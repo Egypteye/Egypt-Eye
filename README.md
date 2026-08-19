@@ -53,12 +53,17 @@ pointing at a file in `public/videos/`.
 
 ## Brand
 
-- **Logo**: `src/components/EyeOfHorusIcon.tsx` is a hand-drawn SVG Eye of
-  Horus standing in for the real logo — this build environment can't read
-  image files pasted into chat, only see them, so the exact brand artwork
-  couldn't be extracted as a file. Drop the real logo into
-  `public/logo.svg`/`public/logo.png` and swap it into `Navbar.tsx`,
-  `Footer.tsx`, and `src/app/icon.svg` (the favicon) when you have it.
+- **Logo**: the real Eye of Horus mark, in `public/brand/`:
+  - `egypt-eye-mark-gold.png` / `egypt-eye-mark-black.png` — trimmed, web-sized
+    (800px) transparent PNGs, used in `Navbar.tsx` and `Footer.tsx`.
+  - `egypt-eye-badge-gold.png` — the circular seal version, used on the About page.
+  - `originals/` — the untouched files as uploaded (`public/brand/originals/`),
+    kept in case a size larger than 800px or a different crop is ever needed.
+  - The favicon (`src/app/icon.png`, `src/app/apple-icon.png`) is the gold mark
+    composited onto a rounded Midnight Navy square. Re-run
+    `node scripts/process-logo-assets.mjs` to regenerate everything above from
+    `public/brand/originals/` if the source art changes (uses `sharp`, already
+    a transitive dependency of Next.js).
 - **Palette**: "Regal Heritage" — Midnight Navy / Royal Gold / Ivory Stone —
   defined as CSS variables at the top of `src/app/globals.css`
   (`--color-ink`, `--color-gold`, `--color-sand`, etc.). Change the hex

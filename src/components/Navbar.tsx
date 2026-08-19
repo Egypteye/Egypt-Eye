@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { site } from "@/content/site";
-import { EyeOfHorusIcon } from "./EyeOfHorusIcon";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -12,8 +12,15 @@ export function Navbar() {
     <header className="sticky top-0 z-50 border-b border-black/5 bg-cream/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
         <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
-          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ink text-gold ring-1 ring-gold/40">
-            <EyeOfHorusIcon className="h-6 w-6" />
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ink p-1.5 ring-1 ring-gold/40">
+            <Image
+              src="/brand/egypt-eye-mark-gold.png"
+              alt=""
+              width={40}
+              height={40}
+              className="h-full w-full object-contain"
+              priority
+            />
           </span>
           <span className="font-display text-lg font-semibold leading-tight text-ink">
             {site.shortName}

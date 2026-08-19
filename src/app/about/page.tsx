@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "@/components/Container";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -43,6 +44,13 @@ export default function AboutPage() {
       <section className="py-20">
         <Container className="grid gap-16">
           <div className="mx-auto max-w-3xl text-center">
+            <Image
+              src="/brand/egypt-eye-badge-gold.png"
+              alt="Egypt Eye seal"
+              width={120}
+              height={120}
+              className="mx-auto mb-6"
+            />
             <SectionHeading
               eyebrow="Our Story"
               title="We turn a trip to Egypt into a personalized, memorable experience"

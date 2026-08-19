@@ -1,7 +1,7 @@
 import Link from "next/link";
+import Image from "next/image";
 import { site } from "@/content/site";
 import { Container } from "./Container";
-import { EyeOfHorusIcon } from "./EyeOfHorusIcon";
 
 export function Footer() {
   return (
@@ -9,8 +9,14 @@ export function Footer() {
       <Container className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full ring-1 ring-gold/40 text-gold-light">
-              <EyeOfHorusIcon className="h-5 w-5" />
+            <span className="flex h-9 w-9 items-center justify-center rounded-full p-1 ring-1 ring-gold/40">
+              <Image
+                src="/brand/egypt-eye-mark-gold.png"
+                alt=""
+                width={36}
+                height={36}
+                className="h-full w-full object-contain"
+              />
             </span>
             <p className="font-display text-xl font-semibold text-gold-light">
               {site.shortName}
