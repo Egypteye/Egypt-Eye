@@ -1,29 +1,62 @@
-// Stylized Eye of Horus (Wedjat) mark — the site logo glyph. Hand-drawn as
+// Stylized Eye of Horus (Wedjat) mark — the site logo glyph. Hand-traced as
 // SVG rather than a raster image so it stays crisp at any size (navbar,
-// footer, favicon). Swap for the finished brand logo file whenever it's
-// ready to hand off — see README.
+// footer, favicon). This session can only *see* images pasted into chat, not
+// save them as files, so the real brand artwork couldn't be extracted —
+// swap this for the finished logo file whenever it's ready; see README.
 export function EyeOfHorusIcon({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 120 100" className={className} fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 200 150" className={className} xmlns="http://www.w3.org/2000/svg">
+      {/* Eyebrow — tapered ribbon */}
       <path
-        d="M8 34 C 30 12, 85 10, 112 28"
-        stroke="currentColor"
-        strokeWidth="7"
-        strokeLinecap="round"
+        d="M18 46
+           C 42 20, 82 6, 118 10
+           C 144 13, 165 22, 180 34
+           C 166 29, 148 25, 128 27
+           C 96 30, 58 43, 32 58
+           Z"
+        fill="currentColor"
       />
+
+      {/* Eye lid band — outer + inner almond outlines combined with evenodd
+          to punch a true transparent hole (works on any background) */}
       <path
-        d="M10 55 C 30 35, 90 35, 112 52 C 95 66, 70 72, 55 72 C 35 72, 18 66, 10 55 Z"
-        stroke="currentColor"
-        strokeWidth="6"
-        strokeLinejoin="round"
+        fill="currentColor"
+        fillRule="evenodd"
+        d="M16 64
+           C 36 44, 76 34, 108 35
+           C 136 36, 160 44, 178 56
+           L 194 48
+           L 198 60
+           L 182 66
+           C 162 76, 134 84, 104 84
+           C 70 84, 38 76, 18 64
+           Z
+           M30 63
+           C 46 50, 78 43, 105 44
+           C 130 45, 150 51, 165 59
+           C 150 66, 128 72, 104 73
+           C 76 73, 48 68, 30 63
+           Z"
       />
-      <circle cx="55" cy="53" r="9" fill="currentColor" />
-      <path d="M104 56 L120 88 L110 91 L95 60 Z" fill="currentColor" />
+
+      {/* Pupil */}
+      <circle cx="103" cy="60" r="15" fill="currentColor" />
+
+      {/* Falcon cheek marking */}
+      <path d="M178 64 L200 122 L186 126 L166 70 Z" fill="currentColor" />
+
+      {/* Teardrop sweep into the spiral */}
       <path
-        d="M28 70 C 18 78, 16 90, 26 96 C 34 100, 42 96, 40 88 C 39 83, 33 82, 31 86"
+        d="M62 78
+           C 46 88, 34 100, 34 114
+           C 34 128, 45 139, 59 139
+           C 71 139, 79 130, 76 119
+           C 74 111, 65 107, 58 111
+           C 53 114, 52 120, 55 124"
         stroke="currentColor"
-        strokeWidth="6"
+        strokeWidth="9"
         strokeLinecap="round"
+        fill="none"
       />
     </svg>
   );
