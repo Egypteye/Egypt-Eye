@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { Badge } from "@/components/Badge";
@@ -13,12 +14,26 @@ import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { Reveal } from "@/components/Reveal";
 import { site } from "@/content/site";
-import { photoshoots } from "@/content/photoshoots";
-import { stories } from "@/content/stories";
 import { getOverallRating } from "@/content/aggregate";
+import {
+  getExperiences,
+  getFaqs,
+  getPhotoshoots,
+  getStories,
+  getTestimonials,
+  getTours,
+} from "@/sanity/fetchers";
 
-export default function Home() {
-  const { average, reviewCount } = getOverallRating();
+export default async function Home() {
+  const [tours, experiences, photoshoots, testimonials, stories, faqs] = await Promise.all([
+    getTours(),
+    getExperiences(),
+    getPhotoshoots(),
+    getTestimonials(),
+    getStories(),
+    getFaqs(),
+  ]);
+  const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
 
   return (
     <>
@@ -62,7 +77,7 @@ export default function Home() {
       <section className="pb-20 pt-20 sm:pt-24">
         <Container>
           <Reveal>
-            <TrustBar />
+            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} />
           </Reveal>
         </Container>
       </section>
@@ -86,7 +101,7 @@ export default function Home() {
             </div>
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <PopularToursCarousel />
+            <PopularToursCarousel tours={tours} />
           </Reveal>
         </Container>
       </section>
@@ -245,7 +260,7 @@ export default function Home() {
           </Reveal>
         </Container>
         <Reveal delay={100} className="mt-10">
-          <ReviewsMarquee />
+          <ReviewsMarquee testimonials={testimonials} />
         </Reveal>
       </section>
 
@@ -256,7 +271,7 @@ export default function Home() {
             <SectionHeading eyebrow="Good to Know" title="Frequently Asked Questions" align="center" />
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <FaqAccordion />
+            <FaqAccordion faqs={faqs} />
           </Reveal>
         </Container>
       </section>
@@ -279,7 +294,12 @@ export default function Home() {
                 href={`/stories/${s.slug}`}
                 className="group overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
               >
-                <PlaceholderImage tone={s.imageTone} className="h-36 w-full transition duration-500 group-hover:scale-105" />
+                <SmartImage
+                  image={s.image}
+                  tone={s.imageTone}
+                  alt={s.title}
+                  className="h-36 w-full transition duration-500 group-hover:scale-105"
+                />
                 <div className="p-4">
                   <h3 className="text-sm font-semibold leading-snug text-ink">{s.title}</h3>
                 </div>

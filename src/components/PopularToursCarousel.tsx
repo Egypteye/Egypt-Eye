@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { TourCard } from "./TourCard";
-import { tours } from "@/content/tours";
 import type { Tour } from "@/content/types";
 
 const TABS: { label: string; value: Tour["category"] | "all" }[] = [
@@ -12,7 +11,7 @@ const TABS: { label: string; value: Tour["category"] | "all" }[] = [
   { label: "Jordan", value: "jordan" },
 ];
 
-export function PopularToursCarousel() {
+export function PopularToursCarousel({ tours }: { tours: Tour[] }) {
   const [tab, setTab] = useState<Tour["category"] | "all">("all");
   const scrollerRef = useRef<HTMLDivElement>(null);
 

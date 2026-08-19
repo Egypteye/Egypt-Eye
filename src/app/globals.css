@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 /* "Regal Heritage" brand palette — Midnight Navy / Royal Gold / Ivory Stone.
    The six PlaceholderImage "tones" (giza/nile/desert/luxor/jordan/redsea)

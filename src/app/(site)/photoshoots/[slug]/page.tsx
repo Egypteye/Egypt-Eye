@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
-import { photoshoots, getPhotoshootBySlug } from "@/content/photoshoots";
+import { getPhotoshootBySlug, getPhotoshoots } from "@/sanity/fetchers";
 import { site } from "@/content/site";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const photoshoots = await getPhotoshoots();
   return photoshoots.map((p) => ({ slug: p.slug }));
 }
 
@@ -18,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const photoshoot = getPhotoshootBySlug(slug);
+  const photoshoot = await getPhotoshootBySlug(slug);
   if (!photoshoot) return {};
   return { title: photoshoot.title, description: photoshoot.description };
 }
@@ -29,15 +30,17 @@ export default async function PhotoshootDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const photoshoot = getPhotoshootBySlug(slug);
+  const photoshoot = await getPhotoshootBySlug(slug);
   if (!photoshoot) notFound();
 
   return (
     <section className="py-14">
       <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>
-          <PlaceholderImage
+          <SmartImage
+            image={photoshoot.image}
             tone={photoshoot.imageTone}
+            alt={photoshoot.title}
             label={photoshoot.locations.join(" · ")}
             className="aspect-[16/10] w-full rounded-2xl"
           />

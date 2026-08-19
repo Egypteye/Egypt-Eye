@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Experience } from "@/content/types";
-import { PlaceholderImage } from "./PlaceholderImage";
+import { SmartImage } from "./SmartImage";
 import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 
@@ -10,8 +10,10 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
       href={`/experiences/${experience.slug}`}
       className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10"
     >
-      <PlaceholderImage
+      <SmartImage
+        image={experience.image}
         tone={experience.imageTone}
+        alt={experience.title}
         label={experience.duration}
         className="h-44 w-full transition duration-500 group-hover:scale-105"
       />

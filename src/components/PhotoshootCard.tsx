@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Photoshoot } from "@/content/types";
-import { PlaceholderImage } from "./PlaceholderImage";
+import { SmartImage } from "./SmartImage";
 import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 
@@ -10,8 +10,10 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
       href={`/photoshoots/${photoshoot.slug}`}
       className="group grid overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 sm:grid-cols-2"
     >
-      <PlaceholderImage
+      <SmartImage
+        image={photoshoot.image}
         tone={photoshoot.imageTone}
+        alt={photoshoot.title}
         label={photoshoot.locations[0]}
         className="h-56 w-full transition duration-500 group-hover:scale-105 sm:h-full"
       />

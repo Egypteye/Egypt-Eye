@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { TrustBar } from "@/components/TrustBar";
 import { Reveal } from "@/components/Reveal";
 import { CustomizeForm } from "./CustomizeForm";
+import { getExperiences, getPhotoshoots, getTours } from "@/sanity/fetchers";
 
 export const metadata = {
   title: "Customize Your Tour",
@@ -18,7 +19,13 @@ const steps = [
   { title: "Confirm with a 20% deposit", body: "Pay the rest in cash or PayPal at the end of your tour." },
 ];
 
-export default function CustomizePage() {
+export default async function CustomizePage() {
+  const [tours, experiences, photoshoots] = await Promise.all([
+    getTours(),
+    getExperiences(),
+    getPhotoshoots(),
+  ]);
+
   return (
     <>
       <section className="relative">
@@ -41,7 +48,7 @@ export default function CustomizePage() {
       <section className="py-16">
         <Container>
           <Reveal>
-            <TrustBar />
+            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} />
           </Reveal>
         </Container>
       </section>

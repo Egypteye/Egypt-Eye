@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "@/components/Navbar";
-import { Footer } from "@/components/Footer";
-import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { site } from "@/content/site";
 
 const inter = Inter({
@@ -24,18 +21,17 @@ export const metadata: Metadata = {
   description: site.description,
 };
 
+// Kept deliberately minimal (just fonts + <html>/<body>) so the /studio
+// route — which needs a full-screen app shell, not the marketing site's
+// navbar/footer — can render cleanly. The site's chrome lives one level
+// down, in app/(site)/layout.tsx.
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-sand text-ink">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
-        <WhatsAppButton />
-      </body>
+      <body className="min-h-full bg-sand text-ink">{children}</body>
     </html>
   );
 }

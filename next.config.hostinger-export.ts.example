@@ -1,0 +1,15 @@
+// Reference only — not used by the build. This is the config that was used
+// when the site was deployed as a static export to Hostinger shared hosting.
+// If the site ever needs to go back to static hosting with no CMS/server,
+// rename this file to next.config.ts (replacing the Sanity/Vercel version).
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  output: "export",
+  trailingSlash: true,
+  images: {
+    unoptimized: true,
+  },
+};
+
+export default nextConfig;

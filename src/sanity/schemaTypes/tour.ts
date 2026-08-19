@@ -1,0 +1,74 @@
+import { defineField, defineType } from "sanity";
+import { imageTones } from "./objects";
+
+export const tour = defineType({
+  name: "tour",
+  title: "Tour",
+  type: "document",
+  fields: [
+    defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
+    defineField({
+      name: "slug",
+      title: "Slug (web address)",
+      type: "slug",
+      options: { source: "title", maxLength: 96 },
+      validation: (r) => r.required(),
+    }),
+    defineField({ name: "tagline", title: "Tagline (one line)", type: "string" }),
+    defineField({
+      name: "category",
+      title: "Category",
+      type: "string",
+      options: { list: ["one-day", "multi-day", "jordan"] },
+      validation: (r) => r.required(),
+    }),
+    defineField({ name: "duration", title: "Duration (display text, e.g. '3 days')", type: "string" }),
+    defineField({ name: "lengthDays", title: "Length in days (for filtering)", type: "number" }),
+    defineField({ name: "cities", title: "Number of cities", type: "number" }),
+    defineField({
+      name: "destinations",
+      title: "Destinations",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({ name: "rating", title: "Rating", type: "rating" }),
+    defineField({ name: "badge", title: "Badge (e.g. 'Free Private Photoshoot')", type: "string" }),
+    defineField({
+      name: "image",
+      title: "Photo",
+      type: "image",
+      options: { hotspot: true },
+      description: "Upload a real photo. Until you do, a gradient placeholder is shown.",
+    }),
+    defineField({
+      name: "imageTone",
+      title: "Placeholder color (used until a photo is uploaded)",
+      type: "string",
+      options: { list: imageTones },
+      initialValue: "giza",
+    }),
+    defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
+    defineField({ name: "highlights", title: "Highlights", type: "array", of: [{ type: "string" }] }),
+    defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
+    defineField({ name: "excluded", title: "Not Included", type: "array", of: [{ type: "string" }] }),
+    defineField({
+      name: "itinerary",
+      title: "Itinerary (multi-day tours only)",
+      type: "array",
+      of: [{ type: "itineraryDay" }],
+    }),
+    defineField({ name: "price", title: "Price", type: "price" }),
+    defineField({
+      name: "order",
+      title: "Sort order (lower shows first)",
+      type: "number",
+      initialValue: 0,
+    }),
+  ],
+  orderings: [
+    { title: "Sort order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },
+  ],
+  preview: {
+    select: { title: "title", subtitle: "duration", media: "image" },
+  },
+});

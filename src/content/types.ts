@@ -1,4 +1,7 @@
 // Shared content types for tours, experiences, and photoshoots.
+import type { Image as SanityImage, PortableTextBlock } from "sanity";
+
+export type ImageTone = "giza" | "nile" | "desert" | "luxor" | "jordan" | "redsea";
 
 export type Rating = {
   score: number;
@@ -29,8 +32,9 @@ export type Tour = {
   destinations: string[];
   rating: Rating;
   badge?: string;
-  imageLabel: string;
-  imageTone: "giza" | "nile" | "desert" | "luxor" | "jordan" | "redsea";
+  imageLabel?: string;
+  image?: SanityImage;
+  imageTone: ImageTone;
   description: string;
   highlights: string[];
   included: string[];
@@ -45,8 +49,9 @@ export type Experience = {
   duration: string;
   rating: Rating;
   price: Price;
-  imageLabel: string;
-  imageTone: "giza" | "nile" | "desert" | "luxor" | "jordan" | "redsea";
+  imageLabel?: string;
+  image?: SanityImage;
+  imageTone: ImageTone;
   description: string;
   included: string[];
 };
@@ -58,8 +63,9 @@ export type Photoshoot = {
   rating: Rating;
   price: Price;
   locations: string[];
-  imageLabel: string;
-  imageTone: "giza" | "nile" | "desert" | "luxor" | "jordan" | "redsea";
+  imageLabel?: string;
+  image?: SanityImage;
+  imageTone: ImageTone;
   description: string;
   goodFor: string[];
   included: string[];
@@ -77,6 +83,14 @@ export type Story = {
   slug: string;
   title: string;
   excerpt: string;
-  imageLabel: string;
-  imageTone: "giza" | "nile" | "desert" | "luxor" | "jordan" | "redsea";
+  imageLabel?: string;
+  image?: SanityImage;
+  imageTone: ImageTone;
+  body?: PortableTextBlock[];
+  publishedAt?: string;
+};
+
+export type Faq = {
+  question: string;
+  answer: string;
 };

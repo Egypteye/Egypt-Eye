@@ -4,7 +4,7 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
 import { ToursGrid } from "./ToursGrid";
-import { tours } from "@/content/tours";
+import { getTours } from "@/sanity/fetchers";
 
 export const metadata: Metadata = {
   title: "Popular Tours",
@@ -12,7 +12,9 @@ export const metadata: Metadata = {
     "Private, expertly guided tours across Egypt and Jordan — one-day trips, multi-day itineraries, and Nile cruises.",
 };
 
-export default function ToursPage() {
+export default async function ToursPage() {
+  const tours = await getTours();
+
   return (
     <>
       <section className="relative">
@@ -36,7 +38,7 @@ export default function ToursPage() {
           />
           <div className="mt-10">
             <Suspense fallback={null}>
-              <ToursGrid />
+              <ToursGrid tours={tours} />
             </Suspense>
           </div>
         </Container>

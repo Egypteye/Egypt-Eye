@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
-import { tours, getTourBySlug } from "@/content/tours";
+import { getAllTourSlugs, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { site } from "@/content/site";
 
-export function generateStaticParams() {
-  return tours.map((t) => ({ slug: t.slug }));
+export async function generateStaticParams() {
+  const slugs = await getAllTourSlugs();
+  return slugs.map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -20,7 +21,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const tour = getTourBySlug(slug);
+  const tour = await getTourBySlug(slug);
   if (!tour) return {};
   return { title: tour.title, description: tour.tagline };
 }
@@ -31,15 +32,16 @@ export default async function TourDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tour = getTourBySlug(slug);
+  const tour = await getTourBySlug(slug);
   if (!tour) notFound();
 
-  const related = tours.filter((t) => t.slug !== tour.slug && t.category === tour.category).slice(0, 3);
+  const allTours = await getTours();
+  const related = allTours.filter((t) => t.slug !== tour.slug && t.category === tour.category).slice(0, 3);
 
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone={tour.imageTone} className="absolute inset-0" />
+        <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[46vh] flex-col justify-end gap-3 pb-14 pt-32">
           {tour.badge && <Badge>{tour.badge}</Badge>}

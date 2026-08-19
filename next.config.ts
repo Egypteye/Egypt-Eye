@@ -1,14 +1,17 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Static export: produces plain HTML/CSS/JS in out/, deployable to any
-  // shared host (e.g. Hostinger) with no Node.js server required. Remove
-  // this block if the site ever moves to a Node-capable host and needs
-  // server features (API routes, image optimization, etc).
-  output: "export",
-  trailingSlash: true,
+  // Full Next.js server mode (Vercel) — needed for the embedded Sanity
+  // Studio at /studio and for content to update without a manual rebuild.
+  // If the site ever moves back to static shared hosting with no CMS,
+  // see next.config.hostinger-export.ts.example for the static-export config.
   images: {
-    unoptimized: true,
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "cdn.sanity.io",
+      },
+    ],
   },
 };
 

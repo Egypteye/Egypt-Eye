@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
-import { experiences, getExperienceBySlug } from "@/content/experiences";
+import { getExperienceBySlug, getExperiences } from "@/sanity/fetchers";
 import { site } from "@/content/site";
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const experiences = await getExperiences();
   return experiences.map((e) => ({ slug: e.slug }));
 }
 
@@ -18,7 +19,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const experience = getExperienceBySlug(slug);
+  const experience = await getExperienceBySlug(slug);
   if (!experience) return {};
   return { title: experience.title, description: experience.description };
 }
@@ -29,15 +30,17 @@ export default async function ExperienceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const experience = getExperienceBySlug(slug);
+  const experience = await getExperienceBySlug(slug);
   if (!experience) notFound();
 
   return (
     <section className="py-14">
       <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>
-          <PlaceholderImage
+          <SmartImage
+            image={experience.image}
             tone={experience.imageTone}
+            alt={experience.title}
             label={experience.duration}
             className="aspect-[16/10] w-full rounded-2xl"
           />

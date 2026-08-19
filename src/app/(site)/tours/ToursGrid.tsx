@@ -3,7 +3,6 @@
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { TourCard } from "@/components/TourCard";
-import { tours } from "@/content/tours";
 import type { Tour } from "@/content/types";
 
 const FILTERS: { label: string; value: Tour["category"] | "all" }[] = [
@@ -28,7 +27,7 @@ function inDurationBucket(days: number, bucket: string) {
   }
 }
 
-export function ToursGrid() {
+export function ToursGrid({ tours }: { tours: Tour[] }) {
   const searchParams = useSearchParams();
   const initialType = (searchParams.get("type") as Tour["category"] | null) ?? "all";
   const initialDuration = searchParams.get("duration") ?? "all";

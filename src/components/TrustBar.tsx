@@ -1,4 +1,5 @@
-import { catalogStats, getOverallRating } from "@/content/aggregate";
+import { getCatalogStats, getOverallRating } from "@/content/aggregate";
+import type { Experience, Photoshoot, Tour } from "@/content/types";
 
 const badges = [
   {
@@ -30,8 +31,17 @@ const icons: Record<string, React.ReactNode> = {
   ),
 };
 
-export function TrustBar() {
-  const { average, reviewCount } = getOverallRating();
+export function TrustBar({
+  tours,
+  experiences,
+  photoshoots,
+}: {
+  tours: Tour[];
+  experiences: Experience[];
+  photoshoots: Photoshoot[];
+}) {
+  const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
+  const catalogStats = getCatalogStats(tours, experiences, photoshoots);
 
   return (
     <div className="grid gap-px overflow-hidden rounded-2xl bg-black/5 sm:grid-cols-3">

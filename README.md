@@ -1,55 +1,88 @@
 # Egypt Eye Travel and Tours — Website
 
-A Next.js rebuild of egypteyetravel.com, designed around three goals: modern,
-beautiful, and easy to edit without touching component code.
+A Next.js site for egypteyetravel.com with a built-in content backend
+([Sanity](https://sanity.io)) — tours, experiences, photoshoots, blog posts,
+testimonials, FAQ, and site-wide settings are all editable from a login page
+at `/studio`, no code required.
 
-## Editing content
+## Editing content (the day-to-day way)
 
-Everything a non-developer would want to change lives in **`src/content/`** as
-plain, commented TypeScript objects — no CMS login needed, no component code
-to touch:
+Once Sanity is set up (see below) and the site is deployed, go to
+**`yoursite.com/studio`**, log in, and edit:
 
-| File | What it controls |
-|---|---|
-| `site.ts` | Brand copy, nav links, contact info, WhatsApp/email, booking policies |
-| `tours.ts` | The 11 Popular Tours — pricing, itinerary, included/excluded, ratings |
-| `experiences.ts` | The 6 Extra Experiences (felucca, ATV, dinner cruise, food tour) |
-| `photoshoots.ts` | The two photoshoot packages (Pyramids, Flying Dress) |
-| `testimonials.ts` | Homepage testimonial quotes |
-| `stories.ts` | Blog/Stories listing |
-| `destinations.ts` | Cities shown on the homepage panel and as checkboxes on the Customize form |
-| `interests.ts` | Activity checkboxes on the Customize form |
-| `faq.ts` | Homepage FAQ accordion |
-| `aggregate.ts` | Derives stat-tile numbers (rating average, tour count, etc.) from the real data above — nothing hardcoded |
+- **Tours**, **Extra Experiences**, **Photoshoot Packages** — copy, pricing,
+  itineraries, included/excluded lists, photos
+- **Blog Posts** — title, cover photo, excerpt, and a full rich-text article
+  body (headings, bold/italic, links, inline images)
+- **Testimonials**, **FAQ** — add/edit/reorder freely
+- **Site Settings** — brand copy, contact info, social links, booking
+  policies (one singleton entry, always at the top of the sidebar)
 
-To add a new tour: copy an existing object in `tours.ts`, give it a unique
-`slug`, and it automatically gets a listing card and its own detail page at
-`/tours/<slug>` — no routing code required.
+Changes go live within about a minute (no rebuild, no re-upload). Photos are
+uploaded directly in the Studio — drag and drop, Sanity handles hosting,
+optimization, and cropping automatically.
 
-Prices are `{ amount: null }` where the current site didn't publish a fixed
-price (shown as "Ask us for today's rate"); fill in a number to show a real
-price instead.
+### If Sanity isn't set up yet
+
+The site still works with zero configuration: every content type falls back
+to plain data files in `src/content/*.ts` (the original copy this site
+shipped with) whenever Sanity has nothing for it. That fallback is
+per-content-type, so you can migrate gradually — e.g. tours can come from
+Sanity while blog posts still come from `stories.ts`, with no code changes
+either way. See `src/sanity/fetchers.ts` if you want to see exactly how that
+decision is made.
+
+## Setting up Sanity (one-time)
+
+1. Go to **[sanity.io](https://sanity.io)** and create a free account.
+2. Create a new project (any name). Note its **Project ID**, shown on the
+   project's dashboard.
+3. In Vercel (see Deployment below), add these environment variables:
+   - `NEXT_PUBLIC_SANITY_PROJECT_ID` — the Project ID from step 2
+   - `NEXT_PUBLIC_SANITY_DATASET` — `production` (Sanity creates this dataset
+     by default)
+4. Redeploy. Visit `yoursite.com/studio` and log in with the same account —
+   you'll see the content types listed above, all empty.
+
+### Populating it with the existing content
+
+Rather than re-typing all 11 tours, 6 experiences, 2 photoshoots, etc. by
+hand, a one-time migration copies everything from `src/content/*.ts` into
+Sanity for you:
+
+1. In [sanity.io/manage](https://sanity.io/manage) → your project → **API →
+   Tokens**, create a token with **Editor** permissions. Copy it.
+2. In Vercel, add two more environment variables:
+   - `SANITY_API_WRITE_TOKEN` — the token from step 1
+   - `MIGRATE_SECRET` — any random password-like string you make up
+3. Redeploy, then visit (once, in your browser):
+   ```
+   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET
+   ```
+   You'll see a JSON summary of everything that was created. Refresh
+   `/studio` — it's now populated.
+4. It's safe to visit that URL again later (e.g. after editing
+   `src/content/*.ts` further) — it re-syncs from the local files without
+   creating duplicates, but note it **will overwrite** any edits already
+   made directly in the Studio for those same tours/experiences/etc.
+   Afterwards, remove `MIGRATE_SECRET` from Vercel's environment variables
+   (or just don't reuse the URL) so the endpoint can't be triggered by
+   anyone who happens to guess it.
 
 ## Images
 
-The site currently ships with elegant gradient placeholders (see
-`src/components/PlaceholderImage.tsx`) instead of real photos, since this
-build environment has no access to your photo library. To swap in real
-photos:
-
-1. Drop image files into `public/images/`.
-2. Replace the relevant `<PlaceholderImage tone="..." />` usage with a Next.js
-   `<Image src="/images/your-photo.jpg" ... />`.
-
-Tours/experiences/photoshoots/stories each carry an `imageTone` field
-(`giza`, `nile`, `desert`, `luxor`, `jordan`, `redsea`) controlling the
-placeholder's color — useful as a guide for which real photo mood fits.
+Every tour/experience/photoshoot/blog post has an optional **Photo** field
+in the Studio. Until a real photo is uploaded, the site shows an elegant
+gradient placeholder instead (see `src/components/PlaceholderImage.tsx` and
+`SmartImage.tsx`, which decides which one to render). Each item also has a
+"Placeholder color" field controlling that gradient's mood — useful as a
+guide for which real photo fits once you have one.
 
 The homepage hero also auto-rotates through five of these placeholder tones
 with a slow Ken Burns zoom (`src/components/HeroSlideshow.tsx`) to stand in
-for real photography/video until it's available. To use real video instead,
-swap its `<PlaceholderImage>` slides for a `<video autoPlay muted loop>`
-pointing at a file in `public/videos/`.
+for real photography/video. To use real video instead, swap its
+`<PlaceholderImage>` slides for a `<video autoPlay muted loop>` pointing at
+a file in `public/videos/`.
 
 ## Brand
 
@@ -57,13 +90,13 @@ pointing at a file in `public/videos/`.
   - `egypt-eye-mark-gold.png` / `egypt-eye-mark-black.png` — trimmed, web-sized
     (800px) transparent PNGs, used in `Navbar.tsx` and `Footer.tsx`.
   - `egypt-eye-badge-gold.png` — the circular seal version, used on the About page.
-  - `originals/` — the untouched files as uploaded (`public/brand/originals/`),
-    kept in case a size larger than 800px or a different crop is ever needed.
-  - The favicon (`src/app/icon.png`, `src/app/apple-icon.png`) is the gold mark
-    composited onto a rounded Midnight Navy square. Re-run
-    `node scripts/process-logo-assets.mjs` to regenerate everything above from
-    `public/brand/originals/` if the source art changes (uses `sharp`, already
-    a transitive dependency of Next.js).
+  - `originals/` — the untouched files as uploaded, kept in case a size
+    larger than 800px or a different crop is ever needed.
+  - The favicon (`src/app/icon.png`, `src/app/apple-icon.png`) is the gold
+    mark composited onto a rounded Midnight Navy square. Re-run
+    `node scripts/process-logo-assets.mjs` to regenerate everything above
+    from `public/brand/originals/` if the source art changes (uses `sharp`,
+    already a transitive dependency of Next.js).
 - **Palette**: "Regal Heritage" — Midnight Navy / Royal Gold / Ivory Stone —
   defined as CSS variables at the top of `src/app/globals.css`
   (`--color-ink`, `--color-gold`, `--color-sand`, etc.). Change the hex
@@ -73,33 +106,45 @@ pointing at a file in `public/videos/`.
 
 ```bash
 npm install
-npm run dev       # http://localhost:3000
+cp .env.local.example .env.local   # fill in your Sanity project ID + dataset
+npm run dev       # http://localhost:3000  (and /studio)
 npm run build     # production build
 npm run lint
 ```
 
 ## Deployment
 
-`next.config.ts` is set to `output: "export"` — `npm run build` produces a
-plain static site in `out/` (HTML/CSS/JS, folder-style URLs with
-`index.html`, no Node.js server needed). That makes it deployable to:
+This site needs a real Next.js server (not just static files) because of
+the embedded `/studio` CMS and content that updates without a rebuild.
+Deploy to **[Vercel](https://vercel.com)**:
 
-- **Shared hosting (e.g. Hostinger)**: run `npm run build`, then upload the
-  entire contents of `out/` (not the folder itself — its contents) into
-  `public_html/` via the hPanel File Manager or FTP/SFTP. That's it — no
-  server config, no `.htaccess` rewrite rules needed, since every route is
-  already a real folder with its own `index.html`.
-- **Vercel/Netlify**: also works zero-config as a static site.
-- **Any other static host** (S3, Cloudflare Pages, GitHub Pages, etc.).
+1. Import the GitHub repo into Vercel (zero-config — it auto-detects
+   Next.js).
+2. Add the environment variables from **Setting up Sanity** above under
+   Project → Settings → Environment Variables.
+3. Deploy. Every push to the connected branch redeploys automatically.
 
-If the site ever needs real server features (a booking API, next/image's
-on-the-fly optimization, server actions), remove the `output: "export"`
-block from `next.config.ts` and deploy to a Node-capable host instead
-(Vercel, or a Hostinger VPS/Cloud plan) with `next build && next start`.
+Point your real domain at the Vercel project under Settings → Domains once
+you're ready to go live.
+
+### If you need static shared hosting instead (e.g. Hostinger)
+
+This is a real trade-off, not a small setting: static hosting can't run
+`/studio` or update content without a manual rebuild-and-reupload each
+time, so the Sanity CMS workflow above won't apply. If shared hosting is a
+hard requirement, `next.config.hostinger-export.ts.example` in this repo is
+the config that was used for that (rename it to `next.config.ts`, remove
+the Sanity/`/studio` routes, and content edits go back to editing
+`src/content/*.ts` and re-uploading `out/`).
 
 ## Tech stack
 
-- Next.js 16 (App Router, TypeScript)
+- Next.js 16 (App Router, TypeScript), deployed on Vercel
 - Tailwind CSS v4
-- No backend/database — the "Customize Your Tour" form and all booking CTAs
-  route to WhatsApp/email, matching the current site's manual booking flow.
+- [Sanity](https://sanity.io) (embedded Studio at `/studio`) for tours,
+  experiences, photoshoots, blog posts, testimonials, FAQ, and site settings
+  — with automatic fallback to `src/content/*.ts` for anything not yet
+  migrated in
+- No custom database/backend beyond Sanity — the "Customize Your Tour" form
+  and all booking CTAs route to WhatsApp/email, matching the original
+  site's manual booking flow

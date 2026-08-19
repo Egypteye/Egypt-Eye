@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
-import { stories } from "@/content/stories";
+import { getStories } from "@/sanity/fetchers";
 
 export const metadata = {
   title: "Stories",
   description: "Travel stories, guides, and journals from Egypt Eye Travel and Tours.",
 };
 
-export default function StoriesPage() {
+export default async function StoriesPage() {
+  const stories = await getStories();
+
   return (
     <section className="py-20">
       <Container>
@@ -25,7 +27,12 @@ export default function StoriesPage() {
               href={`/stories/${s.slug}`}
               className="group overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
             >
-              <PlaceholderImage tone={s.imageTone} className="h-56 w-full transition duration-500 group-hover:scale-105" />
+              <SmartImage
+                image={s.image}
+                tone={s.imageTone}
+                alt={s.title}
+                className="h-56 w-full transition duration-500 group-hover:scale-105"
+              />
               <div className="p-6">
                 <h2 className="font-display text-xl font-semibold text-ink">{s.title}</h2>
                 <p className="mt-2 text-sm text-ink-soft/70">{s.excerpt}</p>
