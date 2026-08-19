@@ -1,0 +1,98 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Container } from "@/components/Container";
+import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { Rating } from "@/components/Rating";
+import { PriceTag } from "@/components/PriceTag";
+import { experiences, getExperienceBySlug } from "@/content/experiences";
+import { site } from "@/content/site";
+
+export function generateStaticParams() {
+  return experiences.map((e) => ({ slug: e.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const experience = getExperienceBySlug(slug);
+  if (!experience) return {};
+  return { title: experience.title, description: experience.description };
+}
+
+export default async function ExperienceDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const experience = getExperienceBySlug(slug);
+  if (!experience) notFound();
+
+  return (
+    <section className="py-14">
+      <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
+        <div>
+          <PlaceholderImage
+            tone={experience.imageTone}
+            label={experience.duration}
+            className="aspect-[16/10] w-full rounded-2xl"
+          />
+          <h1 className="mt-8 font-display text-3xl font-semibold text-ink sm:text-4xl">
+            {experience.title}
+          </h1>
+          <div className="mt-3">
+            <Rating rating={experience.rating} />
+          </div>
+          <p className="mt-5 leading-relaxed text-ink-soft/80">
+            {experience.description}
+          </p>
+
+          <div className="mt-8">
+            <h2 className="font-display text-xl font-semibold text-ink">
+              Included
+            </h2>
+            <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
+              {experience.included.map((i) => (
+                <li key={i} className="flex gap-2">
+                  <span className="text-nile">✓</span>
+                  {i}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <Link
+            href="/experiences"
+            className="mt-10 inline-block text-sm font-semibold text-gold-dark hover:underline"
+          >
+            ← Back to all experiences
+          </Link>
+        </div>
+
+        <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
+          <PriceTag price={experience.price} />
+          <p className="mt-1 text-xs text-ink-soft/60">per person</p>
+          <a
+            href={site.contact.whatsappLink}
+            target="_blank"
+            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
+          >
+            Book on WhatsApp
+          </a>
+          <a
+            href={`mailto:${site.contact.email}?subject=${encodeURIComponent(
+              "Enquiry: " + experience.title
+            )}`}
+            className="mt-3 block w-full rounded-full border border-black/10 py-3 text-center text-sm font-semibold text-ink-soft transition hover:bg-sand-dim"
+          >
+            Email an Enquiry
+          </a>
+        </aside>
+      </Container>
+    </section>
+  );
+}
