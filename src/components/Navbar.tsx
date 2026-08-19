@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { site } from "@/content/site";
+import { EyeOfHorusIcon } from "./EyeOfHorusIcon";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
@@ -10,11 +11,9 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-50 border-b border-black/5 bg-cream/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink text-gold">
-            <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
-              <path d="M12 2 2 20h20L12 2Zm0 4.6L17.8 17H12V6.6Z" />
-            </svg>
+        <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ink text-gold ring-1 ring-gold/40">
+            <EyeOfHorusIcon className="h-6 w-6" />
           </span>
           <span className="font-display text-lg font-semibold leading-tight text-ink">
             {site.shortName}

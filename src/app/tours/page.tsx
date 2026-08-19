@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
@@ -34,7 +35,9 @@ export default function ToursPage() {
             description="Every tour includes a private vehicle and an English-speaking guide. Filter by trip length, or reach out and we'll help you choose."
           />
           <div className="mt-10">
-            <ToursGrid />
+            <Suspense fallback={null}>
+              <ToursGrid />
+            </Suspense>
           </div>
         </Container>
       </section>

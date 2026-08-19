@@ -24,6 +24,7 @@ export type Tour = {
   tagline: string;
   category: "one-day" | "multi-day" | "jordan";
   duration: string;
+  lengthDays: number; // approximate numeric length, used for duration filtering
   cities: number;
   destinations: string[];
   rating: Rating;

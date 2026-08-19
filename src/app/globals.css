@@ -1,21 +1,25 @@
 @import "tailwindcss";
 
+/* "Regal Heritage" brand palette — Midnight Navy / Royal Gold / Ivory Stone.
+   The six PlaceholderImage "tones" (giza/nile/desert/luxor/jordan/redsea)
+   stay independently colorful — they represent destination photography, not
+   site chrome — and are defined in PlaceholderImage.tsx. */
 :root {
-  --background: #faf6ee;
-  --foreground: #1c1712;
+  --background: #f4efe2;
+  --foreground: #0f1c33;
 
-  --color-ink: #14110f;
-  --color-ink-soft: #2a241d;
-  --color-sand: #faf6ee;
-  --color-sand-dim: #f1e9d8;
-  --color-sand-deep: #e6d9b8;
-  --color-gold: #c8973f;
-  --color-gold-light: #e0b768;
-  --color-gold-dark: #9c7229;
+  --color-ink: #0b1930;
+  --color-ink-soft: #24365a;
+  --color-sand: #f4efe2;
+  --color-sand-dim: #ebe2cd;
+  --color-sand-deep: #dbcda3;
+  --color-gold: #c6a15b;
+  --color-gold-light: #ddc17f;
+  --color-gold-dark: #9c7c3c;
   --color-nile: #0f4a4d;
   --color-nile-light: #16686c;
   --color-terracotta: #b5502b;
-  --color-cream: #fffdf8;
+  --color-cream: #fffcf5;
 }
 
 @theme inline {
@@ -76,4 +80,35 @@ h1, h2, h3, h4, .font-display {
 .bg-hieroglyph-pattern {
   background-image: radial-gradient(circle at 1px 1px, rgba(200, 151, 63, 0.18) 1px, transparent 0);
   background-size: 22px 22px;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 40s linear infinite;
 }

@@ -24,9 +24,14 @@ export function PlaceholderImage({
   children?: ReactNode;
 }) {
   const gradient = TONES[tone] ?? TONES.giza;
+  // Only fall back to `relative` when the caller hasn't set their own
+  // position utility (e.g. `absolute inset-0` for full-bleed backgrounds) —
+  // Tailwind gives same-property utilities equal specificity, so having both
+  // `relative` and `absolute` in the class list silently drops one of them.
+  const hasPositionOverride = /\b(absolute|fixed|sticky|static)\b/.test(className);
   return (
     <div
-      className={`relative overflow-hidden bg-gradient-to-br ${gradient} ${className}`}
+      className={`${hasPositionOverride ? "" : "relative"} overflow-hidden bg-gradient-to-br ${gradient} ${className}`}
     >
       <div className="absolute inset-0 bg-hieroglyph-pattern opacity-30" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />

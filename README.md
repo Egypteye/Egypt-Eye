@@ -17,6 +17,10 @@ to touch:
 | `photoshoots.ts` | The two photoshoot packages (Pyramids, Flying Dress) |
 | `testimonials.ts` | Homepage testimonial quotes |
 | `stories.ts` | Blog/Stories listing |
+| `destinations.ts` | Cities shown on the homepage panel and as checkboxes on the Customize form |
+| `interests.ts` | Activity checkboxes on the Customize form |
+| `faq.ts` | Homepage FAQ accordion |
+| `aggregate.ts` | Derives stat-tile numbers (rating average, tour count, etc.) from the real data above — nothing hardcoded |
 
 To add a new tour: copy an existing object in `tours.ts`, give it a unique
 `slug`, and it automatically gets a listing card and its own detail page at
@@ -40,6 +44,25 @@ photos:
 Tours/experiences/photoshoots/stories each carry an `imageTone` field
 (`giza`, `nile`, `desert`, `luxor`, `jordan`, `redsea`) controlling the
 placeholder's color — useful as a guide for which real photo mood fits.
+
+The homepage hero also auto-rotates through five of these placeholder tones
+with a slow Ken Burns zoom (`src/components/HeroSlideshow.tsx`) to stand in
+for real photography/video until it's available. To use real video instead,
+swap its `<PlaceholderImage>` slides for a `<video autoPlay muted loop>`
+pointing at a file in `public/videos/`.
+
+## Brand
+
+- **Logo**: `src/components/EyeOfHorusIcon.tsx` is a hand-drawn SVG Eye of
+  Horus standing in for the real logo — this build environment can't read
+  image files pasted into chat, only see them, so the exact brand artwork
+  couldn't be extracted as a file. Drop the real logo into
+  `public/logo.svg`/`public/logo.png` and swap it into `Navbar.tsx`,
+  `Footer.tsx`, and `src/app/icon.svg` (the favicon) when you have it.
+- **Palette**: "Regal Heritage" — Midnight Navy / Royal Gold / Ivory Stone —
+  defined as CSS variables at the top of `src/app/globals.css`
+  (`--color-ink`, `--color-gold`, `--color-sand`, etc.). Change the hex
+  values there to retune the whole site's chrome in one place.
 
 ## Development
 

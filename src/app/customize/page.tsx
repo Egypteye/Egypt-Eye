@@ -1,6 +1,8 @@
 import { Container } from "@/components/Container";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
 import { SectionHeading } from "@/components/SectionHeading";
+import { TrustBar } from "@/components/TrustBar";
+import { Reveal } from "@/components/Reveal";
 import { CustomizeForm } from "./CustomizeForm";
 
 export const metadata = {
@@ -9,37 +11,51 @@ export const metadata = {
     "Tell us your dates, interests, and pace — we'll design a private Egypt or Jordan itinerary around you.",
 };
 
+const steps = [
+  { title: "Tell us the basics", body: "Dates, guest count, and how packed or relaxed you want the pace." },
+  { title: "Pick cities & activities", body: "Choose from Egypt's icons, Jordan, or the full add-on catalog." },
+  { title: "We reply by email", body: "A proposed day-by-day itinerary and transparent pricing — no obligation." },
+  { title: "Confirm with a 20% deposit", body: "Pay the rest in cash or PayPal at the end of your tour." },
+];
+
 export default function CustomizePage() {
   return (
     <>
       <section className="relative">
         <PlaceholderImage tone="nile" className="absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
-        <Container className="relative flex min-h-[36vh] flex-col justify-end gap-3 pb-14 pt-32">
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
+        <Container className="relative flex min-h-[42vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-            Customization
+            Customization · Inquiry-Only, No Obligation
           </p>
           <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl">
             Design Your Dream Tour
           </h1>
+          <p className="max-w-xl text-cream/80">
+            A private itinerary built entirely around you — every tour, extra
+            experience, and photoshoot in our catalog, combined however you like.
+          </p>
         </Container>
       </section>
 
       <section className="py-16">
-        <Container className="grid gap-12 lg:grid-cols-[1fr_1.2fr]">
+        <Container>
+          <Reveal>
+            <TrustBar />
+          </Reveal>
+        </Container>
+      </section>
+
+      <section className="pb-24">
+        <Container className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
           <div>
             <SectionHeading
               eyebrow="How it works"
               title="Tell us what you're after"
-              description="Fill in the basics and we'll reply with a proposed itinerary and pricing — usually within a few hours."
+              description="Fill in as much or as little as you know — we'll fill in the rest."
             />
-            <ol className="mt-8 space-y-5">
-              {[
-                { title: "Share your dates & pace", body: "How many days, and how packed or relaxed you want it." },
-                { title: "Pick your interests", body: "History, photography, desert adventure, food, the Red Sea — mix and match." },
-                { title: "We build your itinerary", body: "A private Egyptologist guide, transportation, and any experiences you'd like included." },
-                { title: "Confirm with a 20% deposit", body: "Pay the rest in cash or PayPal at the end of your tour." },
-              ].map((step, i) => (
+            <ol className="mt-8 space-y-6">
+              {steps.map((step, i) => (
                 <li key={step.title} className="flex gap-4">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/20 text-sm font-bold text-gold-dark">
                     {i + 1}
@@ -53,7 +69,9 @@ export default function CustomizePage() {
             </ol>
           </div>
 
-          <CustomizeForm />
+          <Reveal>
+            <CustomizeForm />
+          </Reveal>
         </Container>
       </section>
     </>
