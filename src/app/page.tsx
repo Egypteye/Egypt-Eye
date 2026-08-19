@@ -23,7 +23,7 @@ export default function Home() {
   return (
     <>
       {/* Hero */}
-      <section className="relative overflow-hidden">
+      <section className="relative">
         <HeroSlideshow />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/25" />
         <Container className="relative flex min-h-[82vh] flex-col justify-center gap-6 pb-28 pt-40">
