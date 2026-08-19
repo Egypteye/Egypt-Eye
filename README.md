@@ -80,9 +80,22 @@ npm run lint
 
 ## Deployment
 
-This is a standard Next.js App Router project — deploys as-is to
-[Vercel](https://vercel.com) (recommended, zero-config) or any Node hosting
-that runs `next build && next start`.
+`next.config.ts` is set to `output: "export"` — `npm run build` produces a
+plain static site in `out/` (HTML/CSS/JS, folder-style URLs with
+`index.html`, no Node.js server needed). That makes it deployable to:
+
+- **Shared hosting (e.g. Hostinger)**: run `npm run build`, then upload the
+  entire contents of `out/` (not the folder itself — its contents) into
+  `public_html/` via the hPanel File Manager or FTP/SFTP. That's it — no
+  server config, no `.htaccess` rewrite rules needed, since every route is
+  already a real folder with its own `index.html`.
+- **Vercel/Netlify**: also works zero-config as a static site.
+- **Any other static host** (S3, Cloudflare Pages, GitHub Pages, etc.).
+
+If the site ever needs real server features (a booking API, next/image's
+on-the-fly optimization, server actions), remove the `output: "export"`
+block from `next.config.ts` and deploy to a Node-capable host instead
+(Vercel, or a Hostinger VPS/Cloud plan) with `next build && next start`.
 
 ## Tech stack
 
