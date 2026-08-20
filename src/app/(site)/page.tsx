@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
@@ -118,7 +117,7 @@ export default async function Home() {
             />
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <DestinationsPanel />
+            <DestinationsPanel photos={site.destinationPhotos} />
           </Reveal>
         </Container>
       </section>
@@ -145,7 +144,12 @@ export default async function Home() {
                   See the Flying Dress Experience
                 </Link>
               </div>
-              <PlaceholderImage tone="desert" label="Flying Dress Photoshoot" className="min-h-[280px]" />
+              <SmartImage
+                image={site.flyingDressImage.image}
+                tone={site.flyingDressImage.tone}
+                label="Flying Dress Photoshoot"
+                className="min-h-[280px]"
+              />
             </div>
           </Reveal>
         </Container>
@@ -156,7 +160,12 @@ export default async function Home() {
         <Container>
           <Reveal>
             <div className="grid overflow-hidden rounded-3xl bg-nile lg:grid-cols-2">
-              <PlaceholderImage tone="redsea" label="Red Sea Luxe Yachts" className="min-h-[280px] lg:order-1" />
+              <SmartImage
+                image={site.redSeaImage.image}
+                tone={site.redSeaImage.tone}
+                label="Red Sea Luxe Yachts"
+                className="min-h-[280px] lg:order-1"
+              />
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14 lg:order-2">
                 <Badge>Red Sea Luxe Yachts</Badge>
                 <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">
@@ -183,8 +192,9 @@ export default async function Home() {
       <section className="py-24">
         <Container className="grid items-center gap-12 lg:grid-cols-2">
           <Reveal>
-            <PlaceholderImage
-              tone="giza"
+            <SmartImage
+              image={site.ninePyramidsImage.image}
+              tone={site.ninePyramidsImage.tone}
               label="Nine Pyramids View"
               className="aspect-[4/3] w-full rounded-3xl"
             />
@@ -242,7 +252,12 @@ export default async function Home() {
                   Start Customizing
                 </Link>
               </div>
-              <PlaceholderImage tone="luxor" label="Customize Your Tour" className="aspect-square w-full rounded-2xl" />
+              <SmartImage
+                image={site.customizeImage.image}
+                tone={site.customizeImage.tone}
+                label="Customize Your Tour"
+                className="aspect-square w-full rounded-2xl"
+              />
             </div>
           </Reveal>
         </Container>

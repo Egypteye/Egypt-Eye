@@ -115,6 +115,11 @@ export type SiteSettings = {
     tiktok?: string;
   };
   heroImages?: { image?: SanityImage; tone?: ImageTone; label?: string }[];
+  flyingDressImage?: { image?: SanityImage; tone?: ImageTone };
+  redSeaImage?: { image?: SanityImage; tone?: ImageTone };
+  ninePyramidsImage?: { image?: SanityImage; tone?: ImageTone };
+  customizeImage?: { image?: SanityImage; tone?: ImageTone };
+  destinationPhotos?: { name?: string; image?: SanityImage }[];
   pillars?: { title: string; description: string }[];
   policies?: {
     deposit?: string;
@@ -151,6 +156,11 @@ export type ResolvedSiteSettings = {
   };
   nav: readonly { label: string; href: string }[];
   heroImages: readonly { image?: SanityImage; tone: ImageTone; label?: string }[];
+  flyingDressImage: { image?: SanityImage; tone: ImageTone };
+  redSeaImage: { image?: SanityImage; tone: ImageTone };
+  ninePyramidsImage: { image?: SanityImage; tone: ImageTone };
+  customizeImage: { image?: SanityImage; tone: ImageTone };
+  destinationPhotos: readonly { name?: string; image?: SanityImage }[];
   policies: {
     deposit: string;
     currency: string;

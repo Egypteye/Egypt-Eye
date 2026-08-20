@@ -1,6 +1,26 @@
 import { defineField, defineType } from "sanity";
 import { imageTones } from "./objects";
 
+// Shared shape for a single banner photo with a placeholder-color fallback,
+// reused across the homepage's individual (non-slideshow) feature banners.
+function bannerImageField(name: string, title: string) {
+  return defineField({
+    name,
+    title,
+    type: "object",
+    fields: [
+      defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true } }),
+      defineField({
+        name: "tone",
+        title: "Placeholder color (used until a photo is uploaded)",
+        type: "string",
+        options: { list: imageTones },
+        initialValue: "giza",
+      }),
+    ],
+  });
+}
+
 // Singleton document — one instance holds all global site copy, contact
 // info, and booking policies. The Studio structure (structure.ts) pins this
 // to a single, always-visible entry instead of a list.
@@ -46,6 +66,36 @@ export const siteSettings = defineType({
           preview: {
             select: { title: "label", media: "image" },
             prepare: ({ title, media }) => ({ title: title || "Hero slide", media }),
+          },
+        },
+      ],
+    }),
+
+    bannerImageField("flyingDressImage", "Flying Dress banner photo"),
+    bannerImageField("redSeaImage", "Red Sea Luxe Yachts banner photo"),
+    bannerImageField("ninePyramidsImage", "Nine Pyramids View photo"),
+    bannerImageField("customizeImage", "Customize Your Tour banner photo"),
+
+    defineField({
+      name: "destinationPhotos",
+      title: "Destinations panel photos",
+      description:
+        "Real photos for the homepage destination grid (Cairo, Giza, Red Sea, etc.). Match the Destination name exactly — until a name has a photo here, it shows a gradient placeholder instead.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "destinationPhoto",
+          fields: [
+            defineField({
+              name: "name",
+              title: "Destination name (must match exactly, e.g. 'Giza', 'Red Sea')",
+              type: "string",
+            }),
+            defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true } }),
+          ],
+          preview: {
+            select: { title: "name", media: "image" },
           },
         },
       ],

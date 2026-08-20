@@ -119,6 +119,15 @@ const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
   { tone: "desert", label: "Siwa Oasis" },
 ];
 
+// Default placeholder tones for the homepage's single-image feature banners,
+// matching the tones those sections used before they were CMS-editable.
+const defaultBanners = {
+  flyingDressImage: { tone: "desert" as const },
+  redSeaImage: { tone: "redsea" as const },
+  ninePyramidsImage: { tone: "giza" as const },
+  customizeImage: { tone: "luxor" as const },
+};
+
 // Site Settings is a singleton — merge field-by-field instead of an
 // all-or-nothing swap, so filling in just one field in the Studio (e.g. only
 // the WhatsApp number) doesn't blank out everything else that hasn't been
@@ -126,7 +135,9 @@ const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
 // editorial content) and always comes from the local config.
 export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
   const result = await safeFetch<SiteSettings>(siteSettingsQuery);
-  if (!result) return { ...localSite, heroImages: defaultHeroImages };
+  if (!result) {
+    return { ...localSite, heroImages: defaultHeroImages, ...defaultBanners, destinationPhotos: [] };
+  }
 
   return {
     ...localSite,
@@ -137,6 +148,23 @@ export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
       result.heroImages && result.heroImages.length > 0
         ? result.heroImages.map((slide) => ({ ...slide, tone: slide.tone ?? "giza" }))
         : defaultHeroImages,
+    flyingDressImage: {
+      tone: result.flyingDressImage?.tone ?? defaultBanners.flyingDressImage.tone,
+      image: result.flyingDressImage?.image,
+    },
+    redSeaImage: {
+      tone: result.redSeaImage?.tone ?? defaultBanners.redSeaImage.tone,
+      image: result.redSeaImage?.image,
+    },
+    ninePyramidsImage: {
+      tone: result.ninePyramidsImage?.tone ?? defaultBanners.ninePyramidsImage.tone,
+      image: result.ninePyramidsImage?.image,
+    },
+    customizeImage: {
+      tone: result.customizeImage?.tone ?? defaultBanners.customizeImage.tone,
+      image: result.customizeImage?.image,
+    },
+    destinationPhotos: result.destinationPhotos ?? [],
     policies: {
       ...localSite.policies,
       ...result.policies,
