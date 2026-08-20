@@ -109,6 +109,16 @@ export async function getFaqs(): Promise<Faq[]> {
   return result && result.length > 0 ? result : [...localFaqs];
 }
 
+// Default homepage hero slideshow — gradient-placeholder slides shown until
+// real photos are uploaded to Site Settings > Homepage hero background photos.
+const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
+  { tone: "giza", label: "Giza Pyramids" },
+  { tone: "nile", label: "The Nile" },
+  { tone: "luxor", label: "Luxor Temple" },
+  { tone: "redsea", label: "Red Sea" },
+  { tone: "desert", label: "Siwa Oasis" },
+];
+
 // Site Settings is a singleton — merge field-by-field instead of an
 // all-or-nothing swap, so filling in just one field in the Studio (e.g. only
 // the WhatsApp number) doesn't blank out everything else that hasn't been
@@ -116,13 +126,17 @@ export async function getFaqs(): Promise<Faq[]> {
 // editorial content) and always comes from the local config.
 export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
   const result = await safeFetch<SiteSettings>(siteSettingsQuery);
-  if (!result) return localSite;
+  if (!result) return { ...localSite, heroImages: defaultHeroImages };
 
   return {
     ...localSite,
     ...result,
     contact: { ...localSite.contact, ...result.contact },
     socials: { ...localSite.socials, ...result.socials },
+    heroImages:
+      result.heroImages && result.heroImages.length > 0
+        ? result.heroImages.map((slide) => ({ ...slide, tone: slide.tone ?? "giza" }))
+        : defaultHeroImages,
     policies: {
       ...localSite.policies,
       ...result.policies,

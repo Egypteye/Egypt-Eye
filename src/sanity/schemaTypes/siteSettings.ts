@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { imageTones } from "./objects";
 
 // Singleton document — one instance holds all global site copy, contact
 // info, and booking policies. The Studio structure (structure.ts) pins this
@@ -15,6 +16,40 @@ export const siteSettings = defineType({
     defineField({ name: "heroSubheadline", title: "Hero headline", type: "string" }),
     defineField({ name: "description", title: "Brand description", type: "text" }),
     defineField({ name: "positioning", title: "Positioning statement (About page quote)", type: "text" }),
+
+    defineField({
+      name: "heroImages",
+      title: "Homepage hero background photos",
+      description:
+        "The rotating slideshow behind the homepage headline. Upload up to 5-6 real photos — until a slide has a photo, it shows a gradient placeholder instead.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "heroImage",
+          fields: [
+            defineField({
+              name: "image",
+              title: "Photo",
+              type: "image",
+              options: { hotspot: true },
+            }),
+            defineField({
+              name: "tone",
+              title: "Placeholder color (used until a photo is uploaded)",
+              type: "string",
+              options: { list: imageTones },
+              initialValue: "giza",
+            }),
+            defineField({ name: "label", title: "Caption (optional)", type: "string" }),
+          ],
+          preview: {
+            select: { title: "label", media: "image" },
+            prepare: ({ title, media }) => ({ title: title || "Hero slide", media }),
+          },
+        },
+      ],
+    }),
 
     defineField({
       name: "contact",

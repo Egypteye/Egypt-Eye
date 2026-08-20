@@ -114,6 +114,7 @@ export type SiteSettings = {
     facebook?: string;
     tiktok?: string;
   };
+  heroImages?: { image?: SanityImage; tone?: ImageTone; label?: string }[];
   pillars?: { title: string; description: string }[];
   policies?: {
     deposit?: string;
@@ -149,6 +150,7 @@ export type ResolvedSiteSettings = {
     tiktok: string;
   };
   nav: readonly { label: string; href: string }[];
+  heroImages: readonly { image?: SanityImage; tone: ImageTone; label?: string }[];
   policies: {
     deposit: string;
     currency: string;
