@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
+import { Gallery } from "@/components/Gallery";
 import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
 
 export async function generateStaticParams() {
@@ -109,6 +110,15 @@ export default async function PhotoshootDetailPage({
               ))}
             </ul>
           </div>
+
+          {photoshoot.gallery && photoshoot.gallery.length > 0 && (
+            <div className="mt-10">
+              <h2 className="font-display text-lg font-semibold text-ink">Gallery</h2>
+              <div className="mt-4">
+                <Gallery images={photoshoot.gallery} alt={photoshoot.title} />
+              </div>
+            </div>
+          )}
 
           <Link
             href="/photoshoots"

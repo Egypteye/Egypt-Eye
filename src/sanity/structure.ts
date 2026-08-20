@@ -17,6 +17,16 @@ export const structure: StructureResolver = (S) =>
         .child(
           S.document().schemaType("customizePage").documentId("customizePage")
         ),
+      S.listItem()
+        .title("About Page")
+        .child(
+          S.document().schemaType("aboutPage").documentId("aboutPage")
+        ),
+      S.listItem()
+        .title("Contact Page")
+        .child(
+          S.document().schemaType("contactPage").documentId("contactPage")
+        ),
       S.divider(),
       S.documentTypeListItem("tour").title("Tours"),
       S.documentTypeListItem("experience").title("Extra Experiences"),

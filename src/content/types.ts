@@ -52,6 +52,7 @@ export type Experience = {
   imageLabel?: string;
   image?: SanityImage;
   imageTone: ImageTone;
+  gallery?: SanityImage[];
   description: string;
   included: string[];
 };
@@ -66,6 +67,7 @@ export type Photoshoot = {
   imageLabel?: string;
   image?: SanityImage;
   imageTone: ImageTone;
+  gallery?: SanityImage[];
   description: string;
   goodFor: string[];
   included: string[];
@@ -226,4 +228,56 @@ export type ResolvedCustomizePage = {
   formIntroTitle: string;
   formIntroDescription: string;
   formSections: readonly CustomizeFormSection[];
+};
+
+export type AboutPage = {
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroImage?: { image?: SanityImage; tone?: ImageTone };
+  storyEyebrow?: string;
+  storyTitle?: string;
+  whatWeDoEyebrow?: string;
+  whatWeDoTitle?: string;
+  whatWeDoDescription?: string;
+  teamEyebrow?: string;
+  teamTitle?: string;
+  teamDescription?: string;
+  teamMembers?: string[];
+};
+
+export type ResolvedAboutPage = {
+  heroEyebrow: string;
+  heroHeadline: string;
+  heroImage: { image?: SanityImage; tone: ImageTone };
+  storyEyebrow: string;
+  storyTitle: string;
+  whatWeDoEyebrow: string;
+  whatWeDoTitle: string;
+  whatWeDoDescription: string;
+  teamEyebrow: string;
+  teamTitle: string;
+  teamDescription: string;
+  teamMembers: readonly string[];
+};
+
+export type ContactPage = {
+  heroEyebrow?: string;
+  heroHeadline?: string;
+  heroImage?: { image?: SanityImage; tone?: ImageTone };
+  whatsappCardDescription?: string;
+  emailCardDescription?: string;
+  urgentCardDescription?: string;
+  policiesEyebrow?: string;
+  policiesTitle?: string;
+};
+
+export type ResolvedContactPage = {
+  heroEyebrow: string;
+  heroHeadline: string;
+  heroImage: { image?: SanityImage; tone: ImageTone };
+  whatsappCardDescription: string;
+  emailCardDescription: string;
+  urgentCardDescription: string;
+  policiesEyebrow: string;
+  policiesTitle: string;
 };

@@ -9,6 +9,8 @@ import { stories } from "@/content/stories";
 import { faqs } from "@/content/faq";
 import { site } from "@/content/site";
 import { customizePage } from "@/content/customizePage";
+import { aboutPage } from "@/content/aboutPage";
+import { contactPage } from "@/content/contactPage";
 
 // One-time (safely re-runnable) migration: pushes all the existing tour/
 // experience/photoshoot/testimonial/blog/FAQ/site-settings content into
@@ -27,10 +29,10 @@ import { customizePage } from "@/content/customizePage";
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
 // experiences, photoshoots, testimonials, stories, faqs, siteSettings,
-// customizePage. E.g. to seed just the new Customize Page without
-// touching your already-edited Site Settings/Tours:
+// customizePage, aboutPage, contactPage. E.g. to seed just the new About
+// Page without touching your already-edited Site Settings/Tours:
 //
-//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=customizePage
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=aboutPage
 
 function key() {
   return Math.random().toString(36).slice(2, 10);
@@ -217,6 +219,42 @@ export async function GET(request: NextRequest) {
       })),
     });
     results.push("customizePage");
+  }
+
+  if (shouldRun("aboutPage")) {
+    await client.createOrReplace({
+      _id: "aboutPage",
+      _type: "aboutPage",
+      heroEyebrow: aboutPage.heroEyebrow,
+      heroHeadline: aboutPage.heroHeadline,
+      heroImage: { _type: "object", tone: aboutPage.heroImage.tone },
+      storyEyebrow: aboutPage.storyEyebrow,
+      storyTitle: aboutPage.storyTitle,
+      whatWeDoEyebrow: aboutPage.whatWeDoEyebrow,
+      whatWeDoTitle: aboutPage.whatWeDoTitle,
+      whatWeDoDescription: aboutPage.whatWeDoDescription,
+      teamEyebrow: aboutPage.teamEyebrow,
+      teamTitle: aboutPage.teamTitle,
+      teamDescription: aboutPage.teamDescription,
+      teamMembers: [...aboutPage.teamMembers],
+    });
+    results.push("aboutPage");
+  }
+
+  if (shouldRun("contactPage")) {
+    await client.createOrReplace({
+      _id: "contactPage",
+      _type: "contactPage",
+      heroEyebrow: contactPage.heroEyebrow,
+      heroHeadline: contactPage.heroHeadline,
+      heroImage: { _type: "object", tone: contactPage.heroImage.tone },
+      whatsappCardDescription: contactPage.whatsappCardDescription,
+      emailCardDescription: contactPage.emailCardDescription,
+      urgentCardDescription: contactPage.urgentCardDescription,
+      policiesEyebrow: contactPage.policiesEyebrow,
+      policiesTitle: contactPage.policiesTitle,
+    });
+    results.push("contactPage");
   }
 
   return NextResponse.json({ ok: true, migrated: results.length, details: results });

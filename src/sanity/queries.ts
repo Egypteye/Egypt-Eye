@@ -7,13 +7,15 @@ import groq from "groq";
 const ratingFields = groq`rating{score, count}`;
 const priceFields = groq`price{amount, originalAmount, note}`;
 
-export const toursQuery = groq`*[_type == "tour"] | order(order asc) {
+// hidden != true (rather than hidden == false) so tours from before the
+// field existed, where `hidden` is unset, still count as visible.
+export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(order asc) {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, ${ratingFields}, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, ${priceFields}
 }`;
 
-export const tourBySlugQuery = groq`*[_type == "tour" && slug.current == $slug][0] {
+export const tourBySlugQuery = groq`*[_type == "tour" && slug.current == $slug && hidden != true][0] {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, ${ratingFields}, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, ${priceFields}
@@ -26,7 +28,7 @@ export const experiencesQuery = groq`*[_type == "experience"] | order(order asc)
 
 export const experienceBySlugQuery = groq`*[_type == "experience" && slug.current == $slug][0] {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, included
+  image, imageTone, gallery, description, included
 }`;
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
@@ -36,7 +38,7 @@ export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc)
 
 export const photoshootBySlugQuery = groq`*[_type == "photoshoot" && slug.current == $slug][0] {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, description, goodFor, included, addOns, delivery
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
@@ -67,4 +69,17 @@ export const customizePageQuery = groq`*[_type == "customizePage"][0] {
   steps[]{title, body},
   formIntroEyebrow, formIntroTitle, formIntroDescription,
   formSections[]{title, fields[]{label, fieldKey, fieldType, required, placeholder, options, width}}
+}`;
+
+export const aboutPageQuery = groq`*[_type == "aboutPage"][0] {
+  heroEyebrow, heroHeadline, heroImage,
+  storyEyebrow, storyTitle,
+  whatWeDoEyebrow, whatWeDoTitle, whatWeDoDescription,
+  teamEyebrow, teamTitle, teamDescription, teamMembers
+}`;
+
+export const contactPageQuery = groq`*[_type == "contactPage"][0] {
+  heroEyebrow, heroHeadline, heroImage,
+  whatsappCardDescription, emailCardDescription, urgentCardDescription,
+  policiesEyebrow, policiesTitle
 }`;

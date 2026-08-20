@@ -1,7 +1,7 @@
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
-import { getSiteSettings } from "@/sanity/fetchers";
+import { getContactPage, getSiteSettings } from "@/sanity/fetchers";
 
 export const metadata = {
   title: "Contact",
@@ -9,19 +9,19 @@ export const metadata = {
 };
 
 export default async function ContactPage() {
-  const site = await getSiteSettings();
+  const [site, page] = await Promise.all([getSiteSettings(), getContactPage()]);
 
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="redsea" className="absolute inset-0" />
+        <SmartImage image={page.heroImage.image} tone={page.heroImage.tone} className="absolute inset-0" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[34vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-            Contact
+            {page.heroEyebrow}
           </p>
           <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl">
-            Let&rsquo;s Plan Your Trip
+            {page.heroHeadline}
           </h1>
         </Container>
       </section>
@@ -39,7 +39,7 @@ export default async function ContactPage() {
             <p className="mt-2 font-display text-xl font-semibold text-ink">
               {site.contact.whatsapp}
             </p>
-            <p className="mt-1 text-sm text-ink-soft/70">Fastest way to reach us</p>
+            <p className="mt-1 text-sm text-ink-soft/70">{page.whatsappCardDescription}</p>
           </a>
 
           <a
@@ -52,7 +52,7 @@ export default async function ContactPage() {
             <p className="mt-2 font-display text-xl font-semibold text-ink">
               {site.contact.email}
             </p>
-            <p className="mt-1 text-sm text-ink-soft/70">For detailed enquiries</p>
+            <p className="mt-1 text-sm text-ink-soft/70">{page.emailCardDescription}</p>
           </a>
 
           <div className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm">
@@ -62,14 +62,14 @@ export default async function ContactPage() {
             <p className="mt-2 font-display text-xl font-semibold text-ink">
               {site.contact.urgentBooking}
             </p>
-            <p className="mt-1 text-sm text-ink-soft/70">Same-day or in-country support</p>
+            <p className="mt-1 text-sm text-ink-soft/70">{page.urgentCardDescription}</p>
           </div>
         </Container>
       </section>
 
       <section className="bg-sand-dim py-16">
         <Container>
-          <SectionHeading eyebrow="Good to Know" title="Booking Policies" />
+          <SectionHeading eyebrow={page.policiesEyebrow} title={page.policiesTitle} />
           <div className="mt-10 grid gap-8 sm:grid-cols-2">
             <div className="rounded-2xl bg-cream p-6 shadow-sm">
               <p className="font-display text-lg font-semibold text-ink">Deposit &amp; Payment</p>

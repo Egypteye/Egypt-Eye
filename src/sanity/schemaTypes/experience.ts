@@ -30,6 +30,13 @@ export const experience = defineType({
       options: { list: imageTones },
       initialValue: "desert",
     }),
+    defineField({
+      name: "gallery",
+      title: "Gallery photos",
+      description: "Extra photos shown in a gallery on this experience's page, beyond the main photo above.",
+      type: "array",
+      of: [{ type: "image", options: { hotspot: true } }],
+    }),
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "order", title: "Sort order (lower shows first)", type: "number", initialValue: 0 }),

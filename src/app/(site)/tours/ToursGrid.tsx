@@ -31,13 +31,15 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
   const searchParams = useSearchParams();
   const initialType = (searchParams.get("type") as Tour["category"] | null) ?? "all";
   const initialDuration = searchParams.get("duration") ?? "all";
+  const city = searchParams.get("city");
 
   const [filter, setFilter] = useState<Tour["category"] | "all">(initialType);
   const [duration] = useState(initialDuration);
 
   const filtered = tours
     .filter((t) => filter === "all" || t.category === filter)
-    .filter((t) => duration === "all" || inDurationBucket(t.lengthDays, duration));
+    .filter((t) => duration === "all" || inDurationBucket(t.lengthDays, duration))
+    .filter((t) => !city || t.destinations.some((d) => d.toLowerCase().includes(city.toLowerCase())));
 
   return (
     <div>

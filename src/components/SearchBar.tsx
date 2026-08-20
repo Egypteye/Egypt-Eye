@@ -2,13 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { destinations } from "@/content/destinations";
 
-const TRIP_TYPES = [
-  { value: "all", label: "Any trip type" },
-  { value: "one-day", label: "One-Day Tours" },
-  { value: "multi-day", label: "Multi-Day Tours" },
+const COUNTRIES = [
+  { value: "egypt", label: "Egypt" },
   { value: "jordan", label: "Jordan" },
 ];
+
+const EGYPT_CITIES = destinations.filter((d) => d.name !== "Jordan");
 
 const DURATIONS = [
   { value: "all", label: "Any length" },
@@ -18,16 +19,34 @@ const DURATIONS = [
   { value: "8-11", label: "8 – 11 days" },
 ];
 
+const SERVICES = [
+  { value: "tours", label: "Tours" },
+  { value: "experiences", label: "Extra Experiences" },
+];
+
 export function SearchBar({ className = "" }: { className?: string }) {
   const router = useRouter();
-  const [type, setType] = useState("all");
+  const [country, setCountry] = useState("egypt");
+  const [city, setCity] = useState("all");
   const [duration, setDuration] = useState("all");
+  const [service, setService] = useState("tours");
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
+
+    if (service === "experiences") {
+      router.push("/experiences");
+      return;
+    }
+
     const params = new URLSearchParams();
-    if (type !== "all") params.set("type", type);
+    if (country === "jordan") {
+      params.set("type", "jordan");
+    } else if (city !== "all") {
+      params.set("city", city);
+    }
     if (duration !== "all") params.set("duration", duration);
+
     const qs = params.toString();
     router.push(`/tours${qs ? `?${qs}` : ""}`);
   }
@@ -39,24 +58,47 @@ export function SearchBar({ className = "" }: { className?: string }) {
     >
       <label className="flex flex-1 flex-col gap-1 px-3 py-1">
         <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
-          Trip type
+          Country
         </span>
         <select
-          value={type}
-          onChange={(e) => setType(e.target.value)}
+          value={country}
+          onChange={(e) => {
+            setCountry(e.target.value);
+            setCity("all");
+          }}
           className="bg-transparent text-sm font-medium text-ink outline-none"
         >
-          {TRIP_TYPES.map((t) => (
-            <option key={t.value} value={t.value}>
-              {t.label}
+          {COUNTRIES.map((c) => (
+            <option key={c.value} value={c.value}>
+              {c.label}
             </option>
           ))}
         </select>
       </label>
 
+      {country === "egypt" && (
+        <label className="flex flex-1 flex-col gap-1 px-3 py-1">
+          <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
+            Location
+          </span>
+          <select
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            className="bg-transparent text-sm font-medium text-ink outline-none"
+          >
+            <option value="all">Any city</option>
+            {EGYPT_CITIES.map((d) => (
+              <option key={d.name} value={d.name}>
+                {d.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
+
       <label className="flex flex-1 flex-col gap-1 px-3 py-1">
         <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
-          How long
+          Length
         </span>
         <select
           value={duration}
@@ -71,6 +113,23 @@ export function SearchBar({ className = "" }: { className?: string }) {
         </select>
       </label>
 
+      <label className="flex flex-1 flex-col gap-1 px-3 py-1">
+        <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
+          Service
+        </span>
+        <select
+          value={service}
+          onChange={(e) => setService(e.target.value)}
+          className="bg-transparent text-sm font-medium text-ink outline-none"
+        >
+          {SERVICES.map((s) => (
+            <option key={s.value} value={s.value}>
+              {s.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
       <button
         type="submit"
         className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gold px-6 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light sm:ml-3 sm:mt-0"
@@ -79,7 +138,7 @@ export function SearchBar({ className = "" }: { className?: string }) {
           <circle cx="9" cy="9" r="6" />
           <path d="M17 17l-4-4" strokeLinecap="round" />
         </svg>
-        Search tours
+        Search
       </button>
     </form>
   );

@@ -1,5 +1,7 @@
 import { client } from "./client";
 import {
+  aboutPageQuery,
+  contactPageQuery,
   customizePageQuery,
   experienceBySlugQuery,
   experiencesQuery,
@@ -21,11 +23,17 @@ import { stories as localStories } from "@/content/stories";
 import { faqs as localFaqs } from "@/content/faq";
 import { site as localSite } from "@/content/site";
 import { customizePage as localCustomizePage } from "@/content/customizePage";
+import { aboutPage as localAboutPage } from "@/content/aboutPage";
+import { contactPage as localContactPage } from "@/content/contactPage";
 import type {
+  AboutPage,
+  ContactPage,
   CustomizePage,
   Experience,
   Faq,
   Photoshoot,
+  ResolvedAboutPage,
+  ResolvedContactPage,
   ResolvedCustomizePage,
   ResolvedSiteSettings,
   SiteSettings,
@@ -202,5 +210,35 @@ export async function getCustomizePage(): Promise<ResolvedCustomizePage> {
       result.formSections && result.formSections.length > 0
         ? result.formSections
         : localCustomizePage.formSections,
+  };
+}
+
+export async function getAboutPage(): Promise<ResolvedAboutPage> {
+  const result = await safeFetch<AboutPage>(aboutPageQuery);
+  if (!result) return localAboutPage;
+
+  return {
+    ...localAboutPage,
+    ...result,
+    heroImage: {
+      tone: result.heroImage?.tone ?? localAboutPage.heroImage.tone,
+      image: result.heroImage?.image,
+    },
+    teamMembers:
+      result.teamMembers && result.teamMembers.length > 0 ? result.teamMembers : localAboutPage.teamMembers,
+  };
+}
+
+export async function getContactPage(): Promise<ResolvedContactPage> {
+  const result = await safeFetch<ContactPage>(contactPageQuery);
+  if (!result) return localContactPage;
+
+  return {
+    ...localContactPage,
+    ...result,
+    heroImage: {
+      tone: result.heroImage?.tone ?? localContactPage.heroImage.tone,
+      image: result.heroImage?.image,
+    },
   };
 }

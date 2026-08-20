@@ -7,6 +7,8 @@ import { story } from "./story";
 import { faqItem } from "./faqItem";
 import { siteSettings } from "./siteSettings";
 import { customizePage } from "./customizePage";
+import { aboutPage } from "./aboutPage";
+import { contactPage } from "./contactPage";
 
 export const schemaTypes = [
   // Reusable object types first.
@@ -22,4 +24,6 @@ export const schemaTypes = [
   faqItem,
   siteSettings,
   customizePage,
+  aboutPage,
+  contactPage,
 ];

@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { site as localSite } from "@/content/site";
-import { getSiteSettings } from "@/sanity/fetchers";
+import { getAboutPage, getSiteSettings } from "@/sanity/fetchers";
 
 // Metadata can't be fetched async here without generateMetadata, and a
 // slightly-stale SEO description is low-stakes — falls back to the local copy.
@@ -12,36 +12,20 @@ export const metadata = {
   description: localSite.positioning,
 };
 
-const team = [
-  "Fady",
-  "Beshoy",
-  "Jonathan",
-  "Marco",
-  "Yousif",
-  "Michael",
-  "Mena",
-  "Tommy",
-  "David",
-  "Mark",
-  "Bavly",
-  "George",
-  "Bahi",
-];
-
 export default async function AboutPage() {
-  const site = await getSiteSettings();
+  const [site, page] = await Promise.all([getSiteSettings(), getAboutPage()]);
 
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="giza" className="absolute inset-0" />
+        <SmartImage image={page.heroImage.image} tone={page.heroImage.tone} className="absolute inset-0" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-            About Us
+            {page.heroEyebrow}
           </p>
           <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl">
-            More Than a Travel Agency
+            {page.heroHeadline}
           </h1>
         </Container>
       </section>
@@ -57,8 +41,8 @@ export default async function AboutPage() {
               className="mx-auto mb-6"
             />
             <SectionHeading
-              eyebrow="Our Story"
-              title="We turn a trip to Egypt into a personalized, memorable experience"
+              eyebrow={page.storyEyebrow}
+              title={page.storyTitle}
               description={site.description}
               align="center"
             />
@@ -72,10 +56,10 @@ export default async function AboutPage() {
 
           <div>
             <SectionHeading
-              eyebrow="What We Do"
-              title="Travel + Photography + Personalization + Hospitality"
+              eyebrow={page.whatWeDoEyebrow}
+              title={page.whatWeDoTitle}
               align="center"
-              description="Four pillars, one team, delivered on every single trip — whether it's a two-hour photoshoot or a ten-day private journey."
+              description={page.whatWeDoDescription}
             />
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {site.pillars.map((p) => (
@@ -89,13 +73,13 @@ export default async function AboutPage() {
 
           <div>
             <SectionHeading
-              eyebrow="Meet the Team"
-              title="The people behind your trip"
+              eyebrow={page.teamEyebrow}
+              title={page.teamTitle}
               align="center"
-              description="Our travelers consistently mention the team by name — friendly, safe, flexible, and always reachable. Here are a few of the faces you might meet."
+              description={page.teamDescription}
             />
             <div className="mt-8 flex flex-wrap justify-center gap-3">
-              {team.map((name) => (
+              {page.teamMembers.map((name) => (
                 <span
                   key={name}
                   className="rounded-full bg-sand-dim px-4 py-2 text-sm font-medium text-ink-soft"

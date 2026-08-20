@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
+import { Gallery } from "@/components/Gallery";
 import { getExperienceBySlug, getExperiences, getSiteSettings } from "@/sanity/fetchers";
 
 export async function generateStaticParams() {
@@ -66,6 +67,15 @@ export default async function ExperienceDetailPage({
               ))}
             </ul>
           </div>
+
+          {experience.gallery && experience.gallery.length > 0 && (
+            <div className="mt-10">
+              <h2 className="font-display text-xl font-semibold text-ink">Gallery</h2>
+              <div className="mt-4">
+                <Gallery images={experience.gallery} alt={experience.title} />
+              </div>
+            </div>
+          )}
 
           <Link
             href="/experiences"

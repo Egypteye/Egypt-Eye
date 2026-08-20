@@ -6,6 +6,14 @@ export const tour = defineType({
   title: "Tour",
   type: "document",
   fields: [
+    defineField({
+      name: "hidden",
+      title: "Hidden (not shown on the live site)",
+      description:
+        "Turn this on while you're still building the tour out. It stays saved here — just invisible on /tours, search, and direct links — until you turn it back off.",
+      type: "boolean",
+      initialValue: false,
+    }),
     defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
     defineField({
       name: "slug",
@@ -69,6 +77,11 @@ export const tour = defineType({
     { title: "Sort order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },
   ],
   preview: {
-    select: { title: "title", subtitle: "duration", media: "image" },
+    select: { title: "title", subtitle: "duration", media: "image", hidden: "hidden" },
+    prepare: ({ title, subtitle, media, hidden }) => ({
+      title: hidden ? `🚫 ${title} (hidden)` : title,
+      subtitle,
+      media,
+    }),
   },
 });
