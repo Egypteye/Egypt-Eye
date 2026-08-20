@@ -5,8 +5,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
-import { getExperienceBySlug, getExperiences } from "@/sanity/fetchers";
-import { site } from "@/content/site";
+import { getExperienceBySlug, getExperiences, getSiteSettings } from "@/sanity/fetchers";
 
 export async function generateStaticParams() {
   const experiences = await getExperiences();
@@ -30,7 +29,7 @@ export default async function ExperienceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const experience = await getExperienceBySlug(slug);
+  const [experience, site] = await Promise.all([getExperienceBySlug(slug), getSiteSettings()]);
   if (!experience) notFound();
 
   return (

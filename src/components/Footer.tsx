@@ -1,9 +1,9 @@
 import Link from "next/link";
 import Image from "next/image";
-import { site } from "@/content/site";
+import type { ResolvedSiteSettings } from "@/content/types";
 import { Container } from "./Container";
 
-export function Footer() {
+export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   return (
     <footer className="mt-24 border-t border-white/10 bg-ink text-cream">
       <Container className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">

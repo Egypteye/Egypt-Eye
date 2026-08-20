@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { site } from "@/content/site";
+import type { ResolvedSiteSettings } from "@/content/types";
 import { destinations } from "@/content/destinations";
 import { interests } from "@/content/interests";
 
@@ -34,7 +34,7 @@ function ChipGroup({
   );
 }
 
-export function CustomizeForm() {
+export function CustomizeForm({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   const [cities, setCities] = useState<string[]>([]);
   const [activities, setActivities] = useState<string[]>([]);
   const [visitedBefore, setVisitedBefore] = useState("No");

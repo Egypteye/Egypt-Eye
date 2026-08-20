@@ -5,8 +5,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
-import { getPhotoshootBySlug, getPhotoshoots } from "@/sanity/fetchers";
-import { site } from "@/content/site";
+import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
 
 export async function generateStaticParams() {
   const photoshoots = await getPhotoshoots();
@@ -30,7 +29,7 @@ export default async function PhotoshootDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const photoshoot = await getPhotoshootBySlug(slug);
+  const [photoshoot, site] = await Promise.all([getPhotoshootBySlug(slug), getSiteSettings()]);
   if (!photoshoot) notFound();
 
   return (

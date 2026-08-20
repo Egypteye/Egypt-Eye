@@ -3,9 +3,9 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { site } from "@/content/site";
+import type { ResolvedSiteSettings } from "@/content/types";
 
-export function Navbar() {
+export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   const [open, setOpen] = useState(false);
 
   return (

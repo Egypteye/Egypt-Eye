@@ -2,11 +2,14 @@ import Image from "next/image";
 import { Container } from "@/components/Container";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
 import { SectionHeading } from "@/components/SectionHeading";
-import { site } from "@/content/site";
+import { site as localSite } from "@/content/site";
+import { getSiteSettings } from "@/sanity/fetchers";
 
+// Metadata can't be fetched async here without generateMetadata, and a
+// slightly-stale SEO description is low-stakes — falls back to the local copy.
 export const metadata = {
   title: "About Us",
-  description: site.positioning,
+  description: localSite.positioning,
 };
 
 const team = [
@@ -25,7 +28,9 @@ const team = [
   "Bahi",
 ];
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const site = await getSiteSettings();
+
   return (
     <>
       <section className="relative">

@@ -94,3 +94,68 @@ export type Faq = {
   question: string;
   answer: string;
 };
+
+export type SiteSettings = {
+  name?: string;
+  shortName?: string;
+  tagline?: string;
+  heroHeadline?: string;
+  heroSubheadline?: string;
+  description?: string;
+  positioning?: string;
+  contact?: {
+    email?: string;
+    whatsapp?: string;
+    whatsappLink?: string;
+    urgentBooking?: string;
+  };
+  socials?: {
+    instagram?: string;
+    facebook?: string;
+    tiktok?: string;
+  };
+  pillars?: { title: string; description: string }[];
+  policies?: {
+    deposit?: string;
+    currency?: string;
+    children?: { age: string; price: string }[];
+    childrenNote?: string;
+    voucher?: string;
+    cancellation?: string;
+  };
+};
+
+// Fully-resolved site settings (local fallback merged with any Sanity
+// overrides) — widened to plain string/array types since the local
+// fallback's `as const` literal types are too narrow once Sanity content
+// (arbitrary strings) is merged in.
+export type ResolvedSiteSettings = {
+  name: string;
+  shortName: string;
+  tagline: string;
+  heroHeadline: string;
+  heroSubheadline: string;
+  description: string;
+  positioning: string;
+  contact: {
+    email: string;
+    whatsapp: string;
+    whatsappLink: string;
+    urgentBooking: string;
+  };
+  socials: {
+    instagram: string;
+    facebook: string;
+    tiktok: string;
+  };
+  nav: readonly { label: string; href: string }[];
+  policies: {
+    deposit: string;
+    currency: string;
+    children: readonly { age: string; price: string }[];
+    childrenNote: string;
+    voucher: string;
+    cancellation: string;
+  };
+  pillars: readonly { title: string; description: string }[];
+};

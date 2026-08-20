@@ -4,7 +4,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { TrustBar } from "@/components/TrustBar";
 import { Reveal } from "@/components/Reveal";
 import { CustomizeForm } from "./CustomizeForm";
-import { getExperiences, getPhotoshoots, getTours } from "@/sanity/fetchers";
+import { getExperiences, getPhotoshoots, getSiteSettings, getTours } from "@/sanity/fetchers";
 
 export const metadata = {
   title: "Customize Your Tour",
@@ -20,10 +20,11 @@ const steps = [
 ];
 
 export default async function CustomizePage() {
-  const [tours, experiences, photoshoots] = await Promise.all([
+  const [tours, experiences, photoshoots, site] = await Promise.all([
     getTours(),
     getExperiences(),
     getPhotoshoots(),
+    getSiteSettings(),
   ]);
 
   return (
@@ -77,7 +78,7 @@ export default async function CustomizePage() {
           </div>
 
           <Reveal>
-            <CustomizeForm />
+            <CustomizeForm siteSettings={site} />
           </Reveal>
         </Container>
       </section>

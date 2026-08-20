@@ -5,6 +5,7 @@ import {
   faqsQuery,
   photoshootBySlugQuery,
   photoshootsQuery,
+  siteSettingsQuery,
   storiesQuery,
   storyBySlugQuery,
   testimonialsQuery,
@@ -17,7 +18,17 @@ import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
 import { testimonials as localTestimonials } from "@/content/testimonials";
 import { stories as localStories } from "@/content/stories";
 import { faqs as localFaqs } from "@/content/faq";
-import type { Experience, Faq, Photoshoot, Story, Testimonial, Tour } from "@/content/types";
+import { site as localSite } from "@/content/site";
+import type {
+  Experience,
+  Faq,
+  Photoshoot,
+  ResolvedSiteSettings,
+  SiteSettings,
+  Story,
+  Testimonial,
+  Tour,
+} from "@/content/types";
 
 const REVALIDATE_SECONDS = 60;
 
@@ -96,4 +107,31 @@ export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
 export async function getFaqs(): Promise<Faq[]> {
   const result = await safeFetch<Faq[]>(faqsQuery);
   return result && result.length > 0 ? result : [...localFaqs];
+}
+
+// Site Settings is a singleton — merge field-by-field instead of an
+// all-or-nothing swap, so filling in just one field in the Studio (e.g. only
+// the WhatsApp number) doesn't blank out everything else that hasn't been
+// touched yet. `nav` isn't part of the Sanity schema (it's routing, not
+// editorial content) and always comes from the local config.
+export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
+  const result = await safeFetch<SiteSettings>(siteSettingsQuery);
+  if (!result) return localSite;
+
+  return {
+    ...localSite,
+    ...result,
+    contact: { ...localSite.contact, ...result.contact },
+    socials: { ...localSite.socials, ...result.socials },
+    policies: {
+      ...localSite.policies,
+      ...result.policies,
+      children:
+        result.policies?.children && result.policies.children.length > 0
+          ? result.policies.children
+          : localSite.policies.children,
+    },
+    pillars: result.pillars && result.pillars.length > 0 ? result.pillars : localSite.pillars,
+    nav: localSite.nav,
+  };
 }

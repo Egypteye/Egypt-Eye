@@ -7,8 +7,7 @@ import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
-import { getAllTourSlugs, getTourBySlug, getTours } from "@/sanity/fetchers";
-import { site } from "@/content/site";
+import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 
 export async function generateStaticParams() {
   const slugs = await getAllTourSlugs();
@@ -32,7 +31,7 @@ export default async function TourDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const tour = await getTourBySlug(slug);
+  const [tour, site] = await Promise.all([getTourBySlug(slug), getSiteSettings()]);
   if (!tour) notFound();
 
   const allTours = await getTours();

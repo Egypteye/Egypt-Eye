@@ -1,14 +1,16 @@
 import { Container } from "@/components/Container";
 import { PlaceholderImage } from "@/components/PlaceholderImage";
 import { SectionHeading } from "@/components/SectionHeading";
-import { site } from "@/content/site";
+import { getSiteSettings } from "@/sanity/fetchers";
 
 export const metadata = {
   title: "Contact",
   description: "Get in touch with Egypt Eye Travel and Tours via WhatsApp or email.",
 };
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const site = await getSiteSettings();
+
   return (
     <>
       <section className="relative">

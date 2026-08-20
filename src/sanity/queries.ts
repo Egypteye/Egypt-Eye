@@ -54,3 +54,8 @@ export const storyBySlugQuery = groq`*[_type == "story" && slug.current == $slug
 export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {
   question, answer
 }`;
+
+export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
+  name, shortName, tagline, heroHeadline, heroSubheadline, description, positioning,
+  contact, socials, pillars, policies
+}`;

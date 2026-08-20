@@ -13,19 +13,20 @@ import { DestinationsPanel } from "@/components/DestinationsPanel";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { Reveal } from "@/components/Reveal";
-import { site } from "@/content/site";
 import { getOverallRating } from "@/content/aggregate";
 import {
   getExperiences,
   getFaqs,
   getPhotoshoots,
+  getSiteSettings,
   getStories,
   getTestimonials,
   getTours,
 } from "@/sanity/fetchers";
 
 export default async function Home() {
-  const [tours, experiences, photoshoots, testimonials, stories, faqs] = await Promise.all([
+  const [site, tours, experiences, photoshoots, testimonials, stories, faqs] = await Promise.all([
+    getSiteSettings(),
     getTours(),
     getExperiences(),
     getPhotoshoots(),
