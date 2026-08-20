@@ -61,3 +61,10 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage,
   destinationPhotos[]{name, image}
 }`;
+
+export const customizePageQuery = groq`*[_type == "customizePage"][0] {
+  eyebrow, headline, subtext, bannerImage,
+  steps[]{title, body},
+  formIntroEyebrow, formIntroTitle, formIntroDescription,
+  formSections[]{title, fields[]{label, fieldKey, fieldType, required, placeholder, options, width}}
+}`;

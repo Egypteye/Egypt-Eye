@@ -171,3 +171,59 @@ export type ResolvedSiteSettings = {
   };
   pillars: readonly { title: string; description: string }[];
 };
+
+export type CustomizeFormFieldType =
+  | "text"
+  | "email"
+  | "tel"
+  | "number"
+  | "date"
+  | "textarea"
+  | "select"
+  | "chips"
+  | "chips-destinations"
+  | "chips-interests";
+
+export type CustomizeFormField = {
+  label: string;
+  fieldKey: string;
+  fieldType: CustomizeFormFieldType;
+  required?: boolean;
+  placeholder?: string;
+  options?: string[];
+  width?: "full" | "half";
+};
+
+export type CustomizeFormSection = {
+  title: string;
+  fields: CustomizeFormField[];
+};
+
+export type CustomizeStep = { title: string; body: string };
+
+// Sanity-fetched shape — everything optional, since the singleton may be
+// only partially filled in (or not exist yet).
+export type CustomizePage = {
+  eyebrow?: string;
+  headline?: string;
+  subtext?: string;
+  bannerImage?: { image?: SanityImage; tone?: ImageTone };
+  steps?: CustomizeStep[];
+  formIntroEyebrow?: string;
+  formIntroTitle?: string;
+  formIntroDescription?: string;
+  formSections?: CustomizeFormSection[];
+};
+
+// Fully-resolved (local fallback merged with any Sanity overrides).
+export type ResolvedCustomizePage = {
+  eyebrow: string;
+  headline: string;
+  subtext: string;
+  bannerImage: { image?: SanityImage; tone: ImageTone };
+  steps: readonly CustomizeStep[];
+  formIntroEyebrow: string;
+  formIntroTitle: string;
+  formIntroDescription: string;
+  formSections: readonly CustomizeFormSection[];
+};

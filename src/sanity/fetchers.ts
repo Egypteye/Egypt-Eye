@@ -1,5 +1,6 @@
 import { client } from "./client";
 import {
+  customizePageQuery,
   experienceBySlugQuery,
   experiencesQuery,
   faqsQuery,
@@ -19,10 +20,13 @@ import { testimonials as localTestimonials } from "@/content/testimonials";
 import { stories as localStories } from "@/content/stories";
 import { faqs as localFaqs } from "@/content/faq";
 import { site as localSite } from "@/content/site";
+import { customizePage as localCustomizePage } from "@/content/customizePage";
 import type {
+  CustomizePage,
   Experience,
   Faq,
   Photoshoot,
+  ResolvedCustomizePage,
   ResolvedSiteSettings,
   SiteSettings,
   Story,
@@ -175,5 +179,28 @@ export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
     },
     pillars: result.pillars && result.pillars.length > 0 ? result.pillars : localSite.pillars,
     nav: localSite.nav,
+  };
+}
+
+// Same field-by-field merge approach as Site Settings — `steps` and
+// `formSections` are swapped wholesale (rather than deep-merged) when
+// Sanity has a non-empty array, since partial-merging an ordered list of
+// form questions by index would be more surprising than useful.
+export async function getCustomizePage(): Promise<ResolvedCustomizePage> {
+  const result = await safeFetch<CustomizePage>(customizePageQuery);
+  if (!result) return localCustomizePage;
+
+  return {
+    ...localCustomizePage,
+    ...result,
+    bannerImage: {
+      tone: result.bannerImage?.tone ?? localCustomizePage.bannerImage.tone,
+      image: result.bannerImage?.image,
+    },
+    steps: result.steps && result.steps.length > 0 ? result.steps : localCustomizePage.steps,
+    formSections:
+      result.formSections && result.formSections.length > 0
+        ? result.formSections
+        : localCustomizePage.formSections,
   };
 }
