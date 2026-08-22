@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { StoryBody } from "@/components/StoryBody";
 import { StoryCard } from "@/components/StoryCard";
+import { TourCard } from "@/components/TourCard";
 import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
 import { Reveal } from "@/components/Reveal";
 import { getStories, getStoryBySlug } from "@/sanity/fetchers";
@@ -166,6 +167,21 @@ export default async function StoryDetailPage({
               </p>
               <div className="mt-6 max-w-sm">
                 <SignatureExperienceCard experience={story.relatedExperience} />
+              </div>
+            </Reveal>
+          )}
+
+          {/* Related tours — where this article's subject can actually be
+              booked, in addition to any single relatedExperience above. */}
+          {story.relatedTours && story.relatedTours.length > 0 && (
+            <Reveal className="not-prose mt-16">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
+                Where This Takes You
+              </p>
+              <div className="mt-6 grid gap-6 sm:grid-cols-2">
+                {story.relatedTours.map((t) => (
+                  <TourCard key={t.slug} tour={t} />
+                ))}
               </div>
             </Reveal>
           )}

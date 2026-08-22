@@ -91,6 +91,24 @@ export default async function ExperienceDetailPage({
             </div>
           )}
 
+          {experience.relatedTours && experience.relatedTours.length > 0 && (
+            <div className="mt-10">
+              <h2 className="font-display text-xl font-semibold text-ink">Available On</h2>
+              <p className="mt-2 text-sm text-ink-soft/70">Tours this experience pairs naturally with.</p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {experience.relatedTours.map((t) => (
+                  <Link
+                    key={t.slug}
+                    href={`/tours/${t.slug}`}
+                    className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium text-ink-soft transition hover:border-gold/40 hover:text-ink"
+                  >
+                    {t.title} →
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           <Link
             href="/experiences"
             className="mt-10 inline-block text-sm font-semibold text-gold-dark hover:underline"

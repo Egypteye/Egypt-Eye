@@ -145,6 +145,26 @@ export default async function TourDetailPage({
                 </ul>
               </div>
             </div>
+
+            {tour.relatedExperiences && tour.relatedExperiences.length > 0 && (
+              <div className="mt-10">
+                <h2 className="font-display text-2xl font-semibold text-ink">Make It Yours</h2>
+                <p className="mt-2 text-sm text-ink-soft/70">
+                  Experiences travelers often add to this itinerary.
+                </p>
+                <div className="mt-6 flex flex-wrap gap-3">
+                  {tour.relatedExperiences.map((e) => (
+                    <Link
+                      key={e.slug}
+                      href={`/experiences/${e.slug}`}
+                      className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium text-ink-soft transition hover:border-gold/40 hover:text-ink"
+                    >
+                      {e.title} →
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Booking sidebar */}
