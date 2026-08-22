@@ -40,6 +40,13 @@ export const experience = defineType({
     }),
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
+    defineField({
+      name: "relatedTours",
+      title: "Related Tours",
+      description: "Tours this experience pairs naturally with — shown as \"Available On\" on this page.",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "tour" }] }],
+    }),
     defineField({ name: "order", title: "Sort order (lower shows first)", type: "number", initialValue: 0 }),
     seoFields(),
   ],

@@ -41,6 +41,8 @@ export type Tour = {
   lengthDays: number; // approximate numeric length, used for duration filtering
   cities: number;
   destinations: string[];
+  travelStyle?: string[];
+  featured?: boolean;
   rating: Rating;
   badge?: string;
   imageLabel?: string;
@@ -51,6 +53,7 @@ export type Tour = {
   included: string[];
   excluded: string[];
   itinerary?: ItineraryDay[];
+  relatedExperiences?: Experience[];
   price: Price;
   seo?: PageSeo;
 };
@@ -67,6 +70,7 @@ export type Experience = {
   gallery?: SanityImage[];
   description: string;
   included: string[];
+  relatedTours?: Tour[];
   seo?: PageSeo;
 };
 
@@ -207,8 +211,14 @@ export type Story = {
   imageTone: ImageTone;
   body?: StoryBodyBlock[];
   relatedExperience?: SignatureExperience;
+  relatedTours?: Tour[];
   relatedStories?: StoryCardData[];
+  destinations?: string[];
+  badge?: "none" | "editorsPick" | "mostHelpful" | "popular";
   publishedAt?: string;
+  primaryKeyword?: string;
+  secondaryKeywords?: string[];
+  contentReviewDate?: string;
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: SanityImage;

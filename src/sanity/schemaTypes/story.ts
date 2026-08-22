@@ -208,12 +208,58 @@ export const story = defineType({
       to: [{ type: "signatureExperience" }],
     }),
     defineField({
+      name: "relatedTours",
+      title: "Related Tours",
+      description: "Tours this story should send readers toward — shown as a \"Where This Takes You\" section.",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "tour" }] }],
+    }),
+    defineField({
       name: "relatedStories",
       title: "Related Stories (\"Continue Exploring\")",
       type: "array",
       of: [{ type: "reference", to: [{ type: "story" }] }],
     }),
+    defineField({
+      name: "destinations",
+      title: "Destinations covered",
+      description: "E.g. 'Luxor', 'Cairo', 'Aswan' — used to connect this story to the right tours and experiences.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
+      name: "badge",
+      title: "Editorial badge (optional)",
+      description: "Used to curate the Stories index without relying purely on publish date.",
+      type: "string",
+      options: {
+        list: [
+          { title: "None", value: "none" },
+          { title: "Editor's Pick", value: "editorsPick" },
+          { title: "Most Helpful", value: "mostHelpful" },
+          { title: "Popular", value: "popular" },
+        ],
+      },
+      initialValue: "none",
+    }),
     defineField({ name: "publishedAt", title: "Published date", type: "datetime", initialValue: () => new Date().toISOString() }),
+    defineField({
+      name: "primaryKeyword",
+      title: "Primary keyword (internal — SEO strategy, not shown on the site)",
+      type: "string",
+    }),
+    defineField({
+      name: "secondaryKeywords",
+      title: "Secondary keywords (internal — SEO strategy, not shown on the site)",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
+      name: "contentReviewDate",
+      title: "Next content review due",
+      description: "Set this for any story containing prices, opening hours, visa rules, or other information that can go stale — a reminder to re-verify before it quietly goes out of date.",
+      type: "date",
+    }),
     defineField({ name: "seoTitle", title: "SEO title (optional override)", type: "string" }),
     defineField({ name: "seoDescription", title: "SEO description (optional override)", type: "text" }),
     defineField({

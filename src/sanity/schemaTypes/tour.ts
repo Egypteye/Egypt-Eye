@@ -14,6 +14,13 @@ export const tour = defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "featured",
+      title: "Featured on the homepage",
+      description: "Turn on to include this tour in the homepage's curated Popular Tours selection. Leave off and it still appears on /tours.",
+      type: "boolean",
+      initialValue: false,
+    }),
     defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
     defineField({
       name: "slug",
@@ -38,6 +45,25 @@ export const tour = defineType({
       title: "Destinations",
       type: "array",
       of: [{ type: "string" }],
+    }),
+    defineField({
+      name: "travelStyle",
+      title: "Travel style tags",
+      description: "Used for filtering on the All Tours page — e.g. 'Luxury', 'Private', 'Family', 'Honeymoon', \"Women's\", 'Slow Travel'.",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          "Luxury",
+          "Private",
+          "Cultural",
+          "Family",
+          "Honeymoon",
+          "Women's",
+          "Slow Travel",
+          "Adventure",
+        ],
+      },
     }),
     defineField({ name: "rating", title: "Rating", type: "rating" }),
     defineField({ name: "badge", title: "Badge (e.g. 'Free Private Photoshoot')", type: "string" }),
@@ -65,6 +91,13 @@ export const tour = defineType({
       title: "Itinerary (multi-day tours only)",
       type: "array",
       of: [{ type: "itineraryDay" }],
+    }),
+    defineField({
+      name: "relatedExperiences",
+      title: "Related Extra Experiences",
+      description: "Add-on experiences that pair naturally with this tour — shown as \"Make It Yours\" on the tour page.",
+      type: "array",
+      of: [{ type: "reference", to: [{ type: "experience" }] }],
     }),
     defineField({ name: "price", title: "Price", type: "price" }),
     defineField({

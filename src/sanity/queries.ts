@@ -7,18 +7,32 @@ import groq from "groq";
 const ratingFields = groq`rating{score, count}`;
 const priceFields = groq`price{amount, originalAmount, note}`;
 
+// Lightweight tour card used wherever an Experience or Story links to a Tour.
+const relatedTourFields = groq`
+  "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
+  destinations, ${ratingFields}, badge, image, imageTone, ${priceFields}
+`;
+
+// Lightweight Extra Experience card used wherever a Tour links to one.
+const relatedExtraExperienceFields = groq`
+  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
+  image, imageTone, description, included
+`;
+
 // hidden != true (rather than hidden == false) so tours from before the
 // field existed, where `hidden` is unset, still count as visible.
 export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(order asc) {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, ${ratingFields}, badge, image, imageTone, description,
+  destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, ${priceFields}
 }`;
 
 export const tourBySlugQuery = groq`*[_type == "tour" && slug.current == $slug && hidden != true][0] {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, ${ratingFields}, badge, image, imageTone, description,
-  highlights, included, excluded, itinerary, ${priceFields}, seo
+  destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
+  highlights, included, excluded, itinerary,
+  relatedExperiences[]->{${relatedExtraExperienceFields}},
+  ${priceFields}, seo
 }`;
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
@@ -28,7 +42,9 @@ export const experiencesQuery = groq`*[_type == "experience"] | order(order asc)
 
 export const experienceBySlugQuery = groq`*[_type == "experience" && slug.current == $slug][0] {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, gallery, description, included, seo
+  image, imageTone, gallery, description, included,
+  relatedTours[]->{${relatedTourFields}},
+  seo
 }`;
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
@@ -72,7 +88,9 @@ export const storyBySlugQuery = groq`*[_type == "story" && slug.current == $slug
     _type == "experienceCardBlock" => { "experience": experience->{${relatedExperienceFields}} }
   },
   relatedExperience->{${relatedExperienceFields}},
+  relatedTours[]->{${relatedTourFields}},
   relatedStories[]->{"slug": slug.current, title, excerpt, image, imageTone, category},
+  destinations, badge,
   seoTitle, seoDescription, ogImage, canonicalUrl, noindex
 }`;
 
