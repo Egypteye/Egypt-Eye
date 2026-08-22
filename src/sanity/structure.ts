@@ -28,6 +28,9 @@ export const structure: StructureResolver = (S) =>
           S.document().schemaType("contactPage").documentId("contactPage")
         ),
       S.divider(),
+      S.documentTypeListItem("signatureExperience").title("✦ Signature Experiences"),
+      S.documentTypeListItem("host").title("✦ Hosts / Guides"),
+      S.divider(),
       S.documentTypeListItem("tour").title("Tours"),
       S.documentTypeListItem("experience").title("Extra Experiences"),
       S.documentTypeListItem("photoshoot").title("Photoshoot Packages"),

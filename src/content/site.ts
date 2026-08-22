@@ -24,6 +24,7 @@ export const site = {
   },
   nav: [
     { label: "Home", href: "/" },
+    { label: "Signature Experiences", href: "/signature-experiences" },
     { label: "Popular Tours", href: "/tours" },
     { label: "Extra Experiences", href: "/experiences" },
     { label: "Photoshoots", href: "/photoshoots" },

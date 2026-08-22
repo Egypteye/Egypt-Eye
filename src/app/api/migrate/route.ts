@@ -11,6 +11,8 @@ import { site } from "@/content/site";
 import { customizePage } from "@/content/customizePage";
 import { aboutPage } from "@/content/aboutPage";
 import { contactPage } from "@/content/contactPage";
+import { hosts } from "@/content/hosts";
+import { signatureExperiences } from "@/content/signatureExperiences";
 
 // One-time (safely re-runnable) migration: pushes all the existing tour/
 // experience/photoshoot/testimonial/blog/FAQ/site-settings content into
@@ -29,10 +31,11 @@ import { contactPage } from "@/content/contactPage";
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
 // experiences, photoshoots, testimonials, stories, faqs, siteSettings,
-// customizePage, aboutPage, contactPage. E.g. to seed just the new About
-// Page without touching your already-edited Site Settings/Tours:
+// customizePage, aboutPage, contactPage, hosts, signatureExperiences.
+// E.g. to seed just the new Signature Experiences system without touching
+// anything else:
 //
-//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=aboutPage
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences
 
 function key() {
   return Math.random().toString(36).slice(2, 10);
@@ -255,6 +258,72 @@ export async function GET(request: NextRequest) {
       policiesTitle: contactPage.policiesTitle,
     });
     results.push("contactPage");
+  }
+
+  if (shouldRun("hosts")) {
+    for (const [i, h] of hosts.entries()) {
+      await client.createOrReplace({
+        _id: `host-${h.slug}`,
+        _type: "host",
+        name: h.name,
+        slug: { _type: "slug", current: h.slug },
+        role: h.role,
+        bio: h.bio,
+        languages: h.languages,
+        experience: h.experience,
+        personality: h.personality,
+        order: i,
+      });
+      results.push(`host: ${h.slug}`);
+    }
+  }
+
+  if (shouldRun("signatureExperiences")) {
+    for (const e of signatureExperiences) {
+      await client.createOrReplace({
+        _id: `signatureExperience-${e.slug}`,
+        _type: "signatureExperience",
+        status: e.status,
+        order: e.order,
+        name: e.name,
+        slug: { _type: "slug", current: e.slug },
+        forWhom: e.forWhom,
+        emotionalHeadline: e.emotionalHeadline,
+        shortDescription: e.shortDescription,
+        heroImageTone: e.heroImageTone,
+        duration: e.duration,
+        groupSize: e.groupSize,
+        luxuryLevel: e.luxuryLevel,
+        location: e.location,
+        price: { _type: "price", ...e.price },
+        whoIsThisForTitle: e.whoIsThisForTitle,
+        whoIsThisForBody: e.whoIsThisForBody,
+        whyWeCreatedThisTitle: e.whyWeCreatedThisTitle,
+        whyWeCreatedThisBody: e.whyWeCreatedThisBody,
+        experienceIntro: e.experienceIntro,
+        experienceHighlights: e.experienceHighlights.map((h) => ({
+          ...h,
+          _type: "highlight",
+          _key: key(),
+        })),
+        itineraryDays: e.itineraryDays.map((d) => ({
+          ...d,
+          _type: "itineraryDay",
+          _key: key(),
+          items: d.items.map((it) => ({ ...it, _type: "itineraryItem", _key: key() })),
+        })),
+        careTitle: e.careTitle,
+        careIntro: e.careIntro,
+        careItems: e.careItems,
+        hosts: (e.hosts ?? []).map((h) => ({
+          _type: "reference",
+          _ref: `host-${h.slug}`,
+          _key: key(),
+        })),
+        faqs: (e.faqs ?? []).map((f) => ({ ...f, _type: "faq", _key: key() })),
+      });
+      results.push(`signatureExperience: ${e.slug}`);
+    }
   }
 
   return NextResponse.json({ ok: true, migrated: results.length, details: results });

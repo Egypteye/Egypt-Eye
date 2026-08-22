@@ -83,3 +83,33 @@ export const contactPageQuery = groq`*[_type == "contactPage"][0] {
   whatsappCardDescription, emailCardDescription, urgentCardDescription,
   policiesEyebrow, policiesTitle
 }`;
+
+// Signature Experiences — a distinct, emotionally-led product category from
+// the tour catalog. Public queries only ever return "published" or
+// "comingSoon" documents; "draft" and "archived" stay Studio-only.
+const signatureExperienceFields = groq`
+  status, order, "slug": slug.current, name, forWhom, emotionalHeadline,
+  shortDescription, heroImage, heroImageTone, gallery, duration, groupSize,
+  luxuryLevel, location, ${priceFields},
+  whoIsThisForTitle, whoIsThisForBody, whyWeCreatedThisTitle, whyWeCreatedThisBody,
+  experienceIntro, experienceHighlights[]{title, description, image},
+  itineraryDays[]{
+    dayNumber, title, description, image,
+    items[]{time, title, duration, description, location, image, category, includedOrOptional, notes}
+  },
+  careTitle, careIntro, careItems,
+  hosts[]->{"slug": slug.current, name, role, photo, bio, languages, experience, personality},
+  faqs[]{question, answer},
+  testimonials[]->{name, quote, context},
+  seoTitle, seoDescription
+`;
+
+export const signatureExperiencesQuery = groq`*[_type == "signatureExperience" && status in ["published", "comingSoon"]] | order(order asc) {
+  ${signatureExperienceFields}
+}`;
+
+export const signatureExperienceBySlugQuery = groq`*[_type == "signatureExperience" && slug.current == $slug && status in ["published", "comingSoon"]][0] {
+  ${signatureExperienceFields}
+}`;
+
+export const allSignatureExperienceSlugsQuery = groq`*[_type == "signatureExperience" && status in ["published", "comingSoon"]].slug.current`;

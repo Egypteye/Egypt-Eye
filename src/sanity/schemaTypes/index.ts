@@ -9,6 +9,8 @@ import { siteSettings } from "./siteSettings";
 import { customizePage } from "./customizePage";
 import { aboutPage } from "./aboutPage";
 import { contactPage } from "./contactPage";
+import { signatureExperience } from "./signatureExperience";
+import { host } from "./host";
 
 export const schemaTypes = [
   // Reusable object types first.
@@ -19,6 +21,8 @@ export const schemaTypes = [
   tour,
   experience,
   photoshoot,
+  signatureExperience,
+  host,
   testimonial,
   story,
   faqItem,

@@ -281,3 +281,84 @@ export type ResolvedContactPage = {
   policiesEyebrow: string;
   policiesTitle: string;
 };
+
+// ---------------------------------------------------------------------------
+// Signature Experiences — a curated, emotionally-led product category
+// distinct from the tour catalog. See src/sanity/schemaTypes/signatureExperience.ts.
+
+export type Host = {
+  slug: string;
+  name: string;
+  role: string;
+  photo?: SanityImage;
+  bio: string;
+  languages?: string[];
+  experience?: string;
+  personality?: string;
+};
+
+export type SignatureItineraryItem = {
+  time: string;
+  title: string;
+  duration?: string;
+  description: string;
+  location?: string;
+  image?: SanityImage;
+  category?: string;
+  includedOrOptional?: "included" | "optional";
+  notes?: string;
+};
+
+export type SignatureItineraryDay = {
+  dayNumber: number;
+  title: string;
+  description?: string;
+  image?: SanityImage;
+  items: SignatureItineraryItem[];
+};
+
+export type ExperienceHighlight = {
+  title: string;
+  description: string;
+  image?: SanityImage;
+};
+
+export type ExperienceFaq = {
+  question: string;
+  answer: string;
+};
+
+export type ExperienceStatus = "draft" | "comingSoon" | "published" | "archived";
+
+export type SignatureExperience = {
+  status: ExperienceStatus;
+  order: number;
+  slug: string;
+  name: string;
+  forWhom: string;
+  emotionalHeadline: string;
+  shortDescription: string;
+  heroImage?: SanityImage;
+  heroImageTone: ImageTone;
+  gallery?: SanityImage[];
+  duration: string;
+  groupSize: string;
+  luxuryLevel?: string;
+  location?: string;
+  price: Price;
+  whoIsThisForTitle: string;
+  whoIsThisForBody: string;
+  whyWeCreatedThisTitle: string;
+  whyWeCreatedThisBody: string;
+  experienceIntro?: string;
+  experienceHighlights: ExperienceHighlight[];
+  itineraryDays: SignatureItineraryDay[];
+  careTitle: string;
+  careIntro?: string;
+  careItems: string[];
+  hosts?: Host[];
+  faqs?: ExperienceFaq[];
+  testimonials?: Testimonial[];
+  seoTitle?: string;
+  seoDescription?: string;
+};

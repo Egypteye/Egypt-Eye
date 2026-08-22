@@ -1,6 +1,7 @@
 import { client } from "./client";
 import {
   aboutPageQuery,
+  allSignatureExperienceSlugsQuery,
   contactPageQuery,
   customizePageQuery,
   experienceBySlugQuery,
@@ -8,6 +9,8 @@ import {
   faqsQuery,
   photoshootBySlugQuery,
   photoshootsQuery,
+  signatureExperienceBySlugQuery,
+  signatureExperiencesQuery,
   siteSettingsQuery,
   storiesQuery,
   storyBySlugQuery,
@@ -25,6 +28,7 @@ import { site as localSite } from "@/content/site";
 import { customizePage as localCustomizePage } from "@/content/customizePage";
 import { aboutPage as localAboutPage } from "@/content/aboutPage";
 import { contactPage as localContactPage } from "@/content/contactPage";
+import { signatureExperiences as localSignatureExperiences } from "@/content/signatureExperiences";
 import type {
   AboutPage,
   ContactPage,
@@ -36,6 +40,7 @@ import type {
   ResolvedContactPage,
   ResolvedCustomizePage,
   ResolvedSiteSettings,
+  SignatureExperience,
   SiteSettings,
   Story,
   Testimonial,
@@ -241,4 +246,19 @@ export async function getContactPage(): Promise<ResolvedContactPage> {
       image: result.heroImage?.image,
     },
   };
+}
+
+export async function getSignatureExperiences(): Promise<SignatureExperience[]> {
+  const result = await safeFetch<SignatureExperience[]>(signatureExperiencesQuery);
+  return result && result.length > 0 ? result : localSignatureExperiences;
+}
+
+export async function getSignatureExperienceBySlug(slug: string): Promise<SignatureExperience | undefined> {
+  const result = await safeFetch<SignatureExperience | null>(signatureExperienceBySlugQuery, { slug });
+  return result ?? localSignatureExperiences.find((e) => e.slug === slug);
+}
+
+export async function getAllSignatureExperienceSlugs(): Promise<string[]> {
+  const result = await safeFetch<string[]>(allSignatureExperienceSlugsQuery);
+  return result && result.length > 0 ? result : localSignatureExperiences.map((e) => e.slug);
 }
