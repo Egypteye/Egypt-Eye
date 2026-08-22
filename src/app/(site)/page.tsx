@@ -45,6 +45,8 @@ export default async function Home() {
       getSignatureExperiences(),
     ]);
   const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
+  const featuredTours = tours.filter((t) => t.featured);
+  const popularTours = (featuredTours.length > 0 ? featuredTours : tours).slice(0, 8);
 
   return (
     <>
@@ -146,7 +148,33 @@ export default async function Home() {
             </div>
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <PopularToursCarousel tours={tours} />
+            <PopularToursCarousel tours={popularTours} />
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Explore All Tours */}
+      <section className="py-16">
+        <Container>
+          <Reveal>
+            <div className="flex flex-col items-center gap-4 rounded-3xl border border-gold/20 bg-sand-dim px-8 py-14 text-center">
+              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
+                The Complete Collection
+              </p>
+              <h2 className="max-w-lg font-display text-2xl font-semibold text-ink sm:text-3xl">
+                Explore Every Journey We Offer Across Egypt
+              </h2>
+              <p className="max-w-md text-ink-soft/75">
+                Search and filter the full catalog — by destination, length, or travel
+                style — to find the tour built for the trip you actually want.
+              </p>
+              <Link
+                href="/tours"
+                className="mt-2 inline-block rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+              >
+                Explore All Tours
+              </Link>
+            </div>
           </Reveal>
         </Container>
       </section>
