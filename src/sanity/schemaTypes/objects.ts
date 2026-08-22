@@ -59,3 +59,43 @@ export const imageTones = [
   { title: "Jordan (rose)", value: "jordan" },
   { title: "Red Sea (turquoise)", value: "redsea" },
 ];
+
+// A factory (not a shared object literal) so every image field that uses
+// this gets its own independent field definition — spread into any `image`
+// field's `fields: [...]` array to add source/license tracking. Collapsed
+// by default so it doesn't clutter the editing experience; only needs
+// filling in when the photo comes from outside your own photography.
+export function imageCreditField() {
+  return defineField({
+    name: "credit",
+    title: "Image Credit / Source",
+    description: "Where this photo came from — keep this filled in for anything that isn't your own photography.",
+    type: "object",
+    options: { collapsible: true, collapsed: true },
+    fields: [
+      defineField({
+        name: "source",
+        title: "Source",
+        type: "string",
+        options: {
+          list: [
+            "Own Photography",
+            "Unsplash",
+            "Pexels",
+            "Wikimedia Commons",
+            "AI Generated",
+            "Other Licensed Source",
+          ],
+        },
+      }),
+      defineField({ name: "creator", title: "Photographer / Creator", type: "string" }),
+      defineField({ name: "sourceUrl", title: "Source URL", type: "url" }),
+      defineField({ name: "license", title: "License (e.g. 'Unsplash License', 'CC BY 4.0')", type: "string" }),
+      defineField({
+        name: "attributionText",
+        title: "Attribution text (only if the license requires it)",
+        type: "string",
+      }),
+    ],
+  });
+}

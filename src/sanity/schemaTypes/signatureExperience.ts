@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 const ITEM_CATEGORIES = [
   "Wellness",
@@ -70,6 +70,7 @@ export const signatureExperience = defineType({
       title: "Hero photo",
       type: "image",
       options: { hotspot: true },
+      fields: [imageCreditField()],
     }),
     defineField({
       name: "heroImageTone",
@@ -82,7 +83,7 @@ export const signatureExperience = defineType({
       name: "gallery",
       title: "Gallery photos",
       type: "array",
-      of: [{ type: "image", options: { hotspot: true } }],
+      of: [{ type: "image", options: { hotspot: true }, fields: [imageCreditField()] }],
     }),
 
     defineField({ name: "duration", title: "Duration (display text, e.g. '5 days / 4 nights')", type: "string" }),
@@ -124,7 +125,7 @@ export const signatureExperience = defineType({
           fields: [
             defineField({ name: "title", title: "Title", type: "string" }),
             defineField({ name: "description", title: "Description", type: "text" }),
-            defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true } }),
+            defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true }, fields: [imageCreditField()] }),
           ],
           preview: { select: { title: "title", media: "image" } },
         },
@@ -144,7 +145,7 @@ export const signatureExperience = defineType({
             defineField({ name: "dayNumber", title: "Day number", type: "number", validation: (r) => r.required() }),
             defineField({ name: "title", title: "Day title", type: "string", validation: (r) => r.required() }),
             defineField({ name: "description", title: "Day description", type: "text" }),
-            defineField({ name: "image", title: "Day photo", type: "image", options: { hotspot: true } }),
+            defineField({ name: "image", title: "Day photo", type: "image", options: { hotspot: true }, fields: [imageCreditField()] }),
             defineField({
               name: "items",
               title: "Moments in the day",

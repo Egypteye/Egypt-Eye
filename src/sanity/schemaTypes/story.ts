@@ -1,5 +1,5 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 const STORY_CATEGORIES = [
   "Celestial Events",
@@ -18,7 +18,7 @@ const bodyBlockTypes = [
   defineArrayMember({
     type: "image",
     options: { hotspot: true },
-    fields: [defineField({ name: "caption", title: "Caption (optional)", type: "string" })],
+    fields: [defineField({ name: "caption", title: "Caption (optional)", type: "string" }), imageCreditField()],
   }),
   defineArrayMember({
     type: "object",
@@ -57,7 +57,7 @@ const bodyBlockTypes = [
         name: "images",
         title: "Images",
         type: "array",
-        of: [{ type: "image", options: { hotspot: true } }],
+        of: [{ type: "image", options: { hotspot: true }, fields: [imageCreditField()] }],
       }),
     ],
     preview: { select: {}, prepare: () => ({ title: "Gallery" }) },
@@ -185,6 +185,7 @@ export const story = defineType({
       title: "Cover photo",
       type: "image",
       options: { hotspot: true },
+      fields: [imageCreditField()],
     }),
     defineField({
       name: "imageTone",

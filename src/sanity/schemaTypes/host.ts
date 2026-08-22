@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { imageCreditField } from "./objects";
 
 // A reusable person profile — a host/guide who can be assigned to one or
 // more Signature Experiences (see signatureExperience.ts's `hosts` field).
@@ -18,7 +19,14 @@ export const host = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: "role", title: "Role (e.g. 'Guest Experience Host')", type: "string" }),
-    defineField({ name: "photo", title: "Photo", type: "image", options: { hotspot: true } }),
+    defineField({
+      name: "photo",
+      title: "Photo",
+      type: "image",
+      options: { hotspot: true },
+      description: "A real photo of this person — please don't use a stock photo here.",
+      fields: [imageCreditField()],
+    }),
     defineField({ name: "bio", title: "Bio", type: "text", validation: (r) => r.required() }),
     defineField({ name: "languages", title: "Languages", type: "array", of: [{ type: "string" }] }),
     defineField({

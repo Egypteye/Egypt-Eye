@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 // Singleton — powers the /about page. The brand description, positioning
 // quote, and pillars shown on this page come from Site Settings (they're
@@ -16,7 +16,7 @@ export const aboutPage = defineType({
       title: "Hero banner photo",
       type: "object",
       fields: [
-        defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true } }),
+        defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true }, fields: [imageCreditField()] }),
         defineField({
           name: "tone",
           title: "Placeholder color (used until a photo is uploaded)",

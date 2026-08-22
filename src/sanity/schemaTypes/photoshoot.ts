@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 export const photoshoot = defineType({
   name: "photoshoot",
@@ -23,6 +23,7 @@ export const photoshoot = defineType({
       title: "Photo",
       type: "image",
       options: { hotspot: true },
+      fields: [imageCreditField()],
     }),
     defineField({
       name: "imageTone",
@@ -36,7 +37,7 @@ export const photoshoot = defineType({
       title: "Gallery photos",
       description: "Extra photos shown in a gallery on this package's page, beyond the main photo above.",
       type: "array",
-      of: [{ type: "image", options: { hotspot: true } }],
+      of: [{ type: "image", options: { hotspot: true }, fields: [imageCreditField()] }],
     }),
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
     defineField({ name: "goodFor", title: "Good For", type: "array", of: [{ type: "string" }] }),

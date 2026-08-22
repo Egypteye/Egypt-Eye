@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 export const tour = defineType({
   name: "tour",
@@ -47,6 +47,7 @@ export const tour = defineType({
       type: "image",
       options: { hotspot: true },
       description: "Upload a real photo. Until you do, a gradient placeholder is shown.",
+      fields: [imageCreditField()],
     }),
     defineField({
       name: "imageTone",

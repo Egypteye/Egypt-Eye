@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 // A reusable countdown-worthy event — not eclipse-specific. Referenced from
 // a Story's "Countdown" content block (see story.ts), but usable for any
@@ -43,6 +43,7 @@ export const event = defineType({
       title: "Background photo",
       type: "image",
       options: { hotspot: true },
+      fields: [imageCreditField()],
     }),
     defineField({
       name: "backgroundTone",

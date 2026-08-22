@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 // Shared shape for a single banner photo with a placeholder-color fallback,
 // reused across the homepage's individual (non-slideshow) feature banners.
@@ -9,7 +9,7 @@ function bannerImageField(name: string, title: string) {
     title,
     type: "object",
     fields: [
-      defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true } }),
+      defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true }, fields: [imageCreditField()] }),
       defineField({
         name: "tone",
         title: "Placeholder color (used until a photo is uploaded)",
@@ -53,6 +53,7 @@ export const siteSettings = defineType({
               title: "Photo",
               type: "image",
               options: { hotspot: true },
+              fields: [imageCreditField()],
             }),
             defineField({
               name: "tone",
@@ -92,7 +93,7 @@ export const siteSettings = defineType({
               title: "Destination name (must match exactly, e.g. 'Giza', 'Red Sea')",
               type: "string",
             }),
-            defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true } }),
+            defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true }, fields: [imageCreditField()] }),
           ],
           preview: {
             select: { title: "name", media: "image" },

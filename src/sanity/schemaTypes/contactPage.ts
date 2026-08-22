@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageTones } from "./objects";
+import { imageCreditField, imageTones } from "./objects";
 
 // Singleton — powers the /contact page. Actual contact details and booking
 // policy text come from Site Settings (shared with other pages); this
@@ -17,7 +17,7 @@ export const contactPage = defineType({
       title: "Hero banner photo",
       type: "object",
       fields: [
-        defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true } }),
+        defineField({ name: "image", title: "Photo", type: "image", options: { hotspot: true }, fields: [imageCreditField()] }),
         defineField({
           name: "tone",
           title: "Placeholder color (used until a photo is uploaded)",
