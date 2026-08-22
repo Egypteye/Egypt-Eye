@@ -15,6 +15,7 @@ import {
   getSignatureExperienceBySlug,
   getSiteSettings,
 } from "@/sanity/fetchers";
+import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
 export async function generateStaticParams() {
   const slugs = await getAllSignatureExperienceSlugs();
@@ -29,10 +30,19 @@ export async function generateMetadata({
   const { slug } = await params;
   const experience = await getSignatureExperienceBySlug(slug);
   if (!experience) return {};
-  return {
-    title: experience.seoTitle || experience.name,
-    description: experience.seoDescription || experience.shortDescription,
-  };
+  return resolveMetadata({
+    title: experience.name,
+    description: experience.shortDescription,
+    seo: {
+      seoTitle: experience.seoTitle,
+      seoDescription: experience.seoDescription,
+      canonicalUrl: experience.canonicalUrl,
+      ogImage: experience.ogImage,
+      noindex: experience.noindex,
+    },
+    image: experience.heroImage,
+    path: `/signature-experiences/${experience.slug}`,
+  });
 }
 
 export default async function SignatureExperienceDetailPage({
@@ -56,8 +66,14 @@ export default async function SignatureExperienceDetailPage({
   const whatsappHref = `${site.contact.whatsappLink}?text=${enquiryText}`;
   const ctaLabel = isComingSoon ? "Ask to Be Notified" : "Enquire About This Experience";
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Signature Experiences", path: "/signature-experiences" },
+    { name: experience.name, path: `/signature-experiences/${experience.slug}` },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       {/* Hero */}
       <section className="relative">
         <SmartImage

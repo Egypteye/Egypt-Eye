@@ -7,6 +7,7 @@ import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
 import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
+import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
 export async function generateStaticParams() {
   const photoshoots = await getPhotoshoots();
@@ -21,7 +22,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const photoshoot = await getPhotoshootBySlug(slug);
   if (!photoshoot) return {};
-  return { title: photoshoot.title, description: photoshoot.description };
+  return resolveMetadata({
+    title: photoshoot.title,
+    description: photoshoot.description,
+    seo: photoshoot.seo,
+    image: photoshoot.image,
+    path: `/photoshoots/${photoshoot.slug}`,
+  });
 }
 
 export default async function PhotoshootDetailPage({
@@ -33,7 +40,14 @@ export default async function PhotoshootDetailPage({
   const [photoshoot, site] = await Promise.all([getPhotoshootBySlug(slug), getSiteSettings()]);
   if (!photoshoot) notFound();
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Photoshoots", path: "/photoshoots" },
+    { name: photoshoot.title, path: `/photoshoots/${photoshoot.slug}` },
+  ]);
+
   return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
     <section className="py-14">
       <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>
@@ -149,5 +163,6 @@ export default async function PhotoshootDetailPage({
         </aside>
       </Container>
     </section>
+    </>
   );
 }

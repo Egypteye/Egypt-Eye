@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageCreditField, imageTones } from "./objects";
+import { imageCreditField, imageTones, seoFields } from "./objects";
 
 export const photoshoot = defineType({
   name: "photoshoot",
@@ -45,6 +45,7 @@ export const photoshoot = defineType({
     defineField({ name: "addOns", title: "Optional Add-Ons", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "delivery", title: "What You Receive", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "order", title: "Sort order (lower shows first)", type: "number", initialValue: 0 }),
+    seoFields(),
   ],
   orderings: [
     { title: "Sort order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },

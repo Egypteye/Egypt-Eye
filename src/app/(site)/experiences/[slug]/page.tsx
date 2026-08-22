@@ -7,6 +7,7 @@ import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
 import { getExperienceBySlug, getExperiences, getSiteSettings } from "@/sanity/fetchers";
+import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
 export async function generateStaticParams() {
   const experiences = await getExperiences();
@@ -21,7 +22,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const experience = await getExperienceBySlug(slug);
   if (!experience) return {};
-  return { title: experience.title, description: experience.description };
+  return resolveMetadata({
+    title: experience.title,
+    description: experience.description,
+    seo: experience.seo,
+    image: experience.image,
+    path: `/experiences/${experience.slug}`,
+  });
 }
 
 export default async function ExperienceDetailPage({
@@ -33,8 +40,15 @@ export default async function ExperienceDetailPage({
   const [experience, site] = await Promise.all([getExperienceBySlug(slug), getSiteSettings()]);
   if (!experience) notFound();
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Extra Experiences", path: "/experiences" },
+    { name: experience.title, path: `/experiences/${experience.slug}` },
+  ]);
+
   return (
-    <section className="py-14">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <section className="py-14">
       <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>
           <SmartImage
@@ -105,6 +119,7 @@ export default async function ExperienceDetailPage({
           </a>
         </aside>
       </Container>
-    </section>
+      </section>
+    </>
   );
 }

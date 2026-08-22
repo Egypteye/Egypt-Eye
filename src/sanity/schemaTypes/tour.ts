@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageCreditField, imageTones } from "./objects";
+import { imageCreditField, imageTones, seoFields } from "./objects";
 
 export const tour = defineType({
   name: "tour",
@@ -73,6 +73,7 @@ export const tour = defineType({
       type: "number",
       initialValue: 0,
     }),
+    seoFields(),
   ],
   orderings: [
     { title: "Sort order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },

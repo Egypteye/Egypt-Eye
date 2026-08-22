@@ -1,5 +1,5 @@
 import { defineField, defineType } from "sanity";
-import { imageCreditField, imageTones } from "./objects";
+import { imageCreditField, imageTones, seoFields } from "./objects";
 
 export const experience = defineType({
   name: "experience",
@@ -41,6 +41,7 @@ export const experience = defineType({
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "order", title: "Sort order (lower shows first)", type: "number", initialValue: 0 }),
+    seoFields(),
   ],
   orderings: [
     { title: "Sort order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] },

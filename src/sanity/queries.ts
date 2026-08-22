@@ -18,7 +18,7 @@ export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(orde
 export const tourBySlugQuery = groq`*[_type == "tour" && slug.current == $slug && hidden != true][0] {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, ${ratingFields}, badge, image, imageTone, description,
-  highlights, included, excluded, itinerary, ${priceFields}
+  highlights, included, excluded, itinerary, ${priceFields}, seo
 }`;
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
@@ -28,7 +28,7 @@ export const experiencesQuery = groq`*[_type == "experience"] | order(order asc)
 
 export const experienceBySlugQuery = groq`*[_type == "experience" && slug.current == $slug][0] {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, gallery, description, included
+  image, imageTone, gallery, description, included, seo
 }`;
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
@@ -38,7 +38,7 @@ export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc)
 
 export const photoshootBySlugQuery = groq`*[_type == "photoshoot" && slug.current == $slug][0] {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, seo
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
@@ -73,7 +73,7 @@ export const storyBySlugQuery = groq`*[_type == "story" && slug.current == $slug
   },
   relatedExperience->{${relatedExperienceFields}},
   relatedStories[]->{"slug": slug.current, title, excerpt, image, imageTone, category},
-  seoTitle, seoDescription, ogImage, canonicalUrl
+  seoTitle, seoDescription, ogImage, canonicalUrl, noindex
 }`;
 
 export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {
@@ -124,7 +124,7 @@ const signatureExperienceFields = groq`
   hosts[]->{"slug": slug.current, name, role, photo, bio, languages, experience, personality},
   faqs[]{question, answer},
   testimonials[]->{name, quote, context},
-  seoTitle, seoDescription
+  seoTitle, seoDescription, canonicalUrl, ogImage, noindex
 `;
 
 export const signatureExperiencesQuery = groq`*[_type == "signatureExperience" && status in ["published", "comingSoon"]] | order(order asc) {

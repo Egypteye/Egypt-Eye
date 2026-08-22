@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { site } from "@/content/site";
+import { siteUrl } from "@/content/seo";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -12,11 +13,6 @@ const playfair = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
 });
-
-// Falls back to the current Vercel URL until a custom domain is attached —
-// set NEXT_PUBLIC_SITE_URL in Vercel's env vars once one is, so canonical
-// URLs and Open Graph links point at the real domain instead.
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://egypt-eye.vercel.app";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -56,6 +52,13 @@ const organizationJsonLd = {
   sameAs: Object.values(site.socials).filter(Boolean),
 };
 
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  url: siteUrl,
+};
+
 // Kept deliberately minimal (just fonts + <html>/<body>) so the /studio
 // route — which needs a full-screen app shell, not the marketing site's
 // navbar/footer — can render cleanly. The site's chrome lives one level
@@ -70,6 +73,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         {children}
       </body>

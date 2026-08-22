@@ -21,6 +21,17 @@ export type Price = {
   note?: string;
 };
 
+// Shared optional SEO override group — see src/sanity/schemaTypes/objects.ts's
+// seoFields(). Frontend metadata generation falls back to the page's own
+// title/description/photo when these are left blank.
+export type PageSeo = {
+  seoTitle?: string;
+  seoDescription?: string;
+  canonicalUrl?: string;
+  ogImage?: SanityImage;
+  noindex?: boolean;
+};
+
 export type Tour = {
   slug: string;
   title: string;
@@ -41,6 +52,7 @@ export type Tour = {
   excluded: string[];
   itinerary?: ItineraryDay[];
   price: Price;
+  seo?: PageSeo;
 };
 
 export type Experience = {
@@ -55,6 +67,7 @@ export type Experience = {
   gallery?: SanityImage[];
   description: string;
   included: string[];
+  seo?: PageSeo;
 };
 
 export type Photoshoot = {
@@ -73,6 +86,7 @@ export type Photoshoot = {
   included: string[];
   addOns?: string[];
   delivery: string[];
+  seo?: PageSeo;
 };
 
 export type Testimonial = {
@@ -199,6 +213,7 @@ export type Story = {
   seoDescription?: string;
   ogImage?: SanityImage;
   canonicalUrl?: string;
+  noindex?: boolean;
 };
 
 export type Faq = {
@@ -470,4 +485,7 @@ export type SignatureExperience = {
   testimonials?: Testimonial[];
   seoTitle?: string;
   seoDescription?: string;
+  canonicalUrl?: string;
+  ogImage?: SanityImage;
+  noindex?: boolean;
 };

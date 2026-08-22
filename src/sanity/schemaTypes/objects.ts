@@ -99,3 +99,44 @@ export function imageCreditField() {
     ],
   });
 }
+
+// A shared "SEO" field group — grouped into a collapsed object so it doesn't
+// crowd the main editing fields, with sensible fallbacks handled on the
+// frontend (page title/description/cover photo) so the site stays SEO-safe
+// even when these are left blank.
+export function seoFields() {
+  return defineField({
+    name: "seo",
+    title: "SEO",
+    type: "object",
+    options: { collapsible: true, collapsed: true },
+    fields: [
+      defineField({
+        name: "seoTitle",
+        title: "SEO title (optional override)",
+        description: "Defaults to the page title. Aim for 30-60 characters.",
+        type: "string",
+      }),
+      defineField({
+        name: "seoDescription",
+        title: "Meta description (optional override)",
+        description: "Defaults to the page description. Aim for 50-160 characters.",
+        type: "text",
+      }),
+      defineField({ name: "canonicalUrl", title: "Canonical URL (optional)", type: "url" }),
+      defineField({
+        name: "ogImage",
+        title: "Social sharing image (optional override)",
+        description: "Defaults to the page's own photo if left blank.",
+        type: "image",
+      }),
+      defineField({
+        name: "noindex",
+        title: "Hide from search engines (noindex)",
+        description: "Turn on to keep this specific page out of Google — most pages should leave this off.",
+        type: "boolean",
+        initialValue: false,
+      }),
+    ],
+  });
+}

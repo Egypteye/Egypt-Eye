@@ -223,6 +223,13 @@ export const story = defineType({
       type: "image",
     }),
     defineField({ name: "canonicalUrl", title: "Canonical URL (optional)", type: "url" }),
+    defineField({
+      name: "noindex",
+      title: "Hide from search engines (noindex)",
+      description: "Turn on to keep this specific story out of Google — most stories should leave this off.",
+      type: "boolean",
+      initialValue: false,
+    }),
   ],
   orderings: [
     { title: "Newest first", name: "publishedDesc", by: [{ field: "publishedAt", direction: "desc" }] },

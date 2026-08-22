@@ -8,6 +8,7 @@ import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
+import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
 export async function generateStaticParams() {
   const slugs = await getAllTourSlugs();
@@ -22,7 +23,13 @@ export async function generateMetadata({
   const { slug } = await params;
   const tour = await getTourBySlug(slug);
   if (!tour) return {};
-  return { title: tour.title, description: tour.tagline };
+  return resolveMetadata({
+    title: `${tour.title} — Private Tour`,
+    description: tour.tagline,
+    seo: tour.seo,
+    image: tour.image,
+    path: `/tours/${tour.slug}`,
+  });
 }
 
 export default async function TourDetailPage({
@@ -37,8 +44,14 @@ export default async function TourDetailPage({
   const allTours = await getTours();
   const related = allTours.filter((t) => t.slug !== tour.slug && t.category === tour.category).slice(0, 3);
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Tours", path: "/tours" },
+    { name: tour.title, path: `/tours/${tour.slug}` },
+  ]);
+
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <section className="relative">
         <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />

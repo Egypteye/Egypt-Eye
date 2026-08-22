@@ -249,6 +249,20 @@ export const signatureExperience = defineType({
 
     defineField({ name: "seoTitle", title: "SEO title (optional override)", type: "string" }),
     defineField({ name: "seoDescription", title: "SEO description (optional override)", type: "text" }),
+    defineField({ name: "canonicalUrl", title: "Canonical URL (optional)", type: "url" }),
+    defineField({
+      name: "ogImage",
+      title: "Social sharing image (optional override)",
+      description: "Defaults to the hero photo if left blank.",
+      type: "image",
+    }),
+    defineField({
+      name: "noindex",
+      title: "Hide from search engines (noindex)",
+      description: "Turn on to keep this specific page out of Google — most pages should leave this off.",
+      type: "boolean",
+      initialValue: false,
+    }),
   ],
   orderings: [{ title: "Sort order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] }],
   preview: {

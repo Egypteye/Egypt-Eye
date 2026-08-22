@@ -10,6 +10,7 @@ import { Reveal } from "@/components/Reveal";
 import { getStories, getStoryBySlug } from "@/sanity/fetchers";
 import { estimateReadingTime } from "@/content/readingTime";
 import { urlForImage } from "@/sanity/image";
+import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 import type { StoryCountdownBlock } from "@/content/types";
 
 export async function generateStaticParams() {
@@ -26,27 +27,19 @@ export async function generateMetadata({
   const story = await getStoryBySlug(slug);
   if (!story) return {};
 
-  const title = story.seoTitle || story.title;
-  const description = story.seoDescription || story.excerpt;
-  const ogImageUrl = urlForImage(story.ogImage || story.image)?.width(1200).height(630).url();
-
-  return {
-    title,
-    description,
-    alternates: story.canonicalUrl ? { canonical: story.canonicalUrl } : undefined,
-    openGraph: {
-      type: "article",
-      title,
-      description,
-      images: ogImageUrl ? [ogImageUrl] : undefined,
+  return resolveMetadata({
+    title: story.title,
+    description: story.excerpt,
+    seo: {
+      seoTitle: story.seoTitle,
+      seoDescription: story.seoDescription,
+      canonicalUrl: story.canonicalUrl,
+      ogImage: story.ogImage,
+      noindex: story.noindex,
     },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: ogImageUrl ? [ogImageUrl] : undefined,
-    },
-  };
+    image: story.image,
+    path: `/stories/${story.slug}`,
+  });
 }
 
 export default async function StoryDetailPage({
@@ -63,23 +56,22 @@ export default async function StoryDetailPage({
     ? new Date(story.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
     : null;
 
+  const articleImageUrl = urlForImage(story.image)?.width(1200).height(630).url();
   const articleJsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: story.title,
     description: story.excerpt,
+    image: articleImageUrl,
     datePublished: story.publishedAt,
+    dateModified: story.publishedAt,
     author: story.author ? { "@type": "Organization", name: story.author.name } : undefined,
   };
 
-  const breadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    itemListElement: [
-      { "@type": "ListItem", position: 1, name: "Stories", item: "/stories" },
-      { "@type": "ListItem", position: 2, name: story.title, item: `/stories/${story.slug}` },
-    ],
-  };
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Stories", path: "/stories" },
+    { name: story.title, path: `/stories/${story.slug}` },
+  ]);
 
   // If this story carries a Countdown block, surface its event as Event
   // structured data too — using the same verified date/time the countdown
@@ -110,7 +102,7 @@ export default async function StoryDetailPage({
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
       />
       {eventJsonLd && (
         <script
