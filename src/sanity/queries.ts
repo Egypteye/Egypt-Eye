@@ -45,12 +45,35 @@ export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order as
   name, quote, context
 }`;
 
-export const storiesQuery = groq`*[_type == "story"] | order(publishedAt desc) {
-  "slug": slug.current, title, excerpt, image, imageTone, publishedAt
+// Lightweight experience summary used wherever a Story links to a
+// Signature Experience — a card teaser, not the full detail-page payload.
+const relatedExperienceFields = groq`
+  "slug": slug.current, name, forWhom, emotionalHeadline, shortDescription,
+  heroImage, heroImageTone, duration, groupSize, luxuryLevel, status, ${priceFields}
+`;
+
+const storyCardFields = groq`
+  status, featured, "slug": slug.current, title, category, tags, excerpt,
+  image, imageTone, publishedAt,
+  author->{"slug": slug.current, name, role, photo, bio}
+`;
+
+// hidden published only for the public list/detail — "draft" and "archived"
+// stay Studio-only.
+export const storiesQuery = groq`*[_type == "story" && status == "published"] | order(publishedAt desc) {
+  ${storyCardFields}
 }`;
 
-export const storyBySlugQuery = groq`*[_type == "story" && slug.current == $slug][0] {
-  "slug": slug.current, title, excerpt, image, imageTone, body, publishedAt
+export const storyBySlugQuery = groq`*[_type == "story" && slug.current == $slug && status == "published"][0] {
+  ${storyCardFields},
+  body[]{
+    ...,
+    _type == "countdownBlock" => { "event": event-> },
+    _type == "experienceCardBlock" => { "experience": experience->{${relatedExperienceFields}} }
+  },
+  relatedExperience->{${relatedExperienceFields}},
+  relatedStories[]->{"slug": slug.current, title, excerpt, image, imageTone, category},
+  seoTitle, seoDescription, ogImage, canonicalUrl
 }`;
 
 export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {

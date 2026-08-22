@@ -13,6 +13,9 @@ import { aboutPage } from "@/content/aboutPage";
 import { contactPage } from "@/content/contactPage";
 import { hosts } from "@/content/hosts";
 import { signatureExperiences } from "@/content/signatureExperiences";
+import { authors } from "@/content/authors";
+import { events } from "@/content/events";
+import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } from "@/content/types";
 
 // One-time (safely re-runnable) migration: pushes all the existing tour/
 // experience/photoshoot/testimonial/blog/FAQ/site-settings content into
@@ -31,11 +34,11 @@ import { signatureExperiences } from "@/content/signatureExperiences";
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
 // experiences, photoshoots, testimonials, stories, faqs, siteSettings,
-// customizePage, aboutPage, contactPage, hosts, signatureExperiences.
-// E.g. to seed just the new Signature Experiences system without touching
-// anything else:
+// customizePage, aboutPage, contactPage, hosts, signatureExperiences,
+// authors, events. E.g. to seed just the new Stories system (which needs
+// authors/events/signatureExperiences to exist first for its references):
 //
-//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,stories
 
 function key() {
   return Math.random().toString(36).slice(2, 10);
@@ -144,21 +147,6 @@ export async function GET(request: NextRequest) {
         order: i,
       });
       results.push(`testimonial: ${t.name}`);
-    }
-  }
-
-  if (shouldRun("stories")) {
-    for (const s of stories) {
-      await client.createOrReplace({
-        _id: `story-${s.slug}`,
-        _type: "story",
-        title: s.title,
-        slug: { _type: "slug", current: s.slug },
-        excerpt: s.excerpt,
-        imageTone: s.imageTone,
-        publishedAt: new Date().toISOString(),
-      });
-      results.push(`story: ${s.slug}`);
     }
   }
 
@@ -323,6 +311,102 @@ export async function GET(request: NextRequest) {
         faqs: (e.faqs ?? []).map((f) => ({ ...f, _type: "faq", _key: key() })),
       });
       results.push(`signatureExperience: ${e.slug}`);
+    }
+  }
+
+  if (shouldRun("authors")) {
+    for (const a of authors) {
+      await client.createOrReplace({
+        _id: `author-${a.slug}`,
+        _type: "author",
+        name: a.name,
+        slug: { _type: "slug", current: a.slug },
+        role: a.role,
+        bio: a.bio,
+      });
+      results.push(`author: ${a.slug}`);
+    }
+  }
+
+  if (shouldRun("events")) {
+    for (const ev of events) {
+      if (!ev.slug) continue;
+      await client.createOrReplace({
+        _id: `event-${ev.slug}`,
+        _type: "event",
+        name: ev.name,
+        targetDateTime: ev.targetDateTime,
+        timezoneLabel: ev.timezoneLabel,
+        locationName: ev.locationName,
+        displayTitle: ev.displayTitle,
+        supportingText: ev.supportingText,
+        backgroundTone: ev.backgroundTone,
+        dayOfMessage: ev.dayOfMessage,
+        endedMessage: ev.endedMessage,
+        active: ev.active,
+      });
+      results.push(`event: ${ev.slug}`);
+    }
+  }
+
+  // Body blocks are stored locally with embedded data (e.g. a countdown
+  // block holds the full Event object) for convenience when authoring —
+  // for Sanity they need to become references to the documents just
+  // created above.
+  function migrateBodyBlock(block: StoryBodyBlock) {
+    // `PortableTextBlock._type` is a wide `string`, so TS can't fully narrow
+    // the union on equality alone — the casts below are safe since these
+    // shapes are content-authored, not user input.
+    if (block._type === "countdownBlock") {
+      const countdown = block as StoryCountdownBlock;
+      return {
+        ...countdown,
+        event: countdown.event?.slug
+          ? { _type: "reference", _ref: `event-${countdown.event.slug}` }
+          : undefined,
+      };
+    }
+    if (block._type === "experienceCardBlock") {
+      const card = block as StoryExperienceCardBlock;
+      return {
+        ...card,
+        experience: card.experience
+          ? { _type: "reference", _ref: `signatureExperience-${card.experience.slug}` }
+          : undefined,
+      };
+    }
+    return block;
+  }
+
+  if (shouldRun("stories")) {
+    for (const s of stories) {
+      await client.createOrReplace({
+        _id: `story-${s.slug}`,
+        _type: "story",
+        status: s.status,
+        featured: s.featured,
+        title: s.title,
+        slug: { _type: "slug", current: s.slug },
+        category: s.category,
+        tags: s.tags,
+        author: s.author ? { _type: "reference", _ref: `author-${s.author.slug}` } : undefined,
+        excerpt: s.excerpt,
+        imageTone: s.imageTone,
+        body: s.body?.map((b) => ({ ...migrateBodyBlock(b), _key: b._key ?? key() })),
+        relatedExperience: s.relatedExperience
+          ? { _type: "reference", _ref: `signatureExperience-${s.relatedExperience.slug}` }
+          : undefined,
+        relatedStories: s.relatedStories?.map((r) => ({
+          _type: "reference",
+          _ref: `story-${r.slug}`,
+          _key: key(),
+        })),
+        publishedAt: s.publishedAt ?? new Date().toISOString(),
+        seoTitle: s.seoTitle,
+        seoDescription: s.seoDescription,
+        canonicalUrl: s.canonicalUrl,
+      });
+      results.push(`story: ${s.slug}`);
     }
   }
 

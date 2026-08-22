@@ -11,6 +11,8 @@ import { aboutPage } from "./aboutPage";
 import { contactPage } from "./contactPage";
 import { signatureExperience } from "./signatureExperience";
 import { host } from "./host";
+import { author } from "./author";
+import { event } from "./event";
 
 export const schemaTypes = [
   // Reusable object types first.
@@ -25,6 +27,8 @@ export const schemaTypes = [
   host,
   testimonial,
   story,
+  author,
+  event,
   faqItem,
   siteSettings,
   customizePage,

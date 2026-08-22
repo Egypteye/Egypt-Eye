@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
-import { urlForImage } from "@/sanity/image";
+import { StoryBody } from "@/components/StoryBody";
+import { StoryCard } from "@/components/StoryCard";
+import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
+import { Reveal } from "@/components/Reveal";
 import { getStories, getStoryBySlug } from "@/sanity/fetchers";
+import { estimateReadingTime } from "@/content/readingTime";
+import { urlForImage } from "@/sanity/image";
+import type { StoryCountdownBlock } from "@/content/types";
 
 export async function generateStaticParams() {
   const stories = await getStories();
@@ -20,19 +25,29 @@ export async function generateMetadata({
   const { slug } = await params;
   const story = await getStoryBySlug(slug);
   if (!story) return {};
-  return { title: story.title, description: story.excerpt };
-}
 
-const portableTextComponents: PortableTextComponents = {
-  types: {
-    image: ({ value }) => {
-      const src = urlForImage(value)?.width(1200).url();
-      if (!src) return null;
-      // eslint-disable-next-line @next/next/no-img-element
-      return <img src={src} alt="" className="my-6 w-full rounded-2xl" />;
+  const title = story.seoTitle || story.title;
+  const description = story.seoDescription || story.excerpt;
+  const ogImageUrl = urlForImage(story.ogImage || story.image)?.width(1200).height(630).url();
+
+  return {
+    title,
+    description,
+    alternates: story.canonicalUrl ? { canonical: story.canonicalUrl } : undefined,
+    openGraph: {
+      type: "article",
+      title,
+      description,
+      images: ogImageUrl ? [ogImageUrl] : undefined,
     },
-  },
-};
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImageUrl ? [ogImageUrl] : undefined,
+    },
+  };
+}
 
 export default async function StoryDetailPage({
   params,
@@ -43,47 +58,138 @@ export default async function StoryDetailPage({
   const story = await getStoryBySlug(slug);
   if (!story) notFound();
 
+  const readingTime = estimateReadingTime(story.body);
+  const publishedDate = story.publishedAt
+    ? new Date(story.publishedAt).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })
+    : null;
+
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: story.title,
+    description: story.excerpt,
+    datePublished: story.publishedAt,
+    author: story.author ? { "@type": "Organization", name: story.author.name } : undefined,
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Stories", item: "/stories" },
+      { "@type": "ListItem", position: 2, name: story.title, item: `/stories/${story.slug}` },
+    ],
+  };
+
+  // If this story carries a Countdown block, surface its event as Event
+  // structured data too — using the same verified date/time the countdown
+  // itself renders, not a separately-maintained copy.
+  const countdownEvent = story.body?.find(
+    (b): b is StoryCountdownBlock => b._type === "countdownBlock"
+  )?.event;
+  const eventJsonLd = countdownEvent
+    ? {
+        "@context": "https://schema.org",
+        "@type": "Event",
+        name: countdownEvent.name,
+        startDate: countdownEvent.targetDateTime,
+        eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+        eventStatus: "https://schema.org/EventScheduled",
+        location: countdownEvent.locationName
+          ? { "@type": "Place", name: countdownEvent.locationName }
+          : undefined,
+        description: countdownEvent.supportingText,
+      }
+    : null;
+
   return (
-    <section className="py-14">
-      <Container className="mx-auto max-w-3xl">
-        <SmartImage
-          image={story.image}
-          tone={story.imageTone}
-          alt={story.title}
-          className="aspect-[16/9] w-full rounded-2xl"
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      {eventJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
         />
-        {story.publishedAt && (
-          <p className="mt-8 text-xs font-semibold uppercase tracking-wide text-gold-dark">
-            {new Date(story.publishedAt).toLocaleDateString("en-US", {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            })}
-          </p>
-        )}
-        <h1 className="mt-2 font-display text-3xl font-semibold text-ink sm:text-4xl">
-          {story.title}
-        </h1>
-        <p className="mt-4 text-lg leading-relaxed text-ink-soft/80">{story.excerpt}</p>
+      )}
 
-        {story.body && story.body.length > 0 ? (
-          <div className="prose prose-lg mt-8 max-w-none text-ink-soft/85 prose-headings:font-display prose-headings:text-ink prose-a:text-gold-dark">
-            <PortableText value={story.body} components={portableTextComponents} />
+      {/* Hero */}
+      <section className="relative">
+        <SmartImage image={story.image} tone={story.imageTone} className="absolute inset-0" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
+        <Container className="relative flex min-h-[64vh] flex-col justify-end gap-4 pb-16 pt-32">
+          {story.category && (
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
+              {story.category}
+            </p>
+          )}
+          <h1 className="max-w-3xl text-balance font-display text-4xl font-semibold leading-[1.1] text-cream sm:text-5xl">
+            {story.title}
+          </h1>
+          <p className="max-w-xl text-lg text-cream/80">{story.excerpt}</p>
+          <div className="flex flex-wrap items-center gap-4 text-sm text-cream/60">
+            {story.author && <span>{story.author.name}</span>}
+            {publishedDate && <span>{publishedDate}</span>}
+            <span>{readingTime} min read</span>
           </div>
-        ) : (
-          <p className="mt-6 text-sm text-ink-soft/50">
-            Full article coming soon — write it in the{" "}
-            <Link href="/studio" className="underline">
-              Studio
-            </Link>
-            .
-          </p>
-        )}
+        </Container>
+      </section>
 
-        <Link href="/stories" className="mt-10 inline-block text-sm font-semibold text-gold-dark hover:underline">
-          ← Back to all stories
-        </Link>
-      </Container>
-    </section>
+      {/* Body */}
+      <section className="py-16">
+        <Container className="mx-auto max-w-3xl">
+          <Reveal>{story.body && story.body.length > 0 && <StoryBody body={story.body} />}</Reveal>
+
+          {(!story.body || story.body.length === 0) && (
+            <p className="text-sm text-ink-soft/50">
+              Full article coming soon — write it in the{" "}
+              <Link href="/studio" className="underline">
+                Studio
+              </Link>
+              .
+            </p>
+          )}
+
+          {/* Related experience — dedicated section, in addition to anything
+              placed inline in the body via an Experience Card block. */}
+          {story.relatedExperience && (
+            <Reveal className="not-prose mt-16 rounded-3xl border border-gold/20 bg-sand-dim p-6 sm:p-10">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
+                Want to Experience It?
+              </p>
+              <div className="mt-6 max-w-sm">
+                <SignatureExperienceCard experience={story.relatedExperience} />
+              </div>
+            </Reveal>
+          )}
+
+          <Link href="/stories" className="mt-12 inline-block text-sm font-semibold text-gold-dark hover:underline">
+            ← Back to all stories
+          </Link>
+        </Container>
+      </section>
+
+      {/* Related stories */}
+      {story.relatedStories && story.relatedStories.length > 0 && (
+        <section className="bg-sand-dim py-20">
+          <Container>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
+              Continue Exploring
+            </p>
+            <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {story.relatedStories.map((s) => (
+                <StoryCard key={s.slug} story={s} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+    </>
   );
 }

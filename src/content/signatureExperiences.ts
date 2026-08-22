@@ -234,4 +234,220 @@ export const signatureExperiences: SignatureExperience[] = [
       },
     ],
   },
+  {
+    status: "comingSoon",
+    order: 1,
+    slug: "the-luxor-eclipse",
+    name: "The Luxor Eclipse",
+    forWhom: "For travelers who want to watch totality from one of the greatest historical sites on Earth.",
+    emotionalHeadline: "Six Minutes of Totality, Over Three Thousand Years of History.",
+    shortDescription:
+      "On August 2, 2027, Luxor gets roughly six minutes and twenty-two seconds of total solar eclipse — the longest anywhere on Earth until 2114. Two unhurried days built around it: West Bank in the cool of the morning, then an afternoon spent watching the sky do something it won't do again in most of our lifetimes.",
+    heroImageTone: "luxor",
+    duration: "2 days, 1 night",
+    groupSize: "Private, or small group — ask us either way",
+    luxuryLevel: "Ultra-Luxury, Fully Private",
+    location: "Luxor, Egypt",
+    price: { amount: null, note: "Ask us for a personal quote" },
+    whoIsThisForTitle: "Who This Was Designed For",
+    whoIsThisForBody:
+      "Eclipse chasers who'd rather not spend the day it happens standing in a parking lot. History travelers who've always meant to see Luxor and would like a reason that won't wait. And anyone who understands that a six-minute event most of the planet will never witness deserves more planning than a pair of glasses and a hope for clear skies — which, in Luxor, are about as reliable as anywhere on the eclipse path.",
+    whyWeCreatedThisTitle: "Why We Created This",
+    whyWeCreatedThisBody:
+      "Luxor didn't need help becoming an eclipse destination — it sits almost exactly on the path of totality, in a city with famously clear August skies, and it happens to hold the longest totality anywhere on the 2027 path. What it needed was someone thinking about the two days around those six minutes: how to see the Valley of the Kings without competing with eclipse crowds, where to actually be standing at 1:02 PM, and what to do with a group of people who just watched the sun disappear at midday. That's the part we built.",
+    experienceIntro:
+      "Two days, deliberately unbalanced: an easier first day to settle in, and a second day built entirely around being in the right place, calm and ready, when totality arrives.",
+    experienceHighlights: [
+      {
+        title: "West Bank before the heat",
+        description:
+          "The Valley of the Kings and Hatshepsut's temple in the cool of the morning, finished well before midday — both for comfort and to leave the afternoon completely clear.",
+      },
+      {
+        title: "A viewing setup built for looking straight up",
+        description:
+          "At maximum eclipse the sun sits almost directly overhead in Luxor — around 82° up. We're planning shaded, reclined seating rather than folding chairs, so six minutes of looking up is comfortable, not a neck strain.",
+      },
+      {
+        title: "Certified eclipse protection, briefed properly",
+        description:
+          "Certified solar viewers for every guest, with a plain-language safety briefing the evening before — not a leaflet handed out five minutes before totality.",
+      },
+      {
+        title: "A moment to actually process it",
+        description:
+          "No rushing to the next stop the second totality ends. Time built in afterward to sit with what just happened, before the day continues.",
+      },
+    ],
+    itineraryDays: [
+      {
+        dayNumber: 1,
+        title: "Arrival in the City of Thebes",
+        description: "An easy first day — arrive, settle in, and see Luxor Temple the way it's best seen: lit, at night, without a midday crowd.",
+        items: [
+          {
+            time: "Afternoon",
+            title: "Private arrival & transfer",
+            description: "Met at Luxor International Airport and driven straight to your hotel — no queues, no logistics to manage.",
+            location: "Luxor International Airport",
+            category: "Travel",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Afternoon",
+            title: "Luxury hotel check-in",
+            description: "A Nile-view room, already confirmed. The rest of the afternoon is yours.",
+            category: "Free Time",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Evening",
+            title: "Luxor Temple, illuminated",
+            duration: "1.5 hours",
+            description:
+              "Guided through Luxor Temple after dark, when it's lit and considerably quieter than by day — one of the East Bank's genuinely best experiences.",
+            location: "Luxor Temple, East Bank",
+            category: "Culture",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Evening",
+            title: "Dinner",
+            duration: "1.5 hours",
+            description: "A relaxed dinner to close out the day.",
+            category: "Dining",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Evening",
+            title: "Eclipse briefing & solar viewers",
+            duration: "30 minutes",
+            description:
+              "A short, practical briefing on the next day — timing, what to expect during totality, and certified eclipse glasses issued to every guest, so tomorrow starts with nothing left to explain.",
+            category: "Wellness",
+            includedOrOptional: "included",
+            notes: "Certified solar viewers meeting ISO 12312-2 safety standards are provided and required for all partial-phase viewing.",
+          },
+        ],
+      },
+      {
+        dayNumber: 2,
+        title: "Eclipse Day",
+        description:
+          "West Bank in the cool of the morning, rest through the worst of the midday heat, then everything narrows to one thing: being in the right place, calm and ready, at 1:02 PM.",
+        items: [
+          {
+            time: "06:30",
+            title: "Early breakfast",
+            duration: "45 minutes",
+            description: "Early on purpose — to be well ahead of both the heat and the day's only fixed appointment.",
+            category: "Dining",
+            includedOrOptional: "included",
+          },
+          {
+            time: "07:30",
+            title: "Valley of the Kings & Hatshepsut's Temple",
+            duration: "3 hours",
+            description:
+              "A privately guided morning across the West Bank's two essentials, timed to finish before the midday heat — August in Luxor can reach the low 40s°C (over 100°F).",
+            location: "West Bank, Luxor",
+            category: "Culture",
+            includedOrOptional: "included",
+          },
+          {
+            time: "11:00",
+            title: "Return & rest",
+            duration: "1.5 hours",
+            description: "Back to the hotel, out of the sun, with a light lunch — deliberately unhurried before the afternoon ahead.",
+            category: "Free Time",
+            includedOrOptional: "included",
+          },
+          {
+            time: "12:15",
+            title: "Transfer to the eclipse viewing location",
+            duration: "30–45 minutes",
+            description:
+              "A short transfer to your viewing location, timed with margin before the partial eclipse begins at approximately 11:40 AM.",
+            category: "Travel",
+            includedOrOptional: "included",
+            notes:
+              "Final viewing location will be confirmed closer to the event based on access, crowd management, and local authority arrangements. We're evaluating elevated, uncrowded sites on Luxor's edges alongside select Nile-side locations for an open horizon and comfortable, shaded setup.",
+          },
+          {
+            time: "12:45",
+            title: "Eclipse preparation & safety briefing",
+            duration: "20 minutes",
+            description:
+              "Shaded, reclined seating set up in advance — with the sun nearly overhead at maximum eclipse, comfort matters. A final safety reminder before the partial phase begins.",
+            category: "Wellness",
+            includedOrOptional: "included",
+            notes:
+              "Looking directly at the sun during the partial phases can cause serious eye injury. Certified solar viewers must be worn at all times except during the brief window of full totality.",
+          },
+          {
+            time: "13:02",
+            title: "Totality",
+            duration: "≈ 6 minutes 22 seconds",
+            description:
+              "The moment the sun is fully covered, it's safe to view directly — no glasses needed until it ends. The sky darkens, the temperature drops, and Luxor gets one of the longest totalities anywhere on the 2027 path.",
+            location: "Confirmed viewing location, Luxor",
+            category: "Scenic",
+            includedOrOptional: "included",
+            notes: "Solar viewers go back on the instant totality ends — our team will signal this clearly.",
+          },
+          {
+            time: "13:15",
+            title: "After totality",
+            duration: "45 minutes",
+            description: "No rush to the next stop. Time to sit with it, share what everyone just saw, and enjoy a celebratory round of refreshments.",
+            category: "Social",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Evening",
+            title: "Return, and dinner at leisure",
+            description: "Back to the hotel to freshen up, with dinner and the rest of the evening entirely optional and unscheduled.",
+            category: "Free Time",
+            includedOrOptional: "optional",
+          },
+        ],
+      },
+    ],
+    careTitle: "You Watch the Sky. We Handle Everything Below It.",
+    careIntro:
+      "An event this precisely timed leaves no room for logistics to go wrong — so we've built the day around removing every one of them.",
+    careItems: [
+      "Airport arrival and transfer",
+      "Luxury hotel accommodation",
+      "A private Egyptologist guide throughout",
+      "Certified ISO 12312-2 solar viewers for every guest",
+      "A pre-briefed, comfortable eclipse viewing setup",
+      "All transportation, timed with safety margin",
+      "Meals as noted in the itinerary",
+      "One point of contact for anything that comes up",
+    ],
+    hosts,
+    faqs: [
+      {
+        question: "Is the eclipse viewing location guaranteed?",
+        answer:
+          "Not yet, this far out — and we won't pretend otherwise. We're evaluating several strong options around Luxor and will confirm the exact site closer to the event, based on access, crowd management, and local authority arrangements. Wherever we land, it will be chosen for horizon, comfort, and shade.",
+      },
+      {
+        question: "Is it actually safe to look at the eclipse?",
+        answer:
+          "During the partial phases — before and after totality — looking directly at the sun without certified eclipse protection can cause serious eye injury. We provide ISO 12312-2 certified solar viewers for every guest. The only time it's safe to view without protection is during totality itself, when the sun is completely covered — roughly six minutes and twenty-two seconds in Luxor.",
+      },
+      {
+        question: "What if it's cloudy on the day?",
+        answer:
+          "Nobody can guarantee weather two years out, but Luxor has among the best odds on the entire 2027 eclipse path — historically clear skies on this date roughly four years out of five.",
+      },
+      {
+        question: "How hot will it be?",
+        answer:
+          "August in Luxor is genuinely hot, with midday temperatures that can reach the low-to-mid 40s°C (over 100°F). The itinerary is built around that — West Bank sightseeing early, rest through the hottest hours, and shaded seating for the eclipse itself.",
+      },
+    ],
+  },
 ];

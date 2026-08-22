@@ -81,15 +81,124 @@ export type Testimonial = {
   context?: string;
 };
 
-export type Story = {
+export type Author = {
+  slug: string;
+  name: string;
+  role?: string;
+  photo?: SanityImage;
+  bio?: string;
+};
+
+// A reusable countdown target — not eclipse-specific. `targetDateTime` is
+// stored as an ISO string with its own UTC offset baked in (e.g.
+// "2027-08-02T13:02:14+03:00"), so the countdown is correct for every
+// visitor regardless of their own timezone.
+export type EventCountdown = {
+  slug?: string;
+  name: string;
+  targetDateTime: string;
+  timezoneLabel?: string;
+  locationName?: string;
+  displayTitle?: string;
+  supportingText?: string;
+  backgroundImage?: SanityImage;
+  backgroundTone: ImageTone;
+  dayOfMessage?: string;
+  endedMessage?: string;
+  active: boolean;
+};
+
+export type StoryStatus = "draft" | "published" | "archived";
+
+// Story body content blocks — a small set of reusable, non-eclipse-specific
+// block types on top of standard Portable Text (paragraphs/headings/lists
+// via `block`, and captioned photos via `image`), so future articles can be
+// assembled visually in the Studio without code changes.
+export type StoryQuoteBlock = {
+  _type: "quoteBlock";
+  _key: string;
+  quote: string;
+  attribution?: string;
+};
+export type StoryCalloutBlock = {
+  _type: "calloutBlock";
+  _key: string;
+  title?: string;
+  body: string;
+  tone?: "Info" | "Safety" | "Highlight";
+};
+export type StoryGalleryBlock = {
+  _type: "galleryBlock";
+  _key: string;
+  images?: SanityImage[];
+};
+export type StoryVideoEmbedBlock = {
+  _type: "videoEmbedBlock";
+  _key: string;
+  url: string;
+  caption?: string;
+};
+export type StoryCountdownBlock = {
+  _type: "countdownBlock";
+  _key: string;
+  event?: EventCountdown;
+};
+export type StoryExperienceCardBlock = {
+  _type: "experienceCardBlock";
+  _key: string;
+  eyebrow?: string;
+  experience?: SignatureExperience;
+};
+export type StoryCtaBlock = {
+  _type: "ctaBlock";
+  _key: string;
+  title?: string;
+  body?: string;
+  buttonLabel?: string;
+  buttonHref?: string;
+};
+
+export type StoryBodyBlock =
+  | PortableTextBlock
+  | StoryQuoteBlock
+  | StoryCalloutBlock
+  | StoryGalleryBlock
+  | StoryVideoEmbedBlock
+  | StoryCountdownBlock
+  | StoryExperienceCardBlock
+  | StoryCtaBlock;
+
+// Lightweight shape used for "related story" teasers — everything a
+// StoryCard needs, without requiring the full Story (status, body, etc.).
+export type StoryCardData = {
   slug: string;
   title: string;
+  excerpt: string;
+  image?: SanityImage;
+  imageTone: ImageTone;
+  category?: string;
+};
+
+export type Story = {
+  status: StoryStatus;
+  featured: boolean;
+  slug: string;
+  title: string;
+  category?: string;
+  tags?: string[];
+  author?: Author;
   excerpt: string;
   imageLabel?: string;
   image?: SanityImage;
   imageTone: ImageTone;
-  body?: PortableTextBlock[];
+  body?: StoryBodyBlock[];
+  relatedExperience?: SignatureExperience;
+  relatedStories?: StoryCardData[];
   publishedAt?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: SanityImage;
+  canonicalUrl?: string;
 };
 
 export type Faq = {
