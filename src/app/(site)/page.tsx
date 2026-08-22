@@ -346,7 +346,7 @@ export default async function Home() {
               <Link
                 key={s.slug}
                 href={`/stories/${s.slug}`}
-                className="group overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+                className="group overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5"
               >
                 <SmartImage
                   image={s.image}

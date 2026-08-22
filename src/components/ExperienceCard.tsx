@@ -8,7 +8,7 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
   return (
     <Link
       href={`/experiences/${experience.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10"
+      className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5"
     >
       <SmartImage
         image={experience.image}

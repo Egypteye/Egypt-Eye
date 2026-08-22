@@ -33,7 +33,7 @@ export function PlaceholderImage({
     <div
       className={`${hasPositionOverride ? "" : "relative"} overflow-hidden bg-gradient-to-br ${gradient} ${className}`}
     >
-      <div className="absolute inset-0 bg-hieroglyph-pattern opacity-30" />
+      <div className="absolute inset-0 bg-hieroglyph-pattern opacity-[0.07]" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
       {label && (
         <span className="absolute bottom-3 left-3 rounded-full bg-black/30 px-3 py-1 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">

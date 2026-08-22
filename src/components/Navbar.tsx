@@ -50,9 +50,10 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
         </div>
 
         <button
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
+          aria-expanded={open}
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8}>
             {open ? (

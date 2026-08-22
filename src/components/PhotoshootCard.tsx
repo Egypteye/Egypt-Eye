@@ -8,7 +8,7 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
   return (
     <Link
       href={`/photoshoots/${photoshoot.slug}`}
-      className="group grid overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-black/10 sm:grid-cols-2"
+      className="group grid overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5 sm:grid-cols-2"
     >
       <SmartImage
         image={photoshoot.image}

@@ -12,7 +12,7 @@ export function SignatureExperienceCard({ experience }: { experience: SignatureE
   return (
     <Link
       href={`/signature-experiences/${experience.slug}`}
-      className="group flex flex-col overflow-hidden rounded-3xl bg-cream shadow-sm shadow-black/5 transition hover:shadow-xl hover:shadow-black/10"
+      className="group flex flex-col overflow-hidden rounded-3xl bg-cream shadow-sm shadow-black/5 transition hover:shadow-lg hover:shadow-black/5"
     >
       <div className="relative">
         <SmartImage

@@ -31,7 +31,7 @@ export default async function ContactPage() {
           <a
             href={site.contact.whatsappLink}
             target="_blank"
-            className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm transition hover:border-gold/30 hover:shadow-lg hover:shadow-black/5"
           >
             <p className="text-sm font-semibold uppercase tracking-wide text-gold-dark">
               WhatsApp
@@ -44,7 +44,7 @@ export default async function ContactPage() {
 
           <a
             href={`mailto:${site.contact.email}`}
-            className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+            className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm transition hover:border-gold/30 hover:shadow-lg hover:shadow-black/5"
           >
             <p className="text-sm font-semibold uppercase tracking-wide text-gold-dark">
               Email
