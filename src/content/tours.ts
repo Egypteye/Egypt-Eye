@@ -167,7 +167,7 @@ export const tours: Tour[] = [
   {
     slug: "3-days-jordan",
     title: "3 Days Exploring the Wonders of Jordan",
-    tagline: "Wadi Rum, Petra, and the Dead Sea in one unforgettable trip.",
+    tagline: "Wadi Rum, Petra, and the Dead Sea in a single private itinerary.",
     category: "jordan",
     duration: "3 days",
     lengthDays: 3,

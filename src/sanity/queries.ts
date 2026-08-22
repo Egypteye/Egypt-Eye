@@ -124,6 +124,7 @@ const signatureExperienceFields = groq`
   hosts[]->{"slug": slug.current, name, role, photo, bio, languages, experience, personality},
   faqs[]{question, answer},
   testimonials[]->{name, quote, context},
+  relatedStory->{"slug": slug.current, title, excerpt, image, imageTone, category},
   seoTitle, seoDescription, canonicalUrl, ogImage, noindex
 `;
 

@@ -483,6 +483,7 @@ export type SignatureExperience = {
   hosts?: Host[];
   faqs?: ExperienceFaq[];
   testimonials?: Testimonial[];
+  relatedStory?: StoryCardData;
   seoTitle?: string;
   seoDescription?: string;
   canonicalUrl?: string;

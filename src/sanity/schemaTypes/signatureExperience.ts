@@ -247,6 +247,14 @@ export const signatureExperience = defineType({
       of: [{ type: "reference", to: [{ type: "testimonial" }] }],
     }),
 
+    defineField({
+      name: "relatedStory",
+      title: "Related story",
+      description: "A Story that gives background on this experience — shown as a \"Read the Story\" link on the page.",
+      type: "reference",
+      to: [{ type: "story" }],
+    }),
+
     defineField({ name: "seoTitle", title: "SEO title (optional override)", type: "string" }),
     defineField({ name: "seoDescription", title: "SEO description (optional override)", type: "text" }),
     defineField({ name: "canonicalUrl", title: "Canonical URL (optional)", type: "url" }),

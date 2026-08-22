@@ -10,7 +10,8 @@ import { Reveal } from "@/components/Reveal";
 import { getStories, getStoryBySlug } from "@/sanity/fetchers";
 import { estimateReadingTime } from "@/content/readingTime";
 import { urlForImage } from "@/sanity/image";
-import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
+import { breadcrumbJsonLd, resolveMetadata, siteUrl } from "@/content/seo";
+import { site } from "@/content/site";
 import type { StoryCountdownBlock } from "@/content/types";
 
 export async function generateStaticParams() {
@@ -66,6 +67,14 @@ export default async function StoryDetailPage({
     datePublished: story.publishedAt,
     dateModified: story.publishedAt,
     author: story.author ? { "@type": "Organization", name: story.author.name } : undefined,
+    publisher: {
+      "@type": "Organization",
+      name: site.name,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/brand/egypt-eye-badge-gold.png`,
+      },
+    },
   };
 
   const breadcrumbs = breadcrumbJsonLd([

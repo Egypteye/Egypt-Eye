@@ -201,17 +201,6 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "best-travel-agencies-in-egypt-2025-guide",
-    title: "Best Travel Agencies in Egypt (2025 Guide)",
-    category: "Travel Guides",
-    excerpt:
-      "Our 2025 breakdown of how to compare Egypt tour operators, from private vs. group transportation to what a genuinely private Egyptologist guide should include.",
-    imageLabel: "Khan el-Khalili",
-    imageTone: "giza",
-  },
-  {
-    status: "published",
-    featured: false,
     slug: "girls-getaway-cairo-giza-jordan",
     title: "A Girls' Getaway: Exploring Cairo, Giza, and Jordan",
     category: "Behind the Scenes",
@@ -224,8 +213,7 @@ export const stories: Story[] = [
     status: "published",
     featured: false,
     slug: "capturing-unforgettable-moments",
-    title:
-      "Capturing Unforgettable Moments: Our Egyptian Adventure with Egypt Eye Travel and Tours",
+    title: "What a Week With Egypt Eye Actually Looks Like",
     category: "Behind the Scenes",
     excerpt:
       "A first-person look at what a week with Egypt Eye actually feels like — from the Nine Pyramids View at golden hour to dinner aboard a Nile cruise.",

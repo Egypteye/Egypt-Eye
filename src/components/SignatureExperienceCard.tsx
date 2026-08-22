@@ -50,7 +50,7 @@ export function SignatureExperienceCard({ experience }: { experience: SignatureE
         </div>
 
         <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink transition group-hover:gap-3">
-          Discover the experience
+          See the full experience
           <span aria-hidden="true">→</span>
         </span>
       </div>

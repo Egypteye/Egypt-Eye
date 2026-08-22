@@ -9,6 +9,10 @@ import {
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://egypt-eye.vercel.app";
 
+// Slugs that 301-redirect elsewhere (see next.config.ts) — keep them out of
+// the sitemap even if the underlying Sanity document hasn't been removed yet.
+const REDIRECTED_STORY_SLUGS = new Set(["best-travel-agencies-in-egypt-2025-guide"]);
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories] = await Promise.all([
     getAllTourSlugs(),
@@ -54,12 +58,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }));
 
-  const storyRoutes: MetadataRoute.Sitemap = stories.map((s) => ({
-    url: `${siteUrl}/stories/${s.slug}`,
-    changeFrequency: "monthly",
-    priority: 0.65,
-    lastModified: s.publishedAt,
-  }));
+  const storyRoutes: MetadataRoute.Sitemap = stories
+    .filter((s) => !REDIRECTED_STORY_SLUGS.has(s.slug))
+    .map((s) => ({
+      url: `${siteUrl}/stories/${s.slug}`,
+      changeFrequency: "monthly",
+      priority: 0.65,
+      lastModified: s.publishedAt,
+    }));
 
   return [
     ...staticRoutes,

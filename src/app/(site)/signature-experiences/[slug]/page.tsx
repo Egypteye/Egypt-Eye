@@ -10,6 +10,7 @@ import { CareSection } from "@/components/CareSection";
 import { HostCard } from "@/components/HostCard";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { StoryCard } from "@/components/StoryCard";
 import {
   getAllSignatureExperienceSlugs,
   getSignatureExperienceBySlug,
@@ -250,6 +251,25 @@ export default async function SignatureExperienceDetailPage({
             </Reveal>
             <Reveal delay={100} className="mt-10">
               <FaqAccordion faqs={experience.faqs} />
+            </Reveal>
+          </Container>
+        </section>
+      )}
+
+      {/* Related story */}
+      {experience.relatedStory && (
+        <section className="py-20">
+          <Container className="mx-auto max-w-3xl">
+            <Reveal>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
+                The Background
+              </p>
+              <h2 className="mt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
+                Read the Full Story
+              </h2>
+              <div className="mt-6 max-w-sm">
+                <StoryCard story={experience.relatedStory} />
+              </div>
             </Reveal>
           </Container>
         </section>

@@ -238,6 +238,14 @@ export const signatureExperiences: SignatureExperience[] = [
     status: "comingSoon",
     order: 1,
     slug: "the-luxor-eclipse",
+    relatedStory: {
+      slug: "2027-total-solar-eclipse-luxor",
+      title: "Six Minutes of Totality Over the Valley of the Kings",
+      excerpt:
+        "On August 2, 2027, Luxor gets the longest total solar eclipse anywhere on Earth until 2114 — roughly six minutes and twenty-two seconds, almost directly overhead, above one of the oldest cities on the planet.",
+      imageTone: "luxor",
+      category: "Celestial Events",
+    },
     name: "The Luxor Eclipse",
     forWhom: "For travelers who want to watch totality from one of the greatest historical sites on Earth.",
     emotionalHeadline: "Six Minutes of Totality, Over Three Thousand Years of History.",
