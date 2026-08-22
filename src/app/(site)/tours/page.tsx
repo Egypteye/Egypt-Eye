@@ -7,9 +7,9 @@ import { ToursGrid } from "./ToursGrid";
 import { getTours } from "@/sanity/fetchers";
 
 export const metadata: Metadata = {
-  title: "Popular Tours",
+  title: "Private Tours Across Egypt & Jordan",
   description:
-    "Private, expertly guided tours across Egypt and Jordan — one-day trips, multi-day itineraries, and Nile cruises.",
+    "Private, guided tours across Egypt and Jordan — one-day trips, multi-day itineraries, and Nile cruises. Every tour includes a private vehicle and guide.",
 };
 
 export default async function ToursPage() {

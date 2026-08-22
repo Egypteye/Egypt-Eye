@@ -4,8 +4,9 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getContactPage, getSiteSettings } from "@/sanity/fetchers";
 
 export const metadata = {
-  title: "Contact",
-  description: "Get in touch with Egypt Eye Travel and Tours via WhatsApp or email.",
+  title: "Contact Egypt Eye",
+  description:
+    "Reach Egypt Eye Travel and Tours via WhatsApp or email for bookings, questions, or urgent support during your trip.",
 };
 
 export default async function ContactPage() {

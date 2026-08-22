@@ -6,9 +6,9 @@ import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { getPhotoshoots } from "@/sanity/fetchers";
 
 export const metadata: Metadata = {
-  title: "Photoshoot Packages",
+  title: "Pyramids & Flying Dress Photoshoots in Egypt",
   description:
-    "Professional photoshoot packages in Egypt — the Exclusive Pyramids Photoshoot and Egypt's first Flying Dress experience.",
+    "Professional photoshoot packages in Egypt, including the Exclusive Pyramids Photoshoot and Egypt's first Flying Dress experience.",
 };
 
 export default async function PhotoshootsPage() {

@@ -9,7 +9,7 @@ import { getSignatureExperiences } from "@/sanity/fetchers";
 export const metadata: Metadata = {
   title: "Signature Experiences",
   description:
-    "A different kind of travel from Egypt Eye — curated experiences designed around a specific person, need, and way of feeling taken care of, not just a list of destinations.",
+    "Curated Egypt travel experiences designed around a specific person and need — the destination is part of the answer, not the whole plan.",
 };
 
 export default async function SignatureExperiencesPage() {

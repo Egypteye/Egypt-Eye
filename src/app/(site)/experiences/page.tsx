@@ -6,9 +6,9 @@ import { ExperienceCard } from "@/components/ExperienceCard";
 import { getExperiences } from "@/sanity/fetchers";
 
 export const metadata: Metadata = {
-  title: "Extra Experiences",
+  title: "Egypt Add-On Experiences & Day Trips",
   description:
-    "Add-on experiences to any Egypt Eye tour — felucca sailing, desert ATV rides, Nile dinner cruises, and food tours.",
+    "Felucca sailing, desert ATV rides, Nile dinner cruises, and food tours — add one to any Egypt Eye tour, or book it on its own.",
 };
 
 export default async function ExperiencesPage() {

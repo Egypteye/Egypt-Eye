@@ -9,9 +9,9 @@ import { estimateReadingTime } from "@/content/readingTime";
 import { StoriesGrid } from "./StoriesGrid";
 
 export const metadata: Metadata = {
-  title: "Stories",
+  title: "Egypt Travel Stories & Journal",
   description:
-    "Editorial travel stories from Egypt Eye — the history, the places, and the rare moments worth building a trip around.",
+    "Editorial travel writing from Egypt Eye — the history, the places, and the rare moments worth building a trip around.",
 };
 
 export default async function StoriesPage() {

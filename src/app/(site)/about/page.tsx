@@ -2,14 +2,12 @@ import Image from "next/image";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
-import { site as localSite } from "@/content/site";
 import { getAboutPage, getSiteSettings } from "@/sanity/fetchers";
 
-// Metadata can't be fetched async here without generateMetadata, and a
-// slightly-stale SEO description is low-stakes — falls back to the local copy.
 export const metadata = {
-  title: "About Us",
-  description: localSite.positioning,
+  title: "About Egypt Eye Travel and Tours",
+  description:
+    "We show you Egypt, take care of you, customize the trip, and professionally capture it — tour operator, experience company, and photography studio in one.",
 };
 
 export default async function AboutPage() {
