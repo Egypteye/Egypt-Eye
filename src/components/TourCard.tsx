@@ -4,13 +4,12 @@ import { SmartImage } from "./SmartImage";
 import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { Badge } from "./Badge";
+import { AddToJourneyButton } from "./AddToJourneyButton";
 
 export function TourCard({ tour }: { tour: Tour }) {
   return (
-    <Link
-      href={`/tours/${tour.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5">
+      <Link href={`/tours/${tour.slug}`} className="absolute inset-0 z-10" aria-label={tour.title} />
       <SmartImage
         image={tour.image}
         tone={tour.imageTone}
@@ -28,6 +27,9 @@ export function TourCard({ tour }: { tour: Tour }) {
           <span className="text-sm text-ink-soft/70">{tour.duration}</span>
           <Rating rating={tour.rating} />
         </div>
+        <div className="relative z-20">
+          <AddToJourneyButton type="tour" slug={tour.slug} title={tour.title} subtitle={tour.duration} />
+        </div>
         <div className="flex items-center justify-between border-t border-black/5 pt-3">
           <PriceTag price={tour.price} />
           <span className="text-sm font-semibold text-gold-dark transition group-hover:translate-x-1">
@@ -35,6 +37,6 @@ export function TourCard({ tour }: { tour: Tour }) {
           </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

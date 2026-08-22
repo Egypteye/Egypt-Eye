@@ -4,9 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import type { ResolvedSiteSettings } from "@/content/types";
+import { useJourneyItems } from "@/lib/journey";
 
 export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   const [open, setOpen] = useState(false);
+  const journeyCount = useJourneyItems().length;
 
   return (
     <header className="sticky top-0 z-50 border-b border-black/5 bg-cream/90 backdrop-blur-md">
@@ -39,10 +41,20 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           ))}
         </nav>
 
-        <div className="hidden lg:block">
+        <div className="hidden items-center gap-3 lg:flex">
+          {journeyCount > 0 && (
+            <Link
+              href="/customize"
+              className="flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-4 py-2.5 text-sm font-semibold text-gold-dark transition hover:bg-gold/20"
+            >
+              My Journey
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold-dark text-[11px] text-cream">
+                {journeyCount}
+              </span>
+            </Link>
+          )}
           <Link
-            href={site.contact.whatsappLink}
-            target="_blank"
+            href="/customize"
             className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
           >
             Plan My Trip
@@ -79,8 +91,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               </Link>
             ))}
             <Link
-              href={site.contact.whatsappLink}
-              target="_blank"
+              href="/customize"
               className="mt-2 rounded-full bg-ink px-5 py-2.5 text-center text-sm font-semibold text-cream"
               onClick={() => setOpen(false)}
             >

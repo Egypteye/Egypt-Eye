@@ -3,13 +3,16 @@ import type { Photoshoot } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
+import { AddToJourneyButton } from "./AddToJourneyButton";
 
 export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
   return (
-    <Link
-      href={`/photoshoots/${photoshoot.slug}`}
-      className="group grid overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5 sm:grid-cols-2"
-    >
+    <div className="group relative grid overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5 sm:grid-cols-2">
+      <Link
+        href={`/photoshoots/${photoshoot.slug}`}
+        className="absolute inset-0 z-10"
+        aria-label={photoshoot.title}
+      />
       <SmartImage
         image={photoshoot.image}
         tone={photoshoot.imageTone}
@@ -32,11 +35,19 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
             </span>
           ))}
         </div>
+        <div className="relative z-20">
+          <AddToJourneyButton
+            type="photoshoot"
+            slug={photoshoot.slug}
+            title={photoshoot.title}
+            subtitle={photoshoot.duration}
+          />
+        </div>
         <div className="mt-auto flex items-center justify-between border-t border-black/5 pt-3">
           <PriceTag price={photoshoot.price} />
           <Rating rating={photoshoot.rating} />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

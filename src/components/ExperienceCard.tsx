@@ -3,13 +3,16 @@ import type { Experience } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
+import { AddToJourneyButton } from "./AddToJourneyButton";
 
 export function ExperienceCard({ experience }: { experience: Experience }) {
   return (
-    <Link
-      href={`/experiences/${experience.slug}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5">
+      <Link
+        href={`/experiences/${experience.slug}`}
+        className="absolute inset-0 z-10"
+        aria-label={experience.title}
+      />
       <SmartImage
         image={experience.image}
         tone={experience.imageTone}
@@ -24,11 +27,19 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
         <p className="line-clamp-2 text-sm text-ink-soft/70">
           {experience.description}
         </p>
+        <div className="relative z-20">
+          <AddToJourneyButton
+            type="experience"
+            slug={experience.slug}
+            title={experience.title}
+            subtitle={experience.duration}
+          />
+        </div>
         <div className="mt-auto flex items-center justify-between border-t border-black/5 pt-3">
           <PriceTag price={experience.price} />
           <Rating rating={experience.rating} />
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

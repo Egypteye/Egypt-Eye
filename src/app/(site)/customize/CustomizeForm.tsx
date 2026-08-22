@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { CustomizeFormField, CustomizeFormSection, ResolvedSiteSettings } from "@/content/types";
 import { destinations } from "@/content/destinations";
 import { interests } from "@/content/interests";
+import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
 
 const CHIPS_TYPES = new Set(["chips", "chips-destinations", "chips-interests"]);
 
@@ -58,6 +59,7 @@ export function CustomizeForm({
   const [chipSelections, setChipSelections] = useState<Record<string, string[]>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const journeyItems = useJourneyItems();
 
   function toggleChip(fieldKey: string, value: string) {
     setChipSelections((prev) => {
@@ -99,6 +101,14 @@ export function CustomizeForm({
     }
 
     const filled = collected.filter((f) => f.value);
+    if (journeyItems.length > 0) {
+      filled.push({
+        fieldKey: "journeyItems",
+        label: "Added from My Journey",
+        fieldType: "text",
+        value: journeyItems.map((i) => i.title).join("; "),
+      });
+    }
     const name = collected.find((f) => f.fieldKey === "fullName")?.value;
     const replyToEmail = collected.find((f) => f.fieldType === "email")?.value;
     const subject = `Custom Tour Request — ${name || "New Enquiry"}`;
@@ -133,6 +143,35 @@ export function CustomizeForm({
           <input type="text" name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
+
+      {journeyItems.length > 0 && (
+        <div className="mb-8 rounded-2xl border border-gold/20 bg-sand-dim p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-dark">
+            From Your Journey
+          </p>
+          <p className="mt-1 text-xs text-ink-soft/60">
+            These will be included with your request. Remove anything that doesn&rsquo;t belong.
+          </p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {journeyItems.map((item) => (
+              <span
+                key={item.id}
+                className="flex items-center gap-2 rounded-full bg-cream px-3 py-1.5 text-xs font-medium text-ink"
+              >
+                {item.title}
+                <button
+                  type="button"
+                  onClick={() => removeJourneyItem(item.type, item.slug)}
+                  aria-label={`Remove ${item.title}`}
+                  className="text-ink-soft/50 hover:text-terracotta"
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {sections.map((section, sectionIndex) => (
         <FormSection
