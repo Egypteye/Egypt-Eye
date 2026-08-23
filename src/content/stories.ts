@@ -1,4 +1,4 @@
-import type { Story } from "./types";
+import type { Story, StoryBodyBlock, StoryFaqItem } from "./types";
 import { authors } from "./authors";
 import { events } from "./events";
 import { signatureExperiences } from "./signatureExperiences";
@@ -11,6 +11,58 @@ const herEgyptExperience = signatureExperiences.find((e) => e.slug === "her-egyp
 
 function toursBySlug(...slugs: string[]) {
   return slugs.map((slug) => tours.find((t) => t.slug === slug)).filter((t): t is (typeof tours)[number] => Boolean(t));
+}
+
+// Small body-block builders used by the SEO content batch below, so a new
+// article's copy doesn't have to hand-write Portable Text block/span
+// boilerplate for every paragraph.
+let blockKeySeq = 0;
+function nextBlockKey(prefix: string) {
+  blockKeySeq += 1;
+  return `${prefix}${blockKeySeq}`;
+}
+
+function p(text: string): StoryBodyBlock {
+  return {
+    _type: "block",
+    _key: nextBlockKey("p"),
+    style: "normal",
+    children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
+    markDefs: [],
+  } as StoryBodyBlock;
+}
+
+function h2(text: string): StoryBodyBlock {
+  return {
+    _type: "block",
+    _key: nextBlockKey("h"),
+    style: "h2",
+    children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
+    markDefs: [],
+  } as StoryBodyBlock;
+}
+
+function bullets(items: string[]): StoryBodyBlock[] {
+  return items.map(
+    (text) =>
+      ({
+        _type: "block",
+        _key: nextBlockKey("li"),
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
+        markDefs: [],
+      }) as StoryBodyBlock
+  );
+}
+
+function callout(body: string, opts?: { title?: string; tone?: "Info" | "Safety" | "Highlight" }): StoryBodyBlock {
+  return { _type: "calloutBlock", _key: nextBlockKey("callout"), title: opts?.title, body, tone: opts?.tone ?? "Highlight" };
+}
+
+function faq(faqs: StoryFaqItem[], title?: string): StoryBodyBlock {
+  return { _type: "faqBlock", _key: nextBlockKey("faq"), title, faqs };
 }
 
 // Stories / blog listing.
@@ -2008,6 +2060,1238 @@ export const stories: Story[] = [
           },
         ],
       },
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "egypt-visa-guide-2026",
+    title: "Egypt Visa Guide: How to Get Your e-Visa in 2026",
+    category: "Travel Guides",
+    tags: ["Visa", "Trip Planning", "Egypt Travel"],
+    author: editorialTeam,
+    excerpt:
+      "What the Egypt e-visa actually costs, how long it takes, and the mistakes that trip up first-time applicants — a straightforward guide to getting the paperwork right.",
+    imageTone: "giza",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Luxor", "Aswan"],
+    primaryKeyword: "egypt visa",
+    secondaryKeywords: ["egypt e-visa", "egypt visa cost", "egypt visa requirements", "how to get an egypt visa"],
+    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise"),
+    seoTitle: "Egypt Visa Guide 2026: e-Visa Cost, Requirements, and How to Apply",
+    seoDescription:
+      "Everything to know about the Egypt e-visa in 2026 — cost, processing time, requirements, and the common mistakes that delay applications.",
+    body: [
+      p(
+        "Most visitors to Egypt need a visa, and the easiest route for the vast majority of travelers is the official e-visa — applied for online, before you fly, with no visit to an embassy required."
+      ),
+      h2("Single-Entry or Multiple-Entry"),
+      p(
+        "The e-visa comes in two forms. A single-entry visa allows a stay of up to 30 days and is valid for use within 3 months of issue; a multiple-entry visa allows up to 30 days per visit and stays valid for 6 months, useful if your trip includes a side visit elsewhere and a return to Egypt. As of 2026, official fees run around $30 for single-entry and $65 for multiple-entry."
+      ),
+      callout(
+        "Only apply through Egypt's official e-visa portal. A number of unofficial third-party sites mimic it and charge two to three times the real fee for the same visa.",
+        { tone: "Safety", title: "Watch for Unofficial Sites" }
+      ),
+      h2("What You'll Need"),
+      ...bullets([
+        "A passport valid for at least 6 months beyond your travel dates, with at least one to two blank pages",
+        "A digital passport-style photo",
+        "Your travel dates and a valid email address for the approved visa PDF",
+        "A debit or credit card for the application fee",
+      ]),
+      h2("Timing"),
+      p(
+        "Processing typically takes around 3 business days, though it can occasionally take longer. Apply at least a week before departure to leave room for that, and save the approved visa PDF — you'll be asked to show it on arrival alongside your passport."
+      ),
+      faq([
+        {
+          question: "Do I need a visa to visit Egypt?",
+          answer:
+            "Most nationalities do, yes. Check the official e-visa portal for your specific passport, as a small number of nationalities have different requirements or are not eligible for the e-visa.",
+        },
+        {
+          question: "Can I get a visa on arrival in Egypt?",
+          answer:
+            "Visa-on-arrival is available at some airports for eligible nationalities, but it typically costs more than the e-visa and creates a line to wait in after a long flight. Applying online in advance is simpler.",
+        },
+        {
+          question: "How much does an Egypt visa cost?",
+          answer:
+            "As of 2026, the official e-visa fee is roughly $30 for single-entry and $65 for multiple-entry. Prices on unofficial sites are often significantly higher.",
+        },
+      ]),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "is-egypt-safe-to-visit",
+    title: "Is Egypt Safe to Visit in 2026?",
+    category: "Travel Guides",
+    tags: ["Safety", "Trip Planning"],
+    author: editorialTeam,
+    excerpt:
+      "A plain-spoken look at where Egypt's travel advisories actually apply, what tourist areas are like day to day, and the difference between South Sinai and the areas travelers are told to avoid.",
+    imageTone: "desert",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Luxor", "Aswan", "Sinai", "Red Sea"],
+    primaryKeyword: "is egypt safe to visit",
+    secondaryKeywords: ["egypt safety 2026", "is egypt safe for tourists", "sharm el sheikh safe", "sinai travel advisory"],
+    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "10-day-private-luxurious-trip"),
+    seoTitle: "Is Egypt Safe to Visit in 2026? A Grounded Answer",
+    seoDescription:
+      "What Egypt's travel advisories actually say, what the main tourist areas are like on the ground, and the real distinction between South Sinai and North Sinai.",
+    body: [
+      p(
+        "Millions of tourists visit Egypt every year, and the country's main destinations — Cairo, Giza, Luxor, Aswan, and the Red Sea coast — operate normally, with a visible tourist police presence at every major site. That's the honest baseline before getting into specifics."
+      ),
+      h2("What the Advisories Actually Say"),
+      p(
+        "Egypt as a whole is generally rated as a country requiring increased caution, similar to many popular travel destinations, rather than a country to avoid. Within that, some specific areas — Northern and Middle Sinai, and stretches near the western border with Libya — carry stronger advisories against travel. Cairo, Giza, Luxor, Aswan, Alexandria, and the Red Sea resort towns are not part of those warnings."
+      ),
+      h2("The Sinai Confusion, Cleared Up"),
+      p(
+        "This is the detail that trips people up most. \"Sinai\" gets treated online as one place, but it isn't. South Sinai — Sharm El Sheikh, Dahab, Nuweiba, St. Catherine, and Mount Sinai — is the heavily touristed, resort-developed part of the peninsula, and it operates normally. The areas under stronger advisories sit in the north of the Sinai peninsula, a different region entirely, far from the coastal towns visitors actually go to. Confusing the two leads a lot of people to skip destinations that are, in practice, perfectly normal to visit."
+      ),
+      h2("What Actually Happens Day to Day"),
+      p(
+        "The realistic risk most tourists encounter isn't danger — it's persistent vendors, occasional overcharging, and the ordinary hassle of a busy tourist market. Violent crime against visitors is rare. Traveling with a licensed guide, sticking to your itinerary's arranged transport rather than unmarked taxis, and keeping copies of your passport and visa are the same sensible habits that apply in any major destination."
+      ),
+      faq([
+        {
+          question: "Is it safe to travel to Cairo?",
+          answer: "Yes. Cairo and Giza are Egypt's most visited region and operate normally for tourism, with visible security at major sites.",
+        },
+        {
+          question: "Is Sharm El Sheikh safe?",
+          answer: "Yes. Sharm sits in South Sinai, a well-developed resort region distinct from the parts of Sinai under travel advisories.",
+        },
+        {
+          question: "What part of Egypt should I avoid?",
+          answer:
+            "Northern and Middle Sinai, and areas near the western border with Libya, carry stronger travel advisories. These are not part of any standard tourist itinerary.",
+        },
+      ]),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "how-much-does-a-trip-to-egypt-cost",
+    title: "How Much Does a Trip to Egypt Actually Cost?",
+    category: "Travel Guides",
+    tags: ["Trip Planning", "Budgeting"],
+    author: editorialTeam,
+    excerpt:
+      "A realistic breakdown of what a budget, mid-range, and luxury Egypt trip actually costs — accommodation, Nile cruises, and daily spending, by the numbers.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Luxor", "Aswan"],
+    primaryKeyword: "cost of a trip to egypt",
+    secondaryKeywords: ["egypt travel budget", "how much does a nile cruise cost", "egypt trip cost per day"],
+    relatedTours: toursBySlug("10-day-private-luxurious-trip", "8-day-essential-egypt-nile-cruise", "4-day-nile-cruise-luxor-aswan"),
+    seoTitle: "How Much Does a Trip to Egypt Cost? A Realistic Budget Breakdown",
+    seoDescription:
+      "What a budget, mid-range, and luxury Egypt trip actually costs per day — plus how Nile cruise and accommodation pricing scales with comfort.",
+    body: [
+      p(
+        "Egypt can be genuinely affordable or genuinely luxurious, and the honest answer to \"how much will this cost\" depends entirely on which end of that range you're aiming for. Here's roughly how the numbers break down."
+      ),
+      h2("Three Rough Tiers"),
+      p(
+        "Budget travel — hostels or basic hotels, local food, public transport — runs somewhere around $35 to $55 a day, not including international flights. Mid-range travel, with comfortable three- or four-star hotels, private transport for day tours, and a mix of local and touristy restaurants, lands closer to $80 to $150 a day. Luxury travel, with five-star hotels, private guides throughout, and premium Nile cruise cabins, starts around $300 a day and climbs from there."
+      ),
+      h2("Where the Big Costs Sit"),
+      p(
+        "Accommodation is the widest range of any category — a basic double room can run $10 to $40 a night, while five-star Nile-view or desert-lodge properties run $250 to $600 or more. A multi-night cruise between Luxor and Aswan follows a similar spread: standard cruise cabins on a 3- or 4-night sailing often run somewhere in the $150 to $250 range per person, while a luxury dahabiya sailing or a high-end cabin can run into the high hundreds or beyond, per night."
+      ),
+      callout(
+        "These figures are general market context, not what we charge — every Egypt Eye itinerary is quoted individually once we know your dates, group size, and the level of comfort you want, so you always know the actual number before booking.",
+        { tone: "Info", title: "A Note on Our Own Pricing" }
+      ),
+      h2("A Sample Ten-Day Trip"),
+      p(
+        "A well-paced ten-day mid-range trip covering Cairo, Giza, and a Luxor-to-Aswan cruise typically lands somewhere between $2,500 and $4,000 per person, including domestic flights or trains, guided touring, and most meals — excluding the international flight to Egypt itself."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "what-to-pack-for-egypt",
+    title: "What to Pack for Egypt: A Practical Packing Guide",
+    category: "Travel Guides",
+    tags: ["Trip Planning", "Packing"],
+    author: editorialTeam,
+    excerpt:
+      "What actually earns a spot in your suitcase for an Egypt trip — from sun protection and modest layers to the small items first-time visitors forget.",
+    imageTone: "desert",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Luxor", "Aswan"],
+    primaryKeyword: "what to pack for egypt",
+    secondaryKeywords: ["egypt packing list", "what to wear in egypt", "egypt travel essentials"],
+    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise"),
+    seoTitle: "What to Pack for Egypt: A Practical, Season-Aware Packing List",
+    seoDescription:
+      "A realistic Egypt packing list — clothing, sun protection, and the small essentials that make a difference on a walking-heavy, sun-heavy trip.",
+    body: [
+      p(
+        "Egypt is hot, dusty, and full of open-air sites with very little shade, which should shape most of what goes in your suitcase more than anything else."
+      ),
+      h2("Clothing"),
+      p(
+        "Loose, breathable layers in light colors work far better than anything tight or dark. Covered shoulders and knees are comfortable in the heat and also appropriate at religious sites and outside resort areas — a lightweight long-sleeve shirt and loose trousers or a maxi skirt do double duty for sun protection and modesty. Bring a warm layer too: desert nights, and Nile-side mornings from November through February, get genuinely cool."
+      ),
+      h2("Footwear and Sun Protection"),
+      ...bullets([
+        "Comfortable, broken-in walking shoes — temple floors are uneven stone, not paved paths",
+        "A wide-brimmed hat and UV-protective sunglasses",
+        "High-SPF sunscreen, reapplied more than you'd expect — the desert sun is strong even in cooler months",
+        "A reusable water bottle; dehydration is the most common thing that ruins an otherwise good day of touring",
+      ]),
+      h2("Small Essentials Worth Not Forgetting"),
+      p(
+        "A portable phone charger or power bank, a downloaded copy of your e-visa, a few small-denomination local currency notes for tipping, and any prescription medication in its original packaging. If you're visiting between June and August, pack lighter and looser than you think you need to — temperatures inland regularly pass 40°C (104°F)."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "mistakes-first-time-egypt-travelers-make",
+    title: "Common Mistakes First-Time Egypt Travelers Make",
+    category: "Travel Guides",
+    tags: ["Trip Planning", "First-Time Visitors"],
+    author: editorialTeam,
+    excerpt:
+      "The planning mistakes that come up again and again on a first Egypt trip — and how to sidestep each one before you book.",
+    imageTone: "giza",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Luxor", "Aswan"],
+    primaryKeyword: "egypt travel mistakes",
+    secondaryKeywords: ["egypt travel tips", "first time in egypt mistakes", "egypt trip planning tips"],
+    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "10-day-private-luxurious-trip"),
+    seoTitle: "Common Mistakes First-Time Egypt Travelers Make (and How to Avoid Them)",
+    seoDescription:
+      "The planning mistakes that trip up first-time Egypt visitors most often — rushed itineraries, midday touring, and underpricing the Nile Valley.",
+    body: [
+      p(
+        "Egypt rewards a bit of planning more than most destinations, largely because its major sites are spread across a long stretch of the country. Most first-trip regrets trace back to a handful of avoidable decisions."
+      ),
+      h2("Treating Luxor as a Day Trip"),
+      p(
+        "Luxor holds more history than most countries — Karnak, Luxor Temple, the Valley of the Kings, Hatshepsut's temple — and trying to see it in a single rushed day from Cairo means seeing almost none of it properly. Two to three days is the realistic minimum."
+      ),
+      h2("Touring Through the Hottest Hours"),
+      p(
+        "Sites open early specifically so visitors can be through the major stops before midday heat sets in, yet a surprising number of first-time itineraries start late and end up touring at the worst possible hour. An early start, especially outside the cooler months, changes the whole day."
+      ),
+      h2("Underestimating Distances"),
+      p(
+        "Cairo to Luxor is roughly the distance of a long domestic flight, not a short drive — Egypt is a big country, and its main sites sit hours apart by road or a short flight apart by air. Building an itinerary around realistic travel times, rather than a wish list of every site in the country, makes for a far better trip."
+      ),
+      h2("Booking the Cheapest Operator Without Checking Credentials"),
+      p(
+        "Price alone doesn't tell you much about a tour operator. A licensed guide, a roadworthy vehicle, and transparent inclusions matter more than shaving a small amount off the price — especially on longer, multi-day itineraries where a poor guide affects every single day, not just one."
+      ),
+      callout(
+        "The single highest-leverage fix for most of these is booking private rather than a rigid group schedule — it gives you room to start early, linger, or adjust without twenty other people's preferences in the way."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "memphis-saqqara-dahshur-egypts-first-pyramids",
+    title: "Memphis, Saqqara, and Dahshur: Egypt's Original Pyramid Fields",
+    category: "Ancient Egypt",
+    tags: ["Cairo", "Ancient Egypt", "Pyramids"],
+    author: editorialTeam,
+    excerpt:
+      "Before Giza, there was Saqqara — Egypt's first pyramid, its oldest necropolis, and a day trip that draws a fraction of the crowd for a comparable amount of history.",
+    imageTone: "giza",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Saqqara", "Dahshur"],
+    primaryKeyword: "saqqara and dahshur",
+    secondaryKeywords: ["step pyramid of djoser", "bent pyramid dahshur", "memphis egypt ancient capital", "saqqara vs giza"],
+    relatedTours: toursBySlug("memphis-saqqara-dahshur-tour", "3-day-cairo-giza"),
+    seoTitle: "Memphis, Saqqara, and Dahshur: Egypt's First Pyramid Fields",
+    seoDescription:
+      "Before Giza, Egypt built its first pyramids at Saqqara and Dahshur. What's there, why it matters, and why it's worth a day beyond the Giza plateau.",
+    body: [
+      p(
+        "Giza gets the crowds, but the pyramids there weren't Egypt's first. That distinction belongs to Saqqara, about half an hour south, where the earliest large-scale stone monument in the world still stands."
+      ),
+      h2("Saqqara and the Step Pyramid"),
+      p(
+        "The Step Pyramid of Djoser, built around 2670 BCE for Egypt's Third Dynasty, predates Giza's Great Pyramid by roughly a century and represents the first time Egyptians built primarily in stone rather than mudbrick at this scale. Its six stacked stone tiers, designed by the architect Imhotep, mark the actual starting point of pyramid-building as a tradition — everything at Giza follows from what was worked out here first."
+      ),
+      h2("Dahshur's Two Experiments"),
+      p(
+        "A short drive from Saqqara, Dahshur holds the Bent Pyramid and the Red Pyramid, both built under the pharaoh Sneferu. The Bent Pyramid changes angle partway up — a visible record of ancient builders adjusting their approach mid-construction — while the Red Pyramid, built afterward with lessons learned, is considered the first successful true smooth-sided pyramid in Egypt, predating Giza's Great Pyramid."
+      ),
+      h2("Memphis: The Capital Itself"),
+      p(
+        "Memphis was ancient Egypt's capital for much of the Old Kingdom, and while little of the city itself survives above ground, its open-air museum holds a colossal fallen statue of Ramesses II and an alabaster sphinx, giving a sense of the city's scale even in fragments."
+      ),
+      callout(
+        "This whole area draws far fewer visitors than Giza, which means more room to actually look at what you're seeing — including, at Saqqara, some of the best-preserved painted tomb reliefs anywhere near Cairo.",
+        { title: "Why It's Worth the Extra Day" }
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "islamic-and-coptic-cairo-walking-guide",
+    title: "Islamic and Coptic Cairo: A Walking Guide to Old Cairo",
+    category: "Travel Guides",
+    tags: ["Cairo", "Culture", "Architecture"],
+    author: editorialTeam,
+    excerpt:
+      "Beyond the Pyramids, Cairo holds a thousand years of Islamic architecture and some of Christianity's oldest surviving churches — both walkable, both often skipped.",
+    imageTone: "giza",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo"],
+    primaryKeyword: "islamic and coptic cairo",
+    secondaryKeywords: ["old cairo walking tour", "khan el khalili", "hanging church cairo", "cairo citadel"],
+    relatedTours: toursBySlug("islamic-coptic-cairo-walking-tour", "3-day-cairo-giza"),
+    seoTitle: "Islamic and Coptic Cairo: A Walking Guide to Old Cairo",
+    seoDescription:
+      "Cairo's Islamic and Coptic quarters hold a thousand years of architecture and some of the oldest churches in Christianity — a walkable guide to both.",
+    body: [
+      p(
+        "Most first-time visitors spend their Cairo time entirely at Giza and the new museum, which means skipping a part of the city that tells a completely different story — medieval Islamic Cairo and, a short distance away, Coptic Cairo's cluster of ancient churches."
+      ),
+      h2("Islamic Cairo"),
+      p(
+        "Centered around the Citadel of Saladin and the sprawling market of Khan el-Khalili, this district holds one of the largest collections of medieval Islamic architecture anywhere in the world — mosques, madrasas, and mausoleums built across nearly a thousand years, many still in active use. The Citadel itself, with the Mohamed Ali Mosque's Ottoman-style domes overlooking the city, is the natural anchor point for a walk through the area."
+      ),
+      h2("Coptic Cairo"),
+      p(
+        "A few kilometers south, Coptic Cairo is a walled, largely pedestrian quarter holding some of the oldest churches in Christianity, including the Hanging Church, suspended over the gatehouse of a Roman fortress, and the Church of Saints Sergius and Bacchus, built over a site associated with the Holy Family's traditional stay in Egypt. The Ben Ezra Synagogue, one of Cairo's oldest, sits in the same small area."
+      ),
+      h2("Walking Both in One Day"),
+      p(
+        "The two districts are close enough by car to combine into a single, full day — Islamic Cairo in the morning, when the light through Khan el-Khalili's covered alleys is best, and Coptic Cairo in the afternoon, when its narrow lanes are quieter. A knowledgeable local guide makes a real difference here, since much of what makes both districts interesting isn't obvious from the architecture alone."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "cairo-nile-dinner-cruise-what-to-expect",
+    title: "What to Expect on a Cairo Nile Dinner Cruise",
+    category: "Travel Guides",
+    tags: ["Cairo", "Nile"],
+    author: editorialTeam,
+    excerpt:
+      "A dinner cruise down the Nile through central Cairo — what the evening actually involves, and whether it's worth building into your itinerary.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo"],
+    primaryKeyword: "cairo nile dinner cruise",
+    secondaryKeywords: ["nile dinner cruise cairo", "cairo night cruise", "cairo evening things to do"],
+    relatedTours: toursBySlug("cairo-nile-dinner-cruise-night-tour"),
+    seoTitle: "What to Expect on a Cairo Nile Dinner Cruise",
+    seoDescription:
+      "A Cairo Nile dinner cruise, explained plainly — the route, the format of the evening, and whether it's worth adding to a Cairo itinerary.",
+    body: [
+      p(
+        "After a full day of touring temples and museums in the heat, a Cairo Nile dinner cruise is a genuinely different kind of evening — a boat, dinner, and the city's skyline lit up along the water, at a pace that asks nothing of you."
+      ),
+      h2("What the Evening Actually Involves"),
+      p(
+        "A typical dinner cruise runs two to three hours, departing in the early evening and covering a stretch of the Nile through central Cairo, passing under its bridges and past riverside landmarks lit up after dark. Dinner is usually a multi-course buffet with a mix of Egyptian and international dishes, served at a table with a river view, and most cruises include some form of live entertainment — often a Tanoura dance performance, a distinctly Egyptian spinning folk dance."
+      ),
+      h2("Is It Worth Adding to Your Itinerary?"),
+      p(
+        "It's a low-effort, high-comfort way to close out a Cairo day, particularly for travelers who've spent the daylight hours walking through Giza or Islamic Cairo and want an evening that doesn't ask for more walking. It's not a substitute for the multi-day Nile cruises further south between Luxor and Aswan, which are a different experience entirely — this is a single evening in the capital, not a journey along the river."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "aswan-travel-guide",
+    title: "Aswan Travel Guide: Egypt's Nubian Nile",
+    category: "Travel Guides",
+    tags: ["Aswan", "Nile", "Nubian Culture"],
+    author: editorialTeam,
+    excerpt:
+      "Aswan feels different from the rest of Egypt — Nubian rather than Egyptian in character, quieter, and built around the most scenic stretch of the Nile. Here's what to see and how much time it deserves.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Aswan"],
+    badge: "editorsPick",
+    primaryKeyword: "aswan travel guide",
+    secondaryKeywords: ["things to do in aswan", "aswan egypt", "philae temple", "aswan high dam"],
+    relatedTours: toursBySlug("aswan-abu-simbel-tour", "aswan-nubian-village-philae-tour", "8-day-essential-egypt-nile-cruise"),
+    seoTitle: "Aswan Travel Guide: What to See in Egypt's Nubian South",
+    seoDescription:
+      "Aswan's Nubian villages, Philae Temple, and the High Dam — a practical guide to Egypt's southernmost major city and its most scenic stretch of Nile.",
+    body: [
+      p(
+        "Aswan sits at Egypt's southern edge, where the Nile narrows between granite outcrops and Nubian villages line the riverbanks in shades of blue and ochre. It has a different rhythm from Cairo or even Luxor — slower, and shaped as much by Nubian culture as by ancient Egyptian history."
+      ),
+      h2("Philae Temple"),
+      p(
+        "Dedicated to the goddess Isis, Philae was moved stone by stone to its current island location in the 1960s and 70s to save it from the rising waters of the Aswan High Dam — an engineering effort nearly as remarkable as the temple itself. Reached by a short boat ride, it's one of the most photogenic temples on the Nile, particularly in late afternoon light."
+      ),
+      h2("The Unfinished Obelisk"),
+      p(
+        "Still attached to the bedrock it was carved from, this abandoned obelisk — cracked during construction thousands of years ago — is one of the clearest windows anywhere into how ancient Egyptians actually quarried stone, tool marks and all."
+      ),
+      h2("A Nubian Village by Boat"),
+      p(
+        "A felucca or motorboat trip to a Nubian village on Elephantine Island or the west bank is one of Aswan's most distinctive experiences — colorful houses, a different language and cuisine from the rest of Egypt, and a slower pace that contrasts with the temple-hopping further north."
+      ),
+      h2("How Much Time to Give Aswan"),
+      p(
+        "Two days covers Philae, the Unfinished Obelisk, and a Nubian village visit comfortably. It's also the natural jumping-off point for a day trip to Abu Simbel, which is worth its own extra day if your schedule allows it."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "is-abu-simbel-worth-the-trip",
+    title: "Is Abu Simbel Worth the Trip From Aswan?",
+    category: "Travel Guides",
+    tags: ["Aswan", "Abu Simbel", "Ancient Egypt"],
+    author: editorialTeam,
+    excerpt:
+      "Abu Simbel sits far south of Aswan, adds a long day to your itinerary, and is one of the most striking monuments in Egypt. Here's what the trip actually involves.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Aswan", "Abu Simbel"],
+    primaryKeyword: "is abu simbel worth it",
+    secondaryKeywords: ["abu simbel day trip", "abu simbel from aswan", "ramesses ii temple"],
+    relatedTours: toursBySlug("aswan-abu-simbel-tour", "lake-nasser-cruise-aswan-abu-simbel"),
+    seoTitle: "Is Abu Simbel Worth the Trip From Aswan? An Honest Answer",
+    seoDescription:
+      "Abu Simbel adds a long day to an Aswan itinerary. Here's what the journey involves, what you'll actually see, and whether it's worth the extra time.",
+    body: [
+      p(
+        "Abu Simbel sits roughly three hours south of Aswan, close to the Sudanese border, which makes it the single biggest time commitment of any major site in Egypt. It's also, for most visitors who make the trip, unambiguously worth it."
+      ),
+      h2("What's Actually There"),
+      p(
+        "Ramesses II built the Great Temple's facade with four colossal seated statues of himself, each around 20 meters tall, cut directly into a sandstone cliff — built partly as a monument to his own reign and partly as a statement of Egyptian power at the southern frontier. Beside it, the smaller Temple of Hathor honors his queen, Nefertari, with statues of the royal couple standing at equal height on the facade — an unusual gesture in Egyptian royal art."
+      ),
+      h2("The Relocation Story"),
+      p(
+        "Like Philae, Abu Simbel would have been lost to the Aswan High Dam's floodwaters if UNESCO hadn't led an enormous international effort in the 1960s to cut both temples into large blocks and reassemble them on higher ground, inside an artificial mountain built to replicate their original setting. It remains one of the largest archaeological rescue operations ever undertaken."
+      ),
+      h2("How to Actually Get There"),
+      p(
+        "Most visitors go by road in an early-morning convoy from Aswan, arriving by mid-morning and returning by early evening — a long day, but a single one. A smaller number fly directly from Aswan, cutting the travel time significantly at additional cost. Either way, it's typically done as a long day trip rather than an overnight stay."
+      ),
+      faq([
+        {
+          question: "How far is Abu Simbel from Aswan?",
+          answer: "Roughly 280 kilometers, about a three-hour drive each way, or a short flight.",
+        },
+        {
+          question: "Can you visit Abu Simbel in one day?",
+          answer: "Yes — most visitors see it as a long day trip from Aswan, departing early morning and returning by evening.",
+        },
+        {
+          question: "Is Abu Simbel worth the long drive?",
+          answer:
+            "For most travelers, yes. The scale of the facade and the story of its relocation are unlike anything else in Egypt, even accounting for the travel time.",
+        },
+      ]),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "philae-temple-aswan-high-dam-guide",
+    title: "Philae Temple and the Aswan High Dam: A Practical Guide",
+    category: "Travel Guides",
+    tags: ["Aswan", "Ancient Egypt", "Engineering"],
+    author: editorialTeam,
+    excerpt:
+      "Two very different kinds of achievement sit a short drive apart in Aswan — a temple to Isis moved to save it from the water, and the dam that made moving it necessary.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Aswan"],
+    primaryKeyword: "philae temple aswan",
+    secondaryKeywords: ["philae temple", "aswan high dam facts", "temple of isis aswan"],
+    relatedTours: toursBySlug("aswan-nubian-village-philae-tour", "kalabsha-temple-nubian-museum-tour"),
+    seoTitle: "Philae Temple and the Aswan High Dam: A Practical Visitor's Guide",
+    seoDescription:
+      "Philae Temple and the Aswan High Dam sit close together and tell connected stories. What to see, how they relate, and how to visit both in a day.",
+    body: [
+      p(
+        "Philae Temple and the Aswan High Dam are usually visited within the same day, and understanding how they're connected makes both sites more interesting."
+      ),
+      h2("Philae Temple"),
+      p(
+        "Built primarily during the Ptolemaic period and dedicated to Isis, Philae was one of the last places in Egypt where the ancient religion was actively practiced, continuing well into the Christian era before finally being closed in the sixth century CE. Reaching the temple today means a short boat ride to the island of Agilkia, where the entire complex was rebuilt after being moved."
+      ),
+      h2("Why It Had to Move"),
+      p(
+        "The original Philae sat on an island that would have been permanently submerged by the reservoir created behind the Aswan High Dam. Between 1972 and 1980, an international UNESCO-led project dismantled the temple into more than 40,000 numbered blocks and reassembled it on the nearby island of Agilkia, at a higher elevation — a project that saved the temple entirely, though the original island it once stood on is gone for good."
+      ),
+      h2("The Aswan High Dam"),
+      p(
+        "Completed in 1970, the High Dam controls the Nile's seasonal flooding and generates a large share of Egypt's electricity, but it also created Lake Nasser, one of the largest reservoirs in the world, submerging a stretch of ancient Nubia and forcing the relocation of Philae, Abu Simbel, and other monuments. Visitors can see the dam itself and the vast lake it created, though the technical interior isn't open to tourists."
+      ),
+      h2("Visiting Both"),
+      p(
+        "Most Aswan itineraries pair a morning at the High Dam viewpoint with an early-afternoon visit to Philae, when the light on the temple's reliefs is at its best, followed by the Unfinished Obelisk on the way back into town."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "lake-nasser-cruise-guide",
+    title: "Cruising Lake Nasser: Egypt's Quietest Ancient Route",
+    category: "Travel Guides",
+    tags: ["Aswan", "Lake Nasser", "Nile"],
+    author: editorialTeam,
+    excerpt:
+      "A slower, far less crowded alternative to the Luxor-Aswan Nile cruise — sailing Lake Nasser between temples that were moved here to escape the water that now surrounds them.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Aswan", "Lake Nasser", "Abu Simbel"],
+    primaryKeyword: "lake nasser cruise",
+    secondaryKeywords: ["lake nasser cruise abu simbel", "lake nasser egypt", "aswan to abu simbel by boat"],
+    relatedTours: toursBySlug("lake-nasser-cruise-aswan-abu-simbel", "aswan-abu-simbel-tour"),
+    seoTitle: "Cruising Lake Nasser: A Guide to Egypt's Quietest Ancient Route",
+    seoDescription:
+      "A Lake Nasser cruise between Aswan and Abu Simbel is a slower, far less crowded alternative to the standard Luxor-Aswan Nile cruise. Here's what it involves.",
+    body: [
+      p(
+        "Almost everyone who cruises Egypt does it between Luxor and Aswan. A much smaller number sail Lake Nasser instead — the vast reservoir south of the Aswan High Dam, where a handful of small ships cover a route most visitors don't even know exists."
+      ),
+      h2("What Makes It Different"),
+      p(
+        "Lake Nasser cruises run only a few sailings a week, on ships that carry a fraction of the passengers of a standard Nile vessel, through a landscape with almost no other tourist traffic — open water and desert shoreline rather than the towns and farmland that line the Nile further north. The temples along the route, including Kalabsha, Amada, and Wadi es-Sebua, were all relocated here for the same reason as Philae and Abu Simbel: to save them from the dam's floodwaters."
+      ),
+      h2("Abu Simbel by Water"),
+      p(
+        "The route's centerpiece is arriving at Abu Simbel by boat rather than by road convoy — a genuinely different way to approach the temple's facade, without the coach-park crowds that build up around the midday road arrivals."
+      ),
+      h2("Who It Suits"),
+      p(
+        "This is a trip for travelers who've already done a standard Nile cruise, or who specifically want a quieter, slower pace over ticking off maximum sites. It's a smaller, less frequent product than the Luxor-Aswan route, so it needs to be booked further ahead."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "dendera-and-abydos-temples-guide",
+    title: "Dendera and Abydos: The Temples Most Visitors Skip",
+    category: "Ancient Egypt",
+    tags: ["Luxor", "Ancient Egypt", "Temples"],
+    author: editorialTeam,
+    excerpt:
+      "North of Luxor, Dendera and Abydos hold some of the best-preserved temple ceilings and reliefs in Egypt — and draw a fraction of the visitors Karnak does.",
+    imageTone: "luxor",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Dendera", "Abydos"],
+    primaryKeyword: "dendera and abydos",
+    secondaryKeywords: ["temple of hathor dendera", "temple of seti i abydos", "dendera temple complex"],
+    relatedTours: toursBySlug("dendera-abydos-day-tour"),
+    seoTitle: "Dendera and Abydos: The Egypt Temples Most Visitors Skip",
+    seoDescription:
+      "North of Luxor, Dendera and Abydos hold exceptionally well-preserved reliefs and ceilings, with far fewer visitors than Karnak. What's there and why it's worth the day.",
+    body: [
+      p(
+        "Most Luxor itineraries stop at Karnak, Luxor Temple, and the West Bank tombs, and never make it to two of the best-preserved temple complexes in Egypt, both a couple of hours north."
+      ),
+      h2("Dendera's Temple of Hathor"),
+      p(
+        "The Temple of Hathor at Dendera is remarkable mostly for what's survived intact — its roof, largely complete, protected the interior ceiling reliefs and painted astronomical scenes from the erosion that's stripped color from most other temples in Egypt. The famous Dendera zodiac ceiling relief (the original is now in the Louvre, with a replica in place) is one of the clearest surviving records of how ancient Egyptians mapped the night sky."
+      ),
+      h2("Abydos's Temple of Seti I"),
+      p(
+        "Further north, Abydos was one of ancient Egypt's most sacred sites, believed to be the burial place of the god Osiris, and its Temple of Seti I holds some of the finest carved reliefs anywhere in Egypt — cut with a precision and subtlety that's rare even by the high standard of New Kingdom temple art. The temple's king list, a carved record of pharaohs recognized by Seti I, is one of the most important chronological sources historians have for ancient Egyptian history."
+      ),
+      h2("Visiting Both in a Day"),
+      p(
+        "Dendera and Abydos are usually combined into a single long day trip from Luxor, since both sit in the same general direction north of the city. It's a full day of driving relative to a standard in-Luxor itinerary, but for travelers who've already covered Karnak and the Valley of the Kings and want to go further, it's one of the best-value additions available."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "edfu-and-kom-ombo-temples-guide",
+    title: "Edfu and Kom Ombo: The Temples Between Luxor and Aswan",
+    category: "Ancient Egypt",
+    tags: ["Luxor", "Aswan", "Ancient Egypt", "Temples"],
+    author: editorialTeam,
+    excerpt:
+      "Between Luxor and Aswan sit two of Egypt's best-preserved Ptolemaic temples — one dedicated to the falcon god Horus, the other split between a crocodile god and a falcon god.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Edfu", "Kom Ombo"],
+    primaryKeyword: "edfu and kom ombo temples",
+    secondaryKeywords: ["temple of horus edfu", "kom ombo temple", "edfu temple egypt"],
+    relatedTours: toursBySlug("edfu-kom-ombo-day-tour", "4-day-nile-cruise-luxor-aswan"),
+    seoTitle: "Edfu and Kom Ombo: The Temples Between Luxor and Aswan",
+    seoDescription:
+      "Edfu's Temple of Horus and the twin temple at Kom Ombo are among Egypt's best-preserved Ptolemaic monuments. What to expect at both.",
+    body: [
+      p(
+        "Any Nile cruise between Luxor and Aswan stops at Edfu and Kom Ombo along the way, and both are worth far more attention than their status as \"cruise stops\" suggests."
+      ),
+      h2("The Temple of Horus at Edfu"),
+      p(
+        "Built during the Ptolemaic period, the Temple of Horus at Edfu is one of the best-preserved temples anywhere in Egypt, largely because it was buried under desert sand for centuries before excavation, which protected it from the weathering that damaged more exposed sites. Its pylon entrance, at over 30 meters tall, is the largest and most complete of its kind still standing."
+      ),
+      h2("Kom Ombo's Unusual Double Temple"),
+      p(
+        "Kom Ombo is unique among Egyptian temples for its symmetrical double design — one half dedicated to Sobek, the crocodile god, and the other to Horus, each with its own matching entrance, hall, and sanctuary running side by side. A small on-site museum displays mummified crocodiles found near the temple, connected to Sobek worship at the site."
+      ),
+      h2("How They Fit Into a Nile Itinerary"),
+      p(
+        "Both temples are usually visited as scheduled stops on a Luxor-Aswan cruise, typically Kom Ombo in the late afternoon or evening — when the light on its riverside setting is especially good — and Edfu the following morning, often reached from the boat by a short horse-drawn carriage ride into town."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "what-a-nile-cruise-luxor-aswan-actually-looks-like",
+    title: "What a Nile Cruise Between Luxor and Aswan Actually Looks Like",
+    category: "Travel Guides",
+    tags: ["Nile", "Luxor", "Aswan"],
+    author: editorialTeam,
+    excerpt:
+      "Day by day, what a standard Nile cruise between Luxor and Aswan actually involves — the stops, the pace, and how a 4-night sailing differs from a longer one.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Luxor", "Aswan"],
+    primaryKeyword: "nile cruise luxor to aswan",
+    secondaryKeywords: ["4 day nile cruise", "nile cruise itinerary", "luxor aswan cruise what to expect"],
+    relatedTours: toursBySlug("4-day-nile-cruise-luxor-aswan", "7-night-nile-cruise-luxor-aswan", "8-day-essential-egypt-nile-cruise"),
+    seoTitle: "What a Nile Cruise Between Luxor and Aswan Actually Looks Like",
+    seoDescription:
+      "A day-by-day look at what a standard Luxor-to-Aswan Nile cruise actually involves — the stops, the pace, and what changes between a 4-night and longer sailing.",
+    body: [
+      p(
+        "\"Nile cruise\" covers a specific, well-established route — Luxor to Aswan or the reverse — and once you know the shape of it, choosing between a shorter and longer sailing gets much easier."
+      ),
+      h2("The Standard Route"),
+      p(
+        "A typical cruise begins in Luxor with Karnak and Luxor Temple, sails south with a stop at Edfu's Temple of Horus, continues to Kom Ombo's double temple, and ends in Aswan with time for Philae Temple and, often, an optional add-on day to Abu Simbel. Each stop is a scheduled shore excursion — the ship sails, mostly overnight or during less scenic stretches, while touring happens on land during the day."
+      ),
+      h2("4 Nights vs. a Longer Sailing"),
+      p(
+        "A 4-night cruise covers the full core route — Luxor, Edfu, Kom Ombo, Aswan — at a comfortable but efficient pace, and suits travelers with a week or less total in Egypt. A longer sailing, a week or more, adds more time at anchor in Luxor and Aswan themselves, room for the West Bank's full tomb circuit without rushing, and sometimes an extra stop or two along quieter stretches of river — better suited to travelers who'd rather slow down than see more sites in the same number of days."
+      ),
+      h2("What a Typical Day Looks Like"),
+      p(
+        "Mornings usually start early with a shore excursion before the heat builds, followed by lunch back on board while the ship is underway, an afternoon either at another site or resting on deck, and dinner on the ship in the evening — often with some form of entertainment. It's a genuinely different pace from a land-based itinerary, with far less packing and unpacking and far more time actually on the water."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "hurghada-vs-sharm-el-sheikh-vs-dahab",
+    title: "Hurghada vs. Sharm El Sheikh vs. Dahab: Which Red Sea Town Fits You?",
+    category: "Travel Guides",
+    tags: ["Red Sea", "Diving", "Trip Planning"],
+    author: editorialTeam,
+    excerpt:
+      "Egypt's three main Red Sea towns aren't interchangeable — one's family-friendly and mainland, one's polished resort territory, and one's a laid-back diving village. Here's the real difference.",
+    imageTone: "redsea",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Hurghada", "Sharm El Sheikh", "Dahab", "Red Sea"],
+    primaryKeyword: "hurghada vs sharm el sheikh vs dahab",
+    secondaryKeywords: ["best red sea town egypt", "sharm el sheikh vs hurghada", "dahab vs sharm"],
+    relatedTours: toursBySlug("hurghada-red-sea-diving-snorkeling", "ras-mohammed-snorkeling-tour", "dahab-blue-hole-three-pools-tour"),
+    seoTitle: "Hurghada vs. Sharm El Sheikh vs. Dahab: Which Red Sea Town Fits You?",
+    seoDescription:
+      "Hurghada, Sharm El Sheikh, and Dahab cover the same Red Sea but feel completely different. A practical comparison to help pick the right one.",
+    body: [
+      p("All three sit on the Red Sea, all three offer excellent diving and snorkeling, and beyond that, they're genuinely different kinds of places."),
+      h2("Hurghada"),
+      p(
+        "On the Egyptian mainland rather than the Sinai peninsula, Hurghada is the most family-friendly and generally the most affordable of the three, often running 10 to 30 percent cheaper than Sharm for comparable resorts. It's a bigger, livelier town with a wide range of hotel styles and a well-developed selection of boat-based diving and snorkeling trips."
+      ),
+      h2("Sharm El Sheikh"),
+      p(
+        "Sharm, on the southern tip of the Sinai peninsula, tends toward larger, more polished resort properties and is generally considered to have the best boat-accessible diving of the three, with easy access to Ras Mohammed National Park and the wreck-diving sites of the Strait of Tiran."
+      ),
+      h2("Dahab"),
+      p(
+        "About an hour north of Sharm, Dahab has a completely different character — laid-back, low-rise, and built around shore diving rather than resort life. Its biggest draw is walk-in access to world-famous sites like the Blue Hole, reachable without a boat, which makes it the pick for travelers who want a slower pace and easy, frequent diving over five-star amenities."
+      ),
+      h2("So Which One?"),
+      p(
+        "Traveling with family and want the most straightforward, well-rounded resort experience — Hurghada. Want the best all-around diving with polished resort comfort — Sharm. Want a quieter, more bohemian base built specifically around diving — Dahab. All three are part of South Sinai or the Red Sea coast's normally functioning tourist areas, not the parts of the region under any travel advisory."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "is-scuba-diving-in-egypt-worth-it",
+    title: "Is Scuba Diving in the Red Sea Worth It?",
+    category: "Travel Guides",
+    tags: ["Red Sea", "Diving"],
+    author: editorialTeam,
+    excerpt:
+      "The Red Sea is consistently ranked among the world's best diving destinations. Here's what actually makes it worth the trip, and what a first-timer should know.",
+    imageTone: "redsea",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Red Sea", "Sinai"],
+    primaryKeyword: "red sea diving worth it",
+    secondaryKeywords: ["egypt scuba diving", "red sea diving for beginners", "best red sea dive sites"],
+    relatedTours: toursBySlug("ras-mohammed-snorkeling-tour", "marsa-alam-dolphin-house-tour", "hurghada-red-sea-diving-snorkeling"),
+    seoTitle: "Is Scuba Diving in the Red Sea Worth It? An Honest Look",
+    seoDescription:
+      "The Red Sea is one of the world's most acclaimed diving destinations. What actually makes it stand out, and what beginners should know before booking.",
+    body: [
+      p(
+        "Divers talk about the Red Sea the way they talk about very few other destinations — exceptional visibility, warm water nearly year-round, and coral reef systems that have largely avoided the bleaching damage seen elsewhere. For most travelers weighing whether to add it to an Egypt trip, the answer is yes."
+      ),
+      h2("What Makes It Stand Out"),
+      p(
+        "Visibility routinely exceeds 20 meters, water temperatures stay comfortable for most of the year, and the reef walls drop dramatically close to shore in places like Ras Mohammed National Park, putting healthy coral and a wide range of marine life within easy reach of shore or a short boat ride. Wreck diving is another major draw, particularly around the Strait of Tiran and the well-known Thistlegorm wreck near Sharm."
+      ),
+      h2("For Beginners"),
+      p(
+        "You don't need to be a certified diver to get a real sense of it — snorkeling over the same reefs delivers a surprising amount of what makes the Red Sea special, and PADI-certified introductory dives are widely available for first-timers through licensed dive centers. For anyone considering full certification, Egypt is one of the more affordable and accessible places in the world to do it."
+      ),
+      h2("Best Time to Go"),
+      p(
+        "The Red Sea is diveable nearly year-round, with water temperatures rarely dropping uncomfortably even in winter. Summer offers the warmest water and best visibility for most sites, while spring and autumn avoid the peak heat on land between dives."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "mount-sinai-sunrise-hike-what-to-expect",
+    title: "The Mount Sinai Sunrise Hike: What to Actually Expect",
+    category: "Travel Guides",
+    tags: ["Sinai", "Hiking", "Religious Sites"],
+    author: editorialTeam,
+    excerpt:
+      "Climbing Mount Sinai for sunrise is one of Egypt's most physically demanding and most rewarding experiences — here's what the night actually involves.",
+    imageTone: "desert",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Sinai"],
+    primaryKeyword: "mount sinai sunrise hike",
+    secondaryKeywords: ["mount sinai hike difficulty", "st catherine's monastery", "climbing mount sinai at night"],
+    relatedTours: toursBySlug("mount-sinai-sunrise-hike"),
+    seoTitle: "The Mount Sinai Sunrise Hike: What to Actually Expect",
+    seoDescription:
+      "Climbing Mount Sinai for sunrise is a genuine physical undertaking. What the overnight hike actually involves, how hard it is, and what to bring.",
+    body: [
+      p(
+        "Mount Sinai — traditionally identified as the mountain where Moses received the Ten Commandments — draws hikers for a reason that has nothing to do with religion as much as it does the view: sunrise from the summit, over a landscape of bare granite peaks, is one of the most striking sights in Egypt."
+      ),
+      h2("The Climb Itself"),
+      p(
+        "Most hikes begin around midnight or 1 or 2 AM, climbing in darkness so as to reach the 2,285-meter summit before dawn. The main camel path is a longer but gentler ascent, roughly two and a half to three hours at a steady pace; a steeper route of some 3,750 stone steps cuts the distance but demands far more from your legs and lungs. Either way, the final stretch to the summit is on foot, up a set of steps too steep and narrow for camels."
+      ),
+      h2("How Hard Is It?"),
+      p(
+        "It's a genuine physical undertaking, not a casual walk — a moderate fitness level and comfortable hiking shoes matter, and it gets cold at altitude even in a country known for heat, so warm layers are essential regardless of the season. It is not technical climbing; no ropes or special equipment are needed, just stamina and sturdy footing in the dark."
+      ),
+      h2("St. Catherine's Monastery"),
+      p(
+        "At the mountain's base sits St. Catherine's Monastery, one of the oldest continuously operating Christian monasteries in the world, built around what's traditionally identified as the Burning Bush. Most itineraries visit the monastery after the hike, once the morning opening hours begin, closing the loop on a single overnight visit to the mountain."
+      ),
+      faq([
+        {
+          question: "How hard is the Mount Sinai hike?",
+          answer:
+            "It's a moderate, sustained climb of two and a half to three hours by the camel path, done in darkness — manageable for a reasonably fit hiker but not a casual walk.",
+        },
+        {
+          question: "What should I bring for the Mount Sinai sunrise hike?",
+          answer:
+            "Warm layers (it's cold at altitude even at night), a headlamp or flashlight, sturdy shoes, and water. A walking stick, rentable at the base, helps on the steeper sections.",
+        },
+        {
+          question: "Can you visit St. Catherine's Monastery without doing the hike?",
+          answer:
+            "Yes — the monastery keeps its own visiting hours during the day and can be visited on its own, separate from the overnight sunrise climb.",
+        },
+      ]),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "dahab-blue-hole-guide",
+    title: "Dahab's Blue Hole: A Diver's Guide",
+    category: "Travel Guides",
+    tags: ["Dahab", "Diving", "Red Sea"],
+    author: editorialTeam,
+    excerpt:
+      "One of the most famous dive sites in the world sits just off the road north of Dahab — a dramatic sinkhole with a serious reputation. Here's what it actually is.",
+    imageTone: "redsea",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Dahab", "Sinai"],
+    primaryKeyword: "dahab blue hole",
+    secondaryKeywords: ["blue hole dahab diving", "dahab three pools", "blue hole egypt"],
+    relatedTours: toursBySlug("dahab-blue-hole-three-pools-tour"),
+    seoTitle: "Dahab's Blue Hole: A Diver's Guide to Egypt's Most Famous Sinkhole",
+    seoDescription:
+      "The Blue Hole near Dahab is one of the world's most recognized dive sites. What it is, how deep it goes, and how to visit it safely.",
+    body: [
+      p(
+        "A short drive north of Dahab, the Blue Hole is a submarine sinkhole around 130 meters deep, dropping straight down from the shoreline into water so clear its color shifts through nearly every shade of blue as the depth increases."
+      ),
+      h2("What Makes It Famous"),
+      p(
+        "Walk-in access from the shore, combined with the dramatic drop-off just a few meters out, makes the Blue Hole one of the most accessible world-class dive sites anywhere — no boat required, which is part of why Dahab built its whole diving identity around shore access rather than boat trips."
+      ),
+      h2("A Site With a Serious Reputation"),
+      p(
+        "The Blue Hole is also known, honestly, for a difficult safety history, tied specifically to \"the Arch\" — a natural tunnel connecting the Blue Hole to the open sea at roughly 55 meters depth, well beyond recreational diving limits and requiring technical training and equipment to attempt safely. Diving the Blue Hole itself, within recreational depth limits and without attempting the Arch, is a very different and well-established activity, done daily by certified divers of ordinary experience levels with a local guide."
+      ),
+      h2("The Three Pools"),
+      p(
+        "Just along the coast from the Blue Hole, the Three Pools are a series of naturally connected reef pools, popular for snorkeling and a calmer alternative for anyone not diving — clear, shallow water over reef without the Blue Hole's dramatic depth."
+      ),
+      callout(
+        "Dive within your certification level, always with a local guide familiar with the site, and never attempt the Arch without specific technical training. Recreational diving in the Blue Hole itself, done properly, is routine and well-established.",
+        { tone: "Safety", title: "Diving It Safely" }
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "swimming-with-dolphins-sataya-reef",
+    title: "Swimming With Dolphins at Sataya Reef, Marsa Alam",
+    category: "Travel Guides",
+    tags: ["Marsa Alam", "Red Sea", "Wildlife"],
+    author: editorialTeam,
+    excerpt:
+      "Sataya Reef, off Marsa Alam, is home to a resident pod of wild spinner dolphins — one of the most reliable wild dolphin encounters anywhere in the world.",
+    imageTone: "redsea",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Marsa Alam", "Red Sea"],
+    primaryKeyword: "swimming with dolphins marsa alam",
+    secondaryKeywords: ["sataya reef dolphins", "dolphin house marsa alam", "wild dolphins egypt"],
+    relatedTours: toursBySlug("marsa-alam-dolphin-house-tour"),
+    seoTitle: "Swimming With Wild Dolphins at Sataya Reef, Marsa Alam",
+    seoDescription:
+      "Sataya Reef near Marsa Alam is home to a resident pod of wild spinner dolphins. What the experience actually involves, and how to do it responsibly.",
+    body: [
+      p(
+        "Off the coast of Marsa Alam, Sataya Reef — often called Dolphin House — is home to a resident pod of spinner dolphins that use the reef's calm lagoon to rest during the day, making it one of the most consistent wild dolphin encounters anywhere in the world."
+      ),
+      h2("What the Trip Involves"),
+      p(
+        "Boats depart Marsa Alam early, typically reaching the reef by mid-morning, when the dolphins are most reliably present resting in the lagoon. Snorkeling alongside them — never scuba diving, which disturbs their resting behavior more — is the standard way to experience it, in open water rather than any kind of enclosure."
+      ),
+      h2("Doing It Responsibly"),
+      p(
+        "These are wild animals in their natural resting ground, not a performance — reputable operators maintain distance, avoid chasing or touching the dolphins, and limit boat numbers and time in the water to reduce disturbance. Choosing an operator who follows these practices matters more here than at almost any other Red Sea site, since the dolphins' continued use of the reef depends on it."
+      ),
+      h2("What Else Is at the Reef"),
+      p(
+        "Beyond the dolphins, Sataya's coral formations support their own snorkeling and diving worth the trip on their own — reef fish, occasional turtles, and healthy coral in the surrounding lagoon, for the stretches when the pod has moved elsewhere in the reef system."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "el-gouna-and-soma-bay-guide",
+    title: "El Gouna and Soma Bay: Egypt's Purpose-Built Red Sea Resorts",
+    category: "Travel Guides",
+    tags: ["El Gouna", "Soma Bay", "Red Sea"],
+    author: editorialTeam,
+    excerpt:
+      "Two planned resort towns on the Red Sea coast, built for lagoons, watersports, and a slower pace than Hurghada or Sharm — here's what each actually offers.",
+    imageTone: "redsea",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["El Gouna", "Soma Bay", "Red Sea"],
+    primaryKeyword: "el gouna vs soma bay",
+    secondaryKeywords: ["el gouna egypt", "soma bay egypt", "red sea lagoon towns"],
+    relatedTours: toursBySlug("el-gouna-lagoon-day", "soma-bay-watersports-relaxation"),
+    seoTitle: "El Gouna and Soma Bay: Egypt's Purpose-Built Red Sea Resort Towns",
+    seoDescription:
+      "El Gouna and Soma Bay are planned resort towns built around lagoons and watersports. What sets each apart from Hurghada and Sharm El Sheikh.",
+    body: [
+      p(
+        "Not every Red Sea town grew up organically — El Gouna and Soma Bay were both built from scratch as planned resort developments, and it shows, in a good way: wide lagoons, purpose-built marinas, and infrastructure designed around watersports rather than retrofitted for them."
+      ),
+      h2("El Gouna"),
+      p(
+        "Built across a network of man-made lagoons and islands connected by bridges, El Gouna has developed a reputation as one of the more upscale, design-conscious resort towns on the Red Sea — golf courses, a marina, and a lagoon system particularly well suited to kitesurfing, thanks to consistent wind conditions."
+      ),
+      h2("Soma Bay"),
+      p(
+        "Further south, Soma Bay sits on its own peninsula, largely occupied by a small number of large resort properties rather than a town in the conventional sense. It's built heavily around watersports — kitesurfing and windsurfing especially, thanks to reliable Red Sea winds — alongside diving access and a genuinely quiet, resort-only atmosphere."
+      ),
+      h2("Which Fits Your Trip"),
+      p(
+        "Both work well as an add-on to a Cairo-and-Nile itinerary rather than a standalone destination — a few days of lagoon and reef time to close out a longer trip. El Gouna suits travelers who want a real town with restaurants and nightlife alongside the resort; Soma Bay suits those who want a quieter, more self-contained few days focused purely on the water."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "western-desert-oases-guide",
+    title: "The Western Desert Oases: Siwa, Bahariya, Dakhla, and Kharga",
+    category: "Travel Guides",
+    tags: ["Western Desert", "Oases", "Off the Beaten Path"],
+    author: editorialTeam,
+    excerpt:
+      "Egypt's Western Desert holds a string of oases most itineraries never reach — hot springs, salt lakes, and a landscape unlike anywhere else in the country.",
+    imageTone: "desert",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Siwa", "Bahariya", "Dakhla", "Kharga"],
+    primaryKeyword: "western desert oases egypt",
+    secondaryKeywords: ["siwa oasis", "bahariya oasis", "dakhla oasis", "kharga oasis"],
+    relatedTours: toursBySlug("siwa-oasis", "white-desert-safari-bahariya", "dakhla-kharga-oasis-circuit"),
+    seoTitle: "The Western Desert Oases: A Guide to Siwa, Bahariya, Dakhla, and Kharga",
+    seoDescription:
+      "Egypt's Western Desert oases — Siwa, Bahariya, Dakhla, and Kharga — sit far from the standard Nile route. What makes each one distinct.",
+    body: [
+      p(
+        "West of the Nile, Egypt's Great Sand Sea holds a chain of oases that most visitors never see, each shaped by centuries of isolation into its own distinct culture and landscape."
+      ),
+      h2("Siwa"),
+      p(
+        "The most remote of the four, close to the Libyan border, Siwa has its own Amazigh (Berber) language and culture distinct from the rest of Egypt, along with natural spring pools, ancient salt lakes, and the ruins of the Oracle Temple, once consulted by Alexander the Great."
+      ),
+      h2("Bahariya and the White Desert"),
+      p(
+        "Bahariya is the gateway to the White Desert, a surreal landscape of wind-carved white chalk formations rising out of the sand — one of Egypt's most photographed desert landscapes, usually visited on an overnight camping trip from the oasis."
+      ),
+      h2("Dakhla and Kharga"),
+      p(
+        "Further south, Dakhla and Kharga hold well-preserved mudbrick old towns, Roman-era temples, and natural hot springs, and are usually visited together as a multi-day circuit through the desert rather than as single stops — a genuinely off-the-beaten-path route even by Egypt's standards."
+      ),
+      h2("How to Actually Visit"),
+      p(
+        "These oases sit far from the standard Cairo–Luxor–Aswan route and from each other, so a proper visit means either a dedicated multi-day desert circuit or picking one oasis as a focused add-on to a longer trip, rather than trying to fit all four into a standard itinerary."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "is-the-white-desert-worth-visiting",
+    title: "Is the White Desert Worth Visiting?",
+    category: "Travel Guides",
+    tags: ["White Desert", "Bahariya", "Camping"],
+    author: editorialTeam,
+    excerpt:
+      "Chalk formations carved by wind into shapes unlike anything else in Egypt, with a night of camping under some of the darkest skies in the country — here's what it actually involves.",
+    imageTone: "desert",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Bahariya", "White Desert"],
+    primaryKeyword: "is the white desert worth it",
+    secondaryKeywords: ["white desert egypt camping", "white desert national park", "bahariya white desert tour"],
+    relatedTours: toursBySlug("white-desert-safari-bahariya"),
+    seoTitle: "Is the White Desert Worth Visiting? An Honest Look",
+    seoDescription:
+      "The White Desert's chalk rock formations and overnight camping are unlike anything else in Egypt. What the trip actually involves, and who it suits.",
+    body: [
+      p(
+        "The White Desert doesn't look like the rest of Egypt, or much like anywhere else — a protected national park of chalk-white rock formations, sculpted by millennia of wind erosion into shapes that shift depending on the angle and the light."
+      ),
+      h2("What You'll Actually See"),
+      p(
+        "The formations range from mushroom-shaped outcrops to larger structures locals have nicknamed for what they resemble — a sphinx, a rabbit, a chicken — scattered across a stretch of open desert that turns gold, then pink, then white as the sun moves through the day."
+      ),
+      h2("Camping Overnight"),
+      p(
+        "Most visits include an overnight camp directly among the formations — a genuinely memorable night, with a campfire, a simple desert dinner, and, far from any city light pollution, one of the clearest views of the stars available anywhere in Egypt. It's a basic camping setup, not a luxury one, which is part of the appeal for travelers looking for something different from a hotel-based itinerary."
+      ),
+      h2("Who It Suits"),
+      p(
+        "Travelers comfortable with a night of simple camping and an interest in landscape over ancient monuments will find it a genuine highlight. It's a considerable detour from the standard Nile route, best added by travelers with ten days or more, or as a focused desert-specific trip on its own."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "wadi-el-hitan-whale-valley-guide",
+    title: "Wadi El Hitan: The Desert Full of Fossil Whales",
+    category: "Travel Guides",
+    tags: ["Fayoum", "Fossils", "Natural History"],
+    author: editorialTeam,
+    excerpt:
+      "In the middle of the Egyptian desert lies the skeletal record of whales that lived here 40 million years ago, when this was open ocean — a UNESCO site most visitors have never heard of.",
+    imageTone: "desert",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Wadi El Hitan", "Fayoum"],
+    primaryKeyword: "wadi el hitan whale valley",
+    secondaryKeywords: ["whale valley egypt", "wadi el hitan fossils", "fayoum whale fossils"],
+    relatedTours: toursBySlug("wadi-el-hitan-whale-valley-safari", "fayoum-nature-tour"),
+    seoTitle: "Wadi El Hitan: The Egyptian Desert Full of Fossil Whales",
+    seoDescription:
+      "Wadi El Hitan, Egypt's Whale Valley, holds fossilized whale skeletons from a time this desert was open ocean. A guide to this UNESCO World Heritage site.",
+    body: [
+      p(
+        "It's a strange thing to stand in open desert, hours from any coastline, and find the fossilized skeleton of a whale lying in the sand — but that's exactly what Wadi El Hitan, the Whale Valley, offers."
+      ),
+      h2("What's Actually There"),
+      p(
+        "Around 40 million years ago, this stretch of desert was open sea, and Wadi El Hitan preserves the fossilized remains of Basilosaurus and Dorudon, early whale species that still had vestigial hind legs — physical evidence of the evolutionary transition from land mammals to fully aquatic whales. It's one of the most complete fossil records of this transition found anywhere on Earth, which is why it holds UNESCO World Heritage status."
+      ),
+      h2("What a Visit Looks Like"),
+      p(
+        "A marked trail through the valley passes numerous fossil skeletons left largely in place where they were found, along with an on-site museum explaining the science behind them. The surrounding desert landscape, with its own wind-carved rock formations, is worth the visit even setting the fossils aside."
+      ),
+      h2("How It Fits a Trip"),
+      p(
+        "Wadi El Hitan sits near the Fayoum Oasis, a couple of hours from Cairo, which makes it realistic as a day trip from the capital — often combined with Fayoum's lakes and waterfalls into a single day focused on Egypt's natural rather than ancient-Egyptian history."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "who-was-hatshepsut",
+    title: "Who Was Hatshepsut, Egypt's Female Pharaoh?",
+    category: "Ancient Egypt",
+    tags: ["Luxor", "Ancient Egypt", "History"],
+    author: editorialTeam,
+    excerpt:
+      "One of the most successful rulers of ancient Egypt was a woman who took the throne as pharaoh in her own right — and whose monuments still dominate Luxor's West Bank.",
+    imageTone: "luxor",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Luxor"],
+    primaryKeyword: "who was hatshepsut",
+    secondaryKeywords: ["hatshepsut temple luxor", "female pharaoh egypt", "hatshepsut facts"],
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "6-day-cairo-giza-luxor"),
+    seoTitle: "Who Was Hatshepsut? Egypt's Most Successful Female Pharaoh",
+    seoDescription:
+      "Hatshepsut ruled ancient Egypt as pharaoh in her own right, and her mortuary temple still dominates Luxor's West Bank. Her story, explained plainly.",
+    body: [
+      p(
+        "Hatshepsut ruled Egypt as pharaoh for roughly two decades during the 18th Dynasty, one of only a handful of women to take the throne in her own right rather than as a regent — and by most measures, one of the most successful."
+      ),
+      h2("How She Came to Power"),
+      p(
+        "Hatshepsut began as regent for her young stepson, Thutmose III, after her husband's death, and within a few years took on the full title and regalia of pharaoh herself, including the ceremonial false beard shown in her official statues. Her reign is generally regarded by historians as a period of stability and prosperity, marked by extensive building projects and expanded trade, notably a famous expedition to the Land of Punt."
+      ),
+      h2("Her Mortuary Temple"),
+      p(
+        "Her mortuary temple at Deir el-Bahari, on Luxor's West Bank, remains one of ancient Egypt's most striking pieces of architecture — a series of colonnaded terraces cut directly into the cliff face, built to align with the winter solstice sunrise. It's one of the most visited sites on the West Bank today, and unlike almost anything else built in this period."
+      ),
+      h2("What Happened After"),
+      p(
+        "After her death, many of Hatshepsut's monuments and images were defaced or removed on the order of Thutmose III, for reasons historians still debate — possibly political consolidation rather than personal animosity. Much of what's known about her today comes from the monuments that survived that erasure, including her temple, which endures as the clearest record of her reign."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "how-were-the-great-pyramids-built",
+    title: "How Were the Great Pyramids Actually Built?",
+    category: "Ancient Egypt",
+    tags: ["Giza", "Ancient Egypt", "Engineering"],
+    author: editorialTeam,
+    excerpt:
+      "The Great Pyramid of Giza has stood for over 4,500 years. Here's what archaeologists actually know — and don't know — about how it was built.",
+    imageTone: "giza",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Giza"],
+    primaryKeyword: "how were the pyramids built",
+    secondaryKeywords: ["great pyramid of giza construction", "how did ancient egyptians build pyramids", "pyramid building theories"],
+    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza"),
+    seoTitle: "How Were the Great Pyramids of Giza Actually Built?",
+    seoDescription:
+      "The Great Pyramid has stood for over 4,500 years. What archaeologists actually know about how it was built, who built it, and what remains uncertain.",
+    body: [
+      p(
+        "The Great Pyramid of Giza, built for the pharaoh Khufu around 2560 BCE, is made of roughly 2.3 million limestone and granite blocks and remained the tallest man-made structure on Earth for nearly 3,800 years. How exactly it was built is one of the most studied questions in archaeology — and while much is understood, the full picture still isn't settled."
+      ),
+      h2("Who Actually Built It"),
+      p(
+        "Contrary to a persistent myth, the pyramids were not built by enslaved foreign labor. Archaeological evidence, including a nearby workers' town with bakeries, medical facilities, and worker burial sites, points to a large organized workforce of skilled Egyptian laborers, likely working in rotating shifts, fed and housed by the state as part of a genuine national construction project."
+      ),
+      h2("Moving the Stone"),
+      p(
+        "The leading theories involve ramps — straight, spiraling, or internal — combined with sledges, and evidence from other sites suggests workers wetted the sand in front of sledges to reduce friction, a technique depicted in ancient tomb paintings showing exactly this method in use. Precisely which ramp configuration was used for the Great Pyramid specifically remains debated among Egyptologists, since no definitive ramp structure has survived intact."
+      ),
+      h2("The Precision Itself"),
+      p(
+        "What's not in dispute is the sheer precision involved — the pyramid's base is level to within a few centimeters across its entire footprint, and its sides align to true north with remarkable accuracy for a structure built without modern surveying tools. That precision, more than the size alone, is what continues to draw serious scholarly attention to how it was actually achieved."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "tutankhamun-boy-king-facts",
+    title: "Tutankhamun: What We Actually Know About the Boy King",
+    category: "Ancient Egypt",
+    tags: ["Luxor", "Ancient Egypt", "Tutankhamun"],
+    author: editorialTeam,
+    excerpt:
+      "Tutankhamun ruled for less than a decade and died young, yet his tomb became the most famous archaeological discovery of the twentieth century. Here's the real story.",
+    imageTone: "luxor",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Luxor"],
+    primaryKeyword: "tutankhamun facts",
+    secondaryKeywords: ["king tut tomb", "howard carter tutankhamun", "tutankhamun death"],
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "3-day-cairo-giza"),
+    seoTitle: "Tutankhamun: What We Actually Know About the Boy King",
+    seoDescription:
+      "Tutankhamun ruled ancient Egypt briefly and died young, yet his tomb became archaeology's most famous discovery. The real story, without the myths.",
+    body: [
+      p(
+        "Tutankhamun ruled Egypt for roughly nine years, becoming pharaoh at around age nine and dying at about eighteen or nineteen — a minor figure in the actual political history of ancient Egypt, whose fame today rests almost entirely on the survival of his tomb."
+      ),
+      h2("A Short, Difficult Reign"),
+      p(
+        "Tutankhamun came to the throne shortly after the reign of Akhenaten, whose religious reforms had upended traditional Egyptian worship, and much of his own short reign was spent reversing those changes and restoring the old religious order — a significant political undertaking for such a young king, likely guided heavily by senior advisors."
+      ),
+      h2("Why His Tomb Matters So Much"),
+      p(
+        "Most royal tombs in the Valley of the Kings were looted in antiquity. Tutankhamun's, likely because it was minor and hidden beneath the debris of a later tomb's construction, survived largely intact until archaeologist Howard Carter discovered it in 1922 — the only near-complete royal burial ever found in the valley, including the iconic solid gold funerary mask now displayed at the Grand Egyptian Museum."
+      ),
+      h2("How Did He Die?"),
+      p(
+        "The exact cause remains debated. Modern examinations, including CT scans and genetic testing, have identified a broken leg, evidence of malaria, and signs of several inherited health conditions likely linked to his parents being closely related — any of which, in combination, could plausibly explain an early death, though no single definitive cause has been established."
+      ),
+      h2("Seeing It Today"),
+      p(
+        "Tutankhamun's complete funerary collection — over 5,000 objects — is now displayed together for the first time at the Grand Egyptian Museum near Giza, while his mummy remains in his original tomb in the Valley of the Kings, on Luxor's West Bank."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "egyptian-food-guide-what-to-eat",
+    title: "What to Eat in Egypt: A Practical Food Guide",
+    category: "Culture",
+    tags: ["Egyptian Food", "Culture"],
+    author: editorialTeam,
+    excerpt:
+      "Koshari, ful medames, and the dishes that actually define everyday Egyptian eating — what to order, and why they matter beyond just being tasty.",
+    imageTone: "giza",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Luxor", "Aswan"],
+    primaryKeyword: "egyptian food guide",
+    secondaryKeywords: ["what to eat in egypt", "koshari egypt", "ful medames", "egyptian cuisine"],
+    relatedTours: toursBySlug("cairo-nile-dinner-cruise-night-tour", "3-day-cairo-giza"),
+    seoTitle: "What to Eat in Egypt: A Practical Guide to Egyptian Food",
+    seoDescription:
+      "Koshari, ful medames, and the dishes that define everyday Egyptian eating — what to order, where they come from, and why they're worth seeking out.",
+    body: [
+      p("Egyptian food rarely gets the same attention as its ancient sites, which is a shame, because a handful of dishes are genuinely worth building a meal or two around."),
+      h2("Koshari"),
+      p(
+        "Widely considered Egypt's national dish, koshari layers rice, macaroni, and lentils with chickpeas, a spiced tomato sauce, and crispy fried onions, usually finished with a garlic-vinegar sauce and a chili sauce on the side. Its exact origins trace to the 19th century, with likely Indian and British colonial influences on the rice-and-lentil base — but the dish as eaten today, sold everywhere from street carts to sit-down restaurants, is entirely, unmistakably Egyptian."
+      ),
+      h2("Ful Medames"),
+      p(
+        "Egypt's most popular breakfast dish by a wide margin, ful medames is slow-cooked fava beans, typically mashed and dressed with olive oil, lemon, cumin, and garlic. Its roots go back to Pharaonic Egypt, making it one of the oldest continuously eaten dishes in the country — still served every morning in households and street stalls across Cairo."
+      ),
+      h2("Beyond the Basics"),
+      ...bullets([
+        "Molokhia — a garlicky, jute-leaf stew, usually served over rice with chicken or rabbit",
+        "Mahshi — vegetables stuffed with spiced rice, a common home-cooking staple",
+        "Ta'ameya — Egypt's version of falafel, made with fava beans rather than chickpeas",
+        "Fresh Nile-side seafood in Luxor and Aswan, and grilled seafood along the Red Sea coast",
+      ]),
+      h2("Eating Well on a Tour"),
+      p(
+        "A private guide is worth its weight here too — knowing which street stall is actually good, or which restaurant does koshari properly, makes a real difference, and it's exactly the kind of local knowledge a good guide brings to a day that otherwise defaults to hotel restaurants."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "is-the-luxor-hot-air-balloon-safe",
+    title: "Is the Luxor Hot Air Balloon Ride Safe?",
+    category: "Travel Guides",
+    tags: ["Luxor", "Hot Air Balloon", "Safety"],
+    author: editorialTeam,
+    excerpt:
+      "A sunrise balloon over Luxor's West Bank is one of Egypt's most iconic experiences, and it comes with a safety history worth understanding honestly before you book.",
+    imageTone: "luxor",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Luxor"],
+    primaryKeyword: "is luxor hot air balloon safe",
+    secondaryKeywords: ["luxor hot air balloon safety", "luxor balloon ride", "hot air balloon egypt accident"],
+    relatedTours: toursBySlug("2-day-luxor-tour", "luxor-west-bank-day-tour"),
+    seoTitle: "Is the Luxor Hot Air Balloon Ride Safe? An Honest Answer",
+    seoDescription:
+      "A sunrise balloon flight over Luxor is iconic, but has a real safety history worth understanding. What happened, what changed, and how to choose an operator.",
+    body: [
+      p(
+        "A sunrise hot-air balloon over Luxor's West Bank, drifting above the Valley of the Kings and Hatshepsut's temple as the sun comes up, is one of the most-photographed experiences in Egypt — and a reasonable question before booking one is whether it's actually safe."
+      ),
+      h2("What Actually Happened"),
+      p(
+        "Luxor's ballooning industry has had two serious incidents worth being honest about — a multi-balloon collision in 2009, and a more serious accident in 2013 in which a balloon caught fire after landing and resulted in 19 deaths, among the worst hot-air balloon accidents on record anywhere. Both incidents led to real scrutiny of the industry's safety practices at the time."
+      ),
+      h2("What Changed Afterward"),
+      p(
+        "In the years since, Egypt's Civil Aviation Authority tightened oversight of balloon operators significantly — stricter licensing, additional mandatory pilot training, limits on how many balloons can fly simultaneously, and more rigorous equipment inspection requirements. Today, ballooning in Luxor is generally regarded as safe with established, licensed operators, and it remains one of the region's most popular tourist activities for exactly that reason."
+      ),
+      h2("How to Choose an Operator"),
+      p(
+        "The clearest safety signal is an established, licensed operator with a long operating history, rather than the cheapest option available on the day — newer or budget operators are generally considered a relatively higher risk within the industry. Flights are also weather-dependent and routinely cancelled or postponed by operators when conditions aren't right, which is itself a sign of a safety-conscious operation rather than an inconvenience to push past."
+      ),
+      callout(
+        "We only arrange balloon flights through established, licensed operators with strong safety records, and we won't push a flight forward if conditions or an operator's judgment say otherwise — even if it means an early rebooking.",
+        { tone: "Safety", title: "How We Handle It" }
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "egypt-honeymoon-guide",
+    title: "Planning an Egypt Honeymoon: A Practical Guide",
+    category: "Travel Guides",
+    tags: ["Honeymoon", "Luxury Travel", "Trip Planning"],
+    author: editorialTeam,
+    excerpt:
+      "Egypt makes an unusual, genuinely memorable honeymoon destination — ancient temples, a private Nile cruise, and a level of privacy a beach resort can't quite match.",
+    imageTone: "nile",
+    publishedAt: "2026-08-23T00:00:00.000Z",
+    destinations: ["Cairo", "Luxor", "Aswan", "Nile"],
+    relatedExperience: herEgyptExperience,
+    primaryKeyword: "egypt honeymoon",
+    secondaryKeywords: ["egypt honeymoon itinerary", "romantic things to do in egypt", "nile cruise honeymoon"],
+    relatedTours: toursBySlug("10-day-private-luxurious-trip", "4-day-nile-cruise-luxor-aswan", "red-sea-relaxation"),
+    seoTitle: "Planning an Egypt Honeymoon: A Practical, Romantic Itinerary Guide",
+    seoDescription:
+      "Egypt makes a genuinely memorable honeymoon destination — private Nile cruising, sunset over ancient temples, and real privacy. How to plan it well.",
+    body: [
+      p(
+        "Egypt isn't the first place most couples think of for a honeymoon, which is exactly what makes it work — instead of another beach resort, it offers ancient temples at sunset, a private sail down the Nile, and a sense of occasion that's hard to replicate anywhere else."
+      ),
+      h2("Why Egypt Works for a Honeymoon"),
+      p(
+        "A private itinerary here means your own guide and vehicle for the entire trip, which translates directly into privacy most standard honeymoon destinations can't offer at the same price point — no shared group schedule, no waiting on anyone else's preferences, and the flexibility to linger somewhere that catches you both."
+      ),
+      h2("Building the Itinerary"),
+      p(
+        "A well-paced honeymoon usually opens in Cairo and Giza, moves to a private or small-group Nile cruise between Luxor and Aswan — genuinely one of the most romantic ways to travel anywhere, with temples appearing at the water's edge and dinner on deck as the sun sets — and closes with a few unhurried days on the Red Sea coast for pure relaxation after a history-heavy first half."
+      ),
+      h2("A Few Details Worth Planning For"),
+      p(
+        "Sunset and sunrise are worth building the schedule around specifically — sailing past a riverside temple at golden hour, or a quiet Karnak before the day's crowds arrive, tend to be the moments couples remember most. A private candlelit dinner on a felucca, or a personalized photoshoot at a temple or in the desert, are the kind of additions worth requesting directly rather than assuming they're standard."
+      ),
+      callout(
+        "Her Egypt, one of our Signature Experiences, was built with exactly this kind of trip in mind — a considered, private pace rather than a standard group schedule. It's worth a look if privacy and pacing matter most to your honeymoon.",
+        { title: "Worth Knowing About" }
+      ),
     ],
   },
 ];
