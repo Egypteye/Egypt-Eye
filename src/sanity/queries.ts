@@ -100,7 +100,8 @@ export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {
 
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   name, shortName, tagline, heroHeadline, heroSubheadline, description, positioning,
-  contact, socials, pillars, policies, trustStats, heroImages[]{image, tone, label},
+  contact, socials, pillars, policies, trustStats,
+  heroImages[]{image, tone, headline, subtext, linkLabel, linkHref},
   flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage,
   destinationPhotos[]{name, image}
 }`;

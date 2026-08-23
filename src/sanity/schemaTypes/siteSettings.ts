@@ -39,9 +39,9 @@ export const siteSettings = defineType({
 
     defineField({
       name: "heroImages",
-      title: "Homepage hero background photos",
+      title: "Homepage hero slides",
       description:
-        "The rotating slideshow behind the homepage headline. Upload up to 5-6 real photos — until a slide has a photo, it shows a gradient placeholder instead.",
+        "The auto-rotating slideshow at the top of the homepage (advances every 6 seconds). Each slide has its own headline, subtext, and a link to somewhere else on the site — a tour, a story, an experience, a Signature Experience. Upload up to 5-6 real photos — until a slide has a photo, it shows a gradient placeholder instead.",
       type: "array",
       of: [
         {
@@ -62,10 +62,34 @@ export const siteSettings = defineType({
               options: { list: imageTones },
               initialValue: "giza",
             }),
-            defineField({ name: "label", title: "Caption (optional)", type: "string" }),
+            defineField({
+              name: "headline",
+              title: "Headline",
+              type: "string",
+              description: "This slide's own big headline — shown only while this slide is active.",
+            }),
+            defineField({
+              name: "subtext",
+              title: "Supporting line",
+              type: "text",
+              rows: 2,
+            }),
+            defineField({
+              name: "linkLabel",
+              title: "Button text",
+              type: "string",
+              description: "E.g. \"Explore Nile Cruises\" or \"Read the Luxor Guide\".",
+            }),
+            defineField({
+              name: "linkHref",
+              title: "Button link",
+              type: "string",
+              description:
+                "A path on this site the button goes to, e.g. /tours/8-day-essential-egypt-nile-cruise, /stories/luxor-travel-guide, /experiences/atv-quad-bikes-sahara, or /signature-experiences/her-egypt.",
+            }),
           ],
           preview: {
-            select: { title: "label", media: "image" },
+            select: { title: "headline", media: "image" },
             prepare: ({ title, media }) => ({ title: title || "Hero slide", media }),
           },
         },

@@ -261,7 +261,14 @@ export type SiteSettings = {
     facebook?: string;
     tiktok?: string;
   };
-  heroImages?: { image?: SanityImage; tone?: ImageTone; label?: string }[];
+  heroImages?: {
+    image?: SanityImage;
+    tone?: ImageTone;
+    headline?: string;
+    subtext?: string;
+    linkLabel?: string;
+    linkHref?: string;
+  }[];
   flyingDressImage?: { image?: SanityImage; tone?: ImageTone };
   redSeaImage?: { image?: SanityImage; tone?: ImageTone };
   ninePyramidsImage?: { image?: SanityImage; tone?: ImageTone };
@@ -313,7 +320,14 @@ export type ResolvedSiteSettings = {
     tiktok: string;
   };
   nav: readonly { label: string; href: string }[];
-  heroImages: readonly { image?: SanityImage; tone: ImageTone; label?: string }[];
+  heroImages: readonly {
+    image?: SanityImage;
+    tone: ImageTone;
+    headline?: string;
+    subtext?: string;
+    linkLabel?: string;
+    linkHref?: string;
+  }[];
   flyingDressImage: { image?: SanityImage; tone: ImageTone };
   redSeaImage: { image?: SanityImage; tone: ImageTone };
   ninePyramidsImage: { image?: SanityImage; tone: ImageTone };

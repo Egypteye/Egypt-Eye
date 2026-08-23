@@ -54,35 +54,10 @@ export default async function Home() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative">
-        <HeroSlideshow images={site.heroImages} />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/25" />
-        <Container className="relative flex min-h-[82vh] flex-col justify-center gap-6 pb-28 pt-40">
-          <p className="animate-fade-up text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-            {site.tagline}
-          </p>
-          <h1 className="animate-fade-up max-w-3xl text-balance font-display text-4xl font-semibold leading-[1.1] text-cream sm:text-6xl">
-            {site.heroSubheadline}
-          </h1>
-          <p className="animate-fade-up max-w-xl text-lg text-cream/80">
-            {site.description}
-          </p>
-          <div className="animate-fade-up flex flex-wrap gap-4 pt-2">
-            <Link
-              href="/customize"
-              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
-            >
-              Design Your Dream Tour
-            </Link>
-            <Link
-              href="/tours"
-              className="rounded-full border border-cream/30 bg-cream/10 px-7 py-3.5 text-sm font-semibold text-cream backdrop-blur-sm transition hover:bg-cream/20"
-            >
-              Explore Popular Tours
-            </Link>
-          </div>
-        </Container>
+      {/* Hero — an auto-rotating slideshow; each slide carries its own
+          headline, subtext, and link, fully editable in the Studio. */}
+      <section className="relative min-h-[82vh]">
+        <HeroSlideshow slides={site.heroImages} eyebrow={site.tagline} />
 
         {/* Search bar, straddling the hero/content boundary */}
         <div className="absolute inset-x-0 bottom-0 z-10 translate-y-1/2 px-5 sm:px-8">

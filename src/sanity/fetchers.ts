@@ -129,11 +129,41 @@ export async function getFaqs(): Promise<Faq[]> {
 // Default homepage hero slideshow — gradient-placeholder slides shown until
 // real photos are uploaded to Site Settings > Homepage hero background photos.
 const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
-  { tone: "giza", label: "Giza Pyramids" },
-  { tone: "nile", label: "The Nile" },
-  { tone: "luxor", label: "Luxor Temple" },
-  { tone: "redsea", label: "Red Sea" },
-  { tone: "desert", label: "Siwa Oasis" },
+  {
+    tone: "giza",
+    headline: "Where It All Begins: Giza",
+    subtext: "Stand before the last surviving wonder of the ancient world, then climb inside the Great Pyramid itself.",
+    linkLabel: "See the Giza Tour",
+    linkHref: "/tours/1-day-giza-tour",
+  },
+  {
+    tone: "nile",
+    headline: "Temples That Rise Straight From the Water",
+    subtext: "A private cruise between Luxor and Aswan — the most scenic way to see ancient Egypt.",
+    linkLabel: "Explore Nile Cruises",
+    linkHref: "/tours/8-day-essential-egypt-nile-cruise",
+  },
+  {
+    tone: "luxor",
+    headline: "Ancient Thebes, Properly Explored",
+    subtext: "Karnak, the Valley of the Kings, and everything in between — how to actually see Luxor.",
+    linkLabel: "Read the Luxor Guide",
+    linkHref: "/stories/luxor-travel-guide",
+  },
+  {
+    tone: "redsea",
+    headline: "Turquoise Water, White Sand, Nothing on the Agenda",
+    subtext: "A slower few days on Egypt's Red Sea coast.",
+    linkLabel: "Explore the Red Sea",
+    linkHref: "/tours/red-sea-relaxation",
+  },
+  {
+    tone: "desert",
+    headline: "A Sahara Sunset by Quad Bike",
+    subtext: "Golden dunes, a private guide, and a ride you'll actually remember.",
+    linkLabel: "See the Desert Experience",
+    linkHref: "/experiences/atv-quad-bikes-sahara",
+  },
 ];
 
 // Default placeholder tones for the homepage's single-image feature banners,
