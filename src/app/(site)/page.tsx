@@ -147,6 +147,7 @@ export default async function Home() {
                 image={site.flyingDressImage.image}
                 tone={site.flyingDressImage.tone}
                 label="Flying Dress Photoshoot"
+                alt="Flying Dress Photoshoot"
                 className="min-h-[280px]"
               />
             </div>
@@ -163,6 +164,7 @@ export default async function Home() {
                 image={site.redSeaImage.image}
                 tone={site.redSeaImage.tone}
                 label="Red Sea Luxe Yachts"
+                alt="Red Sea Luxe Yachts"
                 className="min-h-[280px] lg:order-1"
               />
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14 lg:order-2">
@@ -189,6 +191,7 @@ export default async function Home() {
               image={site.ninePyramidsImage.image}
               tone={site.ninePyramidsImage.tone}
               label="Nine Pyramids View"
+              alt="Nine Pyramids View"
               className="aspect-[4/3] w-full rounded-3xl"
             />
           </Reveal>
@@ -267,22 +270,25 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* Reviews */}
-      <section className="bg-ink py-16">
-        <Container>
-          <Reveal>
-            <SectionHeading
-              eyebrow={home.reviewsSection.eyebrow}
-              title={home.reviewsSection.title}
-              description={`${average}★ average across ${reviewCount} reviews — our guests rarely just say "good tour."`}
-              align="center"
-            />
+      {/* Reviews — only shown once real, collected testimonials exist in the
+          CMS. No placeholder or illustrative quotes are ever displayed here. */}
+      {testimonials.length > 0 && (
+        <section className="bg-ink py-16">
+          <Container>
+            <Reveal>
+              <SectionHeading
+                eyebrow={home.reviewsSection.eyebrow}
+                title={home.reviewsSection.title}
+                description={`${average}★ average across ${reviewCount} reviews`}
+                align="center"
+              />
+            </Reveal>
+          </Container>
+          <Reveal delay={100} className="mt-10">
+            <ReviewsMarquee testimonials={testimonials} />
           </Reveal>
-        </Container>
-        <Reveal delay={100} className="mt-10">
-          <ReviewsMarquee testimonials={testimonials} />
-        </Reveal>
-      </section>
+        </section>
+      )}
 
       {/* FAQ */}
       <section className="py-16">
@@ -325,6 +331,7 @@ export default async function Home() {
               <a
                 href={site.contact.whatsappLink}
                 target="_blank"
+                rel="noreferrer"
                 className="rounded-full bg-ink px-8 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
               >
                 {home.finalCta.buttonLabel}

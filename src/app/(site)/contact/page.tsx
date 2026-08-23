@@ -15,7 +15,7 @@ export default async function ContactPage() {
   return (
     <>
       <section className="relative">
-        <SmartImage image={page.heroImage.image} tone={page.heroImage.tone} className="absolute inset-0" />
+        <SmartImage image={page.heroImage.image} tone={page.heroImage.tone} className="absolute inset-0" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[34vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
@@ -32,6 +32,7 @@ export default async function ContactPage() {
           <a
             href={site.contact.whatsappLink}
             target="_blank"
+            rel="noreferrer"
             className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm transition hover:border-gold/30 hover:shadow-lg hover:shadow-black/5"
           >
             <p className="text-sm font-semibold uppercase tracking-wide text-gold-dark">

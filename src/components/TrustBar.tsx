@@ -30,19 +30,19 @@ export function TrustBar({
   return (
     <div className="grid gap-px overflow-hidden rounded-2xl bg-black/5 sm:grid-cols-3">
       {badges.map((b) => (
-        <div key={b.title} className="flex gap-4 bg-cream p-6">
+        <div key={b.title} className="flex min-w-0 gap-4 bg-cream p-6">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gold/15 text-gold-dark">
             <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden="true">
               {icons[b.icon]}
             </svg>
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="font-semibold text-ink">{b.title}</p>
             <p className="mt-1 text-sm text-ink-soft/70">{b.body}</p>
           </div>
         </div>
       ))}
-      <div className="flex items-center justify-center gap-8 bg-ink p-6 text-cream sm:col-span-3">
+      <div className="grid grid-cols-2 gap-x-4 gap-y-6 bg-ink p-6 text-cream sm:col-span-3 sm:flex sm:items-center sm:justify-center sm:gap-8">
         <Stat value={`${average}★`} label={`${reviewCount} reviews`} />
         <Stat value={String(catalogStats.tourCount)} label="Private Tours" />
         <Stat value={String(catalogStats.destinationCount)} label="Destinations" />

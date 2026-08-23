@@ -210,7 +210,7 @@ export function CustomizeForm({
       {status === "sent" && (
         <p className="mt-3 text-center text-xs text-ink-soft/60">
           Thanks — your request has been sent. We&rsquo;ll reply by email soon. Prefer to chat now? Message us on{" "}
-          <a href={site.contact.whatsappLink} target="_blank" className="underline">
+          <a href={site.contact.whatsappLink} target="_blank" rel="noreferrer" className="underline">
             WhatsApp
           </a>
           .
@@ -220,7 +220,7 @@ export function CustomizeForm({
       {status === "error" && (
         <p className="mt-3 text-center text-xs text-terracotta">
           Something went wrong sending your request. Please message us directly on{" "}
-          <a href={site.contact.whatsappLink} target="_blank" className="underline">
+          <a href={site.contact.whatsappLink} target="_blank" rel="noreferrer" className="underline">
             WhatsApp
           </a>{" "}
           or email{" "}

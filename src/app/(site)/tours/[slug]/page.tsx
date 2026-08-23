@@ -59,7 +59,7 @@ export default async function TourDetailPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <section className="relative">
-        <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" />
+        <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />
         <Container className="relative flex min-h-[54vh] flex-col justify-end gap-4 pb-14 pt-32">
           <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-medium text-cream/60">
@@ -96,6 +96,7 @@ export default async function TourDetailPage({
             <a
               href={site.contact.whatsappLink}
               target="_blank"
+              rel="noreferrer"
               className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
             >
               Plan My Trip
@@ -218,6 +219,7 @@ export default async function TourDetailPage({
             <a
               href={site.contact.whatsappLink}
               target="_blank"
+              rel="noreferrer"
               className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
             >
               Book on WhatsApp

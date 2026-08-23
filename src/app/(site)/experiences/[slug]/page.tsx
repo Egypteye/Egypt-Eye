@@ -56,6 +56,7 @@ export default async function ExperienceDetailPage({
             tone={experience.imageTone}
             alt={experience.title}
             label={experience.duration}
+            priority
             className="aspect-[16/10] w-full rounded-2xl"
           />
           <h1 className="mt-8 font-display text-3xl font-semibold text-ink sm:text-4xl">
@@ -123,6 +124,7 @@ export default async function ExperienceDetailPage({
           <a
             href={site.contact.whatsappLink}
             target="_blank"
+            rel="noreferrer"
             className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
           >
             Book on WhatsApp

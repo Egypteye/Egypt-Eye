@@ -40,6 +40,7 @@ export function HeroSlideshow({
 
   useEffect(() => {
     if (slides.length <= 1) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const id = setInterval(() => {
       setIndex((i) => (i + 1) % slides.length);
     }, SLIDE_DURATION_MS);

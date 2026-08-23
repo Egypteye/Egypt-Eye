@@ -53,7 +53,7 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               </a>
             </li>
             <li>
-              <a href={site.contact.whatsappLink} target="_blank" className="hover:text-gold-light">
+              <a href={site.contact.whatsappLink} target="_blank" rel="noreferrer" className="hover:text-gold-light">
                 {site.footer.whatsappPrefix}{site.contact.whatsapp}
               </a>
             </li>
@@ -69,17 +69,17 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           </p>
           <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
             <li>
-              <a href={site.socials.instagram} target="_blank" className="hover:text-gold-light">
+              <a href={site.socials.instagram} target="_blank" rel="noreferrer" className="hover:text-gold-light">
                 Instagram
               </a>
             </li>
             <li>
-              <a href={site.socials.facebook} target="_blank" className="hover:text-gold-light">
+              <a href={site.socials.facebook} target="_blank" rel="noreferrer" className="hover:text-gold-light">
                 Facebook
               </a>
             </li>
             <li>
-              <a href={site.socials.tiktok} target="_blank" className="hover:text-gold-light">
+              <a href={site.socials.tiktok} target="_blank" rel="noreferrer" className="hover:text-gold-light">
                 TikTok
               </a>
             </li>
@@ -88,9 +88,17 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
       </Container>
 
       <div className="border-t border-white/10 py-6">
-        <Container className="flex flex-col items-center justify-between gap-2 text-xs text-cream/40 sm:flex-row">
+        <Container className="flex flex-col items-center justify-between gap-3 text-xs text-cream/40 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
-          <p>{site.footer.location}</p>
+          <div className="flex items-center gap-4">
+            <Link href="/privacy" className="hover:text-cream/70">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-cream/70">
+              Terms of Service
+            </Link>
+            <p>{site.footer.location}</p>
+          </div>
         </Container>
       </div>
     </footer>

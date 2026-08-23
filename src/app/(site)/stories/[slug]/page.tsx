@@ -148,7 +148,7 @@ export default async function StoryDetailPage({
 
       {/* Hero */}
       <section className="relative">
-        <SmartImage image={story.image} tone={story.imageTone} className="absolute inset-0" />
+        <SmartImage image={story.image} tone={story.imageTone} alt={story.title} className="absolute inset-0" priority />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
         <Container className="relative flex min-h-[64vh] flex-col justify-end gap-4 pb-16 pt-32">
           {story.category && (
@@ -174,13 +174,7 @@ export default async function StoryDetailPage({
           <Reveal>{story.body && story.body.length > 0 && <StoryBody body={story.body} />}</Reveal>
 
           {(!story.body || story.body.length === 0) && (
-            <p className="text-sm text-ink-soft/50">
-              Full article coming soon — write it in the{" "}
-              <Link href="/studio" className="underline">
-                Studio
-              </Link>
-              .
-            </p>
+            <p className="text-sm text-ink-soft/50">Full article coming soon.</p>
           )}
 
           {/* Related experience — dedicated section, in addition to anything
