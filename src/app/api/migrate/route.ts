@@ -79,6 +79,8 @@ export async function GET(request: NextRequest) {
         lengthDays: t.lengthDays,
         cities: t.cities,
         destinations: t.destinations,
+        travelStyle: t.travelStyle,
+        featured: t.featured,
         rating: t.rating ? { _type: "rating", ...t.rating } : undefined,
         badge: t.badge,
         imageTone: t.imageTone,
@@ -87,6 +89,11 @@ export async function GET(request: NextRequest) {
         included: t.included,
         excluded: t.excluded,
         itinerary: t.itinerary?.map((d) => ({ ...d, _type: "itineraryDay", _key: key() })),
+        relatedExperiences: t.relatedExperiences?.map((e) => ({
+          _type: "reference",
+          _ref: `experience-${e.slug}`,
+          _key: key(),
+        })),
         price: { _type: "price", ...t.price },
         order: i,
       });
@@ -104,6 +111,11 @@ export async function GET(request: NextRequest) {
         duration: e.duration,
         rating: e.rating ? { _type: "rating", ...e.rating } : undefined,
         price: { _type: "price", ...e.price },
+        relatedTours: e.relatedTours?.map((t) => ({
+          _type: "reference",
+          _ref: `tour-${t.slug}`,
+          _key: key(),
+        })),
         imageTone: e.imageTone,
         description: e.description,
         included: e.included,
@@ -309,6 +321,14 @@ export async function GET(request: NextRequest) {
           _key: key(),
         })),
         faqs: (e.faqs ?? []).map((f) => ({ ...f, _type: "faq", _key: key() })),
+        relatedStory: e.relatedStory
+          ? { _type: "reference", _ref: `story-${e.relatedStory.slug}` }
+          : undefined,
+        seoTitle: e.seoTitle,
+        seoDescription: e.seoDescription,
+        canonicalUrl: e.canonicalUrl,
+        ogImage: e.ogImage,
+        noindex: e.noindex,
       });
       results.push(`signatureExperience: ${e.slug}`);
     }
@@ -396,15 +416,27 @@ export async function GET(request: NextRequest) {
         relatedExperience: s.relatedExperience
           ? { _type: "reference", _ref: `signatureExperience-${s.relatedExperience.slug}` }
           : undefined,
+        relatedTours: s.relatedTours?.map((t) => ({
+          _type: "reference",
+          _ref: `tour-${t.slug}`,
+          _key: key(),
+        })),
         relatedStories: s.relatedStories?.map((r) => ({
           _type: "reference",
           _ref: `story-${r.slug}`,
           _key: key(),
         })),
+        destinations: s.destinations,
+        badge: s.badge,
         publishedAt: s.publishedAt ?? new Date().toISOString(),
+        primaryKeyword: s.primaryKeyword,
+        secondaryKeywords: s.secondaryKeywords,
+        contentReviewDate: s.contentReviewDate,
         seoTitle: s.seoTitle,
         seoDescription: s.seoDescription,
+        ogImage: s.ogImage,
         canonicalUrl: s.canonicalUrl,
+        noindex: s.noindex,
       });
       results.push(`story: ${s.slug}`);
     }
