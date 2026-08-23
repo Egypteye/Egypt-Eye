@@ -69,6 +69,36 @@ Sanity for you:
    (or just don't reuse the URL) so the endpoint can't be triggered by
    anyone who happens to guess it.
 
+## Setting up email delivery (Resend)
+
+The **Customize Your Tour** form (`/customize`) submits to `/api/customize-request`,
+which emails the details to whatever address is in **Site Settings → Contact →
+Email** via [Resend](https://resend.com). Without this configured, the form
+returns an error instead of sending.
+
+1. Go to **[resend.com](https://resend.com)** and create a free account
+   (100 emails/day, 3,000/month on the free tier — plenty for a contact form).
+2. **Verify a sending domain** so email can reach *any* inbox reliably —
+   Resend → **Domains** → **Add Domain**, enter your real domain (e.g.
+   `egypteyetravel.com`), and add the DNS records it shows you (a few TXT/CNAME
+   records) wherever your domain's DNS is managed. Verification usually takes
+   a few minutes once the records are added.
+   - You *can* skip this and test immediately with Resend's shared
+     `onboarding@resend.dev` sender, but it will only deliver to the email
+     address you signed up to Resend with — fine for a quick test, not for
+     production, since real submissions need to reach your actual inbox.
+3. Resend → **API Keys** → **Create API Key** (Sending access is enough).
+   Copy it — you won't be able to see it again.
+4. In Vercel → Project → Settings → Environment Variables, add:
+   - `RESEND_API_KEY` — the key from step 3
+   - `RESEND_FROM_EMAIL` — once your domain is verified, something like
+     `Egypt Eye Travel <bookings@egypteyetravel.com>`. Leave unset to use the
+     shared `onboarding@resend.dev` sender (only reaches your Resend
+     account's own email, per the caveat above).
+5. Redeploy (or trigger one from the Vercel dashboard — env var changes
+   don't apply to already-running deployments). Submit the Customize Your
+   Tour form once to confirm the email arrives.
+
 ## Images
 
 Every tour/experience/photoshoot/blog post has an optional **Photo** field
