@@ -10,6 +10,12 @@ import { TourCard } from "@/components/TourCard";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
+const categoryLabels: Record<string, string> = {
+  "one-day": "One-Day Trip",
+  "multi-day": "Multi-Day Journey",
+  jordan: "Jordan Extension",
+};
+
 export async function generateStaticParams() {
   const slugs = await getAllTourSlugs();
   return slugs.map((slug) => ({ slug }));
@@ -54,13 +60,53 @@ export default async function TourDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <section className="relative">
         <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
-        <Container className="relative flex min-h-[46vh] flex-col justify-end gap-3 pb-14 pt-32">
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />
+        <Container className="relative flex min-h-[54vh] flex-col justify-end gap-4 pb-14 pt-32">
+          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-medium text-cream/60">
+            <Link href="/" className="transition hover:text-cream">
+              Home
+            </Link>
+            <span aria-hidden="true">›</span>
+            <Link href="/tours" className="transition hover:text-cream">
+              Tours
+            </Link>
+            <span aria-hidden="true">›</span>
+            <span className="text-cream/85">{tour.title}</span>
+          </nav>
+
           {tour.badge && <Badge>{tour.badge}</Badge>}
           <h1 className="max-w-3xl text-balance font-display text-3xl font-semibold text-cream sm:text-5xl">
             {tour.title}
           </h1>
           <p className="max-w-xl text-cream/80">{tour.tagline}</p>
+
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <span className="rounded-full bg-cream/15 px-3.5 py-1.5 text-sm text-cream backdrop-blur-sm">
+              ⏱ {tour.duration}
+            </span>
+            <span className="rounded-full bg-cream/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-cream backdrop-blur-sm">
+              {categoryLabels[tour.category] ?? tour.category}
+            </span>
+            <span className="rounded-full bg-cream px-3.5 py-1.5">
+              <Rating rating={tour.rating} />
+            </span>
+          </div>
+
+          <div className="flex flex-wrap gap-4 pt-2">
+            <a
+              href={site.contact.whatsappLink}
+              target="_blank"
+              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
+            >
+              Plan My Trip
+            </a>
+            <a
+              href={tour.itinerary ? "#itinerary" : "#details"}
+              className="inline-flex items-center gap-1.5 rounded-full border border-cream/30 bg-cream/10 px-7 py-3.5 text-sm font-semibold text-cream backdrop-blur-sm transition hover:bg-cream/20"
+            >
+              {tour.itinerary ? "View Itinerary" : "See Details"} ↓
+            </a>
+          </div>
         </Container>
       </section>
 
@@ -68,12 +114,10 @@ export default async function TourDetailPage({
         <Container className="grid gap-12 lg:grid-cols-[1.6fr_1fr]">
           <div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-black/5 pb-6 text-sm text-ink-soft/70">
-              <span>⏱ {tour.duration}</span>
               <span>📍 {tour.destinations.join(", ")}</span>
-              <Rating rating={tour.rating} />
             </div>
 
-            <div className="mt-8">
+            <div id="details" className="mt-8 scroll-mt-24">
               <h2 className="font-display text-2xl font-semibold text-ink">
                 About this tour
               </h2>
@@ -97,7 +141,7 @@ export default async function TourDetailPage({
             </div>
 
             {tour.itinerary && (
-              <div className="mt-10">
+              <div id="itinerary" className="mt-10 scroll-mt-24">
                 <h2 className="font-display text-2xl font-semibold text-ink">
                   Itinerary
                 </h2>

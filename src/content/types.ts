@@ -268,6 +268,17 @@ export type SiteSettings = {
   customizeImage?: { image?: SanityImage; tone?: ImageTone };
   destinationPhotos?: { name?: string; image?: SanityImage }[];
   pillars?: { title: string; description: string }[];
+  // Optional, real-numbers-only stats for the homepage trust bar. A field
+  // left unset hides that tile rather than showing a placeholder — never
+  // fabricate a value here.
+  trustStats?: {
+    yearsInEgypt?: number;
+    happyGuestsLabel?: string;
+    reviewPlatformName?: string;
+    reviewPlatformRating?: number;
+    reviewPlatformReviewCount?: number;
+    reviewPlatformUrl?: string;
+  };
   policies?: {
     deposit?: string;
     currency?: string;
@@ -317,6 +328,14 @@ export type ResolvedSiteSettings = {
     cancellation: string;
   };
   pillars: readonly { title: string; description: string }[];
+  trustStats?: {
+    yearsInEgypt?: number;
+    happyGuestsLabel?: string;
+    reviewPlatformName?: string;
+    reviewPlatformRating?: number;
+    reviewPlatformReviewCount?: number;
+    reviewPlatformUrl?: string;
+  };
 };
 
 export type CustomizeFormFieldType =

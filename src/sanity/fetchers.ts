@@ -191,6 +191,7 @@ export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
           : localSite.policies.children,
     },
     pillars: result.pillars && result.pillars.length > 0 ? result.pillars : localSite.pillars,
+    trustStats: { ...localSite.trustStats, ...result.trustStats },
     nav: localSite.nav,
   };
 }

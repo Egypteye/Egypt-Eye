@@ -203,6 +203,7 @@ export async function GET(request: NextRequest) {
       contact: { _type: "object", ...site.contact },
       socials: { _type: "object", ...site.socials },
       pillars: site.pillars.map((p) => ({ ...p, _type: "object", _key: key() })),
+      trustStats: { _type: "object", ...site.trustStats },
       policies: {
         _type: "object",
         deposit: site.policies.deposit,

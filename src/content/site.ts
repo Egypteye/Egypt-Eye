@@ -50,6 +50,12 @@ export const site = {
     cancellation:
       "For force majeure situations (e.g. volcanoes, earthquakes, or other circumstances outside our control), we do not charge a cancellation fee. If you cancel for personal or business reasons after we have incurred costs on your behalf, those costs may be transferred to you.",
   },
+  // Intentionally empty until real numbers are supplied (years operating,
+  // an actual guest count, a genuine review-platform rating) — the trust
+  // bar hides any tile whose value isn't set here rather than showing a
+  // placeholder. Fill in via the Studio (Site Settings → Trust stats bar)
+  // or edit this object directly.
+  trustStats: {},
   pillars: [
     {
       title: "Travel",

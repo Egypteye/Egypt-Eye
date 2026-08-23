@@ -8,6 +8,7 @@ import { Badge } from "@/components/Badge";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
 import { SearchBar } from "@/components/SearchBar";
 import { TrustBar } from "@/components/TrustBar";
+import { StatsBar } from "@/components/StatsBar";
 import { TourCard } from "@/components/TourCard";
 import { DestinationsPanel } from "@/components/DestinationsPanel";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
@@ -15,7 +16,7 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
 import { StoryCard } from "@/components/StoryCard";
 import { Reveal } from "@/components/Reveal";
-import { getOverallRating } from "@/content/aggregate";
+import { getCatalogStats, getOverallRating } from "@/content/aggregate";
 import {
   getExperiences,
   getFaqs,
@@ -46,6 +47,7 @@ export default async function Home() {
       getSignatureExperiences(),
     ]);
   const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
+  const { tourCount, destinationCount } = getCatalogStats(tours, experiences, photoshoots);
   // A small curated set for the homepage teaser — the full searchable
   // catalog lives on /tours, not inline here.
   const popularTours = tours.filter((t) => t.featured).slice(0, 4);
@@ -321,6 +323,17 @@ export default async function Home() {
                 className="aspect-square w-full rounded-2xl"
               />
             </div>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Trust stats — real, computed catalog numbers plus whatever's been
+          filled in under Site Settings → Trust stats bar (years operating,
+          guest count, review-platform rating). Nothing here is invented. */}
+      <section className="py-6">
+        <Container>
+          <Reveal>
+            <StatsBar trustStats={site.trustStats} tourCount={tourCount} destinationCount={destinationCount} />
           </Reveal>
         </Container>
       </section>

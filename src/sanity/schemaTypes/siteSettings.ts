@@ -141,6 +141,26 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: "trustStats",
+      title: "Trust stats bar (homepage, before Reviews)",
+      description:
+        "Only enter numbers you can actually stand behind — years operating, a real guest count, and a genuine TripAdvisor (or Google) rating with a link to it. Leave a field blank to hide that tile rather than showing a placeholder; the tour/destination counts are computed automatically from the live catalog and don't need to be entered here.",
+      type: "object",
+      fields: [
+        defineField({ name: "yearsInEgypt", title: "Years operating in Egypt", type: "number" }),
+        defineField({
+          name: "happyGuestsLabel",
+          title: "Guests served (as displayed, e.g. \"2,500+\")",
+          type: "string",
+        }),
+        defineField({ name: "reviewPlatformName", title: "Review platform name (e.g. \"TripAdvisor\")", type: "string" }),
+        defineField({ name: "reviewPlatformRating", title: "Review platform rating (e.g. 4.9)", type: "number" }),
+        defineField({ name: "reviewPlatformReviewCount", title: "Review platform review count", type: "number" }),
+        defineField({ name: "reviewPlatformUrl", title: "Link to the real reviews page", type: "url" }),
+      ],
+    }),
+
+    defineField({
       name: "policies",
       title: "Booking policies",
       type: "object",
