@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -9,11 +8,12 @@ import { Badge } from "@/components/Badge";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
 import { SearchBar } from "@/components/SearchBar";
 import { TrustBar } from "@/components/TrustBar";
-import { ToursGrid } from "./tours/ToursGrid";
+import { TourCard } from "@/components/TourCard";
 import { DestinationsPanel } from "@/components/DestinationsPanel";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
+import { StoryCard } from "@/components/StoryCard";
 import { Reveal } from "@/components/Reveal";
 import { getOverallRating } from "@/content/aggregate";
 import {
@@ -46,10 +46,13 @@ export default async function Home() {
       getSignatureExperiences(),
     ]);
   const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
-  // Featured tours surface first in the merged Tours section below, without
-  // needing a separate curated carousel — everything lives in one browsable
-  // grid, sorted so the homepage's picks still lead.
-  const sortedTours = [...tours].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+  // A small curated set for the homepage teaser — the full searchable
+  // catalog lives on /tours, not inline here.
+  const popularTours = tours.filter((t) => t.featured).slice(0, 4);
+  // Prefer editor-flagged Stories for the homepage teaser; fall back to the
+  // most recent if none are flagged yet.
+  const featuredStories = stories.filter((s) => s.featured);
+  const homepageStories = (featuredStories.length > 0 ? featuredStories : stories).slice(0, 2);
 
   return (
     <>
@@ -103,15 +106,15 @@ export default async function Home() {
         <section className="py-24">
           <Container>
             <Reveal>
-              <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:items-center">
-                <div>
+              <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+                <div className="mx-auto w-full max-w-md lg:mx-0">
                   <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">
                     Signature Experiences
                   </p>
-                  <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">
+                  <h2 className="mt-4 text-balance font-display text-3xl font-semibold leading-[1.15] text-ink sm:text-4xl lg:text-[2.75rem]">
                     Not a Tour. An Experience, Designed Around You.
                   </h2>
-                  <p className="mt-4 max-w-md text-ink-soft/75">
+                  <p className="mt-4 text-ink-soft/75">
                     A separate collection from our tour catalog — each one built around a
                     specific person and a specific way of feeling taken care of. The
                     destination is part of the answer, not the whole question.
@@ -123,8 +126,8 @@ export default async function Home() {
                     Explore Signature Experiences
                   </Link>
                 </div>
-                <div className="mx-auto w-full max-w-sm">
-                  <SignatureExperienceCard experience={signatureExperiences[0]} />
+                <div className="mx-auto w-full max-w-sm lg:max-w-none">
+                  <SignatureExperienceCard experience={signatureExperiences[0]} imageAspectClassName="aspect-[4/5] lg:aspect-[4/3]" />
                 </div>
               </div>
             </Reveal>
@@ -132,28 +135,35 @@ export default async function Home() {
         </section>
       )}
 
-      {/* Tours — the full, browsable catalog, right on the homepage */}
+      {/* Popular Tours — a small curated preview; the full searchable
+          catalog lives on /tours, not inline on the homepage. */}
       <section className="py-4">
         <Container>
           <Reveal>
-            <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-              <SectionHeading
-                eyebrow="All Tours"
-                title="Every Journey We Offer Across Egypt"
-                description="From Cairo and Giza to Luxor, Aswan, and the Red Sea — search or filter by destination, length, and travel style to find the trip built for you."
-              />
-              <Link
-                href="/tours"
-                className="whitespace-nowrap text-sm font-semibold text-gold-dark hover:underline"
-              >
-                Open the full tours page →
-              </Link>
-            </div>
+            <SectionHeading
+              eyebrow="Popular Tours"
+              title="Tours Travelers Book Most"
+              description="A curated set of our most-loved itineraries — the ones we'd recommend first if you told us nothing else about your trip."
+            />
           </Reveal>
-          <Reveal delay={100} className="mt-10">
-            <Suspense fallback={null}>
-              <ToursGrid tours={sortedTours} />
-            </Suspense>
+          <Reveal delay={100} className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {popularTours.map((tour) => (
+              <TourCard key={tour.slug} tour={tour} />
+            ))}
+          </Reveal>
+          <Reveal delay={150} className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            <Link
+              href="/tours"
+              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+            >
+              See Popular Tours
+            </Link>
+            <Link
+              href="/tours"
+              className="rounded-full border border-ink/15 px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-sand-dim"
+            >
+              Browse All Tours
+            </Link>
           </Reveal>
         </Container>
       </section>
@@ -355,23 +365,9 @@ export default async function Home() {
               </Link>
             </div>
           </Reveal>
-          <Reveal delay={100} className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {stories.map((s) => (
-              <Link
-                key={s.slug}
-                href={`/stories/${s.slug}`}
-                className="group overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5"
-              >
-                <SmartImage
-                  image={s.image}
-                  tone={s.imageTone}
-                  alt={s.title}
-                  className="h-36 w-full transition duration-500 group-hover:scale-105"
-                />
-                <div className="p-4">
-                  <h3 className="text-sm font-semibold leading-snug text-ink">{s.title}</h3>
-                </div>
-              </Link>
+          <Reveal delay={100} className="mt-10 grid gap-8 sm:grid-cols-2">
+            {homepageStories.map((s) => (
+              <StoryCard key={s.slug} story={s} />
             ))}
           </Reveal>
         </Container>

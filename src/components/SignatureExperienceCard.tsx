@@ -6,7 +6,13 @@ import { SmartImage } from "./SmartImage";
 // full-bleed photo, a "who it's for" eyebrow instead of a price-first
 // layout, and a quiet text CTA rather than a button — so a Signature
 // Experience reads as curated rather than "one more package to compare."
-export function SignatureExperienceCard({ experience }: { experience: SignatureExperience }) {
+export function SignatureExperienceCard({
+  experience,
+  imageAspectClassName = "aspect-[4/5]",
+}: {
+  experience: SignatureExperience;
+  imageAspectClassName?: string;
+}) {
   const isComingSoon = experience.status === "comingSoon";
 
   return (
@@ -19,7 +25,7 @@ export function SignatureExperienceCard({ experience }: { experience: SignatureE
           image={experience.heroImage}
           tone={experience.heroImageTone}
           alt={experience.name}
-          className="aspect-[4/5] w-full transition duration-700 ease-out group-hover:scale-[1.03]"
+          className={`${imageAspectClassName} w-full transition duration-700 ease-out group-hover:scale-[1.03]`}
         />
         {isComingSoon && (
           <span className="absolute left-5 top-5 rounded-full bg-cream/95 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink">

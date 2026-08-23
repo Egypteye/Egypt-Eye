@@ -29,23 +29,23 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex">
+        <nav className="hidden flex-wrap items-center justify-end gap-x-5 gap-y-2 xl:flex xl:flex-1 xl:px-6">
           {site.nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="text-sm font-medium text-ink-soft transition hover:text-gold-dark"
+              className="whitespace-nowrap text-[13px] font-medium text-ink-soft transition hover:text-gold-dark"
             >
               {item.label}
             </Link>
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 lg:flex">
+        <div className="hidden items-center gap-2.5 xl:flex">
           {journeyCount > 0 && (
             <Link
               href="/customize"
-              className="flex items-center gap-1.5 rounded-full border border-gold/30 bg-gold/10 px-4 py-2.5 text-sm font-semibold text-gold-dark transition hover:bg-gold/20"
+              className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-[13px] font-semibold text-gold-dark transition hover:bg-gold/20"
             >
               My Journey
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold-dark text-[11px] text-cream">
@@ -55,14 +55,14 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           )}
           <Link
             href="/customize"
-            className="rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+            className="whitespace-nowrap rounded-full bg-ink px-4 py-2.5 text-[13px] font-semibold text-cream transition hover:bg-gold-dark"
           >
             Plan My Trip
           </Link>
         </div>
 
         <button
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 lg:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 xl:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={open}
@@ -78,7 +78,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
       </div>
 
       {open && (
-        <nav className="border-t border-black/5 bg-cream lg:hidden">
+        <nav className="border-t border-black/5 bg-cream xl:hidden">
           <div className="flex flex-col gap-1 px-5 py-4">
             {site.nav.map((item) => (
               <Link
