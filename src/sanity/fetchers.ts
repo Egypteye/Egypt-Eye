@@ -188,7 +188,7 @@ const defaultBanners = {
   },
   redSeaImage: {
     tone: "redsea" as const,
-    image: "/photos/pexels-7974665.jpg",
+    image: "/photos/pexels-7974685.jpg",
   },
   ninePyramidsImage: {
     tone: "giza" as const,
