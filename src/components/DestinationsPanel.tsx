@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Image as SanityImage } from "sanity";
+import type { SanityImage } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import type { Destination, Tour } from "@/content/types";
 

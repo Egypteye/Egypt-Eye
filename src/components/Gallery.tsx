@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import type { Image as SanityImageType } from "sanity";
+import type { SanityImage as SanityImageType } from "@/content/types";
 import { urlForImage } from "@/sanity/image";
 
 // Thumbnail grid + simple click-to-open lightbox with prev/next, for the

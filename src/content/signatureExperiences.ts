@@ -18,6 +18,7 @@ export const signatureExperiences: SignatureExperience[] = [
     shortDescription:
       "Five unhurried days of Egypt, arranged entirely around you — a private host, a photographer who knows how to make you look like yourself on a good day, and nothing left for you to organize. You show up. We've handled the rest.",
     heroImageTone: "desert",
+    heroImage: "/photos/pexels-28601583.jpg",
     duration: "5 days, 4 nights",
     groupSize: "Private — just you, or with the friends you bring",
     luxuryLevel: "Ultra-Luxury, Fully Private",
@@ -252,6 +253,7 @@ export const signatureExperiences: SignatureExperience[] = [
     shortDescription:
       "On August 2, 2027, Luxor gets roughly six minutes and twenty-two seconds of total solar eclipse — the longest anywhere on Earth until 2114. Two unhurried days built around it: West Bank in the cool of the morning, then an afternoon spent watching the sky do something it won't do again in most of our lifetimes.",
     heroImageTone: "luxor",
+    heroImage: "/photos/pexels-38674439.jpg",
     duration: "2 days, 1 night",
     groupSize: "Private, or small group — ask us either way",
     luxuryLevel: "Ultra-Luxury, Fully Private",

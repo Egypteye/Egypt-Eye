@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { Image as SanityImageType } from "sanity";
+import type { SanityImage as SanityImageType } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import type { ImageTone } from "@/content/types";
 

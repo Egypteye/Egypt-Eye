@@ -1,5 +1,5 @@
 import Image from "next/image";
-import type { Image as SanityImageType } from "sanity";
+import type { SanityImage as SanityImageType } from "@/content/types";
 import { urlForImage } from "@/sanity/image";
 import { PlaceholderImage } from "./PlaceholderImage";
 import type { ImageTone } from "@/content/types";

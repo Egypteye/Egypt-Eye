@@ -8,7 +8,10 @@ export const customizePage: ResolvedCustomizePage = {
   headline: "Design Your Dream Tour",
   subtext:
     "A private itinerary built entirely around you — every tour, extra experience, and photoshoot in our catalog, combined however you like.",
-  bannerImage: { tone: "nile" },
+  bannerImage: {
+    tone: "nile",
+    image: "/photos/pexels-15131486.jpg",
+  },
   steps: [
     { title: "Tell us the basics", body: "Dates, guest count, and how packed or relaxed you want the pace." },
     { title: "Pick cities & activities", body: "Choose from Egypt's icons, Jordan, or the full add-on catalog." },

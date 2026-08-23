@@ -139,6 +139,7 @@ export async function getFaqs(): Promise<Faq[]> {
 const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
   {
     tone: "giza",
+    image: "/photos/pexels-10124763.jpg",
     headline: "Where It All Begins: Giza",
     subtext: "Stand before the last surviving wonder of the ancient world, then climb inside the Great Pyramid itself.",
     linkLabel: "See the Giza Tour",
@@ -146,6 +147,7 @@ const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
   },
   {
     tone: "nile",
+    image: "/photos/pexels-15131486.jpg",
     headline: "Temples That Rise Straight From the Water",
     subtext: "A private cruise between Luxor and Aswan — the most scenic way to see ancient Egypt.",
     linkLabel: "Explore Nile Cruises",
@@ -153,6 +155,7 @@ const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
   },
   {
     tone: "luxor",
+    image: "/photos/pexels-18934702.jpg",
     headline: "Ancient Thebes, Properly Explored",
     subtext: "Karnak, the Valley of the Kings, and everything in between — how to actually see Luxor.",
     linkLabel: "Read the Luxor Guide",
@@ -160,6 +163,7 @@ const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
   },
   {
     tone: "redsea",
+    image: "/photos/pexels-36221985.jpg",
     headline: "Turquoise Water, White Sand, Nothing on the Agenda",
     subtext: "A slower few days on Egypt's Red Sea coast.",
     linkLabel: "Explore the Red Sea",
@@ -167,6 +171,7 @@ const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
   },
   {
     tone: "desert",
+    image: "/photos/pexels-20189345.jpg",
     headline: "A Sahara Sunset by Quad Bike",
     subtext: "Golden dunes, a private guide, and a ride you'll actually remember.",
     linkLabel: "See the Desert Experience",
@@ -177,10 +182,22 @@ const defaultHeroImages: ResolvedSiteSettings["heroImages"] = [
 // Default placeholder tones for the homepage's single-image feature banners,
 // matching the tones those sections used before they were CMS-editable.
 const defaultBanners = {
-  flyingDressImage: { tone: "desert" as const },
-  redSeaImage: { tone: "redsea" as const },
-  ninePyramidsImage: { tone: "giza" as const },
-  customizeImage: { tone: "luxor" as const },
+  flyingDressImage: {
+    tone: "desert" as const,
+    image: "/photos/pexels-38810253.jpg",
+  },
+  redSeaImage: {
+    tone: "redsea" as const,
+    image: "/photos/pexels-7974665.jpg",
+  },
+  ninePyramidsImage: {
+    tone: "giza" as const,
+    image: "/photos/pexels-18291196.jpg",
+  },
+  customizeImage: {
+    tone: "luxor" as const,
+    image: "/photos/pexels-15131539.jpg",
+  },
 };
 
 // Site Settings is a singleton — merge field-by-field instead of an
@@ -226,19 +243,19 @@ export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
         : defaultHeroImages,
     flyingDressImage: {
       tone: result.flyingDressImage?.tone ?? defaultBanners.flyingDressImage.tone,
-      image: result.flyingDressImage?.image,
+      image: result.flyingDressImage?.image ?? defaultBanners.flyingDressImage.image,
     },
     redSeaImage: {
       tone: result.redSeaImage?.tone ?? defaultBanners.redSeaImage.tone,
-      image: result.redSeaImage?.image,
+      image: result.redSeaImage?.image ?? defaultBanners.redSeaImage.image,
     },
     ninePyramidsImage: {
       tone: result.ninePyramidsImage?.tone ?? defaultBanners.ninePyramidsImage.tone,
-      image: result.ninePyramidsImage?.image,
+      image: result.ninePyramidsImage?.image ?? defaultBanners.ninePyramidsImage.image,
     },
     customizeImage: {
       tone: result.customizeImage?.tone ?? defaultBanners.customizeImage.tone,
-      image: result.customizeImage?.image,
+      image: result.customizeImage?.image ?? defaultBanners.customizeImage.image,
     },
     destinationPhotos: result.destinationPhotos ?? [],
     policies: {
@@ -272,7 +289,7 @@ export async function getCustomizePage(): Promise<ResolvedCustomizePage> {
     ...result,
     bannerImage: {
       tone: result.bannerImage?.tone ?? localCustomizePage.bannerImage.tone,
-      image: result.bannerImage?.image,
+      image: result.bannerImage?.image ?? localCustomizePage.bannerImage.image,
     },
     steps: result.steps && result.steps.length > 0 ? result.steps : localCustomizePage.steps,
     formSections:
@@ -291,7 +308,7 @@ export async function getAboutPage(): Promise<ResolvedAboutPage> {
     ...result,
     heroImage: {
       tone: result.heroImage?.tone ?? localAboutPage.heroImage.tone,
-      image: result.heroImage?.image,
+      image: result.heroImage?.image ?? localAboutPage.heroImage.image,
     },
     teamMembers:
       result.teamMembers && result.teamMembers.length > 0 ? result.teamMembers : localAboutPage.teamMembers,
@@ -307,7 +324,7 @@ export async function getContactPage(): Promise<ResolvedContactPage> {
     ...result,
     heroImage: {
       tone: result.heroImage?.tone ?? localContactPage.heroImage.tone,
-      image: result.heroImage?.image,
+      image: result.heroImage?.image ?? localContactPage.heroImage.image,
     },
   };
 }

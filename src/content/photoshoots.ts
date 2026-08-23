@@ -12,6 +12,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Giza Pyramids", "Nine Pyramids View"],
     imageLabel: "Pyramids Photoshoot",
     imageTone: "giza",
+    image: "/photos/pexels-36505454.jpg",
     description:
       "A private, professionally directed photoshoot at the Pyramids of Giza — built for travelers who want cinematic, Instagram-ready memories, not just snapshots.",
     goodFor: ["Solo travelers", "Couples", "Families", "Influencers & content creators"],
@@ -44,6 +45,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Pyramids Rooftop", "Sand Castle / Sand Dunes", "Fayoum Oasis"],
     imageLabel: "Flying Dress at the Pyramids",
     imageTone: "desert",
+    image: "/photos/pexels-8037495.jpg",
     description:
       "Egypt's first Flying Dress experience — a dramatic, editorial-style shoot in a flowing dress of your chosen color, directed by our photographers at secret, uncrowded locations away from the crowds.",
     goodFor: [

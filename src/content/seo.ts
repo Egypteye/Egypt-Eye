@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import type { Image as SanityImage } from "sanity";
+import type { SanityImage } from "./types";
 import { urlForImage } from "@/sanity/image";
 import type { PageSeo } from "./types";
 

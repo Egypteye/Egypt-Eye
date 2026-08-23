@@ -11,6 +11,13 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "cdn.sanity.io",
       },
+      {
+        // Curated Pexels photos, used as real imagery until a matching
+        // Sanity upload replaces them — see content/types.ts's SanityImage
+        // union and sanity/image.ts's urlForImage().
+        protocol: "https",
+        hostname: "images.pexels.com",
+      },
     ],
   },
   async redirects() {

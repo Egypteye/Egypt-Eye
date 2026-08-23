@@ -6,7 +6,10 @@ import type { ResolvedContactPage } from "./types";
 export const contactPage: ResolvedContactPage = {
   heroEyebrow: "Contact",
   heroHeadline: "Let's Plan Your Trip",
-  heroImage: { tone: "redsea" },
+  heroImage: {
+    tone: "redsea",
+    image: "/photos/pexels-15276400.jpg",
+  },
   whatsappCardDescription: "Fastest way to reach us",
   emailCardDescription: "For detailed enquiries",
   urgentCardDescription: "Same-day or in-country support",

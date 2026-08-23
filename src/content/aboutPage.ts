@@ -6,7 +6,10 @@ import type { ResolvedAboutPage } from "./types";
 export const aboutPage: ResolvedAboutPage = {
   heroEyebrow: "About Us",
   heroHeadline: "More Than a Travel Agency",
-  heroImage: { tone: "giza" },
+  heroImage: {
+    tone: "giza",
+    image: "/photos/pexels-35549794.jpg",
+  },
   storyEyebrow: "Our Story",
   storyTitle: "We turn a trip to Egypt into a personalized, memorable experience",
   whatWeDoEyebrow: "What We Do",

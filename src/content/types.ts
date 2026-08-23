@@ -1,7 +1,12 @@
 // Shared content types for tours, experiences, and photoshoots.
-import type { Image as SanityImage, PortableTextBlock } from "sanity";
+import type { Image as SanityImageRef, PortableTextBlock } from "sanity";
 
 export type ImageTone = "giza" | "nile" | "desert" | "luxor" | "jordan" | "redsea";
+
+// A photo source: either a real Sanity-uploaded image, or a plain URL to a
+// licensed photo (e.g. a curated Pexels photo) used until a real upload
+// replaces it. urlForImage() in sanity/image.ts understands both.
+export type SanityImage = SanityImageRef | string;
 
 export type Rating = {
   score: number;
