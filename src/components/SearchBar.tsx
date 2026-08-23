@@ -2,14 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { destinations } from "@/content/destinations";
+import type { Destination } from "@/content/types";
 
 const COUNTRIES = [
   { value: "egypt", label: "Egypt" },
   { value: "jordan", label: "Jordan" },
 ];
-
-const EGYPT_CITIES = destinations.filter((d) => d.name !== "Jordan");
 
 const DURATIONS = [
   { value: "all", label: "Any length" },
@@ -24,12 +22,19 @@ const SERVICES = [
   { value: "experiences", label: "Extra Experiences" },
 ];
 
-export function SearchBar({ className = "" }: { className?: string }) {
+export function SearchBar({
+  className = "",
+  destinations,
+}: {
+  className?: string;
+  destinations: readonly Destination[];
+}) {
   const router = useRouter();
   const [country, setCountry] = useState("egypt");
   const [city, setCity] = useState("all");
   const [duration, setDuration] = useState("all");
   const [service, setService] = useState("tours");
+  const egyptCities = destinations.filter((d) => d.name !== "Jordan");
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -87,7 +92,7 @@ export function SearchBar({ className = "" }: { className?: string }) {
             className="bg-transparent text-sm font-medium text-ink outline-none"
           >
             <option value="all">Any city</option>
-            {EGYPT_CITIES.map((d) => (
+            {egyptCities.map((d) => (
               <option key={d.name} value={d.name}>
                 {d.name}
               </option>

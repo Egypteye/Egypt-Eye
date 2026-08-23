@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import type { CustomizeFormField, CustomizeFormSection, ResolvedSiteSettings } from "@/content/types";
-import { destinations } from "@/content/destinations";
-import { interests } from "@/content/interests";
+import type { CustomizeFormField, CustomizeFormSection, Destination, Interest, ResolvedSiteSettings } from "@/content/types";
 import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
 
 const CHIPS_TYPES = new Set(["chips", "chips-destinations", "chips-interests"]);
 
-function optionsFor(field: CustomizeFormField): string[] {
+function optionsFor(
+  field: CustomizeFormField,
+  destinations: readonly Destination[],
+  interests: readonly Interest[]
+): string[] {
   if (field.fieldType === "chips-destinations") {
     return destinations.map((d) => `${d.name} (${d.days}+ day${d.days > 1 ? "s" : ""})`);
   }
@@ -187,6 +189,8 @@ export function CustomizeForm({
                 field={field}
                 selected={chipSelections[field.fieldKey] ?? []}
                 onToggleChip={(value) => toggleChip(field.fieldKey, value)}
+                destinations={site.destinations}
+                interests={site.interests}
               />
             ))}
           </div>
@@ -234,10 +238,14 @@ function FieldRenderer({
   field,
   selected,
   onToggleChip,
+  destinations,
+  interests,
 }: {
   field: CustomizeFormField;
   selected: string[];
   onToggleChip: (value: string) => void;
+  destinations: readonly Destination[];
+  interests: readonly Interest[];
 }) {
   const widthClass = field.width === "full" ? "sm:col-span-2" : "";
   const label = field.required ? `${field.label} *` : field.label;
@@ -246,7 +254,7 @@ function FieldRenderer({
     return (
       <div className={widthClass}>
         <p className="mb-2 text-sm font-medium text-ink-soft">{label}</p>
-        <ChipGroup options={optionsFor(field)} selected={selected} onToggle={onToggleChip} />
+        <ChipGroup options={optionsFor(field, destinations, interests)} selected={selected} onToggle={onToggleChip} />
       </div>
     );
   }

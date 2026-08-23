@@ -4,7 +4,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
-import { getStories } from "@/sanity/fetchers";
+import { getListingPages, getStories } from "@/sanity/fetchers";
 import { estimateReadingTime } from "@/content/readingTime";
 import { StoriesGrid } from "./StoriesGrid";
 
@@ -15,13 +15,11 @@ export const metadata: Metadata = {
 };
 
 export default async function StoriesPage() {
-  const stories = await getStories();
+  const [stories, listingPages] = await Promise.all([getStories(), getListingPages()]);
+  const page = listingPages.stories;
+
   if (stories.length === 0) {
-    return (
-      <Container className="py-24 text-center text-ink-soft/60">
-        Stories are coming soon.
-      </Container>
-    );
+    return <Container className="py-24 text-center text-ink-soft/60">{page.emptyStateText}</Container>;
   }
 
   const featured = stories.find((s) => s.featured) ?? stories[0];
@@ -31,14 +29,11 @@ export default async function StoriesPage() {
     <>
       <section className="py-20">
         <Container>
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">Stories</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">{page.heroEyebrow}</p>
           <h1 className="mt-3 max-w-2xl text-balance font-display text-4xl font-semibold text-ink sm:text-5xl">
-            The Journal
+            {page.heroTitle}
           </h1>
-          <p className="mt-4 max-w-xl text-ink-soft/75">
-            Editorial travel writing from Egypt Eye — the history, the places, and the rare
-            moments worth building a trip around.
-          </p>
+          <p className="mt-4 max-w-xl text-ink-soft/75">{page.heroDescription}</p>
         </Container>
       </section>
 
@@ -76,7 +71,7 @@ export default async function StoriesPage() {
                   <span>{estimateReadingTime(featured.body)} min read</span>
                 </div>
                 <span className="mt-2 inline-flex w-fit items-center gap-2 text-sm font-semibold text-gold-light transition group-hover:gap-3">
-                  Read the story <span aria-hidden="true">→</span>
+                  {page.readStoryLabel} <span aria-hidden="true">→</span>
                 </span>
               </div>
             </Link>
@@ -87,7 +82,7 @@ export default async function StoriesPage() {
       {rest.length > 0 && (
         <section className="pb-24">
           <Container>
-            <SectionHeading eyebrow="More Stories" title="Continue Exploring" />
+            <SectionHeading eyebrow={page.moreStoriesEyebrow} title={page.moreStoriesTitle} />
             <div className="mt-10">
               <StoriesGrid stories={rest} />
             </div>

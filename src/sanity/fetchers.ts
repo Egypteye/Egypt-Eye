@@ -7,6 +7,8 @@ import {
   experienceBySlugQuery,
   experiencesQuery,
   faqsQuery,
+  homepageQuery,
+  listingPagesQuery,
   photoshootBySlugQuery,
   photoshootsQuery,
   signatureExperienceBySlugQuery,
@@ -29,16 +31,22 @@ import { customizePage as localCustomizePage } from "@/content/customizePage";
 import { aboutPage as localAboutPage } from "@/content/aboutPage";
 import { contactPage as localContactPage } from "@/content/contactPage";
 import { signatureExperiences as localSignatureExperiences } from "@/content/signatureExperiences";
+import { homepage as localHomepage } from "@/content/homepage";
+import { listingPages as localListingPages } from "@/content/listingPages";
 import type {
   AboutPage,
   ContactPage,
   CustomizePage,
   Experience,
   Faq,
+  Homepage,
+  ListingPages,
   Photoshoot,
   ResolvedAboutPage,
   ResolvedContactPage,
   ResolvedCustomizePage,
+  ResolvedHomepage,
+  ResolvedListingPages,
   ResolvedSiteSettings,
   SignatureExperience,
   SiteSettings,
@@ -178,13 +186,34 @@ const defaultBanners = {
 // Site Settings is a singleton — merge field-by-field instead of an
 // all-or-nothing swap, so filling in just one field in the Studio (e.g. only
 // the WhatsApp number) doesn't blank out everything else that hasn't been
-// touched yet. `nav` isn't part of the Sanity schema (it's routing, not
-// editorial content) and always comes from the local config.
+// touched yet.
 export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
   const result = await safeFetch<SiteSettings>(siteSettingsQuery);
   if (!result) {
     return { ...localSite, heroImages: defaultHeroImages, ...defaultBanners, destinationPhotos: [] };
   }
+
+  // Every entry needs its required fields filled in before it's usable — a
+  // nav link with a blank href, or a destination with no linked tour, would
+  // otherwise silently break navigation. Incomplete entries are dropped
+  // rather than rendered broken; the local defaults cover the gap.
+  const nav =
+    result.nav
+      ?.filter((n): n is { label: string; href: string } => Boolean(n.label && n.href)) ?? [];
+  const destinations =
+    result.destinations?.filter(
+      (d): d is { name: string; days: number; tone: import("@/content/types").ImageTone; tourSlug: string } =>
+        Boolean(d.name && d.days !== undefined && d.tourSlug)
+    ) ?? [];
+  const interests =
+    result.interests?.filter((i): i is { label: string; kind: NonNullable<typeof i.kind>; slug?: string } =>
+      Boolean(i.label && i.kind)
+    ) ?? [];
+  const trustBadges =
+    result.trustBadges?.filter(
+      (b): b is { icon: NonNullable<typeof b.icon>; title: string; body: string } =>
+        Boolean(b.icon && b.title && b.body)
+    ) ?? [];
 
   return {
     ...localSite,
@@ -222,7 +251,11 @@ export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
     },
     pillars: result.pillars && result.pillars.length > 0 ? result.pillars : localSite.pillars,
     trustStats: { ...localSite.trustStats, ...result.trustStats },
-    nav: localSite.nav,
+    nav: nav.length > 0 ? nav : localSite.nav,
+    trustBadges: trustBadges.length > 0 ? trustBadges : localSite.trustBadges,
+    destinations: destinations.length > 0 ? destinations : localSite.destinations,
+    interests: interests.length > 0 ? interests : localSite.interests,
+    footer: { ...localSite.footer, ...result.footer },
   };
 }
 
@@ -292,4 +325,43 @@ export async function getSignatureExperienceBySlug(slug: string): Promise<Signat
 export async function getAllSignatureExperienceSlugs(): Promise<string[]> {
   const result = await safeFetch<string[]>(allSignatureExperienceSlugsQuery);
   return result && result.length > 0 ? result : localSignatureExperiences.map((e) => e.slug);
+}
+
+// Same field-by-field merge as Site Settings — a Studio editor filling in
+// just one homepage block (say, the Final CTA) shouldn't blank out every
+// other block that hasn't been touched yet.
+export async function getHomepage(): Promise<ResolvedHomepage> {
+  const result = await safeFetch<Homepage>(homepageQuery);
+  if (!result) return localHomepage;
+
+  return {
+    popularTours: { ...localHomepage.popularTours, ...result.popularTours },
+    destinationsSection: { ...localHomepage.destinationsSection, ...result.destinationsSection },
+    flyingDress: { ...localHomepage.flyingDress, ...result.flyingDress },
+    redSea: { ...localHomepage.redSea, ...result.redSea },
+    ninePyramids: { ...localHomepage.ninePyramids, ...result.ninePyramids },
+    photoshootsSection: { ...localHomepage.photoshootsSection, ...result.photoshootsSection },
+    customCta: { ...localHomepage.customCta, ...result.customCta },
+    reviewsSection: { ...localHomepage.reviewsSection, ...result.reviewsSection },
+    faqSection: { ...localHomepage.faqSection, ...result.faqSection },
+    storiesSection: { ...localHomepage.storiesSection, ...result.storiesSection },
+    finalCta: { ...localHomepage.finalCta, ...result.finalCta },
+  };
+}
+
+export async function getListingPages(): Promise<ResolvedListingPages> {
+  const result = await safeFetch<ListingPages>(listingPagesQuery);
+  if (!result) return localListingPages;
+
+  return {
+    tours: {
+      ...localListingPages.tours,
+      ...result.tours,
+      faqs: result.tours?.faqs && result.tours.faqs.length > 0 ? result.tours.faqs : localListingPages.tours.faqs,
+    },
+    experiences: { ...localListingPages.experiences, ...result.experiences },
+    photoshoots: { ...localListingPages.photoshoots, ...result.photoshoots },
+    signatureExperiences: { ...localListingPages.signatureExperiences, ...result.signatureExperiences },
+    stories: { ...localListingPages.stories, ...result.stories },
+  };
 }

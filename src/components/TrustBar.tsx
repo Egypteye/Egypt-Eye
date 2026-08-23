@@ -1,23 +1,5 @@
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
-import type { Experience, Photoshoot, Tour } from "@/content/types";
-
-const badges = [
-  {
-    icon: "shield",
-    title: "Private, Not Pooled",
-    body: "Every tour is your own vehicle and guide — we never merge bookings into larger group tours.",
-  },
-  {
-    icon: "coin",
-    title: "One Price, Nothing Added Later",
-    body: "Once your tour is confirmed, the price is guaranteed. No surprise add-ons, no shop-stop detours.",
-  },
-  {
-    icon: "chat",
-    title: "A Real Reply, Fast",
-    body: "Message us on WhatsApp and hear back from an actual person — not a bot — usually within hours.",
-  },
-];
+import type { Experience, Photoshoot, ResolvedSiteSettings, Tour } from "@/content/types";
 
 const icons: Record<string, React.ReactNode> = {
   shield: (
@@ -35,10 +17,12 @@ export function TrustBar({
   tours,
   experiences,
   photoshoots,
+  badges,
 }: {
   tours: Tour[];
   experiences: Experience[];
   photoshoots: Photoshoot[];
+  badges: ResolvedSiteSettings["trustBadges"];
 }) {
   const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
   const catalogStats = getCatalogStats(tours, experiences, photoshoots);

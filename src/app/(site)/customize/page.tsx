@@ -36,7 +36,7 @@ export default async function CustomizePage() {
       <section className="py-16">
         <Container>
           <Reveal>
-            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} />
+            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} badges={site.trustBadges} />
           </Reveal>
         </Container>
       </section>

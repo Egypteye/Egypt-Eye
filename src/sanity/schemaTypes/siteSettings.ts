@@ -150,6 +150,116 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: "nav",
+      title: "Navigation menu",
+      description:
+        "The main nav links, in order. IMPORTANT: `href` must exactly match a real page path on the site (e.g. /tours, /experiences, /customize) — a typo or a made-up path breaks that link with no warning.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "navItem",
+          fields: [
+            defineField({ name: "label", title: "Label", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "href", title: "Path (e.g. /tours)", type: "string", validation: (r) => r.required() }),
+          ],
+          preview: { select: { title: "label", subtitle: "href" } },
+        },
+      ],
+    }),
+
+    defineField({
+      name: "trustBadges",
+      title: "Trust bar badges (homepage + Customize page)",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "trustBadge",
+          fields: [
+            defineField({
+              name: "icon",
+              title: "Icon",
+              type: "string",
+              options: { list: [{ title: "Shield", value: "shield" }, { title: "Coin", value: "coin" }, { title: "Chat", value: "chat" }] },
+              initialValue: "shield",
+            }),
+            defineField({ name: "title", title: "Title", type: "string" }),
+            defineField({ name: "body", title: "Body", type: "text", rows: 2 }),
+          ],
+          preview: { select: { title: "title" } },
+        },
+      ],
+    }),
+
+    defineField({
+      name: "destinations",
+      title: "Destinations (homepage panel + Customize form)",
+      description: "Each links to the tour that best represents it — `Tour slug` must match a real tour's slug exactly.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "destination",
+          fields: [
+            defineField({ name: "name", title: "Name", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "days", title: "Suggested minimum days", type: "number", validation: (r) => r.required().min(1) }),
+            defineField({ name: "tone", title: "Placeholder color", type: "string", options: { list: imageTones }, initialValue: "giza" }),
+            defineField({ name: "tourSlug", title: "Tour slug (must match exactly)", type: "string", validation: (r) => r.required() }),
+          ],
+          preview: { select: { title: "name", subtitle: "tourSlug" } },
+        },
+      ],
+    }),
+
+    defineField({
+      name: "interests",
+      title: "Interests / activities (Customize form chips)",
+      description:
+        "Anything that's already a real Tour, Experience, or Photoshoot should link to it via Kind + Slug (must match exactly); everything else is quote-only — use Kind \"Inquiry\" and leave Slug blank.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "interest",
+          fields: [
+            defineField({ name: "label", title: "Label", type: "string", validation: (r) => r.required() }),
+            defineField({
+              name: "kind",
+              title: "Kind",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Tour", value: "tour" },
+                  { title: "Experience", value: "experience" },
+                  { title: "Photoshoot", value: "photoshoot" },
+                  { title: "Inquiry (quote-only, no linked page)", value: "inquiry" },
+                ],
+              },
+              initialValue: "inquiry",
+            }),
+            defineField({ name: "slug", title: "Slug (must match exactly, leave blank for Inquiry)", type: "string" }),
+          ],
+          preview: { select: { title: "label", subtitle: "kind" } },
+        },
+      ],
+    }),
+
+    defineField({
+      name: "footer",
+      title: "Footer labels",
+      type: "object",
+      fields: [
+        defineField({ name: "exploreLabel", title: "\"Explore\" column heading", type: "string" }),
+        defineField({ name: "contactLabel", title: "\"Contact\" column heading", type: "string" }),
+        defineField({ name: "followLabel", title: "\"Follow\" column heading", type: "string" }),
+        defineField({ name: "whatsappPrefix", title: "WhatsApp line prefix", type: "string" }),
+        defineField({ name: "urgentBookingPrefix", title: "Urgent booking line prefix", type: "string" }),
+        defineField({ name: "location", title: "Location line (e.g. \"Cairo, Egypt\")", type: "string" }),
+      ],
+    }),
+
+    defineField({
       name: "pillars",
       title: "Brand pillars (Travel / Photography / etc.)",
       type: "array",

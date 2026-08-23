@@ -19,6 +19,7 @@ import { getCatalogStats, getOverallRating } from "@/content/aggregate";
 import {
   getExperiences,
   getFaqs,
+  getHomepage,
   getPhotoshoots,
   getSiteSettings,
   getStories,
@@ -33,8 +34,9 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [site, tours, experiences, photoshoots, testimonials, stories, faqs] = await Promise.all([
+  const [site, home, tours, experiences, photoshoots, testimonials, stories, faqs] = await Promise.all([
     getSiteSettings(),
+    getHomepage(),
     getTours(),
     getExperiences(),
     getPhotoshoots(),
@@ -61,7 +63,7 @@ export default async function Home() {
 
         {/* Search bar, straddling the hero/content boundary */}
         <div className="absolute inset-x-0 bottom-0 z-10 translate-y-1/2 px-5 sm:px-8">
-          <SearchBar className="mx-auto max-w-4xl" />
+          <SearchBar className="mx-auto max-w-4xl" destinations={site.destinations} />
         </div>
       </section>
 
@@ -69,7 +71,7 @@ export default async function Home() {
       <section className="pb-14 pt-14 sm:pt-16">
         <Container>
           <Reveal>
-            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} />
+            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} badges={site.trustBadges} />
           </Reveal>
         </Container>
       </section>
@@ -80,9 +82,9 @@ export default async function Home() {
         <Container>
           <Reveal>
             <SectionHeading
-              eyebrow="Popular Tours"
-              title="Tours Travelers Book Most"
-              description="A curated set of our most-loved itineraries — the ones we'd recommend first if you told us nothing else about your trip."
+              eyebrow={home.popularTours.eyebrow}
+              title={home.popularTours.title}
+              description={home.popularTours.description}
             />
           </Reveal>
           <Reveal delay={100} className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -95,13 +97,13 @@ export default async function Home() {
               href="/tours"
               className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
             >
-              See Popular Tours
+              {home.popularTours.primaryButtonLabel}
             </Link>
             <Link
               href="/tours"
               className="rounded-full border border-ink/15 px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-sand-dim"
             >
-              Browse All Tours
+              {home.popularTours.secondaryButtonLabel}
             </Link>
           </Reveal>
         </Container>
@@ -112,13 +114,13 @@ export default async function Home() {
         <Container>
           <Reveal>
             <SectionHeading
-              eyebrow="Where We Take You"
-              title="Every Corner of Egypt, and Jordan Too"
-              description="Tap a destination to see the tour built around it."
+              eyebrow={home.destinationsSection.eyebrow}
+              title={home.destinationsSection.title}
+              description={home.destinationsSection.description}
             />
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <DestinationsPanel photos={site.destinationPhotos} tours={tours} />
+            <DestinationsPanel photos={site.destinationPhotos} tours={tours} destinations={site.destinations} />
           </Reveal>
         </Container>
       </section>
@@ -129,20 +131,16 @@ export default async function Home() {
           <Reveal>
             <div className="grid overflow-hidden rounded-3xl bg-ink lg:grid-cols-2">
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14">
-                <Badge>First Flying Dresses in Egypt</Badge>
+                <Badge>{home.flyingDress.badge}</Badge>
                 <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">
-                  Egypt&rsquo;s First Flying Dress Photoshoot
+                  {home.flyingDress.title}
                 </h2>
-                <p className="text-cream/70">
-                  A flowing dress, a private photographer, and secret, uncrowded
-                  locations at the Pyramids Rooftop, sand dunes, or Fayoum
-                  Oasis — Egypt Eye&rsquo;s signature photoshoot, from $199.
-                </p>
+                <p className="text-cream/70">{home.flyingDress.body}</p>
                 <Link
                   href="/photoshoots/flying-dress-photoshoot"
                   className="w-fit rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
                 >
-                  See the Flying Dress Experience
+                  {home.flyingDress.buttonLabel}
                 </Link>
               </div>
               <SmartImage
@@ -168,19 +166,14 @@ export default async function Home() {
                 className="min-h-[280px] lg:order-1"
               />
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14 lg:order-2">
-                <Badge>Red Sea Luxe Yachts</Badge>
-                <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">
-                  Sail into Opulence on the Red Sea
-                </h2>
-                <p className="text-cream/70">
-                  A private yacht on calm turquoise water, white sand within
-                  reach, and a pace built entirely around you.
-                </p>
+                <Badge>{home.redSea.badge}</Badge>
+                <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{home.redSea.title}</h2>
+                <p className="text-cream/70">{home.redSea.body}</p>
                 <Link
                   href="/tours/red-sea-relaxation"
                   className="w-fit rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
                 >
-                  Explore Red Sea Experiences
+                  {home.redSea.buttonLabel}
                 </Link>
               </div>
             </div>
@@ -201,15 +194,15 @@ export default async function Home() {
           </Reveal>
           <Reveal delay={100}>
             <SectionHeading
-              eyebrow="Iconic Nine Pyramids View"
-              title="Capture Your Adventure at the Nine Pyramids of Giza"
-              description="Beyond the three main Pyramids — the full panorama, and a professional photoshoot built into the experience. This is the shot every traveler wants and few tours actually deliver."
+              eyebrow={home.ninePyramids.eyebrow}
+              title={home.ninePyramids.title}
+              description={home.ninePyramids.description}
             />
             <Link
               href="/photoshoots/exclusive-pyramids-photoshoot"
               className="mt-6 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"
             >
-              Book the Pyramids Photoshoot
+              {home.ninePyramids.buttonLabel}
             </Link>
           </Reveal>
         </Container>
@@ -220,9 +213,9 @@ export default async function Home() {
         <Container>
           <Reveal>
             <SectionHeading
-              eyebrow="Photoshoot Packages"
-              title="Travel + Professional Photography, In One Booking"
-              description="Egypt Eye's strongest signature: private, professionally directed photoshoots woven into your trip, not booked separately."
+              eyebrow={home.photoshootsSection.eyebrow}
+              title={home.photoshootsSection.title}
+              description={home.photoshootsSection.description}
               align="center"
             />
           </Reveal>
@@ -241,15 +234,15 @@ export default async function Home() {
             <div className="grid items-center gap-10 rounded-3xl border border-gold/20 bg-cream p-10 sm:p-14 lg:grid-cols-[1.2fr_1fr]">
               <div>
                 <SectionHeading
-                  eyebrow="Customization"
-                  title="Design Your Dream Tour"
-                  description="Not sure what to book? Tell us your dates, interests, and pace, and we'll build a private itinerary around you — combining any tour, experience, or photoshoot in our catalog."
+                  eyebrow={home.customCta.eyebrow}
+                  title={home.customCta.title}
+                  description={home.customCta.description}
                 />
                 <Link
                   href="/customize"
                   className="mt-6 inline-block rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
                 >
-                  Start Customizing
+                  {home.customCta.buttonLabel}
                 </Link>
               </div>
               <SmartImage
@@ -279,8 +272,8 @@ export default async function Home() {
         <Container>
           <Reveal>
             <SectionHeading
-              eyebrow="What Travelers Say"
-              title="Personal, Safe, Flexible, and Photographed"
+              eyebrow={home.reviewsSection.eyebrow}
+              title={home.reviewsSection.title}
               description={`${average}★ average across ${reviewCount} reviews — our guests rarely just say "good tour."`}
               align="center"
             />
@@ -295,7 +288,7 @@ export default async function Home() {
       <section className="py-16">
         <Container className="mx-auto max-w-3xl">
           <Reveal>
-            <SectionHeading eyebrow="Good to Know" title="Frequently Asked Questions" align="center" />
+            <SectionHeading eyebrow={home.faqSection.eyebrow} title={home.faqSection.title} align="center" />
           </Reveal>
           <Reveal delay={100} className="mt-10">
             <FaqAccordion faqs={faqs} />
@@ -308,9 +301,9 @@ export default async function Home() {
         <Container>
           <Reveal>
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-              <SectionHeading eyebrow="Stories" title="From the Journal" />
+              <SectionHeading eyebrow={home.storiesSection.eyebrow} title={home.storiesSection.title} />
               <Link href="/stories" className="text-sm font-semibold text-gold-dark hover:underline">
-                Read all stories →
+                {home.storiesSection.linkLabel}
               </Link>
             </div>
           </Reveal>
@@ -327,19 +320,14 @@ export default async function Home() {
         <Container>
           <Reveal>
             <div className="flex flex-col items-center gap-5 rounded-3xl bg-gold/15 px-8 py-16 text-center">
-              <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">
-                Ready to see Egypt through our eyes?
-              </h2>
-              <p className="max-w-xl text-ink-soft/80">
-                Message us on WhatsApp and we&rsquo;ll help you build the right
-                trip — no pressure, just answers.
-              </p>
+              <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">{home.finalCta.title}</h2>
+              <p className="max-w-xl text-ink-soft/80">{home.finalCta.body}</p>
               <a
                 href={site.contact.whatsappLink}
                 target="_blank"
                 className="rounded-full bg-ink px-8 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
               >
-                Chat With Us on WhatsApp
+                {home.finalCta.buttonLabel}
               </a>
             </div>
           </Reveal>

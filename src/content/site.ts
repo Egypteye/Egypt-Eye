@@ -1,5 +1,7 @@
 // Global site configuration. Edit brand copy, contact info, and policies here —
 // changes here update every page that references them.
+import { destinations } from "./destinations";
+import { interests } from "./interests";
 
 export const site = {
   name: "Egypt Eye Travel and Tours",
@@ -33,6 +35,33 @@ export const site = {
     { label: "About", href: "/about" },
     { label: "Contact", href: "/contact" },
   ],
+  trustBadges: [
+    {
+      icon: "shield",
+      title: "Private, Not Pooled",
+      body: "Every tour is your own vehicle and guide — we never merge bookings into larger group tours.",
+    },
+    {
+      icon: "coin",
+      title: "One Price, Nothing Added Later",
+      body: "Once your tour is confirmed, the price is guaranteed. No surprise add-ons, no shop-stop detours.",
+    },
+    {
+      icon: "chat",
+      title: "A Real Reply, Fast",
+      body: "Message us on WhatsApp and hear back from an actual person — not a bot — usually within hours.",
+    },
+  ],
+  destinations,
+  interests,
+  footer: {
+    exploreLabel: "Explore",
+    contactLabel: "Contact",
+    followLabel: "Follow",
+    whatsappPrefix: "WhatsApp: ",
+    urgentBookingPrefix: "Urgent booking: ",
+    location: "Cairo, Egypt",
+  },
   policies: {
     deposit:
       "A 20% down payment secures your reservation. The remaining balance can be paid in cash or via PayPal at the end of the day or tour.",

@@ -286,6 +286,24 @@ export type SiteSettings = {
     reviewPlatformReviewCount?: number;
     reviewPlatformUrl?: string;
   };
+  // Editable, but changing an `href` here without matching a real page path
+  // breaks that nav link — see the Studio field description.
+  nav?: { label?: string; href?: string }[];
+  trustBadges?: { icon?: "shield" | "coin" | "chat"; title?: string; body?: string }[];
+  destinations?: { name?: string; days?: number; tone?: ImageTone; tourSlug?: string }[];
+  interests?: {
+    label?: string;
+    kind?: "tour" | "experience" | "photoshoot" | "inquiry";
+    slug?: string;
+  }[];
+  footer?: {
+    exploreLabel?: string;
+    contactLabel?: string;
+    followLabel?: string;
+    whatsappPrefix?: string;
+    urgentBookingPrefix?: string;
+    location?: string;
+  };
   policies?: {
     deposit?: string;
     currency?: string;
@@ -294,6 +312,19 @@ export type SiteSettings = {
     voucher?: string;
     cancellation?: string;
   };
+};
+
+export type Destination = {
+  name: string;
+  days: number;
+  tone: ImageTone;
+  tourSlug: string;
+};
+
+export type Interest = {
+  label: string;
+  kind: "tour" | "experience" | "photoshoot" | "inquiry";
+  slug?: string;
 };
 
 // Fully-resolved site settings (local fallback merged with any Sanity
@@ -349,6 +380,17 @@ export type ResolvedSiteSettings = {
     reviewPlatformRating?: number;
     reviewPlatformReviewCount?: number;
     reviewPlatformUrl?: string;
+  };
+  trustBadges: readonly { icon: "shield" | "coin" | "chat"; title: string; body: string }[];
+  destinations: readonly Destination[];
+  interests: readonly Interest[];
+  footer: {
+    exploreLabel: string;
+    contactLabel: string;
+    followLabel: string;
+    whatsappPrefix: string;
+    urgentBookingPrefix: string;
+    location: string;
   };
 };
 
@@ -543,4 +585,101 @@ export type SignatureExperience = {
   canonicalUrl?: string;
   ogImage?: SanityImage;
   noindex?: boolean;
+};
+
+// Singleton — every static marketing block on the homepage that isn't
+// already covered by Site Settings (hero slides, trust stats) or a live
+// content query (Popular Tours' cards, Reviews' testimonials, FAQ items,
+// Stories' cards). Each block mirrors one homepage section 1:1.
+export type Homepage = {
+  popularTours?: { eyebrow?: string; title?: string; description?: string; primaryButtonLabel?: string; secondaryButtonLabel?: string };
+  destinationsSection?: { eyebrow?: string; title?: string; description?: string };
+  flyingDress?: { badge?: string; title?: string; body?: string; buttonLabel?: string };
+  redSea?: { badge?: string; title?: string; body?: string; buttonLabel?: string };
+  ninePyramids?: { eyebrow?: string; title?: string; description?: string; buttonLabel?: string };
+  photoshootsSection?: { eyebrow?: string; title?: string; description?: string };
+  customCta?: { eyebrow?: string; title?: string; description?: string; buttonLabel?: string };
+  reviewsSection?: { eyebrow?: string; title?: string };
+  faqSection?: { eyebrow?: string; title?: string };
+  storiesSection?: { eyebrow?: string; title?: string; linkLabel?: string };
+  finalCta?: { title?: string; body?: string; buttonLabel?: string };
+};
+
+export type ResolvedHomepage = {
+  popularTours: { eyebrow: string; title: string; description: string; primaryButtonLabel: string; secondaryButtonLabel: string };
+  destinationsSection: { eyebrow: string; title: string; description: string };
+  flyingDress: { badge: string; title: string; body: string; buttonLabel: string };
+  redSea: { badge: string; title: string; body: string; buttonLabel: string };
+  ninePyramids: { eyebrow: string; title: string; description: string; buttonLabel: string };
+  photoshootsSection: { eyebrow: string; title: string; description: string };
+  customCta: { eyebrow: string; title: string; description: string; buttonLabel: string };
+  reviewsSection: { eyebrow: string; title: string };
+  faqSection: { eyebrow: string; title: string };
+  storiesSection: { eyebrow: string; title: string; linkLabel: string };
+  finalCta: { title: string; body: string; buttonLabel: string };
+};
+
+// Singleton — hero + intro copy for the 5 catalog listing pages
+// (/tours, /experiences, /photoshoots, /signature-experiences, /stories),
+// none of which had a CMS-backed source before. `tours.sectionTitleTemplate`
+// keeps the live tour count dynamic via a literal "{count}" placeholder
+// the page replaces at render time, rather than freezing a stale number.
+export type ListingPages = {
+  tours?: {
+    heroEyebrow?: string;
+    heroTitle?: string;
+    sectionTitleTemplate?: string;
+    sectionDescription?: string;
+    faqs?: { question: string; answer: string }[];
+  };
+  experiences?: { heroEyebrow?: string; heroTitle?: string; sectionTitle?: string; sectionDescription?: string };
+  photoshoots?: { heroEyebrow?: string; heroTitle?: string; sectionTitle?: string; sectionDescription?: string };
+  signatureExperiences?: {
+    heroEyebrow?: string;
+    heroTitle?: string;
+    heroDescription?: string;
+    collectionEyebrow?: string;
+    collectionTitleSingular?: string;
+    collectionTitlePlural?: string;
+    collectionDescription?: string;
+  };
+  stories?: {
+    heroEyebrow?: string;
+    heroTitle?: string;
+    heroDescription?: string;
+    emptyStateText?: string;
+    moreStoriesEyebrow?: string;
+    moreStoriesTitle?: string;
+    readStoryLabel?: string;
+  };
+};
+
+export type ResolvedListingPages = {
+  tours: {
+    heroEyebrow: string;
+    heroTitle: string;
+    sectionTitleTemplate: string;
+    sectionDescription: string;
+    faqs: readonly { question: string; answer: string }[];
+  };
+  experiences: { heroEyebrow: string; heroTitle: string; sectionTitle: string; sectionDescription: string };
+  photoshoots: { heroEyebrow: string; heroTitle: string; sectionTitle: string; sectionDescription: string };
+  signatureExperiences: {
+    heroEyebrow: string;
+    heroTitle: string;
+    heroDescription: string;
+    collectionEyebrow: string;
+    collectionTitleSingular: string;
+    collectionTitlePlural: string;
+    collectionDescription: string;
+  };
+  stories: {
+    heroEyebrow: string;
+    heroTitle: string;
+    heroDescription: string;
+    emptyStateText: string;
+    moreStoriesEyebrow: string;
+    moreStoriesTitle: string;
+    readStoryLabel: string;
+  };
 };

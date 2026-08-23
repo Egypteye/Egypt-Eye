@@ -15,6 +15,8 @@ import { hosts } from "@/content/hosts";
 import { signatureExperiences } from "@/content/signatureExperiences";
 import { authors } from "@/content/authors";
 import { events } from "@/content/events";
+import { homepage } from "@/content/homepage";
+import { listingPages } from "@/content/listingPages";
 import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } from "@/content/types";
 
 // One-time (safely re-runnable) migration: pushes all the existing tour/
@@ -44,7 +46,7 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // untouched), add `&only=` with a comma-separated list of: tours,
 // experiences, photoshoots, testimonials, stories, faqs, siteSettings,
 // customizePage, aboutPage, contactPage, hosts, signatureExperiences,
-// authors, events. E.g. to seed just the new Stories system (which needs
+// authors, events, homepage, listingPages. E.g. to seed just the new Stories system (which needs
 // authors/events/signatureExperiences to exist first for its references):
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,stories
@@ -204,6 +206,11 @@ export async function GET(request: NextRequest) {
       socials: { _type: "object", ...site.socials },
       pillars: site.pillars.map((p) => ({ ...p, _type: "object", _key: key() })),
       trustStats: { _type: "object", ...site.trustStats },
+      nav: site.nav.map((n) => ({ ...n, _type: "object", _key: key() })),
+      trustBadges: site.trustBadges.map((b) => ({ ...b, _type: "object", _key: key() })),
+      destinations: site.destinations.map((d) => ({ ...d, _type: "object", _key: key() })),
+      interests: site.interests.map((i) => ({ ...i, _type: "object", _key: key() })),
+      footer: { _type: "object", ...site.footer },
       policies: {
         _type: "object",
         deposit: site.policies.deposit,
@@ -215,6 +222,42 @@ export async function GET(request: NextRequest) {
       },
     });
     results.push("siteSettings");
+  }
+
+  if (shouldRun("homepage")) {
+    tx.createOrReplace({
+      _id: "homepage",
+      _type: "homepage",
+      popularTours: { _type: "object", ...homepage.popularTours },
+      destinationsSection: { _type: "object", ...homepage.destinationsSection },
+      flyingDress: { _type: "object", ...homepage.flyingDress },
+      redSea: { _type: "object", ...homepage.redSea },
+      ninePyramids: { _type: "object", ...homepage.ninePyramids },
+      photoshootsSection: { _type: "object", ...homepage.photoshootsSection },
+      customCta: { _type: "object", ...homepage.customCta },
+      reviewsSection: { _type: "object", ...homepage.reviewsSection },
+      faqSection: { _type: "object", ...homepage.faqSection },
+      storiesSection: { _type: "object", ...homepage.storiesSection },
+      finalCta: { _type: "object", ...homepage.finalCta },
+    });
+    results.push("homepage");
+  }
+
+  if (shouldRun("listingPages")) {
+    tx.createOrReplace({
+      _id: "listingPages",
+      _type: "listingPages",
+      tours: {
+        _type: "object",
+        ...listingPages.tours,
+        faqs: listingPages.tours.faqs.map((f) => ({ ...f, _type: "object", _key: key() })),
+      },
+      experiences: { _type: "object", ...listingPages.experiences },
+      photoshoots: { _type: "object", ...listingPages.photoshoots },
+      signatureExperiences: { _type: "object", ...listingPages.signatureExperiences },
+      stories: { _type: "object", ...listingPages.stories },
+    });
+    results.push("listingPages");
   }
 
   if (shouldRun("customizePage")) {

@@ -103,7 +103,23 @@ export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   contact, socials, pillars, policies, trustStats,
   heroImages[]{image, tone, headline, subtext, linkLabel, linkHref},
   flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage,
-  destinationPhotos[]{name, image}
+  destinationPhotos[]{name, image},
+  nav[]{label, href},
+  trustBadges[]{icon, title, body},
+  destinations[]{name, days, tone, tourSlug},
+  interests[]{label, kind, slug},
+  footer
+}`;
+
+export const homepageQuery = groq`*[_type == "homepage"][0] {
+  popularTours, destinationsSection, flyingDress, redSea, ninePyramids,
+  photoshootsSection, customCta, reviewsSection, faqSection, storiesSection, finalCta
+}`;
+
+export const listingPagesQuery = groq`*[_type == "listingPages"][0] {
+  tours{heroEyebrow, heroTitle, sectionTitleTemplate, sectionDescription, faqs[]{question, answer}},
+  experiences, photoshoots,
+  signatureExperiences, stories
 }`;
 
 export const customizePageQuery = groq`*[_type == "customizePage"][0] {

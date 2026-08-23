@@ -1,15 +1,16 @@
 import Link from "next/link";
 import type { Image as SanityImage } from "sanity";
-import { destinations } from "@/content/destinations";
 import { SmartImage } from "./SmartImage";
-import type { Tour } from "@/content/types";
+import type { Destination, Tour } from "@/content/types";
 
 export function DestinationsPanel({
   photos,
   tours,
+  destinations,
 }: {
   photos: readonly { name?: string; image?: SanityImage }[];
   tours: Tour[];
+  destinations: readonly Destination[];
 }) {
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">

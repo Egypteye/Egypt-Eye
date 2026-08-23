@@ -29,7 +29,7 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
 
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-cream/50">
-            Explore
+            {site.footer.exploreLabel}
           </p>
           <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
             {site.nav.slice(1).map((item) => (
@@ -44,7 +44,7 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
 
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-cream/50">
-            Contact
+            {site.footer.contactLabel}
           </p>
           <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
             <li>
@@ -54,18 +54,18 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
             </li>
             <li>
               <a href={site.contact.whatsappLink} target="_blank" className="hover:text-gold-light">
-                WhatsApp: {site.contact.whatsapp}
+                {site.footer.whatsappPrefix}{site.contact.whatsapp}
               </a>
             </li>
             <li className="text-cream/50">
-              Urgent booking: {site.contact.urgentBooking}
+              {site.footer.urgentBookingPrefix}{site.contact.urgentBooking}
             </li>
           </ul>
         </div>
 
         <div>
           <p className="text-sm font-semibold uppercase tracking-wide text-cream/50">
-            Follow
+            {site.footer.followLabel}
           </p>
           <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
             <li>
@@ -90,7 +90,7 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
       <div className="border-t border-white/10 py-6">
         <Container className="flex flex-col items-center justify-between gap-2 text-xs text-cream/40 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
-          <p>Cairo, Egypt</p>
+          <p>{site.footer.location}</p>
         </Container>
       </div>
     </footer>

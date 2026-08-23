@@ -6,6 +6,8 @@ import { testimonial } from "./testimonial";
 import { story } from "./story";
 import { faqItem } from "./faqItem";
 import { siteSettings } from "./siteSettings";
+import { homepage } from "./homepage";
+import { listingPages } from "./listingPages";
 import { customizePage } from "./customizePage";
 import { aboutPage } from "./aboutPage";
 import { contactPage } from "./contactPage";
@@ -31,6 +33,8 @@ export const schemaTypes = [
   event,
   faqItem,
   siteSettings,
+  homepage,
+  listingPages,
   customizePage,
   aboutPage,
   contactPage,
