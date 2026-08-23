@@ -13,7 +13,6 @@ import { TourCard } from "@/components/TourCard";
 import { DestinationsPanel } from "@/components/DestinationsPanel";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
-import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
 import { StoryCard } from "@/components/StoryCard";
 import { Reveal } from "@/components/Reveal";
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
@@ -21,7 +20,6 @@ import {
   getExperiences,
   getFaqs,
   getPhotoshoots,
-  getSignatureExperiences,
   getSiteSettings,
   getStories,
   getTestimonials,
@@ -35,17 +33,15 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [site, tours, experiences, photoshoots, testimonials, stories, faqs, signatureExperiences] =
-    await Promise.all([
-      getSiteSettings(),
-      getTours(),
-      getExperiences(),
-      getPhotoshoots(),
-      getTestimonials(),
-      getStories(),
-      getFaqs(),
-      getSignatureExperiences(),
-    ]);
+  const [site, tours, experiences, photoshoots, testimonials, stories, faqs] = await Promise.all([
+    getSiteSettings(),
+    getTours(),
+    getExperiences(),
+    getPhotoshoots(),
+    getTestimonials(),
+    getStories(),
+    getFaqs(),
+  ]);
   const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
   const { tourCount, destinationCount } = getCatalogStats(tours, experiences, photoshoots);
   // A small curated set for the homepage teaser — the full searchable
@@ -102,40 +98,6 @@ export default async function Home() {
           </Reveal>
         </Container>
       </section>
-
-      {/* Signature Experiences */}
-      {signatureExperiences.length > 0 && (
-        <section className="py-24">
-          <Container>
-            <Reveal>
-              <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
-                <div className="mx-auto w-full max-w-md lg:mx-0">
-                  <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">
-                    Signature Experiences
-                  </p>
-                  <h2 className="mt-4 text-balance font-display text-3xl font-semibold leading-[1.15] text-ink sm:text-4xl lg:text-[2.75rem]">
-                    Not a Tour. An Experience, Designed Around You.
-                  </h2>
-                  <p className="mt-4 text-ink-soft/75">
-                    A separate collection from our tour catalog — each one built around a
-                    specific person and a specific way of feeling taken care of. The
-                    destination is part of the answer, not the whole question.
-                  </p>
-                  <Link
-                    href="/signature-experiences"
-                    className="mt-6 inline-block rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-                  >
-                    Explore Signature Experiences
-                  </Link>
-                </div>
-                <div className="mx-auto w-full max-w-sm lg:max-w-none">
-                  <SignatureExperienceCard experience={signatureExperiences[0]} imageAspectClassName="aspect-[4/5] lg:aspect-[4/3]" />
-                </div>
-              </div>
-            </Reveal>
-          </Container>
-        </section>
-      )}
 
       {/* Popular Tours — a small curated preview; the full searchable
           catalog lives on /tours, not inline on the homepage. */}
