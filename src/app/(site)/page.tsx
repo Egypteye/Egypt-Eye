@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -8,7 +9,7 @@ import { Badge } from "@/components/Badge";
 import { HeroSlideshow } from "@/components/HeroSlideshow";
 import { SearchBar } from "@/components/SearchBar";
 import { TrustBar } from "@/components/TrustBar";
-import { PopularToursCarousel } from "@/components/PopularToursCarousel";
+import { ToursGrid } from "./tours/ToursGrid";
 import { DestinationsPanel } from "@/components/DestinationsPanel";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
@@ -45,8 +46,10 @@ export default async function Home() {
       getSignatureExperiences(),
     ]);
   const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
-  const featuredTours = tours.filter((t) => t.featured);
-  const popularTours = (featuredTours.length > 0 ? featuredTours : tours).slice(0, 8);
+  // Featured tours surface first in the merged Tours section below, without
+  // needing a separate curated carousel — everything lives in one browsable
+  // grid, sorted so the homepage's picks still lead.
+  const sortedTours = [...tours].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
 
   return (
     <>
@@ -129,52 +132,28 @@ export default async function Home() {
         </section>
       )}
 
-      {/* Popular Tours */}
+      {/* Tours — the full, browsable catalog, right on the homepage */}
       <section className="py-4">
         <Container>
           <Reveal>
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
               <SectionHeading
-                eyebrow="Popular Tours"
-                title="Tours Across All Egypt"
-                description="From Cairo and Giza to Luxor, Aswan, and the Red Sea — private, expertly guided journeys across the land of the Pharaohs."
+                eyebrow="All Tours"
+                title="Every Journey We Offer Across Egypt"
+                description="From Cairo and Giza to Luxor, Aswan, and the Red Sea — search or filter by destination, length, and travel style to find the trip built for you."
               />
               <Link
                 href="/tours"
                 className="whitespace-nowrap text-sm font-semibold text-gold-dark hover:underline"
               >
-                View all tours →
+                Open the full tours page →
               </Link>
             </div>
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <PopularToursCarousel tours={popularTours} />
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* Explore All Tours */}
-      <section className="py-16">
-        <Container>
-          <Reveal>
-            <div className="flex flex-col items-center gap-4 rounded-3xl border border-gold/20 bg-sand-dim px-8 py-14 text-center">
-              <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                The Complete Collection
-              </p>
-              <h2 className="max-w-lg font-display text-2xl font-semibold text-ink sm:text-3xl">
-                Explore Every Journey We Offer Across Egypt
-              </h2>
-              <p className="max-w-md text-ink-soft/75">
-                Search and filter the full catalog — by destination, length, or travel
-                style — to find the tour built for the trip you actually want.
-              </p>
-              <Link
-                href="/tours"
-                className="mt-2 inline-block rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-              >
-                Explore All Tours
-              </Link>
-            </div>
+            <Suspense fallback={null}>
+              <ToursGrid tours={sortedTours} />
+            </Suspense>
           </Reveal>
         </Container>
       </section>
