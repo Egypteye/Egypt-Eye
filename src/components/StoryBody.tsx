@@ -5,6 +5,7 @@ import { urlForImage } from "@/sanity/image";
 import { Gallery } from "./Gallery";
 import { EventCountdown } from "./EventCountdown";
 import { SignatureExperienceCard } from "./SignatureExperienceCard";
+import { FaqAccordion } from "./FaqAccordion";
 
 const CALLOUT_STYLES: Record<string, string> = {
   Info: "border-gold/30 bg-sand-dim",
@@ -90,6 +91,13 @@ const components: PortableTextComponents = {
           <div className="mt-5 max-w-sm">
             <SignatureExperienceCard experience={value.experience} />
           </div>
+        </div>
+      ) : null,
+    faqBlock: ({ value }) =>
+      value.faqs && value.faqs.length > 0 ? (
+        <div className="not-prose my-12">
+          {value.title && <p className="mb-5 font-display text-xl font-semibold text-ink">{value.title}</p>}
+          <FaqAccordion faqs={value.faqs} />
         </div>
       ) : null,
     ctaBlock: ({ value }) => (

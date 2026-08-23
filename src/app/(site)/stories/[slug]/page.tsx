@@ -13,7 +13,7 @@ import { estimateReadingTime } from "@/content/readingTime";
 import { urlForImage } from "@/sanity/image";
 import { breadcrumbJsonLd, resolveMetadata, siteUrl } from "@/content/seo";
 import { site } from "@/content/site";
-import type { StoryCountdownBlock } from "@/content/types";
+import type { StoryCountdownBlock, StoryFaqBlock } from "@/content/types";
 
 export async function generateStaticParams() {
   const stories = await getStories();
@@ -104,6 +104,25 @@ export default async function StoryDetailPage({
       }
     : null;
 
+  // If this story carries an FAQ block, emit FAQPage structured data from
+  // the exact same question/answer pairs rendered on the page — never a
+  // separately-maintained copy.
+  const faqBlocks = story.body?.filter((b): b is StoryFaqBlock => b._type === "faqBlock") ?? [];
+  const faqJsonLd =
+    faqBlocks.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqBlocks.flatMap((block) =>
+            block.faqs.map((faq) => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: { "@type": "Answer", text: faq.answer },
+            }))
+          ),
+        }
+      : null;
+
   return (
     <>
       <script
@@ -118,6 +137,12 @@ export default async function StoryDetailPage({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+        />
+      )}
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
         />
       )}
 

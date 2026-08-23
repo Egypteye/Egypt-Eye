@@ -131,6 +131,38 @@ const bodyBlockTypes = [
     ],
     preview: { select: { title: "title" } },
   }),
+  defineArrayMember({
+    type: "object",
+    name: "faqBlock",
+    title: "FAQ",
+    description: "Renders as an accordion and is also emitted as FAQPage structured data.",
+    fields: [
+      defineField({ name: "title", title: "Section title (optional)", type: "string", initialValue: "Frequently Asked Questions" }),
+      defineField({
+        name: "faqs",
+        title: "Questions",
+        type: "array",
+        of: [
+          {
+            type: "object",
+            name: "faqItem",
+            fields: [
+              defineField({ name: "question", title: "Question", type: "string", validation: (r) => r.required() }),
+              defineField({ name: "answer", title: "Answer", type: "text", validation: (r) => r.required() }),
+            ],
+            preview: { select: { title: "question" } },
+          },
+        ],
+        validation: (r) => r.required().min(1),
+      }),
+    ],
+    preview: {
+      select: { faqs: "faqs" },
+      prepare: (selection: { faqs?: unknown[] }) => ({
+        title: `FAQ (${selection.faqs?.length ?? 0} questions)`,
+      }),
+    },
+  }),
 ];
 
 export const story = defineType({

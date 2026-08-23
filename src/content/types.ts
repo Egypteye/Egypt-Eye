@@ -175,6 +175,16 @@ export type StoryCtaBlock = {
   buttonLabel?: string;
   buttonHref?: string;
 };
+export type StoryFaqItem = {
+  question: string;
+  answer: string;
+};
+export type StoryFaqBlock = {
+  _type: "faqBlock";
+  _key: string;
+  title?: string;
+  faqs: StoryFaqItem[];
+};
 
 export type StoryBodyBlock =
   | PortableTextBlock
@@ -184,7 +194,8 @@ export type StoryBodyBlock =
   | StoryVideoEmbedBlock
   | StoryCountdownBlock
   | StoryExperienceCardBlock
-  | StoryCtaBlock;
+  | StoryCtaBlock
+  | StoryFaqBlock;
 
 // Lightweight shape used for "related story" teasers — everything a
 // StoryCard needs, without requiring the full Story (status, body, etc.).
