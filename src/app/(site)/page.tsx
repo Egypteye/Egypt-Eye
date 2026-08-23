@@ -66,7 +66,7 @@ export default async function Home() {
       </section>
 
       {/* Trust bar */}
-      <section className="pb-20 pt-20 sm:pt-24">
+      <section className="pb-14 pt-14 sm:pt-16">
         <Container>
           <Reveal>
             <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} />
@@ -108,7 +108,7 @@ export default async function Home() {
       </section>
 
       {/* Destinations panel */}
-      <section className="py-20">
+      <section className="py-14">
         <Container>
           <Reveal>
             <SectionHeading
@@ -189,7 +189,7 @@ export default async function Home() {
       </section>
 
       {/* Nine Pyramids View */}
-      <section className="py-24">
+      <section className="py-16">
         <Container className="grid items-center gap-12 lg:grid-cols-2">
           <Reveal>
             <SmartImage
@@ -216,7 +216,7 @@ export default async function Home() {
       </section>
 
       {/* Photoshoots */}
-      <section className="bg-sand-dim py-24">
+      <section className="bg-sand-dim py-16">
         <Container>
           <Reveal>
             <SectionHeading
@@ -235,7 +235,7 @@ export default async function Home() {
       </section>
 
       {/* Custom Tours CTA */}
-      <section className="py-24">
+      <section className="py-16">
         <Container>
           <Reveal>
             <div className="grid items-center gap-10 rounded-3xl border border-gold/20 bg-cream p-10 sm:p-14 lg:grid-cols-[1.2fr_1fr]">
@@ -275,7 +275,7 @@ export default async function Home() {
       </section>
 
       {/* Reviews */}
-      <section className="bg-ink py-24">
+      <section className="bg-ink py-16">
         <Container>
           <Reveal>
             <SectionHeading
@@ -292,7 +292,7 @@ export default async function Home() {
       </section>
 
       {/* FAQ */}
-      <section className="py-24">
+      <section className="py-16">
         <Container className="mx-auto max-w-3xl">
           <Reveal>
             <SectionHeading eyebrow="Good to Know" title="Frequently Asked Questions" align="center" />
@@ -304,7 +304,7 @@ export default async function Home() {
       </section>
 
       {/* Stories */}
-      <section className="py-24">
+      <section className="py-16">
         <Container>
           <Reveal>
             <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
@@ -323,7 +323,7 @@ export default async function Home() {
       </section>
 
       {/* Final CTA */}
-      <section className="pb-24">
+      <section className="pb-16">
         <Container>
           <Reveal>
             <div className="flex flex-col items-center gap-5 rounded-3xl bg-gold/15 px-8 py-16 text-center">

@@ -54,7 +54,7 @@ export function SearchBar({ className = "" }: { className?: string }) {
   return (
     <form
       onSubmit={handleSubmit}
-      className={`flex flex-col gap-4 rounded-2xl bg-cream p-5 shadow-2xl shadow-black/20 sm:flex-row sm:items-center sm:gap-0 sm:divide-x sm:divide-black/10 sm:p-3 ${className}`}
+      className={`grid grid-cols-2 gap-x-3 gap-y-2 rounded-2xl bg-cream p-4 shadow-2xl shadow-black/20 sm:flex sm:flex-row sm:items-center sm:gap-0 sm:divide-x sm:divide-black/10 sm:p-3 ${className}`}
     >
       <label className="flex flex-1 flex-col gap-1 px-3 py-1">
         <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
@@ -132,7 +132,7 @@ export function SearchBar({ className = "" }: { className?: string }) {
 
       <button
         type="submit"
-        className="mt-1 flex items-center justify-center gap-2 rounded-xl bg-gold px-6 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light sm:ml-3 sm:mt-0"
+        className="col-span-2 mt-1 flex items-center justify-center gap-2 rounded-xl bg-gold px-6 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light sm:ml-3 sm:mt-0"
       >
         <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
           <circle cx="9" cy="9" r="6" />
