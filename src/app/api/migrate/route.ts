@@ -31,6 +31,15 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // started editing in the Studio will discard those edits for whichever
 // document types you re-run.
 //
+// All mutations are queued onto ONE Sanity transaction and committed together
+// at the end, rather than sent as separate requests. This matters for
+// correctness, not just speed: Sanity's write API rejects a reference to a
+// document that doesn't exist yet, so two documents that reference each
+// other (e.g. two Stories that cross-link via relatedStories) can only be
+// created together — a single transaction validates references against the
+// FINAL combined state, so mutual/forward references resolve correctly
+// regardless of which document is queued first.
+//
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
 // experiences, photoshoots, testimonials, stories, faqs, siteSettings,
@@ -41,8 +50,8 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,stories
 
 // Vercel kills serverless functions after a plan-dependent default (10s on
-// Hobby) — this route writes dozens of documents to Sanity sequentially and
-// routinely exceeds that. Extend it to the Hobby-plan ceiling.
+// Hobby) — extend it well past what even a large single-transaction commit
+// should need.
 export const maxDuration = 60;
 
 function key() {
@@ -68,130 +77,120 @@ export async function GET(request: NextRequest) {
   const shouldRun = (name: string) => !only || only.includes(name);
 
   const client = createClient({ projectId, dataset, apiVersion, token, useCdn: false });
-
+  const tx = client.transaction();
   const results: string[] = [];
 
   if (shouldRun("tours")) {
-    await Promise.all(
-      tours.map(async (t, i) => {
-        await client.createOrReplace({
-          _id: `tour-${t.slug}`,
-          _type: "tour",
-          title: t.title,
-          slug: { _type: "slug", current: t.slug },
-          tagline: t.tagline,
-          category: t.category,
-          duration: t.duration,
-          lengthDays: t.lengthDays,
-          cities: t.cities,
-          destinations: t.destinations,
-          travelStyle: t.travelStyle,
-          featured: t.featured,
-          rating: t.rating ? { _type: "rating", ...t.rating } : undefined,
-          badge: t.badge,
-          imageTone: t.imageTone,
-          description: t.description,
-          highlights: t.highlights,
-          included: t.included,
-          excluded: t.excluded,
-          itinerary: t.itinerary?.map((d) => ({ ...d, _type: "itineraryDay", _key: key() })),
-          relatedExperiences: t.relatedExperiences?.map((e) => ({
-            _type: "reference",
-            _ref: `experience-${e.slug}`,
-            _key: key(),
-          })),
-          price: { _type: "price", ...t.price },
-          order: i,
-        });
-        results.push(`tour: ${t.slug}`);
-      })
-    );
+    for (const [i, t] of tours.entries()) {
+      tx.createOrReplace({
+        _id: `tour-${t.slug}`,
+        _type: "tour",
+        title: t.title,
+        slug: { _type: "slug", current: t.slug },
+        tagline: t.tagline,
+        category: t.category,
+        duration: t.duration,
+        lengthDays: t.lengthDays,
+        cities: t.cities,
+        destinations: t.destinations,
+        travelStyle: t.travelStyle,
+        featured: t.featured,
+        rating: t.rating ? { _type: "rating", ...t.rating } : undefined,
+        badge: t.badge,
+        imageTone: t.imageTone,
+        description: t.description,
+        highlights: t.highlights,
+        included: t.included,
+        excluded: t.excluded,
+        itinerary: t.itinerary?.map((d) => ({ ...d, _type: "itineraryDay", _key: key() })),
+        relatedExperiences: t.relatedExperiences?.map((e) => ({
+          _type: "reference",
+          _ref: `experience-${e.slug}`,
+          _key: key(),
+        })),
+        price: { _type: "price", ...t.price },
+        order: i,
+      });
+      results.push(`tour: ${t.slug}`);
+    }
   }
 
   if (shouldRun("experiences")) {
-    await Promise.all(
-      experiences.map(async (e, i) => {
-        await client.createOrReplace({
-          _id: `experience-${e.slug}`,
-          _type: "experience",
-          title: e.title,
-          slug: { _type: "slug", current: e.slug },
-          duration: e.duration,
-          rating: e.rating ? { _type: "rating", ...e.rating } : undefined,
-          price: { _type: "price", ...e.price },
-          relatedTours: e.relatedTours?.map((t) => ({
-            _type: "reference",
-            _ref: `tour-${t.slug}`,
-            _key: key(),
-          })),
-          imageTone: e.imageTone,
-          description: e.description,
-          included: e.included,
-          order: i,
-        });
-        results.push(`experience: ${e.slug}`);
-      })
-    );
+    for (const [i, e] of experiences.entries()) {
+      tx.createOrReplace({
+        _id: `experience-${e.slug}`,
+        _type: "experience",
+        title: e.title,
+        slug: { _type: "slug", current: e.slug },
+        duration: e.duration,
+        rating: e.rating ? { _type: "rating", ...e.rating } : undefined,
+        price: { _type: "price", ...e.price },
+        relatedTours: e.relatedTours?.map((t) => ({
+          _type: "reference",
+          _ref: `tour-${t.slug}`,
+          _key: key(),
+        })),
+        imageTone: e.imageTone,
+        description: e.description,
+        included: e.included,
+        order: i,
+      });
+      results.push(`experience: ${e.slug}`);
+    }
   }
 
   if (shouldRun("photoshoots")) {
-    await Promise.all(
-      photoshoots.map(async (p, i) => {
-        await client.createOrReplace({
-          _id: `photoshoot-${p.slug}`,
-          _type: "photoshoot",
-          title: p.title,
-          slug: { _type: "slug", current: p.slug },
-          duration: p.duration,
-          rating: p.rating ? { _type: "rating", ...p.rating } : undefined,
-          price: { _type: "price", ...p.price },
-          locations: p.locations,
-          imageTone: p.imageTone,
-          description: p.description,
-          goodFor: p.goodFor,
-          included: p.included,
-          addOns: p.addOns,
-          delivery: p.delivery,
-          order: i,
-        });
-        results.push(`photoshoot: ${p.slug}`);
-      })
-    );
+    for (const [i, p] of photoshoots.entries()) {
+      tx.createOrReplace({
+        _id: `photoshoot-${p.slug}`,
+        _type: "photoshoot",
+        title: p.title,
+        slug: { _type: "slug", current: p.slug },
+        duration: p.duration,
+        rating: p.rating ? { _type: "rating", ...p.rating } : undefined,
+        price: { _type: "price", ...p.price },
+        locations: p.locations,
+        imageTone: p.imageTone,
+        description: p.description,
+        goodFor: p.goodFor,
+        included: p.included,
+        addOns: p.addOns,
+        delivery: p.delivery,
+        order: i,
+      });
+      results.push(`photoshoot: ${p.slug}`);
+    }
   }
 
   if (shouldRun("testimonials")) {
-    await Promise.all(
-      testimonials.map(async (t, i) => {
-        await client.createOrReplace({
-          _id: `testimonial-${i}`,
-          _type: "testimonial",
-          name: t.name,
-          quote: t.quote,
-          context: t.context,
-          order: i,
-        });
-        results.push(`testimonial: ${t.name}`);
-      })
-    );
+    for (const [i, t] of testimonials.entries()) {
+      tx.createOrReplace({
+        _id: `testimonial-${i}`,
+        _type: "testimonial",
+        name: t.name,
+        quote: t.quote,
+        context: t.context,
+        order: i,
+      });
+      results.push(`testimonial: ${t.name}`);
+    }
   }
 
   if (shouldRun("faqs")) {
-    await Promise.all(
-      faqs.map(async (f, i) => {
-        await client.createOrReplace({
-          _id: `faq-${i}`,
-          _type: "faqItem",
-          question: f.question,
-          answer: f.answer,
-          order: i,
-        });
-        results.push(`faq: ${f.question}`);
-      })
-    );
+    for (const [i, f] of faqs.entries()) {
+      tx.createOrReplace({
+        _id: `faq-${i}`,
+        _type: "faqItem",
+        question: f.question,
+        answer: f.answer,
+        order: i,
+      });
+      results.push(`faq: ${f.question}`);
+    }
   }
 
   if (shouldRun("siteSettings")) {
-    await client.createOrReplace({
+    tx.createOrReplace({
       _id: "siteSettings",
       _type: "siteSettings",
       name: site.name,
@@ -218,7 +217,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (shouldRun("customizePage")) {
-    await client.createOrReplace({
+    tx.createOrReplace({
       _id: "customizePage",
       _type: "customizePage",
       eyebrow: customizePage.eyebrow,
@@ -240,7 +239,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (shouldRun("aboutPage")) {
-    await client.createOrReplace({
+    tx.createOrReplace({
       _id: "aboutPage",
       _type: "aboutPage",
       heroEyebrow: aboutPage.heroEyebrow,
@@ -260,7 +259,7 @@ export async function GET(request: NextRequest) {
   }
 
   if (shouldRun("contactPage")) {
-    await client.createOrReplace({
+    tx.createOrReplace({
       _id: "contactPage",
       _type: "contactPage",
       heroEyebrow: contactPage.heroEyebrow,
@@ -276,29 +275,26 @@ export async function GET(request: NextRequest) {
   }
 
   if (shouldRun("hosts")) {
-    await Promise.all(
-      hosts.map(async (h, i) => {
-        await client.createOrReplace({
-          _id: `host-${h.slug}`,
-          _type: "host",
-          name: h.name,
-          slug: { _type: "slug", current: h.slug },
-          role: h.role,
-          bio: h.bio,
-          languages: h.languages,
-          experience: h.experience,
-          personality: h.personality,
-          order: i,
-        });
-        results.push(`host: ${h.slug}`);
-      })
-    );
+    for (const [i, h] of hosts.entries()) {
+      tx.createOrReplace({
+        _id: `host-${h.slug}`,
+        _type: "host",
+        name: h.name,
+        slug: { _type: "slug", current: h.slug },
+        role: h.role,
+        bio: h.bio,
+        languages: h.languages,
+        experience: h.experience,
+        personality: h.personality,
+        order: i,
+      });
+      results.push(`host: ${h.slug}`);
+    }
   }
 
   if (shouldRun("signatureExperiences")) {
-    await Promise.all(
-      signatureExperiences.map(async (e) => {
-      await client.createOrReplace({
+    for (const e of signatureExperiences) {
+      tx.createOrReplace({
         _id: `signatureExperience-${e.slug}`,
         _type: "signatureExperience",
         status: e.status,
@@ -348,49 +344,43 @@ export async function GET(request: NextRequest) {
         ogImage: e.ogImage,
         noindex: e.noindex,
       });
-        results.push(`signatureExperience: ${e.slug}`);
-      })
-    );
+      results.push(`signatureExperience: ${e.slug}`);
+    }
   }
 
   if (shouldRun("authors")) {
-    await Promise.all(
-      authors.map(async (a) => {
-        await client.createOrReplace({
-          _id: `author-${a.slug}`,
-          _type: "author",
-          name: a.name,
-          slug: { _type: "slug", current: a.slug },
-          role: a.role,
-          bio: a.bio,
-        });
-        results.push(`author: ${a.slug}`);
-      })
-    );
+    for (const a of authors) {
+      tx.createOrReplace({
+        _id: `author-${a.slug}`,
+        _type: "author",
+        name: a.name,
+        slug: { _type: "slug", current: a.slug },
+        role: a.role,
+        bio: a.bio,
+      });
+      results.push(`author: ${a.slug}`);
+    }
   }
 
   if (shouldRun("events")) {
-    await Promise.all(
-      events
-        .filter((ev) => ev.slug)
-        .map(async (ev) => {
-          await client.createOrReplace({
-            _id: `event-${ev.slug}`,
-            _type: "event",
-            name: ev.name,
-            targetDateTime: ev.targetDateTime,
-            timezoneLabel: ev.timezoneLabel,
-            locationName: ev.locationName,
-            displayTitle: ev.displayTitle,
-            supportingText: ev.supportingText,
-            backgroundTone: ev.backgroundTone,
-            dayOfMessage: ev.dayOfMessage,
-            endedMessage: ev.endedMessage,
-            active: ev.active,
-          });
-          results.push(`event: ${ev.slug}`);
-        })
-    );
+    for (const ev of events) {
+      if (!ev.slug) continue;
+      tx.createOrReplace({
+        _id: `event-${ev.slug}`,
+        _type: "event",
+        name: ev.name,
+        targetDateTime: ev.targetDateTime,
+        timezoneLabel: ev.timezoneLabel,
+        locationName: ev.locationName,
+        displayTitle: ev.displayTitle,
+        supportingText: ev.supportingText,
+        backgroundTone: ev.backgroundTone,
+        dayOfMessage: ev.dayOfMessage,
+        endedMessage: ev.endedMessage,
+        active: ev.active,
+      });
+      results.push(`event: ${ev.slug}`);
+    }
   }
 
   // Body blocks are stored locally with embedded data (e.g. a countdown
@@ -423,9 +413,8 @@ export async function GET(request: NextRequest) {
   }
 
   if (shouldRun("stories")) {
-    await Promise.all(
-      stories.map(async (s) => {
-      await client.createOrReplace({
+    for (const s of stories) {
+      tx.createOrReplace({
         _id: `story-${s.slug}`,
         _type: "story",
         status: s.status,
@@ -463,9 +452,15 @@ export async function GET(request: NextRequest) {
         canonicalUrl: s.canonicalUrl,
         noindex: s.noindex,
       });
-        results.push(`story: ${s.slug}`);
-      })
-    );
+      results.push(`story: ${s.slug}`);
+    }
+  }
+
+  try {
+    await tx.commit();
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true, migrated: results.length, details: results });
