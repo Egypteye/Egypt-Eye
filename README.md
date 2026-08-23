@@ -99,6 +99,27 @@ returns an error instead of sending.
    don't apply to already-running deployments). Submit the Customize Your
    Tour form once to confirm the email arrives.
 
+## Setting up the AI chat widget
+
+A floating chat button (bottom-right, above the WhatsApp button) lets visitors
+ask questions and get answers grounded in the site's real tours, experiences,
+policies, and FAQs (`src/content/chatContext.ts` builds that context;
+`src/app/api/chat/route.ts` sends it to the model). It's explicitly instructed
+never to invent a price or a detail that isn't in that context — for anything
+it doesn't know, it points the visitor to WhatsApp instead of guessing.
+
+It runs on **Google Gemini's free tier** — no credit card required.
+
+1. Go to **[aistudio.google.com/apikey](https://aistudio.google.com/apikey)**,
+   sign in with a Google account, and click **Create API key**.
+2. In Vercel → Project → Settings → Environment Variables, add:
+   - `GEMINI_API_KEY` — the key from step 1
+3. Redeploy. Until this is set, the widget still appears but shows a message
+   pointing to WhatsApp instead of a broken chat.
+
+The free tier's rate limit is generous for a small business site; if you ever
+outgrow it, the same code works with a paid Gemini key with no changes.
+
 ## Images
 
 Every tour/experience/photoshoot/blog post has an optional **Photo** field
