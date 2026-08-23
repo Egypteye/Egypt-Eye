@@ -57,6 +57,29 @@ import type {
 
 const REVALIDATE_SECONDS = 60;
 
+// Sanity documents from an earlier migration can predate a field (like a
+// newly-curated photo) that only exists in the local content files so far.
+// Rather than let a stale/imageless Sanity copy silently blank out a real
+// photo, fill in the local one wherever the Sanity item doesn't have its
+// own — matched by slug. A real photo uploaded in Sanity always wins; this
+// only ever fills a gap, never overrides one.
+function withLocalImageFallback<T extends { slug: string; image?: unknown }>(items: T[], local: readonly T[]): T[] {
+  const localBySlug = new Map(local.map((item) => [item.slug, item]));
+  return items.map((item) =>
+    item.image ? item : { ...item, image: localBySlug.get(item.slug)?.image }
+  );
+}
+
+function withLocalHeroImageFallback<T extends { slug: string; heroImage?: unknown }>(
+  items: T[],
+  local: readonly T[]
+): T[] {
+  const localBySlug = new Map(local.map((item) => [item.slug, item]));
+  return items.map((item) =>
+    item.heroImage ? item : { ...item, heroImage: localBySlug.get(item.slug)?.heroImage }
+  );
+}
+
 // Sanity isn't configured until real env vars are set (see .env.local.example).
 // Until then — and if a fetch ever errors — every function below quietly
 // falls back to the local content files, so the site keeps working exactly
@@ -81,12 +104,14 @@ async function safeFetch<T>(query: string, params: Record<string, unknown> = {})
 
 export async function getTours(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return result && result.length > 0 ? result : localTours;
+  return result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours;
 }
 
 export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
   const result = await safeFetch<Tour | null>(tourBySlugQuery, { slug });
-  return result ?? localTours.find((t) => t.slug === slug);
+  const local = localTours.find((t) => t.slug === slug);
+  if (!result) return local;
+  return result.image ? result : { ...result, image: local?.image };
 }
 
 export async function getAllTourSlugs(): Promise<string[]> {
@@ -96,22 +121,26 @@ export async function getAllTourSlugs(): Promise<string[]> {
 
 export async function getExperiences(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
-  return result && result.length > 0 ? result : localExperiences;
+  return result && result.length > 0 ? withLocalImageFallback(result, localExperiences) : localExperiences;
 }
 
 export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
   const result = await safeFetch<Experience | null>(experienceBySlugQuery, { slug });
-  return result ?? localExperiences.find((e) => e.slug === slug);
+  const local = localExperiences.find((e) => e.slug === slug);
+  if (!result) return local;
+  return result.image ? result : { ...result, image: local?.image };
 }
 
 export async function getPhotoshoots(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
-  return result && result.length > 0 ? result : localPhotoshoots;
+  return result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots;
 }
 
 export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
   const result = await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug });
-  return result ?? localPhotoshoots.find((p) => p.slug === slug);
+  const local = localPhotoshoots.find((p) => p.slug === slug);
+  if (!result) return local;
+  return result.image ? result : { ...result, image: local?.image };
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
@@ -121,12 +150,14 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 
 export async function getStories(): Promise<Story[]> {
   const result = await safeFetch<Story[]>(storiesQuery);
-  return result && result.length > 0 ? result : localStories;
+  return result && result.length > 0 ? withLocalImageFallback(result, localStories) : localStories;
 }
 
 export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   const result = await safeFetch<Story | null>(storyBySlugQuery, { slug });
-  return result ?? localStories.find((s) => s.slug === slug);
+  const local = localStories.find((s) => s.slug === slug);
+  if (!result) return local;
+  return result.image ? result : { ...result, image: local?.image };
 }
 
 export async function getFaqs(): Promise<Faq[]> {
@@ -331,12 +362,16 @@ export async function getContactPage(): Promise<ResolvedContactPage> {
 
 export async function getSignatureExperiences(): Promise<SignatureExperience[]> {
   const result = await safeFetch<SignatureExperience[]>(signatureExperiencesQuery);
-  return result && result.length > 0 ? result : localSignatureExperiences;
+  return result && result.length > 0
+    ? withLocalHeroImageFallback(result, localSignatureExperiences)
+    : localSignatureExperiences;
 }
 
 export async function getSignatureExperienceBySlug(slug: string): Promise<SignatureExperience | undefined> {
   const result = await safeFetch<SignatureExperience | null>(signatureExperienceBySlugQuery, { slug });
-  return result ?? localSignatureExperiences.find((e) => e.slug === slug);
+  const local = localSignatureExperiences.find((e) => e.slug === slug);
+  if (!result) return local;
+  return result.heroImage ? result : { ...result, heroImage: local?.heroImage };
 }
 
 export async function getAllSignatureExperienceSlugs(): Promise<string[]> {
