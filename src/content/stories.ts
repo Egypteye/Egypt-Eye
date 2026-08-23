@@ -524,7 +524,7 @@ export const stories: Story[] = [
     relatedExperience: eclipseExperience,
     primaryKeyword: "luxor travel guide",
     secondaryKeywords: ["things to do in luxor", "luxor egypt", "how many days in luxor", "luxor east bank west bank"],
-    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "epic-8-day-egypt-escapade"),
+    relatedTours: toursBySlug("2-day-luxor-tour", "6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "epic-8-day-egypt-escapade"),
     seoTitle: "Luxor Travel Guide: How to Actually See Ancient Thebes",
     seoDescription:
       "A practical Luxor guide — East Bank vs. West Bank, how many days to spend, and the temples and tombs worth building your time around.",
@@ -683,7 +683,7 @@ export const stories: Story[] = [
     destinations: ["Luxor"],
     primaryKeyword: "luxor east bank vs west bank",
     secondaryKeywords: ["luxor west bank", "luxor east bank", "valley of the kings vs karnak"],
-    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise"),
+    relatedTours: toursBySlug("2-day-luxor-tour", "6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise"),
     relatedStories: [
       {
         slug: "luxor-travel-guide",
@@ -1333,7 +1333,7 @@ export const stories: Story[] = [
       "Luxor experiences",
       "Luxor itinerary",
     ],
-    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "epic-8-day-egypt-escapade"),
+    relatedTours: toursBySlug("2-day-luxor-tour", "6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "epic-8-day-egypt-escapade"),
     relatedStories: [
       {
         slug: "luxor-travel-guide",
