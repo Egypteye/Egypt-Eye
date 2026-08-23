@@ -33,8 +33,8 @@ export const customizePage: ResolvedCustomizePage = {
     {
       title: "Your Trip",
       fields: [
-        { label: "Arrival date (if known)", fieldKey: "arrival", fieldType: "text", placeholder: "D/M/Y", width: "half" },
-        { label: "Departure date (if known)", fieldKey: "departure", fieldType: "text", placeholder: "D/M/Y", width: "half" },
+        { label: "Arrival date (if known)", fieldKey: "arrival", fieldType: "date", width: "half" },
+        { label: "Departure date (if known)", fieldKey: "departure", fieldType: "date", width: "half" },
         { label: "Have you visited Egypt before?", fieldKey: "visitedBefore", fieldType: "select", options: ["No", "Yes"], width: "half" },
         { label: "Number of guests", fieldKey: "guests", fieldType: "number", required: true, placeholder: "2", width: "half" },
         {

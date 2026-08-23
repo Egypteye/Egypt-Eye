@@ -6,6 +6,7 @@ const FIELD_TYPES = [
   { title: "Email", value: "email" },
   { title: "Phone", value: "tel" },
   { title: "Number", value: "number" },
+  { title: "Date", value: "date" },
   { title: "Long text (textarea)", value: "textarea" },
   { title: "Dropdown (custom choices)", value: "select" },
   { title: "Multiple-choice chips (custom choices)", value: "chips" },
