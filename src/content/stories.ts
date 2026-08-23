@@ -1651,7 +1651,7 @@ export const stories: Story[] = [
           {
             _type: "span",
             _key: "p10s1",
-            text: "Luxor Temple feels completely different from Karnak — more intimate, and because it sits right in the heart of modern Luxor, the contrast between ancient Egypt and everyday Egyptian life becomes part of the experience. Come later in the day and stay into the evening: as the lights come on, the columns and statues take on a completely different character. This is one of those moments where you don't need to do much. Just walk, look up, and let the scale of the place sink in.",
+            text: "Luxor Temple feels completely different from Karnak — more intimate, and because modern Luxor has grown up right around it, the contrast between ancient Egypt and everyday Egyptian life becomes part of the experience. Come later in the day and stay into the evening: as the lights come on, the columns and statues take on a completely different character. This is one of those moments where you don't need to do much. Just walk, look up, and let the scale of the place sink in.",
             marks: [],
           },
         ],
@@ -1875,7 +1875,7 @@ export const stories: Story[] = [
       {
         _type: "ctaBlock",
         _key: "cta3",
-        title: "Discover Egypt Tours That Include Luxor",
+        title: "Egypt Tours That Include Luxor",
         body: "See how a full Egypt itinerary can be built around this pace.",
         buttonLabel: "Explore Egypt Tours",
         buttonHref: "/tours",
@@ -2751,7 +2751,7 @@ export const stories: Story[] = [
     relatedTours: toursBySlug("ras-mohammed-snorkeling-tour", "marsa-alam-dolphin-house-tour", "hurghada-red-sea-diving-snorkeling"),
     seoTitle: "Is Scuba Diving in the Red Sea Worth It? An Honest Look",
     seoDescription:
-      "The Red Sea is one of the world's most acclaimed diving destinations. What actually makes it stand out, and what beginners should know before booking.",
+      "The Red Sea is one of the world's best-known diving destinations. What actually makes it stand out, and what beginners should know before booking.",
     body: [
       p(
         "Divers talk about the Red Sea the way they talk about very few other destinations — exceptional visibility, warm water nearly year-round, and coral reef systems that have largely avoided the bleaching damage seen elsewhere. For most travelers weighing whether to add it to an Egypt trip, the answer is yes."
@@ -2849,7 +2849,7 @@ export const stories: Story[] = [
       ),
       h2("What Makes It Famous"),
       p(
-        "Walk-in access from the shore, combined with the dramatic drop-off just a few meters out, makes the Blue Hole one of the most accessible world-class dive sites anywhere — no boat required, which is part of why Dahab built its whole diving identity around shore access rather than boat trips."
+        "Walk-in access from the shore, combined with the dramatic drop-off just a few meters out, makes the Blue Hole one of the most accessible major dive sites anywhere — no boat required, which is part of why Dahab built its whole diving identity around shore access rather than boat trips."
       ),
       h2("A Site With a Serious Reputation"),
       p(

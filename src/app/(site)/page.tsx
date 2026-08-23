@@ -131,7 +131,7 @@ export default async function Home() {
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14">
                 <Badge>First Flying Dresses in Egypt</Badge>
                 <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">
-                  Elegance Unveiled: Egypt&rsquo;s Inaugural Long Dresses Experience
+                  Egypt&rsquo;s First Flying Dress Photoshoot
                 </h2>
                 <p className="text-cream/70">
                   A flowing dress, a private photographer, and secret, uncrowded
@@ -173,9 +173,8 @@ export default async function Home() {
                   Sail into Opulence on the Red Sea
                 </h2>
                 <p className="text-cream/70">
-                  Experience the ultimate luxury aboard a private yacht — calm
-                  turquoise water, white sand, and a relaxed pace built entirely
-                  around you.
+                  A private yacht on calm turquoise water, white sand within
+                  reach, and a pace built entirely around you.
                 </p>
                 <Link
                   href="/tours/red-sea-relaxation"

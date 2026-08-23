@@ -59,7 +59,7 @@ export const site = {
   pillars: [
     {
       title: "Travel",
-      description: "Private, expertly guided journeys across Egypt and Jordan.",
+      description: "Private, guided journeys across Egypt and Jordan.",
     },
     {
       title: "Photography",

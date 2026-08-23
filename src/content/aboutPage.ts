@@ -12,7 +12,7 @@ export const aboutPage: ResolvedAboutPage = {
   whatWeDoEyebrow: "What We Do",
   whatWeDoTitle: "Travel + Photography + Personalization + Hospitality",
   whatWeDoDescription:
-    "Four pillars, one team, delivered on every single trip — whether it's a two-hour photoshoot or a ten-day private journey.",
+    "Four pillars, one team, delivered on every trip — from a two-hour photoshoot to a ten-day private journey.",
   teamEyebrow: "Meet the Team",
   teamTitle: "The people behind your trip",
   teamDescription:
