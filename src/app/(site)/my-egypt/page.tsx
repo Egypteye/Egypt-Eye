@@ -11,6 +11,7 @@ import { getDestinationHubs, getExperiences, getPhotoshoots, getSiteSettings } f
 import { CountdownBanner } from "./CountdownBanner";
 import { PackingChecklist } from "./PackingChecklist";
 import { AddExperienceButton } from "./AddExperienceButton";
+import { ConciergeWidget } from "./ConciergeWidget";
 
 export const metadata: Metadata = {
   title: "My Egypt",
@@ -247,6 +248,12 @@ export default async function MyEgyptPage() {
               </div>
             </div>
           )}
+
+          <div>
+            <h2 className="mb-1 font-display text-lg font-semibold text-ink">Ask Egypt Eye</h2>
+            <p className="mb-4 text-sm text-ink-soft/60">Your private concierge — grounded in your actual trip details.</p>
+            <ConciergeWidget reservationId={reservation.id} whatsappLink={site.contact.whatsappLink} />
+          </div>
 
           <InfoCard title="Important Contacts">
             <div className="flex flex-col gap-2 text-sm">
