@@ -16,8 +16,10 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { StoryCard } from "@/components/StoryCard";
 import { Reveal } from "@/components/Reveal";
 import { NewsletterSignup } from "@/components/NewsletterSignup";
+import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
 import {
+  getDestinationHubs,
   getExperiences,
   getFaqs,
   getHomepage,
@@ -35,7 +37,7 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [site, home, tours, experiences, photoshoots, testimonials, stories, faqs] = await Promise.all([
+  const [site, home, tours, experiences, photoshoots, testimonials, stories, faqs, destinationHubs] = await Promise.all([
     getSiteSettings(),
     getHomepage(),
     getTours(),
@@ -44,6 +46,7 @@ export default async function Home() {
     getTestimonials(),
     getStories(),
     getFaqs(),
+    getDestinationHubs(),
   ]);
   const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
   const { tourCount, destinationCount } = getCatalogStats(tours, experiences, photoshoots);
@@ -123,14 +126,13 @@ export default async function Home() {
           <Reveal delay={100} className="mt-10">
             <DestinationsPanel photos={site.destinationPhotos} tours={tours} destinations={site.destinations} />
           </Reveal>
-          <Reveal delay={150} className="mt-10 flex justify-center">
-            <Link
-              href="/explore-egypt"
-              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              Explore Egypt on the Map
-            </Link>
-          </Reveal>
+        </Container>
+      </section>
+
+      {/* Explore Egypt — the interactive map */}
+      <section className="py-6">
+        <Container>
+          <ExploreEgyptPromo hubs={destinationHubs} />
         </Container>
       </section>
 
