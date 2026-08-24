@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSiteSettings } from "@/sanity/fetchers";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 // Receives a Customize Your Tour submission and emails it via Resend
 // (https://resend.com) to the address in Site Settings > Contact > Email.
@@ -11,6 +12,11 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type SubmittedField = { label?: unknown; value?: unknown };
 
 export async function POST(request: NextRequest) {
+  const { allowed } = await checkRateLimit({ bucket: "customize-request", key: getClientIp(request), max: 10, windowSeconds: 3600 });
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
+
   let body: { fields?: SubmittedField[]; subject?: unknown; replyToEmail?: unknown };
   try {
     body = await request.json();

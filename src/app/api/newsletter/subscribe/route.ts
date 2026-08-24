@@ -4,6 +4,7 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { sendEmail } from "@/lib/email/resend";
 import { newsletterVerifyEmail } from "@/lib/email/templates";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 // Real double opt-in: this route only ever creates/updates a
 // newsletter_subscribers row and emails a confirmation link. Nothing is
@@ -18,6 +19,11 @@ type SubscribeBody = { email?: unknown; firstName?: unknown; source?: unknown };
 export async function POST(request: NextRequest) {
   if (!supabaseAdminConfigured) {
     return NextResponse.json({ error: "The newsletter isn't set up on this deployment yet." }, { status: 500 });
+  }
+
+  const { allowed } = await checkRateLimit({ bucket: "newsletter-subscribe", key: getClientIp(request), max: 8, windowSeconds: 3600 });
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many attempts. Please try again in a bit." }, { status: 429 });
   }
 
   let body: SubscribeBody;

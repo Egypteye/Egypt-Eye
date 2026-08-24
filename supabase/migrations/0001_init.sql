@@ -89,8 +89,32 @@ create policy "profiles_select_own" on public.profiles for select
 drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own" on public.profiles for update
   using (auth.uid() = id)
-  with check (auth.uid() = id and role = 'customer');
-  -- customers can edit their own row but can never grant themselves 'admin'
+  with check (auth.uid() = id);
+
+-- Belt-and-suspenders against privilege escalation: even though the RLS
+-- policy above lets a customer update their own row, this trigger silently
+-- discards any change to `role` unless the request is running as the
+-- service role (i.e. an admin action from /admin, never the browser) — so
+-- a crafted client request that includes role: 'admin' in the update
+-- payload has no effect, while a normal profile edit (name/phone/
+-- preferences) is untouched.
+create or replace function public.prevent_role_self_escalation()
+returns trigger
+language plpgsql
+security definer set search_path = public
+as $$
+begin
+  if new.role is distinct from old.role and auth.role() <> 'service_role' then
+    new.role := old.role;
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists on_profiles_prevent_role_escalation on public.profiles;
+create trigger on_profiles_prevent_role_escalation
+  before update on public.profiles
+  for each row execute function public.prevent_role_self_escalation();
 
 -- ---------------------------------------------------------------------------
 -- newsletter_subscribers — server-only access (no client RLS policy)

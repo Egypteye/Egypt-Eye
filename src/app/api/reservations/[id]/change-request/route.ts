@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 // "Add to My Trip" inside My Egypt never modifies a confirmed reservation
 // directly — it only ever files a request for the Egypt Eye team to review
@@ -15,6 +16,11 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Please log in." }, { status: 401 });
+
+  const { allowed } = await checkRateLimit({ bucket: "change-request", key: user.id, max: 20, windowSeconds: 3600 });
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
+  }
 
   const { id: reservationId } = await params;
 

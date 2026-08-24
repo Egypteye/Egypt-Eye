@@ -8,6 +8,7 @@ import { validateDiscountCode } from "@/lib/discounts/validate";
 import { redeemDiscountCode } from "@/lib/discounts/redeem";
 import { sendIdempotentEmail } from "@/lib/email/idempotent";
 import { reservationConfirmationEmail } from "@/lib/email/templates";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -36,6 +37,11 @@ function generateReference(): string {
 export async function POST(request: NextRequest) {
   if (!supabaseAdminConfigured) {
     return NextResponse.json({ error: "Reservations aren't set up on this deployment yet." }, { status: 500 });
+  }
+
+  const { allowed } = await checkRateLimit({ bucket: "reservation-submit", key: getClientIp(request), max: 10, windowSeconds: 3600 });
+  if (!allowed) {
+    return NextResponse.json({ error: "Too many requests. Please try again later, or message us on WhatsApp." }, { status: 429 });
   }
 
   let body: ReservationBody;

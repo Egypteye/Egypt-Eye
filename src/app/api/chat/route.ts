@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildChatContext } from "@/content/chatContext";
 import { site } from "@/content/site";
+import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 
 // Powers the floating chat widget (src/components/ChatWidget.tsx) via
 // Google Gemini's free tier (see README → "Setting up the AI chat widget").
@@ -31,6 +32,11 @@ Rules:
 }
 
 export async function POST(request: NextRequest) {
+  const { allowed } = await checkRateLimit({ bucket: "chat", key: getClientIp(request), max: 40, windowSeconds: 3600 });
+  if (!allowed) {
+    return NextResponse.json({ error: "The chat assistant is busy right now — please try again in a few minutes." }, { status: 429 });
+  }
+
   let body: { messages?: ChatMessage[] };
   try {
     body = await request.json();

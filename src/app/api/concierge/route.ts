@@ -4,6 +4,7 @@ import { getActiveReservation } from "@/lib/myEgypt";
 import { buildConciergeSystemPrompt } from "@/lib/concierge/systemPrompt";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { checkRateLimit } from "@/lib/rateLimit";
 
 // "Ask Egypt Eye" — same Gemini setup as the public chat widget
 // (src/app/api/chat/route.ts), but requires a real session and only ever
@@ -25,6 +26,11 @@ export async function POST(request: NextRequest) {
   const reservation = await getActiveReservation(user.id);
   if (!reservation) {
     return NextResponse.json({ error: "The concierge unlocks once you have a confirmed reservation." }, { status: 403 });
+  }
+
+  const { allowed } = await checkRateLimit({ bucket: "concierge", key: user.id, max: 40, windowSeconds: 3600 });
+  if (!allowed) {
+    return NextResponse.json({ error: "You've reached the hourly limit for the concierge — please try again soon." }, { status: 429 });
   }
 
   let body: { messages?: ChatMessage[] };
