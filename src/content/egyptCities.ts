@@ -12,7 +12,6 @@ import type { EgyptCity } from "./types";
 
 export const egyptCities: EgyptCity[] = [
   // Nile Delta & Canal cities
-  { slug: "alexandria", name: "Alexandria", region: "Mediterranean Coast", mapX: 44.0, mapY: 9.0, mood: ["history", "coast"] },
   { slug: "port-said", name: "Port Said", region: "Suez Canal", mapX: 60.5, mapY: 8.5, mood: ["coast"] },
   { slug: "suez", name: "Suez", region: "Suez Canal", mapX: 62.2, mapY: 18.5, mood: ["coast"] },
   { slug: "ismailia", name: "Ismailia", region: "Suez Canal", mapX: 60.3, mapY: 13.7, mood: ["coast"] },
@@ -24,7 +23,6 @@ export const egyptCities: EgyptCity[] = [
   { slug: "kafr-el-sheikh", name: "Kafr El Sheikh", region: "Nile Delta", mapX: 51.1, mapY: 9.7, mood: [] },
 
   // Nile Valley & Upper Egypt
-  { slug: "faiyum", name: "Faiyum", region: "Nile Valley", mapX: 50.4, mapY: 23.6, mood: ["desert"] },
   { slug: "beni-suef", name: "Beni Suef", region: "Nile Valley", mapX: 52.2, mapY: 25.5, mood: ["nile"] },
   { slug: "minya", name: "Minya", region: "Nile Valley", mapX: 49.8, mapY: 32.9, mood: ["history", "nile"] },
   { slug: "asyut", name: "Asyut", region: "Nile Valley", mapX: 52.8, mapY: 40.1, mood: ["nile"] },
@@ -51,5 +49,4 @@ export const egyptCities: EgyptCity[] = [
 
   // Red Sea coast
   { slug: "safaga", name: "Safaga", region: "Red Sea Coast", mapX: 71.7, mapY: 43.5, mood: ["beaches", "diving"] },
-  { slug: "ain-sokhna", name: "Ain Sokhna", region: "Red Sea Coast", mapX: 60.7, mapY: 21.4, mood: ["beaches"] },
 ];

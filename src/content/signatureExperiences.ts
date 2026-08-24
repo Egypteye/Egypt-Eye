@@ -23,7 +23,7 @@ export const signatureExperiences: SignatureExperience[] = [
     groupSize: "Private — just you, or with the friends you bring",
     luxuryLevel: "Ultra-Luxury, Fully Private",
     location: "Cairo · Giza · the Nile · Red Sea (customizable)",
-    price: { amount: null, note: "Ask us for a personal quote" },
+    price: { amount: 2400 },
     whoIsThisForTitle: "Who This Was Designed For",
     whoIsThisForBody:
       "You've spent decades being the one who plans things — the trips, the schedules, the meals, everyone else's needs before your own. Her Egypt was built for the woman who's finally ready to be the one who's looked after: financially comfortable, done raising the logistics of other people's lives, and no longer interested in a vacation that turns into a second job. You don't want an itinerary to manage. You want one to simply follow.",
@@ -258,7 +258,7 @@ export const signatureExperiences: SignatureExperience[] = [
     groupSize: "Private, or small group — ask us either way",
     luxuryLevel: "Ultra-Luxury, Fully Private",
     location: "Luxor, Egypt",
-    price: { amount: null, note: "Ask us for a personal quote" },
+    price: { amount: 890 },
     whoIsThisForTitle: "Who This Was Designed For",
     whoIsThisForBody:
       "Eclipse chasers who'd rather not spend the day it happens standing in a parking lot. History travelers who've always meant to see Luxor and would like a reason that won't wait. And anyone who understands that a six-minute event most of the planet will never witness deserves more planning than a pair of glasses and a hope for clear skies — which, in Luxor, are about as reliable as anywhere on the eclipse path.",

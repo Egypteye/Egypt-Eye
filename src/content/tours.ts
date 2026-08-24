@@ -44,7 +44,7 @@ export const tours: Tour[] = [
       "Taxes and service charges",
     ],
     excluded: ["Extras not mentioned", "Tips", "Hotels", "Flights"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 89 },
   },
   {
     slug: "fayoum-nature-tour",
@@ -77,7 +77,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Tips", "Hotels", "Flights", "Optional activities"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 99 },
   },
   {
     slug: "red-sea-relaxation",
@@ -109,7 +109,7 @@ export const tours: Tour[] = [
       "Beach access",
     ],
     excluded: ["Tips", "Hotels", "Flights", "Water sports equipment rental"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "3-day-cairo-giza",
@@ -142,7 +142,27 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Egypt visa", "Hotels", "Flights", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Giza Pyramids & Sphinx",
+        description:
+          "Pickup from your hotel, then straight to the Giza Plateau — the Great Pyramids, the Sphinx, and the Valley Temple, plus a professional photoshoot against the pyramids before the afternoon crowds arrive.",
+      },
+      {
+        day: 2,
+        title: "Egyptian Museum & Old Cairo",
+        description:
+          "A morning at the Egyptian Museum (or the Grand Egyptian Museum, depending on what's open), then Coptic Cairo's ancient churches and the Ben Ezra Synagogue in the afternoon.",
+      },
+      {
+        day: 3,
+        title: "Khan el-Khalili & Departure",
+        description:
+          "A relaxed final morning wandering Khan el-Khalili's bazaars for souvenirs and coffee, before your private transfer to the airport or your next destination.",
+      },
+    ],
+    price: { amount: 255 },
   },
   {
     slug: "siwa-oasis",
@@ -175,7 +195,27 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Egypt visa", "Flights", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Cairo to Siwa",
+        description:
+          "An early departure for the long desert drive west — roughly 8–9 hours, with stops along the way — arriving in Siwa by evening to check in and rest.",
+      },
+      {
+        day: 2,
+        title: "Siwa Oasis",
+        description:
+          "Shali Fortress, Cleopatra's Spring, and the Temple of the Oracle in the morning; the salt lakes and Fatnas Island for sunset, with some of the clearest night skies in Egypt after dark.",
+      },
+      {
+        day: 3,
+        title: "Great Sand Sea & Return",
+        description:
+          "A morning 4x4 safari into the Great Sand Sea's dunes and hot springs, then the long drive back to Cairo, arriving late evening.",
+      },
+    ],
+    price: { amount: 310 },
   },
   {
     slug: "3-days-jordan",
@@ -216,7 +256,27 @@ export const tours: Tour[] = [
       "Personal expenses",
       "Tips",
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrival & Petra",
+        description:
+          "Airport meet & greet, then the drive to Petra (around 3 hours via the Desert Highway). Afternoon at leisure, with Petra by Night available as an optional add-on.",
+      },
+      {
+        day: 2,
+        title: "Petra to Wadi Rum",
+        description:
+          "A full day inside Petra — the Siq, the Treasury, and as much of the site as you want to cover — before a late-afternoon transfer to Wadi Rum for a 4x4 Jeep safari through the desert at sunset.",
+      },
+      {
+        day: 3,
+        title: "Wadi Rum to the Dead Sea",
+        description:
+          "A quiet morning in the desert, then the drive to the Dead Sea (around 3 hours) for a float before your onward transfer to Amman for departure.",
+      },
+    ],
+    price: { amount: 420 },
   },
   {
     slug: "5-day-giza-cairo-alexandria",
@@ -249,7 +309,37 @@ export const tours: Tour[] = [
       "Professional photoshoot",
     ],
     excluded: ["Egypt visa", "Hotels", "Flights", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Giza Pyramids & Sphinx",
+        description:
+          "Arrival and hotel pickup, then the Giza Plateau — the Pyramids, the Sphinx, and a professional photoshoot with the pyramids as your backdrop.",
+      },
+      {
+        day: 2,
+        title: "Egyptian Museum & Old Cairo",
+        description: "The Egyptian Museum's treasures in the morning, then Islamic and Coptic Cairo in the afternoon.",
+      },
+      {
+        day: 3,
+        title: "Alexandria Day Trip",
+        description:
+          "An early start for the roughly two-and-a-half-hour drive to Alexandria — the Citadel of Qaitbay, the Bibliotheca Alexandrina, and the Catacombs of Kom el Shoqafa — before returning to Cairo in the evening.",
+      },
+      {
+        day: 4,
+        title: "Saqqara & Khan el-Khalili",
+        description:
+          "The Step Pyramid of Saqqara and Memphis in the morning; Khan el-Khalili's bazaars in the afternoon for souvenirs and mint tea.",
+      },
+      {
+        day: 5,
+        title: "Departure",
+        description: "A free morning at your own pace, then a private transfer to the airport.",
+      },
+    ],
+    price: { amount: 410 },
   },
   {
     slug: "6-day-cairo-giza-luxor",
@@ -319,7 +409,7 @@ export const tours: Tour[] = [
       },
       { day: 6, title: "Departure", description: "Transfer to the airport for your onward flight." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 520 },
   },
   {
     slug: "8-day-essential-egypt-nile-cruise",
@@ -364,7 +454,52 @@ export const tours: Tour[] = [
       "Optional activities",
       "Tips",
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Giza Pyramids & Photoshoot",
+        description:
+          "Arrival, hotel pickup, and the Giza Plateau — the Pyramids, the Sphinx, camel ride, and the Nine Pyramids professional photoshoot.",
+      },
+      {
+        day: 2,
+        title: "Cairo & Flight to Luxor",
+        description:
+          "The Egyptian Museum and Old Cairo in the morning, then a private transfer to the airport for your flight to Luxor and embarkation on the Nile Cruise ship.",
+      },
+      {
+        day: 3,
+        title: "Luxor East Bank",
+        description: "Karnak Temple and Luxor Temple, then the ship begins sailing south toward Esna.",
+      },
+      {
+        day: 4,
+        title: "Edfu & Kom Ombo",
+        description: "Edfu Temple by horse-drawn carriage from the dock, then on to Kom Ombo's riverside temple.",
+      },
+      {
+        day: 5,
+        title: "Arrive Aswan",
+        description: "Philae Temple, the Aswan High Dam, the Unfinished Obelisk, and a sunset felucca sail.",
+      },
+      {
+        day: 6,
+        title: "Aswan or Abu Simbel (Optional) & Disembark",
+        description:
+          "A morning Abu Simbel excursion is available as an add-on before disembarking; otherwise a relaxed Nubian village visit before checking out.",
+      },
+      {
+        day: 7,
+        title: "Fly Back to Cairo",
+        description: "Return flight to Cairo, with the afternoon free for shopping or an optional extra experience.",
+      },
+      {
+        day: 8,
+        title: "Departure",
+        description: "Private transfer to the airport for your departure flight.",
+      },
+    ],
+    price: { amount: 820 },
   },
   {
     slug: "10-day-private-luxurious-trip",
@@ -399,7 +534,61 @@ export const tours: Tour[] = [
       "Meals as specified",
     ],
     excluded: ["Egypt visa", "Cairo hotels", "Flights", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrival",
+        description: "Private transfer to your hotel, and the evening free to settle in at your own pace.",
+      },
+      {
+        day: 2,
+        title: "Giza Pyramids & Photoshoot",
+        description:
+          "An unhurried morning at the Giza Plateau — the Pyramids, the Sphinx, and the Nine Pyramids photoshoot — with the afternoon left open.",
+      },
+      {
+        day: 3,
+        title: "Cairo, Your Way",
+        description:
+          "A flexible day for the Egyptian Museum, Old Cairo, Saqqara, or simply rest — built around whatever you'd like to add.",
+      },
+      {
+        day: 4,
+        title: "Fly to Luxor & East Bank",
+        description: "Flight to Luxor, embark the Nile Cruise, and an afternoon at Karnak and Luxor Temple.",
+      },
+      {
+        day: 5,
+        title: "Luxor West Bank",
+        description: "The Valley of the Kings and Hatshepsut's Temple in the cool of the morning, sailing on toward Edfu after.",
+      },
+      {
+        day: 6,
+        title: "Edfu & Kom Ombo",
+        description: "Edfu Temple and Kom Ombo's riverside temple, continuing on to Aswan.",
+      },
+      {
+        day: 7,
+        title: "Aswan",
+        description: "Philae Temple, the High Dam, and a sunset felucca sail before disembarking.",
+      },
+      {
+        day: 8,
+        title: "Abu Simbel",
+        description: "A full-day private excursion to Abu Simbel's colossal temples.",
+      },
+      {
+        day: 9,
+        title: "Fly to Cairo, Free Day",
+        description: "Return flight to Cairo, with the day open for a spa afternoon, extra photoshoot, or shopping.",
+      },
+      {
+        day: 10,
+        title: "Departure",
+        description: "Private transfer to the airport.",
+      },
+    ],
+    price: { amount: 1290 },
   },
   {
     slug: "epic-8-day-egypt-escapade",
@@ -431,7 +620,49 @@ export const tours: Tour[] = [
       "Lunch on touring days",
     ],
     excluded: ["Egypt visa", "Hotels", "Flights", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Giza Pyramids & Photoshoot",
+        description: "Arrival, hotel pickup, and the Giza Plateau with a professional photoshoot.",
+      },
+      {
+        day: 2,
+        title: "Cairo Highlights",
+        description: "The Egyptian Museum and Old Cairo, packed into one focused day to keep the pace moving.",
+      },
+      {
+        day: 3,
+        title: "Fly to Luxor, East Bank",
+        description: "Flight to Luxor, then Karnak and Luxor Temple in the afternoon.",
+      },
+      {
+        day: 4,
+        title: "Luxor West Bank",
+        description: "The Valley of the Kings and Hatshepsut's Temple, with an optional sunrise hot air balloon beforehand.",
+      },
+      {
+        day: 5,
+        title: "Fly to Hurghada",
+        description: "Transfer to Luxor airport for the short flight to Hurghada, checking in on the Red Sea coast by afternoon.",
+      },
+      {
+        day: 6,
+        title: "Red Sea Boat Trip",
+        description: "A full-day snorkeling boat trip to Giftun Island or similar reefs.",
+      },
+      {
+        day: 7,
+        title: "Free Beach Day",
+        description: "A day with nothing on the schedule — the beach, the pool, or an optional watersports add-on.",
+      },
+      {
+        day: 8,
+        title: "Departure",
+        description: "Private transfer to Hurghada airport for your departure flight.",
+      },
+    ],
+    price: { amount: 780 },
   },
   {
     slug: "2-day-luxor-tour",
@@ -479,7 +710,7 @@ export const tours: Tour[] = [
         description: "Valley of the Kings, the Temple of Hatshepsut, and the Colossi of Memnon — with an optional sunrise balloon flight to start the day.",
       },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 160 },
   },
   {
     slug: "aswan-abu-simbel-tour",
@@ -525,7 +756,7 @@ export const tours: Tour[] = [
         description: "An early departure (roughly 4:30–5:00am) for the three-hour drive south, arriving at Abu Simbel's temples before the midday heat and the tour-bus crowds.",
       },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 180 },
   },
   {
     slug: "alexandria-day-trip",
@@ -559,7 +790,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Tips", "Hotels", "Flights", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 99 },
   },
   {
     slug: "hurghada-red-sea-diving-snorkeling",
@@ -591,7 +822,7 @@ export const tours: Tour[] = [
       "Marine park entrance fees",
     ],
     excluded: ["Diving certification course", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "white-desert-safari-bahariya",
@@ -638,7 +869,7 @@ export const tours: Tour[] = [
         description: "Sunrise over the White Desert's chalk formations, a walk through Agabat Valley, then the drive back to Cairo.",
       },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 190 },
   },
   {
     slug: "mount-sinai-sunrise-hike",
@@ -671,7 +902,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Camel ride up the mountain (optional add-on)", "Warm clothing for the summit", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "memphis-saqqara-dahshur-tour",
@@ -704,7 +935,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Egypt visa", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "islamic-coptic-cairo-walking-tour",
@@ -736,7 +967,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Shopping", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "cairo-nile-dinner-cruise-night-tour",
@@ -768,7 +999,7 @@ export const tours: Tour[] = [
       "Set menu dinner",
     ],
     excluded: ["Drinks beyond the set menu", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "luxor-east-bank-day-tour",
@@ -800,7 +1031,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 105 },
   },
   {
     slug: "luxor-west-bank-day-tour",
@@ -832,7 +1063,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Tombs requiring a separate ticket", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 105 },
   },
   {
     slug: "dendera-abydos-day-tour",
@@ -865,7 +1096,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Egypt visa", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "edfu-kom-ombo-day-tour",
@@ -897,7 +1128,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "4-day-nile-cruise-luxor-aswan",
@@ -929,7 +1160,29 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Flights to/from Luxor or Aswan", "Egypt visa", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Embark in Luxor",
+        description: "Board the ship, then Karnak Temple and Luxor Temple before the ship sails south toward Esna.",
+      },
+      {
+        day: 2,
+        title: "Edfu & Kom Ombo",
+        description: "Edfu Temple by horse-drawn carriage from the dock, then Kom Ombo's riverside temple, sailing on to Aswan.",
+      },
+      {
+        day: 3,
+        title: "Aswan",
+        description: "Philae Temple, the High Dam, the Unfinished Obelisk, and a sunset felucca sail around Elephantine Island.",
+      },
+      {
+        day: 4,
+        title: "Disembark",
+        description: "Breakfast on board, then disembarkation and your onward transfer.",
+      },
+    ],
+    price: { amount: 430 },
   },
   {
     slug: "7-night-nile-cruise-luxor-aswan",
@@ -960,7 +1213,49 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Flights to/from Luxor or Aswan", "Egypt visa", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Embark in Luxor",
+        description: "Board the ship and settle in, then Karnak Temple and Luxor Temple in the afternoon.",
+      },
+      {
+        day: 2,
+        title: "Luxor West Bank",
+        description: "An unhurried morning at the Valley of the Kings and Hatshepsut's Temple — no rush to move on.",
+      },
+      {
+        day: 3,
+        title: "A Day on Deck",
+        description: "A free morning aboard as the ship sails toward Esna, with time to simply watch the Nile Valley go by.",
+      },
+      {
+        day: 4,
+        title: "Esna & Edfu",
+        description: "The Esna lock, then Edfu Temple by horse-drawn carriage from the dock.",
+      },
+      {
+        day: 5,
+        title: "Kom Ombo",
+        description: "Kom Ombo's riverside temple, continuing on toward Aswan.",
+      },
+      {
+        day: 6,
+        title: "Aswan",
+        description: "Philae Temple, the High Dam, and the Unfinished Obelisk.",
+      },
+      {
+        day: 7,
+        title: "Nubian Village & Felucca",
+        description: "A Nubian village visit and a sunset felucca sail, with an optional Abu Simbel add-on for early risers.",
+      },
+      {
+        day: 8,
+        title: "Disembark",
+        description: "Breakfast on board, then disembarkation and your onward transfer.",
+      },
+    ],
+    price: { amount: 980 },
   },
   {
     slug: "aswan-nubian-village-philae-tour",
@@ -992,7 +1287,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 105 },
   },
   {
     slug: "kalabsha-temple-nubian-museum-tour",
@@ -1023,7 +1318,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 105 },
   },
   {
     slug: "ras-mohammed-snorkeling-tour",
@@ -1055,7 +1350,7 @@ export const tours: Tour[] = [
       "Marine park entrance fees",
     ],
     excluded: ["Diving (available as an add-on)", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "dahab-blue-hole-three-pools-tour",
@@ -1086,7 +1381,7 @@ export const tours: Tour[] = [
       "Local guide",
     ],
     excluded: ["Scuba diving certification/equipment (available separately)", "Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "colored-canyon-nuweiba-tour",
@@ -1117,7 +1412,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "el-gouna-lagoon-day",
@@ -1147,7 +1442,7 @@ export const tours: Tour[] = [
       "Lagoon boat trip",
     ],
     excluded: ["Watersports equipment rental", "Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "marsa-alam-dolphin-house-tour",
@@ -1177,7 +1472,7 @@ export const tours: Tour[] = [
       "Lunch on board",
     ],
     excluded: ["Diving (available as an add-on)", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "soma-bay-watersports-relaxation",
@@ -1207,7 +1502,7 @@ export const tours: Tour[] = [
       "Beach access",
     ],
     excluded: ["Watersports equipment/lessons", "Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "wadi-el-hitan-whale-valley-safari",
@@ -1239,7 +1534,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 99 },
   },
   {
     slug: "dakhla-kharga-oasis-circuit",
@@ -1277,7 +1572,7 @@ export const tours: Tour[] = [
       { day: 3, title: "Dakhla to Kharga", description: "Drive to Kharga Oasis, visiting the Necropolis of al-Bagawat along the way." },
       { day: 4, title: "Kharga to Luxor or Cairo", description: "Final desert stretch, connecting back to the Nile Valley." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 480 },
   },
   {
     slug: "lake-nasser-cruise-aswan-abu-simbel",
@@ -1309,7 +1604,30 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Transport to/from Aswan", "Egypt visa", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    itinerary: [
+      {
+        day: 1,
+        title: "Embark in Aswan",
+        description: "Board the ship at Aswan's High Dam marina, then sail south, stopping at Kalabsha Temple near the dam.",
+      },
+      {
+        day: 2,
+        title: "Wadi es-Sebua & Amada",
+        description: "Two temples relocated to the lake's shores when the High Dam was built, visited with far fewer crowds than the Nile Valley sites.",
+      },
+      {
+        day: 3,
+        title: "Sailing South",
+        description: "A quiet day on the water, passing Qasr Ibrim, with the vast lake for company as the ship continues toward Abu Simbel.",
+      },
+      {
+        day: 4,
+        title: "Abu Simbel by Water",
+        description:
+          "Arrival at Abu Simbel at dawn, seeing Ramesses II's colossal facade lit by the rising sun before the road-trip crowds arrive, then disembarkation.",
+      },
+    ],
+    price: { amount: 650 },
   },
 
   // Jordan
@@ -1344,7 +1662,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Jordan visa", "Lunch", "Horse/donkey rides inside Petra", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 155 },
   },
   {
     slug: "wadi-rum-overnight-bedouin-camp",
@@ -1380,7 +1698,7 @@ export const tours: Tour[] = [
       { day: 1, title: "Desert Safari & Camp", description: "Afternoon 4x4 safari through Wadi Rum's highlights, sunset in the dunes, and a traditional zarb dinner at camp." },
       { day: 2, title: "Sunrise & Departure", description: "An early desert sunrise, breakfast at camp, then transfer onward (to Petra, Aqaba, or Amman)." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 180 },
   },
   {
     slug: "amman-city-tour",
@@ -1412,7 +1730,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Jordan visa", "Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 65 },
   },
   {
     slug: "jerash-ajloun-castle-tour",
@@ -1444,7 +1762,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Jordan visa", "Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "dead-sea-day-trip-jordan",
@@ -1476,7 +1794,7 @@ export const tours: Tour[] = [
       "Towels",
     ],
     excluded: ["Jordan visa", "Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 70 },
   },
   {
     slug: "petra-by-night",
@@ -1503,7 +1821,7 @@ export const tours: Tour[] = [
     ],
     included: ["Petra by Night entrance ticket", "Private transfer if arranged with a same-day tour"],
     excluded: ["Jordan visa", "Daytime Petra entrance (separate ticket)", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 45 },
   },
   {
     slug: "aqaba-red-sea-diving-jordan",
@@ -1535,7 +1853,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Jordan visa", "Dive certification course", "Lunch", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 79 },
   },
   {
     slug: "jordan-5-day-highlights",
@@ -1575,7 +1893,7 @@ export const tours: Tour[] = [
       { day: 4, title: "Wadi Rum to the Dead Sea", description: "Sunrise in the desert, then the drive to the Dead Sea for an afternoon of floating." },
       { day: 5, title: "Departure", description: "A final morning at leisure before transfer to Amman for departure." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 650 },
   },
 
   // Cairo & Giza — additional day trips
@@ -1608,7 +1926,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Dinner", "Daytime Giza entrance (separate ticket)", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 55 },
   },
   {
     slug: "sunrise-camel-ride-giza-pyramids",
@@ -1640,7 +1958,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Pyramid interior entrance (optional, separate ticket)", "Breakfast", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "khan-el-khalili-food-walking-tour",
@@ -1672,7 +1990,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Shopping purchases", "Additional meals", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "cairo-felucca-sunset-sail",
@@ -1698,7 +2016,7 @@ export const tours: Tour[] = [
     ],
     included: ["Hotel pickup and return", "Private felucca charter (1-2 hours)", "Bottled water"],
     excluded: ["Food and drinks aboard", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "egyptian-museum-coptic-cairo-tour",
@@ -1731,7 +2049,7 @@ export const tours: Tour[] = [
       "Lunch",
     ],
     excluded: ["Mummy Room ticket (optional, separate)", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "cairo-by-night-tour",
@@ -1762,7 +2080,7 @@ export const tours: Tour[] = [
       "Private English-speaking guide",
     ],
     excluded: ["Dinner", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
 
   // Luxor — additional day trips
@@ -1794,7 +2112,7 @@ export const tours: Tour[] = [
       "Sound & Light Show ticket",
     ],
     excluded: ["Daytime Karnak entrance (separate ticket)", "Dinner", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 55 },
   },
   {
     slug: "hot-air-balloon-luxor-east-bank-combo",
@@ -1827,7 +2145,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Breakfast", "Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 175 },
   },
   {
     slug: "valley-of-the-kings-hatshepsut-temple-tour",
@@ -1858,7 +2176,7 @@ export const tours: Tour[] = [
       "Entrance fees (standard tombs)",
     ],
     excluded: ["Tutankhamun's tomb ticket (optional, separate)", "Lunch", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 105 },
   },
   {
     slug: "luxor-museum-mummification-museum-tour",
@@ -1889,7 +2207,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 105 },
   },
 
   // Aswan & Nile
@@ -1921,7 +2239,7 @@ export const tours: Tour[] = [
       "Sound & Light Show ticket",
     ],
     excluded: ["Daytime Philae entrance (separate ticket)", "Dinner", "Tips"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 55 },
   },
   {
     slug: "aswan-kom-ombo-felucca-sail-2-day",
@@ -1956,7 +2274,7 @@ export const tours: Tour[] = [
       { day: 1, title: "Aswan to the riverbank", description: "Boarding in Aswan, a full afternoon sailing north, and an overnight stop on the riverbank." },
       { day: 2, title: "Onward to Kom Ombo", description: "Continue sailing to Kom Ombo, visiting the crocodile temple before onward transport." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 145 },
   },
   {
     slug: "esna-lock-nile-tour",
@@ -1987,7 +2305,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 105 },
   },
 
   // Red Sea & Sinai
@@ -2020,7 +2338,7 @@ export const tours: Tour[] = [
       "Snorkeling equipment",
     ],
     excluded: ["Meals", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 155 },
   },
   {
     slug: "ras-mohammed-national-park-tour",
@@ -2052,7 +2370,7 @@ export const tours: Tour[] = [
       "Lunch aboard",
     ],
     excluded: ["Dive certification course", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "st-catherine-monastery-sinai-tour",
@@ -2083,7 +2401,7 @@ export const tours: Tour[] = [
       "Entrance fees",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
   {
     slug: "blue-lagoon-dahab-day-trip",
@@ -2114,7 +2432,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "abu-galum-snorkeling-trek",
@@ -2145,7 +2463,7 @@ export const tours: Tour[] = [
       "Lunch",
     ],
     excluded: ["Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "giftun-island-hurghada-boat-trip",
@@ -2177,7 +2495,7 @@ export const tours: Tour[] = [
       "Marine park fee",
     ],
     excluded: ["Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 69 },
   },
   {
     slug: "taba-day-trip",
@@ -2207,7 +2525,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Meals", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
   },
 
   // Desert & oases
@@ -2245,7 +2563,7 @@ export const tours: Tour[] = [
       { day: 1, title: "Black Desert & Hot Springs", description: "4x4 through the Black Desert's volcanic hills, a stop at Bir Al Ramla hot spring, then on toward the White Desert for a night of camping." },
       { day: 2, title: "White Desert & Return", description: "Sunrise among the White Desert's chalk formations, then the drive back to Bahariya." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 175 },
   },
   {
     slug: "fayoum-wadi-el-rayan-waterfalls-tour",
@@ -2276,7 +2594,7 @@ export const tours: Tour[] = [
       "Lunch",
     ],
     excluded: ["Entrance fees where applicable", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 99 },
   },
   {
     slug: "black-desert-white-desert-combo",
@@ -2307,7 +2625,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Transport to/from Bahariya (from Cairo)", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 99 },
   },
 
   // Multi-day combinations
@@ -2356,7 +2674,7 @@ export const tours: Tour[] = [
       { day: 11, title: "Fly back to Cairo", description: "Return transfer and a final evening in Cairo." },
       { day: 12, title: "Departure", description: "Airport transfer for the international flight home." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 1680 },
   },
   {
     slug: "9-day-egypt-jordan-combo",
@@ -2400,7 +2718,7 @@ export const tours: Tour[] = [
       { day: 8, title: "Wadi Rum to the Dead Sea", description: "Sunrise in the desert, then an afternoon floating in the Dead Sea." },
       { day: 9, title: "Departure", description: "Transfer to Amman for the international flight home." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 1450 },
   },
   {
     slug: "cairo-luxor-hurghada-beach-combo",
@@ -2440,7 +2758,7 @@ export const tours: Tour[] = [
       { day: 6, title: "Red Sea free day", description: "Beach, reef, or an optional snorkeling boat trip." },
       { day: 7, title: "Departure", description: "Transfer for the international flight home." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 650 },
   },
   {
     slug: "4-day-cairo-alexandria-fayoum",
@@ -2476,7 +2794,7 @@ export const tours: Tour[] = [
       { day: 3, title: "Fayoum", description: "Wadi El Rayan's waterfalls and Fayoum's Magic Lake." },
       { day: 4, title: "Cairo & departure", description: "A final morning in Cairo before transfer for departure." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 340 },
   },
   {
     slug: "private-yacht-nile-cruise-luxor-aswan",
@@ -2514,7 +2832,7 @@ export const tours: Tour[] = [
       { day: 3, title: "Edfu & Kom Ombo", description: "The Temple of Horus and the twin temple of Kom Ombo." },
       { day: 4, title: "Arrive Aswan, disembark", description: "Philae Temple and the High Dam before disembarking." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 890 },
   },
   {
     slug: "overnight-dahabiya-sail-esna-edfu",
@@ -2549,7 +2867,7 @@ export const tours: Tour[] = [
       { day: 1, title: "Board at Esna", description: "Boarding and an afternoon sailing north toward Edfu." },
       { day: 2, title: "Edfu & disembark", description: "The Temple of Horus, then disembarking." },
     ],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 220 },
   },
   {
     slug: "quad-bike-stargazing-desert-night",
@@ -2580,7 +2898,176 @@ export const tours: Tour[] = [
       "Telescope session",
     ],
     excluded: ["Dinner", "Tips", "Personal spending"],
-    price: { amount: null, note: "Ask us for today's rate" },
+    price: { amount: 75 },
+  },
+  {
+    slug: "14-day-egypt-jordan-classic-journey",
+    title: "14-Day Egypt & Jordan: The Complete Classic Journey",
+    tagline: "The Pyramids, a full Nile cruise, Abu Simbel, and Petra — the classic route through both countries.",
+    category: "multi-day",
+    featured: true,
+    travelStyle: ["Cultural", "Private"],
+    duration: "14 days",
+    lengthDays: 14,
+    cities: 6,
+    destinations: ["Cairo", "Giza", "Luxor", "Aswan", "Abu Simbel", "Petra", "Jordan"],
+    rating: { score: 4.86, count: 15 },
+    badge: "Most Complete",
+    imageLabel: "Pyramids and Petra",
+    imageTone: "desert",
+    image: "/photos/pexels-18765298.jpg",
+    description:
+      "Our most complete classic itinerary — Cairo and Giza, a full Nile cruise from Luxor to Aswan, a dedicated day at Abu Simbel, then onward to Jordan for Petra, Wadi Rum, and the Dead Sea. Two countries' essential sights, properly paced instead of rushed into one week.",
+    highlights: [
+      "Giza Pyramids & Nine Pyramids photoshoot",
+      "5-star Nile Cruise, Luxor to Aswan",
+      "A full day at Abu Simbel",
+      "Petra's Treasury & the Siq",
+      "Wadi Rum 4x4 desert safari",
+      "Dead Sea floating experience",
+    ],
+    included: [
+      "Private air-conditioned transportation throughout",
+      "Private English-speaking Egyptologist in Egypt",
+      "Private English-speaking guide in Jordan",
+      "Professional photoshoot",
+      "Entrance fees",
+      "5-star Nile Cruise cabin accommodation",
+      "Meals aboard the cruise",
+      "4x4 Jeep Safari in Wadi Rum",
+    ],
+    excluded: ["Egypt & Jordan visas", "Cairo and Amman hotels", "International flights", "Tips", "Personal spending"],
+    itinerary: [
+      { day: 1, title: "Arrival Cairo", description: "Private transfer to your hotel, evening free to settle in." },
+      { day: 2, title: "Giza Pyramids & Photoshoot", description: "The Giza Plateau, the Sphinx, and the Nine Pyramids professional photoshoot." },
+      { day: 3, title: "Egyptian Museum & Old Cairo", description: "The Egyptian Museum in the morning, Islamic and Coptic Cairo in the afternoon." },
+      { day: 4, title: "Saqqara & Dahshur", description: "The Step Pyramid of Saqqara, the Bent and Red Pyramids of Dahshur, and Memphis." },
+      { day: 5, title: "Fly to Luxor, East Bank", description: "Flight to Luxor, then Karnak Temple and Luxor Temple in the afternoon." },
+      { day: 6, title: "Luxor West Bank & Embark", description: "The Valley of the Kings and Hatshepsut's Temple, then boarding the Nile Cruise ship." },
+      { day: 7, title: "Edfu & Kom Ombo", description: "Edfu Temple by horse-drawn carriage, then Kom Ombo's riverside temple, sailing on to Aswan." },
+      { day: 8, title: "Aswan", description: "Philae Temple, the High Dam, the Unfinished Obelisk, and a sunset felucca sail." },
+      { day: 9, title: "Abu Simbel & Disembark", description: "A full day at Abu Simbel's colossal temples, then disembarking the cruise." },
+      { day: 10, title: "Fly to Amman", description: "Flight from Aswan or Cairo to Amman, private transfer, evening free." },
+      { day: 11, title: "Petra", description: "A full day inside Petra — the Siq, the Treasury, and the site's rock-cut monuments." },
+      { day: 12, title: "Wadi Rum", description: "Transfer to Wadi Rum for a 4x4 Jeep safari through the desert and a night under the stars." },
+      { day: 13, title: "Dead Sea", description: "A float in the Dead Sea, then transfer back to Amman." },
+      { day: 14, title: "Departure", description: "Private transfer to Amman's airport for your departure flight." },
+    ],
+    price: { amount: 2650 },
+  },
+  {
+    slug: "16-day-egypt-hidden-gems",
+    title: "Egypt Hidden Gems: 16 Days Off the Beaten Path",
+    tagline: "The Great Sand Sea, the Western Desert's oases, and the Nile — the Egypt most visitors never see.",
+    category: "multi-day",
+    featured: false,
+    travelStyle: ["Adventure", "Slow Travel"],
+    duration: "16 days",
+    lengthDays: 16,
+    cities: 7,
+    destinations: ["Cairo", "Giza", "Bahariya Oasis", "White Desert", "Farafra Oasis", "Dakhla Oasis", "Kharga Oasis", "Luxor", "Aswan"],
+    rating: { score: 4.92, count: 7 },
+    badge: "Hidden Gems",
+    imageLabel: "Western Desert Oases",
+    imageTone: "desert",
+    image: "/photos/pexels-5540933.jpg",
+    description:
+      "For travelers who've already done Cairo and the Nile, or who'd rather start somewhere quieter — the full Western Desert circuit through Bahariya, the White and Black Deserts, Farafra, Dakhla, and Kharga, before finishing on the Nile at Luxor and Aswan. Long desert drives, real solitude, and almost no other tourists.",
+    highlights: [
+      "Black Desert & White Desert camping",
+      "Bahariya, Farafra, Dakhla & Kharga oases",
+      "Old Qasr town & hot springs, Dakhla",
+      "Full Nile Valley finale at Luxor & Aswan",
+    ],
+    included: [
+      "Private 4x4 transportation throughout the desert circuit",
+      "Private English-speaking Egyptologist",
+      "Desert camping equipment & experienced desert crew",
+      "Entrance fees",
+      "Meals as specified",
+      "Bottled water",
+    ],
+    excluded: ["Egypt visa", "Cairo and Luxor hotels", "Flights", "Tips", "Personal spending"],
+    itinerary: [
+      { day: 1, title: "Arrival Cairo", description: "Private transfer to your hotel, evening free." },
+      { day: 2, title: "Giza Pyramids & Photoshoot", description: "The Giza Plateau, the Sphinx, and a professional photoshoot." },
+      { day: 3, title: "Egyptian Museum & Old Cairo", description: "The Egyptian Museum and Islamic and Coptic Cairo." },
+      { day: 4, title: "Cairo to Bahariya Oasis", description: "A four-to-five-hour drive southwest into the desert, arriving by afternoon." },
+      { day: 5, title: "Black Desert & White Desert", description: "A full day 4x4 safari through the volcanic Black Desert and into the chalk-white formations of the White Desert, camping overnight under the stars." },
+      { day: 6, title: "White Desert to Farafra", description: "More time among the White Desert's sculpted rock formations before continuing to Farafra." },
+      { day: 7, title: "Farafra to Dakhla Oasis", description: "The long desert drive south to Dakhla, one of Egypt's most remote inhabited oases." },
+      { day: 8, title: "Dakhla Oasis", description: "The old mud-brick town of Al-Qasr, natural hot springs, and Dakhla's palm groves." },
+      { day: 9, title: "Dakhla to Kharga Oasis", description: "Onward to Kharga, visiting the Temple of Hibis and the Bagawat necropolis." },
+      { day: 10, title: "Kharga to the Nile Valley", description: "The long return drive east to Luxor, arriving by evening." },
+      { day: 11, title: "Luxor East Bank", description: "Karnak Temple and Luxor Temple." },
+      { day: 12, title: "Luxor West Bank", description: "The Valley of the Kings and Hatshepsut's Temple, with an optional sunrise hot air balloon." },
+      { day: 13, title: "Edfu & Kom Ombo", description: "Edfu Temple and Kom Ombo's riverside temple, continuing on toward Aswan." },
+      { day: 14, title: "Aswan", description: "Philae Temple, the High Dam, and a sunset felucca sail." },
+      { day: 15, title: "Abu Simbel (Optional)", description: "An optional full-day excursion to Abu Simbel, or a slower day around Aswan and the Nubian villages." },
+      { day: 16, title: "Fly to Cairo & Departure", description: "Return flight to Cairo and private transfer to the airport." },
+    ],
+    price: { amount: 2350 },
+  },
+  {
+    slug: "21-day-egypt-grand-explorer",
+    title: "Egypt Grand Explorer: The Ultimate 21-Day Journey",
+    tagline: "Cairo, Alexandria, Fayoum, a full Nile cruise, Abu Simbel, and the Sinai's reefs and mountains — everything, unhurried.",
+    category: "multi-day",
+    featured: true,
+    travelStyle: ["Adventure", "Luxury", "Private"],
+    duration: "21 days",
+    lengthDays: 21,
+    cities: 10,
+    destinations: ["Cairo", "Giza", "Alexandria", "Fayoum", "Luxor", "Aswan", "Abu Simbel", "Sharm El Sheikh", "Dahab", "St. Catherine"],
+    rating: { score: 4.9, count: 6 },
+    badge: "The Full Country",
+    imageLabel: "Red Sea & Sinai",
+    imageTone: "redsea",
+    image: "/photos/pexels-17814812.jpg",
+    description:
+      "Three unhurried weeks covering everything Egypt Eye offers — Cairo and Giza, a Mediterranean day in Alexandria, Fayoum's desert lakes, a full Nile cruise from Luxor to Aswan, a dedicated day at Abu Simbel, and a closing week across the Sinai's dive sites, desert canyons, and Mount Sinai. Built for travelers who want the complete country, not the highlights reel.",
+    highlights: [
+      "Giza Pyramids & Nine Pyramids photoshoot",
+      "Alexandria & Fayoum day trips",
+      "5-star Nile Cruise, Luxor to Aswan",
+      "A full day at Abu Simbel",
+      "Diving at Ras Mohammed & the Blue Hole",
+      "Mount Sinai sunrise hike",
+    ],
+    included: [
+      "Private air-conditioned transportation throughout",
+      "Private English-speaking Egyptologist",
+      "Professional photoshoot",
+      "Entrance fees",
+      "5-star Nile Cruise cabin accommodation",
+      "Meals aboard the cruise",
+      "Snorkeling/diving equipment on Red Sea days",
+    ],
+    excluded: ["Egypt visa", "Cairo and Sinai hotels", "Domestic & international flights", "Tips", "Personal spending"],
+    itinerary: [
+      { day: 1, title: "Arrival Cairo", description: "Private transfer to your hotel, evening free." },
+      { day: 2, title: "Giza Pyramids & Photoshoot", description: "The Giza Plateau, the Sphinx, and the Nine Pyramids professional photoshoot." },
+      { day: 3, title: "Egyptian Museum & Old Cairo", description: "The Egyptian Museum, then Islamic and Coptic Cairo." },
+      { day: 4, title: "Saqqara & Dahshur", description: "The Step Pyramid of Saqqara, the Bent and Red Pyramids of Dahshur." },
+      { day: 5, title: "Alexandria Day Trip", description: "The Citadel of Qaitbay, the Bibliotheca Alexandrina, and the Catacombs of Kom el Shoqafa." },
+      { day: 6, title: "Fayoum", description: "Wadi El Rayan's waterfalls and Fayoum's Magic Lake." },
+      { day: 7, title: "Fly to Luxor, East Bank", description: "Flight to Luxor, then Karnak Temple and Luxor Temple." },
+      { day: 8, title: "Luxor West Bank & Embark", description: "The Valley of the Kings and Hatshepsut's Temple, then boarding the Nile Cruise." },
+      { day: 9, title: "Edfu & Kom Ombo", description: "Edfu Temple and Kom Ombo's riverside temple, sailing toward Aswan." },
+      { day: 10, title: "Aswan", description: "Philae Temple, the High Dam, and a sunset felucca sail." },
+      { day: 11, title: "Abu Simbel & Disembark", description: "A full day at Abu Simbel's colossal temples, then disembarking." },
+      { day: 12, title: "Fly to Sharm El Sheikh", description: "Flight to Sharm El Sheikh, check in on the Red Sea coast." },
+      { day: 13, title: "Ras Mohammed National Park", description: "A snorkeling or diving boat trip through Ras Mohammed's reefs." },
+      { day: 14, title: "Free Beach Day", description: "A day with nothing scheduled — the beach, the pool, or optional watersports." },
+      { day: 15, title: "Transfer to Dahab", description: "The coastal drive to Dahab, roughly ninety minutes." },
+      { day: 16, title: "Blue Hole & Three Pools", description: "Diving or snorkeling at Dahab's legendary Blue Hole and the calmer Three Pools." },
+      { day: 17, title: "Free Day in Dahab", description: "A slow day in Dahab's low-key beach town atmosphere." },
+      { day: 18, title: "Mount Sinai Sunrise Hike", description: "An overnight climb to watch the sunrise from Mount Sinai's summit, then St. Catherine's Monastery." },
+      { day: 19, title: "Transfer to Sharm El Sheikh", description: "Return to Sharm El Sheikh, afternoon free to rest after the hike." },
+      { day: 20, title: "Free Day / Optional Activities", description: "A final open day for shopping, an optional dive, or simply relaxing before departure." },
+      { day: 21, title: "Fly to Cairo & Departure", description: "Return flight to Cairo and private transfer to the airport for your departure flight." },
+    ],
+    price: { amount: 3450 },
   },
 ];
 

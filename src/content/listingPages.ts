@@ -61,7 +61,7 @@ export const listingPages: ResolvedListingPages = {
   },
   exploreEgypt: {
     heroEyebrow: "Explore Egypt",
-    heroTitle: "One Country, Ten Unforgettable Places to Start",
+    heroTitle: "One Country, Thirteen Unforgettable Places to Start",
     heroDescription:
       "Tap a destination on the map to see the real tours, experiences, photoshoots, and stories we offer there — then add whatever catches your eye to My Journey.",
   },

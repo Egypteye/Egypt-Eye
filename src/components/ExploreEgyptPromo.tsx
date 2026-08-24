@@ -43,7 +43,7 @@ export function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
                 </span>
               </Link>
               <p className="text-xs font-medium uppercase tracking-[0.15em] text-cream/40">
-                10 destinations · one live map
+                {hubs.length} destinations · one live map
               </p>
             </div>
           </div>

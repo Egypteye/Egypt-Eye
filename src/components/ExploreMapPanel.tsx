@@ -5,13 +5,18 @@ import { useState } from "react";
 import { EgyptMap } from "./EgyptMap";
 import type { DestinationHub, EgyptCity, Mood } from "@/content/types";
 
-const MOODS: { value: Mood; label: string }[] = [
-  { value: "history", label: "History & Monuments" },
-  { value: "beaches", label: "Red Sea & Beaches" },
-  { value: "desert", label: "Desert & Oases" },
-  { value: "diving", label: "Diving & Snorkeling" },
-  { value: "nile", label: "Nile & River Towns" },
-  { value: "coast", label: "Mediterranean Coast" },
+// Each mood gets its own color so the row reads at a glance (blue for
+// water/beaches, orange for history, etc.) rather than one uniform brand
+// gold for every button — a deliberate, scoped exception to the site's
+// single-accent system, since these are functional filter chips, not
+// brand chrome.
+const MOODS: { value: Mood; label: string; dot: string; active: string }[] = [
+  { value: "history", label: "History & Monuments", dot: "bg-orange-600", active: "border-orange-600 bg-orange-600 text-white" },
+  { value: "beaches", label: "Red Sea & Beaches", dot: "bg-blue-600", active: "border-blue-600 bg-blue-600 text-white" },
+  { value: "desert", label: "Desert & Oases", dot: "bg-amber-700", active: "border-amber-700 bg-amber-700 text-white" },
+  { value: "diving", label: "Diving & Snorkeling", dot: "bg-teal-600", active: "border-teal-600 bg-teal-600 text-white" },
+  { value: "nile", label: "Nile & River Towns", dot: "bg-green-600", active: "border-green-600 bg-green-600 text-white" },
+  { value: "coast", label: "Mediterranean Coast", dot: "bg-indigo-600", active: "border-indigo-600 bg-indigo-600 text-white" },
 ];
 
 // The map + everything directly around it on /explore-egypt: the mood
@@ -43,12 +48,11 @@ export function ExploreMapPanel({
               type="button"
               onClick={() => setMood((cur) => (cur === m.value ? null : m.value))}
               aria-pressed={mood === m.value}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                mood === m.value
-                  ? "border-gold-dark bg-gold-dark text-cream"
-                  : "border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink"
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                mood === m.value ? m.active : "border-black/10 text-ink-soft/70 hover:border-black/25 hover:text-ink"
               }`}
             >
+              <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${mood === m.value ? "bg-white" : m.dot}`} />
               {m.label}
             </button>
           ))}
