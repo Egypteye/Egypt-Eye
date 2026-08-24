@@ -60,10 +60,6 @@ const ZOOM_STEP = 1.6;
 type Point = { x: number; y: number };
 type View = { scale: number; tx: number; ty: number };
 
-function distance(a: { mapX: number; mapY: number }, b: { mapX: number; mapY: number }) {
-  return Math.hypot(a.mapX - b.mapX, a.mapY - b.mapY);
-}
-
 function clampView(next: View, rect: DOMRect | null): View {
   const scale = Math.min(MAX_SCALE, Math.max(MIN_SCALE, next.scale));
   if (!rect) return { scale, tx: 0, ty: 0 };
@@ -112,14 +108,6 @@ export function EgyptMap({
   const routePoints = (routeSlugs ?? [])
     .map((slug) => hubs.find((h) => h.slug === slug))
     .filter((h): h is DestinationHub => Boolean(h));
-
-  const allPoints = [...hubs, ...cities];
-  // A pin only gets a permanent label if nothing else sits within reach —
-  // otherwise (Cairo/Giza/Saqqara, Hurghada/El Gouna) it shows a label on
-  // hover/focus/selection instead of jamming names on top of each other.
-  const CROWD_THRESHOLD = 5.5;
-  const isCrowded = (point: { slug: string; mapX: number; mapY: number }) =>
-    allPoints.some((other) => other.slug !== point.slug && distance(point, other) < CROWD_THRESHOLD);
 
   function getContainerPoint(clientX: number, clientY: number): Point {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -331,9 +319,13 @@ export function EgyptMap({
               y={label.y}
               fontSize={label.size}
               fill="#0b1930"
-              fillOpacity={label.text.includes("SEA") || label.text.includes("GULF") ? 0.35 : 0.4}
+              fillOpacity={0.65}
+              stroke="#f6f1e6"
+              strokeWidth={0.35}
+              strokeOpacity={0.5}
+              paintOrder="stroke"
               fontFamily="ui-sans-serif, system-ui"
-              fontWeight={600}
+              fontWeight={700}
               letterSpacing="0.15em"
               transform={label.rotate ? `rotate(${label.rotate} ${label.x} ${label.y})` : undefined}
             >
@@ -347,7 +339,6 @@ export function EgyptMap({
             opens an inline note instead of a dead link or a full page. */}
         {cities.map((city) => {
           const matchesMood = moodFilter ? (city.mood ?? []).includes(moodFilter) : true;
-          const alwaysLabel = !isCrowded(city);
           const open = city.slug === openCitySlug;
           return (
             <button
@@ -360,16 +351,19 @@ export function EgyptMap({
               aria-label={`${city.name} — no tours here yet`}
               aria-expanded={open}
               disabled={!interactive}
-              className={`group absolute flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition ${
+              className={`group absolute flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition hover:z-10 focus-visible:z-10 ${
                 interactive ? "cursor-pointer" : "cursor-default"
-              } ${matchesMood ? "opacity-90" : "opacity-30"}`}
+              } ${open ? "z-10" : "z-0"} ${matchesMood ? "opacity-90" : "opacity-30"}`}
               style={{ left: `${(city.mapX / VIEWBOX_W) * 100}%`, top: `${(city.mapY / VIEWBOX_H) * 100}%` }}
             >
               {/* The label is absolutely positioned and pointer-events-none
                   so it never grows this button's hit area — with 42+ pins on
                   the map, a label's box (even invisible, at opacity-0) would
                   otherwise reach into and swallow clicks meant for a
-                  neighboring pin in a dense cluster. */}
+                  neighboring pin in a dense cluster. Labels are always shown
+                  (not hover-gated); z-index on the button itself (not the
+                  label) brings a hovered/open pin's label above its
+                  neighbors' in a dense cluster. */}
               <span
                 className={`h-1.5 w-1.5 rounded-full border shadow-sm transition group-hover:scale-150 ${
                   open ? "border-ink bg-cream" : "border-ink-soft/50 bg-cream/70"
@@ -377,7 +371,7 @@ export function EgyptMap({
               />
               <span
                 className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink/70 px-1.5 py-0.5 text-[8.5px] font-medium tracking-wide text-cream/90 backdrop-blur-sm transition sm:text-[9px] ${
-                  alwaysLabel || open ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
+                  open ? "bg-ink" : "group-hover:bg-ink/85"
                 }`}
               >
                 {city.name}
@@ -391,7 +385,6 @@ export function EgyptMap({
           const onRoute = routeSlugs?.includes(hub.slug) ?? false;
           const matchesMood = moodFilter ? (hub.mood ?? []).includes(moodFilter) : true;
           const dimmed = (routeSlugs !== undefined && !onRoute) || !matchesMood;
-          const alwaysLabel = !isCrowded(hub) || active;
 
           // Label is absolutely positioned + pointer-events-none for the
           // same reason as the city markers above: it must never enlarge
@@ -412,17 +405,17 @@ export function EgyptMap({
               </span>
               <span
                 className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-wide shadow-md transition sm:text-[11px] ${
-                  alwaysLabel ? "opacity-100" : "opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100"
-                } ${active ? "bg-gold-dark text-cream" : "bg-cream text-ink-soft group-hover:bg-cream group-hover:text-ink"}`}
+                  active ? "bg-gold-dark text-cream" : "bg-cream text-ink-soft group-hover:bg-cream group-hover:text-ink"
+                }`}
               >
                 {hub.name}
               </span>
             </>
           );
 
-          const sharedClassName = `group absolute flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition ${
-            interactive ? "cursor-pointer" : "cursor-default"
-          } ${dimmed ? "opacity-40" : "opacity-100"}`;
+          const sharedClassName = `group absolute flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition hover:z-10 focus-visible:z-10 ${
+            active ? "z-10" : "z-0"
+          } ${interactive ? "cursor-pointer" : "cursor-default"} ${dimmed ? "opacity-40" : "opacity-100"}`;
           const style = { left: `${(hub.mapX / VIEWBOX_W) * 100}%`, top: `${(hub.mapY / VIEWBOX_H) * 100}%` };
 
           if (linkBase) {
