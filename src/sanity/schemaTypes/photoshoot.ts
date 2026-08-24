@@ -44,6 +44,13 @@ export const photoshoot = defineType({
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "addOns", title: "Optional Add-Ons", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "delivery", title: "What You Receive", type: "array", of: [{ type: "string" }] }),
+    defineField({
+      name: "destinations",
+      title: "Destinations",
+      description: "E.g. 'Giza' — connects this photoshoot to the Explore Egypt map.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
     defineField({ name: "order", title: "Sort order (lower shows first)", type: "number", initialValue: 0 }),
     seoFields(),
   ],

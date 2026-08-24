@@ -20,6 +20,7 @@ export const experiences: Experience[] = [
       "Hotel pickup and return",
       "Bottled water",
     ],
+    destinations: ["Cairo"],
   },
   {
     slug: "atv-quad-bikes-sahara",
@@ -37,6 +38,7 @@ export const experiences: Experience[] = [
       "Private transportation",
       "Guide/instructor",
     ],
+    destinations: ["Giza"],
   },
   {
     slug: "nile-cruise-dinner-show",
@@ -54,6 +56,7 @@ export const experiences: Experience[] = [
       "Live entertainment (belly dance & Tanoura)",
       "Hotel pickup and return",
     ],
+    destinations: ["Cairo"],
   },
   {
     slug: "food-tour",
@@ -71,6 +74,7 @@ export const experiences: Experience[] = [
       "Tastings at multiple stops",
       "Private transportation",
     ],
+    destinations: ["Cairo"],
   },
 ];
 

@@ -17,6 +17,7 @@ import { authors } from "@/content/authors";
 import { events } from "@/content/events";
 import { homepage } from "@/content/homepage";
 import { listingPages } from "@/content/listingPages";
+import { destinationHubs } from "@/content/destinationHubs";
 import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } from "@/content/types";
 
 // One-time (safely re-runnable) migration: pushes all the existing tour/
@@ -44,9 +45,9 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
-// experiences, photoshoots, testimonials, stories, faqs, siteSettings,
-// customizePage, aboutPage, contactPage, hosts, signatureExperiences,
-// authors, events, homepage, listingPages. E.g. to seed just the new Stories system (which needs
+// experiences, photoshoots, destinationHubs, testimonials, stories,
+// faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
+// signatureExperiences, authors, events, homepage, listingPages. E.g. to seed just the new Stories system (which needs
 // authors/events/signatureExperiences to exist first for its references):
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,stories
@@ -135,6 +136,7 @@ export async function GET(request: NextRequest) {
         imageTone: e.imageTone,
         description: e.description,
         included: e.included,
+        destinations: e.destinations,
         order: i,
       });
       results.push(`experience: ${e.slug}`);
@@ -158,9 +160,30 @@ export async function GET(request: NextRequest) {
         included: p.included,
         addOns: p.addOns,
         delivery: p.delivery,
+        destinations: p.destinations,
         order: i,
       });
       results.push(`photoshoot: ${p.slug}`);
+    }
+  }
+
+  if (shouldRun("destinationHubs")) {
+    for (const [i, d] of destinationHubs.entries()) {
+      tx.createOrReplace({
+        _id: `destinationHub-${d.slug}`,
+        _type: "destinationHub",
+        name: d.name,
+        slug: { _type: "slug", current: d.slug },
+        region: d.region,
+        tagline: d.tagline,
+        intro: d.intro,
+        matchNames: d.matchNames,
+        mapX: d.mapX,
+        mapY: d.mapY,
+        imageTone: d.imageTone,
+        order: i,
+      });
+      results.push(`destinationHub: ${d.slug}`);
     }
   }
 
@@ -255,6 +278,7 @@ export async function GET(request: NextRequest) {
       experiences: { _type: "object", ...listingPages.experiences },
       photoshoots: { _type: "object", ...listingPages.photoshoots },
       signatureExperiences: { _type: "object", ...listingPages.signatureExperiences },
+      exploreEgypt: { _type: "object", ...listingPages.exploreEgypt },
       stories: { _type: "object", ...listingPages.stories },
     });
     results.push("listingPages");

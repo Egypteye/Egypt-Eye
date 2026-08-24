@@ -11,7 +11,7 @@
 
 import { useSyncExternalStore } from "react";
 
-export type JourneyItemType = "tour" | "experience" | "photoshoot";
+export type JourneyItemType = "tour" | "experience" | "photoshoot" | "destination";
 
 export type JourneyItem = {
   id: string;

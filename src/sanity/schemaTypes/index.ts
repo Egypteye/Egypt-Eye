@@ -2,6 +2,7 @@ import { ratingObject, priceObject, itineraryDayObject } from "./objects";
 import { tour } from "./tour";
 import { experience } from "./experience";
 import { photoshoot } from "./photoshoot";
+import { destinationHub } from "./destinationHub";
 import { testimonial } from "./testimonial";
 import { story } from "./story";
 import { faqItem } from "./faqItem";
@@ -25,6 +26,7 @@ export const schemaTypes = [
   tour,
   experience,
   photoshoot,
+  destinationHub,
   signatureExperience,
   host,
   testimonial,

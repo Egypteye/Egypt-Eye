@@ -86,6 +86,16 @@ export const listingPages = defineType({
       ],
     }),
     defineField({
+      name: "exploreEgypt",
+      title: "/explore-egypt page",
+      type: "object",
+      fields: [
+        defineField({ name: "heroEyebrow", title: "Hero eyebrow", type: "string" }),
+        defineField({ name: "heroTitle", title: "Hero title", type: "string" }),
+        defineField({ name: "heroDescription", title: "Hero description", type: "text", rows: 2 }),
+      ],
+    }),
+    defineField({
       name: "stories",
       title: "/stories page",
       type: "object",

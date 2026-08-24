@@ -42,17 +42,17 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
         </nav>
 
         <div className="hidden items-center gap-2.5 xl:flex">
-          {journeyCount > 0 && (
-            <Link
-              href="/customize"
-              className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-[13px] font-semibold text-gold-dark transition hover:bg-gold/20"
-            >
-              My Journey
+          <Link
+            href="/my-journey"
+            className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-[13px] font-semibold text-gold-dark transition hover:bg-gold/20"
+          >
+            My Journey
+            {journeyCount > 0 && (
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold-dark text-[11px] text-cream">
                 {journeyCount}
               </span>
-            </Link>
-          )}
+            )}
+          </Link>
           <Link
             href="/customize"
             className="whitespace-nowrap rounded-full bg-ink px-4 py-2.5 text-[13px] font-semibold text-cream transition hover:bg-gold-dark"
@@ -90,6 +90,18 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/my-journey"
+              className="mt-2 flex items-center justify-center gap-1.5 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2.5 text-sm font-semibold text-gold-dark"
+              onClick={() => setOpen(false)}
+            >
+              My Journey
+              {journeyCount > 0 && (
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold-dark text-[11px] text-cream">
+                  {journeyCount}
+                </span>
+              )}
+            </Link>
             <Link
               href="/customize"
               className="mt-2 rounded-full bg-ink px-5 py-2.5 text-center text-sm font-semibold text-cream"

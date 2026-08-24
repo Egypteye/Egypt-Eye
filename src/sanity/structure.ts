@@ -46,6 +46,8 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem("author").title("✦ Story Authors"),
       S.documentTypeListItem("event").title("✦ Events / Countdowns"),
       S.divider(),
+      S.documentTypeListItem("destinationHub").title("✦ Explore Egypt Destinations"),
+      S.divider(),
       S.documentTypeListItem("tour").title("Tours"),
       S.documentTypeListItem("experience").title("Extra Experiences"),
       S.documentTypeListItem("photoshoot").title("Photoshoot Packages"),

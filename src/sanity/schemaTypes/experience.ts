@@ -41,6 +41,13 @@ export const experience = defineType({
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
     defineField({
+      name: "destinations",
+      title: "Destinations",
+      description: "E.g. 'Cairo', 'Giza' — connects this experience to the Explore Egypt map.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
       name: "relatedTours",
       title: "Related Tours",
       description: "Tours this experience pairs naturally with — shown as \"Available On\" on this page.",

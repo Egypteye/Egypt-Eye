@@ -4,6 +4,8 @@ import {
   allSignatureExperienceSlugsQuery,
   contactPageQuery,
   customizePageQuery,
+  destinationHubBySlugQuery,
+  destinationHubsQuery,
   experienceBySlugQuery,
   experiencesQuery,
   faqsQuery,
@@ -33,10 +35,12 @@ import { contactPage as localContactPage } from "@/content/contactPage";
 import { signatureExperiences as localSignatureExperiences } from "@/content/signatureExperiences";
 import { homepage as localHomepage } from "@/content/homepage";
 import { listingPages as localListingPages } from "@/content/listingPages";
+import { destinationHubs as localDestinationHubs } from "@/content/destinationHubs";
 import type {
   AboutPage,
   ContactPage,
   CustomizePage,
+  DestinationHub,
   Experience,
   Faq,
   Homepage,
@@ -156,6 +160,18 @@ export async function getStories(): Promise<Story[]> {
 export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   const result = await safeFetch<Story | null>(storyBySlugQuery, { slug });
   const local = localStories.find((s) => s.slug === slug);
+  if (!result) return local;
+  return result.image ? result : { ...result, image: local?.image };
+}
+
+export async function getDestinationHubs(): Promise<DestinationHub[]> {
+  const result = await safeFetch<DestinationHub[]>(destinationHubsQuery);
+  return result && result.length > 0 ? withLocalImageFallback(result, localDestinationHubs) : localDestinationHubs;
+}
+
+export async function getDestinationHubBySlug(slug: string): Promise<DestinationHub | undefined> {
+  const result = await safeFetch<DestinationHub | null>(destinationHubBySlugQuery, { slug });
+  const local = localDestinationHubs.find((d) => d.slug === slug);
   if (!result) return local;
   return result.image ? result : { ...result, image: local?.image };
 }
@@ -414,6 +430,7 @@ export async function getListingPages(): Promise<ResolvedListingPages> {
     experiences: { ...localListingPages.experiences, ...result.experiences },
     photoshoots: { ...localListingPages.photoshoots, ...result.photoshoots },
     signatureExperiences: { ...localListingPages.signatureExperiences, ...result.signatureExperiences },
+    exploreEgypt: { ...localListingPages.exploreEgypt, ...result.exploreEgypt },
     stories: { ...localListingPages.stories, ...result.stories },
   };
 }

@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import {
   getAllSignatureExperienceSlugs,
   getAllTourSlugs,
+  getDestinationHubs,
   getExperiences,
   getPhotoshoots,
   getStories,
@@ -14,16 +15,18 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://egypt-eye.vercel.ap
 const REDIRECTED_STORY_SLUGS = new Set(["best-travel-agencies-in-egypt-2025-guide"]);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories] = await Promise.all([
+  const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories, destinationHubs] = await Promise.all([
     getAllTourSlugs(),
     getExperiences(),
     getPhotoshoots(),
     getAllSignatureExperienceSlugs(),
     getStories(),
+    getDestinationHubs(),
   ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
+    { url: `${siteUrl}/explore-egypt`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/signature-experiences`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/tours`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/experiences`, changeFrequency: "monthly", priority: 0.7 },
@@ -67,6 +70,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: s.publishedAt,
     }));
 
+  const destinationRoutes: MetadataRoute.Sitemap = destinationHubs.map((d) => ({
+    url: `${siteUrl}/explore-egypt/${d.slug}`,
+    changeFrequency: "monthly",
+    priority: 0.75,
+  }));
+
   return [
     ...staticRoutes,
     ...tourRoutes,
@@ -74,5 +83,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...photoshootRoutes,
     ...signatureExperienceRoutes,
     ...storyRoutes,
+    ...destinationRoutes,
   ];
 }

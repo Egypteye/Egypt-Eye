@@ -37,24 +37,32 @@ export const tourBySlugQuery = groq`*[_type == "tour" && slug.current == $slug &
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, included
+  image, imageTone, description, included, destinations
 }`;
 
 export const experienceBySlugQuery = groq`*[_type == "experience" && slug.current == $slug][0] {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, gallery, description, included,
+  image, imageTone, gallery, description, included, destinations,
   relatedTours[]->{${relatedTourFields}},
   seo
 }`;
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, description, goodFor, included, addOns, delivery
+  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations
 }`;
 
 export const photoshootBySlugQuery = groq`*[_type == "photoshoot" && slug.current == $slug][0] {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, seo
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, seo
+}`;
+
+export const destinationHubsQuery = groq`*[_type == "destinationHub"] | order(order asc) {
+  "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, image, imageTone, order
+}`;
+
+export const destinationHubBySlugQuery = groq`*[_type == "destinationHub" && slug.current == $slug][0] {
+  "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, image, imageTone, order
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
@@ -119,7 +127,7 @@ export const homepageQuery = groq`*[_type == "homepage"][0] {
 export const listingPagesQuery = groq`*[_type == "listingPages"][0] {
   tours{heroEyebrow, heroTitle, sectionTitleTemplate, sectionDescription, faqs[]{question, answer}},
   experiences, photoshoots,
-  signatureExperiences, stories
+  signatureExperiences, exploreEgypt, stories
 }`;
 
 export const customizePageQuery = groq`*[_type == "customizePage"][0] {

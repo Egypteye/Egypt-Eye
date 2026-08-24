@@ -35,6 +35,7 @@ export const photoshoots: Photoshoot[] = [
       "Raw, unedited photos the same day",
       "Optional larger gallery: 100+ high-resolution edited images within 5 days",
     ],
+    destinations: ["Giza"],
   },
   {
     slug: "flying-dress-photoshoot",
@@ -65,6 +66,7 @@ export const photoshoots: Photoshoot[] = [
     ],
     addOns: ["High-end retouching upgrade"],
     delivery: ["Professionally edited image gallery", "Optional high-end retouching"],
+    destinations: ["Giza"],
   },
 ];
 

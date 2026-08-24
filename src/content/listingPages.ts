@@ -59,6 +59,12 @@ export const listingPages: ResolvedListingPages = {
     collectionDescription:
       "Each one starts with a person, not a place — read through and see which one was built with you in mind.",
   },
+  exploreEgypt: {
+    heroEyebrow: "Explore Egypt",
+    heroTitle: "One Country, Ten Unforgettable Places to Start",
+    heroDescription:
+      "Tap a destination on the map to see the real tours, experiences, photoshoots, and stories we offer there — then add whatever catches your eye to My Journey.",
+  },
   stories: {
     heroEyebrow: "Stories",
     heroTitle: "The Journal",

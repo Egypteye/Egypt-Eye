@@ -26,6 +26,7 @@ export const site = {
   },
   nav: [
     { label: "Home", href: "/" },
+    { label: "Explore Egypt", href: "/explore-egypt" },
     { label: "Signature Experiences", href: "/signature-experiences" },
     { label: "Popular Tours", href: "/tours" },
     { label: "Extra Experiences", href: "/experiences" },

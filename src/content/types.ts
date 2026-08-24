@@ -75,6 +75,7 @@ export type Experience = {
   gallery?: SanityImage[];
   description: string;
   included: string[];
+  destinations?: string[];
   relatedTours?: Tour[];
   seo?: PageSeo;
 };
@@ -95,6 +96,7 @@ export type Photoshoot = {
   included: string[];
   addOns?: string[];
   delivery: string[];
+  destinations?: string[];
   seo?: PageSeo;
 };
 
@@ -324,6 +326,27 @@ export type Destination = {
   days: number;
   tone: ImageTone;
   tourSlug: string;
+};
+
+// A richer, standalone destination profile powering the "Explore Egypt" map —
+// distinct from the lightweight `Destination` above (which only feeds the
+// homepage panel + Customize form chips). Tours/Experiences/Photoshoots/
+// Stories are matched to a hub by comparing their own `destinations`/`
+// locations` string tags against `matchNames` (case-sensitive), so the
+// relationship is driven entirely by those existing tag fields — no new
+// reference field to keep in sync.
+export type DestinationHub = {
+  slug: string;
+  name: string;
+  region?: string;
+  tagline: string;
+  intro: string;
+  matchNames: string[];
+  mapX: number; // 0-100, position on the stylized map (left %)
+  mapY: number; // 0-100, position on the stylized map (top %)
+  image?: SanityImage;
+  imageTone: ImageTone;
+  order: number;
 };
 
 export type Interest = {
@@ -648,6 +671,7 @@ export type ListingPages = {
     collectionTitlePlural?: string;
     collectionDescription?: string;
   };
+  exploreEgypt?: { heroEyebrow?: string; heroTitle?: string; heroDescription?: string };
   stories?: {
     heroEyebrow?: string;
     heroTitle?: string;
@@ -678,6 +702,7 @@ export type ResolvedListingPages = {
     collectionTitlePlural: string;
     collectionDescription: string;
   };
+  exploreEgypt: { heroEyebrow: string; heroTitle: string; heroDescription: string };
   stories: {
     heroEyebrow: string;
     heroTitle: string;
