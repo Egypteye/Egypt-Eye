@@ -1,26 +1,27 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* "Riviera Sage" brand palette — Ink Navy / Sage-Lime / Teal / Ivory Cream.
-   The six PlaceholderImage "tones" (giza/nile/desert/luxor/jordan/redsea)
-   stay independently colorful — they represent destination photography, not
+/* "Antique Gold" brand palette — Hunter Ink / Antique Gold / White.
+   Matches the gold-on-white itinerary documents sent to clients. The six
+   PlaceholderImage "tones" (giza/nile/desert/luxor/jordan/redsea) stay
+   independently colorful — they represent destination photography, not
    site chrome — and are defined in PlaceholderImage.tsx. */
 :root {
-  --background: #f9f4e8;
-  --foreground: #1c2740;
+  --background: #ffffff;
+  --foreground: #1b2a20;
 
-  --color-ink: #1c2740;
-  --color-ink-soft: #47536e;
-  --color-sand: #f9f4e8;
-  --color-sand-dim: #f0e2c9;
-  --color-sand-deep: #e4cfa0;
-  --color-gold: #d7e6a6;
-  --color-gold-light: #e8efc7;
-  --color-gold-dark: #5b6e23;
-  --color-nile: #7fc4bf;
-  --color-nile-light: #a8d9d5;
-  --color-terracotta: #c97b54;
-  --color-cream: #fffdf6;
+  --color-ink: #1b2a20;
+  --color-ink-soft: #4a5c4f;
+  --color-sand: #ffffff;
+  --color-sand-dim: #faf7f0;
+  --color-sand-deep: #f0e9d8;
+  --color-gold: #c9a227;
+  --color-gold-light: #e4c878;
+  --color-gold-dark: #8c6d1f;
+  --color-nile: #5c7a5f;
+  --color-nile-light: #8faa8f;
+  --color-terracotta: #a8562e;
+  --color-cream: #fffdf8;
 }
 
 @theme inline {
@@ -40,8 +41,8 @@
   --color-terracotta: var(--color-terracotta);
   --color-cream: var(--color-cream);
 
-  --font-sans: var(--font-inter);
-  --font-serif: var(--font-playfair);
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-display);
 }
 
 body {
@@ -79,7 +80,7 @@ h1, h2, h3, h4, .font-display {
 }
 
 .bg-hieroglyph-pattern {
-  background-image: radial-gradient(circle at 1px 1px, rgba(91, 110, 35, 0.18) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgba(140, 109, 31, 0.18) 1px, transparent 0);
   background-size: 22px 22px;
 }
 
@@ -121,7 +122,7 @@ h1, h2, h3, h4, .font-display {
   background-image:
     radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.55) 1px, transparent 0),
     radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.3) 1px, transparent 0),
-    radial-gradient(circle at 1px 1px, rgba(215, 230, 166, 0.4) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, rgba(228, 200, 120, 0.4) 1px, transparent 0);
   background-size: 180px 180px, 90px 90px, 260px 260px;
   background-position: 0 0, 40px 60px, 120px 30px;
 }

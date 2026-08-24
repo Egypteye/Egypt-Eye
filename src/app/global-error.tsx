@@ -20,11 +20,11 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           textAlign: "center",
           padding: "2rem",
           fontFamily: "system-ui, sans-serif",
-          background: "#f9f4e8",
-          color: "#1c2740",
+          background: "#ffffff",
+          color: "#1b2a20",
         }}
       >
-        <p style={{ fontSize: "0.875rem", fontWeight: 600, letterSpacing: "0.3em", textTransform: "uppercase", color: "#5b6e23" }}>
+        <p style={{ fontSize: "0.875rem", fontWeight: 600, letterSpacing: "0.3em", textTransform: "uppercase", color: "#8c6d1f" }}>
           Error
         </p>
         <h1 style={{ maxWidth: "32rem", fontSize: "1.875rem", fontWeight: 600 }}>Something went wrong</h1>
@@ -35,11 +35,11 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           onClick={reset}
           style={{
             borderRadius: "9999px",
-            background: "#d7e6a6",
+            background: "#c9a227",
             padding: "0.75rem 1.5rem",
             fontSize: "0.875rem",
             fontWeight: 600,
-            color: "#1c2740",
+            color: "#1b2a20",
             border: "none",
             cursor: "pointer",
           }}
