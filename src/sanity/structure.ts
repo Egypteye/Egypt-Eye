@@ -1,4 +1,5 @@
 import type { StructureResolver } from "sanity/structure";
+import BulkReviewsTool from "./tools/BulkReviewsTool";
 
 // Custom Studio sidebar: pins "Site Settings" as a single always-visible
 // entry (it's a singleton — one document holds all global copy) instead of
@@ -49,5 +50,8 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem("experience").title("Extra Experiences"),
       S.documentTypeListItem("photoshoot").title("Photoshoot Packages"),
       S.documentTypeListItem("testimonial").title("Testimonials"),
+      S.listItem()
+        .title("＋ Bulk Add Reviews")
+        .child(S.component(BulkReviewsTool).id("bulk-reviews").title("Bulk Add Reviews")),
       S.documentTypeListItem("faqItem").title("FAQ"),
     ]);
