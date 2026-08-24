@@ -123,6 +123,14 @@ export default async function Home() {
           <Reveal delay={100} className="mt-10">
             <DestinationsPanel photos={site.destinationPhotos} tours={tours} destinations={site.destinations} />
           </Reveal>
+          <Reveal delay={150} className="mt-10 flex justify-center">
+            <Link
+              href="/explore-egypt"
+              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+            >
+              Explore Egypt on the Map
+            </Link>
+          </Reveal>
         </Container>
       </section>
 
