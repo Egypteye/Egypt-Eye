@@ -1,26 +1,26 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* "Regal Heritage" brand palette — Midnight Navy / Royal Gold / Ivory Stone.
+/* "Riviera Sage" brand palette — Ink Navy / Sage-Lime / Teal / Ivory Cream.
    The six PlaceholderImage "tones" (giza/nile/desert/luxor/jordan/redsea)
    stay independently colorful — they represent destination photography, not
    site chrome — and are defined in PlaceholderImage.tsx. */
 :root {
-  --background: #f4efe2;
-  --foreground: #0f1c33;
+  --background: #f9f4e8;
+  --foreground: #1c2740;
 
-  --color-ink: #0b1930;
-  --color-ink-soft: #24365a;
-  --color-sand: #f4efe2;
-  --color-sand-dim: #ebe2cd;
-  --color-sand-deep: #dbcda3;
-  --color-gold: #dba53a;
-  --color-gold-light: #ecc06a;
-  --color-gold-dark: #b17f24;
-  --color-nile: #0f4a4d;
-  --color-nile-light: #16686c;
-  --color-terracotta: #b5502b;
-  --color-cream: #fffcf5;
+  --color-ink: #1c2740;
+  --color-ink-soft: #47536e;
+  --color-sand: #f9f4e8;
+  --color-sand-dim: #f0e2c9;
+  --color-sand-deep: #e4cfa0;
+  --color-gold: #d7e6a6;
+  --color-gold-light: #e8efc7;
+  --color-gold-dark: #5b6e23;
+  --color-nile: #7fc4bf;
+  --color-nile-light: #a8d9d5;
+  --color-terracotta: #c97b54;
+  --color-cream: #fffdf6;
 }
 
 @theme inline {
@@ -79,7 +79,7 @@ h1, h2, h3, h4, .font-display {
 }
 
 .bg-hieroglyph-pattern {
-  background-image: radial-gradient(circle at 1px 1px, rgba(200, 151, 63, 0.18) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgba(91, 110, 35, 0.18) 1px, transparent 0);
   background-size: 22px 22px;
 }
 
@@ -121,7 +121,7 @@ h1, h2, h3, h4, .font-display {
   background-image:
     radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.55) 1px, transparent 0),
     radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.3) 1px, transparent 0),
-    radial-gradient(circle at 1px 1px, rgba(236, 192, 106, 0.4) 1px, transparent 0);
+    radial-gradient(circle at 1px 1px, rgba(215, 230, 166, 0.4) 1px, transparent 0);
   background-size: 180px 180px, 90px 90px, 260px 260px;
   background-position: 0 0, 40px 60px, 120px 30px;
 }

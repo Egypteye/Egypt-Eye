@@ -7,19 +7,19 @@ function baseLayout({ preheader, bodyHtml, footerHtml }: { preheader: string; bo
   return `<!doctype html>
 <html>
 <head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /></head>
-<body style="margin:0;padding:0;background:#f4efe2;font-family:Georgia,'Times New Roman',serif;">
-  <span style="display:none;font-size:1px;color:#f4efe2;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${escapeHtml(preheader)}</span>
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4efe2;padding:32px 16px;">
+<body style="margin:0;padding:0;background:#f9f4e8;font-family:Georgia,'Times New Roman',serif;">
+  <span style="display:none;font-size:1px;color:#f9f4e8;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${escapeHtml(preheader)}</span>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f4e8;padding:32px 16px;">
     <tr><td align="center">
-      <table role="presentation" width="100%" style="max-width:520px;background:#fffcf5;border-radius:20px;overflow:hidden;border:1px solid rgba(219,165,58,0.25);">
+      <table role="presentation" width="100%" style="max-width:520px;background:#fffdf6;border-radius:20px;overflow:hidden;border:1px solid rgba(215,230,166,0.4);">
         <tr>
-          <td style="background:#0b1930;padding:28px 32px;text-align:center;">
-            <span style="color:#ecc06a;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-family:Arial,sans-serif;">Egypt Eye Travel and Tours</span>
+          <td style="background:#1c2740;padding:28px 32px;text-align:center;">
+            <span style="color:#e8efc7;font-size:12px;letter-spacing:3px;text-transform:uppercase;font-family:Arial,sans-serif;">Egypt Eye Travel and Tours</span>
           </td>
         </tr>
-        <tr><td style="padding:32px;color:#0b1930;font-size:15px;line-height:1.6;">${bodyHtml}</td></tr>
+        <tr><td style="padding:32px;color:#1c2740;font-size:15px;line-height:1.6;">${bodyHtml}</td></tr>
         <tr>
-          <td style="padding:20px 32px 28px;border-top:1px solid rgba(11,25,48,0.08);color:#7c7362;font-size:12px;font-family:Arial,sans-serif;line-height:1.6;">
+          <td style="padding:20px 32px 28px;border-top:1px solid rgba(28,39,64,0.08);color:#6b7480;font-size:12px;font-family:Arial,sans-serif;line-height:1.6;">
             ${footerHtml}
           </td>
         </tr>
@@ -31,8 +31,8 @@ function baseLayout({ preheader, bodyHtml, footerHtml }: { preheader: string; bo
 }
 
 function ctaButton(label: string, href: string) {
-  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td style="border-radius:999px;background:#0b1930;">
-    <a href="${href}" style="display:inline-block;padding:14px 28px;color:#fffcf5;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;border-radius:999px;">${escapeHtml(label)}</a>
+  return `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:24px 0;"><tr><td style="border-radius:999px;background:#1c2740;">
+    <a href="${href}" style="display:inline-block;padding:14px 28px;color:#fffdf6;font-family:Arial,sans-serif;font-size:14px;font-weight:bold;text-decoration:none;border-radius:999px;">${escapeHtml(label)}</a>
   </td></tr></table>`;
 }
 
@@ -74,16 +74,16 @@ export function discountCodeEmail({
     bodyHtml: `
       <p style="margin:0 0 16px;">${greeting}</p>
       <p style="margin:0 0 20px;">You're in. Here's your exclusive 4% off code for any Egypt Eye tour or journey — yours alone, ready whenever you are.</p>
-      <div style="text-align:center;margin:24px 0;padding:20px;background:#f4efe2;border-radius:16px;border:1px dashed #dba53a;">
-        <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#b17f24;">4% Off Your Egypt Journey</div>
-        <div style="font-family:'Courier New',monospace;font-size:26px;font-weight:bold;letter-spacing:2px;color:#0b1930;margin-top:6px;">${escapeHtml(code)}</div>
+      <div style="text-align:center;margin:24px 0;padding:20px;background:#f9f4e8;border-radius:16px;border:1px dashed #5b6e23;">
+        <div style="font-family:Arial,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#5b6e23;">4% Off Your Egypt Journey</div>
+        <div style="font-family:'Courier New',monospace;font-size:26px;font-weight:bold;letter-spacing:2px;color:#1c2740;margin-top:6px;">${escapeHtml(code)}</div>
       </div>
       ${expiryLine}
       <p style="margin:0 0 16px;">Use it during your reservation request on any tour or custom itinerary — we'll apply it to your estimate and confirm the final amount with you directly.</p>
       ${ctaButton("Plan My Egypt", `${SITE_URL}/explore-egypt`)}
       <p style="margin:16px 0 0;font-size:12px;color:#889;">One code per customer, one-time use, subject to the campaign's terms shown at checkout. Not combinable with other offers unless stated.</p>
     `,
-    footerHtml: `You're receiving this because you subscribed to Egypt Eye travel updates. <a href="${unsubscribeUrl}" style="color:#7c7362;">Unsubscribe</a> or manage your preferences anytime.`,
+    footerHtml: `You're receiving this because you subscribed to Egypt Eye travel updates. <a href="${unsubscribeUrl}" style="color:#6b7480;">Unsubscribe</a> or manage your preferences anytime.`,
   });
   const text = `${greeting}\n\nYour unique 4% off code: ${code}\n${expiresAt ? `Valid until ${new Date(expiresAt).toLocaleDateString()}\n` : ""}\nUse it during your reservation request at ${SITE_URL}/explore-egypt\n\nUnsubscribe: ${unsubscribeUrl}`;
   return { subject: "Your Egypt Eye 4% Off Is Here 🇪🇬", html, text };
@@ -117,7 +117,7 @@ export function reservationConfirmationEmail({
     bodyHtml: `
       <p style="margin:0 0 16px;">Hi ${escapeHtml(guestName)},</p>
       <p style="margin:0 0 16px;">Your Egypt journey is on its way. Our team is reviewing your request and will reach out with next steps shortly.</p>
-      <p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b17f24;">Reference</p>
+      <p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#5b6e23;">Reference</p>
       <p style="margin:0 0 20px;font-family:'Courier New',monospace;font-size:18px;font-weight:bold;">${escapeHtml(reference)}</p>
       ${tripStartDate ? `<p style="margin:0 0 16px;">Trip start: <strong>${escapeHtml(new Date(tripStartDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }))}</strong></p>` : ""}
       ${itemsHtml}
