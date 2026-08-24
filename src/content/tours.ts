@@ -1,7 +1,18 @@
 import type { Tour } from "./types";
+import { experiences } from "./experiences";
 
 // Popular Tours — edit durations, ratings, itineraries, and pricing here.
 // price.amount = null means "Contact for pricing" (shown as "Get a Quote").
+
+// Cross-links a Cairo/Giza tour to a couple of the short Extra Experiences
+// that make sense as an add-on for it — surfaced as the "you might also
+// like" suggestion when someone adds this tour to My Journey. Only Cairo/
+// Giza tours get any (that's where all 4 current experiences run); the
+// import stays one-directional (tours -> experiences) since experiences.ts
+// derives relatedTours the other way in fetchers.ts, to avoid a cycle.
+function experiencesBySlug(...slugs: string[]) {
+  return slugs.map((slug) => experiences.find((e) => e.slug === slug)).filter((e): e is (typeof experiences)[number] => Boolean(e));
+}
 
 export const tours: Tour[] = [
   {
@@ -44,6 +55,7 @@ export const tours: Tour[] = [
       "Taxes and service charges",
     ],
     excluded: ["Extras not mentioned", "Tips", "Hotels", "Flights"],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "food-tour"),
     price: { amount: 89 },
   },
   {
@@ -162,6 +174,7 @@ export const tours: Tour[] = [
           "A relaxed final morning wandering Khan el-Khalili's bazaars for souvenirs and coffee, before your private transfer to the airport or your next destination.",
       },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 255 },
   },
   {
@@ -339,6 +352,7 @@ export const tours: Tour[] = [
         description: "A free morning at your own pace, then a private transfer to the airport.",
       },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "nile-cruise-dinner-show", "food-tour"),
     price: { amount: 410 },
   },
   {
@@ -409,6 +423,7 @@ export const tours: Tour[] = [
       },
       { day: 6, title: "Departure", description: "Transfer to the airport for your onward flight." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 520 },
   },
   {
@@ -499,6 +514,7 @@ export const tours: Tour[] = [
         description: "Private transfer to the airport for your departure flight.",
       },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 820 },
   },
   {
@@ -588,6 +604,7 @@ export const tours: Tour[] = [
         description: "Private transfer to the airport.",
       },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "nile-cruise-dinner-show", "food-tour"),
     price: { amount: 1290 },
   },
   {
@@ -662,6 +679,7 @@ export const tours: Tour[] = [
         description: "Private transfer to Hurghada airport for your departure flight.",
       },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 780 },
   },
   {
@@ -967,6 +985,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Lunch", "Shopping", "Tips", "Personal spending"],
+    relatedExperiences: experiencesBySlug("quiet-nile-felucca-tour", "nile-cruise-dinner-show"),
     price: { amount: 75 },
   },
   {
@@ -999,6 +1018,7 @@ export const tours: Tour[] = [
       "Set menu dinner",
     ],
     excluded: ["Drinks beyond the set menu", "Tips", "Personal spending"],
+    relatedExperiences: experiencesBySlug("quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 75 },
   },
   {
@@ -1926,6 +1946,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Dinner", "Daytime Giza entrance (separate ticket)", "Tips"],
+    relatedExperiences: experiencesBySlug("food-tour", "quiet-nile-felucca-tour"),
     price: { amount: 55 },
   },
   {
@@ -1958,6 +1979,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Pyramid interior entrance (optional, separate ticket)", "Breakfast", "Tips"],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "food-tour"),
     price: { amount: 75 },
   },
   {
@@ -1990,6 +2012,7 @@ export const tours: Tour[] = [
       "Bottled water",
     ],
     excluded: ["Shopping purchases", "Additional meals", "Tips"],
+    relatedExperiences: experiencesBySlug("quiet-nile-felucca-tour", "nile-cruise-dinner-show"),
     price: { amount: 75 },
   },
   {
@@ -2016,6 +2039,7 @@ export const tours: Tour[] = [
     ],
     included: ["Hotel pickup and return", "Private felucca charter (1-2 hours)", "Bottled water"],
     excluded: ["Food and drinks aboard", "Tips"],
+    relatedExperiences: experiencesBySlug("nile-cruise-dinner-show", "food-tour"),
     price: { amount: 75 },
   },
   {
@@ -2049,6 +2073,7 @@ export const tours: Tour[] = [
       "Lunch",
     ],
     excluded: ["Mummy Room ticket (optional, separate)", "Tips", "Personal spending"],
+    relatedExperiences: experiencesBySlug("quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 75 },
   },
   {
@@ -2080,6 +2105,7 @@ export const tours: Tour[] = [
       "Private English-speaking guide",
     ],
     excluded: ["Dinner", "Tips", "Personal spending"],
+    relatedExperiences: experiencesBySlug("food-tour", "atv-quad-bikes-sahara"),
     price: { amount: 75 },
   },
 
@@ -2674,6 +2700,7 @@ export const tours: Tour[] = [
       { day: 11, title: "Fly back to Cairo", description: "Return transfer and a final evening in Cairo." },
       { day: 12, title: "Departure", description: "Airport transfer for the international flight home." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 1680 },
   },
   {
@@ -2718,6 +2745,7 @@ export const tours: Tour[] = [
       { day: 8, title: "Wadi Rum to the Dead Sea", description: "Sunrise in the desert, then an afternoon floating in the Dead Sea." },
       { day: 9, title: "Departure", description: "Transfer to Amman for the international flight home." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 1450 },
   },
   {
@@ -2758,6 +2786,7 @@ export const tours: Tour[] = [
       { day: 6, title: "Red Sea free day", description: "Beach, reef, or an optional snorkeling boat trip." },
       { day: 7, title: "Departure", description: "Transfer for the international flight home." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 650 },
   },
   {
@@ -2794,6 +2823,7 @@ export const tours: Tour[] = [
       { day: 3, title: "Fayoum", description: "Wadi El Rayan's waterfalls and Fayoum's Magic Lake." },
       { day: 4, title: "Cairo & departure", description: "A final morning in Cairo before transfer for departure." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "nile-cruise-dinner-show", "food-tour"),
     price: { amount: 340 },
   },
   {
@@ -2898,6 +2928,7 @@ export const tours: Tour[] = [
       "Telescope session",
     ],
     excluded: ["Dinner", "Tips", "Personal spending"],
+    relatedExperiences: experiencesBySlug("quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 75 },
   },
   {
@@ -2953,6 +2984,7 @@ export const tours: Tour[] = [
       { day: 13, title: "Dead Sea", description: "A float in the Dead Sea, then transfer back to Amman." },
       { day: 14, title: "Departure", description: "Private transfer to Amman's airport for your departure flight." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 2650 },
   },
   {
@@ -3006,6 +3038,7 @@ export const tours: Tour[] = [
       { day: 15, title: "Abu Simbel (Optional)", description: "An optional full-day excursion to Abu Simbel, or a slower day around Aswan and the Nubian villages." },
       { day: 16, title: "Fly to Cairo & Departure", description: "Return flight to Cairo and private transfer to the airport." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
     price: { amount: 2350 },
   },
   {
@@ -3067,6 +3100,7 @@ export const tours: Tour[] = [
       { day: 20, title: "Free Day / Optional Activities", description: "A final open day for shopping, an optional dive, or simply relaxing before departure." },
       { day: 21, title: "Fly to Cairo & Departure", description: "Return flight to Cairo and private transfer to the airport for your departure flight." },
     ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "nile-cruise-dinner-show", "food-tour"),
     price: { amount: 3450 },
   },
 ];

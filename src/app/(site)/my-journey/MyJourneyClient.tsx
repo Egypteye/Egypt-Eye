@@ -10,6 +10,7 @@ import { TourCard } from "@/components/TourCard";
 import { ExperienceCard } from "@/components/ExperienceCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { clearJourneyItems, removeJourneyItem, useJourneyItems } from "@/lib/journey";
+import { SuggestionToast, type JourneySuggestion } from "@/components/AddToJourneyButton";
 import type { DestinationHub } from "@/content/types";
 import type { JourneyDetailsResponse } from "@/app/api/journey/route";
 
@@ -22,6 +23,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
   const [fetchedDetails, setDetails] = useState<JourneyDetailsResponse | null>(null);
   const [status, setStatus] = useState<Status>("idle");
   const [confirmingClear, setConfirmingClear] = useState(false);
+  const [suggestionsDismissed, setSuggestionsDismissed] = useState(false);
   const details = items.length === 0 ? EMPTY_DETAILS : fetchedDetails;
 
   useEffect(() => {
@@ -72,6 +74,38 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
     () => (details ? details.tours.reduce((sum, t) => sum + (t.lengthDays || 0), 0) : 0),
     [details]
   );
+
+  // "You might also like" — pooled from the related tours/experiences of
+  // everything already in the journey, minus anything already added. Same
+  // data (Tour.relatedExperiences / Experience.relatedTours) that powers
+  // the add-to-journey suggestion toast on individual tour/experience
+  // pages, just aggregated across the whole journey instead of one item.
+  const journeySuggestions = useMemo<JourneySuggestion[]>(() => {
+    if (!details) return [];
+    const inJourney = new Set([
+      ...details.tours.map((t) => `tour:${t.slug}`),
+      ...details.experiences.map((e) => `experience:${e.slug}`),
+    ]);
+    const seen = new Set<string>();
+    const suggestions: JourneySuggestion[] = [];
+    for (const tour of details.tours) {
+      for (const experience of tour.relatedExperiences ?? []) {
+        const key = `experience:${experience.slug}`;
+        if (inJourney.has(key) || seen.has(key)) continue;
+        seen.add(key);
+        suggestions.push({ type: "experience", slug: experience.slug, title: experience.title, subtitle: experience.duration });
+      }
+    }
+    for (const experience of details.experiences) {
+      for (const tour of experience.relatedTours ?? []) {
+        const key = `tour:${tour.slug}`;
+        if (inJourney.has(key) || seen.has(key)) continue;
+        seen.add(key);
+        suggestions.push({ type: "tour", slug: tour.slug, title: tour.title, subtitle: tour.duration });
+      }
+    }
+    return suggestions;
+  }, [details]);
 
   const isEmpty = items.length === 0;
 
@@ -310,6 +344,14 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
           )}
         </Container>
       </section>
+
+      {!suggestionsDismissed && journeySuggestions.length > 0 && (
+        <SuggestionToast
+          label="Based on your journey — travelers also like"
+          suggestions={journeySuggestions}
+          onClose={() => setSuggestionsDismissed(true)}
+        />
+      )}
     </>
   );
 }

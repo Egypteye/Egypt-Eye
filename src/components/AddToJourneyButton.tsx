@@ -52,7 +52,11 @@ export function AddToJourneyButton({
       </button>
 
       {showSuggestions && suggestions && suggestions.length > 0 && (
-        <SuggestionToast title={title} suggestions={suggestions} onClose={() => setShowSuggestions(false)} />
+        <SuggestionToast
+          label={`Added “${title}” — travelers also like`}
+          suggestions={suggestions}
+          onClose={() => setShowSuggestions(false)}
+        />
       )}
     </>
   );
@@ -61,25 +65,31 @@ export function AddToJourneyButton({
 // A fixed (not popover-anchored) toast — cards this button lives in are
 // `overflow-hidden` for their rounded corners, so anything positioned
 // relative to the button itself would get clipped. Fixed positioning
-// escapes that regardless of which card/page renders the button.
-function SuggestionToast({
-  title,
+// escapes that regardless of which card/page renders the button. Exported
+// so /my-journey can reuse the same look for its own "you might also like"
+// popup, built from everything already in the journey rather than a single
+// just-added item.
+//
+// `bottom-40` (not `bottom-4`) clears the WhatsApp button (bottom-6, 56px
+// tall) and the chat widget's launcher (bottom-24, 56px tall) stacked above
+// it — at bottom-4 this toast's own suggestion rows sat right underneath
+// both, so their "+Add" targets were unreachable.
+export function SuggestionToast({
+  label,
   suggestions,
   onClose,
 }: {
-  title: string;
+  label: string;
   suggestions: JourneySuggestion[];
   onClose: () => void;
 }) {
   return (
     <div
-      className="animate-fade-up fixed inset-x-4 bottom-4 z-50 mx-auto max-w-sm rounded-2xl border border-gold/20 bg-ink p-4 shadow-2xl shadow-black/20 sm:inset-x-auto sm:right-4"
+      className="animate-fade-up fixed inset-x-4 bottom-40 z-50 mx-auto max-w-sm rounded-2xl border border-gold/20 bg-ink p-4 shadow-2xl shadow-black/20 sm:inset-x-auto sm:right-4"
       role="status"
     >
       <div className="flex items-start justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gold-light">
-          Added &ldquo;{title}&rdquo; — travelers also like
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-gold-light">{label}</p>
         <button
           type="button"
           aria-label="Dismiss"

@@ -123,15 +123,30 @@ export async function getAllTourSlugs(): Promise<string[]> {
   return tours.map((t) => t.slug);
 }
 
+// The Sanity `relatedTours` relation on an Experience only has data once an
+// editor sets it in the Studio. Local fallback content instead derives it
+// from the other side of the relation (Tour.relatedExperiences, curated in
+// tours.ts) so the "you might also like" suggestion still has something to
+// show before that curation happens in Sanity.
+function withLocalExperienceRelations(exps: Experience[]): Experience[] {
+  return exps.map((e) =>
+    e.relatedTours && e.relatedTours.length > 0
+      ? e
+      : { ...e, relatedTours: localTours.filter((t) => (t.relatedExperiences ?? []).some((re) => re.slug === e.slug)) }
+  );
+}
+
 export async function getExperiences(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localExperiences) : localExperiences;
+  return result && result.length > 0
+    ? withLocalImageFallback(result, localExperiences)
+    : withLocalExperienceRelations(localExperiences);
 }
 
 export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
   const result = await safeFetch<Experience | null>(experienceBySlugQuery, { slug });
   const local = localExperiences.find((e) => e.slug === slug);
-  if (!result) return local;
+  if (!result) return local && withLocalExperienceRelations([local])[0];
   return result.image ? result : { ...result, image: local?.image };
 }
 
