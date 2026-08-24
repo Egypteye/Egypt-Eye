@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { EgyptMap } from "@/components/EgyptMap";
@@ -14,11 +14,10 @@ import type { DestinationHub } from "@/content/types";
 import type { JourneyDetailsResponse } from "@/app/api/journey/route";
 
 type Status = "idle" | "ready" | "error";
-type RequestStatus = "idle" | "sending" | "sent" | "error";
 
 const EMPTY_DETAILS: JourneyDetailsResponse = { tours: [], experiences: [], photoshoots: [], destinations: [] };
 
-export function MyJourneyClient({ allHubs, whatsappLink }: { allHubs: DestinationHub[]; whatsappLink: string }) {
+export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
   const items = useJourneyItems();
   const [fetchedDetails, setDetails] = useState<JourneyDetailsResponse | null>(null);
   const [status, setStatus] = useState<Status>("idle");
@@ -149,12 +148,12 @@ export function MyJourneyClient({ allHubs, whatsappLink }: { allHubs: Destinatio
                   >
                     Customize My Trip
                   </Link>
-                  <a
-                    href="#request-journey"
+                  <Link
+                    href="/reserve"
                     className="rounded-full bg-ink px-5 py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
                   >
                     Request This Journey
-                  </a>
+                  </Link>
                 </div>
               </div>
 
@@ -242,112 +241,11 @@ export function MyJourneyClient({ allHubs, whatsappLink }: { allHubs: Destinatio
                     </div>
                   </div>
                 )}
-
-                <RequestJourneyForm items={items} tripDays={tripDays} visitedHubs={visitedHubs} whatsappLink={whatsappLink} />
               </div>
             </div>
           )}
         </Container>
       </section>
     </>
-  );
-}
-
-function RequestJourneyForm({
-  items,
-  tripDays,
-  visitedHubs,
-  whatsappLink,
-}: {
-  items: { type: string; title: string }[];
-  tripDays: number;
-  visitedHubs: DestinationHub[];
-  whatsappLink: string;
-}) {
-  const [status, setStatus] = useState<RequestStatus>("idle");
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const name = ((form.get("name") as string) ?? "").trim();
-    const email = ((form.get("email") as string) ?? "").trim();
-    const message = ((form.get("message") as string) ?? "").trim();
-    if (!name || !email) return;
-
-    const byType = (t: string) => items.filter((i) => i.type === t).map((i) => i.title).join("; ");
-    const fields = [
-      { label: "Name", value: name },
-      { label: "Email", value: email },
-      { label: "Destinations", value: visitedHubs.map((h) => h.name).join(", ") || "Not specified" },
-      { label: "Selected Tours", value: byType("tour") || "None" },
-      { label: "Selected Experiences", value: byType("experience") || "None" },
-      { label: "Selected Photoshoots", value: byType("photoshoot") || "None" },
-      ...(tripDays > 0 ? [{ label: "Estimated Trip Length", value: `${tripDays}+ days` }] : []),
-      ...(message ? [{ label: "Message", value: message }] : []),
-    ];
-
-    setStatus("sending");
-    try {
-      const res = await fetch("/api/customize-request", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fields, subject: `Journey Request — ${name}`, replyToEmail: email }),
-      });
-      if (!res.ok) throw new Error("Request failed");
-      setStatus("sent");
-    } catch {
-      setStatus("error");
-    }
-  }
-
-  return (
-    <div id="request-journey" className="scroll-mt-24 rounded-3xl border border-gold/20 bg-cream p-6 shadow-xl shadow-black/5 sm:p-8">
-      <h3 className="font-display text-xl font-semibold text-ink">Request This Journey</h3>
-      <p className="mt-1 text-sm text-ink-soft/70">
-        Send us your full selection above — we&rsquo;ll reply with real pricing and availability for exactly what you&rsquo;ve chosen.
-      </p>
-
-      {status === "sent" ? (
-        <p className="mt-6 text-sm text-ink-soft/70">
-          Thanks, {""}
-          your journey request has been sent — we&rsquo;ll reply by email soon. Prefer to chat now? Message us on{" "}
-          <a href={whatsappLink} target="_blank" rel="noreferrer" className="font-semibold text-gold-dark underline">
-            WhatsApp
-          </a>
-          .
-        </p>
-      ) : (
-        <form onSubmit={handleSubmit} className="mt-6 grid gap-4 sm:grid-cols-2">
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-            Full Name *
-            <input name="name" type="text" required className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold" />
-          </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-            Email *
-            <input name="email" type="email" required className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold" />
-          </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
-            Anything else we should know? (optional)
-            <textarea name="message" rows={3} className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold" />
-          </label>
-          {status === "error" && (
-            <p className="text-sm text-terracotta sm:col-span-2">
-              Something went wrong sending your request. Please message us on{" "}
-              <a href={whatsappLink} target="_blank" rel="noreferrer" className="underline">
-                WhatsApp
-              </a>{" "}
-              instead.
-            </p>
-          )}
-          <button
-            type="submit"
-            disabled={status === "sending"}
-            className="rounded-full bg-ink py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60 sm:col-span-2"
-          >
-            {status === "sending" ? "Sending…" : "Send My Journey Request"}
-          </button>
-        </form>
-      )}
-    </div>
   );
 }

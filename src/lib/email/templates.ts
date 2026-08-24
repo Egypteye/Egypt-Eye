@@ -88,3 +88,44 @@ export function discountCodeEmail({
   const text = `${greeting}\n\nYour unique 4% off code: ${code}\n${expiresAt ? `Valid until ${new Date(expiresAt).toLocaleDateString()}\n` : ""}\nUse it during your reservation request at ${SITE_URL}/explore-egypt\n\nUnsubscribe: ${unsubscribeUrl}`;
   return { subject: "Your Egypt Eye 4% Off Is Here 🇪🇬", html, text };
 }
+
+export function reservationConfirmationEmail({
+  guestName,
+  reference,
+  itemTitles,
+  tripStartDate,
+  discountAmount,
+  totalEstimate,
+}: {
+  guestName: string;
+  reference: string;
+  itemTitles: string[];
+  tripStartDate: string | null;
+  discountAmount: number;
+  totalEstimate: number | null;
+}) {
+  const itemsHtml = itemTitles.length
+    ? `<ul style="margin:0 0 16px;padding-left:20px;">${itemTitles.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ul>`
+    : "";
+  const pricingHtml =
+    totalEstimate !== null
+      ? `<p style="margin:0 0 16px;">Estimated total${discountAmount > 0 ? ` (after your discount)` : ""}: <strong>$${totalEstimate.toLocaleString()}</strong></p>`
+      : `<p style="margin:0 0 16px;font-size:13px;color:#556;">Your final price will be confirmed with you directly, since part of your journey is custom-quoted.</p>`;
+
+  const html = baseLayout({
+    preheader: `Your Egypt journey is on its way — reference ${reference}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(guestName)},</p>
+      <p style="margin:0 0 16px;">Your Egypt journey is on its way. Our team is reviewing your request and will reach out with next steps shortly.</p>
+      <p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#b17f24;">Reference</p>
+      <p style="margin:0 0 20px;font-family:'Courier New',monospace;font-size:18px;font-weight:bold;">${escapeHtml(reference)}</p>
+      ${tripStartDate ? `<p style="margin:0 0 16px;">Trip start: <strong>${escapeHtml(new Date(tripStartDate).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }))}</strong></p>` : ""}
+      ${itemsHtml}
+      ${pricingHtml}
+      ${ctaButton("View My Journey", `${SITE_URL}/my-journey`)}
+    `,
+    footerHtml: `Questions? Just reply to this email — Egypt Eye Travel and Tours.`,
+  });
+  const text = `Hi ${guestName},\n\nYour Egypt journey is on its way. Reference: ${reference}\n${tripStartDate ? `Trip start: ${new Date(tripStartDate).toLocaleDateString()}\n` : ""}${itemTitles.length ? `\n${itemTitles.join("\n")}\n` : ""}\n${totalEstimate !== null ? `Estimated total: $${totalEstimate.toLocaleString()}` : "Your final price will be confirmed with you directly."}`;
+  return { subject: `Your Egypt journey is on its way — ${reference}`, html, text };
+}

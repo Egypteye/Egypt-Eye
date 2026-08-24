@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getDestinationHubs, getSiteSettings } from "@/sanity/fetchers";
+import { getDestinationHubs } from "@/sanity/fetchers";
 import { MyJourneyClient } from "./MyJourneyClient";
 
 export const metadata: Metadata = {
@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function MyJourneyPage() {
-  const [hubs, site] = await Promise.all([getDestinationHubs(), getSiteSettings()]);
-  return <MyJourneyClient allHubs={hubs} whatsappLink={site.contact.whatsappLink} />;
+  const hubs = await getDestinationHubs();
+  return <MyJourneyClient allHubs={hubs} />;
 }
