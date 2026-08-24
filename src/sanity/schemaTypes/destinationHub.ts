@@ -33,17 +33,19 @@ export const destinationHub = defineType({
     }),
     defineField({
       name: "mapX",
-      title: "Map position — left %",
-      description: "Horizontal position on the Explore Egypt map, 0 (west) to 100 (east).",
+      title: "Map position — X",
+      description:
+        "Horizontal position on the Explore Egypt map's coordinate grid (0 = west edge, 100 = east edge) — matches the map's real geographic projection, so this should line up with the destination's true position. Ask a developer before changing unless you're nudging a pin slightly.",
       type: "number",
       validation: (r) => r.min(0).max(100),
     }),
     defineField({
       name: "mapY",
-      title: "Map position — top %",
-      description: "Vertical position on the Explore Egypt map, 0 (north) to 100 (south).",
+      title: "Map position — Y",
+      description:
+        "Vertical position on the Explore Egypt map's coordinate grid (0 = north edge, ~87 = south edge — the grid is wider than it is tall, matching Egypt's real shape).",
       type: "number",
-      validation: (r) => r.min(0).max(100),
+      validation: (r) => r.min(0).max(90),
     }),
     defineField({
       name: "image",
