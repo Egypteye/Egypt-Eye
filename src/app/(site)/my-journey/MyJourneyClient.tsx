@@ -9,7 +9,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { TourCard } from "@/components/TourCard";
 import { ExperienceCard } from "@/components/ExperienceCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
-import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
+import { clearJourneyItems, removeJourneyItem, useJourneyItems } from "@/lib/journey";
 import type { DestinationHub } from "@/content/types";
 import type { JourneyDetailsResponse } from "@/app/api/journey/route";
 
@@ -21,6 +21,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
   const items = useJourneyItems();
   const [fetchedDetails, setDetails] = useState<JourneyDetailsResponse | null>(null);
   const [status, setStatus] = useState<Status>("idle");
+  const [confirmingClear, setConfirmingClear] = useState(false);
   const details = items.length === 0 ? EMPTY_DETAILS : fetchedDetails;
 
   useEffect(() => {
@@ -155,6 +156,39 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                     Request This Journey
                   </Link>
                 </div>
+
+                <div className="flex justify-center">
+                  {confirmingClear ? (
+                    <div className="flex items-center gap-3 text-xs">
+                      <span className="text-ink-soft/60">Clear everything?</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          clearJourneyItems();
+                          setConfirmingClear(false);
+                        }}
+                        className="font-semibold text-terracotta hover:underline"
+                      >
+                        Yes, clear all
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmingClear(false)}
+                        className="font-semibold text-ink-soft/60 hover:text-ink"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => setConfirmingClear(true)}
+                      className="text-xs font-semibold text-ink-soft/50 transition hover:text-terracotta"
+                    >
+                      Clear all selections
+                    </button>
+                  )}
+                </div>
               </div>
 
               <div className="flex flex-col gap-10">
@@ -210,7 +244,17 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.tours.map((tour) => (
-                        <TourCard key={tour.slug} tour={tour} />
+                        <div key={tour.slug} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => removeJourneyItem("tour", tour.slug)}
+                            aria-label={`Remove ${tour.title} from My Journey`}
+                            className="absolute right-3 top-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-cream backdrop-blur-sm transition hover:bg-terracotta"
+                          >
+                            ×
+                          </button>
+                          <TourCard tour={tour} />
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -223,7 +267,17 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.experiences.map((experience) => (
-                        <ExperienceCard key={experience.slug} experience={experience} />
+                        <div key={experience.slug} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => removeJourneyItem("experience", experience.slug)}
+                            aria-label={`Remove ${experience.title} from My Journey`}
+                            className="absolute right-3 top-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-cream backdrop-blur-sm transition hover:bg-terracotta"
+                          >
+                            ×
+                          </button>
+                          <ExperienceCard experience={experience} />
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -236,7 +290,17 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.photoshoots.map((photoshoot) => (
-                        <PhotoshootCard key={photoshoot.slug} photoshoot={photoshoot} />
+                        <div key={photoshoot.slug} className="relative">
+                          <button
+                            type="button"
+                            onClick={() => removeJourneyItem("photoshoot", photoshoot.slug)}
+                            aria-label={`Remove ${photoshoot.title} from My Journey`}
+                            className="absolute right-3 top-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-cream backdrop-blur-sm transition hover:bg-terracotta"
+                          >
+                            ×
+                          </button>
+                          <PhotoshootCard photoshoot={photoshoot} />
+                        </div>
                       ))}
                     </div>
                   </div>

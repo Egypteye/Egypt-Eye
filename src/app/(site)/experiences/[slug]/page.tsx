@@ -6,6 +6,8 @@ import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
+import { AddToJourneyButton } from "@/components/AddToJourneyButton";
+import { EnquiryButton } from "@/components/EnquiryButton";
 import { getExperienceBySlug, getExperiences, getSiteSettings } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
@@ -129,14 +131,23 @@ export default async function ExperienceDetailPage({
           >
             Book on WhatsApp
           </a>
-          <a
-            href={`mailto:${site.contact.email}?subject=${encodeURIComponent(
-              "Enquiry: " + experience.title
-            )}`}
-            className="mt-3 block w-full rounded-full border border-black/10 py-3 text-center text-sm font-semibold text-ink-soft transition hover:bg-sand-dim"
-          >
-            Email an Enquiry
-          </a>
+          <EnquiryButton itemType="experience" itemTitle={experience.title} itemSlug={experience.slug} className="mt-3" />
+
+          <div className="mt-4 border-t border-black/5 pt-4">
+            <AddToJourneyButton
+              type="experience"
+              slug={experience.slug}
+              title={experience.title}
+              subtitle={experience.duration}
+              suggestions={experience.relatedTours?.map((t) => ({
+                type: "tour" as const,
+                slug: t.slug,
+                title: t.title,
+                subtitle: t.duration,
+              }))}
+              className="w-full justify-center"
+            />
+          </div>
         </aside>
       </Container>
       </section>

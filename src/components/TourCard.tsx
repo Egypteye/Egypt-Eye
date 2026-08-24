@@ -28,7 +28,18 @@ export function TourCard({ tour }: { tour: Tour }) {
           <Rating rating={tour.rating} />
         </div>
         <div className="relative z-20">
-          <AddToJourneyButton type="tour" slug={tour.slug} title={tour.title} subtitle={tour.duration} />
+          <AddToJourneyButton
+            type="tour"
+            slug={tour.slug}
+            title={tour.title}
+            subtitle={tour.duration}
+            suggestions={tour.relatedExperiences?.map((e) => ({
+              type: "experience" as const,
+              slug: e.slug,
+              title: e.title,
+              subtitle: e.duration,
+            }))}
+          />
         </div>
         <div className="flex items-center justify-between border-t border-black/5 pt-3">
           <PriceTag price={tour.price} />

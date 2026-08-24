@@ -7,6 +7,8 @@ import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
+import { AddToJourneyButton } from "@/components/AddToJourneyButton";
+import { EnquiryButton } from "@/components/EnquiryButton";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
@@ -224,14 +226,23 @@ export default async function TourDetailPage({
             >
               Book on WhatsApp
             </a>
-            <a
-              href={`mailto:${site.contact.email}?subject=${encodeURIComponent(
-                "Enquiry: " + tour.title
-              )}`}
-              className="mt-3 block w-full rounded-full border border-black/10 py-3 text-center text-sm font-semibold text-ink-soft transition hover:bg-sand-dim"
-            >
-              Email an Enquiry
-            </a>
+            <EnquiryButton itemType="tour" itemTitle={tour.title} itemSlug={tour.slug} className="mt-3" />
+
+            <div className="mt-4 border-t border-black/5 pt-4">
+              <AddToJourneyButton
+                type="tour"
+                slug={tour.slug}
+                title={tour.title}
+                subtitle={tour.duration}
+                suggestions={tour.relatedExperiences?.map((e) => ({
+                  type: "experience" as const,
+                  slug: e.slug,
+                  title: e.title,
+                  subtitle: e.duration,
+                }))}
+                className="w-full justify-center"
+              />
+            </div>
 
             <div className="mt-6 space-y-3 border-t border-black/5 pt-6 text-xs text-ink-soft/60">
               <p>{site.policies.deposit}</p>

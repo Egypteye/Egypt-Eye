@@ -6,6 +6,8 @@ import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
+import { AddToJourneyButton } from "@/components/AddToJourneyButton";
+import { EnquiryButton } from "@/components/EnquiryButton";
 import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
@@ -154,14 +156,17 @@ export default async function PhotoshootDetailPage({
           >
             Book on WhatsApp
           </a>
-          <a
-            href={`mailto:${site.contact.email}?subject=${encodeURIComponent(
-              "Enquiry: " + photoshoot.title
-            )}`}
-            className="mt-3 block w-full rounded-full border border-black/10 py-3 text-center text-sm font-semibold text-ink-soft transition hover:bg-sand-dim"
-          >
-            Email an Enquiry
-          </a>
+          <EnquiryButton itemType="photoshoot" itemTitle={photoshoot.title} itemSlug={photoshoot.slug} className="mt-3" />
+
+          <div className="mt-4 border-t border-black/5 pt-4">
+            <AddToJourneyButton
+              type="photoshoot"
+              slug={photoshoot.slug}
+              title={photoshoot.title}
+              subtitle={photoshoot.duration}
+              className="w-full justify-center"
+            />
+          </div>
         </aside>
       </Container>
     </section>

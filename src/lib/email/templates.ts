@@ -129,3 +129,69 @@ export function reservationConfirmationEmail({
   const text = `Hi ${guestName},\n\nYour Egypt journey is on its way. Reference: ${reference}\n${tripStartDate ? `Trip start: ${new Date(tripStartDate).toLocaleDateString()}\n` : ""}${itemTitles.length ? `\n${itemTitles.join("\n")}\n` : ""}\n${totalEstimate !== null ? `Estimated total: $${totalEstimate.toLocaleString()}` : "Your final price will be confirmed with you directly."}`;
   return { subject: `Your Egypt journey is on its way — ${reference}`, html, text };
 }
+
+// Team-facing (not customer-facing) — sent to Site Settings > Contact >
+// Email whenever a visitor submits the "Email an Enquiry" popup on a tour,
+// experience, or photoshoot page. Every field the reservations team needs
+// to reply without asking the basics again, laid out as a scannable table
+// with the enquired-about item called out first.
+export function tourEnquiryEmail({
+  itemLabel,
+  itemTitle,
+  itemUrl,
+  name,
+  email,
+  phone,
+  nationality,
+  travelDates,
+  travelers,
+  message,
+}: {
+  itemLabel: string;
+  itemTitle: string;
+  itemUrl: string;
+  name: string;
+  email: string;
+  phone: string;
+  nationality: string;
+  travelDates: string;
+  travelers: string;
+  message?: string;
+}) {
+  const rows: [string, string][] = [
+    ["Full name", name],
+    ["Email", email],
+    ["WhatsApp / Phone", phone],
+    ["Nationality", nationality],
+    ["Travel date(s)", travelDates],
+    ["Number of travelers", travelers],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const html = baseLayout({
+    preheader: `${name} asked about ${itemTitle} — reply directly to this email.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Enquiry — ${escapeHtml(itemLabel)}</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;"><a href="${itemUrl}" style="color:#1b2a20;text-decoration:none;">${escapeHtml(itemTitle)}</a></p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${
+        message
+          ? `<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">Message</p><p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(message)}</p>`
+          : ""
+      }
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to respond directly to ${escapeHtml(name)}.</p>
+    `,
+    footerHtml: `Sent from the "Email an Enquiry" form on ${escapeHtml(itemUrl)}.`,
+  });
+
+  const text = `New Enquiry — ${itemLabel}\n${itemTitle}\n${itemUrl}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n${
+    message ? `\nMessage:\n${message}\n` : ""
+  }\nReply to this email to respond directly to ${name}.`;
+
+  return { subject: `New Enquiry: ${itemTitle}`, html, text };
+}

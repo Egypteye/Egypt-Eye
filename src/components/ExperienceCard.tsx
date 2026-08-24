@@ -33,6 +33,12 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
             slug={experience.slug}
             title={experience.title}
             subtitle={experience.duration}
+            suggestions={experience.relatedTours?.map((t) => ({
+              type: "tour" as const,
+              slug: t.slug,
+              title: t.title,
+              subtitle: t.duration,
+            }))}
           />
         </div>
         <div className="mt-auto flex items-center justify-between border-t border-black/5 pt-3">

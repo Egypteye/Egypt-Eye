@@ -86,6 +86,10 @@ export function toggleJourneyItem(item: Omit<JourneyItem, "id">): boolean {
   return !exists;
 }
 
+export function clearJourneyItems() {
+  saveJourneyItems([]);
+}
+
 export function subscribeToJourney(callback: () => void) {
   const handleStorage = () => {
     loadCache();
