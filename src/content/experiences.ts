@@ -62,7 +62,7 @@ export const experiences: Experience[] = [
     slug: "food-tour",
     title: "Food Tour",
     duration: "1 hour",
-    rating: null,
+    rating: { score: 4.79, count: 6 },
     price: { amount: 30, originalAmount: 60, currency: "USD" },
     imageLabel: "Egyptian Street Food",
     imageTone: "giza",

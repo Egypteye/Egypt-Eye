@@ -65,14 +65,18 @@ export default async function Home() {
       <section className="relative min-h-[82vh]">
         <HeroSlideshow slides={site.heroImages} eyebrow={site.tagline} />
 
-        {/* Search bar, straddling the hero/content boundary */}
-        <div className="absolute inset-x-0 bottom-0 z-10 translate-y-1/2 px-5 sm:px-8">
+        {/* Search bar, peeking a fixed amount below the hero's bottom edge —
+            a fixed translate (not a proportional translate-y-1/2) so the
+            overlap stays predictable even though the card is much taller on
+            mobile (fields stack 2-up) than on desktop (one row). The section
+            below reserves enough top padding to clear that fixed amount. */}
+        <div className="absolute inset-x-0 bottom-0 z-10 translate-y-12 px-5 sm:translate-y-10 sm:px-8">
           <SearchBar className="mx-auto max-w-4xl" destinations={site.destinations} />
         </div>
       </section>
 
       {/* Trust bar */}
-      <section className="pb-14 pt-14 sm:pt-16">
+      <section className="pb-14 pt-24 sm:pt-20">
         <Container>
           <Reveal>
             <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} badges={site.trustBadges} />
@@ -296,7 +300,7 @@ export default async function Home() {
             </Reveal>
           </Container>
           <Reveal delay={100} className="mt-10">
-            <ReviewsMarquee testimonials={testimonials} />
+            <ReviewsMarquee testimonials={testimonials} href="/about" />
           </Reveal>
         </section>
       )}

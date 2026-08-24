@@ -1,8 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
-import { getAboutPage, getSiteSettings } from "@/sanity/fetchers";
+import { TestimonialCard } from "@/components/TestimonialCard";
+import { getAboutPage, getSiteSettings, getTestimonials } from "@/sanity/fetchers";
 
 export const metadata = {
   title: "About Egypt Eye Travel and Tours",
@@ -11,7 +13,12 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const [site, page] = await Promise.all([getSiteSettings(), getAboutPage()]);
+  const [site, page, testimonials] = await Promise.all([
+    getSiteSettings(),
+    getAboutPage(),
+    getTestimonials(),
+  ]);
+  const featuredTestimonials = testimonials.slice(0, 6);
 
   return (
     <>
@@ -89,6 +96,37 @@ export default async function AboutPage() {
           </div>
         </Container>
       </section>
+
+      {/* Testimonials — only shown once real, collected reviews exist in the
+          CMS. A short teaser here, with a link through to the full page. */}
+      {featuredTestimonials.length > 0 && (
+        <section className="bg-sand-dim py-20">
+          <Container>
+            <SectionHeading
+              eyebrow="Traveler Stories"
+              title="What Our Travelers Say"
+              description="Real words from real trips — a small sample of what's waiting for you on the full page."
+              align="center"
+            />
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {featuredTestimonials.map((t, i) => (
+                <TestimonialCard key={`${t.name}-${i}`} testimonial={t} />
+              ))}
+            </div>
+            <div className="mt-10 text-center">
+              <Link
+                href="/testimonials"
+                className="inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+              >
+                Read All Reviews
+                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </div>
+          </Container>
+        </section>
+      )}
     </>
   );
 }

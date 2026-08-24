@@ -45,12 +45,20 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
-// experiences, photoshoots, destinationHubs, testimonials, stories,
+// experiences, photoshoots, ratings, destinationHubs, testimonials, stories,
 // faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
 // signatureExperiences, authors, events, homepage, listingPages. E.g. to seed just the new Stories system (which needs
 // authors/events/signatureExperiences to exist first for its references):
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,stories
+//
+// `only=ratings` is the safe one to re-run any time after editing ratings in
+// content/tours.ts / experiences.ts / photoshoots.ts — it only patches the
+// `rating` field on each existing document (unlike `tours`/`experiences`/
+// `photoshoots`, which do a full createOrReplace and would wipe any other
+// field edited directly in the Studio since the last full migration):
+//
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=ratings
 
 // Vercel kills serverless functions after a plan-dependent default (10s on
 // Hobby) — extend it well past what even a large single-transaction commit
@@ -164,6 +172,32 @@ export async function GET(request: NextRequest) {
         order: i,
       });
       results.push(`photoshoot: ${p.slug}`);
+    }
+  }
+
+  // Unlike the createOrReplace blocks above, this ONLY touches the `rating`
+  // field via a partial patch — safe to re-run any time (e.g. after editing
+  // ratings in content/tours.ts) without wiping images, descriptions, or any
+  // other field a real edit in the Studio may have changed since the last
+  // full migration.
+  if (shouldRun("ratings")) {
+    for (const t of tours) {
+      tx.patch(`tour-${t.slug}`, (p) =>
+        t.rating ? p.set({ rating: { _type: "rating", ...t.rating } }) : p.unset(["rating"])
+      );
+      results.push(`rating: tour-${t.slug}`);
+    }
+    for (const e of experiences) {
+      tx.patch(`experience-${e.slug}`, (p) =>
+        e.rating ? p.set({ rating: { _type: "rating", ...e.rating } }) : p.unset(["rating"])
+      );
+      results.push(`rating: experience-${e.slug}`);
+    }
+    for (const ph of photoshoots) {
+      tx.patch(`photoshoot-${ph.slug}`, (p) =>
+        ph.rating ? p.set({ rating: { _type: "rating", ...ph.rating } }) : p.unset(["rating"])
+      );
+      results.push(`rating: photoshoot-${ph.slug}`);
     }
   }
 

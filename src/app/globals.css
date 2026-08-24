@@ -84,12 +84,16 @@ h1, h2, h3, h4, .font-display {
   background-size: 22px 22px;
 }
 
-@keyframes kenburns {
+/* A slow, continuous zoom that alternates back and forth forever — used on
+   the hero slideshow, where every slide's image is mounted at once and
+   cross-faded via opacity (see HeroSlideshow.tsx), so the drift needs to
+   keep running in the background rather than restart on activation. */
+@keyframes kenburns-drift {
   from {
     transform: scale(1);
   }
   to {
-    transform: scale(1.12);
+    transform: scale(1.08);
   }
 }
 

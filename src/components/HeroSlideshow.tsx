@@ -18,11 +18,12 @@ type Slide = {
 const SLIDE_DURATION_MS = 6000;
 
 // Full hero: background photo, gradient, and the per-slide headline/CTA all
-// change together every 6 seconds. Only the active slide's image is ever
-// mounted (not all of them stacked with opacity toggled), and it's re-keyed
-// by `index` so React gives it a fresh DOM node on every change — the old
-// version reused the same nodes and toggled classes, which is what made the
-// Ken Burns zoom freeze/stutter instead of restarting cleanly each time.
+// change together every 6 seconds. All slide images are mounted at once,
+// stacked and cross-faded via opacity — swapping the visible one never
+// triggers a fresh network fetch (which is what caused the old "freeze": a
+// remounted, non-preloaded image has nothing to paint until it downloads).
+// Each image keeps its own slow, continuous, independent Ken Burns drift, so
+// there's no animation to restart/resync when a slide becomes active again.
 // Slides are editable in the Studio under Site Settings > Homepage hero slides.
 export function HeroSlideshow({
   slides: rawSlides,
@@ -56,17 +57,21 @@ export function HeroSlideshow({
 
   return (
     <div className="absolute inset-0 overflow-hidden bg-ink">
-      <SmartImage
-        key={index}
-        image={active.image}
-        tone={active.tone}
-        className="absolute inset-0 animate-[kenburns_6500ms_ease-out_forwards]"
-        priority={index === 0}
-      />
+      {slides.map((slide, i) => (
+        <SmartImage
+          key={i}
+          image={slide.image}
+          tone={slide.tone}
+          className={`absolute inset-0 animate-[kenburns-drift_26000ms_ease-in-out_infinite_alternate] transition-opacity duration-1000 ease-in-out ${
+            i === index ? "opacity-100" : "opacity-0"
+          }`}
+          priority
+        />
+      ))}
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/25" />
 
-      <div className="relative flex h-full flex-col justify-center gap-4 px-5 pb-56 pt-24 sm:gap-6 sm:px-8 sm:pb-28 sm:pt-40">
-        <div className="mx-auto w-full max-w-7xl">
+      <div className="relative flex h-full flex-col items-center justify-center gap-4 px-5 pb-56 pt-24 text-center sm:gap-6 sm:px-8 sm:pb-28 sm:pt-40">
+        <div className="mx-auto flex w-full max-w-3xl flex-col items-center">
           {eyebrow && (
             <p className="animate-fade-up text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
               {eyebrow}
@@ -75,7 +80,7 @@ export function HeroSlideshow({
           {active.headline && (
             <h1
               key={`h-${index}`}
-              className="animate-fade-up mt-4 max-w-3xl text-balance font-display text-4xl font-semibold leading-[1.1] text-cream sm:text-6xl"
+              className="animate-fade-up mt-4 text-balance font-display text-4xl font-semibold leading-[1.1] text-cream sm:text-6xl"
             >
               {active.headline}
             </h1>
@@ -85,7 +90,7 @@ export function HeroSlideshow({
               {active.subtext}
             </p>
           )}
-          <div key={`b-${index}`} className="animate-fade-up mt-6 flex flex-wrap gap-4">
+          <div key={`b-${index}`} className="animate-fade-up mt-6 flex flex-wrap justify-center gap-4">
             <Link
               href="/customize"
               className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
@@ -110,7 +115,7 @@ export function HeroSlideshow({
               card straddles the hero/content boundary and grows tall
               enough on small screens to cover anything fixed down there). */}
           {slides.length > 1 && (
-            <div className="mt-8 flex items-center gap-4">
+            <div className="mt-8 flex items-center justify-center gap-4">
               <button
                 type="button"
                 aria-label="Previous slide"
