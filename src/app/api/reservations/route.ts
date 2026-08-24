@@ -93,10 +93,10 @@ export async function POST(request: NextRequest) {
 
   const reference = generateReference();
   const journeySnapshot = [
-    ...hydrated.tours.map((t) => ({ slug: t.slug, title: t.title })),
-    ...hydrated.experiences.map((e) => ({ slug: e.slug, title: e.title })),
-    ...hydrated.photoshoots.map((p) => ({ slug: p.slug, title: p.title })),
-    ...hydrated.destinations.map((d) => ({ slug: d.slug, title: d.name })),
+    ...hydrated.tours.map((t) => ({ type: "tour", slug: t.slug, title: t.title })),
+    ...hydrated.experiences.map((e) => ({ type: "experience", slug: e.slug, title: e.title })),
+    ...hydrated.photoshoots.map((p) => ({ type: "photoshoot", slug: p.slug, title: p.title })),
+    ...hydrated.destinations.map((d) => ({ type: "destination", slug: d.slug, title: d.name })),
   ];
 
   const supabase = createAdminSupabaseClient();
