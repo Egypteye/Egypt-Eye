@@ -15,6 +15,7 @@ import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { StoryCard } from "@/components/StoryCard";
 import { Reveal } from "@/components/Reveal";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
 import {
   getExperiences,
@@ -317,6 +318,15 @@ export default async function Home() {
             {homepageStories.map((s) => (
               <StoryCard key={s.slug} story={s} />
             ))}
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Newsletter / 4% off */}
+      <section className="py-16">
+        <Container>
+          <Reveal>
+            <NewsletterSignup source="homepage" />
           </Reveal>
         </Container>
       </section>

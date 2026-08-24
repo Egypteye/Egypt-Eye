@@ -5,8 +5,15 @@ import Image from "next/image";
 import { useState } from "react";
 import type { ResolvedSiteSettings } from "@/content/types";
 import { useJourneyItems } from "@/lib/journey";
+import type { CurrentUser } from "@/lib/auth/session";
 
-export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
+export function Navbar({
+  siteSettings: site,
+  currentUser,
+}: {
+  siteSettings: ResolvedSiteSettings;
+  currentUser: CurrentUser | null;
+}) {
   const [open, setOpen] = useState(false);
   const journeyCount = useJourneyItems().length;
 
@@ -59,6 +66,17 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           >
             Plan My Trip
           </Link>
+          <Link
+            href={currentUser ? "/account" : "/account/login"}
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 text-ink-soft transition hover:border-gold/40 hover:text-ink"
+            aria-label={currentUser ? "My Account" : "Log in"}
+            title={currentUser ? `My Account${currentUser.firstName ? ` — ${currentUser.firstName}` : ""}` : "Log in"}
+          >
+            <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth={1.8}>
+              <circle cx="12" cy="8" r="3.4" />
+              <path d="M4.5 20c1.6-4 4.4-6 7.5-6s5.9 2 7.5 6" strokeLinecap="round" />
+            </svg>
+          </Link>
         </div>
 
         <button
@@ -108,6 +126,13 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               onClick={() => setOpen(false)}
             >
               Plan My Trip
+            </Link>
+            <Link
+              href={currentUser ? "/account" : "/account/login"}
+              className="mt-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium text-ink-soft hover:bg-sand-dim"
+              onClick={() => setOpen(false)}
+            >
+              {currentUser ? `My Account${currentUser.firstName ? ` (${currentUser.firstName})` : ""}` : "Log In / Create Account"}
             </Link>
           </div>
         </nav>

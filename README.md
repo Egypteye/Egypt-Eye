@@ -120,6 +120,56 @@ It runs on **Google Gemini's free tier** — no credit card required.
 The free tier's rate limit is generous for a small business site; if you ever
 outgrow it, the same code works with a paid Gemini key with no changes.
 
+## Setting up accounts, newsletter & the 4% discount system
+
+Customer accounts, the newsletter signup, unique discount codes, saved
+journeys, reservations, and the "My Egypt" portal all run on
+**[Supabase](https://supabase.com)** — a free hosted Postgres database with
+built-in secure authentication (password hashing, email verification,
+password reset are all handled by Supabase Auth, not by this codebase).
+Without it configured, the site still works exactly as before — the
+account/newsletter/reservation UI shows a "not set up yet" state instead of
+crashing.
+
+1. Go to **[supabase.com](https://supabase.com)** → sign up (free, no card
+   required) → **New Project**.
+2. Once it's ready, open the **SQL Editor** and run the contents of
+   `supabase/migrations/0001_init.sql` from this repo once. It creates every
+   table (profiles, newsletter subscribers, discount campaigns/codes,
+   journeys, reservations, etc.) with Row Level Security already configured,
+   and seeds the default "Newsletter 4% Off" campaign.
+3. Go to **Authentication → Email Templates** and turn on **Confirm email**
+   (this is what makes email verification real, not simulated). Under
+   **Authentication → URL Configuration**, set the **Site URL** to your real
+   domain (or `http://localhost:3000` for local dev).
+4. Go to **Project Settings → API** and copy three values into Vercel →
+   Project → Settings → Environment Variables (and your local `.env.local`):
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY` — **secret**, never exposed to the browser;
+     only server code (Route Handlers, Server Actions) is allowed to use it.
+5. Also set `NEXT_PUBLIC_SITE_URL` to your real domain — verification,
+   password reset, and unsubscribe links are built from it.
+6. Redeploy. Discount emails and account emails reuse the same Resend setup
+   from **Setting up email delivery** above — no separate email provider
+   needed.
+
+### Making yourself an admin
+
+The admin dashboards (`/admin`) check `profiles.role = 'admin'`. After
+creating your own account on the live site, open Supabase → **Table
+Editor → profiles**, find your row, and change `role` from `customer` to
+`admin`.
+
+### Payments
+
+There's no payment provider wired in yet — reservations are requests the
+Egypt Eye team follows up on by email/WhatsApp, exactly like the existing
+Customize Your Tour flow. The `reservations` table is deliberately shaped so
+a real checkout (Stripe, using its Coupons/Promotion Codes API rather than a
+second parallel discount system) can be added later without a rework — see
+`supabase/migrations/0001_init.sql`'s comments.
+
 ## Images
 
 Every tour/experience/photoshoot/blog post has an optional **Photo** field
