@@ -61,6 +61,23 @@ export const destinationHub = defineType({
       options: { list: imageTones },
       initialValue: "giza",
     }),
+    defineField({
+      name: "mood",
+      title: "Mood tags (shown as filter buttons above the map)",
+      description: "What kind of trip is this place good for? Used to highlight matching pins when a visitor clicks a mood button.",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "History & Monuments", value: "history" },
+          { title: "Red Sea & Beaches", value: "beaches" },
+          { title: "Desert & Oases", value: "desert" },
+          { title: "Diving & Snorkeling", value: "diving" },
+          { title: "Nile & River Towns", value: "nile" },
+          { title: "Mediterranean Coast", value: "coast" },
+        ],
+      },
+    }),
     defineField({ name: "order", title: "Sort order (lower shows first)", type: "number", initialValue: 0 }),
   ],
   orderings: [{ title: "Sort order", name: "orderAsc", by: [{ field: "order", direction: "asc" }] }],

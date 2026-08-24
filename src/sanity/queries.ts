@@ -58,11 +58,11 @@ export const photoshootBySlugQuery = groq`*[_type == "photoshoot" && slug.curren
 }`;
 
 export const destinationHubsQuery = groq`*[_type == "destinationHub"] | order(order asc) {
-  "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, image, imageTone, order
+  "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, mood, image, imageTone, order
 }`;
 
 export const destinationHubBySlugQuery = groq`*[_type == "destinationHub" && slug.current == $slug][0] {
-  "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, image, imageTone, order
+  "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, mood, image, imageTone, order
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {

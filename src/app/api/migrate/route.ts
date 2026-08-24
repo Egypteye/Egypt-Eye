@@ -214,6 +214,7 @@ export async function GET(request: NextRequest) {
         matchNames: d.matchNames,
         mapX: d.mapX,
         mapY: d.mapY,
+        mood: d.mood,
         imageTone: d.imageTone,
         order: i,
       });

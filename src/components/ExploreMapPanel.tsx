@@ -1,0 +1,79 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { EgyptMap } from "./EgyptMap";
+import type { DestinationHub, EgyptCity, Mood } from "@/content/types";
+
+const MOODS: { value: Mood; label: string }[] = [
+  { value: "history", label: "History & Monuments" },
+  { value: "beaches", label: "Red Sea & Beaches" },
+  { value: "desert", label: "Desert & Oases" },
+  { value: "diving", label: "Diving & Snorkeling" },
+  { value: "nile", label: "Nile & River Towns" },
+  { value: "coast", label: "Mediterranean Coast" },
+];
+
+// The map + everything directly around it on /explore-egypt: the mood
+// buttons that help an undecided visitor narrow things down, the map
+// itself, and the flat list of hub names below it. Kept as one client
+// component (rather than adding "use client" to the whole page) since the
+// mood-filter selection is the only piece of state involved.
+export function ExploreMapPanel({
+  hubs,
+  cities,
+  selectedSlug,
+}: {
+  hubs: DestinationHub[];
+  cities: EgyptCity[];
+  selectedSlug: string;
+}) {
+  const [mood, setMood] = useState<Mood | null>(null);
+
+  return (
+    <div className="lg:sticky lg:top-24 lg:self-start">
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/50">
+          Not sure where to start? Pick a mood
+        </p>
+        <div className="mt-2.5 flex flex-wrap gap-2">
+          {MOODS.map((m) => (
+            <button
+              key={m.value}
+              type="button"
+              onClick={() => setMood((cur) => (cur === m.value ? null : m.value))}
+              aria-pressed={mood === m.value}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                mood === m.value
+                  ? "border-gold-dark bg-gold-dark text-cream"
+                  : "border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <EgyptMap hubs={hubs} cities={cities} selectedSlug={selectedSlug} linkBase="/explore-egypt" moodFilter={mood} />
+      </div>
+
+      <div className="mt-5 flex flex-wrap gap-2">
+        {hubs.map((hub) => (
+          <Link
+            key={hub.slug}
+            href={`/explore-egypt/${hub.slug}`}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              hub.slug === selectedSlug
+                ? "border-gold-dark bg-gold/15 text-gold-dark"
+                : "border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink"
+            }`}
+          >
+            {hub.name}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}

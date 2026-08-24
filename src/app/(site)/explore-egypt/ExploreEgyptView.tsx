@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { Container } from "@/components/Container";
-import { EgyptMap } from "@/components/EgyptMap";
+import { ExploreMapPanel } from "@/components/ExploreMapPanel";
 import { ExploreModeToggle } from "@/components/ExploreModeToggle";
 import { DestinationPanel } from "./DestinationPanel";
 import { experiencesForHub, photoshootsForHub, storiesForHub, toursForHub } from "./data";
+import { egyptCities } from "@/content/egyptCities";
 import type { DestinationHub, Experience, Photoshoot, ResolvedListingPages, Story, Tour } from "@/content/types";
 
 export function ExploreEgyptView({
@@ -42,24 +42,7 @@ export function ExploreEgyptView({
       <section className="bg-sand py-10 sm:py-14">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr] lg:items-start lg:gap-10">
-            <div className="lg:sticky lg:top-24 lg:self-start">
-              <EgyptMap hubs={hubs} selectedSlug={selectedHub.slug} linkBase="/explore-egypt" />
-              <div className="mt-5 flex flex-wrap gap-2">
-                {hubs.map((hub) => (
-                  <Link
-                    key={hub.slug}
-                    href={`/explore-egypt/${hub.slug}`}
-                    className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                      hub.slug === selectedHub.slug
-                        ? "border-gold-dark bg-gold/15 text-gold-dark"
-                        : "border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink"
-                    }`}
-                  >
-                    {hub.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
+            <ExploreMapPanel hubs={hubs} cities={egyptCities} selectedSlug={selectedHub.slug} />
 
             <DestinationPanel
               hub={selectedHub}

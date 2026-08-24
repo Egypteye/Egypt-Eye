@@ -335,6 +335,12 @@ export type Destination = {
 // locations` string tags against `matchNames` (case-sensitive), so the
 // relationship is driven entirely by those existing tag fields — no new
 // reference field to keep in sync.
+// The fixed set of "what kind of trip are you in the mood for" tags used to
+// filter the Explore Egypt map — shared between DestinationHub.mood and
+// EgyptCity.mood so both full destinations and not-yet-offered cities can be
+// highlighted by the same mood buttons.
+export type Mood = "history" | "beaches" | "desert" | "diving" | "nile" | "coast";
+
 export type DestinationHub = {
   slug: string;
   name: string;
@@ -344,9 +350,23 @@ export type DestinationHub = {
   matchNames: string[];
   mapX: number; // 0-100, position on the stylized map (left %)
   mapY: number; // 0-100, position on the stylized map (top %)
+  mood?: Mood[];
   image?: SanityImage;
   imageTone: ImageTone;
   order: number;
+};
+
+// A real Egyptian city shown on the Explore Egypt map that Egypt Eye doesn't
+// (yet) run tours in — no dedicated page, just a marker with a "not yet
+// offered" note so the map reads as a complete, honest map of the country
+// rather than only the places currently for sale.
+export type EgyptCity = {
+  slug: string;
+  name: string;
+  region: string;
+  mapX: number;
+  mapY: number;
+  mood: Mood[];
 };
 
 export type Interest = {
