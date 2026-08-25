@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
   const supabase = createAdminSupabaseClient();
   const { data: subscriber } = await supabase
     .from("newsletter_subscribers")
-    .select("id, email, first_name, verified, unsubscribed, unsubscribe_token")
+    .select("id, email, first_name, verified, unsubscribed, unsubscribe_token, customer_id")
     .eq("verify_token", token)
     .maybeSingle();
 
@@ -39,7 +39,26 @@ export async function GET(request: NextRequest) {
       .eq("id", subscriber.id);
   }
 
-  const code = await mintDiscountCode({ campaignSlug: "newsletter-4-off", subscriberId: subscriber.id });
+  // The signup trigger (handle_new_user) only links a newsletter subscriber
+  // to an account at the moment that account is *created* — if someone
+  // subscribes to the newsletter after already having an account (same
+  // email), that link never happens automatically. Catch it here instead,
+  // so the discount code this mints is attributed to their account and
+  // shows up in My Account, not just their inbox.
+  let customerId = subscriber.customer_id as string | null;
+  if (!customerId) {
+    const { data: profile } = await supabase.from("profiles").select("id").eq("email", subscriber.email).maybeSingle();
+    if (profile) {
+      customerId = profile.id;
+      await supabase.from("newsletter_subscribers").update({ customer_id: customerId }).eq("id", subscriber.id);
+    }
+  }
+
+  const code = await mintDiscountCode({
+    campaignSlug: "newsletter-4-off",
+    subscriberId: subscriber.id,
+    customerId: customerId ?? undefined,
+  });
 
   if (code) {
     const unsubscribeUrl = `${SITE_URL}/api/newsletter/unsubscribe?token=${subscriber.unsubscribe_token}`;

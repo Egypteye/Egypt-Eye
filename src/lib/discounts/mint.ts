@@ -31,7 +31,22 @@ export async function mintDiscountCode({
   let existingQuery = supabase.from("discount_codes").select("*").eq("campaign_id", campaign.id);
   existingQuery = subscriberId ? existingQuery.eq("subscriber_id", subscriberId) : existingQuery.eq("customer_id", customerId!);
   const { data: existing } = await existingQuery.maybeSingle<DiscountCodeRow>();
-  if (existing) return existing;
+  if (existing) {
+    // A code minted while this person was only a newsletter subscriber
+    // (no account yet, or not yet linked) — now that we know their
+    // customer_id, attach it so the code shows up in their My Account page
+    // instead of staying orphaned to just the subscriber row.
+    if (customerId && !existing.customer_id) {
+      const { data: linked } = await supabase
+        .from("discount_codes")
+        .update({ customer_id: customerId })
+        .eq("id", existing.id)
+        .select("*")
+        .single<DiscountCodeRow>();
+      return linked ?? existing;
+    }
+    return existing;
+  }
 
   const expiresAt = campaign.code_validity_days
     ? new Date(Date.now() + campaign.code_validity_days * 86_400_000).toISOString()
