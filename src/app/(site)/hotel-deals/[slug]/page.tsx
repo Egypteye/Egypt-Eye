@@ -142,7 +142,12 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
               <p className="mt-2 text-sm text-ink-soft/70">
                 {hotel.deal_description || "Ask us about our current rate for this hotel."}
               </p>
-              <RateRequestButton hotelId={hotel.id} hotelName={hotel.name} className="mt-5 w-full" />
+              <RateRequestButton
+                hotelId={hotel.id}
+                hotelName={hotel.name}
+                rooms={rooms.map((r) => ({ id: r.id, name: r.name }))}
+                className="mt-5 w-full"
+              />
               <p className="mt-3 text-xs text-ink-soft/50">
                 Rates below are Egypt Eye deal rates, not live booking availability — we confirm the final price and
                 availability with you before you book.

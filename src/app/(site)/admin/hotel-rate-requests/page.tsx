@@ -8,6 +8,12 @@ export const metadata = { title: "Hotel Rate Requests", robots: { index: false, 
 type RateRequest = {
   id: string;
   hotel_name_snapshot: string;
+  room_name_snapshot: string | null;
+  rooms_count: number | null;
+  check_in: string | null;
+  check_out: string | null;
+  guests: number | null;
+  meal_plan: string | null;
   name: string | null;
   email: string;
   message: string | null;
@@ -27,7 +33,9 @@ export default async function AdminHotelRateRequestsPage() {
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase
     .from("hotel_rate_requests")
-    .select("id, hotel_name_snapshot, name, email, message, status, created_at")
+    .select(
+      "id, hotel_name_snapshot, room_name_snapshot, rooms_count, check_in, check_out, guests, meal_plan, name, email, message, status, created_at"
+    )
     .order("created_at", { ascending: false })
     .limit(500);
 
@@ -70,6 +78,28 @@ export default async function AdminHotelRateRequestsPage() {
                 </div>
               </div>
             </div>
+            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4">
+              <div>
+                <dt className="text-xs text-ink-soft/50">Room</dt>
+                <dd className="text-ink">{r.room_name_snapshot ?? "Any"}</dd>
+              </div>
+              <div>
+                <dt className="text-xs text-ink-soft/50">Rooms / Guests</dt>
+                <dd className="text-ink">
+                  {r.rooms_count ?? "—"} / {r.guests ?? "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs text-ink-soft/50">Check-in / out</dt>
+                <dd className="text-ink">
+                  {r.check_in ?? "—"} → {r.check_out ?? "—"}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs text-ink-soft/50">Meal Plan</dt>
+                <dd className="text-ink">{r.meal_plan ?? "—"}</dd>
+              </div>
+            </dl>
             {r.message && <p className="mt-3 whitespace-pre-wrap text-sm text-ink-soft/80">{r.message}</p>}
           </div>
         ))}

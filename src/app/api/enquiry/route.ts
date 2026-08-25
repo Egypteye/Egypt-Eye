@@ -17,12 +17,14 @@ const ITEM_PATHS: Record<string, string> = {
   tour: "tours",
   experience: "experiences",
   photoshoot: "photoshoots",
+  signatureExperience: "signature-experiences",
 };
 
 const ITEM_LABELS: Record<string, string> = {
   tour: "Tour",
   experience: "Experience",
   photoshoot: "Photoshoot",
+  signatureExperience: "Signature Experience",
 };
 
 function clean(value: unknown, max = 300): string {
@@ -58,6 +60,9 @@ export async function POST(request: NextRequest) {
   const startDate = clean(body.startDate, 40);
   const endDate = clean(body.endDate, 40);
   const flexibleDates = body.flexibleDates === true;
+  const hotel = clean(body.hotel, 200);
+  const pickupLocation = clean(body.pickupLocation, 300);
+  const preferredTime = clean(body.preferredTime, 100);
   const message = clean(body.message, 2000);
 
   if (!ITEM_PATHS[itemType] || !itemSlug || !itemTitle) {
@@ -93,6 +98,9 @@ export async function POST(request: NextRequest) {
     nationality,
     travelDates,
     travelers,
+    hotel: hotel || undefined,
+    pickupLocation: pickupLocation || undefined,
+    preferredTime: preferredTime || undefined,
     message: message || undefined,
   });
 

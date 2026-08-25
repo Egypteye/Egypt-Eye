@@ -5,6 +5,8 @@ import { useEffect, useState, type FormEvent } from "react";
 const inputClass =
   "w-full rounded-lg border border-black/10 bg-sand px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-gold";
 
+const MEAL_PLANS = ["Room Only", "Bed & Breakfast", "Half Board", "Full Board", "All Inclusive"];
+
 function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: React.ReactNode }) {
   return (
     <label htmlFor={htmlFor} className="flex flex-col gap-1.5">
@@ -17,10 +19,13 @@ function Field({ label, htmlFor, children }: { label: string; htmlFor: string; c
 export function RateRequestButton({
   hotelId,
   hotelName,
+  rooms = [],
   className = "",
 }: {
   hotelId: string;
   hotelName: string;
+  /** Populates the room-type dropdown — pass the hotel's own rooms so the request is tied to a real room type. */
+  rooms?: { id: string; name: string }[];
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -33,12 +38,22 @@ export function RateRequestButton({
       >
         Check Latest Rates
       </button>
-      {open && <RateRequestModal hotelId={hotelId} hotelName={hotelName} onClose={() => setOpen(false)} />}
+      {open && <RateRequestModal hotelId={hotelId} hotelName={hotelName} rooms={rooms} onClose={() => setOpen(false)} />}
     </>
   );
 }
 
-function RateRequestModal({ hotelId, hotelName, onClose }: { hotelId: string; hotelName: string; onClose: () => void }) {
+function RateRequestModal({
+  hotelId,
+  hotelName,
+  rooms,
+  onClose,
+}: {
+  hotelId: string;
+  hotelName: string;
+  rooms: { id: string; name: string }[];
+  onClose: () => void;
+}) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState("");
 
@@ -60,6 +75,9 @@ function RateRequestModal({ hotelId, hotelName, onClose }: { hotelId: string; ho
     setError("");
 
     const form = new FormData(e.currentTarget);
+    const roomId = String(form.get("roomId") ?? "");
+    const roomName = rooms.find((r) => r.id === roomId)?.name ?? "";
+
     try {
       const res = await fetch("/api/hotel-rate-request", {
         method: "POST",
@@ -67,6 +85,13 @@ function RateRequestModal({ hotelId, hotelName, onClose }: { hotelId: string; ho
         body: JSON.stringify({
           hotelId,
           hotelName,
+          roomId,
+          roomName,
+          roomsCount: form.get("roomsCount"),
+          checkIn: form.get("checkIn"),
+          checkOut: form.get("checkOut"),
+          guests: form.get("guests"),
+          mealPlan: form.get("mealPlan"),
           name: form.get("name"),
           email: form.get("email"),
           message: form.get("message"),
@@ -124,7 +149,8 @@ function RateRequestModal({ hotelId, hotelName, onClose }: { hotelId: string; ho
             </span>
             <p className="font-display text-lg font-semibold text-ink">Request sent</p>
             <p className="text-sm text-ink-soft/70">
-              Our team will confirm the latest rates and availability for {hotelName} and get back to you by email.
+              Our reservations team will confirm the latest rate, availability, and any current discount for{" "}
+              {hotelName} and get back to you by email.
             </p>
             <button
               type="button"
@@ -137,22 +163,64 @@ function RateRequestModal({ hotelId, hotelName, onClose }: { hotelId: string; ho
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6">
             <p className="text-sm text-ink-soft/70">
-              The rates shown are our current Egypt Eye deal rates, not live availability. Leave your email and
-              we&rsquo;ll confirm the latest pricing and availability for your dates.
+              The rates shown are our current Egypt Eye deal rates, not live availability. Tell us your dates and
+              we&rsquo;ll confirm the latest price, availability, and any current discount by email.
             </p>
+
+            {rooms.length > 0 && (
+              <Field label="Room Type" htmlFor="rate-room">
+                <select id="rate-room" name="roomId" defaultValue="" className={inputClass}>
+                  <option value="">Not sure / any room type</option>
+                  {rooms.map((r) => (
+                    <option key={r.id} value={r.id}>
+                      {r.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            )}
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Check-in" htmlFor="rate-checkin">
+                <input id="rate-checkin" name="checkIn" type="date" className={inputClass} />
+              </Field>
+              <Field label="Check-out" htmlFor="rate-checkout">
+                <input id="rate-checkout" name="checkOut" type="date" className={inputClass} />
+              </Field>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Rooms" htmlFor="rate-rooms-count">
+                <input id="rate-rooms-count" name="roomsCount" type="number" min={1} max={20} defaultValue={1} className={inputClass} />
+              </Field>
+              <Field label="Guests" htmlFor="rate-guests">
+                <input id="rate-guests" name="guests" type="number" min={1} max={40} defaultValue={2} className={inputClass} />
+              </Field>
+            </div>
+
+            <Field label="Meal Plan" htmlFor="rate-meal-plan">
+              <select id="rate-meal-plan" name="mealPlan" defaultValue="Bed & Breakfast" className={inputClass}>
+                {MEAL_PLANS.map((m) => (
+                  <option key={m} value={m}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
             <Field label="Name" htmlFor="rate-name">
               <input id="rate-name" name="name" type="text" maxLength={200} className={inputClass} />
             </Field>
             <Field label="Email" htmlFor="rate-email">
               <input id="rate-email" name="email" type="email" required maxLength={200} className={inputClass} />
             </Field>
-            <Field label="Your dates or any other details" htmlFor="rate-message">
+            <Field label="Special requests" htmlFor="rate-message">
               <textarea
                 id="rate-message"
                 name="message"
                 rows={3}
                 maxLength={2000}
-                placeholder="e.g. Check-in and check-out dates, number of guests"
+                placeholder="Anything else we should know?"
                 className={`${inputClass} resize-none`}
               />
             </Field>
@@ -164,7 +232,7 @@ function RateRequestModal({ hotelId, hotelName, onClose }: { hotelId: string; ho
               disabled={status === "submitting"}
               className="mt-1 rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
             >
-              {status === "submitting" ? "Sending…" : "Request Latest Rates"}
+              {status === "submitting" ? "Sending…" : "Request Latest Rate"}
             </button>
           </form>
         )}

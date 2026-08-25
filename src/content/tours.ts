@@ -16,6 +16,100 @@ function experiencesBySlug(...slugs: string[]) {
 
 export const tours: Tour[] = [
   {
+    slug: "cairo-giza-nile-cruise-signature-trip",
+    title: "Cairo, Giza & Nile Cruise Signature Trip",
+    tagline: "Cairo and Giza, then a private Nile cruise from Aswan to Luxor.",
+    category: "multi-day",
+    featured: true,
+    travelStyle: ["Cultural", "Private", "Luxury"],
+    duration: "8 days / 7 nights",
+    lengthDays: 8,
+    cities: 4,
+    destinations: ["Cairo", "Giza", "Aswan", "Luxor"],
+    rating: { score: 4.9, count: 12 },
+    badge: "Signature Trip",
+    imageLabel: "Nile Cruise",
+    imageTone: "nile",
+    image: "/photos/pexels-37559132.jpg",
+    description:
+      "Our signature Cairo, Giza & Nile Cruise trip — three days exploring Cairo and the Giza Plateau, then a flight to Aswan to begin a private Nile cruise, sailing with the river's current through Kom Ombo and Edfu to Luxor, before flying back to Cairo.",
+    highlights: [
+      "Nine Pyramids professional photoshoot",
+      "Giza Pyramids & Sphinx",
+      "Egyptian Museum & Old Cairo",
+      "5-star Nile Cruise, Aswan to Luxor",
+      "Kom Ombo & Edfu temples",
+      "Karnak & Luxor temples",
+      "Valley of the Kings",
+    ],
+    included: [
+      "Nine Pyramids professional photoshoot",
+      "Professional content creator",
+      "Private air-conditioned sightseeing vehicle",
+      "Private English-speaking Egyptologist guide",
+      "5-star Nile Cruise cabin, Aswan to Luxor",
+      "Meals aboard the cruise",
+      "All cruise shore excursions",
+      "Lunch on Cairo/Giza days",
+      "Entrance fees",
+    ],
+    excluded: [
+      "Egypt visa",
+      "Cairo hotels",
+      "Domestic flights (Cairo–Aswan, Luxor–Cairo)",
+      "Tips",
+      "Personal spending",
+      "Optional activities",
+    ],
+    itinerary: [
+      {
+        day: 1,
+        title: "Arrival in Cairo",
+        description: "A relaxing, free day to settle in and recover from your flight — no sightseeing scheduled.",
+      },
+      {
+        day: 2,
+        title: "Giza & the Pyramids",
+        description:
+          "The Giza Plateau — Pyramids, Sphinx, and the Valley Temple, with a camel ride, the Nine Pyramids professional photoshoot, and lunch.",
+      },
+      {
+        day: 3,
+        title: "Cairo Sightseeing",
+        description: "The Egyptian Museum, Old/Coptic Cairo, and Khan el-Khalili bazaar.",
+      },
+      {
+        day: 4,
+        title: "Fly to Aswan & Embark",
+        description:
+          "A private transfer to Cairo airport for your flight to Aswan, then embarkation on your Nile Cruise ship. Philae Temple and the Aswan High Dam in the afternoon.",
+      },
+      {
+        day: 5,
+        title: "Kom Ombo & Edfu",
+        description:
+          "The ship sails north toward Luxor — Kom Ombo's riverside temple in the morning, then Edfu Temple by horse-drawn carriage from the dock.",
+      },
+      {
+        day: 6,
+        title: "Arrive Luxor — East Bank",
+        description: "The ship arrives in Luxor. Karnak Temple and Luxor Temple in the afternoon.",
+      },
+      {
+        day: 7,
+        title: "Luxor — West Bank & Disembark",
+        description: "The Valley of the Kings and Hatshepsut Temple, then disembarkation.",
+      },
+      {
+        day: 8,
+        title: "Fly to Cairo & Departure",
+        description: "A private transfer to Luxor airport for your flight back to Cairo, connecting to your onward journey.",
+      },
+    ],
+    relatedExperiences: experiencesBySlug("atv-quad-bikes-sahara", "quiet-nile-felucca-tour", "food-tour"),
+    price: { amount: 790 },
+  },
+  {
     slug: "1-day-giza-tour",
     title: "1 Day Giza Tour: Exploring Ancient Wonders",
     tagline: "Pyramids, Sphinx, and a free private photoshoot — all in one day.",

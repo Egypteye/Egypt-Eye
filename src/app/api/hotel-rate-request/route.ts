@@ -44,6 +44,13 @@ export async function POST(request: NextRequest) {
 
   const hotelId = clean(body.hotelId, 100);
   const hotelName = clean(body.hotelName, 200);
+  const roomId = clean(body.roomId, 100);
+  const roomName = clean(body.roomName, 200);
+  const roomsCount = clean(body.roomsCount, 10);
+  const checkIn = clean(body.checkIn, 40);
+  const checkOut = clean(body.checkOut, 40);
+  const guests = clean(body.guests, 10);
+  const mealPlan = clean(body.mealPlan, 100);
   const name = clean(body.name, 200);
   const email = clean(body.email, 200);
   const message = clean(body.message, 2000);
@@ -58,6 +65,13 @@ export async function POST(request: NextRequest) {
     .insert({
       hotel_id: hotelId,
       hotel_name_snapshot: hotelName,
+      room_id: roomId || null,
+      room_name_snapshot: roomName || null,
+      rooms_count: roomsCount ? Number(roomsCount) : null,
+      check_in: checkIn || null,
+      check_out: checkOut || null,
+      guests: guests ? Number(guests) : null,
+      meal_plan: mealPlan || null,
       name: name || null,
       email,
       message: message || null,
@@ -75,6 +89,12 @@ export async function POST(request: NextRequest) {
     const site = await getSiteSettings();
     const { subject, html, text } = hotelRateRequestEmail({
       hotelName,
+      roomName: roomName || undefined,
+      roomsCount: roomsCount || undefined,
+      checkIn: checkIn || undefined,
+      checkOut: checkOut || undefined,
+      guests: guests || undefined,
+      mealPlan: mealPlan || undefined,
       name: name || undefined,
       email,
       message: message || undefined,

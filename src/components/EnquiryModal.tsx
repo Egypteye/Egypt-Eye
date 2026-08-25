@@ -2,12 +2,13 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
-type ItemType = "tour" | "experience" | "photoshoot";
+type ItemType = "tour" | "experience" | "photoshoot" | "signatureExperience";
 
 const ITEM_LABELS: Record<ItemType, string> = {
   tour: "Tour",
   experience: "Experience",
   photoshoot: "Photoshoot",
+  signatureExperience: "Signature Experience",
 };
 
 const inputClass =
@@ -67,6 +68,9 @@ export function EnquiryModal({
       endDate: form.get("endDate"),
       flexibleDates,
       travelers: form.get("travelers"),
+      hotel: form.get("hotel"),
+      pickupLocation: form.get("pickupLocation"),
+      preferredTime: form.get("preferredTime"),
       message: form.get("message"),
     };
 
@@ -190,6 +194,25 @@ export function EnquiryModal({
               />
               My travel dates are flexible
             </label>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Hotel (for pickup)" htmlFor="enq-hotel">
+                <input id="enq-hotel" name="hotel" type="text" maxLength={200} placeholder="Optional" className={inputClass} />
+              </Field>
+              <Field label="Preferred Time" htmlFor="enq-time">
+                <input id="enq-time" name="preferredTime" type="text" maxLength={100} placeholder="e.g. Morning" className={inputClass} />
+              </Field>
+            </div>
+            <Field label="Pickup / Drop-off Location" htmlFor="enq-pickup">
+              <input
+                id="enq-pickup"
+                name="pickupLocation"
+                type="text"
+                maxLength={300}
+                placeholder="Optional — hotel address or area, if different from above"
+                className={inputClass}
+              />
+            </Field>
 
             <Field label="Additional Questions or Requests" htmlFor="enq-message">
               <textarea

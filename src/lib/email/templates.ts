@@ -145,6 +145,9 @@ export function tourEnquiryEmail({
   nationality,
   travelDates,
   travelers,
+  hotel,
+  pickupLocation,
+  preferredTime,
   message,
 }: {
   itemLabel: string;
@@ -156,6 +159,9 @@ export function tourEnquiryEmail({
   nationality: string;
   travelDates: string;
   travelers: string;
+  hotel?: string;
+  pickupLocation?: string;
+  preferredTime?: string;
   message?: string;
 }) {
   const rows: [string, string][] = [
@@ -165,6 +171,9 @@ export function tourEnquiryEmail({
     ["Nationality", nationality],
     ["Travel date(s)", travelDates],
     ["Number of travelers", travelers],
+    ...(hotel ? ([["Hotel", hotel]] as [string, string][]) : []),
+    ...(pickupLocation ? ([["Pickup / Drop-off", pickupLocation]] as [string, string][]) : []),
+    ...(preferredTime ? ([["Preferred time", preferredTime]] as [string, string][]) : []),
   ];
   const rowsHtml = rows
     .map(
@@ -393,12 +402,24 @@ export function collaborationApplicationEmail({
 
 export function hotelRateRequestEmail({
   hotelName,
+  roomName,
+  roomsCount,
+  checkIn,
+  checkOut,
+  guests,
+  mealPlan,
   name,
   email,
   message,
   reviewUrl,
 }: {
   hotelName: string;
+  roomName?: string;
+  roomsCount?: string;
+  checkIn?: string;
+  checkOut?: string;
+  guests?: string;
+  mealPlan?: string;
   name?: string;
   email: string;
   message?: string;
@@ -406,6 +427,12 @@ export function hotelRateRequestEmail({
 }) {
   const rows: [string, string][] = [
     ["Hotel", hotelName],
+    ["Room type", roomName || "Not specified"],
+    ["Number of rooms", roomsCount || "Not specified"],
+    ["Check-in", checkIn || "Not specified"],
+    ["Check-out", checkOut || "Not specified"],
+    ["Guests", guests || "Not specified"],
+    ["Meal plan", mealPlan || "Not specified"],
     ["Name", name || "Not provided"],
     ["Email", email],
   ];
@@ -417,10 +444,11 @@ export function hotelRateRequestEmail({
     .join("");
 
   const html = baseLayout({
-    preheader: `${email} wants the latest rates for ${hotelName}.`,
+    preheader: `${email} wants the latest rate and availability for ${hotelName}.`,
     bodyHtml: `
       <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Hotel Rate Request</p>
       <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(hotelName)}</p>
+      <p style="margin:0 0 16px;font-weight:600;">Requesting the latest available rate, availability, and any current discount for this room and these dates.</p>
       <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
       ${
         message
@@ -433,7 +461,7 @@ export function hotelRateRequestEmail({
     footerHtml: `Sent from the "Check Latest Rates" button on the Hotel Deals page.`,
   });
 
-  const text = `New Hotel Rate Request\n${hotelName}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n${
+  const text = `New Hotel Rate Request\n${hotelName}\nRequesting the latest available rate, availability, and any current discount.\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n${
     message ? `\nDetails:\n${message}\n` : ""
   }\nReview: ${reviewUrl}`;
 

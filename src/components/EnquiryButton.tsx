@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { EnquiryModal } from "./EnquiryModal";
 
-type ItemType = "tour" | "experience" | "photoshoot";
+type ItemType = "tour" | "experience" | "photoshoot" | "signatureExperience";
 
 // Replaces the old plain `mailto:` link, which only ever carried a subject
 // line and no real customer details. Opens a short popup form instead —

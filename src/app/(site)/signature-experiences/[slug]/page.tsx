@@ -11,6 +11,7 @@ import { HostCard } from "@/components/HostCard";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { StoryCard } from "@/components/StoryCard";
+import { EnquiryButton } from "@/components/EnquiryButton";
 import {
   getAllSignatureExperienceSlugs,
   getSignatureExperienceBySlug,
@@ -291,14 +292,21 @@ export default async function SignatureExperienceDetailPage({
               <div className="mt-1">
                 <PriceTag price={experience.price} />
               </div>
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-2 rounded-full bg-gold px-8 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
-              >
-                {ctaLabel}
-              </a>
+              <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+                <a
+                  href={whatsappHref}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full bg-gold px-8 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
+                >
+                  {ctaLabel}
+                </a>
+                {!isComingSoon && (
+                  <div className="[&>button]:w-auto [&>button]:border-cream/25 [&>button]:px-8 [&>button]:py-3.5 [&>button]:text-cream/80 [&>button]:hover:bg-cream/10">
+                    <EnquiryButton itemType="signatureExperience" itemTitle={experience.name} itemSlug={experience.slug} />
+                  </div>
+                )}
+              </div>
             </div>
           </Reveal>
         </Container>
