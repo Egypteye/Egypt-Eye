@@ -203,6 +203,7 @@ export const destinationHubs: DestinationHub[] = [
     mapX: 60.7,
     mapY: 21.4,
     mood: ["beaches"],
+    image: "/photos/pexels-17814812.jpg",
     imageTone: "redsea",
     order: 13,
   },

@@ -16,6 +16,7 @@ export const events: EventCountdown[] = [
     displayTitle: "The sky is waiting.",
     supportingText:
       "On August 2, 2027, totality reaches Luxor at 1:02 PM local time — roughly six minutes and twenty-two seconds when the sun disappears entirely. It's the longest total solar eclipse anywhere on Earth until 2114.",
+    backgroundImage: "/photos/pexels-5572492.jpg",
     backgroundTone: "nile",
     dayOfMessage:
       "Today is the day. Totality reaches Luxor at 1:02 PM local time (EEST) — look up.",
