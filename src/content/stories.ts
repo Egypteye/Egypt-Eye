@@ -5339,26 +5339,107 @@ export const stories: Story[] = [
     destinations: ["El Gouna", "Soma Bay", "Red Sea"],
     primaryKeyword: "el gouna vs soma bay",
     secondaryKeywords: ["el gouna egypt", "soma bay egypt", "red sea lagoon towns"],
-    relatedTours: toursBySlug("el-gouna-lagoon-day", "soma-bay-watersports-relaxation"),
-    seoTitle: "El Gouna and Soma Bay: Egypt's Purpose-Built Red Sea Resort Towns",
+    relatedTours: toursBySlug(
+      "el-gouna-lagoon-day",
+      "soma-bay-watersports-relaxation",
+      "hurghada-red-sea-diving-snorkeling",
+      "red-sea-relaxation"
+    ),
+    seoTitle: "El Gouna vs Soma Bay: Egypt's Purpose-Built Red Sea Resorts",
     seoDescription:
-      "El Gouna and Soma Bay are planned resort towns built around lagoons and watersports. What sets each apart from Hurghada and Sharm El Sheikh.",
+      "El Gouna and Soma Bay are planned Red Sea resort towns built around lagoons, kitesurfing, and diving. What sets each apart, and which suits your trip.",
     body: [
       p(
-        "Not every Red Sea town grew up organically — El Gouna and Soma Bay were both built from scratch as planned resort developments, and it shows, in a good way: wide lagoons, purpose-built marinas, and infrastructure designed around watersports rather than retrofitted for them."
+        "Most Red Sea towns in Egypt grew up around a fishing village or a diving boom and expanded outward in whatever direction the coastline allowed. El Gouna and Soma Bay didn't. Both were designed from scratch as planned resort developments — lagoons dug where developers wanted lagoons, marinas built where a marina made sense, roads and bridges laid out before a single hotel went up. It shows, and mostly in a good way: the infrastructure exists for the activities people actually come here to do, rather than being retrofitted around a town that grew for other reasons."
       ),
-      h2("El Gouna"),
       p(
-        "Built across a network of man-made lagoons and islands connected by bridges, El Gouna has developed a reputation as one of the more upscale, design-conscious resort towns on the Red Sea — golf courses, a marina, and a lagoon system particularly well suited to kitesurfing, thanks to consistent wind conditions."
+        "They also get compared to each other constantly, which is fair, since both sit on the same stretch of Red Sea coast within a couple of hours of Hurghada and both lean heavily on watersports. But they're not really substitutes for one another. They're built for slightly different kinds of trips, and knowing the difference before you book matters more here than it does at most Red Sea destinations."
       ),
-      h2("Soma Bay"),
+      h2("El Gouna: A Real Town Built Around Lagoons"),
       p(
-        "Further south, Soma Bay sits on its own peninsula, largely occupied by a small number of large resort properties rather than a town in the conventional sense. It's built heavily around watersports — kitesurfing and windsurfing especially, thanks to reliable Red Sea winds — alongside diving access and a genuinely quiet, resort-only atmosphere."
+        "El Gouna sits about twenty minutes north of Hurghada, developed since the late 1980s across a network of man-made lagoons and small islands connected by bridges and, in places, by boat. It reads less like a resort compound and more like an actual town — Downtown El Gouna has restaurants, cafes, bars, and a walkable promenade that stays lively well past dinner, which is unusual for a Red Sea resort area and part of why the town has built such a loyal following, especially among Egyptians and Europeans who return year after year."
       ),
-      h2("Which Fits Your Trip"),
       p(
-        "Both work well as an add-on to a Cairo-and-Nile itinerary rather than a standalone destination — a few days of lagoon and reef time to close out a longer trip. El Gouna suits travelers who want a real town with restaurants and nightlife alongside the resort; Soma Bay suits those who want a quieter, more self-contained few days focused purely on the water."
+        "The lagoon system is the other half of the story. El Gouna's combination of shallow, sheltered water and consistent wind has made it one of the more internationally recognized kitesurfing destinations on the Red Sea, with several schools operating directly on the lagoons and conditions gentle enough for complete beginners. The town also has its own marina — Abu Tig Marina, lined with yachts and waterfront restaurants — golf courses, a small airport with seasonal charter connections, and boat access to nearby snorkeling spots like Mahmya Island and the dugong-feeding grounds at Abu Dabbab, both popular half-day trips from town."
       ),
+      h2("Soma Bay: A Peninsula Built for Wind and Water"),
+      p(
+        "Soma Bay is a different proposition entirely. It occupies its own narrow peninsula south of Hurghada, near Safaga, and it isn't a town at all — there's no downtown, no independent restaurant scene, no wandering after dinner. It's a small cluster of large resort properties, each fairly self-contained, connected by a single access road onto the peninsula."
+      ),
+      p(
+        "What Soma Bay does have is exceptional wind. The peninsula's shape channels a reliable side-shore breeze that's made it one of the more serious kitesurfing and windsurfing destinations in Egypt, with dedicated watersports centers, rental equipment, and instruction aimed at both beginners and experienced riders looking for consistent conditions rather than a lucky day. Diving is strong here too, with several well-regarded reef sites a short boat ride from the peninsula's own dive centers, and one of the resorts sits alongside a golf course designed by Gary Player, framed by desert on one side and the Red Sea on the other."
+      ),
+      callout(
+        "Wind is seasonal on the Red Sea, strongest and most consistent from around March through November. If kitesurfing or windsurfing is the main reason for the trip, that window matters more than which specific town you choose — check conditions for your travel dates before booking either destination.",
+        { title: "Timing the Wind", tone: "Info" }
+      ),
+      h2("Diving and Snorkeling From Each Town"),
+      p(
+        "Diving is strong from both bases, though the character of it differs. El Gouna's dive sites lie mostly offshore in the open Red Sea, reached by boat, with a mix of reef and wreck diving popular with certified divers, alongside beginner-friendly introductory dives run from several PADI centers in town. The lagoons themselves aren't diving water — they're for kitesurfing and calm-water swimming — so any diving day starts with a boat transfer out to the open sea."
+      ),
+      p(
+        "Soma Bay's reefs sit closer to the peninsula itself, with several well-regarded sites a short boat ride from the resorts' own dive centers, making it easy to fit a couple of dives into an otherwise low-key beach day without losing much of the morning to transfers. Snorkelers at both destinations have house-reef or near-shore options, though the more memorable coral and fish life at either town usually still means a short boat trip rather than walking straight off the beach.",
+      ),
+      h2("A Genuinely Different Pace"),
+      p(
+        "The clearest way to think about the difference is pace. El Gouna gives you somewhere to go in the evening — a proper dinner out, a walk along the marina, a bar with other people in it. Soma Bay gives you almost nowhere to go except back to your own resort, which for a lot of travelers is exactly the point. After a busy stretch of temples and museums in Cairo and Luxor, a few days where the only decision is which pool or which reef can be a genuine relief rather than a limitation."
+      ),
+      p(
+        "Neither town has much in the way of ancient sites or cultural attractions of its own, and that's by design — they're not meant to compete with Luxor or Cairo, they're meant to complement them. Both work best as the closing chapter of a longer Egypt itinerary rather than a standalone destination, unless watersports specifically are the reason for the trip."
+      ),
+      h2("Which One Fits Your Trip"),
+      ...bullets([
+        "Choose El Gouna if you want a real town — restaurants, nightlife, and things to do beyond the resort itself",
+        "Choose Soma Bay if you want maximum quiet and a fully self-contained resort stay with minimal decisions to make",
+        "Choose El Gouna's lagoons if you're learning to kitesurf and want sheltered, beginner-friendly water",
+        "Choose Soma Bay if you're already comfortable on the water and want stronger, more consistent wind",
+        "Either works well as a 2-4 day add-on after Cairo, Giza, and a Nile itinerary, rather than as the whole trip",
+      ]),
+      h2("Getting There"),
+      p(
+        "Both towns are most easily reached via Hurghada International Airport, which has frequent domestic connections from Cairo as well as direct international charter flights from Europe in season. From the airport it's a short transfer to El Gouna and a slightly longer one down the coast to Soma Bay. Travelers combining either with Cairo, Giza, and a Nile cruise typically fly Cairo-Hurghada rather than driving, since the road distance is considerable and the flight is short."
+      ),
+      faq(
+        [
+          {
+            question: "Is El Gouna or Soma Bay better for a family trip?",
+            answer:
+              "El Gouna generally works better for families who want variety — restaurants, a walkable town, and gentler lagoon water for kids learning to swim or try watersports for the first time. Soma Bay suits families happy to stay resort-based for the whole visit.",
+          },
+          {
+            question: "Can you visit both in one trip?",
+            answer:
+              "It's possible but not typical, since they're roughly an hour apart and each rewards settling in rather than moving around. Most travelers pick one based on the pace they want and spend their full Red Sea allotment there.",
+          },
+          {
+            question: "Do you need diving experience to enjoy either destination?",
+            answer:
+              "No. Both have snorkeling accessible directly from shore or a short boat ride, and both have dive centers offering introductory dives for complete beginners alongside certified diving for experienced divers.",
+          },
+          {
+            question: "How many days should I budget for El Gouna or Soma Bay?",
+            answer:
+              "Three to four days is enough to properly settle into either place — long enough for a couple of dive or snorkel outings, some pool or beach time, and, in El Gouna's case, a few evenings in town.",
+          },
+          {
+            question: "Is either destination good for non-divers who just want a beach?",
+            answer:
+              "Yes, both work well for travelers who have no interest in diving at all. The resorts at both towns are built around pools and beach clubs first, with watersports and diving as optional add-ons rather than the only reason to be there.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Neither town will give you the Egypt of temple reliefs and tomb paintings, and neither is trying to. What they give you instead is a genuinely well-designed stretch of Red Sea coast, built specifically for the water, to close out a trip that's already covered the history properly."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Add the Red Sea to Your Itinerary",
+        body: "Tell us how many days you have left after Cairo and the Nile, and we'll help you decide between El Gouna, Soma Bay, or another stretch of coast.",
+        buttonLabel: "Customize Your Tour",
+        buttonHref: "/customize",
+      },
     ],
   },
   {
@@ -5377,30 +5458,101 @@ export const stories: Story[] = [
     destinations: ["Siwa", "Bahariya", "Dakhla", "Kharga"],
     primaryKeyword: "western desert oases egypt",
     secondaryKeywords: ["siwa oasis", "bahariya oasis", "dakhla oasis", "kharga oasis"],
-    relatedTours: toursBySlug("siwa-oasis", "white-desert-safari-bahariya", "dakhla-kharga-oasis-circuit"),
-    seoTitle: "The Western Desert Oases: A Guide to Siwa, Bahariya, Dakhla, and Kharga",
+    relatedTours: toursBySlug(
+      "siwa-oasis",
+      "white-desert-safari-bahariya",
+      "dakhla-kharga-oasis-circuit",
+      "bahariya-oasis-2-day-safari"
+    ),
+    seoTitle: "Western Desert Oases: A Guide to Siwa, Bahariya, Dakhla & Kharga",
     seoDescription:
-      "Egypt's Western Desert oases — Siwa, Bahariya, Dakhla, and Kharga — sit far from the standard Nile route. What makes each one distinct.",
+      "Egypt's Western Desert oases — Siwa, Bahariya, Dakhla, and Kharga — sit far off the standard Nile route. What makes each one distinct, and how to visit.",
     body: [
       p(
-        "West of the Nile, Egypt's Great Sand Sea holds a chain of oases that most visitors never see, each shaped by centuries of isolation into its own distinct culture and landscape."
+        "Most of the Egypt itinerary you've seen in guidebooks follows a straight line: Cairo, then south along the Nile to Luxor and Aswan. West of that line, past where the fertile Nile Valley gives way to open desert, lies a completely different Egypt — a chain of oases scattered across the Great Sand Sea, each one an isolated pocket of green and fresh water that developed its own language, architecture, and rhythm of life over thousands of years of separation from the rest of the country."
       ),
-      h2("Siwa"),
       p(
-        "The most remote of the four, close to the Libyan border, Siwa has its own Amazigh (Berber) language and culture distinct from the rest of Egypt, along with natural spring pools, ancient salt lakes, and the ruins of the Oracle Temple, once consulted by Alexander the Great."
+        "Very few visitors make it out here, and that's precisely the appeal. These aren't polished sites with visitor centers and gift shops — they're working towns and genuine landscapes that happen to be extraordinary, reached by long desert roads rather than a quick coach ride from a Nile-side hotel. If you have the time for it, the Western Desert oases are one of the most rewarding detours available anywhere in Egypt."
+      ),
+      h2("Siwa: The Most Remote and the Most Distinct"),
+      p(
+        "Siwa sits close to the Libyan border, hundreds of kilometers from the nearest other oasis, and that isolation shows in everything about it. The local population speaks Siwi, a Berber (Amazigh) language unrelated to Arabic, and the town's mudbrick architecture, customs, and daily rhythms feel closer to North Africa's other desert cultures than to the Nile Valley just a few hundred kilometers east."
+      ),
+      p(
+        "The oasis itself is genuinely beautiful — natural spring pools you can swim in, palm and olive groves that have sustained the town for millennia, and the stark white expanse of Siwa's salt lakes, some so saline that swimmers float without effort. History buffs come for the ruined Oracle Temple, where Alexander the Great is said to have traveled to consult the priests about his own divine parentage, a detour so significant that ancient historians recorded it as a turning point in how he saw himself. Above the modern town, the crumbling mudbrick fortress of Shali still stands, abandoned after a rare heavy rainstorm damaged its walls decades ago.",
+      ),
+      p(
+        "A short drive from the modern town, Gebel al-Mawta — the Mountain of the Dead — holds rock-cut tombs from Egypt's Ptolemaic and Roman periods, painted with scenes that show how thoroughly Siwa absorbed Nile Valley religious imagery even from its remote position. Locals still gather at Fatnas Island at sunset, a small palm-shaded spot on the edge of Siwa's saltwater lake, which remains one of the simplest and most memorable ways to end a day in the oasis."
       ),
       h2("Bahariya and the White Desert"),
       p(
-        "Bahariya is the gateway to the White Desert, a surreal landscape of wind-carved white chalk formations rising out of the sand — one of Egypt's most photographed desert landscapes, usually visited on an overnight camping trip from the oasis."
+        "Bahariya is the most accessible of the four oases from Cairo, and it functions mainly as the gateway to the White Desert, one of Egypt's genuinely strange landscapes — a protected area of chalk-white rock formations, carved by wind over millennia into shapes locals have nicknamed for what they resemble. Most visitors pass through Bahariya on their way to an overnight desert camp among those formations rather than spending much time in the oasis town itself, though Bahariya has its own worthwhile sites, including well-preserved Roman-era tombs and hot springs used for bathing since antiquity."
       ),
-      h2("Dakhla and Kharga"),
       p(
-        "Further south, Dakhla and Kharga hold well-preserved mudbrick old towns, Roman-era temples, and natural hot springs, and are usually visited together as a multi-day circuit through the desert rather than as single stops — a genuinely off-the-beaten-path route even by Egypt's standards."
+        "The White Desert's formations shift dramatically depending on the light — chalky white at midday, gold and pink at sunset, and genuinely eerie under a clear desert sky at night. Many operators pair the White Desert with the Black Desert nearby, where volcanic rock scattered across the sand dunes gives the landscape an entirely different color palette in the space of a short drive."
+      ),
+      h2("Dakhla and Kharga: The Deep South of the Desert"),
+      p(
+        "Further south and considerably harder to reach, Dakhla and Kharga are usually visited together as a multi-day circuit rather than as individual stops. Both hold well-preserved mudbrick old towns — Dakhla's Al-Qasr in particular is one of the best-preserved medieval Islamic towns in Egypt, with narrow covered lanes built to stay cool through the desert heat. Both also have significant Roman-era ruins, including temples and an extensive Roman-period necropolis at Kharga, along with natural hot springs used the same way they've always been used: as a place to sit and soak after a long day of desert travel."
+      ),
+      p(
+        "This is genuinely off-the-beaten-path travel even by Egypt's standards. Distances between towns are long, tourist infrastructure is thin compared to the Nile Valley, and a private guide who knows the route and the sites well is far more valuable here than almost anywhere else in the country."
+      ),
+      p(
+        "Dakhla's Deir el-Hagar, a small sandstone Roman-period temple restored from near ruin, sits just outside the oasis and rarely sees more than a handful of visitors on any given day. Kharga's Bagawat necropolis, meanwhile, is one of the earliest and best-preserved Christian cemeteries anywhere in the world, its mudbrick chapel domes dating back to the fourth and fifth centuries, a reminder that these oases were significant staging points on desert trade and pilgrimage routes long before modern borders existed."
+      ),
+      callout(
+        "Distances in the Western Desert are considerable and often underestimated — Siwa alone is roughly an eight-hour drive from Cairo. Build real travel days into the itinerary rather than trying to compress oasis visits into the same pace as a Nile-side day trip.",
+        { title: "Plan for the Distances", tone: "Info" }
       ),
       h2("How to Actually Visit"),
+      ...bullets([
+        "Siwa is usually visited on its own, as a dedicated multi-day trip from Cairo, given the distance involved",
+        "Bahariya and the White Desert work well as a shorter add-on — commonly two days, including one night camping",
+        "Dakhla and Kharga are typically combined into a single multi-day circuit rather than visited separately",
+        "Combining all four oases into one trip is possible but demanding, and usually reserved for travelers with two weeks or more in Egypt",
+        "A private vehicle and driver, or a guided desert safari, is strongly preferable to attempting the route independently",
+      ]),
+      h2("What to Pack and Prepare For"),
       p(
-        "These oases sit far from the standard Cairo–Luxor–Aswan route and from each other, so a proper visit means either a dedicated multi-day desert circuit or picking one oasis as a focused add-on to a longer trip, rather than trying to fit all four into a standard itinerary."
+        "Desert travel here means real temperature swings — hot days and genuinely cold nights, especially camping in the White Desert, where a warm layer after sunset makes a noticeable difference. Sturdy, closed shoes matter more than sandals once you're off paved roads, and a headscarf or wide-brimmed hat is worth having for sun protection on longer drives and open-vehicle desert crossings. None of the oases have the density of hotels, restaurants, or amenities you'll find along the Nile, so travelers used to a five-star pace should adjust expectations accordingly, particularly around Dakhla and Kharga."
       ),
+      faq(
+        [
+          {
+            question: "Which Western Desert oasis is most worth visiting if I only have time for one?",
+            answer:
+              "Siwa for the most distinct culture and landscape, or Bahariya if the White Desert's rock formations and a night of desert camping are the main draw. Both are reachable as standalone trips without needing the full oasis circuit.",
+          },
+          {
+            question: "Is it safe to travel to the Western Desert oases?",
+            answer:
+              "These routes are regularly traveled by tour operators and generally treated as safe for organized travel, though as with any remote desert region, going with an experienced guide or operator who knows current road conditions is the sensible approach rather than attempting it independently.",
+          },
+          {
+            question: "How many days do I need for the Western Desert?",
+            answer:
+              "A minimum of two days for a Bahariya and White Desert add-on, three to four for Siwa on its own, or four or more for a proper Dakhla-Kharga circuit. Covering all four oases realistically takes a week or more given the distances involved.",
+          },
+          {
+            question: "Can the Western Desert be combined with a standard Cairo–Luxor–Aswan itinerary?",
+            answer:
+              "Yes, most commonly as a Bahariya and White Desert add-on before or after the Nile Valley portion of a trip, since it departs from and returns to Cairo. Siwa and the deep south oases require more dedicated time and are better suited to longer or repeat trips to Egypt.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "None of this is a quick add-on, and that's exactly why so few travelers see it. But for anyone with the time and the inclination to go further than the standard route, the Western Desert oases offer something the Nile Valley simply can't — genuine remoteness, still-lived-in traditions, and landscapes that don't look like anywhere else in Egypt."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Go Further Into the Desert",
+        body: "From a two-day White Desert safari to a full Dakhla-Kharga circuit, we'll help you build a Western Desert itinerary that fits the rest of your trip.",
+        buttonLabel: "Explore Desert Tours",
+        buttonHref: "/tours/dakhla-kharga-oasis-circuit",
+      },
     ],
   },
   {
@@ -5419,26 +5571,102 @@ export const stories: Story[] = [
     destinations: ["Bahariya", "White Desert"],
     primaryKeyword: "is the white desert worth it",
     secondaryKeywords: ["white desert egypt camping", "white desert national park", "bahariya white desert tour"],
-    relatedTours: toursBySlug("white-desert-safari-bahariya"),
+    relatedTours: toursBySlug("white-desert-safari-bahariya", "bahariya-oasis-2-day-safari", "black-desert-white-desert-combo"),
     seoTitle: "Is the White Desert Worth Visiting? An Honest Look",
     seoDescription:
-      "The White Desert's chalk rock formations and overnight camping are unlike anything else in Egypt. What the trip actually involves, and who it suits.",
+      "The White Desert's chalk formations and overnight camping are unlike anywhere else in Egypt. What the trip actually involves, who it suits, and who should skip it.",
     body: [
       p(
-        "The White Desert doesn't look like the rest of Egypt, or much like anywhere else — a protected national park of chalk-white rock formations, sculpted by millennia of wind erosion into shapes that shift depending on the angle and the light."
+        "Every guide who's taken travelers out to the White Desert has heard some version of the same question beforehand: is it actually worth the drive? It's a fair thing to ask. This isn't a temple you can slot into a Cairo day trip — it's a genuine detour, hours from the Nile Valley, into a landscape that looks less like Egypt and more like another planet entirely. Whether that's worth your time depends less on the desert itself, which is extraordinary, and more on what kind of traveler you are."
       ),
-      h2("What You'll Actually See"),
+      h2("What the White Desert Actually Is"),
       p(
-        "The formations range from mushroom-shaped outcrops to larger structures locals have nicknamed for what they resemble — a sphinx, a rabbit, a chicken — scattered across a stretch of open desert that turns gold, then pink, then white as the sun moves through the day."
+        "The White Desert is a protected national park in the Farafra depression, reached via the oasis town of Bahariya, defined by chalk-white rock formations that wind erosion has carved out of the desert floor over hundreds of thousands of years. Unlike the golden sand dunes most people picture when they think of the Sahara, this stretch of desert is genuinely white — a color that shifts through gold and pink as the sun drops, then turns a pale, ghostly glow after dark under moonlight."
       ),
-      h2("Camping Overnight"),
       p(
-        "Most visits include an overnight camp directly among the formations — a genuinely memorable night, with a campfire, a simple desert dinner, and, far from any city light pollution, one of the clearest views of the stars available anywhere in Egypt. It's a basic camping setup, not a luxury one, which is part of the appeal for travelers looking for something different from a hotel-based itinerary."
+        "The formations themselves range from small mushroom-shaped outcrops to larger sculptural structures that locals and guides have nicknamed for what they resemble — a sphinx, a rabbit, a chicken, a mountain of ice cream. Whether or not you see the resemblance, the shapes themselves are the real draw: nothing about them looks deliberately placed, and nothing about them looks like it belongs anywhere else in Egypt.",
       ),
-      h2("Who It Suits"),
       p(
-        "Travelers comfortable with a night of simple camping and an interest in landscape over ancient monuments will find it a genuine highlight. It's a considerable detour from the standard Nile route, best added by travelers with ten days or more, or as a focused desert-specific trip on its own."
+        "Part of what makes the formations so photogenic is scale — some outcrops are small enough to walk around in a minute, others rise several meters overhead, and the open desert floor between them means you can wander from one to the next without any marked trail dictating your route. Sunrise and sunset both transform the place completely, with the low sun throwing long shadows across the chalk and turning the white rock a deep gold or pink for a short window that experienced guides know how to plan around."
       ),
+      h2("What a Visit Actually Involves"),
+      p(
+        "A typical trip starts in Cairo, with several hours of driving to reach Bahariya Oasis, followed by a 4x4 transfer out into the desert itself — the White Desert isn't accessible by regular vehicle, and a skilled desert driver who knows the terrain is essential. Along the way, most itineraries also pass through the Black Desert, a separate stretch where volcanic rock scattered across sand dunes creates an entirely different color palette, and Crystal Mountain, a small outcrop embedded with quartz crystals that catch the light."
+      ),
+      p(
+        "Most visits are built around an overnight camp, set up directly among the white formations by your guide and driver rather than at a fixed campsite. A basic desert dinner is cooked over a campfire, mattresses and blankets are laid out under the open sky, and — because there's no light pollution for a very long way in any direction — the night sky here is one of the clearest and most star-dense views available anywhere in Egypt. It's genuinely one of those experiences that photographs undersell.",
+      ),
+      callout(
+        "This is basic desert camping, not a luxury glamping setup — sleeping bags or simple bedding on the ground, no showers, and a portable toilet setup at best. Pack a warm layer regardless of the season; desert nights get cold even when the days are hot, and it catches first-timers off guard more than almost anything else about the trip.",
+        { title: "Set Realistic Expectations", tone: "Info" }
+      ),
+      h2("Who It Genuinely Suits"),
+      ...bullets([
+        "Travelers drawn to landscape and natural scenery as much as ancient monuments",
+        "Anyone comfortable with a night of simple, no-frills camping in exchange for genuinely dark skies",
+        "Photographers — the formations and the night sky both reward patience and the right light",
+        "Travelers with a longer Egypt trip, roughly eight to ten days or more, who can absorb a two-day desert detour without cutting into Nile Valley time",
+      ]),
+      h2("Choosing a Guide and Operator"),
+      p(
+        "Not every desert operator is equal here, and the difference matters more than it might for a Cairo day tour. Look for a guide and driver with genuine desert experience — someone who knows the current state of the tracks, carries proper recovery and safety equipment, and sets up camp with real attention to comfort rather than just parking wherever's convenient. A good guide also knows how to time the drive so you're standing among the formations for sunset rather than still en route, which is the single biggest factor in how memorable the trip ends up being."
+      ),
+      h2("Who Should Think Twice"),
+      p(
+        "If your Egypt trip is short — four or five days focused on Cairo, Giza, and Luxor — the White Desert is a genuine sacrifice of time you probably want elsewhere. It's also not the right call for anyone who needs a proper bed, a real bathroom, or reliable phone signal to sleep comfortably; those aren't available out in the formations, and pretending otherwise sets up a disappointing night. Travelers prone to motion sickness should also know that the 4x4 approach involves genuine off-road driving over sand and rock, which some find uncomfortable.",
+      ),
+      h2("How It Compares to Other Egypt Desert Trips"),
+      p(
+        "Egypt has several desert experiences worth weighing against each other. A sunset quad-biking trip near the Giza Pyramids gives you a taste of desert landscape in an afternoon, with none of the commitment. Siwa Oasis offers a different kind of desert entirely, built around an oasis town and its culture rather than a single rock formation. The White Desert sits at the more committed end of that spectrum — it demands more time and more comfort trade-offs than either of those, but it delivers a landscape genuinely unlike anything else available in the country, which is exactly why travelers who make the trip rarely regret it.",
+      ),
+      h2("Is It Actually Worth It?"),
+      p(
+        "For the right traveler, yes, without much hesitation. There's very little else in Egypt — or honestly, anywhere — that looks like the White Desert at sunset, and very few nights on a standard itinerary come close to a night sky this dark. But it's a genuine trade-off against time and comfort, not a universal must-do, and it earns its place on an itinerary rather than deserving one by default."
+      ),
+      faq(
+        [
+          {
+            question: "How many days does the White Desert require?",
+            answer:
+              "Two days is the standard — one day out and camping overnight, one day back — including the Black Desert and Crystal Mountain along the route. It can be extended with additional time in Bahariya Oasis itself if desired.",
+          },
+          {
+            question: "Is the White Desert safe to visit?",
+            answer:
+              "Yes, when traveling with an experienced local guide and driver who knows the terrain and current conditions. Attempting the drive independently without proper 4x4 experience and local knowledge isn't advisable.",
+          },
+          {
+            question: "What's the best time of year to visit the White Desert?",
+            answer:
+              "Cooler months, roughly October through April, are more comfortable for desert camping, since summer daytime heat is intense even though nights stay cold year-round. Clear skies are common across most of the year.",
+          },
+          {
+            question: "Can you visit the White Desert without camping overnight?",
+            answer:
+              "It's possible as a very long single day from Cairo, but it sacrifices the best parts of the experience — sunset light on the formations and the night sky — which is why most operators and most travelers who've done it recommend the overnight version.",
+          },
+          {
+            question: "What should I pack for a White Desert trip?",
+            answer:
+              "Layers for a big day-to-night temperature swing, closed shoes rather than sandals, a headscarf or hat for sun during the drive, a flashlight or headlamp, and a fully charged camera or phone, since the formations and night sky are both worth photographing properly.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "It won't suit every itinerary, and it shouldn't try to. But for travelers with the time and the right expectations going in, a night among the White Desert's formations tends to be one of the parts of an Egypt trip people talk about longest afterward — not because it's ancient, but because nothing else on the trip looks remotely like it."
+      ),
+      p(
+        "It's also worth saying plainly that the White Desert doesn't compete with the Pyramids or Karnak for historical weight, and it isn't trying to. It's a natural landscape, not an ancient monument, and travelers expecting another temple experience should recalibrate before booking. Approached on its own terms — as a night of landscape, silence, and stars rather than history — it rarely disappoints."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See the White Desert Properly",
+        body: "A private guide and 4x4 driver make the difference between a rushed day trip and a real overnight desert experience. Let's build it into your Egypt itinerary.",
+        buttonLabel: "See White Desert Safaris",
+        buttonHref: "/tours/white-desert-safari-bahariya",
+      },
     ],
   },
   {
@@ -5457,26 +5685,105 @@ export const stories: Story[] = [
     destinations: ["Wadi El Hitan", "Fayoum"],
     primaryKeyword: "wadi el hitan whale valley",
     secondaryKeywords: ["whale valley egypt", "wadi el hitan fossils", "fayoum whale fossils"],
-    relatedTours: toursBySlug("wadi-el-hitan-whale-valley-safari", "fayoum-nature-tour"),
-    seoTitle: "Wadi El Hitan: The Egyptian Desert Full of Fossil Whales",
+    relatedTours: toursBySlug("wadi-el-hitan-whale-valley-safari", "fayoum-nature-tour", "fayoum-wadi-el-rayan-waterfalls-tour"),
+    seoTitle: "Wadi El Hitan: Egypt's Desert Full of Fossil Whales",
     seoDescription:
-      "Wadi El Hitan, Egypt's Whale Valley, holds fossilized whale skeletons from a time this desert was open ocean. A guide to this UNESCO World Heritage site.",
+      "Wadi El Hitan, Egypt's Whale Valley, preserves fossilized whale skeletons from a time this desert was open ocean. A practical guide to visiting this UNESCO site.",
     body: [
       p(
-        "It's a strange thing to stand in open desert, hours from any coastline, and find the fossilized skeleton of a whale lying in the sand — but that's exactly what Wadi El Hitan, the Whale Valley, offers."
+        "It's a genuinely strange thing to stand in open desert, hours from any coastline, and find the fossilized skeleton of a whale lying half-exposed in the sand. But that's exactly what Wadi El Hitan offers, and it's one of the more unusual sites you can add to an Egypt itinerary — not a temple, not a tomb, but a desert valley that used to be the floor of an ancient sea."
       ),
-      h2("What's Actually There"),
       p(
-        "Around 40 million years ago, this stretch of desert was open sea, and Wadi El Hitan preserves the fossilized remains of Basilosaurus and Dorudon, early whale species that still had vestigial hind legs — physical evidence of the evolutionary transition from land mammals to fully aquatic whales. It's one of the most complete fossil records of this transition found anywhere on Earth, which is why it holds UNESCO World Heritage status."
+        "Most visitors to Egypt never hear about it, which is a shame, because it's one of the few places on Earth where you can see, with your own eyes and without any real archaeological training, direct physical evidence of one of the most significant transitions in the history of life on this planet.",
       ),
-      h2("What a Visit Looks Like"),
+      h2("What's Actually Preserved Here"),
       p(
-        "A marked trail through the valley passes numerous fossil skeletons left largely in place where they were found, along with an on-site museum explaining the science behind them. The surrounding desert landscape, with its own wind-carved rock formations, is worth the visit even setting the fossils aside."
+        "Around 40 million years ago, during the Eocene epoch, the area now known as Wadi El Hitan — Arabic for Whale Valley — was open sea, part of the ancient Tethys Ocean that once separated the continents. As that sea receded over millions of years, it left behind an extraordinary concentration of fossils, including the skeletal remains of Basilosaurus and Dorudon, two early whale species that lived and died in these waters."
       ),
-      h2("How It Fits a Trip"),
       p(
-        "Wadi El Hitan sits near the Fayoum Oasis, a couple of hours from Cairo, which makes it realistic as a day trip from the capital — often combined with Fayoum's lakes and waterfalls into a single day focused on Egypt's natural rather than ancient-Egyptian history."
+        "What makes these particular fossils so scientifically important is that both species still had vestigial hind legs — small, functionally useless leg bones, a leftover from their evolutionary history as land mammals that gradually returned to the sea. It's direct physical proof of one of evolution's more remarkable transitions: full-time land animals evolving, over an immense span of time, into the fully aquatic whales we know today. Wadi El Hitan holds one of the largest and most complete concentrations of these transitional fossils found anywhere on Earth, which is exactly why UNESCO inscribed it as a World Heritage Site in 2005 — the first natural heritage site in Egypt to receive that designation.",
       ),
+      h2("What a Visit Actually Looks Like"),
+      p(
+        "A marked walking trail winds through the valley, passing dozens of fossil skeletons left largely in place where they were originally found rather than removed to a museum case — an unusual and genuinely powerful way to encounter them, still half-buried in the same sand that's held them for tens of millions of years. Small protective shelters and information panels mark the more significant specimens, and a visitor center near the entrance explains the science in more depth, including how the site formed and what it reveals about the broader story of whale evolution."
+      ),
+      p(
+        "The surrounding desert landscape is worth the trip even setting the fossils aside. Wind erosion has carved its own sculptural rock formations across the valley, and the stark, open scenery — flat desert floor interrupted by low ridges and outcrops — has a quiet, almost lunar quality that most visitors don't expect from a paleontology site. Sunset light across the formations is particularly striking, and photographers who make it out here tend to linger well past the fossils themselves.",
+      ),
+      callout(
+        "Wadi El Hitan sits deep in the desert with no shade along most of the trail and no facilities beyond the visitor center at the entrance. Bring more water than feels necessary, wear proper closed shoes rather than sandals, and avoid the peak midday heat in summer — morning or late afternoon visits are considerably more comfortable.",
+        { title: "Bring Water and Sun Protection", tone: "Safety" }
+      ),
+      h2("How It Fits Into a Trip"),
+      p(
+        "Wadi El Hitan sits within the Fayoum depression, roughly a couple of hours' drive from Cairo, which makes it realistic as a full-day trip from the capital rather than requiring a dedicated multi-day detour. Most itineraries combine it with the rest of Fayoum's natural attractions on the same day — Wadi El Rayan's waterfalls and lakes, and sometimes Qarun Lake, one of the oldest natural lakes in the world, giving the day a coherent focus on Egypt's natural rather than ancient-Egyptian history."
+      ),
+      p(
+        "It's a genuinely different kind of day compared to the temple-and-tomb pace of a standard Egypt trip, and that contrast is part of the appeal. Travelers with a Cairo stay of four days or more, or anyone with a specific interest in natural history and paleontology, tend to find it a worthwhile break from monuments — a day about deep time rather than ancient Egyptian time.",
+      ),
+      h2("The Broader Fayoum Connection"),
+      p(
+        "Fayoum itself is one of Egypt's oldest continuously inhabited regions, a natural depression fed by a branch of the Nile that's supported agriculture and settlement since Pharaonic times, when it was a favored retreat for royalty precisely because of its lush, well-watered landscape in the middle of otherwise arid desert. That long human history sits alongside Wadi El Hitan's far older natural history, and the two together give Fayoum a genuinely distinct identity compared to the more famous stops along the Nile Valley proper."
+      ),
+      p(
+        "Wadi El Rayan, the other major stop most visitors pair with Wadi El Hitan, is a pair of connected lakes fed partly by agricultural drainage, with a small but genuinely scenic waterfall between them — one of the very few waterfalls anywhere in Egypt. The contrast between that green, water-fed landscape and the stark whale-fossil desert just a short drive away makes for a day that covers an unusual amount of visual variety for the time invested.",
+      ),
+      h2("Practical Tips for Visiting"),
+      ...bullets([
+        "Go in the cooler months if possible, roughly October through April — summer heat in this part of the desert is intense with almost no shade",
+        "Wear closed, comfortable shoes; the trail crosses loose sand and uneven rock in places",
+        "Bring more water than you think you need, along with sun protection — hat, sunglasses, sunscreen",
+        "Allow at least half a day for the site itself once you factor in the drive from Cairo",
+        "Combine it with Wadi El Rayan's waterfalls the same day to make full use of the trip out to Fayoum",
+      ]),
+      h2("Why It's Worth the Detour"),
+      p(
+        "Egypt's ancient history tends to dominate every conversation about the country, understandably so, but Wadi El Hitan is a reminder that Egypt's older history — the geological and evolutionary kind — is just as remarkable in its own way. Standing next to a 40-million-year-old whale skeleton, in the middle of a desert, tends to reframe how travelers think about the landscape they've been driving through for the rest of the trip.",
+      ),
+      faq(
+        [
+          {
+            question: "How far is Wadi El Hitan from Cairo?",
+            answer:
+              "Roughly a couple of hours' drive, via Fayoum. It's a realistic day trip from Cairo rather than requiring an overnight stay, especially when combined with other Fayoum sites on the same route.",
+          },
+          {
+            question: "Is Wadi El Hitan suitable for kids?",
+            answer:
+              "Yes, generally — the walking trail is manageable for most ages, and the fossil skeletons tend to genuinely fascinate kids in a way temples sometimes don't. Bring enough water and sun protection, and plan around the cooler parts of the day.",
+          },
+          {
+            question: "Do you need a guide to visit Wadi El Hitan?",
+            answer:
+              "It's not strictly required, since the trail is marked and the visitor center has information panels, but a knowledgeable guide adds a lot here — explaining the science behind what you're looking at turns the walk from a curiosity into something considerably more meaningful.",
+          },
+          {
+            question: "How much time should I set aside for the site itself?",
+            answer:
+              "Two to three hours is typically enough to walk the main trail and visit the museum, though photographers and anyone with a strong interest in paleontology often stay longer, especially around sunset.",
+          },
+          {
+            question: "Are there restrictions on touching or collecting fossils?",
+            answer:
+              "Yes — the fossils are protected under UNESCO World Heritage status and Egyptian law, and removing or disturbing them is prohibited. The site is set up specifically so visitors can view the skeletons in place without needing to touch them.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "There's nothing else quite like Wadi El Hitan on a standard Egypt itinerary, and that's exactly the point. It's a day that trades pharaohs for deep time, and for the right traveler, that trade is well worth making."
+      ),
+      p(
+        "It's also a useful reminder, for anyone deep into a trip focused on temples and tombs, that Egypt's story didn't begin with the pharaohs — it began tens of millions of years earlier, written into the desert itself, and Wadi El Hitan is one of the very few places where that older story is still visible on the surface, waiting in the sand exactly where it was left.",
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Add Wadi El Hitan to Your Cairo Days",
+        body: "Pair the Whale Valley with Fayoum's lakes and waterfalls for a full day of Egypt's natural history, private and unhurried.",
+        buttonLabel: "See the Whale Valley Safari",
+        buttonHref: "/tours/wadi-el-hitan-whale-valley-safari",
+      },
     ],
   },
   {
@@ -5495,26 +5802,90 @@ export const stories: Story[] = [
     destinations: ["Luxor"],
     primaryKeyword: "who was hatshepsut",
     secondaryKeywords: ["hatshepsut temple luxor", "female pharaoh egypt", "hatshepsut facts"],
-    relatedTours: toursBySlug("luxor-west-bank-day-tour", "6-day-cairo-giza-luxor"),
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "6-day-cairo-giza-luxor", "valley-of-the-kings-hatshepsut-temple-tour", "2-day-luxor-tour"),
     seoTitle: "Who Was Hatshepsut? Egypt's Most Successful Female Pharaoh",
     seoDescription:
-      "Hatshepsut ruled ancient Egypt as pharaoh in her own right, and her mortuary temple still dominates Luxor's West Bank. Her story, explained plainly.",
+      "Hatshepsut ruled ancient Egypt as pharaoh in her own right, and her mortuary temple still dominates Luxor's West Bank. Her remarkable story, explained plainly.",
     body: [
       p(
-        "Hatshepsut ruled Egypt as pharaoh for roughly two decades during the 18th Dynasty, one of only a handful of women to take the throne in her own right rather than as a regent — and by most measures, one of the most successful."
+        "Stand in front of the temple at Deir el-Bahari, on Luxor's West Bank, and it's hard not to ask who built something this ambitious. The answer is Hatshepsut, one of ancient Egypt's most capable rulers, and one of only a handful of women in three thousand years of pharaonic history to take the throne fully in her own right rather than as a placeholder for a male heir. Her reign gets less attention in popular culture than Tutankhamun's or Cleopatra's, but by almost any historical measure, she was one of Egypt's most successful pharaohs, full stop."
       ),
       h2("How She Came to Power"),
       p(
-        "Hatshepsut began as regent for her young stepson, Thutmose III, after her husband's death, and within a few years took on the full title and regalia of pharaoh herself, including the ceremonial false beard shown in her official statues. Her reign is generally regarded by historians as a period of stability and prosperity, marked by extensive building projects and expanded trade, notably a famous expedition to the Land of Punt."
+        "Hatshepsut was the daughter of Thutmose I and became the principal wife of her half-brother, Thutmose II, as was common practice among Egyptian royalty of the period. When Thutmose II died, the throne passed to his young son, Thutmose III, born to a secondary wife — a child too young to rule alone. Hatshepsut, as the boy's aunt and stepmother, initially took the conventional role of regent, managing affairs of state on his behalf.",
       ),
-      h2("Her Mortuary Temple"),
       p(
-        "Her mortuary temple at Deir el-Bahari, on Luxor's West Bank, remains one of ancient Egypt's most striking pieces of architecture — a series of colonnaded terraces cut directly into the cliff face, built to align with the winter solstice sunrise. It's one of the most visited sites on the West Bank today, and unlike almost anything else built in this period."
+        "What she did next set her apart from every other royal woman who'd held that role before her. Within a few years of becoming regent, Hatshepsut assumed the full formal titles, regalia, and iconography of a pharaoh in her own right, ruling alongside — and effectively ahead of — Thutmose III rather than stepping aside once he came of age. Official statues and reliefs from her reign show her wearing the traditional false beard and kingly regalia associated with male pharaohs, a deliberate visual statement asserting her legitimacy as ruler within a role that Egyptian tradition and religious ideology had always framed as male.",
       ),
-      h2("What Happened After"),
+      h2("A Reign Marked by Building and Trade, Not War"),
       p(
-        "After her death, many of Hatshepsut's monuments and images were defaced or removed on the order of Thutmose III, for reasons historians still debate — possibly political consolidation rather than personal animosity. Much of what's known about her today comes from the monuments that survived that erasure, including her temple, which endures as the clearest record of her reign."
+        "Hatshepsut ruled for roughly two decades, and her reign is generally remembered by historians as one of the more stable and prosperous periods of the 18th Dynasty. Rather than pursuing the military campaigns that defined many pharaohs' legacies, she focused heavily on domestic building projects and expanding trade relationships — an approach that speaks to a genuinely different governing style, whether by preference or by the political reality of a female ruler needing to establish legitimacy through visible achievement rather than conquest."
       ),
+      p(
+        "Her most celebrated achievement outside of architecture was a major trading expedition to the Land of Punt, a region generally placed somewhere along the Horn of Africa or southern Red Sea coast, whose exact location remains debated among Egyptologists. The expedition returned with incense, ebony, ivory, gold, and living myrrh trees, and Hatshepsut had the entire journey — ships, cargo, and the exotic goods brought back — recorded in extensive relief carvings on her mortuary temple, a form of self-promotion as much as historical record.",
+      ),
+      h2("Her Mortuary Temple at Deir el-Bahari"),
+      p(
+        "Her mortuary temple, Djeser-Djeseru, remains one of ancient Egypt's most striking pieces of architecture and the clearest surviving monument to her reign. Rather than the more conventional pylon-and-courtyard temple layout of the period, it's built as a series of colonnaded terraces climbing directly toward the cliff face at Deir el-Bahari, designed in close conversation with the surrounding landscape rather than imposed on top of it. The temple's main axis was aligned to catch the winter solstice sunrise, illuminating the sanctuary at the back in a deliberate piece of architectural choreography.",
+      ),
+      p(
+        "The temple's reliefs record her divine birth story — a claim that her true father was the god Amun, not Thutmose I, a common but still politically significant device pharaohs used to reinforce their legitimacy — alongside the Punt expedition and scenes of her coronation. Today it's one of the most visited sites on Luxor's West Bank, and unlike almost anything else built during the New Kingdom in scale and design.",
+      ),
+      callout(
+        "The temple sits directly against the cliffs with very little shade across its open terraces, and it's one of the hotter West Bank sites to visit in the middle of the day. Visiting early in the morning, ideally combined with the Valley of the Kings before the heat sets in, is considerably more comfortable.",
+        { title: "Visit Early in the Day", tone: "Info" }
+      ),
+      h2("Senenmut and the Question of Her Court"),
+      p(
+        "One figure who looms large in any account of Hatshepsut's reign is Senenmut, a court official of relatively modest origins who rose to become one of her most trusted advisors, overseeing major building projects including, most historians believe, elements of her mortuary temple itself. His unusually rapid rise and his closeness to the queen have fueled centuries of speculation, none of it conclusively proven, about the exact nature of their relationship. What's better documented is his competence — the architectural sophistication of Deir el-Bahari suggests a genuinely skilled team behind it, whatever the personal dynamics at court."
+      ),
+      h2("What Happened After Her Death"),
+      p(
+        "After Hatshepsut's death, Thutmose III ruled alone for roughly another three decades, and at some point later in his reign — the exact timing remains debated — a systematic campaign began to remove her images and inscriptions from monuments across Egypt. Statues were smashed, her name was chiseled out of many inscriptions, and in several places her image was replaced with that of Thutmose I, II, or III, effectively erasing her from the official historical record.",
+      ),
+      p(
+        "Historians no longer widely accept the older theory that this was driven by personal resentment. The more common current interpretation is that it reflected a political and religious concern about the precedent a powerful female pharaoh had set, and a desire to restore the traditional, male-centered line of succession in the official record for future generations — consolidation rather than personal vendetta. Whatever the motive, the erasure was incomplete, and it's largely because of that incompleteness — including her temple, which survived largely intact — that Hatshepsut's reign could later be reconstructed and recognized for what it actually was.",
+      ),
+      h2("Why She Matters Today"),
+      p(
+        "Modern Egyptology has substantially rehabilitated Hatshepsut's reputation, recognizing her not as an aberration but as genuinely one of ancient Egypt's most effective rulers, whose reign strengthened the economy, expanded trade, and left behind some of the era's finest architecture. Her granite sarcophagus and several of her statues are now held at the Egyptian Museum and the Metropolitan Museum of Art, and her temple remains one of the most-photographed sites in Luxor, standing as a far more durable statement about her reign than the erasure campaign that followed it ever managed to achieve.",
+      ),
+      faq(
+        [
+          {
+            question: "Was Hatshepsut the only female pharaoh of ancient Egypt?",
+            answer:
+              "No, but she was one of very few, and the one most historians regard as the most successful. Others include Sobekneferu, who ruled briefly at the end of the 12th Dynasty, and Cleopatra VII, who ruled much later, at the very end of the Ptolemaic period.",
+          },
+          {
+            question: "Why is Hatshepsut shown with a beard in statues?",
+            answer:
+              "The false beard was a formal symbol of pharaonic authority, not a claim to be male — it appears in official, ceremonial depictions of her as ruler, following the established visual language of kingship, while other portraits and everyday depictions show her with more conventionally feminine features.",
+          },
+          {
+            question: "Where can I see Hatshepsut's temple today?",
+            answer:
+              "Her mortuary temple, Djeser-Djeseru, sits at Deir el-Bahari on Luxor's West Bank, close to the Valley of the Kings, and is included on almost every West Bank tour itinerary.",
+          },
+          {
+            question: "Did Thutmose III hate Hatshepsut?",
+            answer:
+              "It's unclear, and the erasure of her monuments happened years into his sole reign rather than immediately after her death, which argues against simple personal animosity. Most current historians see it as a political move to reassert traditional succession rather than a personal grievance.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Whatever Thutmose III intended by trying to erase her, the temple at Deir el-Bahari has outlasted the attempt by more than three thousand years. Standing on its upper terrace, looking out over the Nile Valley she once governed, remains one of the more genuinely moving moments available on Luxor's West Bank."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See Hatshepsut's Temple in Person",
+        body: "Visit Deir el-Bahari with a private Egyptologist who can walk you through the reliefs, the Punt expedition, and the story behind the erasure.",
+        buttonLabel: "Explore Luxor West Bank Tours",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      },
     ],
   },
   {
@@ -5533,26 +5904,93 @@ export const stories: Story[] = [
     destinations: ["Giza"],
     primaryKeyword: "how were the pyramids built",
     secondaryKeywords: ["great pyramid of giza construction", "how did ancient egyptians build pyramids", "pyramid building theories"],
-    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza"),
+    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza", "memphis-saqqara-dahshur-tour", "sunrise-camel-ride-giza-pyramids"),
     seoTitle: "How Were the Great Pyramids of Giza Actually Built?",
     seoDescription:
-      "The Great Pyramid has stood for over 4,500 years. What archaeologists actually know about how it was built, who built it, and what remains uncertain.",
+      "The Great Pyramid has stood for over 4,500 years. What archaeologists actually know about how it was built, who built it, and what still isn't settled.",
     body: [
       p(
-        "The Great Pyramid of Giza, built for the pharaoh Khufu around 2560 BCE, is made of roughly 2.3 million limestone and granite blocks and remained the tallest man-made structure on Earth for nearly 3,800 years. How exactly it was built is one of the most studied questions in archaeology — and while much is understood, the full picture still isn't settled."
+        "Every visitor who stands at the base of the Great Pyramid asks some version of the same question: how did they actually do this? It's a fair question, and one archaeologists have spent well over a century investigating in real detail. The Great Pyramid of Giza, built for the pharaoh Khufu around 2560 BCE, is made of roughly 2.3 million limestone and granite blocks, some weighing several tons apiece, and it remained the tallest man-made structure on Earth for nearly 3,800 years, until the completion of Lincoln Cathedral in medieval England. How exactly it was built without modern machinery is one of the most studied questions in archaeology — and while a great deal is understood today, the full picture of the construction process still isn't completely settled.",
       ),
       h2("Who Actually Built It"),
       p(
-        "Contrary to a persistent myth, the pyramids were not built by enslaved foreign labor. Archaeological evidence, including a nearby workers' town with bakeries, medical facilities, and worker burial sites, points to a large organized workforce of skilled Egyptian laborers, likely working in rotating shifts, fed and housed by the state as part of a genuine national construction project."
+        "The persistent popular image of enslaved foreign laborers, whipped into building the pyramids by force, has been thoroughly undermined by the archaeological record. Excavations near Giza uncovered a substantial workers' town, complete with bakeries, breweries, medical facilities capable of treating broken bones, and dedicated worker cemeteries where laborers were buried with genuine care and provisions for the afterlife — not the treatment given to enslaved captives.",
       ),
-      h2("Moving the Stone"),
       p(
-        "The leading theories involve ramps — straight, spiraling, or internal — combined with sledges, and evidence from other sites suggests workers wetted the sand in front of sledges to reduce friction, a technique depicted in ancient tomb paintings showing exactly this method in use. Precisely which ramp configuration was used for the Great Pyramid specifically remains debated among Egyptologists, since no definitive ramp structure has survived intact."
+        "What the evidence actually points to is a large, organized, and largely voluntary workforce of skilled Egyptian laborers, likely drawn in part from farming communities during the Nile's annual flood season, when agricultural work paused and the state needed a labor supply anyway. Workers appear to have been organized into teams with names — some inscriptions found on pyramid blocks even record team identities, a small but telling sign of the pride and identity attached to the work. Fed, housed, and medically cared for by the state, pyramid construction functioned less like forced labor and more like a genuine national project, not unlike a modern large-scale infrastructure undertaking.",
       ),
-      h2("The Precision Itself"),
+      h2("Quarrying and Moving the Stone"),
       p(
-        "What's not in dispute is the sheer precision involved — the pyramid's base is level to within a few centimeters across its entire footprint, and its sides align to true north with remarkable accuracy for a structure built without modern surveying tools. That precision, more than the size alone, is what continues to draw serious scholarly attention to how it was actually achieved."
+        "The bulk of the pyramid's limestone was quarried close by, at Giza itself, while the finer white casing stone that once covered the entire exterior came from Tura, across the Nile, and the massive granite blocks used in the internal chambers were transported from Aswan, over 800 kilometers south — an enormous undertaking on its own, most likely accomplished by barge along the Nile during flood season, when water levels made river transport most efficient.",
       ),
+      p(
+        "Moving the stone from quarry or riverbank to the construction site itself relied on sledges rather than wheels, since the wheel wasn't yet in common use in Egypt for this kind of heavy transport. A well-known relief from a tomb at El-Bersha depicts workers pouring water onto the sand directly in front of a sledge hauling a massive statue — a technique later confirmed by physics research to meaningfully reduce friction and the number of workers needed to move a given load, a striking case of ancient practical engineering matching what modern experiments have independently verified.",
+      ),
+      h2("Getting the Stone to Height: The Ramp Debate"),
+      p(
+        "How workers raised blocks to the pyramid's upper levels remains the most actively debated part of the construction process. The leading theories all involve some form of ramp — a single straight ramp running directly up one face, a ramp that spiraled around the pyramid's exterior as it rose, or an internal ramp built into the body of the structure itself, an idea gaining traction in recent decades based on scans revealing internal voids and structures not otherwise explained.",
+      ),
+      p(
+        "No definitive ramp structure has survived intact at the Great Pyramid itself, which is precisely why the debate continues — different ramp types solve different practical problems (stability, the angle of ascent, how to turn corners) but each carries its own engineering complications at this pyramid's scale. It's one of the genuinely open questions in Egyptology, and new evidence, including a well-preserved external ramp found at a different, smaller pyramid quarry site in recent years, continues to refine the leading theories without fully closing the debate.",
+      ),
+      callout(
+        "Ancient Egyptian workers had no iron tools, no wheels for heavy transport, and no pulleys as we understand them today — their achievement rested almost entirely on organization, manpower, and a remarkably sophisticated understanding of leverage, ramps, and friction. That's arguably more impressive than any single piece of hypothetical lost technology.",
+        { title: "No Lost Advanced Technology Required", tone: "Info" }
+      ),
+      h2("The Precision That Still Impresses Engineers"),
+      p(
+        "What's not in dispute, and what continues to draw serious engineering attention today, is the sheer precision achieved without any modern surveying equipment. The pyramid's base is level to within a few centimeters across its entire footprint — an area larger than several football fields — and its four sides align to true north with an accuracy that modern engineers still find genuinely impressive given the tools available at the time.",
+      ),
+      p(
+        "Researchers have proposed several methods for achieving that alignment, including using the stars — specifically circumpolar stars that rotate around the celestial pole — to establish true north with remarkable accuracy, alongside careful use of water-filled trenches to establish a perfectly level base before construction began. That combination of precision and scale, more than the pyramid's size alone, is what keeps it at the center of serious archaeological and engineering study more than 4,500 years after it was finished.",
+      ),
+      h2("Beyond the Great Pyramid Itself"),
+      p(
+        "Giza isn't just the one pyramid most photos focus on. The plateau holds three major pyramids — Khufu's, along with those of his son Khafre and grandson Menkaure — plus a cluster of smaller queens' pyramids, the Sphinx, and extensive cemeteries for officials and family members, all part of the same broader royal necropolis. Visiting nearby Saqqara, home to the earlier Step Pyramid of Djoser, and Dahshur, with its Bent and Red pyramids, adds valuable context — you can actually see the earlier, more experimental pyramid designs that led up to Giza's near-perfect geometry, including collapsed and reworked structures that show engineers learning from real failures along the way.",
+      ),
+      h2("What Remains Genuinely Uncertain"),
+      ...bullets([
+        "The exact ramp configuration used to raise blocks to the pyramid's upper levels",
+        "How long construction actually took — estimates commonly range from roughly ten to twenty years, but the true figure isn't precisely confirmed",
+        "The full internal layout of the pyramid, since recent scanning technology has revealed previously unknown voids not yet fully explained",
+        "The precise organizational structure of the workforce beyond what surviving records and the workers' town reveal",
+      ]),
+      faq(
+        [
+          {
+            question: "Did aliens or a lost advanced civilization build the pyramids?",
+            answer:
+              "No credible archaeological evidence supports this. The workers' town, tool marks, quarry sites, and construction techniques all point clearly to skilled human labor using period-appropriate tools and methods, however impressive the end result looks today.",
+          },
+          {
+            question: "How long did it take to build the Great Pyramid?",
+            answer:
+              "Estimates generally range from around ten to twenty years, based on the scale of the project and the length of Khufu's reign, though the exact figure isn't definitively established from surviving records.",
+          },
+          {
+            question: "Were the pyramids built by slaves?",
+            answer:
+              "No. Archaeological evidence, including a purpose-built workers' town with medical care and respectful burials, points to organized, largely voluntary Egyptian labor rather than enslaved foreign workers — a myth largely traceable to ancient Greek accounts written long after the pyramids were built.",
+          },
+          {
+            question: "Can you go inside the Great Pyramid today?",
+            answer:
+              "Yes, visitors can enter the interior chambers with a separate ticket from the general Giza entrance, though the passages are steep, narrow, and low-ceilinged, and not recommended for anyone uncomfortable in tight spaces.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "The honest answer to how the pyramids were built isn't a single clean explanation — it's a combination of organized labor, careful logistics, practical engineering solved through trial and observation, and a level of precision that still isn't fully explained by any one theory alone. That unresolved detail is part of what keeps people asking the question in front of the pyramid itself, more than four and a half thousand years after the last block was set."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See the Pyramids With Someone Who Knows the Debate",
+        body: "A private Egyptologist guide can walk you through the leading construction theories on-site, at the actual scale involved.",
+        buttonLabel: "Book a Giza Pyramids Tour",
+        buttonHref: "/tours/1-day-giza-tour",
+      },
     ],
   },
   {
@@ -5571,30 +6009,95 @@ export const stories: Story[] = [
     destinations: ["Luxor"],
     primaryKeyword: "tutankhamun facts",
     secondaryKeywords: ["king tut tomb", "howard carter tutankhamun", "tutankhamun death"],
-    relatedTours: toursBySlug("luxor-west-bank-day-tour", "3-day-cairo-giza"),
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "3-day-cairo-giza", "1-day-giza-tour", "valley-of-the-kings-hatshepsut-temple-tour"),
     seoTitle: "Tutankhamun: What We Actually Know About the Boy King",
     seoDescription:
-      "Tutankhamun ruled ancient Egypt briefly and died young, yet his tomb became archaeology's most famous discovery. The real story, without the myths.",
+      "Tutankhamun ruled ancient Egypt briefly and died young, yet his tomb became archaeology's most famous discovery. The real story, separated from the myths.",
     body: [
       p(
-        "Tutankhamun ruled Egypt for roughly nine years, becoming pharaoh at around age nine and dying at about eighteen or nineteen — a minor figure in the actual political history of ancient Egypt, whose fame today rests almost entirely on the survival of his tomb."
+        "No pharaoh's name is more recognizable worldwide than Tutankhamun's, and almost none of that fame has anything to do with what he actually accomplished as a ruler. He came to the throne as a child, reigned for less than a decade, and died young in a period of ancient Egyptian history that was, by most measures, fairly unremarkable politically. What made him famous was something that happened more than three thousand years later: the near-complete survival of his tomb, found by chance in 1922 in a valley where almost every other royal burial had already been looted.",
       ),
       h2("A Short, Difficult Reign"),
       p(
-        "Tutankhamun came to the throne shortly after the reign of Akhenaten, whose religious reforms had upended traditional Egyptian worship, and much of his own short reign was spent reversing those changes and restoring the old religious order — a significant political undertaking for such a young king, likely guided heavily by senior advisors."
+        "Tutankhamun became pharaoh at around age nine, following the reign of Akhenaten — likely his father, though the exact relationship remains debated among Egyptologists — whose radical religious reforms had upended traditional Egyptian worship, replacing the traditional pantheon with exclusive devotion to the sun disk Aten and relocating the capital to a new city built specifically for that purpose.",
+      ),
+      p(
+        "Much of Tutankhamun's brief reign, unsurprisingly guided heavily by senior advisors and officials given his age, was spent quietly reversing those changes: restoring the traditional priesthood and temples, moving the capital back, and reasserting the old religious order that Akhenaten had disrupted. It was a genuinely significant political undertaking, even if the young king himself was likely more a figurehead for that restoration than its architect. He died at around eighteen or nineteen, still a young man, having ruled for roughly nine years.",
       ),
       h2("Why His Tomb Matters So Much"),
       p(
-        "Most royal tombs in the Valley of the Kings were looted in antiquity. Tutankhamun's, likely because it was minor and hidden beneath the debris of a later tomb's construction, survived largely intact until archaeologist Howard Carter discovered it in 1922 — the only near-complete royal burial ever found in the valley, including the iconic solid gold funerary mask now displayed at the Grand Egyptian Museum."
+        "Nearly every other royal tomb in the Valley of the Kings was robbed in antiquity, often within decades of burial, stripped of the gold, jewelry, and precious objects that were supposed to accompany the pharaoh into the afterlife. Tutankhamun's tomb escaped that fate almost entirely, most likely because it was a relatively minor, modestly sized tomb that later became buried under debris from the construction of a nearby, larger tomb — hidden by accident rather than by design.",
       ),
-      h2("How Did He Die?"),
       p(
-        "The exact cause remains debated. Modern examinations, including CT scans and genetic testing, have identified a broken leg, evidence of malaria, and signs of several inherited health conditions likely linked to his parents being closely related — any of which, in combination, could plausibly explain an early death, though no single definitive cause has been established."
+        "British archaeologist Howard Carter, funded by Lord Carnarvon, had spent years searching the valley before his team finally uncovered the tomb's entrance in November 1922. What they found inside was the only near-complete royal burial ever recovered from the Valley of the Kings: thousands of objects, including furniture, chariots, weapons, jewelry, and the tomb's most iconic single object, Tutankhamun's solid gold funerary mask, inlaid with lapis lazuli and colored glass, now displayed at the Grand Egyptian Museum near Giza.",
+      ),
+      callout(
+        "The discovery took nearly a decade to fully catalogue and clear — Carter's team documented and removed more than 5,000 individual objects from the tomb, a scale of find that had never been seen before and hasn't been matched by any other royal Egyptian tomb since.",
+        { title: "The Scale of the Discovery", tone: "Highlight" }
+      ),
+      h2("How Did He Actually Die?"),
+      p(
+        "The exact cause of Tutankhamun's early death remains genuinely debated among researchers, and probably always will, given the limits of what can be determined from a 3,300-year-old mummy. Modern examinations, including CT scans and genetic testing conducted in the 2000s and 2010s, have identified a fracture in his left leg near the time of death, evidence consistent with a malaria infection, and signs of several inherited health conditions likely linked to the close family relationships common among Egyptian royalty of the period — his parents are widely believed by researchers to have been siblings.",
+      ),
+      p(
+        "No single one of these findings definitively explains his death on its own, but in combination — a compromised immune system, a serious infection, and a leg injury that could easily have become infected in ancient conditions — they present a genuinely plausible picture. What can be said with more confidence is that Tutankhamun was, by the evidence of his own remains, a physically fragile young man for much of his short life, walking with the aid of canes found among his tomb's grave goods.",
+      ),
+      h2("The Amarna Period He Was Born Into"),
+      p(
+        "Understanding Tutankhamun means understanding the strange, turbulent period he was born into. His likely father, Akhenaten, had spent his reign dismantling Egypt's traditional religious system, closing temples to the old gods, and elevating the sun disk Aten above all other deities in a form of monotheism unprecedented in Egyptian history. He also relocated the entire capital to a newly built city, Akhetaten, in the desert at what's now Amarna — abandoning Thebes and Memphis in the process.",
+      ),
+      p(
+        "Tutankhamun was originally named Tutankhaten, reflecting that same Aten-centered religion, before changing his name early in his reign to Tutankhamun as part of the broader restoration of traditional worship, particularly of Amun, whose priesthood had been sidelined under Akhenaten. That name change alone is a small but telling piece of evidence for how deliberately his reign worked to undo his predecessor's legacy, even as a child pharaoh acting largely under the guidance of powerful advisors like Ay and the general Horemheb.",
+      ),
+      h2("Family and Succession"),
+      p(
+        "Tutankhamun married Ankhesenamun, his half-sister, in keeping with royal custom of the period, and the couple appear to have had two daughters who were stillborn or died shortly after birth — their small mummified remains were found within his tomb. With no surviving heir, his death triggered a succession crisis; the throne passed briefly to Ay, an elderly court official likely closely connected to the royal family, and then to Horemheb, a military commander who effectively ended the 18th Dynasty's direct royal line.",
       ),
       h2("Seeing It Today"),
       p(
-        "Tutankhamun's complete funerary collection — over 5,000 objects — is now displayed together for the first time at the Grand Egyptian Museum near Giza, while his mummy remains in his original tomb in the Valley of the Kings, on Luxor's West Bank."
+        "Tutankhamun's complete funerary collection is displayed together at the Grand Egyptian Museum near the Giza Pyramids, the first time the full collection has been exhibited as a single, unified display since its discovery a century ago. His mummy, meanwhile, remains in his original tomb in the Valley of the Kings, on Luxor's West Bank — a deliberate choice to keep the body in its resting place rather than relocating it, unlike many other royal mummies now held at the Egyptian Museum in Cairo.",
       ),
+      faq(
+        [
+          {
+            question: "Why is Tutankhamun so famous if he wasn't a significant pharaoh?",
+            answer:
+              "Almost entirely because of the survival of his tomb. Nearly every other pharaoh's burial was looted in antiquity, so Tutankhamun's largely intact tomb, discovered in 1922, gave the world an unprecedented, complete look at royal Egyptian burial practices and wealth that no other find has matched since.",
+          },
+          {
+            question: "Is the 'curse of the pharaohs' related to Tutankhamun's tomb real?",
+            answer:
+              "No credible evidence supports it. The idea gained traction after several people connected to the excavation died in the years following the discovery, but statistically their deaths are consistent with normal mortality rates for the era rather than any supernatural cause.",
+          },
+          {
+            question: "Can you visit Tutankhamun's actual tomb in the Valley of the Kings?",
+            answer:
+              "Yes, with a separate ticket from the general Valley of the Kings entrance. The tomb itself is smaller and less elaborately decorated than several other Valley tombs, since it was never intended as a pharaoh's primary burial site.",
+          },
+          {
+            question: "Where is the famous gold mask displayed?",
+            answer:
+              "At the Grand Egyptian Museum near Giza, along with the rest of Tutankhamun's roughly 5,000-piece funerary collection, displayed together for the first time since the tomb's discovery.",
+          },
+          {
+            question: "How old was Tutankhamun when he died?",
+            answer:
+              "Around eighteen or nineteen. He became pharaoh at roughly nine years old and reigned for about nine years, making him one of the youngest kings in Egyptian history to sit on the throne and one of the youngest to die while still ruling.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Tutankhamun's real historical importance has very little to do with what he did as pharaoh and everything to do with what he left behind by accident — a sealed window into royal Egyptian life that nearly every other tomb in the valley failed to preserve. It's a strange kind of fame, earned almost entirely posthumously, and it's exactly what makes both his tomb and his gold mask worth seeing in person."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See Tutankhamun's Tomb and Treasures",
+        body: "Visit his original tomb in the Valley of the Kings and his full collection at the Grand Egyptian Museum, with a private guide who can separate the facts from the myths.",
+        buttonLabel: "Explore Luxor and Giza Tours",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      },
     ],
   },
   {
@@ -5613,31 +6116,106 @@ export const stories: Story[] = [
     destinations: ["Cairo", "Luxor", "Aswan"],
     primaryKeyword: "egyptian food guide",
     secondaryKeywords: ["what to eat in egypt", "koshari egypt", "ful medames", "egyptian cuisine"],
-    relatedTours: toursBySlug("cairo-nile-dinner-cruise-night-tour", "3-day-cairo-giza"),
+    relatedTours: toursBySlug("cairo-nile-dinner-cruise-night-tour", "3-day-cairo-giza", "khan-el-khalili-food-walking-tour"),
     seoTitle: "What to Eat in Egypt: A Practical Guide to Egyptian Food",
     seoDescription:
       "Koshari, ful medames, and the dishes that define everyday Egyptian eating — what to order, where they come from, and why they're worth seeking out.",
     body: [
-      p("Egyptian food rarely gets the same attention as its ancient sites, which is a shame, because a handful of dishes are genuinely worth building a meal or two around."),
-      h2("Koshari"),
       p(
-        "Widely considered Egypt's national dish, koshari layers rice, macaroni, and lentils with chickpeas, a spiced tomato sauce, and crispy fried onions, usually finished with a garlic-vinegar sauce and a chili sauce on the side. Its exact origins trace to the 19th century, with likely Indian and British colonial influences on the rice-and-lentil base — but the dish as eaten today, sold everywhere from street carts to sit-down restaurants, is entirely, unmistakably Egyptian."
+        "Egyptian food rarely gets the same attention as the country's ancient sites, and that's a genuine shame, because a handful of dishes here are worth building entire meals around, and understanding them tells you as much about daily Egyptian life as any temple does about its ancient past. This isn't a country of elaborate tasting menus — it's a country of dishes perfected over generations, sold everywhere from folding street carts to family-run restaurants, largely unchanged because they didn't need changing.",
       ),
-      h2("Ful Medames"),
       p(
-        "Egypt's most popular breakfast dish by a wide margin, ful medames is slow-cooked fava beans, typically mashed and dressed with olive oil, lemon, cumin, and garlic. Its roots go back to Pharaonic Egypt, making it one of the oldest continuously eaten dishes in the country — still served every morning in households and street stalls across Cairo."
+        "None of it requires an adventurous palate or a big budget. Most of what's genuinely worth eating in Egypt is inexpensive, widely available, and eaten by locals every single day — which is exactly why it's worth seeking out rather than defaulting to hotel buffets for an entire trip.",
+      ),
+      h2("Koshari: The National Dish"),
+      p(
+        "Widely considered Egypt's national dish, koshari layers rice, macaroni, and brown lentils with chickpeas and a spiced tomato sauce, topped with a generous pile of crispy fried onions and usually finished with a garlic-vinegar sauce and a separate chili sauce on the side so you can adjust the heat yourself. It sounds like an odd combination on paper — carbs stacked on carbs — but the textures and the tang of the vinegar and chili pull it together into something genuinely satisfying.",
+      ),
+      p(
+        "Its exact origins trace to the 19th century, with likely Indian influences on the rice-and-lentil base, possibly introduced or adapted during the period of British colonial presence in Egypt. But whatever its mixed ancestry, the dish as eaten today — sold from dedicated koshari shops in every Egyptian city, with entire menus built around it and nothing else — is entirely, unmistakably Egyptian, and a first-time visitor who skips it is genuinely missing one of the country's best cheap meals.",
+      ),
+      h2("Ful Medames: Egypt's Breakfast Staple"),
+      p(
+        "Egypt's most popular breakfast dish by a wide margin, ful medames is slow-cooked fava beans, typically mashed and dressed with olive oil, lemon juice, cumin, and garlic, often topped with chopped tomato, parsley, or a boiled egg depending on the region and the cook. It's eaten scooped up with fresh Egyptian flatbread, baladi bread, rather than with a fork, and it's cheap enough that it remains a genuine daily staple across income levels, not just a tourist-facing dish.",
+      ),
+      p(
+        "Its roots go back to Pharaonic Egypt, which makes it one of the oldest continuously eaten dishes anywhere in the world — a genuinely remarkable culinary through-line connecting modern Cairo breakfast stalls to the ancient civilization most visitors have come specifically to see. Ful carts and small stalls selling it fresh, still warm from the pot, are found on nearly every street corner in Cairo each morning.",
+      ),
+      callout(
+        "Street food in Egypt is generally safe and genuinely some of the best food available, but stick to stalls with visible turnover — a long local line is a good sign, food sitting out for hours isn't. Bottled water is the safer default for drinking throughout the trip, even though tap water in major hotels is typically treated.",
+        { title: "Eating Street Food Safely", tone: "Safety" }
       ),
       h2("Beyond the Basics"),
+      p(
+        "Once koshari and ful are covered, a handful of other dishes round out a genuine picture of everyday Egyptian eating, each with its own regional or seasonal character.",
+      ),
       ...bullets([
-        "Molokhia — a garlicky, jute-leaf stew, usually served over rice with chicken or rabbit",
-        "Mahshi — vegetables stuffed with spiced rice, a common home-cooking staple",
-        "Ta'ameya — Egypt's version of falafel, made with fava beans rather than chickpeas",
-        "Fresh Nile-side seafood in Luxor and Aswan, and grilled seafood along the Red Sea coast",
+        "Molokhia — a garlicky, jute-leaf stew with a distinctive silky texture, usually served over rice with chicken or rabbit",
+        "Mahshi — vegetables such as zucchini, eggplant, or grape leaves stuffed with spiced rice, a labor-intensive home-cooking staple often made for special occasions",
+        "Ta'ameya — Egypt's version of falafel, made with fava beans rather than chickpeas, giving it a greener color and a slightly different texture from the Levantine version most visitors know",
+        "Shawarma and grilled kofta — widely available across Cairo and beyond, and a reliable, familiar option for less adventurous eaters in the group",
+        "Fresh Nile-side seafood in Luxor and Aswan, and grilled Red Sea seafood along the Hurghada and Sharm El Sheikh coast",
+        "Om Ali — a warm bread-and-milk dessert, Egypt's answer to bread pudding, usually studded with nuts, raisins, and coconut",
       ]),
+      h2("Eating Along the Nile: Luxor and Aswan"),
+      p(
+        "Food changes slightly as you move south along the Nile toward Luxor and Aswan, with Nubian influence becoming more noticeable in Aswan's cooking — different spice blends, more use of okra and dried hibiscus (karkade, which is also served hot or iced as a distinctly Egyptian drink throughout the country). Nile perch and other freshwater fish appear more regularly on menus in both cities, grilled simply with lemon and spices, a welcome change of pace after several days of Cairo's heavier, carb-forward staples.",
+      ),
+      p(
+        "A dinner cruise on the Nile, whether a short evening outing in Cairo or part of a longer multi-day cruise between Luxor and Aswan, is also a genuinely good way to combine a proper Egyptian meal with the scenery — many include a broad spread covering several of the dishes above in one sitting, which is a useful way to sample widely without committing to a full sit-down meal at every individual restaurant.",
+      ),
+      h2("Egyptian Tea, Coffee, and Sweets"),
+      p(
+        "Egyptian tea, shai, is strong, usually served heavily sweetened, and functions as a near-constant social ritual — offered in shops, homes, and on long car journeys as a matter of course. Egyptian coffee, ahwa, is served Turkish-style in small cups, thick and unfiltered, and it's worth specifying your sugar preference when ordering, since it's typically brewed with the sugar already mixed in rather than added afterward.",
+      ),
+      p(
+        "For something sweet, look beyond the international hotel dessert table toward konafa and baklava-style pastries sold by weight in dedicated sweet shops, particularly around Ramadan, when Egyptian dessert culture is at its most elaborate. Fresh juice stands, selling sugarcane juice, mango, and pomegranate juice depending on the season, are also genuinely worth a stop, especially in the heat of a Cairo afternoon.",
+      ),
       h2("Eating Well on a Tour"),
       p(
-        "A private guide is worth its weight here too — knowing which street stall is actually good, or which restaurant does koshari properly, makes a real difference, and it's exactly the kind of local knowledge a good guide brings to a day that otherwise defaults to hotel restaurants."
+        "A private guide is worth its weight here too, and not only for temples. Knowing which street stall is actually good, which restaurant does koshari properly, or where the fresh juice is genuinely fresh makes a real difference to how a day feels, and it's exactly the kind of local knowledge a good guide brings that otherwise gets missed by a group defaulting to hotel restaurants for every meal of the trip. Food tours through markets like Khan el-Khalili in Cairo are also a genuinely good way to sample several dishes in a single outing without committing to a full sit-down meal at each one.",
       ),
+      faq(
+        [
+          {
+            question: "Is street food safe to eat in Egypt?",
+            answer:
+              "Generally yes, especially at busy stalls with visible turnover and food cooked fresh in front of you. Use common-sense judgment — a stall with a long local line is a good sign, and bottled water is the safer default throughout the trip.",
+          },
+          {
+            question: "What's the best dish to try first in Egypt?",
+            answer:
+              "Koshari is the easiest entry point — inexpensive, filling, widely available, and genuinely representative of everyday Egyptian eating. Ful medames is the equivalent for breakfast.",
+          },
+          {
+            question: "Is Egyptian food spicy?",
+            answer:
+              "Not inherently — most dishes are more about depth of flavor from garlic, cumin, and herbs than heat. Chili sauce is usually offered on the side with dishes like koshari, so you can add heat rather than have it built in.",
+          },
+          {
+            question: "Are there good vegetarian options in Egyptian food?",
+            answer:
+              "Yes, more than travelers often expect. Koshari, ful medames, ta'ameya, and mahshi are all naturally vegetarian or easily ordered that way, making Egyptian cuisine genuinely accommodating for vegetarian travelers without much extra effort.",
+          },
+          {
+            question: "What should I drink besides bottled water?",
+            answer:
+              "Karkade (hibiscus tea), served hot or cold, is a distinctly Egyptian option worth trying, along with fresh sugarcane or fruit juice from street stands and the strong, sweet local tea served everywhere from shops to private homes.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "None of this requires seeking out a special restaurant scene — it's already everywhere, sold at street level, eaten daily by millions of people, and it's some of the most honest, satisfying food you'll find anywhere on the trip. Skipping it in favor of hotel buffets is one of the more common regrets travelers mention after an Egypt trip, and one of the easiest to avoid."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Taste Egypt Properly",
+        body: "Add a market food walk or a Nile dinner cruise to your itinerary and let a local guide take you to the places that actually do it right.",
+        buttonLabel: "See Cairo Food Experiences",
+        buttonHref: "/tours/khan-el-khalili-food-walking-tour",
+      },
     ],
   },
   {
