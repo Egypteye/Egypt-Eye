@@ -1,10 +1,9 @@
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
-import { TrustBar } from "@/components/TrustBar";
 import { Reveal } from "@/components/Reveal";
 import { CustomizeForm } from "./CustomizeForm";
-import { getCustomizePage, getExperiences, getPhotoshoots, getSiteSettings, getTours } from "@/sanity/fetchers";
+import { getCustomizePage, getSiteSettings } from "@/sanity/fetchers";
 
 export const metadata = {
   title: "Customize Your Tour",
@@ -13,13 +12,7 @@ export const metadata = {
 };
 
 export default async function CustomizePage() {
-  const [tours, experiences, photoshoots, site, page] = await Promise.all([
-    getTours(),
-    getExperiences(),
-    getPhotoshoots(),
-    getSiteSettings(),
-    getCustomizePage(),
-  ]);
+  const [site, page] = await Promise.all([getSiteSettings(), getCustomizePage()]);
 
   return (
     <>
@@ -33,15 +26,7 @@ export default async function CustomizePage() {
         </Container>
       </section>
 
-      <section className="py-16">
-        <Container>
-          <Reveal>
-            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} badges={site.trustBadges} />
-          </Reveal>
-        </Container>
-      </section>
-
-      <section className="pb-24">
+      <section className="pb-24 pt-16">
         <Container className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
           <div>
             <SectionHeading

@@ -294,6 +294,21 @@ function FieldRenderer({
     );
   }
 
+  if (field.fieldType === "date") {
+    return (
+      <label className={`flex flex-col gap-1.5 text-sm font-medium text-ink-soft ${widthClass}`}>
+        {label}
+        <input
+          name={field.fieldKey}
+          type="date"
+          required={field.required}
+          onClick={(e) => e.currentTarget.showPicker?.()}
+          className="cursor-pointer rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold"
+        />
+      </label>
+    );
+  }
+
   return (
     <label className={`flex flex-col gap-1.5 text-sm font-medium text-ink-soft ${widthClass}`}>
       {label}

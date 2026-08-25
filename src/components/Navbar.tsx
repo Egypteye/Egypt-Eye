@@ -2,10 +2,15 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ResolvedSiteSettings } from "@/content/types";
 import { useJourneyItems } from "@/lib/journey";
 import type { CurrentUser } from "@/lib/auth/session";
+
+// Only these stay visible in the desktop nav bar; every other site.nav item
+// (Home is already reachable via the logo) is tucked into the "More"
+// dropdown so the bar doesn't get crowded as the nav list grows.
+const PRIMARY_NAV_LABELS = ["Popular Tours", "Customize Your Tour", "Photoshoots"];
 
 export function Navbar({
   siteSettings: site,
@@ -15,10 +20,58 @@ export function Navbar({
   currentUser: CurrentUser | null;
 }) {
   const [open, setOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
+  const moreRef = useRef<HTMLDivElement>(null);
   const journeyCount = useJourneyItems().length;
 
+  const primaryNav = PRIMARY_NAV_LABELS.map((label) => site.nav.find((item) => item.label === label)).filter(
+    (item): item is (typeof site.nav)[number] => Boolean(item)
+  );
+  const moreNav = site.nav.filter((item) => !PRIMARY_NAV_LABELS.includes(item.label));
+
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (y <= 80) setNavHidden(false);
+        else if (y > lastY) setNavHidden(true);
+        else if (y < lastY) setNavHidden(false);
+        lastY = y;
+        ticking = false;
+      });
+    }
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    function onClickOutside(e: MouseEvent) {
+      if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
+    }
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") setMoreOpen(false);
+    }
+    document.addEventListener("mousedown", onClickOutside);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClickOutside);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
+  const hidden = navHidden && !open && !moreOpen;
+
   return (
-    <header className="sticky top-0 z-50 border-b border-black/5 bg-cream/90 backdrop-blur-md">
+    <header
+      className={`sticky top-0 z-50 border-b border-black/5 bg-cream/90 backdrop-blur-md transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+        hidden ? "pointer-events-none -translate-y-3 opacity-0" : "translate-y-0 opacity-100"
+      }`}
+    >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
         <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ink p-1.5 ring-1 ring-gold/40">
@@ -36,8 +89,8 @@ export function Navbar({
           </span>
         </Link>
 
-        <nav className="hidden flex-wrap items-center justify-end gap-x-5 gap-y-2 xl:flex xl:flex-1 xl:px-6">
-          {site.nav.map((item) => (
+        <nav className="hidden items-center justify-end gap-x-6 xl:flex xl:flex-1 xl:px-6">
+          {primaryNav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -46,6 +99,45 @@ export function Navbar({
               {item.label}
             </Link>
           ))}
+
+          {moreNav.length > 0 && (
+            <div className="relative" ref={moreRef}>
+              <button
+                type="button"
+                onClick={() => setMoreOpen((v) => !v)}
+                aria-expanded={moreOpen}
+                className="flex items-center gap-1 whitespace-nowrap text-[13px] font-medium text-ink-soft transition hover:text-gold-dark"
+              >
+                More
+                <svg
+                  viewBox="0 0 20 20"
+                  className={`h-3.5 w-3.5 transition-transform duration-300 ${moreOpen ? "rotate-180" : ""}`}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                >
+                  <path d="M5 7.5l5 5 5-5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              <div
+                className={`absolute right-0 top-full z-10 mt-3 w-56 origin-top-right rounded-2xl border border-black/5 bg-cream p-2 shadow-xl shadow-black/10 transition-[transform,opacity] duration-200 ease-out ${
+                  moreOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"
+                }`}
+              >
+                {moreNav.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    onClick={() => setMoreOpen(false)}
+                    className="block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium text-ink-soft transition hover:bg-sand-dim hover:text-gold-dark"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </nav>
 
         <div className="hidden items-center gap-2.5 xl:flex">

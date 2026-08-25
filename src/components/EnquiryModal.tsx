@@ -179,10 +179,23 @@ export function EnquiryModal({
 
             <div className="grid grid-cols-2 gap-3">
               <Field label={flexibleDates ? "Around this date" : "Start Date"} htmlFor="enq-start">
-                <input id="enq-start" name="startDate" type="date" className={inputClass} />
+                <input
+                  id="enq-start"
+                  name="startDate"
+                  type="date"
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  className={inputClass}
+                />
               </Field>
               <Field label="End Date" htmlFor="enq-end">
-                <input id="enq-end" name="endDate" type="date" disabled={flexibleDates} className={`${inputClass} disabled:opacity-40`} />
+                <input
+                  id="enq-end"
+                  name="endDate"
+                  type="date"
+                  disabled={flexibleDates}
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  className={`${inputClass} disabled:opacity-40`}
+                />
               </Field>
             </div>
             <label className="-mt-2 flex items-center gap-2 text-xs text-ink-soft/60">

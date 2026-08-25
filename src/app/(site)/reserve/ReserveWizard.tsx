@@ -209,10 +209,22 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
           {step === 1 && (
             <div className="flex flex-col gap-4">
               <Field label="Trip start date">
-                <input type="date" value={form.tripStartDate} onChange={(e) => update("tripStartDate", e.target.value)} className={inputClass} />
+                <input
+                  type="date"
+                  value={form.tripStartDate}
+                  onChange={(e) => update("tripStartDate", e.target.value)}
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  className={inputClass}
+                />
               </Field>
               <Field label="Trip end date (optional)">
-                <input type="date" value={form.tripEndDate} onChange={(e) => update("tripEndDate", e.target.value)} className={inputClass} />
+                <input
+                  type="date"
+                  value={form.tripEndDate}
+                  onChange={(e) => update("tripEndDate", e.target.value)}
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  className={inputClass}
+                />
               </Field>
               <p className="text-xs text-ink-soft/50">Not sure yet? Leave these blank — we can finalize dates together.</p>
             </div>

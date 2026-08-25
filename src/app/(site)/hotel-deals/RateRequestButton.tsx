@@ -182,10 +182,22 @@ function RateRequestModal({
 
             <div className="grid grid-cols-2 gap-3">
               <Field label="Check-in" htmlFor="rate-checkin">
-                <input id="rate-checkin" name="checkIn" type="date" className={inputClass} />
+                <input
+                  id="rate-checkin"
+                  name="checkIn"
+                  type="date"
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  className={inputClass}
+                />
               </Field>
               <Field label="Check-out" htmlFor="rate-checkout">
-                <input id="rate-checkout" name="checkOut" type="date" className={inputClass} />
+                <input
+                  id="rate-checkout"
+                  name="checkOut"
+                  type="date"
+                  onClick={(e) => e.currentTarget.showPicker?.()}
+                  className={inputClass}
+                />
               </Field>
             </div>
 

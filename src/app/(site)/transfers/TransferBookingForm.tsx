@@ -333,7 +333,14 @@ export function TransferBookingForm() {
         <div className="mt-5 grid gap-5 sm:grid-cols-4">
           <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
             Date
-            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className={inputClass()} />
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              onClick={(e) => e.currentTarget.showPicker?.()}
+              required
+              className={inputClass()}
+            />
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
             Time
