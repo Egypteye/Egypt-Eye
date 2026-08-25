@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
 import { NewsletterComposer } from "./NewsletterComposer";
 import { addSubscriberManually, setSubscriberUnsubscribed } from "./actions";
@@ -17,6 +19,8 @@ type Subscriber = {
 };
 
 export default async function AdminNewsletterPage() {
+  const user = await getCurrentUser();
+  if (user?.role !== "admin") redirect("/admin/reservations");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase

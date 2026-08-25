@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../../NotConfiguredNotice";
 import { ConfirmSubmitButton } from "../ConfirmSubmitButton";
 import {
@@ -57,6 +58,8 @@ type Rate = {
 };
 
 export default async function AdminHotelEditPage({ params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+  if (user?.role !== "admin") redirect("/admin/reservations");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const { id } = await params;
   const supabase = createAdminSupabaseClient();

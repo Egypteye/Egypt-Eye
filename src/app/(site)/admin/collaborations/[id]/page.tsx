@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../../NotConfiguredNotice";
 import { updateCollaborationStatus, updateCollaborationNotes } from "../actions";
 import { STATUSES, type CollaborationStatus } from "../constants";
@@ -28,6 +29,8 @@ type Application = {
 };
 
 export default async function AdminCollaborationDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+  if (user?.role !== "admin") redirect("/admin/reservations");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const { id } = await params;
   const supabase = createAdminSupabaseClient();

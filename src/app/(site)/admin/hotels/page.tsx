@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
 import { createHotel } from "./actions";
 
@@ -9,6 +11,8 @@ export const metadata = { title: "Hotels", robots: { index: false, follow: false
 type HotelRow = { id: string; name: string; location: string; enabled: boolean; display_order: number };
 
 export default async function AdminHotelsPage() {
+  const user = await getCurrentUser();
+  if (user?.role !== "admin") redirect("/admin/reservations");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase

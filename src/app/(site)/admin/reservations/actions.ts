@@ -1,11 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/session";
+import { requireReservationsStaff } from "@/lib/auth/session";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 
 export async function updateReservationStatus(reservationId: string, formData: FormData) {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   const status = String(formData.get("status") ?? "requested");
   await supabase.from("reservations").update({ status, updated_at: new Date().toISOString() }).eq("id", reservationId);
@@ -14,7 +14,7 @@ export async function updateReservationStatus(reservationId: string, formData: F
 }
 
 export async function addHotel(reservationId: string, formData: FormData) {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase.from("reservations").select("hotels").eq("id", reservationId).single();
   const hotels = Array.isArray(data?.hotels) ? data.hotels : [];
@@ -30,7 +30,7 @@ export async function addHotel(reservationId: string, formData: FormData) {
 }
 
 export async function addTransfer(reservationId: string, formData: FormData) {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase.from("reservations").select("transfers").eq("id", reservationId).single();
   const transfers = Array.isArray(data?.transfers) ? data.transfers : [];
@@ -47,7 +47,7 @@ export async function addTransfer(reservationId: string, formData: FormData) {
 }
 
 export async function addGuide(reservationId: string, formData: FormData) {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase.from("reservations").select("guides").eq("id", reservationId).single();
   const guides = Array.isArray(data?.guides) ? data.guides : [];
@@ -61,7 +61,7 @@ export async function addGuide(reservationId: string, formData: FormData) {
 }
 
 export async function addDocument(reservationId: string, formData: FormData) {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase.from("reservations").select("documents").eq("id", reservationId).single();
   const documents = Array.isArray(data?.documents) ? data.documents : [];
@@ -71,7 +71,7 @@ export async function addDocument(reservationId: string, formData: FormData) {
 }
 
 export async function addItineraryDay(reservationId: string, formData: FormData) {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase.from("reservations").select("itinerary").eq("id", reservationId).single();
   const itinerary = Array.isArray(data?.itinerary) ? data.itinerary : [];
@@ -86,7 +86,7 @@ export async function addItineraryDay(reservationId: string, formData: FormData)
 }
 
 export async function addItineraryItem(reservationId: string, dayIndex: number, formData: FormData) {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase.from("reservations").select("itinerary").eq("id", reservationId).single();
   const itinerary = Array.isArray(data?.itinerary) ? data.itinerary : [];
@@ -104,7 +104,7 @@ export async function addItineraryItem(reservationId: string, dayIndex: number, 
 }
 
 export async function resolveChangeRequest(requestId: string, reservationId: string, status: "approved" | "declined") {
-  await requireAdmin();
+  await requireReservationsStaff();
   const supabase = createAdminSupabaseClient();
   await supabase.from("reservation_change_requests").update({ status }).eq("id", requestId);
   revalidatePath(`/admin/reservations/${reservationId}`);

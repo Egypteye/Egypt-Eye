@@ -1,11 +1,15 @@
+import { redirect } from "next/navigation";
 import { getCampaignStats } from "./stats";
 import { createCampaign, toggleCampaignActive, updateCampaign } from "./actions";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
 
 export const metadata = { title: "Discount Campaigns", robots: { index: false, follow: false } };
 
 export default async function AdminDiscountsPage() {
+  const user = await getCurrentUser();
+  if (user?.role !== "admin") redirect("/admin/reservations");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const stats = await getCampaignStats();
 

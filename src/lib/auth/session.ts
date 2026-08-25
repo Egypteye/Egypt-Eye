@@ -5,7 +5,7 @@ export type CurrentUser = {
   id: string;
   email: string;
   firstName: string | null;
-  role: "customer" | "admin";
+  role: "customer" | "admin" | "reservations";
 };
 
 // Server-side only. Uses supabase.auth.getUser() (not getSession()) because
@@ -31,13 +31,25 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     id: user.id,
     email: user.email,
     firstName: (profile?.first_name as string | null) ?? null,
-    role: (profile?.role as "customer" | "admin") ?? "customer",
+    role: (profile?.role as "customer" | "admin" | "reservations") ?? "customer",
   };
 }
 
 export async function requireAdmin(): Promise<CurrentUser> {
   const user = await getCurrentUser();
   if (!user || user.role !== "admin") {
+    throw new Error("Not authorized");
+  }
+  return user;
+}
+
+// Scoped staff access for the reservations desk: full admins pass too, but
+// so does the narrower "reservations" role, which can only reach
+// /admin/reservations and /admin/hotel-rate-requests (every other /admin/*
+// page still calls requireAdmin() directly and rejects this role).
+export async function requireReservationsStaff(): Promise<CurrentUser> {
+  const user = await getCurrentUser();
+  if (!user || (user.role !== "admin" && user.role !== "reservations")) {
     throw new Error("Not authorized");
   }
   return user;
