@@ -3,21 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import { EgyptMap } from "./EgyptMap";
+import { MOOD_COLORS, MOOD_ORDER } from "@/lib/moodColors";
 import type { DestinationHub, EgyptCity, Mood } from "@/content/types";
 
 // Each mood gets its own color so the row reads at a glance (blue for
 // water/beaches, orange for history, etc.) rather than one uniform brand
 // gold for every button — a deliberate, scoped exception to the site's
 // single-accent system, since these are functional filter chips, not
-// brand chrome.
-const MOODS: { value: Mood; label: string; dot: string; active: string }[] = [
-  { value: "history", label: "History & Monuments", dot: "bg-orange-600", active: "border-orange-600 bg-orange-600 text-white" },
-  { value: "beaches", label: "Red Sea & Beaches", dot: "bg-blue-600", active: "border-blue-600 bg-blue-600 text-white" },
-  { value: "desert", label: "Desert & Oases", dot: "bg-amber-700", active: "border-amber-700 bg-amber-700 text-white" },
-  { value: "diving", label: "Diving & Snorkeling", dot: "bg-teal-600", active: "border-teal-600 bg-teal-600 text-white" },
-  { value: "nile", label: "Nile & River Towns", dot: "bg-green-600", active: "border-green-600 bg-green-600 text-white" },
-  { value: "coast", label: "Mediterranean Coast", dot: "bg-indigo-600", active: "border-indigo-600 bg-indigo-600 text-white" },
-];
+// brand chrome. Colors live in lib/moodColors so the map pins they filter
+// can match the same colors.
+const MOODS = MOOD_ORDER.map((value) => ({ value, ...MOOD_COLORS[value] }));
 
 // The map + everything directly around it on /explore-egypt: the mood
 // buttons that help an undecided visitor narrow things down, the map

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { MOOD_COLORS } from "@/lib/moodColors";
 import type { DestinationHub, EgyptCity, Mood } from "@/content/types";
 
 // A real, accurately-projected map of Egypt — not a stylized illustration.
@@ -108,6 +109,10 @@ export function EgyptMap({
   const routePoints = (routeSlugs ?? [])
     .map((slug) => hubs.find((h) => h.slug === slug))
     .filter((h): h is DestinationHub => Boolean(h));
+
+  // The color a matching pin takes on while a mood filter is active — the
+  // same color as the mood button itself (shared lookup in lib/moodColors).
+  const moodColor = moodFilter ? MOOD_COLORS[moodFilter] : null;
 
   function getContainerPoint(clientX: number, clientY: number): Point {
     const rect = containerRef.current?.getBoundingClientRect();
@@ -365,7 +370,11 @@ export function EgyptMap({
                   cities, showing every label at once buried the map. */}
               <span
                 className={`h-1.5 w-1.5 rounded-full border shadow-sm transition group-hover:scale-150 ${
-                  open ? "border-ink bg-cream" : "border-ink-soft/50 bg-cream/70"
+                  open
+                    ? "border-ink bg-cream"
+                    : matchesMood && moodColor
+                      ? `${moodColor.border} ${moodColor.dot}`
+                      : "border-ink-soft/50 bg-cream/70"
                 }`}
               />
               <span
@@ -401,7 +410,9 @@ export function EgyptMap({
                       ? "border-cream bg-gold-dark shadow-[0_0_0_4px_rgba(177,127,36,0.28)]"
                       : onRoute
                         ? "border-cream bg-nile-light"
-                        : "border-cream bg-ink"
+                        : matchesMood && moodColor
+                          ? `border-cream ${moodColor.dot}`
+                          : "border-cream bg-ink"
                   }`}
                 />
               </span>
