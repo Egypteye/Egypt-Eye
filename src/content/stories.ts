@@ -1500,127 +1500,97 @@ export const stories: Story[] = [
     relatedTours: toursBySlug("2-day-luxor-tour", "6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "epic-8-day-egypt-escapade"),
     seoTitle: "Luxor Travel Guide: How to Actually See Ancient Thebes",
     seoDescription:
-      "A practical Luxor guide — East Bank vs. West Bank, how many days to spend, and the temples and tombs worth building your time around.",
+      "A practical Luxor guide covering East Bank vs. West Bank, how many days to spend, getting there, and the temples worth building your trip around.",
     body: [
-      {
-        _type: "block",
-        _key: "p1",
-        style: "normal",
-        children: [
+      p(
+        "Luxor gets called an open-air museum so often it starts to sound like a slogan, but it holds up. This was ancient Thebes, the religious and political capital of Egypt for centuries, and its temples and tombs were built at a scale meant to be walked through, not glanced at from a bus window. Treating Luxor as a single long day trip from Cairo is the most common mistake first-time visitors make, and it's the one that leaves them wishing they'd planned differently."
+      ),
+      p(
+        "This guide covers what a Luxor trip actually involves: how to get here, how the East and West Banks divide the city, which sites are worth building your days around, how many days to give it, and when to come. Treat it as the planning layer underneath the more detailed pieces we've written on specific decisions, like how to split your time between the two banks."
+      ),
+      h2("Getting to Luxor"),
+      p(
+        "Most visitors reach Luxor one of three ways: a short domestic flight from Cairo, an overnight sleeper train, or arriving already on a Nile cruise or dahabiya that starts or ends here. The flight is the fastest option and the one most private itineraries use when Luxor is one stop among several. The sleeper train has its own appeal — you go to bed in Cairo and wake up in Upper Egypt — though it demands more patience than comfort seekers might want. If Luxor is the starting or ending point of a Nile cruise between here and Aswan, you'll already be arriving by water, which settles the question for you."
+      ),
+      h2("Two Banks, Two Different Worlds"),
+      p(
+        "The Nile splits Luxor into two halves that don't feel like the same place. The East Bank holds modern Luxor town, most hotels and restaurants, and the temples built for the living — Karnak and Luxor Temple, connected by the restored Avenue of Sphinxes. The West Bank belongs to the dead: the Valley of the Kings, Hatshepsut's mortuary temple, the Colossi of Memnon, and the villages of the workers who built it all. It's quieter, more spread out, and requires a vehicle to move between sites comfortably. We've written a longer comparison of the two banks if you want the specifics side by side before you plan your days."
+      ),
+      h2("The Sites Worth Building Your Trip Around"),
+      p("Every Luxor itinerary should include a handful of non-negotiables, and a few more that reward the traveler willing to slow down."),
+      ...bullets([
+        "Karnak Temple — Egypt's largest religious complex, expanded by generations of pharaohs over roughly two thousand years; the Great Hypostyle Hall alone, with its 134 massive columns, justifies the visit on its own",
+        "Luxor Temple — smaller and more intimate than Karnak, especially striking after dark when the columns and statues are lit",
+        "The Valley of the Kings — the burial ground of New Kingdom pharaohs, including Tutankhamun, in tombs cut into the rock and decorated with painted reliefs",
+        "Hatshepsut's Temple — a three-tiered temple built directly into the cliffs of Deir el-Bahari, unlike almost anything else in Egypt",
+        "The Colossi of Memnon — two enormous seated statues that once guarded a vanished mortuary temple, easy to combine with a West Bank morning",
+        "The quieter West Bank sites — Medinet Habu and the tombs of the nobles draw far fewer visitors than the Valley of the Kings and reward the extra time",
+      ]),
+      h2("How Many Days Does Luxor Actually Need?"),
+      p(
+        "Two to three days is the honest answer, not the single day a lot of standard itineraries allow. One full day per bank is the minimum to see the major sites without rushing: Karnak and Luxor Temple can fill a morning into early afternoon on the East Bank, while the Valley of the Kings, Hatshepsut's temple, and the Colossi of Memnon take a similar block of time on the West Bank. A third day leaves room for a sunrise hot-air balloon over the West Bank's temples and tombs — reliably one of the best views in Egypt — or simply a slower pace through sites you'd otherwise have to rush."
+      ),
+      h2("Getting Around Once You're There"),
+      p(
+        "Luxor town is walkable on the East Bank, but crossing to the West Bank and moving between its spread-out sites is not something to do on foot in the heat. Most private itineraries include a dedicated driver and vehicle for the length of your stay, which removes the need to negotiate taxis or haggle over a felucca crossing each morning. If you're arranging things independently, a bridge now connects both banks by road, alongside the traditional public ferry that still carries most foot traffic across the river near the Luxor Temple corniche."
+      ),
+      h2("Where to Stay"),
+      p(
+        "Most travelers base themselves on the East Bank, close to Karnak, Luxor Temple, and the town's restaurants, with a Nile-facing room turning breakfast or a sundowner into part of the experience. A smaller number of boutique properties sit on the West Bank itself, closer to the Valley of the Kings and away from the town's noise — worth considering if you'd rather wake up already on the quiet side of the river."
+      ),
+      h2("A Sample Two-Day Plan"),
+      p(
+        "If two days is what you have, a workable split looks like this: spend day one on the West Bank, starting at the Valley of the Kings as early as tickets allow, then Hatshepsut's Temple and the Colossi of Memnon before the heat peaks in early afternoon. Spend day two on the East Bank, with Karnak first thing in the morning and Luxor Temple saved for late afternoon into evening, when it's lit and the crowds have thinned. A third day, if you can manage it, is best spent either on a sunrise balloon flight or simply revisiting whichever site pulled at you the most."
+      ),
+      h2("Best Time to Visit Luxor"),
+      p(
+        "Luxor's summer heat is serious — well above 40°C (104°F) inland from June through August — which makes October through April far more comfortable for a full day of walking between open-air temple courts. Early starts matter here more than almost anywhere else in Egypt: most sites open at dawn specifically so visitors can finish before the worst of the midday heat, whatever the season. If your dates are flexible, we've written a fuller month-by-month breakdown of when to visit Egypt generally."
+      ),
+      callout(
+        "Ticket rules for the Valley of the Kings rotate to protect the paintings from humidity and crowding — a standard ticket includes entry to a handful of tombs, while a few of the most famous, including Tutankhamun's, require a separate ticket. Choose which tombs to see based on what's actually open the day you visit rather than a fixed list.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      h2("Practical Notes for Planning"),
+      ...bullets([
+        "Dress for temple visits the way you would for any conservative site — shoulders and knees covered, loose and breathable fabric",
+        "Bring more water than feels necessary, especially on West Bank mornings with real walking between sites",
+        "A private Egyptologist guide is worth it in Luxor more than almost anywhere else in Egypt — the difference between looking at a wall of hieroglyphs and understanding the story on it is enormous",
+        "Photography is generally allowed at most sites, though some tombs restrict or charge for cameras — check locally before you go",
+      ]),
+      faq(
+        [
           {
-            _type: "span",
-            _key: "p1s1",
-            text: "Luxor gets called an open-air museum so often that it starts to sound like a slogan, but it's a fair description — this was ancient Thebes, the religious and political capital of Egypt for centuries, and its temples and tombs were built at a scale meant to be walked through, not glanced at from a bus window. Treating Luxor as a single day trip from Cairo is the most common mistake first-time visitors make.",
-            marks: [],
+            question: "Is Luxor safe to visit?",
+            answer:
+              "Yes. Luxor is one of Egypt's most tourism-oriented cities, with a visible tourist police presence at every major site, and violent crime against visitors is rare.",
+          },
+          {
+            question: "Can I see Luxor in one day?",
+            answer:
+              "You can see a compressed highlight reel, usually Karnak and the Valley of the Kings, but you'll be moving fast and skipping most of what makes Luxor worth the trip. Two to three days is the realistic minimum.",
+          },
+          {
+            question: "Do I need a guide inside the temples?",
+            answer:
+              "You don't need one to enter, but you'll get far more out of the visit with one. Luxor's sites are dense with symbolism that isn't explained on-site, and a good Egyptologist turns a wall of carvings into an actual story.",
+          },
+          {
+            question: "Is Luxor part of a standard Nile cruise?",
+            answer:
+              "Yes. Luxor is the traditional starting or ending point for cruises and dahabiya sails to and from Aswan, which is why many Egypt itineraries combine a Luxor stay with the river journey rather than treating them separately.",
+          },
+          {
+            question: "How does a Luxor stay fit into a wider Egypt trip?",
+            answer:
+              "Most multi-day Egypt itineraries treat Luxor as one stop in a Cairo–Luxor–Aswan route, often continuing by Nile cruise or private car to Aswan afterward. It pairs naturally with a Nile cruise on one end and Cairo and Giza on the other, which is how most of our own multi-day itineraries are built.",
           },
         ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h1",
-        style: "h2",
-        children: [{ _type: "span", _key: "h1s1", text: "Two Banks, Two Different Cities", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p2",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p2s1",
-            text: "Luxor splits cleanly into two halves along the Nile, and they don't feel like the same place. The East Bank is where the living city is — Luxor town, most of the hotels and restaurants, and the temples built for the living: Karnak, the largest religious complex ever built, and Luxor Temple, connected to Karnak by the recently restored Avenue of Sphinxes. The West Bank belongs to the dead — the Valley of the Kings, Hatshepsut's mortuary temple, and the Colossi of Memnon — and has a quieter, more rural feel entirely. We've written a longer comparison of the two banks separately if you want the specifics side by side.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h2",
-        style: "h2",
-        children: [{ _type: "span", _key: "h2s1", text: "Karnak Temple", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p3",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p3s1",
-            text: "Karnak isn't one temple but a complex built and expanded by successive pharaohs over roughly two thousand years — the Great Hypostyle Hall alone, with its 134 massive columns, is worth the visit on its own. Go early. It's Luxor's single most-visited site, and the light through the columns in the first hour after opening is very different from midday.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h3",
-        style: "h2",
-        children: [{ _type: "span", _key: "h3s1", text: "The Valley of the Kings", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p4",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p4s1",
-            text: "This is where New Kingdom pharaohs — including Tutankhamun — were buried, in tombs cut deep into the valley rock and decorated with some of the best-preserved painted reliefs anywhere in Egypt. A standard ticket includes entry to a handful of tombs; a few of the most famous, including Tutankhamun's, require a separate ticket. Choose which tombs to see based on what's actually open that day rather than a fixed list — access rotates to protect the paintings from humidity and crowding.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h4",
-        style: "h2",
-        children: [{ _type: "span", _key: "h4s1", text: "How Many Days Does Luxor Actually Need?", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p5",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p5s1",
-            text: "Two to three days is the honest answer. One full day per bank is the minimum to see the major sites without rushing — Karnak and Luxor Temple can realistically fill a morning to early afternoon on the East Bank; the Valley of the Kings, Hatshepsut's temple, and the Colossi of Memnon take a similar block of time on the West Bank. A third day leaves room for a sunrise hot-air balloon over the West Bank's temples and tombs — reliably one of the best views in Egypt — or simply a slower pace through sites you'd otherwise have to rush.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h5",
-        style: "h2",
-        children: [{ _type: "span", _key: "h5s1", text: "Best Time to Visit Luxor", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p6",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p6s1",
-            text: "Luxor's summer heat is serious — well above 40°C (104°F) inland from June through August — which makes October through April far more comfortable for a full day of walking between open-air temple courts. Early morning starts matter here more than almost anywhere else in Egypt: most sites open at dawn specifically so visitors can be finished before the worst of the midday heat, whatever the season.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Luxor rewards patience more than almost anywhere else in Egypt. Rush it and you'll leave with photographs of temples. Give it two or three unhurried days and you'll leave understanding why this was ancient Egypt's capital for so long."
+      ),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Plan Your Luxor Days", body: "See how a private Luxor stay fits into your Egypt itinerary.", buttonLabel: "Explore Luxor Tours", buttonHref: "/tours/2-day-luxor-tour" },
     ],
     relatedStories: [
       {
@@ -1657,7 +1627,7 @@ export const stories: Story[] = [
     destinations: ["Luxor"],
     primaryKeyword: "luxor east bank vs west bank",
     secondaryKeywords: ["luxor west bank", "luxor east bank", "valley of the kings vs karnak"],
-    relatedTours: toursBySlug("2-day-luxor-tour", "6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise"),
+    relatedTours: toursBySlug("luxor-east-bank-day-tour", "luxor-west-bank-day-tour", "2-day-luxor-tour", "6-day-cairo-giza-luxor"),
     relatedStories: [
       {
         slug: "luxor-travel-guide",
@@ -1672,83 +1642,89 @@ export const stories: Story[] = [
     seoDescription:
       "Karnak and Luxor Temple sit on the East Bank; the Valley of the Kings sits on the West. Here's what that split actually means for your visit.",
     body: [
-      {
-        _type: "block",
-        _key: "p1",
-        style: "normal",
-        children: [
+      p(
+        "Ancient Thebans built their city around a straightforward idea: the living belonged on the east side of the Nile, where the sun rises, and the dead belonged on the west, where it sets. Three thousand years later, that division still organizes how you'll actually spend your time in Luxor — and it's worth understanding before you plan your days, not after you've already booked a single rushed itinerary that tries to cram both into an afternoon."
+      ),
+      h2("The East Bank: Temples for the Living"),
+      p(
+        "This is where modern Luxor actually lives — the town, most hotels and restaurants, and the temples built to be used by the living: Karnak, Egypt's largest religious complex, and Luxor Temple, connected to it by the restored Avenue of Sphinxes. Both are close together and walkable from most East Bank hotels, which makes this the more convenient half to explore. Karnak alone can absorb two or three hours if you take it slowly, and Luxor Temple is worth a second visit after dark, when it's lit and feels almost like a different site entirely."
+      ),
+      p(
+        "Give the East Bank a comfortable half-day to a full day, ideally starting at Karnak before the heat and the crowds build, then working through Luxor Temple later — either right after, or saved for evening. The corniche along the Nile here is also genuinely pleasant to walk, with cafes and river views that make a good stretch for people who've had enough temple walls for one morning."
+      ),
+      h2("The West Bank: A Landscape Built for the Dead"),
+      p(
+        "The West Bank holds the Valley of the Kings, Hatshepsut's mortuary temple carved into a cliff face, the Colossi of Memnon, and the villages and workshops of the people who actually built the tombs. It's quieter, greener in patches near the cultivated land by the river, and spread out enough that a private vehicle matters more here than on the East Bank — sites sit further apart, and the desert heat between them is no place for a long walk."
+      ),
+      p(
+        "Plan a full morning here at minimum, starting as early as tickets allow. The Valley of the Kings alone deserves unhurried time inside at least two or three tombs, and Hatshepsut's Temple rewards a slow approach up its terraces rather than a quick photo from the entrance. Fewer restaurants and shops sit out here compared to the East Bank, so most visitors return across the river for lunch rather than staying through the afternoon."
+      ),
+      h2("Practical Differences That Actually Matter"),
+      p("Beyond the history, a handful of practical differences shape how each half of Luxor actually feels to visit."),
+      ...bullets([
+        "Transport — the East Bank is largely walkable between major sites; the West Bank requires a car or taxi between almost every stop",
+        "Shade — Karnak and Luxor Temple offer some covered colonnades; the Valley of the Kings has almost none, which makes an early start more important there",
+        "Food and rest stops — East Bank restaurants and cafes are frequent; West Bank options are sparser, so plan lunch back across the river or bring supplies",
+        "Pace — East Bank sites can be seen somewhat flexibly through the day; West Bank sites reward an early start more strictly because of the heat and walking distances",
+        "Crowds — Karnak and the Valley of the Kings both draw the largest tour groups; arriving right at opening makes the biggest difference at either",
+      ]),
+      h2("So Which Should You See First?"),
+      p(
+        "There's no wrong order, but there is a practical one: the West Bank rewards an early start more than the East Bank does, since the Valley of the Kings has less shade and more walking between sites. Most private itineraries put the West Bank first for that reason, saving Karnak's covered colonnades and Luxor Temple's evening lighting for later in the day, when the desert heat has eased but there's still enough light to see the reliefs clearly."
+      ),
+      h2("Can You Do Both Banks in One Day?"),
+      p(
+        "Technically, yes — plenty of day-tour itineraries pack the Valley of the Kings, Hatshepsut's Temple, Karnak, and Luxor Temple into a single long day. Honestly, it's a lot: you're covering roughly five thousand years of construction across two very different landscapes, in the heat, with a river crossing in the middle. It works if Luxor is genuinely just one stop on a longer Egypt trip and a single day is all you have. If you can give it two days instead, one bank each, you'll see the same sites without racing the clock between every stop."
+      ),
+      h2("What First-Timers Get Wrong"),
+      p(
+        "The most common mistake is treating the two banks as interchangeable stops on a checklist rather than two genuinely different experiences that deserve different expectations. Visitors who rush the West Bank in the same brisk pace that works fine at Luxor Temple in the evening often come away exhausted and underwhelmed — the Valley of the Kings rewards standing quietly inside a tomb and actually looking, not speed-walking past six of them to say you saw them all. The opposite mistake happens too: spending so long on the West Bank's tombs that Karnak gets rushed at the end of a long, hot day when everyone's patience for hieroglyphs has run out."
+      ),
+      p(
+        "The second common mistake is underestimating the West Bank's logistics. It looks close to the East Bank on a map — it's the same city, after all — but the sites themselves are spread across a wide stretch of desert foothills, and walking between them isn't realistic. Arranging a driver for the morning, whether through a private tour or a hired car, matters more here than almost anywhere else in Luxor."
+      ),
+      h2("A Different Way to See Both Banks at Once"),
+      p(
+        "If you want a single moment that ties the whole geography together, a sunrise hot-air balloon flight over the West Bank does exactly that. From the air, the relationship between the two banks becomes obvious in a way it never quite is on the ground — the green, cultivated strip that follows the Nile, the desert beginning almost immediately beyond it, and the temples and tombs of both banks visible at once in the first light of day. It's not a substitute for visiting either bank properly, but it's a genuinely useful way to understand why the ancient division existed in the first place."
+      ),
+      callout(
+        "A public ferry still crosses the Nile near the Luxor Temple corniche and is the fastest way over for foot passengers, though most private tours use a vehicle and the newer road bridge instead, which is more practical once you're moving between spread-out West Bank sites rather than staying on foot.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      faq(
+        [
           {
-            _type: "span",
-            _key: "p1s1",
-            text: "Ancient Thebans built their city around a straightforward idea: the living belonged on the east side of the Nile, where the sun rises, and the dead belonged on the west, where it sets. Three thousand years later, that division still organizes how you'll actually spend your time in Luxor — and it's worth understanding before you plan your days, not after.",
-            marks: [],
+            question: "Which bank has better hotels?",
+            answer:
+              "Most hotels, including the well-known Nile-view properties, sit on the East Bank, close to the town, restaurants, and Karnak. A smaller number of quieter boutique stays sit on the West Bank itself, appealing if you'd rather wake up already close to the Valley of the Kings.",
+          },
+          {
+            question: "Which bank should I prioritize with limited time?",
+            answer:
+              "If you truly only have a few hours, the West Bank generally has the higher-priority sites for most first-time visitors — the Valley of the Kings and Hatshepsut's Temple are harder to substitute than an abbreviated visit to Karnak.",
+          },
+          {
+            question: "Is the West Bank safe to visit independently?",
+            answer:
+              "Yes. It's well set up for tourism, with ticket offices, guides, and vehicles readily available, though its spread-out layout makes a private driver or guide considerably more convenient than trying to arrange transport site by site on your own.",
+          },
+          {
+            question: "Do I need separate tickets for each bank?",
+            answer:
+              "Yes, generally. East Bank sites like Karnak and Luxor Temple and West Bank sites like the Valley of the Kings and Hatshepsut's Temple are ticketed separately, and some West Bank tombs — Tutankhamun's among them — require an additional ticket beyond the standard Valley of the Kings entry.",
+          },
+          {
+            question: "How early should I start on the West Bank?",
+            answer:
+              "As early as tickets are sold. The Valley of the Kings has little shade, and the difference between arriving right at opening and arriving mid-morning is significant once the desert sun is fully up — both in comfort and in how thin the crowds are inside the tombs themselves.",
           },
         ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h1",
-        style: "h2",
-        children: [{ _type: "span", _key: "h1s1", text: "The East Bank: Temples for the Living", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p2",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p2s1",
-            text: "This is where modern Luxor actually lives — the town, most hotels and restaurants, and the temples built to be used by the living: Karnak, Egypt's largest religious complex, and Luxor Temple, connected to it by the restored Avenue of Sphinxes. Both are close together and walkable from most East Bank hotels, which makes this the more convenient half to explore. Give it a comfortable half-day to a full day, ideally starting at Karnak before the heat and the crowds build.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h2",
-        style: "h2",
-        children: [{ _type: "span", _key: "h2s1", text: "The West Bank: A Landscape Built for the Dead", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p3",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p3s1",
-            text: "The West Bank holds the Valley of the Kings, Hatshepsut's mortuary temple carved into a cliff face, the Colossi of Memnon, and the villages and workshops of the people who actually built the tombs. It's quieter, greener in patches, and spread out enough that a private vehicle matters more here than on the East Bank — sites sit further apart, and the desert heat between them is no place for a long walk. Plan a full morning here at minimum, starting as early as tickets allow.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h3",
-        style: "h2",
-        children: [{ _type: "span", _key: "h3s1", text: "So Which Should You See First?", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p4",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p4s1",
-            text: "There's no wrong order, but there is a practical one: the West Bank rewards an early start more than the East Bank does, since the Valley of the Kings has less shade and more walking between sites. Most private itineraries put the West Bank first for that reason, saving Karnak's covered colonnades and Luxor Temple's evening lighting for later in the day, when the desert heat has eased but there's still enough light to see the reliefs clearly.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Neither bank is the real Luxor on its own. The East Bank's temples and the West Bank's tombs were built as two halves of one religious idea, and seeing only one leaves the story unfinished. Give both banks their own unhurried block of time, and the ancient division between the living and the dead starts to make a lot more sense than it does on paper."
+      ),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "See Both Banks Properly", body: "Book a dedicated East Bank or West Bank day, or combine them on a longer Luxor stay.", buttonLabel: "Explore Luxor Tours", buttonHref: "/tours/luxor-west-bank-day-tour" },
     ],
   },
   {
@@ -1768,88 +1744,99 @@ export const stories: Story[] = [
     badge: "editorsPick",
     primaryKeyword: "nile cruise vs dahabiya",
     secondaryKeywords: ["what is a dahabiya", "luxury nile cruise", "nile cruise luxor to aswan"],
-    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "10-day-private-luxurious-trip"),
+    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "4-day-nile-cruise-luxor-aswan", "overnight-dahabiya-sail-esna-edfu", "private-yacht-nile-cruise-luxor-aswan"),
     seoTitle: "Nile Cruise vs. Dahabiya: Which Is Right for You?",
     seoDescription:
       "A standard Nile cruise ship and a traditional dahabiya sailboat cover the same route very differently. Here's what actually changes between them.",
     body: [
-      {
-        _type: "block",
-        _key: "p1",
-        style: "normal",
-        children: [
+      p(
+        "The stretch of Nile between Luxor and Aswan is the single most scenic way to see ancient Egypt — temples appear right at the water's edge, roughly in the order the pharaohs who built them intended. How you travel that stretch, though, changes the experience more than almost any other decision in an Egypt itinerary, and the two main options don't just differ in price. They're genuinely different kinds of trips."
+      ),
+      h2("The Standard Nile Cruise"),
+      p(
+        "A modern Nile cruise ship is a motor vessel, typically carrying anywhere from 40 to well over 100 passengers, with balcony cabins, a pool deck, multiple dining rooms, and evening entertainment — closer to a small floating hotel than a boat in the traditional sense. It's the more structured way to travel the river: a fixed itinerary, shared meals, and shore excursions organized for the whole ship. Stops typically include Edfu, Kom Ombo, and Aswan, with everyone disembarking together for guided visits to each temple along the way."
+      ),
+      p(
+        "For travelers who want the comfort of a proper cabin, a pool to come back to after a hot morning at Kom Ombo, and the reassurance of a set schedule, it's genuinely hard to beat. It also tends to suit families and first-time visitors especially well, since meals, excursions, and onboard entertainment are all handled without much for you to plan day to day."
+      ),
+      h2("What Is a Dahabiya?"),
+      p(
+        "A dahabiya is a traditional Egyptian sailing boat — a shallow wooden hull, tall lateen sails, and a wide open sun deck — carrying a small fraction of a standard cruise ship's passengers, usually somewhere between 8 and 20 guests. The sailing itself becomes part of the experience rather than a means of transport: without a ship's engine noise, you notice things a large cruise moves past — fishermen working the shallows at dawn, villages along the bank, the sound of the water itself."
+      ),
+      p(
+        "Because a dahabiya carries so few guests, it can also stop in places a large cruise ship simply can't — narrower stretches of river, quieter riverside villages, smaller temple sites without a mooring built for a hundred-cabin vessel. It's a slower, more private way to cover the same general route, generally at a higher cost per guest than a standard cruise cabin, and it depends more directly on wind and weather since a dahabiya genuinely sails rather than motoring on a fixed schedule."
+      ),
+      h2("What Actually Changes Day to Day"),
+      p(
+        "On a standard cruise, your day follows the ship's printed schedule: breakfast, a shore excursion with a large group, lunch back on board, an afternoon stop, dinner, and an evening show or lecture. On a dahabiya, the day bends around the wind and the group itself — a stop might run longer because everyone's enjoying it, or the boat might simply sail for an extra hour because the light on the water is good. Meals on a dahabiya are typically shared at one table with the small group aboard, which suits travelers who like that kind of company and feels different from a cruise ship's larger, more anonymous dining rooms."
+      ),
+      h2("Which Route Makes Sense for Each"),
+      p(
+        "Both typically sail the same general route between Luxor and Aswan, taking in Edfu's Temple of Horus and Kom Ombo's twin temple along the way, though the specific stops and pacing vary by itinerary and by how many days you have. A standard cruise tends to run this full stretch on a fixed multi-day schedule; a dahabiya sail can cover a shorter, more focused piece of the route — an overnight sail between Esna and Edfu is a good example of a shorter dahabiya experience that gives you the sailing and the temples without the full multi-day commitment."
+      ),
+      h2("Side by Side"),
+      p("A quick comparison, if you want the differences in one place before reading further:"),
+      ...bullets([
+        "Group size — standard cruise: often 100+ guests; dahabiya: typically 8 to 20 guests",
+        "Propulsion — standard cruise: engine, fixed schedule; dahabiya: sails, weather-dependent pacing",
+        "Onboard amenities — standard cruise: pool, multiple restaurants, entertainment; dahabiya: sun deck, single shared dining table",
+        "Atmosphere — standard cruise: bustling, hotel-like; dahabiya: quiet, intimate, closer to the water",
+        "Cost per guest — standard cruise: generally lower; dahabiya: generally higher for a smaller, more personal experience",
+        "Best suited to — standard cruise: families, first-time visitors, groups who want structure; dahabiya: couples, small groups, and travelers who want the sailing itself to be the memory",
+      ]),
+      h2("Who Tends to Regret Which Choice"),
+      p(
+        "Travelers who choose a standard cruise expecting dahabiya-level quiet sometimes find the ship busier and more scheduled than they pictured, especially during peak season when several large vessels dock together at the same temple at once. Travelers who choose a dahabiya expecting cruise-ship amenities — a pool, an extensive buffet, nightly entertainment — are choosing the wrong boat for the wrong reasons; a dahabiya's appeal is precisely that it doesn't try to be that. Knowing which trade-off you're actually making ahead of time avoids both disappointments."
+      ),
+      h2("Onboard Life: A Closer Look"),
+      p(
+        "On a standard cruise, expect a full daily rhythm — breakfast buffet, a shore excursion, lunch back aboard, an afternoon at the pool or in a lounge chair on deck, a multi-course dinner, and often live entertainment or a themed evening. Cabins are hotel-standard, usually with a private balcony on the higher-category ships, and staff outnumber guests enough that service feels attentive without being intrusive."
+      ),
+      p(
+        "On a dahabiya, the rhythm slows down considerably. Mornings often start with coffee on deck as the crew raises the sails, meals are cooked fresh by a small onboard kitchen and served at one long table, and afternoons might mean reading on deck, a swim off the boat where the river allows it, or simply watching the Nile Valley pass at a walking pace rather than a motor's pace. It's a genuinely different kind of days-at-sea experience, closer to a small private yacht than a resort.",
+      ),
+      h2("So Which Should You Choose?"),
+      p(
+        "If a pool, a full-size cabin, several dining options, and a well-established schedule matter to you, a standard Nile cruise will feel more comfortable — it's the right choice for most families, first-time visitors, and anyone who'd rather not think about logistics. If what you actually want is quiet, a smaller group, and the sailing itself as part of the memory rather than just the transport between temples, a dahabiya is worth booking directly."
+      ),
+      callout(
+        "Cabin sizes and amenities vary a lot between individual cruise ships and dahabiyas, more than the category name alone suggests. If a specific feature matters to you — a particular cabin size, a pool, a certain number of guests aboard — ask about that exact boat rather than assuming every vessel in a category is the same.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      faq(
+        [
           {
-            _type: "span",
-            _key: "p1s1",
-            text: "The stretch of Nile between Luxor and Aswan is the single most scenic way to see ancient Egypt — temples appear right at the water's edge, in roughly the order the pharaohs who built them intended. How you travel that stretch, though, changes the experience more than almost any other decision in an Egypt itinerary.",
-            marks: [],
+            question: "Is a dahabiya more expensive than a standard cruise?",
+            answer:
+              "Generally yes, per guest, since a dahabiya carries far fewer passengers to split the cost of the crew, boat, and route across. What you're paying for is the smaller group and the quieter, more personal experience, not a fundamentally different route.",
+          },
+          {
+            question: "Do dahabiyas have air conditioning and private bathrooms?",
+            answer:
+              "Most modern dahabiyas built for tourism do include private en-suite cabins and air conditioning, alongside the traditional sails — it's a genuine boat with real amenities, not a rustic recreation. Specifics vary by vessel, so confirm what a particular dahabiya offers before booking.",
+          },
+          {
+            question: "Can children join a dahabiya sail?",
+            answer:
+              "They can, though the smaller, quieter, adult-oriented atmosphere on most dahabiyas suits older children and teenagers better than very young kids, who may get more out of a standard cruise's pool deck and more flexible pacing.",
+          },
+          {
+            question: "How many days does a Nile sail typically take?",
+            answer:
+              "It depends entirely on the route and vessel — some cruises run the full multi-day stretch between Luxor and Aswan, while shorter dahabiya sails can cover a single overnight leg of the same river. Choose based on how much time you have and how much of the sailing itself you want as part of the trip.",
+          },
+          {
+            question: "Can I combine both on one trip?",
+            answer:
+              "Some travelers do — a short dahabiya sail for a couple of nights, paired with a standard cruise or a land-based Luxor and Aswan stay for the rest of the trip, gets you a taste of the quiet sailing experience without committing every night of the itinerary to it. It's exactly the kind of combination we can build into a custom itinerary rather than something you'd typically find pre-packaged.",
           },
         ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h1",
-        style: "h2",
-        children: [{ _type: "span", _key: "h1s1", text: "The Standard Nile Cruise", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p2",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p2s1",
-            text: "A modern Nile cruise ship is a motor vessel, typically carrying anywhere from 40 to well over 100 passengers, with balcony cabins, a pool deck, multiple dining rooms, and evening entertainment — closer to a small floating hotel than a boat in the traditional sense. It's the more structured way to travel the river: a fixed itinerary, shared meals, and shore excursions organized for the whole ship. For travelers who want the comfort of a proper cabin and the reassurance of a set schedule, it's genuinely hard to beat.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h2",
-        style: "h2",
-        children: [{ _type: "span", _key: "h2s1", text: "What Is a Dahabiya?", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p3",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p3s1",
-            text: "A dahabiya is a traditional Egyptian sailing boat — a shallow wooden hull, tall lateen sails, and a wide open sun deck — carrying a small fraction of a standard cruise ship's passengers, usually somewhere between 8 and 20 guests. The sailing itself becomes part of the experience rather than a means of transport: without a ship's engine noise, you notice things a large cruise moves past — fishermen working the shallows at dawn, villages along the bank, the sound of the water itself. It's a quieter, slower, more private way to cover the same route, generally at a higher cost per guest than a standard cruise cabin.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h3",
-        style: "h2",
-        children: [{ _type: "span", _key: "h3s1", text: "So Which Should You Choose?", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p4",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p4s1",
-            text: "If a pool, a full-size cabin, several dining options, and a well-established schedule matter to you, a standard Nile cruise will feel more comfortable — it's the right choice for most families, first-time visitors, and anyone who'd rather not think about logistics. If what you actually want is quiet, a smaller group, and the sailing itself as part of the memory rather than just the transport between temples, a dahabiya is worth asking about directly — it isn't part of our standard tour catalog today, but it's exactly the kind of request Customize Your Tour was built to handle.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
+        "Frequently Asked Questions"
+      ),
+      p(
+        "There's no wrong answer here, only a mismatch between the trip you actually want and the one you book without asking the right questions first. Picture your ideal afternoon on the water — a pool and a set schedule, or a quiet sail and dinner with a handful of other guests — and the choice tends to make itself."
+      ),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Sail the Nile Your Way", body: "From a full-service cruise to an overnight dahabiya sail, we'll help you pick the right way to see Luxor and Aswan by water.", buttonLabel: "See Nile Sailing Options", buttonHref: "/tours/overnight-dahabiya-sail-esna-edfu" },
     ],
   },
   {
@@ -1868,89 +1855,98 @@ export const stories: Story[] = [
     destinations: ["Cairo", "Giza", "Luxor", "Aswan"],
     primaryKeyword: "private vs group tour egypt",
     secondaryKeywords: ["private egypt tour", "is a private egypt tour worth it", "egypt tour with private guide"],
-    relatedTours: toursBySlug("10-day-private-luxurious-trip", "3-days-jordan"),
+    relatedTours: toursBySlug("10-day-private-luxurious-trip", "8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor"),
     relatedExperience: herEgyptExperience,
     seoTitle: "Private vs. Group Tours in Egypt: What Actually Changes",
     seoDescription:
       "The price gap between private and group Egypt tours is obvious. What it buys you day to day is less talked about — here's the honest breakdown.",
     body: [
-      {
-        _type: "block",
-        _key: "p1",
-        style: "normal",
-        children: [
+      p(
+        "Every Egypt tour operator will tell you private is better. It usually is — but it's worth being specific about why, because the price difference is real, and it should buy you something you'd actually notice, not just a nicer-sounding word on a brochure. Here's the honest breakdown of what actually changes."
+      ),
+      h2("What a Group Tour Actually Looks Like"),
+      p(
+        "A group tour puts you on a shared itinerary with anywhere from a handful to several dozen other travelers, moving through sites together on a fixed schedule, with a guide who's explaining the same information to the whole group at once. Meals, entry times, and pacing are all set in advance and shared across the group, which is exactly what keeps the per-person cost down. For travelers on a tighter budget, or those who genuinely enjoy meeting other people on the road, it can work well."
+      ),
+      h2("What Changes on a Private Tour"),
+      p(
+        "Your vehicle is yours alone, which means your schedule is yours alone. You can start at sunrise to beat both the heat and the crowds at Karnak or the Pyramids, linger somewhere that unexpectedly catches you, or leave early if someone in your group is tired — none of which is possible when twenty other people's preferences are also on the itinerary. Your guide is dedicated to your group specifically, which tends to mean deeper, more responsive explanations rather than a fixed script delivered to the same size crowd every day."
+      ),
+      h2("What You're Actually Paying For"),
+      p(
+        "A group tour splits the cost of the vehicle, guide, and driver across everyone on board, which is why it's cheaper. A private tour means you're covering that full cost yourself, in exchange for controlling exactly how the day runs. It's the same trade-off as a private car versus a scheduled bus route: the destination can be identical, but the experience of getting there rarely is."
+      ),
+      h2("Timing Matters More Than People Expect"),
+      p(
+        "Egypt's major sites are genuinely different places at 7am versus 11am — quieter, cooler, and better lit for photographs. A private tour lets you build your entire day around that window, arriving at Karnak or the Valley of the Kings right as the gates open. A group tour is bound to the group's collective wake-up time and the bus schedule, which usually means arriving well after the first rush of the day and standing in the same crowd everyone else is trying to avoid."
+      ),
+      h2("Who Actually Benefits Most"),
+      p("A few kinds of travelers notice the difference between private and group touring more than others."),
+      ...bullets([
+        "Families with young children — no waiting on twenty strangers when someone needs a bathroom break or a snack, and naps or slower mornings don't derail the whole group's day",
+        "Couples marking an occasion — a honeymoon, an anniversary, a milestone trip — where the day can be shaped around what matters to them rather than a fixed group schedule",
+        "Travelers with mobility considerations — pacing, rest stops, and routes through a site can all be adjusted, which isn't possible on a bus itinerary built for the average pace of a large group",
+        "Photographers — early arrivals and flexible lingering time at a site matter enormously for good light and empty frames",
+        "Anyone who simply dislikes being herded — some travelers notice the loss of control from the very first temple, regardless of budget",
+      ]),
+      h2("What Group Tours Do Better"),
+      p(
+        "To be fair, group touring isn't only a compromise. It's genuinely more affordable, which matters. It also puts you around other travelers, which some people enjoy rather than tolerate — shared excitement at the Pyramids, dinner conversation with people from somewhere else entirely. And a well-run group tour still gets you to every major site; you're not missing the Sphinx because you chose the cheaper option. The real trade-off is control and pace, not access."
+      ),
+      h2("A Middle Ground: Small Private Groups"),
+      p(
+        "If cost is the main hesitation but the crowd-following experience of a large bus tour doesn't appeal, look at small private group options — traveling with one other family or a small handful of people who split a private vehicle and guide, rather than joining a large fixed-departure tour. It's not always advertised clearly, but it's worth asking about directly if you want most of a private tour's flexibility without covering the full cost alone."
+      ),
+      h2("What About Guide Quality?"),
+      p(
+        "This is where the gap between private and group touring can be widest but least visible from the outside. A group guide is managing a large crowd's attention, safety, and pace simultaneously, which naturally limits how deep any single explanation can go — there's a schedule to keep and thirty people to shepherd through a doorway. A private guide answers to your group alone, which tends to mean genuine back-and-forth rather than a memorized script: you can ask a follow-up question about a specific pharaoh or a detail on a wall, and actually get a real answer rather than a redirect toward the next stop."
+      ),
+      h2("Photography and the Golden Hour"),
+      p(
+        "Anyone serious about photography should weigh this factor specifically. The best light at the Pyramids, Karnak, or the Valley of the Kings falls in the first hour after sunrise and the last before sunset — windows that group tours rarely hit, since bus schedules are built around meal times and site opening hours that work for the whole group's logistics, not for optimal light. A private tour can be built explicitly around those windows, arriving before the tour buses and leaving before the midday crowds peak."
+      ),
+      h2("How Booking and Planning Differ"),
+      p(
+        "Booking a group tour is usually simpler upfront — you pick a fixed departure date and an itinerary someone else already designed, and that's largely the extent of the planning involved. Booking a private tour typically means more of a conversation beforehand: what you want to see, how many days you have, whether pace matters more to you than covering the maximum number of sites. That conversation takes a little more time at the start, but it's what makes the itinerary actually fit your trip rather than a generic average of what most travelers want."
+      ),
+      callout(
+        "Group tour prices often look lower than they actually are once you check what's included — some quote a bare tour price and charge separately for entry tickets, meals, or a private guide upgrade. When comparing a group price against a private one, confirm exactly what's bundled into each before assuming the gap is as large as it first appears.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      faq(
+        [
           {
-            _type: "span",
-            _key: "p1s1",
-            text: "Every Egypt tour operator will tell you private is better. It usually is — but it's worth being specific about why, because the price difference is real, and it should buy you something you'd actually notice, not just a nicer-sounding word on a brochure.",
-            marks: [],
+            question: "Is a private tour worth it for a first trip to Egypt?",
+            answer:
+              "For most first-time visitors, yes — a first trip is exactly when the flexibility to slow down at something unexpectedly moving, or speed past something that doesn't interest you, matters most. It also removes a lot of the logistical stress of a country you don't know yet.",
+          },
+          {
+            question: "How much more does a private tour typically cost?",
+            answer:
+              "It varies by itinerary and group size, but private touring generally costs meaningfully more per person than a large group tour, since you're no longer splitting the vehicle and guide across many travelers. The gap narrows the more people are in your own private party.",
+          },
+          {
+            question: "Can I customize a private tour's itinerary?",
+            answer:
+              "Yes — that's a large part of the point. A private itinerary can be adjusted for pacing, interests, mobility needs, or specific sites you care about, in a way a fixed group departure simply can't accommodate.",
+          },
+          {
+            question: "Do private tours still include a knowledgeable guide?",
+            answer:
+              "Yes, and often a more attentive one — your guide's attention isn't divided across a large group, so questions get real answers and the explanations can go as deep as your actual interest in the subject.",
+          },
+          {
+            question: "Is it safe to travel privately versus in a group?",
+            answer:
+              "Yes — private touring in Egypt is a well-established, mainstream way to travel, not a niche or higher-risk option. Licensed private guides and drivers work throughout the country's tourism industry, and a private vehicle with a dedicated guide is, if anything, easier to keep track of than coordinating with a large group.",
           },
         ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h1",
-        style: "h2",
-        children: [{ _type: "span", _key: "h1s1", text: "What Changes on a Private Tour", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p2",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p2s1",
-            text: "Your vehicle is yours alone, which means your schedule is yours alone. You can start at sunrise to beat both the heat and the crowds at Karnak or the Pyramids, linger somewhere that unexpectedly catches you, or leave early if someone in your group is tired — none of which is possible when twenty other people's preferences are also on the itinerary. Your guide is dedicated to your group specifically, which tends to mean deeper, more responsive explanations rather than a fixed script delivered to the same size crowd every day.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h2",
-        style: "h2",
-        children: [{ _type: "span", _key: "h2s1", text: "What You're Actually Paying For", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p3",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p3s1",
-            text: "A group tour splits the cost of the vehicle, guide, and driver across everyone on board, which is why it's cheaper. A private tour means you're covering that full cost yourself, in exchange for controlling exactly how the day runs. It's the same trade-off as a private car versus a scheduled bus route: the destination can be identical, but the experience of getting there rarely is.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h3",
-        style: "h2",
-        children: [{ _type: "span", _key: "h3s1", text: "Who Actually Benefits Most", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p4",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p4s1",
-            text: "Families with young children benefit enormously — no waiting on twenty strangers when someone needs a bathroom break or a snack. Travelers marking a specific occasion — a honeymoon, an anniversary, a milestone trip — tend to feel the difference too, since the day can actually be shaped around what matters to them rather than a fixed group schedule. And anyone who simply dislikes being herded through a site on someone else's clock will notice it immediately, from the very first temple.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Traveling privately in Egypt isn't about luxury for its own sake. It's about the trip actually following your interests and your pace instead of a stranger's average preferences across twenty people. For most travelers who can manage the cost difference, that's worth quite a lot."
+      ),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Build a Private Egypt Itinerary", body: "Tell us your dates, interests, and pace, and we'll shape a private tour around them.", buttonLabel: "Customize Your Tour", buttonHref: "/customize" },
     ],
   },
   {
@@ -1976,83 +1972,95 @@ export const stories: Story[] = [
     seoDescription:
       "The GEM is now fully open near Giza, with Tutankhamun's complete collection together for the first time. What to expect, and how to plan your visit.",
     body: [
-      {
-        _type: "block",
-        _key: "p1",
-        style: "normal",
-        children: [
+      p(
+        "The Grand Egyptian Museum opened in full on November 1, 2025, after two decades of construction, and it changes what a Cairo and Giza itinerary actually looks like. It sits close to the Pyramids themselves, meaning a single day can now realistically combine the Giza plateau with one of the largest archaeological museums in the world, something that wasn't possible before it opened. This guide covers what's actually inside, how to plan the visit, and how it fits alongside the Pyramids on the same day."
+      ),
+      h2("What's Actually Inside"),
+      p(
+        "The museum holds more than 100,000 artifacts across its main galleries, but the single biggest draw is Tutankhamun: for the first time, his complete funerary collection — all 5,398 pieces, from the golden mask to objects that had never left storage — is displayed together in dedicated galleries. Seeing the boy king's collection as one complete set, rather than split across cases in downtown Cairo the way it was for decades, is genuinely different from anything Egypt's museums have offered before."
+      ),
+      p(
+        "The Khufu Boat Museum, housing the full-size solar barque buried beside the Great Pyramid, is also part of the complex, displayed in its own dedicated space designed around the vessel's scale. Beyond Tutankhamun and the boat, the main galleries move chronologically through ancient Egyptian history, from the earliest dynasties through the Greco-Roman period, with statues, sarcophagi, and everyday objects organized to tell a continuous story rather than presenting artifacts in isolation."
+      ),
+      h2("The Grand Staircase"),
+      p(
+        "One of the museum's most photographed features isn't a single artifact but the building itself — a monumental staircase lined with statues and stone pieces, rising through the atrium and framing a view of the Pyramids visible through the museum's glass facade at the top. It's worth allowing time to walk it slowly rather than treating it as a passage between galleries."
+      ),
+      h2("Tickets and Booking"),
+      p(
+        "Tickets are sold online through the museum's official site, and advance booking is strongly recommended — it lets you skip the ticket line entirely and lock in a specific time slot. As of this writing, standard foreign-visitor admission runs around $30, with reduced rates for students and children; given how recently the museum opened, treat any specific price as a starting estimate and confirm the current rate when you book, rather than something fixed. Separate, additional tickets apply for the Tutankhamun galleries and the Khufu Boat Museum beyond the general admission ticket, so check what's included before you go. If you're touring with us, this is exactly the kind of detail we handle as part of your itinerary rather than something you need to manage yourself."
+      ),
+      h2("Getting There"),
+      p(
+        "The museum sits on the edge of the Giza plateau, close enough to the Pyramids that many visitors combine both in a single day. Most private itineraries build the museum and the Pyramids into the same day trip from Cairo, moving between the two by private vehicle rather than treating them as separate excursions on separate days."
+      ),
+      h2("How Much Time to Allow"),
+      p(
+        "Between the Tutankhamun galleries and the wider collection, it's realistic to spend a half day here without feeling rushed — figure on three to four hours minimum if you want to see the Tutankhamun collection properly rather than walking past it. Visitors trying to also fit in the Pyramids, the Sphinx, and lunch on the same day should plan an early start; the museum alone can easily fill an entire day if you let it."
+      ),
+      h2("Combining It With the Pyramids"),
+      p(
+        "Because the museum and the Giza plateau sit so close together, a full-day itinerary pairing both has become one of the most popular ways to structure a Cairo visit. A typical approach starts at the Pyramids and the Sphinx early, before the heat and crowds build, then moves to the museum for the afternoon, when its air-conditioned galleries are a welcome break from the desert sun outside. Doing it in the opposite order works too, though starting outdoors while the morning light and temperatures are still manageable tends to suit most travelers better."
+      ),
+      h2("Why It Took Twenty Years to Build"),
+      p(
+        "The museum's long construction timeline reflects both its scale and the complexity of the project — moving and conserving thousands of fragile artifacts, including entire statues and boats, is slow, careful work that can't be rushed without risking damage to pieces that have survived for thousands of years. Delays over the decades pushed the opening back repeatedly, which is partly why its full opening in November 2025 felt like such a significant moment for Egypt's tourism industry rather than a routine museum launch."
+      ),
+      h2("How It Changes a Cairo and Giza Itinerary"),
+      p(
+        "Before the museum opened, a Giza day typically meant the Pyramids, the Sphinx, and perhaps a visit to the older Egyptian Museum in downtown Cairo on a separate day, adding real travel time across the city. Now that the collection sits minutes from the plateau itself, itineraries can consolidate what used to take two separate excursions into one focused day, freeing up time elsewhere in a trip for Islamic Cairo, Coptic Cairo, or an extra day in Luxor or Aswan instead."
+      ),
+      h2("Visiting Tips"),
+      ...bullets([
+        "Book your ticket online in advance rather than planning to buy on arrival, especially during peak season",
+        "Budget separate time and, if relevant, a separate ticket for the Tutankhamun galleries and the Khufu Boat Museum",
+        "Wear comfortable shoes — the museum is enormous, and the distance between galleries adds up quickly",
+        "Bring a light layer; the galleries are air-conditioned and noticeably cooler than outside",
+        "If you're combining it with the Pyramids in one day, start outdoors in the morning and save the museum for the afternoon heat",
+      ]),
+      callout(
+        "The museum's scale genuinely surprises first-time visitors — its total footprint is enormous compared to Cairo's older Egyptian Museum downtown, and trying to see everything in one rushed pass usually backfires. Pick what matters most to you ahead of time, whether that's Tutankhamun, the Khufu boat, or a specific period of ancient history, and build your visit around that rather than attempting comprehensive coverage in a few hours.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      faq(
+        [
           {
-            _type: "span",
-            _key: "p1s1",
-            text: "The Grand Egyptian Museum opened in full on November 1, 2025, after two decades of construction, and it changes what a Cairo and Giza itinerary actually looks like. It sits close to the Pyramids themselves — meaning a single day can now realistically combine the Giza plateau with one of the largest archaeological museums in the world, something that wasn't possible before it opened.",
-            marks: [],
+            question: "Is the Grand Egyptian Museum worth visiting?",
+            answer:
+              "Yes, straightforwardly. Seeing Tutankhamun's collection displayed as a complete set, rather than split across galleries the way it was for decades, is a genuinely different experience, and pairing it with the Pyramids on the same day makes a Giza day noticeably more complete than it was before the museum opened.",
+          },
+          {
+            question: "Is the old Egyptian Museum in Tahrir Square still open?",
+            answer:
+              "Yes, it remains open with its own collection, though many of its most famous pieces, including much of the Tutankhamun material, have moved to the Grand Egyptian Museum. The two museums now serve somewhat different purposes rather than duplicating each other.",
+          },
+          {
+            question: "How long does a visit to the Grand Egyptian Museum take?",
+            answer:
+              "Plan for at least three to four hours to see the Tutankhamun galleries and a meaningful slice of the main collection without rushing. A full day is realistic if you want to see everything the museum offers in real depth.",
+          },
+          {
+            question: "Can I visit the Grand Egyptian Museum and the Pyramids on the same day?",
+            answer:
+              "Yes, and many travelers now do exactly that, since the museum sits close to the Giza plateau. A typical plan covers the Pyramids and Sphinx in the morning and the museum in the afternoon, though either order works depending on your preference.",
+          },
+          {
+            question: "Do I need a guide inside the museum?",
+            answer:
+              "You don't need one to enter, but given how new and vast the collection is, a knowledgeable guide makes a real difference in understanding what you're looking at, particularly within the dense, artifact-packed Tutankhamun galleries.",
+          },
+          {
+            question: "Is photography allowed inside the museum?",
+            answer:
+              "Photography is generally permitted in most galleries for personal use, though some areas, particularly around the Tutankhamun collection, may restrict flash or tripod use to protect the artifacts. Check current rules when you book, since policies at a museum this new can still be refined.",
           },
         ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h1",
-        style: "h2",
-        children: [{ _type: "span", _key: "h1s1", text: "What's Actually Inside", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p2",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p2s1",
-            text: "The museum holds more than 100,000 artifacts across its main galleries, but the single biggest draw is Tutankhamun: for the first time, his complete funerary collection — all 5,398 pieces, from the golden mask to objects that had never left storage — is displayed together in dedicated galleries. The Khufu Boat Museum, housing the full-size solar barque buried beside the Great Pyramid, is also part of the complex. Between the Tutankhamun galleries and the wider collection, it's realistic to spend a half day here without feeling rushed.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h2",
-        style: "h2",
-        children: [{ _type: "span", _key: "h2s1", text: "Tickets and Booking", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p3",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p3s1",
-            text: "Tickets are sold online through the museum's official site, and advance booking is strongly recommended — it lets you skip the ticket line entirely and lock in a specific time slot. As of this writing, standard foreign-visitor admission runs around $30, with reduced rates for students and children; given how recently the museum opened, treat any specific price as a starting estimate and confirm the current rate when you book, rather than something fixed. If you're touring with us, this is exactly the kind of detail we handle as part of your itinerary rather than something you need to manage yourself.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h3",
-        style: "h2",
-        children: [{ _type: "span", _key: "h3s1", text: "Is It Worth Visiting?", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p4",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p4s1",
-            text: "Yes, straightforwardly. Seeing Tutankhamun's collection displayed as a complete set, rather than split across galleries as it was for decades in downtown Cairo, is a genuinely different experience — and pairing it with the Pyramids on the same day, now that they're a short drive apart, makes a Giza day noticeably more complete than it was before the museum opened.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
+        "Frequently Asked Questions"
+      ),
+      p(
+        "The Grand Egyptian Museum isn't simply a new building for old artifacts. It's the first time in decades that a visit to Giza can genuinely combine the Pyramids with a museum experience built at the same scale as the monuments themselves, and it's already reshaping how a Cairo and Giza trip should be planned."
+      ),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Combine the Museum With the Pyramids", body: "Let us build a Giza day that pairs the Grand Egyptian Museum with the Pyramids and Sphinx without the rush.", buttonLabel: "See Giza Tours", buttonHref: "/tours/1-day-giza-tour" },
     ],
   },
   {
@@ -2078,111 +2086,91 @@ export const stories: Story[] = [
     seoDescription:
       "Egypt's comfortable season runs October to April, but crowds, prices, and heat shift within it. A practical, month-by-month guide to picking yours.",
     body: [
-      {
-        _type: "block",
-        _key: "p1",
-        style: "normal",
-        children: [
+      p(
+        "The short answer — October through April — is true but not that useful on its own, because those seven months aren't interchangeable. Crowds, prices, and how hot it actually feels standing at the Valley of the Kings at noon all shift meaningfully within that window. Here's what each part of the year is actually like, region by region, so you can pick a month based on what you actually care about rather than a generic rule of thumb."
+      ),
+      h2("December to February: Peak Season"),
+      p(
+        "This is Egypt's coolest, most comfortable stretch, and also its busiest — January in particular draws the year's largest crowds to Giza, Karnak, and the Valley of the Kings. If you're traveling privately, crowding matters less, since an early start and a private guide can route around the worst of it. If comfortable weather matters more to you than avoiding a crowd, this remains the safest bet, and it's also when Nile cruise cabins and popular hotels book up furthest in advance."
+      ),
+      h2("October–November and February–March: The Sweet Spot"),
+      p(
+        "These shoulder-season windows consistently come up as the smartest time to go: the weather is still genuinely comfortable, but the peak-season crowds either haven't arrived yet or have just thinned out. If your dates are flexible at all, this is where we'd point you first — it's the best ratio of good weather to manageable sites anywhere on the calendar, and pricing on hotels and cruises tends to ease slightly compared to the December through February peak."
+      ),
+      h2("May to September: Real Heat, and a Different Kind of Trip"),
+      p(
+        "Summer heat inland is serious — Luxor and Aswan regularly exceed 40°C (104°F) — and it does change what a day of temple-touring feels like, even with early starts and air-conditioned transport between stops. It's not a reason to rule the season out entirely, though: the Red Sea coast stays warm and inviting for swimming and diving right through summer, and if your trip leans toward the coast rather than a full temple circuit, these months work well. Cairo and Giza are more manageable than Upper Egypt in summer, if the Nile Valley's heat is the main concern, and hotel and tour pricing is often noticeably more flexible during these quieter months."
+      ),
+      h2("Weather by Region, Not Just by Month"),
+      p("Egypt is a large country, and \"best time to visit\" answers differently depending on which part of it you're asking about."),
+      ...bullets([
+        "Cairo and Giza — hot but rarely extreme in summer, and genuinely pleasant from October through April; a year-round destination more than the Nile Valley or Sinai interior",
+        "Luxor and Aswan (Upper Egypt) — the most heat-sensitive region on a standard itinerary; October through April is strongly preferred, with summer best avoided for full-day temple touring",
+        "The Red Sea coast (Hurghada, El Gouna, Marsa Alam) — warm water and good diving conditions nearly year-round, including through the summer months when the Nile Valley is at its hottest",
+        "Sinai (Sharm El Sheikh, Dahab) — similar to the Red Sea coast, comfortable across most of the year, with winter evenings noticeably cooler than the water itself",
+      ]),
+      h2("Best Time for a Nile Cruise"),
+      p(
+        "October through April is the strongest window for a Luxor-to-Aswan Nile cruise or dahabiya sail, for the same reason it's strongest for temple-touring generally: comfortable daytime temperatures for the shore excursions that are a core part of any river itinerary. A cruise during peak December-to-February season means busier temple stops, since several ships often dock at the same site around the same time; a shoulder-season sail in November or March usually means a quieter Kom Ombo or Edfu without sacrificing much comfort."
+      ),
+      h2("Best Time for the Red Sea"),
+      p(
+        "If your trip is built primarily around diving, snorkeling, or beach time rather than temples, the calendar opens up considerably. The Red Sea stays warm enough for swimming and diving across nearly the entire year, including summer, when Upper Egypt's heat makes a temple-heavy itinerary considerably harder. Winter evenings can be cool enough to want a light jacket after dark, but daytime water temperatures stay comfortable."
+      ),
+      h2("A Note on Ramadan"),
+      p(
+        "Ramadan's dates shift each year on the Islamic calendar, so it doesn't map to a fixed month — it's worth checking against your travel dates specifically. During it, some restaurants and shops keep shorter daytime hours before the evening iftar meal, and the pace of daily life shifts generally. Major sites stay open and tours run as normal; it simply changes some of the rhythm around them, in ways many travelers find genuinely interesting to witness firsthand."
+      ),
+      h2("Crowds and Pricing Trends"),
+      p(
+        "Broadly, price and crowd levels track each other through the year: December through February commands the highest hotel and cruise rates alongside the largest crowds, while summer months see the softest pricing and the thinnest crowds, offset by the heat trade-off in Upper Egypt. The shoulder seasons split the difference reasonably well, which is a large part of why they're so consistently recommended."
+      ),
+      h2("How Far in Advance to Book"),
+      p(
+        "For December through February travel, book flights, hotels, and Nile cruises several months out if you can — cabins on popular ships and rooms at well-located Luxor and Aswan hotels do sell out ahead of the peak. Shoulder-season and summer travel is more forgiving, with availability holding up closer to your travel dates, though a specific dahabiya or a particular hotel room category can still book out early regardless of season if it's in high demand."
+      ),
+      h2("A Special Case: Eclipse Travel"),
+      p(
+        "Occasionally a specific astronomical event reshapes the usual calendar logic entirely. A total solar eclipse crossing Luxor on August 2, 2027, for instance, will draw visitors specifically for that date regardless of the summer heat that month would otherwise discourage — proof that the \"best\" time to visit is sometimes about what's happening on a given day rather than the average weather for that month. If an event like that is the reason for your trip, plan around it first and treat the seasonal weather guidance as secondary."
+      ),
+      callout(
+        "Want the best weather-to-crowd ratio without overthinking it? Aim for November or March. Want guaranteed cool weather and don't mind company at the major sites? December through February. Building your trip around the Red Sea rather than temples? Summer works fine, and pricing tends to be more flexible.",
+        { title: "If You're Only Picking One Detail", tone: "Highlight" }
+      ),
+      faq(
+        [
           {
-            _type: "span",
-            _key: "p1s1",
-            text: "The short answer — October through April — is true but not that useful on its own, because those seven months aren't interchangeable. Crowds, prices, and how hot it actually feels standing at the Valley of the Kings at noon all shift meaningfully within that window. Here's what each part of the year is actually like.",
-            marks: [],
+            question: "What's the single best month to visit Egypt?",
+            answer:
+              "Most seasoned travelers point to November or March specifically — comfortable temperatures across the whole country, thinner crowds than the December-to-February peak, and generally easier pricing on hotels and cruises.",
+          },
+          {
+            question: "Is Egypt too hot to visit in summer?",
+            answer:
+              "Not entirely, but it depends heavily on your itinerary. A temple-focused trip through Luxor and Aswan is genuinely difficult in peak summer heat; a Red Sea coast trip built around diving and beach time works well through the same months.",
+          },
+          {
+            question: "When is the Nile flooded or too low to cruise?",
+            answer:
+              "Since the Aswan High Dam was completed, the Nile no longer floods seasonally the way it did in antiquity, and river levels are managed year-round, so cruising isn't seasonally restricted by water levels the way it once was.",
+          },
+          {
+            question: "Does Ramadan affect tours and site access?",
+            answer:
+              "Major archaeological sites, temples, and tours continue operating normally during Ramadan. What changes is mostly around restaurant hours and the general daytime pace in cities, which picks back up after the evening iftar meal.",
+          },
+          {
+            question: "Is winter too cold for a Nile cruise?",
+            answer:
+              "No — even Egypt's coolest months rarely bring genuinely cold daytime weather in the Nile Valley. Evenings can be cool enough for a light jacket, especially on an open sun deck, but daytime temperatures stay comfortable for sightseeing.",
           },
         ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h1",
-        style: "h2",
-        children: [{ _type: "span", _key: "h1s1", text: "December to February: Peak Season", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p2",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p2s1",
-            text: "This is Egypt's coolest, most comfortable stretch, and also its busiest — January in particular draws the year's largest crowds to Giza, Karnak, and the Valley of the Kings. If you're traveling privately, crowding matters less, since an early start and a private guide can route around the worst of it. If comfortable weather matters more to you than avoiding a crowd, this remains the safest bet.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h2",
-        style: "h2",
-        children: [{ _type: "span", _key: "h2s1", text: "October–November and February–March: The Sweet Spot", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p3",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p3s1",
-            text: "These shoulder-season windows consistently come up as the smartest time to go: the weather is still genuinely comfortable, but the peak-season crowds either haven't arrived yet or have just thinned out. If your dates are flexible at all, this is where we'd point you first — it's the best ratio of good weather to manageable sites anywhere on the calendar.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h3",
-        style: "h2",
-        children: [{ _type: "span", _key: "h3s1", text: "May to September: Real Heat, and a Different Kind of Trip", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p4",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p4s1",
-            text: "Summer heat inland is serious — Luxor and Aswan regularly exceed 40°C (104°F) — and it does change what a day of temple-touring feels like, even with early starts and air-conditioned transport between stops. It's not a reason to rule the season out entirely, though: the Red Sea coast stays warm and inviting for swimming and diving right through summer, and if your trip leans toward the coast rather than a full temple circuit, these months work well. Cairo and Giza are more manageable than Upper Egypt in summer, if the Nile Valley's heat is the main concern.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h4",
-        style: "h2",
-        children: [{ _type: "span", _key: "h4s1", text: "A Note on Ramadan", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p5",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p5s1",
-            text: "Ramadan's dates shift each year on the Islamic calendar, so it doesn't map to a fixed month — it's worth checking against your travel dates specifically. During it, some restaurants and shops keep shorter daytime hours before the evening iftar meal, and the pace of daily life shifts generally. Major sites stay open and tours run as normal; it simply changes some of the rhythm around them, in ways many travelers find genuinely interesting to witness firsthand.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "calloutBlock",
-        _key: "callout1",
-        title: "If You're Only Picking One Detail",
-        body: "Want the best weather-to-crowd ratio without overthinking it? Aim for November or March. Want guaranteed cool weather and don't mind company at the major sites? December through February. Building your trip around the Red Sea rather than temples? Summer works fine, and pricing tends to be more flexible.",
-        tone: "Highlight",
-      },
+        "Frequently Asked Questions"
+      ),
+      p(
+        "There's no single correct month to visit Egypt, only a better or worse match for what you actually want from the trip. Chase comfortable weather and thinner crowds, and the shoulder seasons win easily. Chase guaranteed cool weather and don't mind sharing Karnak with a few more people, go in winter. Build the trip around the coast instead of the temples, and summer stops being a problem at all."
+      ),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Plan Around the Right Season", body: "Tell us your dates and priorities, and we'll build an itinerary suited to the weather you'll actually get.", buttonLabel: "Customize Your Tour", buttonHref: "/customize" },
     ],
   },
   {
