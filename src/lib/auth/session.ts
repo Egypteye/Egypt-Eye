@@ -5,6 +5,7 @@ export type CurrentUser = {
   id: string;
   email: string;
   firstName: string | null;
+  avatarUrl: string | null;
   role: "customer" | "admin" | "reservations";
 };
 
@@ -23,7 +24,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("first_name, role")
+    .select("first_name, role, avatar_url")
     .eq("id", user.id)
     .single();
 
@@ -31,6 +32,7 @@ export async function getCurrentUser(): Promise<CurrentUser | null> {
     id: user.id,
     email: user.email,
     firstName: (profile?.first_name as string | null) ?? null,
+    avatarUrl: (profile?.avatar_url as string | null) ?? null,
     role: (profile?.role as "customer" | "admin" | "reservations") ?? "customer",
   };
 }

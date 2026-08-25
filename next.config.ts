@@ -18,6 +18,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.pexels.com",
       },
+      {
+        // Customer-uploaded profile pictures, served from the public
+        // "avatars" Storage bucket (see supabase/migrations/0010_profile_avatars.sql).
+        // Wildcarded so this keeps working if the project ever moves to a
+        // different Supabase project.
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
     ],
   },
   async redirects() {

@@ -89,7 +89,7 @@ export function Navbar({
           </span>
         </Link>
 
-        <nav className="hidden items-center justify-end gap-x-6 xl:flex xl:flex-1 xl:px-6">
+        <nav className="hidden items-center justify-end gap-x-6 lg:flex lg:flex-1 lg:px-6">
           {primaryNav.map((item) => (
             <Link
               key={item.href}
@@ -140,7 +140,7 @@ export function Navbar({
           )}
         </nav>
 
-        <div className="hidden items-center gap-2.5 xl:flex">
+        <div className="hidden items-center gap-2.5 lg:flex">
           <Link
             href="/my-journey"
             className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-[13px] font-semibold text-gold-dark transition hover:bg-gold/20"
@@ -160,19 +160,23 @@ export function Navbar({
           </Link>
           <Link
             href={currentUser ? "/account" : "/account/login"}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/10 text-ink-soft transition hover:border-gold/40 hover:text-ink"
+            className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 text-ink-soft transition hover:border-gold/40 hover:text-ink"
             aria-label={currentUser ? "My Account" : "Log in"}
             title={currentUser ? `My Account${currentUser.firstName ? ` — ${currentUser.firstName}` : ""}` : "Log in"}
           >
-            <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth={1.8}>
-              <circle cx="12" cy="8" r="3.4" />
-              <path d="M4.5 20c1.6-4 4.4-6 7.5-6s5.9 2 7.5 6" strokeLinecap="round" />
-            </svg>
+            {currentUser?.avatarUrl ? (
+              <Image src={currentUser.avatarUrl} alt="" width={40} height={40} className="h-full w-full object-cover" />
+            ) : (
+              <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth={1.8}>
+                <circle cx="12" cy="8" r="3.4" />
+                <path d="M4.5 20c1.6-4 4.4-6 7.5-6s5.9 2 7.5 6" strokeLinecap="round" />
+              </svg>
+            )}
           </Link>
         </div>
 
         <button
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 xl:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Toggle menu"
           aria-expanded={open}
@@ -188,7 +192,7 @@ export function Navbar({
       </div>
 
       {open && (
-        <nav className="border-t border-black/5 bg-cream xl:hidden">
+        <nav className="border-t border-black/5 bg-cream lg:hidden">
           <div className="flex flex-col gap-1 px-5 py-4">
             {site.nav.map((item) => (
               <Link
