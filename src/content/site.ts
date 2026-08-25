@@ -32,6 +32,7 @@ export const site = {
     { label: "Extra Experiences", href: "/experiences" },
     { label: "Photoshoots", href: "/photoshoots" },
     { label: "Transfers", href: "/transfers" },
+    { label: "Hotel Deals", href: "/hotel-deals" },
     { label: "Customize Your Tour", href: "/customize" },
     { label: "Stories", href: "/stories" },
     { label: "About", href: "/about" },

@@ -390,3 +390,52 @@ export function collaborationApplicationEmail({
 
   return { subject: `New Collaboration Application: ${fullName}`, html, text };
 }
+
+export function hotelRateRequestEmail({
+  hotelName,
+  name,
+  email,
+  message,
+  reviewUrl,
+}: {
+  hotelName: string;
+  name?: string;
+  email: string;
+  message?: string;
+  reviewUrl: string;
+}) {
+  const rows: [string, string][] = [
+    ["Hotel", hotelName],
+    ["Name", name || "Not provided"],
+    ["Email", email],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const html = baseLayout({
+    preheader: `${email} wants the latest rates for ${hotelName}.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Hotel Rate Request</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(hotelName)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${
+        message
+          ? `<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">Details</p><p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(message)}</p>`
+          : ""
+      }
+      ${ctaButton("Review in Admin", reviewUrl)}
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to respond directly.</p>
+    `,
+    footerHtml: `Sent from the "Check Latest Rates" button on the Hotel Deals page.`,
+  });
+
+  const text = `New Hotel Rate Request\n${hotelName}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n${
+    message ? `\nDetails:\n${message}\n` : ""
+  }\nReview: ${reviewUrl}`;
+
+  return { subject: `New Rate Request: ${hotelName}`, html, text };
+}
