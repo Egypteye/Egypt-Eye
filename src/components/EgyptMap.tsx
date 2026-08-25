@@ -360,18 +360,17 @@ export function EgyptMap({
                   so it never grows this button's hit area — with 42+ pins on
                   the map, a label's box (even invisible, at opacity-0) would
                   otherwise reach into and swallow clicks meant for a
-                  neighboring pin in a dense cluster. Labels are always shown
-                  (not hover-gated); z-index on the button itself (not the
-                  label) brings a hovered/open pin's label above its
-                  neighbors' in a dense cluster. */}
+                  neighboring pin in a dense cluster. Shown only once this
+                  pin is clicked open (not on hover) — with 30+ secondary
+                  cities, showing every label at once buried the map. */}
               <span
                 className={`h-1.5 w-1.5 rounded-full border shadow-sm transition group-hover:scale-150 ${
                   open ? "border-ink bg-cream" : "border-ink-soft/50 bg-cream/70"
                 }`}
               />
               <span
-                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink/70 px-1.5 py-0.5 text-[8.5px] font-medium tracking-wide text-cream/90 backdrop-blur-sm transition sm:text-[9px] ${
-                  open ? "bg-ink" : "group-hover:bg-ink/85"
+                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink px-1.5 py-0.5 text-[8.5px] font-medium tracking-wide text-cream/90 backdrop-blur-sm transition sm:text-[9px] ${
+                  open ? "opacity-100" : "opacity-0"
                 }`}
               >
                 {city.name}
@@ -388,7 +387,10 @@ export function EgyptMap({
 
           // Label is absolutely positioned + pointer-events-none for the
           // same reason as the city markers above: it must never enlarge
-          // this pin's hit area into a neighboring pin's space.
+          // this pin's hit area into a neighboring pin's space. Shown only
+          // for the currently-selected/clicked hub (not on hover, not for
+          // every hub at once) — with 13 hubs plus 30+ secondary cities,
+          // showing every label buried the map.
           const inner = (
             <>
               <span className="relative flex h-4 w-4 items-center justify-center">
@@ -404,8 +406,8 @@ export function EgyptMap({
                 />
               </span>
               <span
-                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full px-2.5 py-1 text-[10px] font-semibold tracking-wide shadow-md transition sm:text-[11px] ${
-                  active ? "bg-gold-dark text-cream" : "bg-cream text-ink-soft group-hover:bg-cream group-hover:text-ink"
+                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-gold-dark px-2.5 py-1 text-[10px] font-semibold tracking-wide text-cream shadow-md transition sm:text-[11px] ${
+                  active ? "opacity-100" : "opacity-0"
                 }`}
               >
                 {hub.name}
