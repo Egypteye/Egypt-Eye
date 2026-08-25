@@ -733,3 +733,68 @@ export type ResolvedListingPages = {
     readStoryLabel: string;
   };
 };
+
+// Transfers — private airport/hotel/intercity car transfers within Cairo &
+// Giza, plus hourly/daily private-driver hire. This is local-only config
+// (not wired through Sanity/queries.ts/fetchers.ts like the catalog types
+// above): it's a pricing matrix a developer maintains, not editorial copy
+// a marketer edits, so src/content/transfers.ts is the single source of
+// truth. Pricing logic that reads this data lives in src/lib/transferPricing.ts.
+
+export type TransferVehicleId = "sedan" | "suv" | "van" | "minibus" | "vip";
+
+export type TransferVehicle = {
+  id: TransferVehicleId;
+  name: string;
+  tagline: string;
+  passengers: number; // max seated passengers
+  luggage: number; // max standard suitcases
+};
+
+export type TransferCategory = "airport" | "hotel" | "intercity" | "private-driver" | "custom";
+
+export type TransferCategoryInfo = {
+  id: TransferCategory;
+  label: string;
+  description: string;
+};
+
+// A selectable pickup/destination point. "Intercity" zones (Alexandria,
+// Ain Sokhna, Fayoum) get their own per-destination pricing table since
+// distance varies a lot between them; "Cairo & Giza" zones share the two
+// flat tiers below (airport / hotel) since they're all a short drive
+// apart. `isCustom` marks the "Other — I'll specify" option, which always
+// routes to a quote request regardless of category.
+export type TransferZone = {
+  id: string;
+  label: string;
+  group: "Cairo & Giza" | "Intercity";
+  isCustom?: boolean;
+};
+
+export type TransferTierPricing = Partial<Record<TransferVehicleId, number>>;
+
+export type TransferIntercityPricing = {
+  zoneId: string;
+  prices: Partial<Record<TransferVehicleId, number>>;
+};
+
+export type TransferPrivateDriverRate = {
+  vehicle: TransferVehicleId;
+  hourly: number;
+  daily: number; // a standard 8-10 hour day
+};
+
+export type TransfersPageContent = {
+  heroEyebrow: string;
+  heroTitle: string;
+  heroDescription: string;
+  categories: readonly TransferCategoryInfo[];
+  vehicles: readonly TransferVehicle[];
+  zones: readonly TransferZone[];
+  tierPricing: { airport: TransferTierPricing; hotel: TransferTierPricing };
+  intercityPricing: readonly TransferIntercityPricing[];
+  privateDriverRates: readonly TransferPrivateDriverRate[];
+  included: readonly string[];
+  faqs: readonly Faq[];
+};

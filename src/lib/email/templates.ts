@@ -195,3 +195,70 @@ export function tourEnquiryEmail({
 
   return { subject: `New Enquiry: ${itemTitle}`, html, text };
 }
+
+export function transferRequestEmail({
+  routeSummary,
+  priceSummary,
+  name,
+  email,
+  phone,
+  date,
+  time,
+  passengers,
+  luggage,
+  vehicle,
+  notes,
+}: {
+  routeSummary: string;
+  priceSummary: string;
+  name: string;
+  email: string;
+  phone: string;
+  date: string;
+  time: string;
+  passengers: string;
+  luggage: string;
+  vehicle: string;
+  notes?: string;
+}) {
+  const rows: [string, string][] = [
+    ["Route", routeSummary],
+    ["Price", priceSummary],
+    ["Vehicle", vehicle],
+    ["Date", date],
+    ["Time", time],
+    ["Passengers", passengers],
+    ["Luggage", luggage],
+    ["Full name", name],
+    ["Email", email],
+    ["WhatsApp / Phone", phone],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const html = baseLayout({
+    preheader: `${name} requested a transfer: ${routeSummary} — reply directly to this email.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Transfer Request</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(routeSummary)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${
+        notes
+          ? `<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">Notes</p><p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(notes)}</p>`
+          : ""
+      }
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to respond directly to ${escapeHtml(name)}.</p>
+    `,
+    footerHtml: `Sent from the Transfers booking form on ${escapeHtml(SITE_URL)}/transfers.`,
+  });
+
+  const text = `New Transfer Request\n${routeSummary}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n${
+    notes ? `\nNotes:\n${notes}\n` : ""
+  }\nReply to this email to respond directly to ${name}.`;
+
+  return { subject: `New Transfer Request: ${routeSummary}`, html, text };
+}

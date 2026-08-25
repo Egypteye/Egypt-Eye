@@ -31,6 +31,7 @@ export const site = {
     { label: "Popular Tours", href: "/tours" },
     { label: "Extra Experiences", href: "/experiences" },
     { label: "Photoshoots", href: "/photoshoots" },
+    { label: "Transfers", href: "/transfers" },
     { label: "Customize Your Tour", href: "/customize" },
     { label: "Stories", href: "/stories" },
     { label: "About", href: "/about" },
