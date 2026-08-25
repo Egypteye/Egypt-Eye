@@ -59,20 +59,26 @@ export function ExploreMapPanel({
       </div>
 
       <div className="mt-5 flex flex-wrap gap-2">
-        {hubs.map((hub) => (
-          <Link
-            key={hub.slug}
-            href={`/explore-egypt/${hub.slug}`}
-            scroll={false}
-            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-              hub.slug === selectedSlug
-                ? "border-gold-dark bg-gold/15 text-gold-dark"
-                : "border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink"
-            }`}
-          >
-            {hub.name}
-          </Link>
-        ))}
+        {hubs.map((hub) => {
+          const isSelected = hub.slug === selectedSlug;
+          const matchesMood = mood ? (hub.mood ?? []).includes(mood) : false;
+          return (
+            <Link
+              key={hub.slug}
+              href={`/explore-egypt/${hub.slug}`}
+              scroll={false}
+              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                isSelected
+                  ? "border-gold-dark bg-gold/15 text-gold-dark"
+                  : matchesMood && mood
+                    ? MOOD_COLORS[mood].active
+                    : `border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink ${mood ? "opacity-40" : ""}`
+              }`}
+            >
+              {hub.name}
+            </Link>
+          );
+        })}
       </div>
     </div>
   );

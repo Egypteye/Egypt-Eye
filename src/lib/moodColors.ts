@@ -13,4 +13,7 @@ export const MOOD_COLORS: Record<Mood, { label: string; dot: string; border: str
   coast: { label: "Mediterranean Coast", dot: "bg-indigo-600", border: "border-indigo-600", active: "border-indigo-600 bg-indigo-600 text-white" },
 };
 
-export const MOOD_ORDER: Mood[] = ["history", "beaches", "desert", "diving", "nile", "coast"];
+// Only these four are offered as filter buttons — "nile" and "coast" stay
+// valid tags on hubs/cities (still used for map-pin coloring if a hub
+// happens to carry one), just not their own button in the picker row.
+export const MOOD_ORDER: Mood[] = ["history", "beaches", "desert", "diving"];
