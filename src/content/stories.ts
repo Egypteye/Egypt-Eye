@@ -82,9 +82,10 @@ export const stories: Story[] = [
     image: "/photos/pexels-18934702.jpg",
     publishedAt: "2026-08-22T00:00:00.000Z",
     relatedExperience: eclipseExperience,
+    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor", "hot-air-balloon-luxor-east-bank-combo", "2-day-luxor-tour"),
     seoTitle: "Total Solar Eclipse in Luxor, Egypt — August 2, 2027",
     seoDescription:
-      "Everything you need to know about the August 2, 2027 total solar eclipse in Luxor, Egypt — verified timing, why Luxor has the longest totality on the path, and how to plan around it.",
+      "Everything you need to know about the August 2, 2027 total solar eclipse in Luxor — verified timing, why totality is longest here, and how to plan around it.",
     body: [
       {
         _type: "block",
@@ -244,6 +245,193 @@ export const stories: Story[] = [
         ],
         markDefs: [],
       },
+      {
+        _type: "block",
+        _key: "hx1",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx1s1", text: "Where to Actually Watch It From", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px1",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px1s1",
+            text: "Where you're actually standing matters more than people expect. The West Bank, near Hatshepsut's temple or looking out across the river toward the Theban hills, puts you low in a landscape built for exactly this kind of sky event — open, quiet, with three-thousand-year-old cliffs as a backdrop instead of a hotel wall. A rooftop on the East Bank with a clear view toward Karnak works well too, and it puts you closer to shade, water, and a bathroom, which matters more than it sounds like it will after four hours in the sun. What you want to avoid is anywhere boxed in on all sides — you lose the horizon-to-horizon change in light that's half of what makes a total eclipse different from a partial one.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx2",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx2s1", text: "What to Bring, Beyond the Glasses", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px2",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [
+          {
+            _type: "span",
+            _key: "px2s1",
+            text: "A certified ISO 12312-2 solar viewer for everyone in your group, plus at least one spare",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px3",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [
+          { _type: "span", _key: "px3s1", text: "Water and something with electrolytes — the heat by early afternoon is real", marks: [] },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px4",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px4s1", text: "A hat and light, long sleeves rather than sunscreen alone", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px5",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [
+          {
+            _type: "span",
+            _key: "px5s1",
+            text: "A solar filter for your camera or phone lens, if you plan to photograph the partial phases",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px6",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [
+          {
+            _type: "span",
+            _key: "px6s1",
+            text: "A portable charger — phone networks get busy on eclipse day, and batteries drain faster in the heat",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx3",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx3s1", text: "Photographing Six Minutes", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px7",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px7s1",
+            text: "The temptation is to spend the whole six minutes looking through a viewfinder instead of at the sky. A wide shot that includes a piece of the Luxor skyline or the West Bank cliffs, set up on a tripod beforehand and left mostly alone once totality starts, usually makes a better memory than a close telephoto attempt managed in real time. If you do want a closer shot of the corona, remove the solar filter from your lens only during totality itself — the same rule that applies to your eyes — and put it straight back on the instant the first bright edge of the Sun reappears.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx4",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx4s1", text: "Booking Around a Fixed Six Minutes", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px8",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px8s1",
+            text: "Hotel rooms and flights into Luxor for the first days of August 2027 will fill up well before the date itself — this is a rare, headline astronomical event landing on one of Egypt's most visited historical sites, and interest is already building years out. A private, pre-scoped viewing location solves two problems at once: it removes the uncertainty of where you'll actually be standing when totality starts, and it means someone has already worked out the practical side — shade, water, a clear sightline — so the only thing left to do on the day itself is watch the sky.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "calloutBlock",
+        _key: "calloutx1",
+        tone: "Highlight",
+        title: "Six Minutes, No Second Chance",
+        body: "There's no encore on eclipse day — once totality ends, it's over for another century in this exact spot. Knowing your viewing location and your shade, water, and restroom plan in advance matters more here than on almost any other single day of a trip to Egypt.",
+      },
+      {
+        _type: "faqBlock",
+        _key: "faqx1",
+        title: "Eclipse Day, Answered",
+        faqs: [
+          {
+            question: "Do I need to wear eclipse glasses for the entire eclipse?",
+            answer:
+              "Only during the partial phases, before and after totality. Once the Moon fully covers the Sun — starting at 1:02:14 PM and lasting roughly six minutes and twenty-two seconds — it's safe to look directly at it without any protection. The moment the first bright sliver of Sun reappears, glasses go back on immediately.",
+          },
+          {
+            question: "What happens if it's cloudy that day?",
+            answer:
+              "Luxor's skies are historically clear on this date roughly four years out of five — among the best odds anywhere on the 2027 path — but no forecast is a guarantee years out. Even on a rare cloudy day, the drop in temperature and light is still dramatic, and Luxor's temples make the rest of the trip worthwhile regardless of what happens at 1:02 PM.",
+          },
+          {
+            question: "Can I see this eclipse without traveling all the way to Luxor?",
+            answer:
+              "Partial phases will be visible across a much wider stretch of Egypt and the surrounding region, but totality — the Sun fully covered, the sky going dark — only happens inside a band roughly 250 kilometers wide crossing central Egypt. Luxor sits close to the centerline of that band, which is also why its totality runs close to the maximum length anywhere on the path.",
+          },
+          {
+            question: "Is it worth arranging a private guide just for eclipse day?",
+            answer:
+              "For six minutes with no do-over, yes. A private arrangement means your viewing spot, your shade, and the rest of your day's schedule are all worked out ahead of time, rather than figured out in the heat alongside everyone else trying to do the same thing at once.",
+          },
+        ],
+      },
+      {
+        _type: "block",
+        _key: "px9",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px9s1",
+            text: "Total solar eclipses happen somewhere on Earth every year or two. One lasting six minutes, over a city that has stood since before most of recorded history began, will not happen again in most of our lifetimes. Luxor on August 2, 2027 is worth building a trip around.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      { _type: "ctaBlock", _key: "ctax1", title: "Plan Your Trip Around the Eclipse", body: "Egypt Eye's Luxor Eclipse experience pairs eclipse day with private access to the temples that make Luxor worth the trip on its own.", buttonLabel: "Explore The Luxor Eclipse", buttonHref: "/signature-experiences/the-luxor-eclipse" },
     ],
   },
   {
@@ -257,6 +445,98 @@ export const stories: Story[] = [
     imageLabel: "Cairo Skyline",
     imageTone: "giza",
     image: "/photos/pexels-28013721.jpg",
+    relatedTours: toursBySlug("10-day-private-luxurious-trip", "8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor"),
+    seoTitle: "Best Travel Agencies in Egypt: What to Check in 2026",
+    seoDescription:
+      "How to actually vet an Egypt tour operator in 2026 — licensing, guide quality, hidden exclusions, red flags, and why photography access separates good operators from average ones.",
+    body: [
+      p(
+        "Egypt has thousands of tour operators, and the gap between the best and the worst of them is enormous — the same nine-day Cairo-to-Luxor-to-Aswan itinerary can be an unhurried, well-guided trip, or four rushed days spent being herded past monuments and into commission shops, depending entirely on who's running it. Picking the right operator matters more here than in most destinations, because so much of what actually shapes the trip — which guide you get, how early you arrive at a site, whether you're given time to actually take a photo — never shows up on a price comparison page."
+      ),
+      h2("Check the License Before Anything Else"),
+      p(
+        "Every legitimate Egyptian tour operator is licensed through the Ministry of Tourism and Antiquities, and that licensing is what allows a company to actually operate inside archaeological sites — hire registered guides, coordinate with site security, and take legal responsibility for a group. An operator that can't produce a license or company registration, or that runs entirely through informal messaging-app bookings with no business name attached, is a real risk, not just an inconvenience: if anything goes wrong on-site, an unlicensed operator has no standing to fix it."
+      ),
+      h2("Look at the Guides, Not Just the Itinerary"),
+      p(
+        "Two companies can sell an identical-looking itinerary — same temples, same days, same hotels — and deliver completely different trips, because the difference is the guide. Egypt's best guides are licensed Egyptologists, often with real academic backgrounds in Egyptology or archaeology, who can explain what you're actually looking at rather than reciting a memorized script. Before booking, ask directly whether the guide is licensed, whether they speak your language fluently, and whether the same guide stays with you for the whole trip or changes city to city with no continuity."
+      ),
+      h2("Read the Inclusions Line by Line"),
+      p(
+        "The single biggest source of Egypt trip complaints isn't the sites — it's the gap between what a quote implies and what it actually includes. A cheap-looking price that excludes site entry fees, meals, or Nile cruise cabin category can end up costing more, once everything is added back in, than a transparent quote that included it all from the start. Before comparing two prices, make sure they're actually quoting the same things."
+      ),
+      ...bullets([
+        "Entry fees for every site on the itinerary — Egyptian monument tickets add up fast across a multi-day trip",
+        "Meals — full board, half board, or sightseeing only, and which specific meals are covered",
+        "Nile cruise cabin category, if the itinerary includes a cruise segment",
+        "Domestic flights or overnight trains between Cairo and Luxor or Aswan",
+        "Tipping — expected in Egypt, and worth knowing the norm for before arrival, not after",
+        "Optional add-ons like a hot air balloon ride or a private photoshoot, which most operators quote separately",
+      ]),
+      h2("Ask About Group Size and Pace"),
+      p(
+        "A 'small group' tour in Egypt can mean six people, or it can mean twenty-five people on one bus following one fixed schedule. Ask directly how many people will actually be in your group and how much flexibility the schedule has — whether you can start before the crowds reach Karnak, or whether you're locked into whatever time slot the whole bus was assigned. Private touring costs more, but it buys back the one thing a group tour structurally can't offer: your own pace."
+      ),
+      h2("Photography and Access — Can They Actually Get You the Shot"),
+      p(
+        "This matters more in Egypt than in almost any other destination, because so many of the country's best photo opportunities depend on timing and access that a generic tour simply doesn't plan around. Getting an empty-plaza shot at the Pyramids, or a few uncrowded minutes inside a tomb in the Valley of the Kings, depends on an operator that builds the day around light and crowds on purpose — arriving before sunrise, knowing which sites empty out by early afternoon, and having a working relationship with on-site security rather than hoping for the best. If photography is part of why you're going, ask specifically what access an operator can actually arrange, not just whether photography is 'allowed.'"
+      ),
+      h2("Red Flags Worth Walking Away From"),
+      ...bullets([
+        "Pressure to book and pay a deposit within hours, with no time to think it over",
+        "No verifiable online presence — no real reviews, no consistent company name across platforms, no registration details",
+        "A quote with no itinerary breakdown, just a single total price",
+        "An itinerary padded with stops at 'government' papyrus, perfume, or essential-oil shops that mainly exist to pay guide commissions",
+        "No clear cancellation or refund policy offered in writing",
+      ]),
+      callout(
+        "Ask for the exact itinerary, the exact inclusions, the guide's licensing, and the cancellation policy — all in writing, before any money changes hands. An operator confident in what they're offering will have all four ready without being asked twice.",
+        { title: "Before You Pay a Deposit", tone: "Info" }
+      ),
+      h2("Reviews Worth Trusting"),
+      p(
+        "A page full of five-star reviews doesn't tell you much on its own — what matters is whether those reviews describe an actual trip. Look for reviews that mention a specific guide by name, a specific itinerary, or a specific problem that got solved well, rather than generic praise. Be a little wary of a sudden cluster of near-identical five-star reviews posted within the same week, and check whether the reviewer's other reviews look like a real travel history rather than a one-off account created to post a single glowing post."
+      ),
+      h2("What a Confirmed Booking Should Include"),
+      p(
+        "Once you've actually booked, the confirmation you get back tells you almost as much about the operator as the sales conversation did. A confirmation that names your actual hotels — not 'similar category' — your actual guide or at least how guides are assigned, your vehicle type, and a direct emergency contact number for the trip itself is a good sign you're dealing with an operator who runs a tight operation rather than one juggling more bookings than they can properly service."
+      ),
+      ...bullets([
+        "A day-by-day itinerary with named hotels, not 'similar category' placeholders",
+        "Confirmation of whether the guide is licensed and whether they stay with you for the whole trip",
+        "The vehicle type and whether it's private to your group or shared",
+        "A direct emergency contact number for the days you're actually traveling",
+      ]),
+      faq(
+        [
+          {
+            question: "Is it cheaper to book directly with a local Egyptian operator than through an international agency?",
+            answer:
+              "Usually, yes. Booking directly with a licensed, well-reviewed local operator often costs less than routing through an international agency that then subcontracts to the same local companies anyway — you're mainly cutting out a markup layer. The trade-off is that vetting the operator yourself matters more.",
+          },
+          {
+            question: "Are online travel marketplaces reliable for booking Egypt tours?",
+            answer:
+              "Some listings are excellent and some aren't — being listed on a marketplace doesn't guarantee quality on its own. The same due diligence on licensing, guides, and inclusions applies whether you found an operator through a marketplace or found them directly.",
+          },
+          {
+            question: "How far in advance should I book a private Egypt tour?",
+            answer:
+              "For peak season (December through February) or around a major event, several months ahead gives the widest choice of guides and hotel rooms. Outside peak season, a few weeks is often enough, though earlier is always safer when your dates are fixed.",
+          },
+          {
+            question: "Is private touring actually worth the extra cost over a group tour?",
+            answer:
+              "For most travelers, yes — particularly on a first trip, or a trip built around something specific, like a proposal, a photoshoot, or a limited number of days. The price difference buys pace, flexibility, and a guide's full attention, which tends to matter more once you're standing in front of Karnak than it did on a spreadsheet.",
+          },
+        ],
+        "Choosing an Operator, Answered"
+      ),
+      p(
+        "None of this is about finding the cheapest possible quote — it's about knowing which questions actually predict a good trip versus a frustrating one. A licensed, transparent operator with real guides and a clear cancellation policy will answer every one of these without hesitation. That's usually all the vetting a first-time visitor to Egypt actually needs."
+      ),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "See How Egypt Eye Does It", body: "Licensed guides, transparent pricing, and private-paced itineraries built around what you actually want to see.", buttonLabel: "Browse Our Tours", buttonHref: "/tours" },
+    ],
   },
   {
     status: "published",
@@ -269,6 +549,111 @@ export const stories: Story[] = [
     imageLabel: "Petra, Jordan",
     imageTone: "jordan",
     image: "/photos/pexels-11195786.jpg",
+    relatedTours: toursBySlug(
+      "9-day-egypt-jordan-combo",
+      "petra-by-night",
+      "sunrise-camel-ride-giza-pyramids",
+      "wadi-rum-overnight-bedouin-camp"
+    ),
+    seoTitle: "A Girls' Trip to Egypt & Jordan: Cairo, Giza & Petra",
+    seoDescription:
+      "Inside a real girls' getaway across Egypt and Jordan — sunrise at the Pyramids, a flying dress shoot in the dunes, and Petra's Treasury by lantern light.",
+    body: [
+      p(
+        "There were four of us, a group chat that had said 'we should really do this' for two years, and a decision made at eleven at night on a random Tuesday that this was finally the year. Egypt first, then Jordan — a little over a week that we're all still talking about the following Christmas."
+      ),
+      h2("Landing in Cairo, Overwhelmed in the Right Way"),
+      p(
+        "Nobody warns you properly about the first twenty minutes out of Cairo airport — the traffic, the noise, the sheer size of a city of over twenty million people moving at once. It's a lot, and then it isn't, because by the time we'd checked into our hotel and stood on a balcony with the city lit up below us, the overwhelm had already turned into something closer to excitement. We ordered koshary from room service because none of us could agree on going back out, and it remains, unreasonably, one of the best meals of the whole trip."
+      ),
+      h2("Sunrise at the Pyramids, No Crowds Yet"),
+      p(
+        "We were up before it was light, which felt insane at the time and made complete sense about forty minutes later. The Giza Plateau at sunrise is a different place than the Giza Plateau at noon — no tour buses yet, no vendors, just the Pyramids catching the first orange light while the sky behind them was still half-dark. We climbed up to the Nine Pyramids View point and just stood there for a while, not really talking, which is not something four friends on a trip together do very often."
+      ),
+      h2("The Flying Dress in the Dunes"),
+      p(
+        "This was the one we'd all seen on Instagram a hundred times and half-doubted we'd actually pull off. A flowing dress, a stretch of open sand dunes outside the city, and a photographer who knew exactly how to time the wind so the fabric caught the light instead of just whipping around chaotically. It took a few tries — sand in shoes, sand in everything, honestly — and a lot of laughing between takes, but the shots that came out of it are the ones that ended up printed and framed, not just posted and forgotten."
+      ),
+      h2("One Last Egyptian Evening"),
+      p(
+        "Our last night in Cairo we did almost nothing, on purpose — a quiet felucca out on the Nile as the sun went down, the city noise fading out the further we sailed from the bank. After four days of being genuinely dazzled by ancient Egypt, that hour on the water, wind on the sail instead of an engine, was exactly the kind of ending the Cairo half of the trip needed before we packed for Jordan."
+      ),
+      h2("Crossing Into Jordan"),
+      p(
+        "The mood shifts the moment you land in Jordan — smaller, quieter, the desert reddening the further south you drive. We based ourselves for a couple of nights near Petra, which turned out to be the right call, because Petra is not something you rush through in an afternoon, however much a shorter itinerary might try to convince you otherwise."
+      ),
+      h2("Petra by Lantern Light"),
+      p(
+        "Walking the Siq at night is nothing like walking it during the day. The narrow canyon that leads into Petra was lined with hundreds of paper lanterns, the only light for most of the walk, until it opens out and the Treasury appears lit up ahead of you — the same building everyone recognizes from photos, but seen for the first time in candlelight instead of full sun. Bedouin musicians were playing near the base of it, and we sat on the ground in the cold desert air and didn't say much for a while. It's one of those experiences that photographs badly and matters enormously anyway."
+      ),
+      h2("Wadi Rum Under a Ridiculous Number of Stars"),
+      p(
+        "We added an overnight in the desert almost as an afterthought, and it turned into one of the best decisions of the trip. Wadi Rum at night, away from any real light pollution, makes you realize how few genuinely dark skies most of us ever actually see. We slept in a Bedouin camp, ate dinner cooked in the sand, and lay outside afterward picking out constellations none of us could actually name, which somehow didn't matter at all."
+      ),
+      h2("The Little Chaos of Traveling as Four"),
+      p(
+        "Nobody warns you how much logistics four grown women generate — whose turn it was for the bathroom mirror, who packed the phone charger everyone needed, who fell asleep in the van by 8 PM every single night no matter what time we'd started. There were small arguments about pace, mostly resolved by whoever was hungriest at the time, and there was a lot of laughing about things that weren't actually that funny, the way things only are when you're overtired and somewhere extraordinary at the same time."
+      ),
+      h2("Splitting the Cost, Without the Awkwardness"),
+      p(
+        "One of the quieter reasons this trip worked as well as it did: we booked it as a single private group rather than four separate bookings stitched together. One vehicle, one guide, one invoice split evenly four ways, instead of four people trying to coordinate separate itineraries that happened to overlap. It sounds like a small thing until you've tried to plan a group trip the other way and spent more energy on logistics than the actual travel deserved."
+      ),
+      h2("What We'd Do Differently"),
+      p(
+        "If we did it again, we'd give Wadi Rum two nights instead of one — by the time we'd figured out where the best stargazing spot near camp actually was, it was time to leave. We'd also build in one genuinely lazy day somewhere in the middle instead of stacking everything back to back, because by day five even the most enthusiastic person in the group was running on fumes by early afternoon."
+      ),
+      ...bullets([
+        "Comfortable, closed sandals or trainers — Petra and the dunes both mean a lot of walking on sand and uneven stone",
+        "A light scarf or shawl, useful for sun, wind, and covering shoulders at religious or conservative sites",
+        "A portable charger — between two photoshoot-worthy countries, phone batteries do not last",
+        "A printed or downloaded copy of your itinerary and hotel confirmations, in case signal is patchy in Wadi Rum",
+        "An open mind about sand getting into absolutely everything, because it will",
+      ]),
+      callout(
+        "Petra by Night doesn't run every night of the week — check the schedule before building the rest of your Jordan days around it, so you're not stuck choosing between the lantern-lit Siq and your only free evening.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      h2("Food We Still Talk About"),
+      p(
+        "Somewhere between the Pyramids and Petra we became fully unserious about trying everything put in front of us — koshary in Cairo, fresh-baked bread from a Nubian village near Aswan on a detour we almost skipped, mint tea in Jordan strong enough to wake the dead. None of it was planned as a food trip. Most of what we remember best from the meals wasn't even the food itself, it was sitting somewhere unglamorous with good light and no schedule for the next hour, which barely happened anywhere else on the itinerary."
+      ),
+      faq(
+        [
+          {
+            question: "Is a girls' trip to Egypt and Jordan safe to do together, just as a group of women?",
+            answer:
+              "Yes, and it's a genuinely popular trip to do this way. Traveling with a private guide and driver for the Egypt legs, and a licensed local guide in Jordan, removes most of the friction solo or group female travelers worry about most — navigating unfamiliar cities and getting reliable transport.",
+          },
+          {
+            question: "How many days do you actually need for both countries?",
+            answer:
+              "A little over a week is workable if you keep Jordan focused on Petra and Wadi Rum rather than trying to add Amman and the Dead Sea too. Nine or ten days gives you room to actually enjoy both countries instead of rushing between them.",
+          },
+          {
+            question: "Do you need a visa to cross from Egypt into Jordan?",
+            answer:
+              "Requirements depend on your nationality and how you're crossing, so it's worth confirming with your operator or embassy before you book flights — this is exactly the kind of logistics a private itinerary sorts out for you in advance.",
+          },
+          {
+            question: "What's the best time of year for a trip like this?",
+            answer:
+              "October through April in both countries — comfortable temperatures for walking Petra's Siq and standing out in the Giza sun, without the peak heat of summer working against you in either place.",
+          },
+        ],
+        "Planning Your Own Version of This Trip"
+      ),
+      p(
+        "None of us expected the Jordan half to hit as hard as the Egypt half did — we'd booked it almost as an add-on, and it ended up being half the reason we still talk about this trip. What stuck wasn't any single site, honestly. It was doing all of it together, four friends who'd been saying 'we should really do this' for two years and finally just did."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Plan Your Own Girls' Trip",
+        body: "Egypt and Jordan, done properly, in one private itinerary — Pyramids, flying dress, and Petra by lantern light included.",
+        buttonLabel: "See the Egypt & Jordan Combo",
+        buttonHref: "/tours/9-day-egypt-jordan-combo",
+      },
+    ],
   },
   {
     status: "published",
@@ -281,6 +666,106 @@ export const stories: Story[] = [
     imageLabel: "Nile Sunset",
     imageTone: "nile",
     image: "/photos/pexels-28601595.jpg",
+    relatedTours: toursBySlug(
+      "8-day-essential-egypt-nile-cruise",
+      "hot-air-balloon-luxor-east-bank-combo",
+      "cairo-nile-dinner-cruise-night-tour",
+      "10-day-private-luxurious-trip"
+    ),
+    seoTitle: "A Week in Egypt: What a Private Trip Actually Looks Like",
+    seoDescription:
+      "A day-by-day, first-person account of a week traveling Egypt privately — Giza at golden hour, Karnak, a hot air balloon sunrise, and dinner aboard a Nile cruise.",
+    body: [
+      p(
+        "I kept notes on my phone the whole week, mostly so I wouldn't lose track of which day was which once I got home, because they blur together fast when every single one has its own version of 'best day of the trip.' This is roughly what those notes turned into — seven days, more or less as they happened."
+      ),
+      h2("Day One: Cairo at Dusk"),
+      p(
+        "I landed in the late afternoon, and by the time I'd checked into the hotel the call to prayer was echoing across the city from a dozen directions at once — my first real signal that I wasn't in a generic big city anymore, I was specifically in Cairo. My guide met me that evening just to walk through the plan, not to sightsee yet, which turned out to be the right pace. No rush on night one. Just dinner, and a city outside the window that I already couldn't wait to actually be in."
+      ),
+      h2("Day Two: Golden Hour at Nine Pyramids View"),
+      p(
+        "This was the day I'd built the whole trip around, if I'm honest. We got to the Giza Plateau early enough that the light was still soft and low, and stood at the Nine Pyramids View point — the one spot where you can actually see all nine pyramids of the Giza complex lined up together — while the stone went from grey to gold in about twenty minutes. I'd seen a hundred photos of the Pyramids before this trip. None of them prepared me for how it feels to stand there in person while the light does that."
+      ),
+      h2("Day Three: Khan el-Khalili and Old Cairo"),
+      p(
+        "A slower day, and I needed it. We wandered Khan el-Khalili's market alleys, drank tea that was stronger than any tea has a right to be, and spent the afternoon in Islamic and Coptic Cairo — mosques and churches that are centuries old sitting a short walk from each other, which says something about the city that no single monument really can. I bought more spices than I had any real plan for. No regrets."
+      ),
+      h2("Day Four: Karnak by Golden Light, Luxor Temple at Night"),
+      p(
+        "A short flight put me in Luxor by mid-morning, and by late afternoon I was standing in the Great Hypostyle Hall at Karnak — the largest religious complex ever built, a hundred and thirty-something columns still standing after more than three thousand years, catching that same late gold light Giza had two days earlier. We went back to Luxor Temple after dark, when it's lit differently and far quieter, and I think I liked it there even more than Karnak, which I did not expect to say."
+      ),
+      h2("Day Five: Hot Air Balloon Sunrise, Then the Valley of the Kings"),
+      p(
+        "Up before 4 AM, which felt brutal for about ten minutes and then felt completely worth it once the balloon lifted off over the West Bank and the whole Theban landscape opened up below — Hatshepsut's temple, the Valley of the Kings, the Nile catching first light in the distance. We landed, had breakfast, and went straight into the Valley of the Kings itself, walking down into tombs painted the way they were left thousands of years ago. Two completely different ways of seeing the same landscape, in the same morning."
+      ),
+      h2("Day Six: Sailing to Aswan, Dinner Aboard"),
+      p(
+        "The Nile slows everything down, in the best way. We sailed south toward Aswan with not much to do but watch the riverbanks change — palm groves, small villages, fishermen in narrow boats that looked like they hadn't changed design in centuries. Dinner that night was on deck as the sun went down over the water, and it's still the meal I think about most from the whole trip, not because of what was on the plate but because of where I was sitting while I ate it."
+      ),
+      h2("Day Seven: Philae Temple, and Home"),
+      p(
+        "Last full day, and it started with Philae Temple, reached by a short boat ride across the water — a temple that was actually moved, piece by piece, to save it from the rising waters after the Aswan High Dam was built, which is its own remarkable story. I spent the last afternoon just sitting by the Nile instead of scheduling one more site, which felt like exactly the right way to close out a week that had, until then, been full to the brim."
+      ),
+      h2("A Note on the Heat"),
+      p(
+        "Nobody exaggerated the heat, and I'm glad I didn't underestimate it either. By early afternoon most days, the only sensible plan was to be somewhere shaded, ideally horizontal, with cold water within reach. My guide built the whole week around that reality instead of pretending it wasn't there — sightseeing early, a real break through the hottest hours, and evenings that started back up once the temperature dropped. Fighting that rhythm would have wrecked the trip. Working with it made every single day better."
+      ),
+      h2("What I'd Do Differently Next Time"),
+      p(
+        "I'd add a day in Aswan. I said yes to Philae Temple and then found myself wishing I had one more unhurried afternoon by the water there before flying home, instead of it being the very last thing on the itinerary. I'd also pack fewer clothes and more patience for laundry — a week of temples and desert dust is hard on anything you bring, and half of what I packed never left the suitcase."
+      ),
+      ...bullets([
+        "How much quiet is actually built into the days — the boat, the balloon, the early mornings — not just monument after monument",
+        "How hospitable people were, everywhere, not performatively so",
+        "How different the same site looks in early morning light versus midday light",
+        "How much the heat shapes the day if you don't plan around it — starting early wasn't optional, it was the whole strategy",
+        "How much better the photos came out once I stopped worrying about getting a photo and just let the guide time it",
+      ]),
+      h2("The Meals I Still Think About"),
+      p(
+        "Nobody told me the food would end up being its own storyline. Koshary on the first night out of pure convenience, then genuinely craving it again by day four. Fresh-baked bread and grilled fish beside the Nile in Aswan, eaten with my hands because nobody handed me cutlery and it felt wrong to ask. Dinner on the cruise the last night, plates cleared while the boat kept moving south and the lights of a small riverside village slid past the window. None of it was fancy in the way a hotel restaurant is fancy. All of it mattered more than the hotel restaurant would have."
+      ),
+      h2("Why I Went Private Instead of Joining a Group"),
+      p(
+        "I almost booked a group tour to save money, and I'm genuinely glad I didn't. The version of this week that stuck with me depended entirely on timing — being at Giza before the buses arrived, having the guide adjust the Karnak visit because the light was doing something worth waiting for, not being rushed out of a tomb in the Valley of the Kings because twenty other people on the bus were ready to move on. None of that is available on a fixed group schedule, and it turned out to be the actual difference between a good trip and the trip I keep thinking about."
+      ),
+      callout(
+        "Build at least one slower day into a week-long trip — the felucca, the Nile cruise stretch, an unscheduled afternoon. The monuments are the reason to go, but the quiet time between them is usually what actually sticks with you afterward.",
+        { title: "What I'd Tell a Friend", tone: "Highlight" }
+      ),
+      faq(
+        [
+          {
+            question: "Is a week actually enough time to see Egypt properly?",
+            answer:
+              "It's enough for Cairo and Giza plus a real taste of Luxor, especially with a private, well-paced itinerary. It won't fit Aswan and a full Nile cruise without extending a day or two, but a week gives you a genuinely complete first look at the country.",
+          },
+          {
+            question: "Do you need to know what you're doing with a camera to get good photos?",
+            answer:
+              "No — most of what made the photos from this trip work was timing and access, not camera skill. Being in the right spot at golden hour, with a guide who knows exactly where to stand, does more than an expensive lens ever could.",
+          },
+          {
+            question: "How physically demanding is a week like this?",
+            answer:
+              "Moderately — plenty of walking, some early mornings, and heat to manage, but nothing technical. A reasonable fitness level and comfortable shoes cover almost all of it.",
+          },
+        ],
+        "Questions I Got Asked After I Got Home"
+      ),
+      p(
+        "People keep asking me which day was the best day, and I still don't have one answer. It was the accumulation of it — Giza at dawn, Karnak at dusk, a balloon over the Valley of the Kings, dinner on the Nile — that made the week what it was, not any single moment on its own."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Build Your Own Week Like This",
+        body: "A private, golden-hour-timed itinerary across Cairo, Giza, Luxor, and Aswan — built around the moments, not just the checklist.",
+        buttonLabel: "See the 8-Day Itinerary",
+        buttonHref: "/tours/8-day-essential-egypt-nile-cruise",
+      },
+    ],
   },
   {
     status: "published",
@@ -430,6 +915,215 @@ export const stories: Story[] = [
         ],
         markDefs: [],
       },
+      {
+        _type: "block",
+        _key: "hx1",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx1s1", text: "What a Typical Day Actually Looks Like", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px1",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px1s1",
+            text: "On a private itinerary, most days start earlier than a typical vacation morning — not because it's demanded, but because the sites are simply better before the heat and the crowds arrive. A driver and guide collect you from the hotel, the pace through each site is yours to set, and the afternoon is usually left looser: lunch, a rest at the hotel, an optional add-on if you want one. It isn't a bus schedule dictating the day; it's closer to having a knowledgeable friend who happens to know exactly when each site is at its best.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx2",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx2s1", text: "What to Budget For, Without Fake Numbers", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px2",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px2s1",
+            text: "Egypt trip costs vary enormously depending on trip length, hotel category, and private versus group travel, so a single number is more misleading than useful. What's worth knowing instead is what actually drives the cost up or down: private touring versus joining a group, five-star versus mid-range hotels, a Nile cruise cabin category if one's included, and how many extras — a hot air balloon, a photoshoot, a sound and light show — get added on top of the base itinerary. Ask any operator for a full breakdown by category rather than a single bottom-line figure, so you can see exactly where your money is actually going.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx3",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx3s1", text: "What to Sort Out Before You Arrive", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px3",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px3s1", text: "Visa requirements for your nationality — many travelers can get one on arrival or online in advance", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px4",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px4s1", text: "Domestic flights between Cairo and Luxor or Aswan, which fill up faster around peak season", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px5",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px5s1", text: "Travel insurance that covers the specific activities you're planning, including anything adventurous like diving or a hot air balloon", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px6",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px6s1", text: "A local eSIM or roaming plan, so you're not relying entirely on hotel wifi to stay in touch with your guide", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px7",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px7s1", text: "US dollars in small denominations for tipping, which is customary in Egypt for guides, drivers, and hotel staff", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx4",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx4s1", text: "Common First-Timer Mistakes", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px9",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px9s1", text: "Treating Luxor as a rushed day trip from Cairo instead of giving it its own days", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px10",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px10s1", text: "Packing the itinerary so tightly there's no room for a delay, a rest, or an unplanned detour", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px11",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px11s1", text: "Scheduling major sightseeing through the hottest hours of the afternoon instead of around them", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px12",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px12s1", text: "Skipping travel insurance, especially for anything involving diving, a hot air balloon, or a desert excursion", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px13",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px13s1", text: "Leaving visa and flight-timing questions until the last minute instead of confirming them early", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx5",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx5s1", text: "Working With a Travel Specialist vs. Booking It Yourself", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px14",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px14s1",
+            text: "Egypt is entirely bookable independently — flights, hotels, and site tickets can all be arranged piece by piece. What's harder to book yourself is the local knowledge: which entrance to the Grand Egyptian Museum avoids the longest line, which guide is actually good versus just available, how the timing of a Nile cruise cabin category affects which side of the boat gets the better view. A specialist who works in Egypt daily isn't selling convenience so much as selling the difference between a trip that goes smoothly and one where you're troubleshooting logistics on vacation.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "faqBlock",
+        _key: "faqx1",
+        title: "Quick Questions Before You Book",
+        faqs: [
+          {
+            question: "Is Egypt safe for tourists right now?",
+            answer:
+              "The main tourist areas — Cairo, Giza, Luxor, Aswan, and the Red Sea resorts — see millions of visitors a year and have dedicated tourism police. As anywhere, common-sense precautions apply, and traveling with a reputable, licensed operator adds another layer of comfort, especially for first-time visitors.",
+          },
+          {
+            question: "Should I fly or take an overnight train between Cairo and Luxor?",
+            answer:
+              "Flying is faster and what most private itineraries use, especially with limited days. An overnight train is a slower, more atmospheric option some travelers add deliberately, but it eats into a day either at the start or the end of the trip.",
+          },
+          {
+            question: "Do I need to speak Arabic to get by?",
+            answer:
+              "No — English is widely spoken throughout Egypt's tourism industry, and a private guide handles the rest. It's still a nice touch to learn a few basic Arabic greetings, purely for the reaction you'll get.",
+          },
+          {
+            question: "How much should I tip guides and drivers?",
+            answer:
+              "Tipping is customary and expected in Egypt, generally on a per-day basis for guides and drivers separately. Ask your operator for their standard guidance before you travel so you're not guessing on the day.",
+          },
+        ],
+      },
+      {
+        _type: "block",
+        _key: "px8",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px8s1",
+            text: "Every Egypt trip that goes well starts from the same handful of decisions covered here — length, region, travel style, and season — made deliberately rather than left to chance. Once those are settled, the rest of the planning gets a lot easier, and a lot more fun.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      { _type: "ctaBlock", _key: "ctax1", title: "Let Us Build the Itinerary", body: "Tell us your dates, who's traveling, and what you want to see — we'll design a private Egypt itinerary around it.", buttonLabel: "Start Customizing", buttonHref: "/customize" },
     ],
   },
   {
@@ -563,6 +1257,226 @@ export const stories: Story[] = [
         body: "Under a week, pick Cairo or the Nile, not both. A week to eight days fits both, tightly. Ten days is the most comfortable full-country trip. Two weeks or more leaves room to add somewhere beyond Cairo and the Nile entirely.",
         tone: "Highlight",
       },
+      {
+        _type: "block",
+        _key: "hx1",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx1s1", text: "Under 5 Days: Possible, But Tight", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px1",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px1s1",
+            text: "A three or four day trip can work if Cairo and Giza are genuinely all you want — the Pyramids, the Sphinx, and one more site or the Grand Egyptian Museum. The math is unforgiving, though: with international flights on both ends, you often only get two full sightseeing days out of four calendar days. It's a real trip, just not one to expect to feel unhurried. Anything shorter than three full days rarely justifies the flight time for most travelers coming from outside the region.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx2",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx2s1", text: "Adding the Red Sea or Jordan: Budget Extra Days", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px2",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px2s1",
+            text: "The Red Sea coast and Jordan both get added onto an Egypt trip fairly often, and both deserve their own days rather than being squeezed into a single afternoon. Hurghada or the Sinai coast is worth two to three days minimum once you factor in the flight or drive to get there — going for less than that means most of your trip is transit. Jordan is a bigger addition: Petra and Wadi Rum alone justify three to four extra days once border logistics and travel time between sites are accounted for, which is why most combined Egypt-and-Jordan itineraries run nine days or more.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx3",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx3s1", text: "How Travel Style Changes the Math", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px3",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px3s1",
+            text: "Private travel compresses these numbers slightly, because there's no waiting on a group to assemble, no fixed departure times, and no lost time backtracking to accommodate someone else's pace. A private ten-day itinerary can cover, comfortably, what a group tour needs eleven or twelve days to do at the same unhurried pace. It's not a huge difference, but on a trip where every day matters, it's often the difference between fitting in one more site and not.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px4",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px4s1", text: "5-6 days: Cairo and Giza only, done properly", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px5",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px5s1", text: "7-8 days: Cairo plus a real taste of Luxor", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px6",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px6s1", text: "10 days: Cairo, Giza, and a full Luxor-to-Aswan Nile stretch", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px7",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px7s1", text: "14 days: the full route plus Alexandria, the Red Sea, or a desert oasis", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px8",
+        style: "normal",
+        listItem: "bullet",
+        level: 1,
+        children: [{ _type: "span", _key: "px8s1", text: "16+ days: room to add Jordan or the Western Desert oases without cutting anything else", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx4",
+        style: "h2",
+        children: [
+          { _type: "span", _key: "hx4s1", text: "Solo Travelers, Families, and Honeymooners: Does the Math Change?", marks: [] },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px10",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px10s1",
+            text: "Who you're traveling with changes how much a given number of days actually covers. Families with young children usually need slightly more days than the lengths above suggest, since afternoon rest breaks and shorter site visits eat into what a childless itinerary would cover in the same window. Honeymooners often want the opposite adjustment — fewer sites, more time built around a single unhurried experience like a Nile cruise or a private photoshoot, rather than maximizing how much ground gets covered. Solo travelers and small private groups tend to move fastest of anyone, since there's no group consensus to manage and no one waiting on anyone else.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx5",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx5s1", text: "The Off-Season Trade-Off", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px11",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px11s1",
+            text: "Traveling in summer changes the calculation slightly. The heat forces an earlier start and a longer midday break, but the trade-off is thinner crowds at every site and more flexibility on flights and hotel availability, which can make a shorter trip feel less compressed than the same length would in the December-to-February peak. Winter buys comfortable weather but demands more advance planning, since the same number of days has to compete with everyone else's itinerary for the best time slots at popular sites.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "hx6",
+        style: "h2",
+        children: [{ _type: "span", _key: "hx6s1", text: "Why More Days Isn't Automatically Better", marks: [] }],
+        markDefs: [],
+      },
+      {
+        _type: "block",
+        _key: "px12",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px12s1",
+            text: "It's tempting to assume a longer trip is always the safer choice, but past a certain point extra days stop adding new sites and start adding repetition or filler stops that don't earn their place on the itinerary. A trip stretched to fourteen days without a genuine second region to explore — the Red Sea, Jordan, a desert oasis — often ends up feeling slower rather than richer. The better question isn't 'how many days can I get' but 'what would I actually do with each additional day,' and if the honest answer is 'rest at the hotel,' that's a fine answer, but it's worth knowing that's what you're booking.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      {
+        _type: "faqBlock",
+        _key: "faqx1",
+        title: "Length-Specific Questions",
+        faqs: [
+          {
+            question: "Is 4 days enough for a first trip to Egypt?",
+            answer:
+              "It's enough for Cairo and Giza specifically, but not enough to add Luxor or Aswan without the trip feeling rushed. If four days is genuinely all you have, focus entirely on Cairo rather than trying to fit in a flight to the Nile Valley as well.",
+          },
+          {
+            question: "Can you realistically do Egypt in a long weekend?",
+            answer:
+              "You can see the Pyramids in a long weekend, which for some travelers is the whole point of going. It's not enough to get a real sense of the country beyond that single, extraordinary sight.",
+          },
+          {
+            question: "How many days does Cairo alone deserve?",
+            answer:
+              "Two to three full days covers Giza, the Grand Egyptian Museum, Islamic and Coptic Cairo, and Khan el-Khalili without rushing any of them. Less than that means picking two or three highlights and accepting you'll miss the rest.",
+          },
+          {
+            question: "Is three weeks too long for an Egypt trip?",
+            answer:
+              "Not if you're genuinely interested in going beyond the standard route — three weeks fits Cairo, the full Nile, the Red Sea, and a desert oasis or two without feeling padded. It's simply more time than most first-time visitors need or have available.",
+          },
+          {
+            question: "What length trip do returning visitors usually book?",
+            answer:
+              "Ten to fourteen days, most often — long enough to revisit favorite sites at a slower pace, or to add a region skipped the first time, like the Red Sea or a desert oasis, without needing to repeat the full Cairo-to-Aswan route from scratch.",
+          },
+        ],
+      },
+      {
+        _type: "block",
+        _key: "px9",
+        style: "normal",
+        children: [
+          {
+            _type: "span",
+            _key: "px9s1",
+            text: "There's no wrong length, as long as it's chosen on purpose. The trips that disappoint people aren't the short ones or the long ones — they're the ones where the itinerary tried to fit a fourteen-day country into a six-day trip and something important got rushed as a result. Decide what you're willing to leave out before you book, and whatever length you land on will feel like the right one once you're actually there.",
+            marks: [],
+          },
+        ],
+        markDefs: [],
+      },
+      { _type: "ctaBlock", _key: "ctax1", title: "Find the Right Length for You", body: "Browse itineraries from a single day in Giza to a full three-week grand tour, and filter by exactly how much time you have.", buttonLabel: "Browse All Tours", buttonHref: "/tours" },
     ],
   },
   {
