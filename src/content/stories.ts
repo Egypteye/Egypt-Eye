@@ -3535,33 +3535,102 @@ export const stories: Story[] = [
     destinations: ["Cairo", "Luxor", "Aswan"],
     primaryKeyword: "egypt travel mistakes",
     secondaryKeywords: ["egypt travel tips", "first time in egypt mistakes", "egypt trip planning tips"],
-    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "10-day-private-luxurious-trip"),
-    seoTitle: "Common Mistakes First-Time Egypt Travelers Make (and How to Avoid Them)",
+    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "10-day-private-luxurious-trip", "8-day-essential-egypt-nile-cruise"),
+    seoTitle: "Common Mistakes First-Time Egypt Travelers Make (and Fixes)",
     seoDescription:
-      "The planning mistakes that trip up first-time Egypt visitors most often — rushed itineraries, midday touring, and underpricing the Nile Valley.",
+      "The planning mistakes that trip up first-time Egypt visitors most often — rushed itineraries, midday touring, and underestimating the Nile Valley.",
     body: [
       p(
-        "Egypt rewards a bit of planning more than most destinations, largely because its major sites are spread across a long stretch of the country. Most first-trip regrets trace back to a handful of avoidable decisions."
+        "Egypt rewards planning more than most destinations, mainly because its major sites are spread across a genuinely large stretch of the country rather than clustered in one city. The mistakes that show up again and again on a first trip aren't exotic — they're planning decisions that seemed reasonable when booking from home and turn into real regrets once you're standing in front of Karnak at noon in July, or trying to squeeze the Egyptian Museum into forty-five minutes before a flight."
+      ),
+      p(
+        "None of what follows requires you to become an Egypt expert before you land. It just means understanding a handful of things that aren't obvious until you've already made the mistake once."
       ),
       h2("Treating Luxor as a Day Trip"),
       p(
-        "Luxor holds more history than most countries — Karnak, Luxor Temple, the Valley of the Kings, Hatshepsut's temple — and trying to see it in a single rushed day from Cairo means seeing almost none of it properly. Two to three days is the realistic minimum."
+        "Luxor holds more concentrated ancient history than most countries manage in their entire national collection — Karnak Temple, Luxor Temple, the Valley of the Kings, the Valley of the Queens, Hatshepsut's mortuary temple, the Colossi of Memnon, and more, split across two very different banks of the Nile. Trying to see it in a single rushed day trip from Cairo, which some tour operators still sell, means you'll get a handful of photos and almost none of the actual experience. Two to three full days is the realistic minimum to cover the East Bank and West Bank properly, with time left over to actually stand inside a tomb rather than being herded through it."
+      ),
+      p(
+        "The version of this mistake that stings the most is flying into Luxor for one day as part of a longer Cairo-based trip, because by the time you've factored in the flight and the drive time to and from the airport, you're often left with three or four usable hours on the ground — not nearly enough for a place this dense with things worth seeing."
       ),
       h2("Touring Through the Hottest Hours"),
       p(
-        "Sites open early specifically so visitors can be through the major stops before midday heat sets in, yet a surprising number of first-time itineraries start late and end up touring at the worst possible hour. An early start, especially outside the cooler months, changes the whole day."
+        "Most major sites open at or before 8 a.m. specifically so visitors can get through the big stops before the midday heat sets in, yet a surprising number of first-time itineraries start at a leisurely 9:30 or 10 and end up touring the Valley of the Kings or the Giza plateau at the worst possible hour. This isn't just a comfort issue — walking through an unshaded temple courtyard at 1 p.m. in June is a genuinely different experience from doing the same walk at 7 a.m., and it affects how much you actually take in. An early start, especially outside the cooler winter months, changes the whole day for the better."
       ),
-      h2("Underestimating Distances"),
+      h2("Underestimating How Big Egypt Actually Is"),
       p(
-        "Cairo to Luxor is roughly the distance of a long domestic flight, not a short drive — Egypt is a big country, and its main sites sit hours apart by road or a short flight apart by air. Building an itinerary around realistic travel times, rather than a wish list of every site in the country, makes for a far better trip."
+        "Cairo to Luxor is roughly the distance of a long domestic flight, not a short drive, and Luxor to Aswan adds another few hours on top of that. Egypt is a big country, and its headline sites — the Pyramids, Luxor's temples, Abu Simbel, the Red Sea coast — sit hours apart by road or a short flight apart by air. First-time visitors sometimes build a wish-list itinerary that tries to touch every region in a week, which usually means spending more time in transit than at the sites themselves. Building an itinerary around realistic travel times, and accepting that you probably can't do the Pyramids, Luxor, Aswan, and the Red Sea justice in under a week and a half, makes for a far better trip than cramming."
       ),
       h2("Booking the Cheapest Operator Without Checking Credentials"),
       p(
-        "Price alone doesn't tell you much about a tour operator. A licensed guide, a roadworthy vehicle, and transparent inclusions matter more than shaving a small amount off the price — especially on longer, multi-day itineraries where a poor guide affects every single day, not just one."
+        "Price alone doesn't tell you much about a tour operator in Egypt, where the range between a bare-bones group bus tour and a private, licensed guide can be significant even for what looks like the same itinerary on paper. A licensed Egyptology guide, a roadworthy vehicle, and genuinely transparent inclusions (entry fees, meals, whether a guide is even provided at each site) matter more than shaving a modest amount off the sticker price — especially on longer, multi-day itineraries, where a mediocre guide affects every single day rather than just one afternoon."
       ),
+      h2("Overpacking the Itinerary"),
+      p(
+        "There's a specific kind of first-timer mistake where the itinerary reads well on paper — Cairo, Alexandria, Luxor, Aswan, Abu Simbel, Hurghada, all in eight days — but leaves almost no slack for anything to run long, for a temple to be more interesting than expected, or for you to just be tired. Egypt's best moments are often the unhurried ones: an extra half hour at Karnak after the group has moved on, a slow felucca sail at sunset instead of rushing to the next stop. Building in at least one lighter day, particularly around the Nile Valley, tends to matter more than adding one more destination to the list."
+      ),
+      h2("Getting Dress Codes and Site Etiquette Wrong"),
+      p(
+        "Egypt is more relaxed about dress than many first-time visitors expect, particularly in tourist areas and at ancient sites, but mosques and churches are a different matter — modest coverage of shoulders and knees is expected, and mosques generally require women to cover their hair. Photography rules also vary more than people assume: some tombs in the Valley of the Kings charge a separate fee for photography or restrict it entirely, and flash photography can damage painted reliefs that have survived thousands of years. A quick check with your guide before raising a camera avoids an awkward moment."
+      ),
+      h2("Not Planning for Cash and Small Bills"),
+      p(
+        "Cards are accepted at hotels and larger restaurants, but plenty of everyday moments in Egypt — a bathroom attendant, a small tip for someone who helps with your bags, a purchase in a local market — run on small-denomination cash, and having only large bills or no local currency at all is a recurring first-trip headache. It's worth arriving with a mix of small notes and treating tipping as a normal, expected part of daily interactions rather than an optional extra, the same way it functions in much of the region."
+      ),
+      h2("Overlooking the Small Practical Basics"),
+      p(
+        "None of these are dramatic on their own, but skipping all of them at once is how a good trip turns into an uncomfortable one by day three."
+      ),
+      ...bullets([
+        "Bottled or filtered water rather than tap water, kept on hand throughout the day",
+        "Sunscreen and a hat, even for winter visits — the desert sun is stronger than it looks",
+        "Comfortable, closed-toe walking shoes for uneven temple floors and sandy sites",
+        "A light scarf or shawl, useful both for mosque visits and for sun coverage on the water",
+        "Basic travel insurance that covers medical care, not just cancellations",
+        "A photocopy or photo of your passport and visa, kept separate from the originals",
+      ]),
       callout(
-        "The single highest-leverage fix for most of these is booking private rather than a rigid group schedule — it gives you room to start early, linger, or adjust without twenty other people's preferences in the way."
+        "The single highest-leverage fix for most of these mistakes is booking private rather than a rigid fixed-group schedule. A private itinerary gives you room to start early, linger somewhere that turns out to be more interesting than expected, or swap a day around without twenty other travelers' preferences in the way — and it removes most of the guesswork about guide quality, since you can vet exactly who's leading your trip before you commit.",
+        { title: "The One Fix That Solves Most of These", tone: "Highlight" }
       ),
+      faq([
+        {
+          question: "What's the best time of year to visit Egypt for a first trip?",
+          answer:
+            "October through April is the most comfortable window, with cooler daytime temperatures across the Nile Valley. Summer is hotter but far less crowded, and sites are still fully open — it just rewards an earlier start.",
+        },
+        {
+          question: "How many days do first-time visitors actually need?",
+          answer:
+            "Ten to twelve days lets you cover Cairo and Giza, Luxor, and Aswan without rushing. A week is workable if you're willing to cut one region, but trying to do all three plus the Red Sea in under a week usually means regretting the pace.",
+        },
+        {
+          question: "Is it a mistake to skip a guide and explore independently?",
+          answer:
+            "Not necessarily for a city like Cairo, but at the ancient sites specifically, a knowledgeable guide is what turns a field of stone columns into something you actually understand — the history isn't posted on plaques the way it might be at a Western museum.",
+        },
+        {
+          question: "Do I need to plan around Friday prayers or religious holidays?",
+          answer:
+            "It's worth checking your dates against Ramadan and major holidays, since hours and crowd patterns shift, but sites remain open and a good local operator will already be planning around it.",
+        },
+        {
+          question: "Should I exchange money before arriving or after I land?",
+          answer:
+            "Either works, but you'll generally get a fair rate exchanging at the airport or a bank once you land, and it saves the hassle of tracking down Egyptian pounds at home in advance.",
+        },
+      ]),
+      p(
+        "Get the planning right and Egypt stops feeling like a country you're racing against the clock in, and starts feeling like what it actually is — one of the most rewarding places on earth to spend a slow, well-paced week or two."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Skip the Guesswork, Plan It Right the First Time",
+        body: "Tell us your dates and priorities, and we'll build a private itinerary paced the way Egypt actually deserves to be seen.",
+        buttonLabel: "Start Planning",
+        buttonHref: "/customize",
+      },
     ],
   },
   {
@@ -3790,30 +3859,106 @@ export const stories: Story[] = [
     destinations: ["Aswan"],
     primaryKeyword: "philae temple aswan",
     secondaryKeywords: ["philae temple", "aswan high dam facts", "temple of isis aswan"],
-    relatedTours: toursBySlug("aswan-nubian-village-philae-tour", "kalabsha-temple-nubian-museum-tour"),
+    relatedTours: toursBySlug("aswan-nubian-village-philae-tour", "kalabsha-temple-nubian-museum-tour", "aswan-abu-simbel-tour"),
     seoTitle: "Philae Temple and the Aswan High Dam: A Practical Visitor's Guide",
     seoDescription:
       "Philae Temple and the Aswan High Dam sit close together and tell connected stories. What to see, how they relate, and how to visit both in a day.",
     body: [
       p(
-        "Philae Temple and the Aswan High Dam are usually visited within the same day, and understanding how they're connected makes both sites more interesting."
+        "Most visitors to Aswan see Philae Temple and the Aswan High Dam on the same morning, often back to back, without ever hearing how directly one caused the other. The dam that keeps the lights on in Cairo is the reason the temple you're about to walk through isn't where it was originally built. Knowing that connection before you go changes how you look at both places."
       ),
-      h2("Philae Temple"),
+      h2("The Temple of Isis at Philae"),
       p(
-        "Built primarily during the Ptolemaic period and dedicated to Isis, Philae was one of the last places in Egypt where the ancient religion was actively practiced, continuing well into the Christian era before finally being closed in the sixth century CE. Reaching the temple today means a short boat ride to the island of Agilkia, where the entire complex was rebuilt after being moved."
+        "Philae was built up mainly during the Ptolemaic period, several centuries after Egypt's New Kingdom had ended, and dedicated to Isis, the goddess of magic and motherhood, whose cult had spread far beyond Egypt by the time the temple reached its final form. Pilgrims came from as far as Nubia and later from across the Roman world, and the temple kept functioning as an active place of worship long after most of Egypt's other temples had gone quiet. It held on as one of the last outposts of the old religion, still conducting rites to Isis into the sixth century CE, roughly two hundred years after the Roman Empire had officially become Christian, before the Byzantine emperor Justinian finally ordered it closed."
       ),
-      h2("Why It Had to Move"),
       p(
-        "The original Philae sat on an island that would have been permanently submerged by the reservoir created behind the Aswan High Dam. Between 1972 and 1980, an international UNESCO-led project dismantled the temple into more than 40,000 numbered blocks and reassembled it on the nearby island of Agilkia, at a higher elevation — a project that saved the temple entirely, though the original island it once stood on is gone for good."
+        "That long, layered history is visible on the walls. Ptolemaic and Roman reliefs of Isis, Osiris, and Horus sit near crosses carved by the Coptic Christians who later converted parts of the temple into a church, one relief cut over another rather than destroyed outright. Few sites in Egypt show the transition between religions this plainly, carved into the same stone."
+      ),
+      h2("Why the Temple Had to Move"),
+      p(
+        "The original Philae stood on its own island, a short way upriver from where it sits now, and by the mid-twentieth century that island was on a collision course with the rising water behind the new Aswan High Dam. Left where it was, the temple would have been submerged for good."
+      ),
+      p(
+        "Between 1972 and 1980, an international team working under UNESCO carried out one of the most ambitious rescue projects in the history of archaeology. A cofferdam was built around the original island to hold back the Nile while the temple was dismantled block by block, more than 40,000 pieces in total, each one numbered and mapped. The blocks were then ferried to Agilkia, a nearby island reshaped to match the contours of the original site, and reassembled in the same configuration, stone for stone. The original island Philae stood on for two thousand years is gone, permanently underwater. What you visit today is a faithful, painstaking reconstruction on a different piece of land."
+      ),
+      h2("Walking Through Philae Today"),
+      p(
+        "Access to Philae is by a short motorboat ride across open water, which is part of what makes the site feel different from Luxor's land-locked temples — you arrive the way ancient pilgrims once did, approaching from the river rather than walking up from a parking lot. The Kiosk of Trajan, with its distinctive open columns, is the image most people already know from photographs, but it's really just the entrance point to a much larger complex behind it: a towering first pylon, courtyards, a birth house dedicated to the child Horus, and the main sanctuary of Isis itself."
+      ),
+      p(
+        "Afternoon light tends to bring out the reliefs best, catching the carved surfaces at an angle rather than flattening them the way harsh midday sun does. Philae also runs an evening sound and light show, walking visitors through the temple's history as the complex is lit up after dark — a genuinely different atmosphere from the daytime visit, and worth adding on for travelers spending more than a single day in Aswan."
       ),
       h2("The Aswan High Dam"),
       p(
-        "Completed in 1970, the High Dam controls the Nile's seasonal flooding and generates a large share of Egypt's electricity, but it also created Lake Nasser, one of the largest reservoirs in the world, submerging a stretch of ancient Nubia and forcing the relocation of Philae, Abu Simbel, and other monuments. Visitors can see the dam itself and the vast lake it created, though the technical interior isn't open to tourists."
+        "Completed in 1970 after roughly a decade of construction with substantial Soviet engineering support, the Aswan High Dam replaced an older, smaller dam built by the British early in the twentieth century, which could no longer control the Nile's flooding as reliably as Egypt needed. The new dam ended the annual flood cycle that had shaped Egyptian agriculture for thousands of years, brought large-scale, dependable irrigation to Upper Egypt, and today generates a meaningful share of the country's electricity."
       ),
-      h2("Visiting Both"),
       p(
-        "Most Aswan itineraries pair a morning at the High Dam viewpoint with an early-afternoon visit to Philae, when the light on the temple's reliefs is at its best, followed by the Unfinished Obelisk on the way back into town."
+        "Its other major effect was creating Lake Nasser, one of the largest reservoirs built by human beings, stretching south from Aswan deep into Sudan. Visitors can walk out onto the dam itself and look across the water, though the dam's technical interior isn't open to tourists — what you're seeing is really the scale of the thing, a wall of rock and concrete holding back an entire inland sea."
       ),
+      h2("The Nubia Rescue Campaign"),
+      p(
+        "Philae wasn't the only monument in the dam's path. The rising water threatened dozens of temples and tombs across ancient Nubia, and UNESCO's response became one of the largest heritage preservation efforts ever undertaken, eventually saving more than twenty monuments, Abu Simbel's colossal facade among them, by physically relocating them to higher ground. It's worth remembering, standing at Philae, that you're looking at only one piece of a rescue that reshaped how the world thinks about protecting ancient heritage from modern development."
+      ),
+      h2("Visiting Both in a Day"),
+      p(
+        "Most Aswan itineraries put the High Dam first thing in the morning, when the light on the water is clearest and the site is quietest, then move to Philae in the early afternoon for the boat crossing and the temple itself. Many private guides fold in the Unfinished Obelisk on the way back into town — a granite obelisk abandoned in its quarry after a crack appeared partway through carving, left exactly where the ancient workers walked away from it, and one of the clearest windows anywhere into how these monuments were actually made."
+      ),
+      p("A few practical points make the day easier:"),
+      ...bullets([
+        "Wear real walking shoes — the boat dock to Philae involves some uneven ground, and the temple itself has stairs and courtyards to cover.",
+        "Bring sun protection regardless of season; there's very little shade on the dam or the approach to the boat dock.",
+        "Ask about the evening sound and light show if you're in Aswan more than one night — it runs on a rotating schedule and is worth checking in advance.",
+        "Photography is allowed throughout Philae; a polarizing filter helps if you're shooting the reliefs in strong afternoon sun.",
+        "Pair the visit with the Unfinished Obelisk rather than treating it as a separate outing — it's a short stop that adds real context to Aswan's granite quarries.",
+      ]),
+      p(
+        "Those quarries, in fact, supplied the stone for obelisks and statues that ended up as far away as Luxor and Cairo, which is part of why Aswan held such a central place in ancient Egyptian building projects long before the modern dam existed."
+      ),
+      callout(
+        "Book the boat crossing to Philae as early in the day as your schedule allows — the island gets busier as cruise groups arrive mid-morning, and the light on the reliefs is better before the sun climbs directly overhead.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      faq(
+        [
+          {
+            question: "How much time should I budget for Philae and the High Dam together?",
+            answer:
+              "A half day is enough for both — figure on two to three hours including the boat crossing, the temple itself, and a stop at the dam viewpoint, longer if you add the Unfinished Obelisk or want to linger over the reliefs.",
+          },
+          {
+            question: "Is the boat ride to Philae included in a typical tour?",
+            answer:
+              "Yes, on any guided visit — the boat is the only way to reach the island, and tickets are arranged as part of the standard temple visit.",
+          },
+          {
+            question: "Can you go inside the Aswan High Dam?",
+            answer:
+              "No, the dam's interior and machinery aren't open to visitors. What you see is the dam wall itself and the view across Lake Nasser, which is still an impressive stop in its own right.",
+          },
+          {
+            question: "Is Philae worth visiting if I've already seen Karnak and Luxor Temple?",
+            answer:
+              "Very much so — Philae is a different style and era of temple, with a survival story that's arguably more dramatic than the architecture of the older sites, and the boat approach makes for a different kind of visit than anything in Luxor.",
+          },
+          {
+            question: "What's the best time of day to photograph Philae?",
+            answer:
+              "Early to mid afternoon, when the sun angles across the reliefs rather than flattening them from directly overhead — or the evening sound and light show for a completely different look at the same stones.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Philae and the High Dam make an unusually good pair for a single morning: one is a monument that barely survived the modern world, the other is the reason it needed saving in the first place. Seeing them together tells a more complete story about Aswan than either site does alone."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See Philae and Aswan's Nubian Heritage in One Day",
+        body: "Our Aswan Nubian Village & Philae Temple tour pairs the temple crossing with the High Dam and a private Egyptologist guide.",
+        buttonLabel: "View the Tour",
+        buttonHref: "/tours/aswan-nubian-village-philae-tour",
+      },
     ],
   },
   {
@@ -4024,26 +4169,106 @@ export const stories: Story[] = [
     destinations: ["Red Sea", "Sinai"],
     primaryKeyword: "red sea diving worth it",
     secondaryKeywords: ["egypt scuba diving", "red sea diving for beginners", "best red sea dive sites"],
-    relatedTours: toursBySlug("ras-mohammed-snorkeling-tour", "marsa-alam-dolphin-house-tour", "hurghada-red-sea-diving-snorkeling"),
+    relatedTours: toursBySlug(
+      "ras-mohammed-snorkeling-tour",
+      "marsa-alam-dolphin-house-tour",
+      "hurghada-red-sea-diving-snorkeling",
+      "dahab-blue-hole-three-pools-tour"
+    ),
     seoTitle: "Is Scuba Diving in the Red Sea Worth It? An Honest Look",
     seoDescription:
-      "The Red Sea is one of the world's best-known diving destinations. What actually makes it stand out, and what beginners should know before booking.",
+      "The Red Sea is one of the world's best-known diving destinations. What actually makes it stand out, which sites matter, and what beginners should know.",
     body: [
       p(
-        "Divers talk about the Red Sea the way they talk about very few other destinations — exceptional visibility, warm water nearly year-round, and coral reef systems that have largely avoided the bleaching damage seen elsewhere. For most travelers weighing whether to add it to an Egypt trip, the answer is yes."
+        "Ask a diver who has logged time on reefs around the world where the Red Sea ranks, and most put it near the top — not because of one spectacular site, but because of the consistency. Wall after wall of coral in genuinely good condition, visibility that turns a reef thirty meters down into something you can see clearly from the surface, and a range of diving that runs from gentle shore entries suitable for a first-timer to some of the most serious wreck and current-swept wall dives anywhere in the world. For anyone weighing whether to build diving into an Egypt trip, the short answer is yes. The more useful answer explains why, and what actually varies from one base to the next."
       ),
-      h2("What Makes It Stand Out"),
       p(
-        "Visibility routinely exceeds 20 meters, water temperatures stay comfortable for most of the year, and the reef walls drop dramatically close to shore in places like Ras Mohammed National Park, putting healthy coral and a wide range of marine life within easy reach of shore or a short boat ride. Wreck diving is another major draw, particularly around the Strait of Tiran and the well-known Thistlegorm wreck near Sharm."
+        "The Red Sea isn't one destination with one experience. Sharm El Sheikh, Dahab, Hurghada, El Gouna, and Marsa Alam are all diving bases with genuinely different characters, and what you get out of \"the Red Sea\" depends a lot on which of them you dive from, how many days you have, and whether you're already certified. This is what actually makes the diving here worth the trip, which sites are worth knowing by name, and what to expect if you're trying it for the first time."
       ),
-      h2("For Beginners"),
+      h2("What Makes the Red Sea Different"),
       p(
-        "You don't need to be a certified diver to get a real sense of it — snorkeling over the same reefs delivers a surprising amount of what makes the Red Sea special, and PADI-certified introductory dives are widely available for first-timers through licensed dive centers. For anyone considering full certification, Egypt is one of the more affordable and accessible places in the world to do it."
+        "Geography does most of the work. The Red Sea is narrow, deep, and gets almost no freshwater runoff, which keeps salinity high and sediment low — the reason visibility here is routinely excellent rather than occasional. Reef walls tend to start close to shore and drop fast, so healthy coral and a wide range of marine life sit within easy reach of a beach entry or a short boat ride, rather than requiring a long crossing to open water."
+      ),
+      p(
+        "The reefs themselves are also in better shape than a lot of divers expect. Red Sea coral has proven more resistant to the warming-driven bleaching events that have damaged reef systems elsewhere, partly because corals here evolved tolerating naturally higher summer temperatures. That doesn't mean the reefs are untouched — anchor damage and diver contact are real, ongoing concerns, which is part of why buoyancy control and reputable operators matter here as much as anywhere. But structurally, a lot of what divers came here to see fifteen years ago is still there to see now."
+      ),
+      h2("The Sites Worth Knowing By Name"),
+      p(
+        "A handful of sites come up in almost every conversation about Red Sea diving, and it's worth knowing what each one actually is before you build a trip around it."
+      ),
+      ...bullets([
+        "Ras Mohammed National Park, at the southern tip of the Sinai Peninsula near Sharm El Sheikh — dramatic coral walls, strong fish life, and some of the most consistently good visibility on the coast.",
+        "The Thistlegorm, a WWII British supply ship sunk near the Strait of Tiran — widely considered one of the best wreck dives in the world, with motorcycles, trucks, and rifles still visible in the cargo holds.",
+        "The Blue Hole, just north of Dahab — a dramatic submarine sinkhole, mostly dived within safe recreational limits by ordinary certified divers with a local guide, and famous enough to deserve its own visit.",
+        "Elphinstone Reef, Brothers Islands, and Daedalus Reef, all off Marsa Alam — remote, current-swept, liveaboard-access sites for more experienced divers, known for reef sharks, hammerheads, and oceanic whitetips.",
+      ]),
+      h2("Learning to Dive, or Trying It for the First Time"),
+      p(
+        "You don't need a certification card to get a real sense of what makes this diving special. Licensed dive centers throughout the Red Sea resorts offer supervised introductory dives — sometimes called Discover Scuba dives — that take a complete beginner into shallow water with an instructor, no prior experience required. It's a controlled, closely watched way to see coral and fish life up close before deciding whether to go further."
+      ),
+      p(
+        "For anyone considering full certification, Egypt is genuinely one of the more affordable and accessible places in the world to do it. A PADI Open Water course typically runs over several days, mixing classroom or e-learning modules with pool sessions and open-water dives, and dive centers in Hurghada, Sharm, and Dahab in particular are set up to run these courses constantly, in English and several other languages, with reef access a short boat ride from the classroom."
+      ),
+      p(
+        "If diving itself isn't the goal, snorkeling over the same reefs delivers a surprising amount of what makes the Red Sea worth visiting — most of the color and fish activity happens in the top few meters of water anyway, well within snorkeling range, and it requires no certification, gear rental beyond a mask and fins, or prior experience at all."
+      ),
+      h2("What a Day of Diving Actually Looks Like"),
+      p(
+        "Most Red Sea diving happens off day boats rather than shore entries, particularly from Hurghada, El Gouna, and Marsa Alam, where the best reefs sit some distance offshore. A typical day involves an early departure, two boat dives separated by a surface interval and lunch on board, and a return by mid-afternoon — enough time in the water to see two different sites without the fatigue of a third dive. Dahab is the exception, with excellent house reefs accessible directly from the shore, which is part of why it built its reputation as a shore-diving town rather than a boat-diving one."
       ),
       h2("Best Time to Go"),
       p(
-        "The Red Sea is diveable nearly year-round, with water temperatures rarely dropping uncomfortably even in winter. Summer offers the warmest water and best visibility for most sites, while spring and autumn avoid the peak heat on land between dives."
+        "The Red Sea is diveable nearly year-round, which is unusual among major dive destinations and a real part of its appeal. Summer brings the warmest water and often the clearest visibility, though air temperatures on land climb high enough that time between dives matters. Winter cools the water somewhat but rarely to an uncomfortable degree, and it comes with fewer crowds on the boats and better rates. Spring and autumn tend to split the difference — comfortable air temperatures, still-warm water, and good visibility without peak-season pricing."
       ),
+      callout(
+        "Choose a dive center affiliated with a recognized agency (PADI, SSI, or similar), check your gear before entering the water, and always dive within your certification's depth limits — the Red Sea's more advanced sites have currents and depths that catch out divers who push past what they're trained for. Basic dive insurance through an organization like DAN is worth having, and remember the standard rule about not flying for at least eighteen to twenty-four hours after your last dive.",
+        { title: "Diving It Safely", tone: "Safety" }
+      ),
+      h2("Is It Worth It If You're Not a Certified Diver"),
+      p(
+        "Yes, unreservedly. Snorkeling trips to sites like Ras Mohammed or the reefs off Marsa Alam put you over the same coral and much of the same marine life divers see, minus the depth. Families traveling together often split the difference well this way — certified divers go down while snorkelers stay on the surface above the same reef, and everyone regroups on the boat with their own version of the same morning."
+      ),
+      faq(
+        [
+          {
+            question: "Is Red Sea diving good for complete beginners?",
+            answer:
+              "Yes. Licensed dive centers run supervised introductory dives for people with zero experience, and if you decide to go further, full Open Water certification is widely available and relatively affordable compared to many other diving destinations.",
+          },
+          {
+            question: "Which Red Sea base is best for diving — Hurghada, Sharm, Dahab, or Marsa Alam?",
+            answer:
+              "Hurghada and Sharm El Sheikh offer the most polished resort infrastructure and boat access to major sites. Dahab is quieter and built around shore diving, including the Blue Hole. Marsa Alam sits closest to remote, current-swept sites like Elphinstone and the Brothers, better suited to more experienced divers.",
+          },
+          {
+            question: "Do I need to bring my own dive gear?",
+            answer:
+              "No — dive centers throughout the Red Sea resorts rent full gear, including wetsuits, regulators, and BCDs, to a standard that's more than adequate for recreational diving. Serious or frequent divers sometimes bring their own mask and fins for fit and comfort.",
+          },
+          {
+            question: "Are there sharks in the Red Sea, and is that a safety concern?",
+            answer:
+              "Reef sharks and, at remote sites like the Brothers, oceanic whitetips and hammerheads are part of what draws experienced divers there. Encounters at recreational sites are calm and non-threatening when following a guide's instructions; incidents are rare and almost always tied to specific, well-documented circumstances rather than ordinary diving.",
+          },
+          {
+            question: "Can I dive the Red Sea if I only have one or two days?",
+            answer:
+              "Yes. A single day of boat diving out of Hurghada, Sharm, or Marsa Alam is enough to see a genuinely good reef site, and it's a common add-on to a broader Egypt itinerary rather than something that requires a dedicated diving trip on its own.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "The honest case for Red Sea diving isn't that it beats every other ocean on a single metric — it's that so little about the experience disappoints. The visibility holds up, the coral is genuinely healthy, the range of sites suits everyone from a first-time snorkeler to a technical diver chasing hammerheads at the Brothers, and the logistics of actually doing it, from certification to gear to boat access, are about as smooth as diving gets anywhere in the world."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Get Into the Water",
+        body: "Whether you're certified or trying it for the first time, we'll build a Red Sea day — or a full diving-focused trip — around what you actually want to see.",
+        buttonLabel: "Book a Red Sea Diving Day",
+        buttonHref: "/tours/hurghada-red-sea-diving-snorkeling",
+      },
     ],
   },
   {
@@ -4062,43 +4287,106 @@ export const stories: Story[] = [
     destinations: ["Sinai"],
     primaryKeyword: "mount sinai sunrise hike",
     secondaryKeywords: ["mount sinai hike difficulty", "st catherine's monastery", "climbing mount sinai at night"],
-    relatedTours: toursBySlug("mount-sinai-sunrise-hike"),
-    seoTitle: "The Mount Sinai Sunrise Hike: What to Actually Expect",
+    relatedTours: toursBySlug("mount-sinai-sunrise-hike", "st-catherine-monastery-sinai-tour"),
+    seoTitle: "Mount Sinai Sunrise Hike: What to Actually Expect",
     seoDescription:
       "Climbing Mount Sinai for sunrise is a genuine physical undertaking. What the overnight hike actually involves, how hard it is, and what to bring.",
     body: [
       p(
-        "Mount Sinai — traditionally identified as the mountain where Moses received the Ten Commandments — draws hikers for a reason that has nothing to do with religion as much as it does the view: sunrise from the summit, over a landscape of bare granite peaks, is one of the most striking sights in Egypt."
+        "Mount Sinai — traditionally identified as the mountain where Moses received the Ten Commandments — draws hikers for a reason that has less to do with religion than with the view. Sunrise from the summit, breaking slowly over a landscape of bare granite peaks with no city light for miles, is one of the most striking sights in Egypt, and one of the few experiences in the country that has nothing to do with temples or the Nile at all."
+      ),
+      p(
+        "It's also a genuinely demanding night. Most people who sign up for \"the Mount Sinai hike\" picture the sunrise and underestimate everything that comes before it — the pre-dawn wake-up, hours of climbing in darkness, and real cold at altitude. Here's what the night actually involves, so you arrive prepared rather than surprised."
       ),
       h2("The Climb Itself"),
       p(
-        "Most hikes begin around midnight or 1 or 2 AM, climbing in darkness so as to reach the 2,285-meter summit before dawn. The main camel path is a longer but gentler ascent, roughly two and a half to three hours at a steady pace; a steeper route of some 3,750 stone steps cuts the distance but demands far more from your legs and lungs. Either way, the final stretch to the summit is on foot, up a set of steps too steep and narrow for camels."
+        "Hikes begin late — typically around midnight, or between 1 and 2 AM — timed so climbers reach the 2,285-meter summit with enough margin before dawn to find a spot and catch their breath. Climbing in full darkness is standard, not a scheduling quirk; the mountain simply takes long enough to climb that starting any later risks missing the sunrise itself, which is the entire point of the trip."
       ),
-      h2("How Hard Is It?"),
       p(
-        "It's a genuine physical undertaking, not a casual walk — a moderate fitness level and comfortable hiking shoes matter, and it gets cold at altitude even in a country known for heat, so warm layers are essential regardless of the season. It is not technical climbing; no ropes or special equipment are needed, just stamina and sturdy footing in the dark."
+        "The trail is well established and impossible to lose in the dark — a steady stream of headlamps ahead of and behind you marks the way on any night with more than a handful of climbers, and local Bedouin guides who know the mountain by feel lead every group. Small tea and snack stalls dot the route at intervals, run by Bedouin from the surrounding area, offering tea, coffee, and blankets for rent to anyone who underestimated the cold."
+      ),
+      h2("Two Routes: Camel Path or Steps of Repentance"),
+      p(
+        "There are two ways up, and it's worth knowing the difference before you commit to one."
+      ),
+      ...bullets([
+        "The camel path — the standard route for most visitors, a longer but gentler ascent along a wide, well-graded trail, roughly two and a half to three hours at a steady pace. Camels can be hired for most of this route (for a fee, arranged locally), though the final stretch to the summit is on foot regardless, up a set of steps too steep and narrow for camels.",
+        "The Steps of Repentance — some 3,750 stone steps built by a monk as a penance, cutting straight up the mountain rather than switchbacking. It's shorter in distance but far steeper and harder on the legs and lungs, done almost entirely in the dark without the gentler grading of the camel path.",
+      ]),
+      p(
+        "Most first-time climbers take the camel path up; some choose to descend by the Steps of Repentance afterward, in daylight, when the drop is easier to judge and less punishing on tired legs than climbing them at night would be."
+      ),
+      h2("How Hard Is It, Really?"),
+      p(
+        "It's a genuine physical undertaking, not a casual walk, and it deserves to be taken seriously by anyone who isn't a regular hiker. A moderate fitness level matters, as do comfortable, broken-in shoes with real grip — the trail is uneven stone and gravel, and doing it in sandals or worn-out sneakers makes three hours feel like six. It is not technical climbing in any sense; no ropes, harnesses, or prior experience are needed, just sustained stamina, steady footing in the dark, and the patience to keep a slow, even pace rather than burning out in the first hour."
+      ),
+      p(
+        "The cold surprises people more than the climb does. Egypt's reputation for heat doesn't extend to a granite summit at over two thousand meters before dawn — temperatures drop well below what the desert floor suggests, even in summer, and a stiff wind at the top makes it colder still. Dressing in layers you can add and remove is the single most useful piece of practical advice for this hike."
+      ),
+      ...bullets([
+        "Warm layers — a fleece or jacket, even in summer, plus something to add at the summit itself",
+        "Sturdy, broken-in walking shoes with real tread",
+        "A headlamp or flashlight (most of the climb happens in full darkness)",
+        "A refillable water bottle — tea stalls along the way sell drinks, but bring your own water too",
+        "A small amount of local currency for tea, snacks, blankets, or camel hire along the route",
+        "A walking stick, rentable cheaply at the base, which helps more than expected on the steeper sections",
+      ]),
+      h2("The Summit and Sunrise"),
+      p(
+        "The top of Mount Sinai is a rocky plateau with a small chapel and a mosque, both usually closed to entry but recognizable landmarks for where to settle in and wait. Space fills up as the sky starts to lighten, and finding a good spot with an unobstructed eastern view is worth arriving a little early for. Blanket rental at the summit is common and genuinely worth the small cost — the wait before first light is the coldest part of the whole night."
+      ),
+      p(
+        "The sunrise itself unfolds slowly, the granite peaks around you shifting from black to deep red to gold as the light spreads, with the surrounding mountains of the Sinai massif visible in every direction once the sun clears the horizon. It's a quiet, almost meditative half hour that most people describe as the actual reason the climb was worth it, regardless of how tired they were getting there."
       ),
       h2("St. Catherine's Monastery"),
       p(
-        "At the mountain's base sits St. Catherine's Monastery, one of the oldest continuously operating Christian monasteries in the world, built around what's traditionally identified as the Burning Bush. Most itineraries visit the monastery after the hike, once the morning opening hours begin, closing the loop on a single overnight visit to the mountain."
+        "At the mountain's base sits St. Catherine's Monastery, one of the oldest continuously operating Christian monasteries in the world, built around what's traditionally identified as the site of the Burning Bush. Its walls hold an extraordinary collection of Byzantine icons and manuscripts, some of the oldest in existence anywhere. Most itineraries visit the monastery after the hike, once its morning visiting hours begin — descending from the summit, resting briefly, then walking through the monastery grounds before heading back, closing the loop on a single overnight visit built around one mountain."
       ),
-      faq([
-        {
-          question: "How hard is the Mount Sinai hike?",
-          answer:
-            "It's a moderate, sustained climb of two and a half to three hours by the camel path, done in darkness — manageable for a reasonably fit hiker but not a casual walk.",
-        },
-        {
-          question: "What should I bring for the Mount Sinai sunrise hike?",
-          answer:
-            "Warm layers (it's cold at altitude even at night), a headlamp or flashlight, sturdy shoes, and water. A walking stick, rentable at the base, helps on the steeper sections.",
-        },
-        {
-          question: "Can you visit St. Catherine's Monastery without doing the hike?",
-          answer:
-            "Yes — the monastery keeps its own visiting hours during the day and can be visited on its own, separate from the overnight sunrise climb.",
-        },
-      ]),
+      callout(
+        "The descent is where knees and ankles suffer, not the climb up — tired legs on loose gravel in full daylight is when most minor injuries happen. Take the way down slowly, use a walking stick if you have one, and don't feel pressure to keep pace with faster hikers on the way back to the base.",
+        { title: "Coming Down Safely", tone: "Safety" }
+      ),
+      faq(
+        [
+          {
+            question: "How hard is the Mount Sinai hike?",
+            answer:
+              "It's a moderate, sustained climb of roughly two and a half to three hours by the camel path, done in darkness and at altitude — manageable for a reasonably fit hiker with decent shoes, but genuinely tiring and not a casual walk.",
+          },
+          {
+            question: "What should I bring for the Mount Sinai sunrise hike?",
+            answer:
+              "Warm layers (it's cold at altitude even in summer), a headlamp or flashlight, sturdy broken-in shoes, water, and a bit of local currency for tea or blanket rental along the way. A walking stick, rentable at the base, helps on the steeper sections.",
+          },
+          {
+            question: "Can you visit St. Catherine's Monastery without doing the hike?",
+            answer:
+              "Yes — the monastery keeps its own daytime visiting hours and can be seen on its own, separate from the overnight sunrise climb, though most travelers combine the two into a single trip.",
+          },
+          {
+            question: "Do I need to be an experienced hiker to climb Mount Sinai?",
+            answer:
+              "No technical experience is needed — it's a walking climb on an established trail with no ropes or scrambling. What matters more is basic fitness, comfortable footwear, and being mentally ready for hours of climbing in the dark and cold.",
+          },
+          {
+            question: "Is it cold at the top of Mount Sinai?",
+            answer:
+              "Yes, often surprisingly so — even in summer, pre-dawn temperatures at the 2,285-meter summit are far colder than the desert floor below, and wind makes it feel colder still. Warm layers are essential regardless of the season.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "People remember this night less for any single detail and more for the whole shape of it — the long dark climb, the cold wait at the top, and then a sunrise that makes all of it make sense at once. It's not a relaxing morning, and it isn't meant to be one. It's one of the few experiences in Egypt built entirely around effort and timing rather than a monument, and that's exactly why it stays with people."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Climb Mount Sinai for Sunrise",
+        body: "Join a guided overnight climb to the summit, paired with a morning visit to St. Catherine's Monastery — everything arranged, so all you have to do is climb.",
+        buttonLabel: "Book the Sunrise Hike",
+        buttonHref: "/tours/mount-sinai-sunrise-hike",
+      },
     ],
   },
   {
