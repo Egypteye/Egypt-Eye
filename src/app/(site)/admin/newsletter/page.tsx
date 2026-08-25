@@ -1,6 +1,8 @@
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
+import { NewsletterComposer } from "./NewsletterComposer";
+import { addSubscriberManually, setSubscriberUnsubscribed } from "./actions";
 
 export const metadata = { title: "Newsletter", robots: { index: false, follow: false } };
 
@@ -37,8 +39,47 @@ export default async function AdminNewsletterPage() {
         <Stat label="Unsubscribed" value={unsubscribed} />
       </div>
 
+      <div className="mt-10 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
+        <h2 className="font-display text-lg font-semibold text-ink">Send a Newsletter</h2>
+        <p className="mt-1 text-sm text-ink-soft/60">
+          Goes out to every verified, still-subscribed address below. Each subscriber gets their own unsubscribe link.
+        </p>
+        <div className="mt-5">
+          <NewsletterComposer recipientCount={verified} />
+        </div>
+      </div>
+
+      <div className="mt-8 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
+        <h2 className="font-display text-lg font-semibold text-ink">Add a Subscriber</h2>
+        <p className="mt-1 text-sm text-ink-soft/60">Adds directly as verified — no confirmation email sent, no discount code minted.</p>
+        <form action={addSubscriberManually} className="mt-4 flex flex-wrap items-end gap-3">
+          <label className="flex flex-1 min-w-[200px] flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            Email
+            <input
+              name="email"
+              type="email"
+              required
+              className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold"
+            />
+          </label>
+          <label className="flex flex-1 min-w-[160px] flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            First name (optional)
+            <input
+              name="firstName"
+              className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold"
+            />
+          </label>
+          <button
+            type="submit"
+            className="shrink-0 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+          >
+            Add
+          </button>
+        </form>
+      </div>
+
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
-        <table className="w-full min-w-[640px] text-left text-sm">
+        <table className="w-full min-w-[720px] text-left text-sm">
           <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
             <tr>
               <th className="px-4 py-3">Email</th>
@@ -46,6 +87,7 @@ export default async function AdminNewsletterPage() {
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3">Source</th>
               <th className="px-4 py-3">Signed Up</th>
+              <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody>
@@ -64,11 +106,18 @@ export default async function AdminNewsletterPage() {
                 </td>
                 <td className="px-4 py-3 text-ink-soft/60">{s.source}</td>
                 <td className="px-4 py-3 text-ink-soft/60">{new Date(s.created_at).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-right">
+                  <form action={setSubscriberUnsubscribed.bind(null, s.id, !s.unsubscribed)}>
+                    <button type="submit" className="text-xs font-semibold text-ink-soft/60 underline hover:text-ink">
+                      {s.unsubscribed ? "Resubscribe" : "Unsubscribe"}
+                    </button>
+                  </form>
+                </td>
               </tr>
             ))}
             {subscribers.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-ink-soft/50">
+                <td colSpan={6} className="px-4 py-8 text-center text-ink-soft/50">
                   No subscribers yet.
                 </td>
               </tr>

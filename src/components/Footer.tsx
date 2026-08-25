@@ -91,6 +91,12 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
         <Container className="flex flex-col items-center justify-between gap-3 text-xs text-cream/40 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
           <div className="flex items-center gap-4">
+            <Link href="/travel-agents" className="hover:text-cream/70">
+              Travel Agents
+            </Link>
+            <Link href="/collaborate" className="hover:text-cream/70">
+              Collaborate
+            </Link>
             <Link href="/privacy" className="hover:text-cream/70">
               Privacy Policy
             </Link>

@@ -262,3 +262,131 @@ export function transferRequestEmail({
 
   return { subject: `New Transfer Request: ${routeSummary}`, html, text };
 }
+
+// A one-off newsletter sent to the whole subscriber list from the admin
+// composer (admin/newsletter). `bodyHtml` is admin-authored plain
+// paragraphs (already escaped/trusted — written by staff, not a visitor),
+// wrapped in the same branded layout as every other email so a newsletter
+// doesn't look like a different product.
+export function newsletterBroadcastEmail({
+  subject,
+  bodyHtml,
+  bodyText,
+  unsubscribeUrl,
+}: {
+  subject: string;
+  bodyHtml: string;
+  bodyText: string;
+  unsubscribeUrl: string;
+}) {
+  const html = baseLayout({
+    preheader: subject,
+    bodyHtml,
+    footerHtml: `You're receiving this because you subscribed to Egypt Eye travel updates. <a href="${unsubscribeUrl}" style="color:#6b7d70;">Unsubscribe</a> or manage your preferences anytime.`,
+  });
+  const text = `${bodyText}\n\nUnsubscribe: ${unsubscribeUrl}`;
+  return { subject, html, text };
+}
+
+export function travelAgentApplicationEmail({
+  companyName,
+  contactName,
+  email,
+  phone,
+  website,
+  country,
+  services,
+  estimatedBookings,
+  message,
+}: {
+  companyName: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  website: string;
+  country: string;
+  services: string;
+  estimatedBookings: string;
+  message?: string;
+}) {
+  const rows: [string, string][] = [
+    ["Company", companyName],
+    ["Contact person", contactName],
+    ["Email", email],
+    ["WhatsApp / Phone", phone],
+    ["Website", website || "Not provided"],
+    ["Country", country],
+    ["Services offered", services],
+    ["Estimated bookings / year", estimatedBookings],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const html = baseLayout({
+    preheader: `${companyName} applied to become an Egypt Eye travel agent partner.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Travel Agent Application</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(companyName)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${
+        message
+          ? `<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">Message</p><p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(message)}</p>`
+          : ""
+      }
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to respond directly to ${escapeHtml(contactName)}.</p>
+    `,
+    footerHtml: `Sent from the Travel Agent application form on ${escapeHtml(SITE_URL)}/travel-agents.`,
+  });
+
+  const text = `New Travel Agent Application\n${companyName}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n${
+    message ? `\nMessage:\n${message}\n` : ""
+  }\nReply to this email to respond directly to ${contactName}.`;
+
+  return { subject: `New Travel Agent Application: ${companyName}`, html, text };
+}
+
+export function collaborationApplicationEmail({
+  fullName,
+  email,
+  socialsSummary,
+  collaborationType,
+  reviewUrl,
+}: {
+  fullName: string;
+  email: string;
+  socialsSummary: string;
+  collaborationType: string;
+  reviewUrl: string;
+}) {
+  const rows: [string, string][] = [
+    ["Name", fullName],
+    ["Email", email],
+    ["Social accounts", socialsSummary],
+    ["Collaboration type", collaborationType],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const html = baseLayout({
+    preheader: `${fullName} applied to collaborate with Egypt Eye.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Collaboration Application</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(fullName)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${ctaButton("Review in Admin", reviewUrl)}
+    `,
+    footerHtml: `Sent from the Collaborate With Egypt Eye application form.`,
+  });
+
+  const text = `New Collaboration Application\n${fullName}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n\nReview: ${reviewUrl}`;
+
+  return { subject: `New Collaboration Application: ${fullName}`, html, text };
+}

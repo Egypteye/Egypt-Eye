@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { ChatWidget } from "@/components/ChatWidget";
 import { JourneySyncBridge } from "@/components/JourneySyncBridge";
+import { NewsletterPopup } from "@/components/NewsletterPopup";
 import { getSiteSettings } from "@/sanity/fetchers";
 import { getCurrentUser } from "@/lib/auth/session";
 
@@ -17,6 +18,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Footer siteSettings={siteSettings} />
       <WhatsAppButton whatsappLink={siteSettings.contact.whatsappLink} />
       <ChatWidget whatsappLink={siteSettings.contact.whatsappLink} />
+      <NewsletterPopup />
     </div>
   );
 }
