@@ -667,4 +667,161 @@ export const signatureExperiences: SignatureExperience[] = [
       },
     ],
   },
+  {
+    status: "published",
+    order: 3,
+    slug: "shakiras-2-day-egypt-experience",
+    name: "Shakira's 2-Day Egypt Experience",
+    forWhom: "For travelers who want Cairo's biggest moments — the Pyramids, a professional photoshoot, the Grand Egyptian Museum, Khan el-Khalili — done privately, unhurried, and at a celebrity-level pace, in just two days.",
+    emotionalHeadline: "The Cairo Route Inspired By a Global Icon's Visit.",
+    shortDescription:
+      "A premium, private 2-day Cairo experience inspired by Shakira's own celebrated visit to the Pyramids of Giza — a private Pyramids tour and exclusive photoshoot, the Grand Egyptian Museum, and Khan el-Khalili's historic bazaar, with a private driver and transportation throughout. Enquiry only — our team confirms your dates and price directly.",
+    heroImageTone: "giza",
+    heroImage: "/photos/pexels-36505454.jpg",
+    duration: "2 days",
+    groupSize: "Private — just you and your party",
+    luxuryLevel: "Ultra-Private, Celebrity-Level Service",
+    location: "Cairo · Giza",
+    price: { amount: null, note: "Enquire for Pricing" },
+    whoIsThisForTitle: "Who This Is For",
+    whoIsThisForBody:
+      "This is for travelers who want Cairo's essentials — the Pyramids, a professional photoshoot, the Grand Egyptian Museum, and the old city — done privately and at a premium pace, without stretching it into a week. Two focused days, a private driver throughout, and nothing shared with a group.",
+    whyWeCreatedThisTitle: "Why We Created This",
+    whyWeCreatedThisBody:
+      "When Shakira visited Egypt, her stop at the Pyramids of Giza became one of the most talked-about celebrity visits to the site in years — and it's exactly the kind of trip we already build for our guests: private, camera-ready, and centered on Cairo's most iconic moments. This experience takes that same route — the Pyramids, a professional photoshoot, the Grand Egyptian Museum, and Khan el-Khalili — and builds it into two fully private days for you. Shakira isn't part of this experience; her visit is simply the inspiration behind the route.",
+    experienceIntro:
+      "Two private days moving from the Pyramids of Giza to Cairo's museums and old markets — here's what they look like.",
+    experienceHighlights: [
+      {
+        title: "A private Pyramids tour and photoshoot",
+        description:
+          "The Pyramids of Giza with a private guide, followed by an exclusive professional photoshoot at the Pyramids — the same iconic backdrop, captured properly.",
+      },
+      {
+        title: "The Grand Egyptian Museum",
+        description:
+          "A visit to the Grand Egyptian Museum, Cairo's newest and most significant museum, with time to actually take it in rather than rush through.",
+      },
+      {
+        title: "Khan el-Khalili & Old Cairo",
+        description:
+          "The atmosphere of historic Cairo — Khan el-Khalili's bazaar and the old city, on foot, at your pace.",
+      },
+      {
+        title: "A private driver, start to finish",
+        description:
+          "Airport pickup, private transportation for both days, and full assistance throughout — nothing shared, nothing rushed.",
+      },
+    ],
+    itineraryDays: [
+      {
+        dayNumber: 1,
+        title: "Pyramids of Giza",
+        description: "Arrival and a full private day at the Pyramids, including a professional photoshoot.",
+        items: [
+          {
+            time: "Flexible",
+            title: "Airport pickup",
+            description: "Met on arrival by your private driver and transferred into Cairo.",
+            location: "Cairo International Airport",
+            category: "Travel",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Morning",
+            title: "Private Pyramids of Giza tour",
+            description: "A private, guided tour of the Pyramids of Giza and the Sphinx.",
+            location: "Giza",
+            category: "Sightseeing",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Midday",
+            title: "Exclusive Pyramids photoshoot",
+            description: "A professional, exclusive photoshoot with the Pyramids as your backdrop.",
+            location: "Giza",
+            category: "Photoshoot",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Afternoon",
+            title: "Time to explore and enjoy the Pyramids",
+            description: "Unhurried time at the Giza Plateau — no rush to the next stop.",
+            location: "Giza",
+            category: "Free Time",
+            includedOrOptional: "included",
+          },
+        ],
+      },
+      {
+        dayNumber: 2,
+        title: "GEM & Khan el-Khalili",
+        description: "The Grand Egyptian Museum, then Cairo's historic old city.",
+        items: [
+          {
+            time: "Morning",
+            title: "Grand Egyptian Museum (GEM)",
+            description: "A visit to the Grand Egyptian Museum.",
+            location: "Giza",
+            category: "Sightseeing",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Afternoon",
+            title: "Khan el-Khalili Bazaar",
+            description: "Exploring Khan el-Khalili's historic bazaar.",
+            location: "Khan el-Khalili",
+            category: "Free Time",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Afternoon",
+            title: "Historic & Old Cairo",
+            description: "Taking in the atmosphere of historic Cairo and Old Cairo.",
+            location: "Old Cairo",
+            category: "Sightseeing",
+            includedOrOptional: "included",
+          },
+          {
+            time: "Flexible",
+            title: "Private transfer",
+            description: "Private transportation back to your hotel or to the airport for departure.",
+            category: "Travel",
+            includedOrOptional: "included",
+          },
+        ],
+      },
+    ],
+    careTitle: "One Driver, One Itinerary, Every Detail Handled",
+    careIntro: "Everything below is arranged before you land — private, personal, and fully assisted throughout.",
+    careItems: [
+      "Airport pickup",
+      "Private transportation",
+      "Private driver",
+      "Customized Cairo itinerary",
+      "Pyramids tour",
+      "Pyramids photoshoot",
+      "Grand Egyptian Museum visit",
+      "Khan el-Khalili visit",
+      "Local recommendations",
+      "Full assistance throughout the experience",
+    ],
+    faqs: [
+      {
+        question: "Is Shakira part of this experience?",
+        answer:
+          "No — Shakira isn't hosting or appearing on this trip. The name and route are inspired by her own well-publicized visit to the Pyramids of Giza; this is Egypt Eye's private, curated version of that same Cairo route, built for you.",
+      },
+      {
+        question: "Is this an instant booking?",
+        answer:
+          "No — this is enquiry only. Submit your dates and details and our reservations team will confirm availability and pricing directly with you; nothing is booked or charged automatically.",
+      },
+      {
+        question: "Can the itinerary be adjusted?",
+        answer:
+          "Yes — the two-day structure (Pyramids and photoshoot on day one, GEM and Khan el-Khalili on day two) is the core route, and timing within each day can be adjusted to you.",
+      },
+    ],
+  },
 ];
