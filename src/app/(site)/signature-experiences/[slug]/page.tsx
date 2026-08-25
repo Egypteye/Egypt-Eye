@@ -84,6 +84,7 @@ export default async function SignatureExperienceDetailPage({
           alt={experience.name}
           className="absolute inset-0"
           priority
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
         <Container className="relative flex min-h-[74vh] flex-col justify-end gap-5 pb-20 pt-32">

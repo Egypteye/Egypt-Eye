@@ -66,6 +66,7 @@ export function HeroSlideshow({
             i === index ? "opacity-100" : "opacity-0"
           }`}
           priority
+          sizes="100vw"
         />
       ))}
       <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/25" />

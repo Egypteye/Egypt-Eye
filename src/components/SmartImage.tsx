@@ -15,6 +15,7 @@ export function SmartImage({
   alt = "",
   className = "",
   priority = false,
+  sizes = "(max-width: 768px) 100vw, 50vw",
 }: {
   image?: SanityImageType;
   tone: ImageTone | string;
@@ -22,6 +23,13 @@ export function SmartImage({
   alt?: string;
   className?: string;
   priority?: boolean;
+  // Must match how large the image actually renders — this is what Next.js
+  // uses to pick which source resolution to serve. The default assumes a
+  // ~half-width card; full-bleed banners/heroes (`absolute inset-0` at
+  // 100vw) MUST pass sizes="100vw" or they get served a half-resolution
+  // image stretched across the whole screen, which looks blurry/low-quality
+  // even though the original upload is perfectly sharp.
+  sizes?: string;
 }) {
   const src = urlForImage(image)?.url();
 
@@ -39,7 +47,7 @@ export function SmartImage({
           fill
           priority={priority}
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, 50vw"
+          sizes={sizes}
         />
         {label && (
           <span className="absolute bottom-3 left-3 rounded-full bg-black/30 px-3 py-1 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">

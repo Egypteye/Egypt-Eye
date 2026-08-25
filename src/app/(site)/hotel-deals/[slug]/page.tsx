@@ -72,7 +72,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
   return (
     <>
       <section className="relative">
-        <SmartImage image={hotel.photos[0]} tone="nile" alt={hotel.name} className="absolute inset-0" priority />
+        <SmartImage image={hotel.photos[0]} tone="nile" alt={hotel.name} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />
         <Container className="relative flex min-h-[46vh] flex-col justify-end gap-3 pb-14 pt-32">
           {hotel.deal_headline && (

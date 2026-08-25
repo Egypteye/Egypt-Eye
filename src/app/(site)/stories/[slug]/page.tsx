@@ -148,7 +148,7 @@ export default async function StoryDetailPage({
 
       {/* Hero */}
       <section className="relative">
-        <SmartImage image={story.image} tone={story.imageTone} alt={story.title} className="absolute inset-0" priority />
+        <SmartImage image={story.image} tone={story.imageTone} alt={story.title} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
         <Container className="relative flex min-h-[64vh] flex-col justify-end gap-4 pb-16 pt-32">
           {story.category && (

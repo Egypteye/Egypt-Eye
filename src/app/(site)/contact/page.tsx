@@ -15,7 +15,7 @@ export default async function ContactPage() {
   return (
     <>
       <section className="relative">
-        <SmartImage image={page.heroImage.image} tone={page.heroImage.tone} className="absolute inset-0" priority />
+        <SmartImage image={page.heroImage.image} tone={page.heroImage.tone} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[34vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
