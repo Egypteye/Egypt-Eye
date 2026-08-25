@@ -28,11 +28,14 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET
 //
 // Uses createOrReplace with deterministic IDs, which does a FULL document
-// replace — any field not included in the payload below (e.g. a photo
-// uploaded directly in the Studio, for a field with no local-content
-// equivalent) gets wiped, not preserved. So re-running this after you've
-// started editing in the Studio will discard those edits for whichever
-// document types you re-run.
+// replace — any field not included in the payload below gets wiped, not
+// preserved. For tours/experiences/photoshoots specifically, `image` and
+// `gallery` (fields with no local-content equivalent, typically set by
+// uploading a real photo directly in the Studio) are the exception: this
+// route fetches whatever's currently set for those first and folds it back
+// into the payload, so re-running it never wipes a Studio-uploaded photo.
+// Any OTHER field edited directly in the Studio (e.g. SEO overrides) still
+// follows normal full-replace semantics and gets discarded on re-run.
 //
 // All mutations are queued onto ONE Sanity transaction and committed together
 // at the end, rather than sent as separate requests. This matters for
@@ -91,10 +94,26 @@ export async function GET(request: NextRequest) {
   const tx = client.transaction();
   const results: string[] = [];
 
+  // createOrReplace fully replaces a document — any field left out of the
+  // payload (like `image`/`gallery`, which have no equivalent in the local
+  // content files) is gone from the result, not just "left as-is". That
+  // silently wiped real photos uploaded directly in the Studio the moment
+  // this migration was re-run for a type that already had them. Fetching
+  // whatever's currently set and folding it back into each payload below
+  // makes re-running this endpoint safe even after Studio photo uploads.
+  let existingMedia = new Map<string, { image?: unknown; gallery?: unknown }>();
+  if (shouldRun("tours") || shouldRun("experiences") || shouldRun("photoshoots")) {
+    const rows = await client.fetch<{ _id: string; image?: unknown; gallery?: unknown }[]>(
+      `*[_type in ["tour","experience","photoshoot"]]{_id, image, gallery}`
+    );
+    existingMedia = new Map(rows.map((r) => [r._id, { image: r.image, gallery: r.gallery }]));
+  }
+
   if (shouldRun("tours")) {
     for (const [i, t] of tours.entries()) {
+      const id = `tour-${t.slug}`;
       tx.createOrReplace({
-        _id: `tour-${t.slug}`,
+        _id: id,
         _type: "tour",
         title: t.title,
         slug: { _type: "slug", current: t.slug },
@@ -109,6 +128,8 @@ export async function GET(request: NextRequest) {
         rating: t.rating ? { _type: "rating", ...t.rating } : undefined,
         badge: t.badge,
         imageTone: t.imageTone,
+        image: existingMedia.get(id)?.image,
+        gallery: existingMedia.get(id)?.gallery,
         description: t.description,
         highlights: t.highlights,
         included: t.included,
@@ -128,8 +149,9 @@ export async function GET(request: NextRequest) {
 
   if (shouldRun("experiences")) {
     for (const [i, e] of experiences.entries()) {
+      const id = `experience-${e.slug}`;
       tx.createOrReplace({
-        _id: `experience-${e.slug}`,
+        _id: id,
         _type: "experience",
         title: e.title,
         slug: { _type: "slug", current: e.slug },
@@ -142,6 +164,8 @@ export async function GET(request: NextRequest) {
           _key: key(),
         })),
         imageTone: e.imageTone,
+        image: existingMedia.get(id)?.image,
+        gallery: existingMedia.get(id)?.gallery,
         description: e.description,
         included: e.included,
         destinations: e.destinations,
@@ -153,8 +177,9 @@ export async function GET(request: NextRequest) {
 
   if (shouldRun("photoshoots")) {
     for (const [i, p] of photoshoots.entries()) {
+      const id = `photoshoot-${p.slug}`;
       tx.createOrReplace({
-        _id: `photoshoot-${p.slug}`,
+        _id: id,
         _type: "photoshoot",
         title: p.title,
         slug: { _type: "slug", current: p.slug },
@@ -163,6 +188,8 @@ export async function GET(request: NextRequest) {
         price: { _type: "price", ...p.price },
         locations: p.locations,
         imageTone: p.imageTone,
+        image: existingMedia.get(id)?.image,
+        gallery: existingMedia.get(id)?.gallery,
         description: p.description,
         goodFor: p.goodFor,
         included: p.included,
