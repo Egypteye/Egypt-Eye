@@ -6234,30 +6234,101 @@ export const stories: Story[] = [
     destinations: ["Luxor"],
     primaryKeyword: "is luxor hot air balloon safe",
     secondaryKeywords: ["luxor hot air balloon safety", "luxor balloon ride", "hot air balloon egypt accident"],
-    relatedTours: toursBySlug("2-day-luxor-tour", "luxor-west-bank-day-tour"),
+    relatedTours: toursBySlug("hot-air-balloon-luxor-east-bank-combo", "2-day-luxor-tour", "luxor-west-bank-day-tour", "valley-of-the-kings-hatshepsut-temple-tour"),
     seoTitle: "Is the Luxor Hot Air Balloon Ride Safe? An Honest Answer",
     seoDescription:
       "A sunrise balloon flight over Luxor is iconic, but has a real safety history worth understanding. What happened, what changed, and how to choose an operator.",
     body: [
       p(
-        "A sunrise hot-air balloon over Luxor's West Bank, drifting above the Valley of the Kings and Hatshepsut's temple as the sun comes up, is one of the most-photographed experiences in Egypt — and a reasonable question before booking one is whether it's actually safe."
+        "A sunrise hot-air balloon over Luxor's West Bank, drifting above the Valley of the Kings and Hatshepsut's temple as the sun comes up over the Theban hills, is one of the most-photographed experiences in Egypt. It's also one of the questions we get asked most directly, and it deserves a direct answer: flying with an established, licensed operator today is considered safe, but Luxor's ballooning industry has a real safety history that's worth understanding honestly rather than glossing over, so you can make an informed choice about who you fly with."
       ),
       h2("What Actually Happened"),
       p(
-        "Luxor's ballooning industry has had two serious incidents worth being honest about — a multi-balloon collision in 2009, and a more serious accident in 2013 in which a balloon caught fire after landing and resulted in 19 deaths, among the worst hot-air balloon accidents on record anywhere. Both incidents led to real scrutiny of the industry's safety practices at the time."
+        "Luxor's ballooning industry has had two serious incidents that shaped how the activity is regulated today. In 2009, a multi-balloon collision occurred over the West Bank, causing injuries among passengers when baskets made contact mid-air. Then in February 2013, a balloon caught fire after an emergency landing near Deir el-Bahari, and 19 of the 21 people on board were killed. It remains one of the worst hot-air balloon accidents on record anywhere in the world, and it triggered an immediate grounding of Luxor's entire balloon fleet while investigators worked out what had gone wrong."
+      ),
+      p(
+        "The investigation pointed to a chain of equipment and procedural failures rather than one single cause — a gas leak during landing, an ignition, and a fire that spread faster than the pilot or ground crew could control. It was a genuine industry failure, not a freak weather event, which is exactly why the response afterward focused so heavily on equipment standards and pilot procedure rather than just insurance paperwork."
       ),
       h2("What Changed Afterward"),
       p(
-        "In the years since, Egypt's Civil Aviation Authority tightened oversight of balloon operators significantly — stricter licensing, additional mandatory pilot training, limits on how many balloons can fly simultaneously, and more rigorous equipment inspection requirements. Today, ballooning in Luxor is generally regarded as safe with established, licensed operators, and it remains one of the region's most popular tourist activities for exactly that reason."
+        "In the years since 2013, Egypt's Civil Aviation Authority overhauled how balloon operations in Luxor are licensed and run. Pilots now need more extensive training and recertification than before. Balloons and burners go through more rigorous, more frequent equipment inspections. There are hard limits on how many balloons can be in the air over the West Bank at once, and stricter rules around minimum safe distances between balloons during flight — directly addressing what caused the 2009 collision. Operators without a clean safety record and proper licensing have been pushed out of the market entirely."
+      ),
+      p(
+        "The result is an industry that looks very different from the one that existed in 2013. Today, ballooning in Luxor is generally regarded as safe when you fly with an established, licensed operator, and it remains one of the most popular activities in the region for exactly that reason — a steady stream of people fly over the Valley of the Kings every week during the season without incident. That doesn't mean every operator is equal, though, which is really the point of this guide."
+      ),
+      h2("How the Flight Actually Works"),
+      p(
+        "Balloons launch before sunrise, which means an early pickup — usually somewhere between 4:30 and 5:30 AM depending on the season, since the exact timing follows sunrise itself. You're driven to a launch site on the West Bank, near the fields close to the river, where the ground crew inflates the balloon while you watch. It's worth arriving early enough to see this part; the scale of an envelope filling with hot air in the half-dark is its own small spectacle."
+      ),
+      p(
+        "A typical flight lasts around 45 minutes to an hour, drifting with the wind rather than being steered in any conventional sense — pilots control altitude with the burner and use that to catch different wind layers, which is how they roughly manage direction. You'll pass low over sugarcane fields and villages waking up for the day, then rise higher for views across the Valley of the Kings, Hatshepsut's temple, the Colossi of Memnon, and the Nile curving toward Luxor and Karnak on the East Bank. Landing is usually a gentle touchdown in an open field, timed and chosen by the pilot as conditions allow."
       ),
       h2("How to Choose an Operator"),
       p(
-        "The clearest safety signal is an established, licensed operator with a long operating history, rather than the cheapest option available on the day — newer or budget operators are generally considered a relatively higher risk within the industry. Flights are also weather-dependent and routinely cancelled or postponed by operators when conditions aren't right, which is itself a sign of a safety-conscious operation rather than an inconvenience to push past."
+        "The clearest safety signal isn't price — it's an established operator with a long, verifiable operating history and a properly licensed, well-maintained fleet, rather than whichever option happens to be cheapest on the day. Newer or budget operators without a track record carry meaningfully more risk within an industry where the difference between operators is real, not just marketing."
+      ),
+      p("A few things worth checking or asking about before you book:"),
+      ...bullets([
+        "Confirm the operator has current licensing from Egypt's Civil Aviation Authority and has been flying for several years, not just a season or two",
+        "Ask how many passengers the basket carries — smaller baskets with fewer people generally mean more attentive pilots and less crowding",
+        "A pilot who's willing to explain the safety briefing properly, rather than rushing through it, is a good sign in itself",
+        "Weather-dependent cancellations are normal and expected, not a red flag — a willingness to cancel is a sign of a safety-conscious operation",
+      ]),
+      p(
+        "Flights are genuinely weather-dependent, and licensed operators cancel or postpone routinely when wind conditions aren't right, sometimes with only an hour or two of notice. That can be frustrating if you've built your morning around it, but it's the system working as intended rather than a failure of planning — a pilot who's willing to push back a flight, or scrub it entirely, is not someone cutting corners."
       ),
       callout(
-        "We only arrange balloon flights through established, licensed operators with strong safety records, and we won't push a flight forward if conditions or an operator's judgment say otherwise — even if it means an early rebooking.",
+        "We only arrange balloon flights through established, licensed operators with strong safety records and well-maintained fleets, and we won't push a flight forward if conditions or an operator's judgment say otherwise — even if it means an early rebooking or a missed sunrise.",
         { tone: "Safety", title: "How We Handle It" }
       ),
+      h2("What to Expect the Morning Of"),
+      p(
+        "Because pickup happens so early, it helps to lay out everything the night before — you won't want to be searching for a jacket at 4:15 AM. Mornings on the West Bank can be cool even though Luxor days get hot, so a light layer is worth bringing for the ride itself; it warms up quickly once the sun is up and the burner's running above you."
+      ),
+      p(
+        "Most operators include a light breakfast or tea after landing, sometimes with a certificate to mark the flight, before driving you back to your hotel. If you're combining the balloon ride with a full day on the West Bank — the Valley of the Kings, Hatshepsut's temple, the Colossi of Memnon — the early start actually works in your favor, since you'll be back on the ground and ready to continue sightseeing well before the heat of midday sets in and before the tour buses arrive at the major sites."
+      ),
+      faq(
+        [
+          {
+            question: "Has there been a serious hot-air balloon accident in Luxor recently?",
+            answer:
+              "No. The two major incidents on record, in 2009 and 2013, both happened more than a decade ago and led directly to the safety overhaul that governs the industry today. Established operators have strong ongoing safety records since then.",
+          },
+          {
+            question: "Is it worth paying more for a better operator?",
+            answer:
+              "Yes. The price difference between a budget flight and an established operator is usually modest against the total cost of an Egypt trip, and it's the one place on this kind of itinerary where cutting cost genuinely changes the risk profile.",
+          },
+          {
+            question: "What happens if the flight gets cancelled for weather?",
+            answer:
+              "Reputable operators either rebook you for the following morning or refund the flight. A cancellation is a sign the operator is taking wind conditions seriously rather than flying regardless.",
+          },
+          {
+            question: "Do children fly the Luxor balloon?",
+            answer:
+              "Most operators set a minimum age, commonly around six or seven, and it's worth confirming directly with the operator when booking, since baskets are compact and the safety briefing assumes passengers can follow instructions during landing.",
+          },
+          {
+            question: "Is the balloon ride worth it given the history?",
+            answer:
+              "For most travelers, yes — flown with a properly licensed, established operator, it's one of the most memorable single hours of an Egypt trip, and the safety record since the 2013 reforms reflects a genuinely different, more regulated industry.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "A sunrise balloon over the West Bank earns its reputation honestly — the view really is that good, and the industry that carries you there today isn't the same one that existed in 2013. Fly with an operator that takes the weather seriously and has the history to back up its license, and it's one of the better mornings you'll spend in Egypt."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Ready for Sunrise Over the Valley of the Kings?",
+        body: "We book Luxor balloon flights only through established, licensed operators, paired with a full East Bank day so the early start doesn't go to waste.",
+        buttonLabel: "Plan the Balloon Flight",
+        buttonHref: "/tours/hot-air-balloon-luxor-east-bank-combo",
+      },
     ],
   },
   {
@@ -6277,30 +6348,101 @@ export const stories: Story[] = [
     relatedExperience: herEgyptExperience,
     primaryKeyword: "egypt honeymoon",
     secondaryKeywords: ["egypt honeymoon itinerary", "romantic things to do in egypt", "nile cruise honeymoon"],
-    relatedTours: toursBySlug("10-day-private-luxurious-trip", "4-day-nile-cruise-luxor-aswan", "red-sea-relaxation"),
+    relatedTours: toursBySlug("10-day-private-luxurious-trip", "4-day-nile-cruise-luxor-aswan", "red-sea-relaxation", "private-yacht-nile-cruise-luxor-aswan"),
     seoTitle: "Planning an Egypt Honeymoon: A Practical, Romantic Itinerary Guide",
     seoDescription:
       "Egypt makes a genuinely memorable honeymoon destination — private Nile cruising, sunset over ancient temples, and real privacy. How to plan it well.",
     body: [
       p(
-        "Egypt isn't the first place most couples think of for a honeymoon, which is exactly what makes it work — instead of another beach resort, it offers ancient temples at sunset, a private sail down the Nile, and a sense of occasion that's hard to replicate anywhere else."
+        "Egypt isn't the first place most couples think of for a honeymoon, and that's exactly what makes it work. Instead of another beach resort indistinguishable from the last one, you get ancient temples at sunset, a private sail down the Nile, candlelit dinners on deck under a sky with almost no light pollution once you're south of Luxor, and a sense of occasion that's genuinely hard to replicate anywhere else. This guide covers how to actually build that trip — the pacing, the private-travel logistics, and the details that turn a good itinerary into a honeymoon you'll talk about for the rest of your marriage."
       ),
       h2("Why Egypt Works for a Honeymoon"),
       p(
-        "A private itinerary here means your own guide and vehicle for the entire trip, which translates directly into privacy most standard honeymoon destinations can't offer at the same price point — no shared group schedule, no waiting on anyone else's preferences, and the flexibility to linger somewhere that catches you both."
+        "The single biggest advantage of an Egypt honeymoon is privacy, and it comes from how the trip is structured rather than from any one hotel. A private itinerary here means your own guide and vehicle for the entire trip, which translates directly into freedom most standard honeymoon destinations can't offer at a comparable price — no shared coach schedule, no waiting on a group's slower members at the Egyptian Museum, and the flexibility to linger an extra half hour at Karnak because the light happens to be perfect."
+      ),
+      p(
+        "There's also real romantic texture here that beach destinations simply don't have. Watching the sun set behind Philae Temple from a boat on Lake Nasser, or waking up to the Nile outside your cabin window on a private cruise, gives a honeymoon a sense of scale and history that a resort pool can't match. And because Egypt runs on a private-guide model rather than big-bus group tourism for most upscale travel, couples end up with something closer to a tailored trip than a package tour, even at a moderate budget."
       ),
       h2("Building the Itinerary"),
       p(
-        "A well-paced honeymoon usually opens in Cairo and Giza, moves to a private or small-group Nile cruise between Luxor and Aswan — genuinely one of the most romantic ways to travel anywhere, with temples appearing at the water's edge and dinner on deck as the sun sets — and closes with a few unhurried days on the Red Sea coast for pure relaxation after a history-heavy first half."
+        "A well-paced Egypt honeymoon usually opens in Cairo and Giza — the Pyramids, the Sphinx, the Egyptian Museum's treasures, and a felucca sail on the Nile at sunset to ease into the trip's rhythm. From there, most couples fly south to Luxor and Aswan for a private or small-group Nile cruise, genuinely one of the most romantic ways to travel anywhere on earth, with temples appearing at the water's edge and dinner served on deck as the sun goes down over the west bank."
+      ),
+      p(
+        "The cruise itself typically runs three to four nights between Luxor and Aswan, taking in Karnak and Luxor Temple, the Valley of the Kings, Edfu, and Kom Ombo along the way, with the boat doing the traveling overnight so you wake up somewhere new each morning. Many couples close the trip with a few unhurried days on the Red Sea coast, at Hurghada or a quieter spot, purely for relaxation after a history-heavy first half — diving or snorkeling if that appeals, or just doing nothing at all by the water for the first time in the whole itinerary."
+      ),
+      p(
+        "Longer honeymoons, ten days to two weeks, can add Abu Simbel at dawn, a felucca overnight on the Nile with the crew cooking dinner on deck, or a couple of nights in the Sinai for a completely different landscape and pace. Shorter honeymoons of five or six days work best focused tightly on Cairo, Giza, and a shortened Luxor-Aswan cruise rather than trying to cover all of Egypt at once, which tends to leave a trip feeling rushed rather than romantic."
       ),
       h2("A Few Details Worth Planning For"),
       p(
-        "Sunset and sunrise are worth building the schedule around specifically — sailing past a riverside temple at golden hour, or a quiet Karnak before the day's crowds arrive, tend to be the moments couples remember most. A private candlelit dinner on a felucca, or a personalized photoshoot at a temple or in the desert, are the kind of additions worth requesting directly rather than assuming they're standard."
+        "Sunset and sunrise are worth building the schedule around specifically, not treating as incidental. Sailing past a riverside temple at golden hour, or standing in a quiet Karnak before the day's crowds arrive, tend to be the moments couples remember most clearly years later — more than any single meal or hotel room. It's worth telling your planner explicitly that these moments matter to you, so the day's timing gets built around them rather than around convenience."
+      ),
+      p(
+        "A private candlelit dinner on a felucca, a rooftop dinner with a view of a lit-up temple, or a personalized couple's photoshoot at a temple or out in the desert are the kind of additions worth requesting directly rather than assuming they're standard — most upscale Egypt operators can arrange them, but they need to be asked for in advance, not improvised on arrival."
+      ),
+      p("A few practical things worth sorting out before you travel:"),
+      ...bullets([
+        "Book any Nile cruise cabin upgrade or honeymoon suite well ahead of travel dates — cabins with private balconies are limited and go first",
+        "Mention the honeymoon when booking; most hotels and cruise operators will arrange a small welcome gesture, room decoration, or upgrade with enough notice",
+        "Pack for both temperature extremes — desert mornings and evenings get cool even when the day itself is hot, especially outside summer",
+        "If modesty matters at religious sites, pack accordingly; shoulders and knees covered works for temples, mosques, and churches alike",
+      ]),
+      h2("What a Realistic Budget Looks Like"),
+      p(
+        "Egypt can be genuinely luxurious without the price tag of a comparable European honeymoon, largely because private guiding, drivers, and boutique Nile cruise cabins cost less here than the equivalent experience elsewhere. That said, the difference between a standard cabin and a suite with a private balcony, or a shared group itinerary and a fully private one, is real and worth budgeting for deliberately if privacy and pacing matter most to you — those are the two things that most define how a honeymoon here actually feels day to day."
       ),
       callout(
-        "Her Egypt, one of our Signature Experiences, was built with exactly this kind of trip in mind — a considered, private pace rather than a standard group schedule. It's worth a look if privacy and pacing matter most to your honeymoon.",
+        "A private Nile cruise cabin with a balcony, timed sunset stops at temples, and a candlelit dinner on deck cost more than the standard package, but for most couples that difference is exactly where the honeymoon feeling actually lives — worth prioritizing over adding extra destinations.",
         { title: "Worth Knowing About" }
       ),
+      h2("Choosing Where to Stay"),
+      p(
+        "Cairo has a genuine range of honeymoon-worthy hotels, and the ones worth paying up for are almost always the ones with a Pyramids view — waking up and seeing the Giza plateau from your balcony is a different experience entirely from a city-center hotel with a shuttle bus to the sites. In Luxor and Aswan, the choice usually comes down to a Nile-front hotel versus the cruise boat itself; many couples do both, a couple of land nights bookending the cruise, so you get a proper hotel bed and a pool between the more active sightseeing days."
+      ),
+      p(
+        "On the Red Sea coast, the resorts built specifically around couples and diving tend to feel calmer than the larger all-inclusive properties aimed at big family groups — worth asking your planner specifically for an adults-focused or boutique property if that atmosphere matters to you for the final leg of the trip."
+      ),
+      faq(
+        [
+          {
+            question: "How many days should an Egypt honeymoon be?",
+            answer:
+              "Ten to twelve days lets you do Cairo, Giza, a full Luxor-to-Aswan cruise, and a few beach days without rushing. A week works if you're willing to skip the beach extension and focus on the Nile Valley.",
+          },
+          {
+            question: "Is Egypt safe for a honeymoon?",
+            answer:
+              "Yes — the major tourist areas of Cairo, Luxor, Aswan, and the Red Sea coast see millions of visitors a year, and a private guide and driver for the whole trip adds another layer of ease on top of that.",
+          },
+          {
+            question: "When is the best time of year to go?",
+            answer:
+              "October through April is the most comfortable window, with warm days and cool evenings. Summer in the Nile Valley runs very hot, though the Red Sea coast stays pleasant year-round for the beach portion of a trip.",
+          },
+          {
+            question: "Should we do a group Nile cruise or a private one?",
+            answer:
+              "A private or small-boat cruise gives you control over timing and privacy that a large group ship can't, which matters more on a honeymoon than almost any other kind of trip. It's worth the difference in cost if a private, unhurried pace is the priority.",
+          },
+          {
+            question: "What should we tell our travel planner in advance?",
+            answer:
+              "Say explicitly that it's a honeymoon and that privacy and sunset or sunrise timing matter to you — that single sentence changes how a good planner builds the whole itinerary, from cabin selection to which day gets the candlelit dinner.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "An Egypt honeymoon rewards couples who give it room to breathe rather than trying to see everything at once. Build it around the Nile, protect the sunset and sunrise moments, and let a private guide handle the logistics — the rest of the trip tends to take care of itself."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Start Planning Your Egypt Honeymoon",
+        body: "Tell us your dates and what matters most to you as a couple, and we'll build a private honeymoon itinerary around the Nile, the temples, and real time to yourselves.",
+        buttonLabel: "Plan Our Honeymoon",
+        buttonHref: "/customize",
+      },
     ],
   },
   // --- Jordan guides ---
@@ -6320,21 +6462,110 @@ export const stories: Story[] = [
     publishedAt: "2026-02-03T09:00:00+02:00",
     primaryKeyword: "petra travel guide",
     secondaryKeywords: ["petra jordan", "how to visit petra", "petra treasury"],
+    relatedTours: toursBySlug("petra-day-tour-from-amman", "petra-by-night", "wadi-rum-overnight-bedouin-camp", "jordan-5-day-highlights"),
     seoTitle: "Petra Travel Guide: What to Know Before You Go | Egypt Eye",
     seoDescription: "A practical Petra guide — the Siq walk, the Monastery climb, timing your visit, and what a single day covers.",
     body: [
-      p("Petra is bigger than most photos suggest. The Treasury — the facade everyone recognizes — is only the entrance. The Nabataean city carved into these sandstone cliffs covers several square kilometers, and seeing more than the Treasury takes real walking."),
+      p(
+        "Petra is bigger than most photos suggest. The Treasury — the facade everyone recognizes from a single famous shot down the Siq — is only the entrance to a Nabataean city carved into these sandstone cliffs over two thousand years ago, and the full site covers several square kilometers of tombs, temples, a Roman-style theatre, and a monastery at the top of a serious climb. Seeing more than the Treasury takes real walking and a full day, and this guide covers how to actually plan that day so you leave having seen Petra properly rather than just its most photographed corner."
+      ),
       h2("The Siq"),
-      p("You reach the Treasury through the Siq, a natural canyon roughly a kilometer long and, in places, barely wide enough for two people to pass. It's the single most photographed stretch of the visit, and for good reason — the Treasury appears suddenly, framed by a narrow gap in the rock, exactly as it would have to a Nabataean trader arriving 2,000 years ago."),
-      h2("The Monastery climb"),
-      p("Beyond the Treasury and the Royal Tombs, the Monastery (Ad Deir) sits at the top of roughly 800 rock-cut steps. It's a real climb — 45 minutes to an hour at a steady pace — but it's also less crowded than the Treasury and, by most visitors' accounts, just as striking."),
+      p(
+        "You reach the Treasury through the Siq, a natural canyon roughly a kilometer long and, in places, barely wide enough for two people to pass, with walls rising 80 meters or more on either side. It's the single most photographed stretch of the visit, and for good reason — the Treasury appears suddenly at the end, framed by a narrow gap in the rock, exactly as it would have to a Nabataean trader arriving on a camel caravan two thousand years ago. Watch the walls as you walk, too; carved water channels run along both sides, part of the flood-control system that let the Nabataeans manage flash floods through a canyon that would otherwise be lethal in a storm."
+      ),
+      p(
+        "The walk through the Siq takes 20 to 30 minutes at an unhurried pace, and it's worth resisting the urge to rush it just to reach the Treasury faster. The canyon itself is one of the more remarkable parts of the whole site, not simply a corridor to get through."
+      ),
+      h2("Beyond the Treasury"),
+      p(
+        "Most first-time visitors underestimate how much is beyond that famous first view. Past the Treasury, the path opens into the Street of Facades and the Royal Tombs, a row of monumental tomb facades carved into the cliff face that get far less foot traffic than the Treasury despite being just as impressive up close. Further on is the Colonnaded Street, the remains of a Roman-era city center, and a theatre carved directly into the rock that once seated thousands."
+      ),
+      h2("The Monastery Climb"),
+      p(
+        "Beyond the Royal Tombs, the Monastery (Ad Deir) sits at the top of roughly 800 rock-cut steps carved into the mountainside. It's a real climb — 45 minutes to an hour at a steady pace, longer if you stop often for the views back down the valley — but it's also considerably less crowded than the Treasury and, by most visitors' accounts, just as striking once you're standing in front of it. The facade is actually larger than the Treasury's, though it's carved into rougher, less ornate stone."
+      ),
+      p(
+        "Along the climb, small stalls run by local Bedouin families sell tea, snacks, and souvenirs, which makes convenient rest points on the way up. There's no need to rush the climb; it's steep enough in places that a steady pace beats a fast one, and donkeys are available for hire if the steps aren't manageable, though walking gives you a better read on the scale of the site."
+      ),
+      h2("Planning a Full Day"),
+      p(
+        "A full day at Petra realistically covers the Siq, the Treasury, the Royal Tombs, the Colonnaded Street, and the Monastery climb, arriving at opening time and allowing six to eight hours total including rest stops. Trying to add much more in a single visit tends to mean rushing the parts that deserve time, particularly the Monastery, which rewards sitting for a while once you've made the climb rather than turning straight around."
+      ),
       ...bullets([
-        "Wear real walking shoes — the Siq floor and the Monastery steps are uneven stone, not pavement",
-        "Bring more water than you think you need; there's little shade",
-        "A full day covers the Treasury, Royal Tombs, and the Monastery climb comfortably",
-        "Petra by Night runs three evenings a week and is worth pairing with a daytime visit, not a substitute for one",
+        "Wear real walking shoes — the Siq floor and the Monastery steps are uneven, worn stone, not pavement",
+        "Bring more water than you think you need; there's very little shade across most of the site",
+        "Start at opening time; the Siq and Treasury area gets crowded and genuinely hot by mid-morning",
+        "A full day covers the Treasury, Royal Tombs, and the Monastery climb comfortably without rushing",
+        "Petra by Night runs a few evenings a week and is worth pairing with a daytime visit, not treating as a substitute for one",
       ]),
-      callout("Petra opens early and the Siq gets genuinely hot by midday — starting at opening time is the single best way to beat both the heat and the crowds.", { tone: "Info" }),
+      h2("Petra by Night"),
+      p(
+        "On the evenings it runs, over a thousand candles light the path through the Siq to the Treasury, which is then illuminated for a Bedouin music performance. It's an entirely different experience from the daytime visit — quieter, more atmospheric, and worth doing as a second, separate evening rather than instead of a full daytime visit, since you won't see the Royal Tombs, Colonnaded Street, or Monastery this way."
+      ),
+      h2("Vendors, Camels, and Donkey Rides"),
+      p(
+        "Petra is still home to Bedouin families who've lived among these tombs and canyons for generations, and their presence is part of the site rather than separate from it — stalls selling tea, jewelry, and souvenirs line much of the route, and camel and donkey rides are offered throughout, particularly around the Treasury and along the Monastery steps. It's worth deciding in advance how you feel about animal rides here, since standards vary between operators and it's a fair question to ask before agreeing to one. Walking is always the better way to actually see the site regardless."
+      ),
+      p(
+        "Bargaining is expected at the stalls, gently and good-naturedly rather than aggressively, and carrying small bills makes transactions easier throughout the day. None of this should feel like a hassle if you go in expecting it as part of the texture of the place rather than an interruption to it."
+      ),
+      h2("Getting There and Timing Your Visit"),
+      p(
+        "Petra sits roughly midway between Amman and Aqaba, and most visitors base themselves in the nearby town of Wadi Musa, right at the site's entrance, for at least one night. A single very long day trip from Amman is possible but rushed; staying overnight near the entrance lets you start right at opening and, if timing allows, catch Petra by Night as well without a long drive back afterward."
+      ),
+      p(
+        "October through April brings the most comfortable temperatures for the amount of walking involved. Summer visits are doable if you start early and take the heat seriously, but the exposed stone through the Siq and around the Treasury holds heat by midday in a way that makes an early start less optional than in cooler months."
+      ),
+      callout(
+        "Petra opens early and the Siq gets genuinely hot by midday — starting at opening time is the single best way to beat both the heat and the crowds.",
+        { tone: "Info" }
+      ),
+      faq(
+        [
+          {
+            question: "How many days do you need at Petra?",
+            answer:
+              "One full day covers the essentials — the Siq, Treasury, Royal Tombs, and the Monastery climb. A second day is worth it if you want to add the High Place of Sacrifice or simply move at a slower pace, or if you're pairing a daytime visit with Petra by Night.",
+          },
+          {
+            question: "Is the Monastery climb worth it?",
+            answer:
+              "Yes, for most visitors who are reasonably fit. It's a genuine 800-step climb, but the facade at the top is less crowded than the Treasury and arguably just as impressive, and the views back across the valley on the way up are worth the effort on their own.",
+          },
+          {
+            question: "Can you visit Petra as a day trip from Amman?",
+            answer:
+              "It's possible — Petra sits a few hours south of Amman by road — but it makes for a very long day with limited time actually inside the site. Staying overnight in Wadi Musa, right at the entrance, is the better way to see Petra properly.",
+          },
+          {
+            question: "Is Petra by Night worth doing instead of a day visit?",
+            answer:
+              "No, it's worth doing in addition to one. Petra by Night only covers the walk to the Treasury by candlelight; you won't see the Royal Tombs, the Colonnaded Street, or the Monastery, all of which need a daytime visit.",
+          },
+          {
+            question: "What should I bring for a full day at Petra?",
+            answer:
+              "Real walking shoes, more water than feels necessary, sun protection, and cash for tea or snacks at the stalls along the Monastery climb. There's very little shade across most of the site, so a hat and sunscreen matter more here than on most Jordan stops.",
+          },
+          {
+            question: "How does Petra usually fit into a Jordan itinerary?",
+            answer:
+              "Most Jordan trips pair Petra with Wadi Rum a short drive south and the Dead Sea to the north, often alongside a stop in Amman. A five-day Jordan itinerary comfortably covers all four without feeling rushed.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Petra earns the reputation it has, but the postcard shot of the Treasury is really just the doorway. Give it a full day, make the climb to the Monastery, and let the Siq itself be part of the experience rather than something to walk through quickly — that's how the site actually reveals itself."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Plan Your Petra Visit",
+        body: "We build Petra into private Jordan itineraries with the timing, pacing, and a guide who knows exactly when to move fast and when to slow down.",
+        buttonLabel: "See Jordan Tours",
+        buttonHref: "/tours/jordan-5-day-highlights",
+      },
     ],
   },
   {
@@ -6353,19 +6584,106 @@ export const stories: Story[] = [
     publishedAt: "2026-02-04T09:00:00+02:00",
     primaryKeyword: "wadi rum jordan",
     secondaryKeywords: ["wadi rum desert", "bedouin camp jordan", "wadi rum 4x4"],
+    relatedTours: toursBySlug("wadi-rum-overnight-bedouin-camp", "petra-day-tour-from-amman", "jordan-5-day-highlights", "3-days-jordan"),
     seoTitle: "Wadi Rum Guide: Jordan's Red Desert & Bedouin Camps | Egypt Eye",
     seoDescription: "What to expect from a Wadi Rum visit — the 4x4 safari, a Bedouin camp night, and why film crews keep coming back.",
     body: [
-      p("Wadi Rum's sandstone valleys and towering rock formations have stood in for Mars in several films — the red sand and the scale of the landscape need almost no alteration on camera. In person, the effect is less about recognizing a movie set and more about the sheer quiet of the place."),
-      h2("A typical visit"),
-      p("Most visits combine an afternoon 4x4 safari — Bedouin drivers know routes through canyons and past rock bridges that aren't obvious from the main track — with a night at a desert camp. Dinner is usually a zarb, meat and vegetables cooked slowly underground, and once the fire dies down, the sky does the rest."),
+      p(
+        "Wadi Rum's sandstone valleys and towering rock formations have stood in for Mars and other alien worlds in several major films — the red sand and the sheer scale of the landscape need almost no alteration on camera, which tells you something about how it actually looks in person. But the effect on the ground is less about recognizing a movie set and more about the quiet. Once the 4x4 engines cut out and the sun starts going down, this is one of the emptiest, most genuinely still landscapes in the Middle East, and that stillness is really the point of going."
+      ),
+      h2("What Wadi Rum Actually Is"),
+      p(
+        "Wadi Rum is a protected desert valley in southern Jordan, carved from sandstone and granite over millions of years into narrow canyons, natural arches, and rock towers that rise straight out of flat desert floor — some of them several hundred meters high. It's been inhabited by Bedouin communities for generations, and the Zalabia Bedouin who live in and around the valley today still run most of the camps, jeep tours, and treks that visitors experience. T.E. Lawrence passed through here during the Arab Revolt, and the valley carries his name in places for exactly that reason."
+      ),
+      h2("A Typical Visit"),
+      p(
+        "Most visits combine an afternoon 4x4 safari with a night at a desert camp, and that combination is really the standard, well-tested way to see the valley. Bedouin drivers know routes through canyons, past natural rock bridges, and up to viewpoints that aren't obvious or accessible from the main track, stopping along the way at sites like Lawrence's Spring, the Khazali Canyon with its ancient rock inscriptions, and the towering red dunes that are easy to climb and even easier to slide back down."
+      ),
+      p(
+        "As the light drops toward evening, most safaris end at a high viewpoint for sunset before heading to camp. Dinner is usually a zarb — meat and vegetables slow-cooked underground in a covered pit, a genuinely different way of cooking that produces something closer to a smoky roast than a barbecue. Once the fire dies down and the camp's lights go off, the sky does the rest; Wadi Rum has almost no light pollution, and on a clear night the number of visible stars is startling even for travelers who think they've seen a proper night sky before."
+      ),
+      h2("Choosing a Camp"),
+      p(
+        "Camps in Wadi Rum range widely, from simple shared tents with basic facilities to well-run Bedouin camps with proper beds, private bathrooms, and considerably more comfort than the word 'camping' suggests. The better camps tend to be smaller and family-run, which usually means a more personal experience and food that's actually cooked to order rather than served buffet-style to a large group."
+      ),
+      p(
+        "Bubble tents — camps with clear-topped domes that let you watch the stars from bed without leaving the tent — have become popular in recent years and are worth considering if star-watching from comfort matters more to you than the more traditional woven Bedouin tent experience. Either way, it's worth booking through an operator who can vouch for the specific camp rather than an unnamed one, since standards genuinely vary across the valley."
+      ),
       ...bullets([
-        "Nights get genuinely cold, even in summer — bring a layer",
-        "Camps range from simple tents to Bedouin-run camps with proper beds",
-        "The stargazing here is some of the best in the region — minimal light pollution for miles",
-        "A single overnight is enough; longer treks exist for those who want more",
+        "Nights get genuinely cold, even in summer — bring a warm layer regardless of the season",
+        "Camps range from simple tents to well-appointed Bedouin-run camps with proper beds and private bathrooms",
+        "The stargazing here is some of the best in the region — minimal light pollution across the entire valley",
+        "A single overnight is enough for most visitors; longer multi-day treks exist for those who want more",
+        "Comfortable, closed shoes matter more than sandals — the sand gets deep and holds heat during the day",
       ]),
-      callout("Wadi Rum pairs naturally with Petra — the two are about an hour and a half apart by road, and most Jordan itineraries connect them on the same trip.", { tone: "Highlight" }),
+      h2("Beyond the Standard Safari"),
+      p(
+        "Travelers with more time can go further than the standard afternoon safari. Multi-day trekking routes cross the valley on foot with a Bedouin guide, camping at a different spot each night, and rock climbing is genuinely well-regarded here among climbers internationally, with routes on the sandstone towers that range from easy scrambles to serious multi-pitch climbs. Hot air balloon flights over the valley at sunrise are also available seasonally, offering a completely different vantage point on the same landscape."
+      ),
+      h2("What to Pack for a Desert Night"),
+      p(
+        "Layers matter more than any single item — daytime temperatures can be warm even in cooler months, and the drop after sunset is sharp enough to catch first-time visitors off guard. A warm jacket or fleece, a hat, and something to cover your head from sun during the jeep safari are the essentials; most camps provide blankets for the night itself, but bringing your own layer for sitting around the fire makes the evening more comfortable."
+      ),
+      p(
+        "A scarf or shemagh, the kind Bedouin guides often wear, is genuinely useful rather than just a souvenir — it keeps blown sand out of your face during the jeep ride and doubles as extra warmth after dark. Closed shoes are worth prioritizing over sandals; the sand can get surprisingly hot underfoot by afternoon and cold again by evening."
+      ),
+      h2("Getting There and Timing"),
+      p(
+        "Wadi Rum sits in Jordan's south, roughly midway between Petra and Aqaba, which makes it a natural stop on the way between the two. Most visitors arrive by road from Petra, about ninety minutes away, spend a single night at a desert camp, and continue on to Aqaba or the Dead Sea the next day. October through April brings the most comfortable daytime temperatures for the jeep safari and any walking; summer days run very hot, though desert nights stay cool to cold year-round, which is worth remembering no matter when you visit."
+      ),
+      callout(
+        "Wadi Rum pairs naturally with Petra — the two are about ninety minutes apart by road, and most Jordan itineraries connect them on the same trip, often with Wadi Rum as the overnight stop between Petra and Aqaba or the Dead Sea.",
+        { tone: "Highlight" }
+      ),
+      faq(
+        [
+          {
+            question: "How cold does it get in Wadi Rum at night?",
+            answer:
+              "Desert nights drop sharply once the sun goes down, even in summer, often into the single digits Celsius outside the warmer months. A proper jacket or fleece is worth packing regardless of when you visit, since camps are largely open-air in the evening around the fire.",
+          },
+          {
+            question: "Is one night in Wadi Rum enough?",
+            answer:
+              "For most travelers, yes — a single overnight covers the afternoon jeep safari, sunset, the zarb dinner, and a night under the stars, which is the core of what makes the valley worth visiting. Multi-day treks exist for those who want to go deeper on foot.",
+          },
+          {
+            question: "Do you need a guide to visit Wadi Rum?",
+            answer:
+              "Effectively yes. The valley is a protected area and the roads through it aren't signposted the way a normal highway would be, so visits run through Bedouin-operated jeep tours and camps rather than independent driving.",
+          },
+          {
+            question: "What's the food like at a desert camp?",
+            answer:
+              "Dinner is typically a zarb, slow-cooked underground, alongside mezze-style sides, rice, and grilled vegetables. It's a proper meal, not a basic camping dinner, and most camps serve it as the evening's centerpiece around the fire.",
+          },
+          {
+            question: "Can you see Wadi Rum and Petra in the same trip?",
+            answer:
+              "Yes, and most Jordan itineraries do exactly that — Petra during the day, then on to Wadi Rum for a desert night, continuing to Aqaba or the Dead Sea afterward. The short drive between them makes the combination easy to build around.",
+          },
+          {
+            question: "Is Wadi Rum worth visiting if you're not into hiking or climbing?",
+            answer:
+              "Yes — the standard jeep safari and camp night require no real fitness at all, just riding in a 4x4 and sitting around a fire. Trekking and climbing are optional extras for travelers who specifically want them, not a prerequisite for enjoying the valley.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Booking through a camp with a genuine, verifiable Bedouin family running it — rather than a resold, unnamed tent listed generically online — tends to make the difference between a forgettable overnight and one of the best nights of a Jordan trip."
+      ),
+      p(
+        "There's a reason filmmakers keep coming back to Wadi Rum, and it isn't really about how the rock formations look on camera. It's the scale of the place and the quiet that settles in once the jeeps stop for the night — a landscape that still feels genuinely remote, in a region where that's increasingly rare."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Sleep Under the Wadi Rum Stars",
+        body: "We build a Wadi Rum desert night into private Jordan itineraries, paired with Petra and the route south to Aqaba or the Dead Sea.",
+        buttonLabel: "See Jordan Tours",
+        buttonHref: "/tours/wadi-rum-overnight-bedouin-camp",
+      },
     ],
   },
   {
@@ -6384,18 +6702,106 @@ export const stories: Story[] = [
     publishedAt: "2026-02-05T09:00:00+02:00",
     primaryKeyword: "amman travel guide",
     secondaryKeywords: ["amman jordan", "things to do in amman", "amman citadel"],
+    relatedTours: toursBySlug("amman-city-tour", "jerash-ajloun-castle-tour", "dead-sea-day-trip-jordan", "jordan-5-day-highlights"),
     seoTitle: "Amman Travel Guide: Jordan's Capital | Egypt Eye",
     seoDescription: "What's worth seeing in Amman — the Citadel, the Roman Theatre, and downtown — for travelers passing through before Petra or Wadi Rum.",
     body: [
-      p("Most Jordan itineraries treat Amman as a stopover between the airport and Petra, and for a first visit, that's a reasonable read — but the city itself has more layers than a quick transit suggests."),
-      h2("What to see with limited time"),
+      p(
+        "Most Jordan itineraries treat Amman as a stopover between the airport and Petra, and for a first visit that's a reasonable read — the country's real headline sites are further south. But the city itself has more layers than a quick transit suggests, built across low hills with a downtown that still feels like a working Middle Eastern capital rather than a place arranged for tourists, and a night or two here is worth more than most itineraries give it credit for."
+      ),
+      p(
+        "Amman also functions as Jordan's practical hub, and that's worth knowing even if you're spending most of your trip elsewhere — the international airport sits south of the city, most domestic connections and rental cars start here, and it's simply the place your Jordan trip is most likely to begin and end regardless of how the middle of the itinerary is built."
+      ),
+      h2("A City Built on Hills"),
+      p(
+        "Amman is spread across a series of hills, or jabal, each with its own character and, historically, its own identity as a distinct district before the modern city grew and merged them together. That layout is part of what makes the city interesting to walk through rather than just drive across — staircases connect one level to another, older neighborhoods sit right beside newer development, and the views change constantly depending on which hill you're standing on."
+      ),
+      h2("The Citadel and the Roman Theatre"),
+      p(
+        "Amman Citadel sits on Jabal al-Qal'a, one of the city's highest points, and has been continuously occupied since the Bronze Age — a genuinely long span of use that few sites anywhere can claim. The standing remains today are mostly Roman and Umayyad, including the Temple of Hercules and the Umayyad Palace complex, and the site gives sweeping views over downtown Amman that make it worth the visit for the panorama alone, even before considering the ruins themselves."
+      ),
+      p(
+        "Down in the valley below the Citadel sits the Roman Theatre, a 2nd-century amphitheater carved into the hillside and still structurally sound enough to host concerts and events today. It seated around 6,000 people in antiquity and remains one of the best-preserved Roman theatres in the region — walking up to the top row gives a real sense of how the acoustics were designed to carry a voice from the stage all the way up."
+      ),
+      h2("Downtown Amman"),
+      p(
+        "Downtown, or al-Balad, is where the city's working, everyday character comes through most clearly. Narrow streets are packed with gold souks, spice shops, fabric merchants, and small cafes that have been serving the same few dishes for decades. Hashem Restaurant, a no-frills falafel and hummus spot near the Roman Theatre, has fed generations of Ammanis and remains a genuine local institution rather than a tourist stop that happened to get famous."
+      ),
+      p(
+        "This isn't a neighborhood built primarily for visitors, which is exactly what makes it worth the time — the pace, the noise, and the mix of old and new give a much better sense of contemporary Jordan than a hotel district ever could."
+      ),
+      h2("Rainbow Street and the Newer City"),
+      p(
+        "West of downtown, Rainbow Street runs through Jabal Amman, one of the city's older, more affluent neighborhoods, now lined with cafes, restaurants, and small galleries in restored early-20th-century buildings. It's a good spot for an evening walk, particularly on weekends when the street closes to cars and fills with people out for the evening — a very different atmosphere from downtown's market bustle, and worth seeing both to get a fuller picture of the city."
+      ),
+      p(
+        "Further west again, Amman's newer districts hold the malls, embassies, and international hotels most visitors actually sleep in — comfortable and convenient, but with little of the character that makes the older parts of the city worth a look."
+      ),
       ...bullets([
-        "Amman Citadel — a hilltop site with the Temple of Hercules and sweeping views over the city",
+        "Amman Citadel — a hilltop site with the Temple of Hercules, the Umayyad Palace, and sweeping views over the city",
         "The Roman Theatre — a 2nd-century amphitheater still used for events, seated into the hillside downtown",
-        "Downtown Amman — souqs, coffee houses, and the general texture of a working Middle Eastern capital",
-        "Rainbow Street — cafés and a good spot for an evening walk",
+        "Downtown Amman — souqs, gold markets, and long-running local restaurants like Hashem",
+        "Rainbow Street — cafes, galleries, and a good spot for an evening walk, especially on weekends",
+        "The Jordan Museum — a well-curated overview of the country's history, useful context before heading to Petra or Jerash",
       ]),
-      p("A half-day covers the Citadel and the Roman Theatre comfortably. If you have a full day before heading south, downtown's markets are worth the extra time — this isn't a city built primarily for tourism, which is part of what makes it worth a look."),
+      h2("How Much Time to Give It"),
+      p(
+        "A half-day covers the Citadel and the Roman Theatre comfortably, and that's the minimum worth budgeting even on a tight Jordan itinerary. A full day adds real time in downtown's markets and a proper evening on Rainbow Street, which is worth it if your schedule allows — this isn't a city built primarily for tourism, and that's part of what makes it worth the extra time rather than treating it purely as a transit point."
+      ),
+      p(
+        "Amman works well either as the start or the end of a Jordan trip — arriving late and exploring the Citadel and downtown the next morning before heading to Petra, or finishing a Jordan itinerary here with a relaxed evening on Rainbow Street before an early flight out."
+      ),
+      h2("Food Worth Seeking Out"),
+      p(
+        "Beyond Hashem's falafel, downtown Amman has a genuinely strong food scene worth building an afternoon around. Habibah Sweets, a few steps from the Roman Theatre, has been making knafeh and other Levantine sweets for decades and is worth the short detour. Mansaf, Jordan's national dish — lamb cooked in a fermented dried yogurt sauce called jameed, served over rice — is best had at a proper local restaurant rather than a hotel buffet if you want to understand why Jordanians take it so seriously."
+      ),
+      callout(
+        "Hashem Restaurant near the Roman Theatre has no menu and no sign worth mentioning — just falafel, hummus, foul, and fresh bread served at communal tables day and night. It's cash-only and inexpensive, and it's exactly the kind of place a private guide is useful for, since it's easy to walk past without knowing what you're missing.",
+        { tone: "Info", title: "Worth Knowing" }
+      ),
+      h2("Day Trips from Amman"),
+      p(
+        "Amman's real strength as a base is how much sits within reach of it. Jerash, one of the best-preserved Roman provincial cities anywhere, is about an hour north and pairs naturally with Ajloun Castle for a single day trip. The Dead Sea is under an hour west, close enough for a half-day float and drive back for dinner in the city. Petra and Wadi Rum sit further south, three to four hours by road, which most travelers treat as the start of a separate multi-day leg rather than a day trip from the capital."
+      ),
+      p(
+        "That range is exactly why so many Jordan itineraries use Amman as a hub for the first day or two — Jerash and the Dead Sea both work as day trips, while Petra, Wadi Rum, and Aqaba become the second half of the journey once you head south."
+      ),
+      faq(
+        [
+          {
+            question: "Is Amman worth more than a quick stopover?",
+            answer:
+              "Yes, if your schedule allows it. Most travelers give it a half-day on the way to Petra, but a full day or an overnight lets you actually see downtown properly and catch an evening on Rainbow Street, which changes the impression of the city considerably.",
+          },
+          {
+            question: "How do the Citadel and Roman Theatre compare to Jerash or Petra?",
+            answer:
+              "They're smaller in scale but easier to fit into a tight schedule since they're right in the city. Jerash and Petra are worth dedicated day trips of their own; the Citadel and Roman Theatre work well as a half-day city stop rather than a full excursion.",
+          },
+          {
+            question: "Is Amman safe to walk around?",
+            answer:
+              "Yes — Amman is generally considered one of the safer capitals in the region, and downtown and Rainbow Street both see heavy foot traffic well into the evening, including families and groups out for dinner.",
+          },
+          {
+            question: "What's the best area to stay in for a short visit?",
+            answer:
+              "Jabal Amman, near Rainbow Street, puts you within walking distance of good restaurants and a reasonable taxi ride from downtown and the Citadel — a more central, walkable choice than the newer western districts.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Amman doesn't try to compete with Petra for spectacle, and it doesn't need to. What it offers instead is texture — a real, functioning capital with genuine layers of history stacked into its hills, worth more than the drive-through most itineraries give it."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Start Your Jordan Trip in Amman",
+        body: "We build Amman into private Jordan itineraries as more than a stopover — the Citadel, downtown, and real time before the road south to Petra and Wadi Rum.",
+        buttonLabel: "See Jordan Tours",
+        buttonHref: "/tours/amman-city-tour",
+      },
     ],
   },
   {
@@ -6414,19 +6820,107 @@ export const stories: Story[] = [
     publishedAt: "2026-02-06T09:00:00+02:00",
     primaryKeyword: "jerash jordan",
     secondaryKeywords: ["jerash ruins", "ajloun castle", "roman ruins jordan"],
+    relatedTours: toursBySlug("jerash-ajloun-castle-tour", "amman-city-tour", "jordan-5-day-highlights", "3-days-jordan"),
     seoTitle: "Jerash & Ajloun Castle Guide | Egypt Eye",
     seoDescription: "Jerash's Roman ruins and Ajloun's 12th-century castle — what to see, and how the two connect on a day trip from Amman.",
     body: [
-      p("Jerash rarely gets the recognition Petra does, which is strange given what's actually there — a Roman provincial city with its street plan, forum, and two theatres still largely intact, an hour north of Amman."),
-      h2("Jerash's highlights"),
+      p(
+        "Jerash rarely gets the recognition Petra does, which is strange given what's actually there — a Roman provincial city with its street plan, forum, colonnaded avenues, and two theatres still largely intact, sitting an hour north of Amman. Pair it with Ajloun Castle, a 12th-century Islamic fortress in the hills nearby, and you get a single day trip that covers two completely different periods of Jordan's layered history without much driving between them."
+      ),
+      h2("Why Jerash Is Worth the Detour"),
+      p(
+        "Jerash was one of the cities of the Decapolis, a loose network of ten Greco-Roman cities across the eastern edge of the empire, and it flourished for centuries under Roman rule before a series of earthquakes and a shift in trade routes led to its slow decline. What makes it unusual today isn't any single monument but how much of the whole city survived — you're not looking at isolated ruins scattered across a field, you're walking through a street plan that still makes sense as a city."
+      ),
+      p(
+        "Much of that survival comes down to what happened after Jerash was abandoned: sand and soil gradually buried large sections of it, which protected the stonework from centuries of scavenging for building material that stripped so many other ancient sites down to their foundations. Archaeologists only began serious excavation in the early 20th century, and even now a portion of the city remains unexcavated."
+      ),
+      h2("Jerash's Highlights"),
       ...bullets([
-        "The Oval Forum, an unusually shaped public square ringed by columns",
-        "The Cardo, the city's main colonnaded street, still paved with the original stones in places",
-        "The South and North Theatres, both still structurally sound enough to host performances",
+        "The Oval Forum, an unusually shaped public square ringed by 56 Ionic columns, built to smooth the transition between two streets that meet at an angle",
+        "The Cardo, the city's main colonnaded street, still paved with the original stones in places, with visible ruts worn into them by two thousand years of cart traffic",
+        "The South and North Theatres, both still structurally sound enough to host performances, with the South Theatre in particular known for its unusually good acoustics",
+        "The Temple of Artemis, Jerash's patron goddess, with towering columns that once supported a roof and now stand open to the sky",
+        "Hadrian's Arch, built to commemorate the Roman emperor's visit in 129 AD, marking what was once the city's southern entrance",
       ]),
+      p(
+        "The Jerash Festival, held most summers, brings performances to the South Theatre and other parts of the site, using the ancient spaces exactly as they were designed to be used — worth checking the dates if your visit lines up with it."
+      ),
       h2("Ajloun Castle"),
-      p("Ajloun Castle was built in 1184 by a commander under Saladin, specifically to watch these hills for Crusader troop movements. It's a working example of Islamic military architecture from the period, and the hilltop position still gives a clear read on why it was placed exactly there."),
-      p("Most day trips from Amman combine both sites — Jerash in the morning, Ajloun after lunch, back in the capital by evening."),
+      p(
+        "Ajloun Castle was built in 1184 by Izz al-Din Usama, a commander under Saladin, specifically to watch these forested hills for Crusader troop movements and to protect the trade and communication routes between Damascus and Cairo. It's a working example of Islamic military architecture from the period — thick walls, arrow slits, a dry moat, and a hilltop position that still gives a clear read on why it was placed exactly there."
+      ),
+      p(
+        "The castle changed hands several times over the following centuries, was partly destroyed by a Mongol raid in the 13th century, and was later restored by the Mamluks, whose additions are still visible in parts of the structure today. Climbing to the upper levels gives sweeping views across the wooded hills of northern Jordan — a genuinely different landscape from the desert most visitors associate with the rest of the country."
+      ),
+      p(
+        "Inside, a small museum displays artifacts recovered from the castle and the surrounding region, giving useful context on the site's Ayyubid and Mamluk history before you head back down through the same corridors and stairwells the garrison would have used eight centuries ago."
+      ),
+      h2("The Hippodrome and the Roman Army Show"),
+      p(
+        "Near Jerash's south entrance sits a restored hippodrome, once used for chariot races and capable of seating around 15,000 spectators in its day. Several days a week, a reenactment show stages gladiator fights and a chariot race with performers in Roman military dress, using the space roughly as it was intended — it's a bit theatrical compared to the rest of the site's quiet, contemplative ruins, but it's a genuinely fun addition if the timing lines up with your visit, and it gives a more visceral sense of scale than reading a placard ever could."
+      ),
+      h2("Getting There from Amman"),
+      p(
+        "Both Jerash and Ajloun sit north of Amman, connected by a road that winds through increasingly green, hilly terrain the further north you go — a noticeable shift from the browner landscape around the capital. The drive to Jerash from Amman takes roughly an hour, and Ajloun is a further 30 to 40 minutes beyond that, through forested hills that are a pleasant change of scenery in their own right, particularly in spring when the countryside is at its greenest."
+      ),
+      h2("Combining the Two on One Day"),
+      p(
+        "Most day trips from Amman combine both sites in a single itinerary — Jerash in the morning, when the light is better for photos and the site is at its coolest, and Ajloun after lunch, with the short drive between them taking well under an hour through green, hilly countryside that's worth a look on its own. Being back in Amman by evening is realistic without feeling rushed at either stop."
+      ),
+      callout(
+        "Visit Jerash in the morning if you can — the site has very little shade, and the light on the Oval Forum's columns is considerably better before midday than after.",
+        { tone: "Info" }
+      ),
+      h2("What to Expect Underfoot"),
+      p(
+        "Jerash involves a genuine amount of walking across original Roman paving, which is uneven, worn smooth in places, and occasionally slick if it's been raining — proper shoes matter more here than the flat, groomed paths at some other sites might suggest. Ajloun's stone stairways inside the castle are narrow and steep in places, another spot where sturdy footwear pays off over sandals. Bring water for both stops; Jerash in particular offers little shade across its open plazas and colonnaded streets."
+      ),
+      faq(
+        [
+          {
+            question: "How does Jerash compare to Petra?",
+            answer:
+              "They're not really competing sites — Petra is a Nabataean city carved into rock, while Jerash is a Roman provincial city built in stone the conventional way, with an intact street plan rather than tombs and facades. Both are worth seeing; Jerash simply gets less attention because Petra's Treasury photograph is so iconic.",
+          },
+          {
+            question: "How much time do you need at Jerash?",
+            answer:
+              "Two to three hours covers the main sites — the Oval Forum, the Cardo, both theatres, and the Temple of Artemis — at an unrushed pace. Add another hour if you're visiting during the Jerash Festival or want to explore the less-visited northern sections.",
+          },
+          {
+            question: "Is Ajloun Castle worth visiting on its own?",
+            answer:
+              "It's a solid site on its own merits, but most visitors combine it with Jerash specifically because the two are close together and represent such different periods — pairing them makes for a more complete day than either alone.",
+          },
+          {
+            question: "Can you visit Jerash and Ajloun without a guide?",
+            answer:
+              "Both sites are open to independent visitors, but a guide adds real value at Jerash in particular, since the layout only fully makes sense with context about which buildings served which purpose across the centuries of the city's use, and at Ajloun for understanding how the castle's defenses were actually meant to work against a Crusader siege.",
+          },
+          {
+            question: "What's the best time of year to visit?",
+            answer:
+              "Spring and autumn bring the most comfortable temperatures for the amount of walking involved at both sites. Summer gets hot with little shade at Jerash, while Ajloun's forested hills stay slightly cooler than the surrounding desert regions of the country.",
+          },
+          {
+            question: "Is the Jerash reenactment show worth timing a visit around?",
+            answer:
+              "It's a nice bonus if the schedule lines up, but not essential — the site itself is the real draw. Check current show days when planning if it interests you, since it doesn't run daily.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Jerash and Ajloun make an easy case for themselves once you're actually standing in either one — a Roman city that still reads as a city, and a Crusader-era castle that still commands its hilltop. Together they're one of the better single days you can build into a Jordan itinerary, and one of the least crowded."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Add Jerash & Ajloun to Your Jordan Trip",
+        body: "We build this pairing into private Jordan itineraries from Amman — Roman ruins in the morning, a Crusader-era castle after lunch, back in the capital by evening.",
+        buttonLabel: "See Jordan Tours",
+        buttonHref: "/tours/jerash-ajloun-castle-tour",
+      },
     ],
   },
   {
@@ -6445,18 +6939,108 @@ export const stories: Story[] = [
     publishedAt: "2026-02-07T09:00:00+02:00",
     primaryKeyword: "dead sea jordan",
     secondaryKeywords: ["floating in the dead sea", "dead sea mud", "dead sea day trip"],
-    seoTitle: "Dead Sea Guide: What to Know Before You Float | Egypt Eye",
-    seoDescription: "What a Dead Sea day actually involves — the floating, the mud, and practical tips nobody mentions beforehand.",
+    relatedTours: toursBySlug("dead-sea-day-trip-jordan", "jordan-5-day-highlights", "3-days-jordan", "wadi-rum-overnight-bedouin-camp"),
+    seoTitle: "Dead Sea Jordan Guide: Floating, Mud & Tips | Egypt Eye",
+    seoDescription: "What a Dead Sea day in Jordan actually involves — the floating, the mineral mud, and practical tips nobody mentions beforehand until you're there.",
     body: [
-      p("The Dead Sea sits about 430 meters below sea level, the lowest point on Earth's land surface, and its salt content — roughly ten times that of the ocean — is high enough that floating isn't really a skill. You simply don't sink."),
-      h2("What nobody mentions beforehand"),
+      p(
+        "The Dead Sea sits about 430 meters below sea level, the lowest point on Earth's land surface, and the number that actually matters once you're standing in the water is a different one: its salt content runs roughly ten times that of the open ocean. That's not a small difference. It's the difference between water you need to work at floating in and water that makes floating the default state — you lean back and, instead of your legs sinking the way they would anywhere else, the water pushes you up almost insistently. Most people spend their first few minutes just testing that, tipping sideways, trying to sit upright the way you would in a swimming pool, and finding out it doesn't really work that way here."
+      ),
+      p(
+        "For most travelers combining Egypt and Jordan, the Dead Sea is a half-day stop rather than a destination in itself, and that's about the right amount of time to give it. This guide covers what the experience actually involves — the geography, what floating and the mud genuinely feel like, and the handful of things nobody mentions until you're already standing on the shore with salt water stinging a cut you'd forgotten about."
+      ),
+      h2("Where the Dead Sea Actually Is"),
+      p(
+        "The Dead Sea sits in the Jordan Rift Valley, with Jordan on the eastern shore and the West Bank on the western one. On the Jordanian side, the main public beaches and resort strip sit under an hour's drive from Amman, which is why it fits so naturally into a Jordan itinerary. Most multi-day Jordan routes — Amman, Petra, Wadi Rum, Dead Sea — treat it as the closing stop before a flight home, and that sequencing makes sense: it's a low-effort, high-payoff way to end a trip that has otherwise involved a lot of walking through ruins, canyons, and desert sand."
+      ),
+      p(
+        "The sea itself has no outlet. The Jordan River and a handful of smaller streams feed it, and the only way water leaves is evaporation in a hot, low desert basin. Over thousands of years that's what concentrated the dissolved minerals to their current levels, and it's also why the shoreline keeps changing — the Dead Sea has been retreating for decades, a well-documented effect of reduced inflow, and older jetties and access roads at some resorts now sit well back from where the water actually reaches."
+      ),
+      h2("What Floating Actually Feels Like"),
+      p(
+        "There's no technique to learn. You walk in, lean back, and the water does the rest — your hips and legs come up whether you try to or not, and swimming in the normal sense becomes almost impossible, because your lower body simply won't stay submerged. Most people end up in a reclined, hands-behind-the-head float, which is exactly the photo everyone takes and exactly the one you'll take too."
+      ),
+      p(
+        "What tends to surprise people more than the buoyancy is the texture. The water feels noticeably thicker than seawater, almost oily against the skin, and it leaves a faint mineral film as it dries. It's also warm through most of the year, a byproduct of the low elevation and surrounding desert heat, so outside of the coldest weeks of winter the water temperature is rarely the uncomfortable part of the day."
+      ),
+      h2("The Mud, and Why Everyone Uses It"),
+      p(
+        "The black mineral mud along the shoreline is free, and it's the other thing every visitor photographs. It carries the same mineral profile as the water — magnesium, potassium, bromide compounds among others — and the ritual is simple: coat yourself in it, let it dry in the sun for ten or fifteen minutes until it cracks, then rinse off in the sea or under a shower. Whether it delivers everything the spa marketing promises is a separate question, but it's a genuinely fun, slightly absurd shared activity, and every resort and public beach along the shore includes it as part of the day."
+      ),
+      h2("Not a Swimming Destination"),
+      p(
+        "It's worth being clear about what the Dead Sea isn't. There's no snorkeling, no reef, no real swimming laps — the same salinity that makes floating effortless also makes it hard to submerge or swim any real distance without fighting the buoyancy the whole way. If diving or open-water swimming is what you're after, that's the Red Sea coast around Hurghada, Dahab, or Sharm El Sheikh, not here. The Dead Sea is closer to a spa afternoon with an odd physics lesson attached than a beach day, and it's worth going in with that expectation rather than a snorkel."
+      ),
       ...bullets([
-        "The water stings — badly — in any cut, scrape, or recently shaved skin",
-        "Don't get it in your eyes; it genuinely hurts",
-        "The mud along the shore is free to use and is the thing everyone photographs",
-        "Most resorts along the shore offer day-access with showers, which is worth paying for afterward",
+        "The water stings, sometimes badly, in any cut, scrape, or recently shaved skin — check yourself before wading in",
+        "Keep it away from your eyes; it hurts more than ocean water does and doesn't rinse out quickly",
+        "Don't try to swim normally — fighting the buoyancy is how people end up swallowing a mouthful, which tastes awful and can trigger gagging",
+        "Water shoes help if you have sensitive feet; some stretches of shoreline have sharp salt-crystal formations",
+        "The salt dries fast and gets uncomfortably tight on skin within minutes — a proper shower afterward isn't optional",
       ]),
-      p("A half-day is enough — an hour or two floating and applying mud, a shower, and time to dry off. Most Jordan itineraries schedule it as a closing activity, right before a flight home, for exactly that reason."),
+      h2("Planning Your Dead Sea Day"),
+      p(
+        "Most resorts along the Jordanian shore sell day-access passes that include a beach or pool area, showers, and sometimes lunch, and it's worth paying for — public beaches have fewer facilities and get crowded, especially on weekends. A half-day is genuinely enough: an hour or two floating and applying mud, a shower to rinse the salt off thoroughly, and time to dry off and moisturize, since the minerals are noticeably drying on both skin and hair."
+      ),
+      p(
+        "Timing matters more than people expect. Midday sun at that elevation and latitude is intense, and there's minimal natural shade directly on the beach, so a mid-morning or late-afternoon visit is a more comfortable window than arriving at noon. If your route allows it, pairing the Dead Sea with Wadi Rum or Petra on the same loop, rather than treating it as an isolated out-and-back from Amman, makes better use of the drive time."
+      ),
+      callout(
+        "Rinse off in a proper shower as soon as you're done floating — the salt residue left on skin and clothing if you skip this is genuinely uncomfortable for the rest of the day, and it can stain fabric over repeated exposure.",
+        { title: "Before You Leave the Shore", tone: "Safety" }
+      ),
+      p(
+        "Spring and autumn give the most comfortable air temperatures for the drive down and the walk from your room or cabana to the water, since the Dead Sea basin runs noticeably hotter than Amman at any time of year. Summer is still very doable — most people are in and out of the water often enough to stay comfortable, and the resorts are built for exactly that — but if you have flexibility in your dates, shoulder-season months make the whole afternoon easier."
+      ),
+      h2("What to Pack"),
+      ...bullets([
+        "A swimsuit you don't mind staining — the mud and salt can affect fabric colors over time",
+        "Water shoes for sensitive feet or the rockier stretches of shoreline",
+        "A dry bag or plastic bag to separate wet items on the drive back",
+        "Extra moisturizer — the minerals dry out skin faster than a normal day at the sea",
+        "A hat and reef-safe sunscreen, since there's little natural shade directly on the beach",
+      ]),
+      faq(
+        [
+          {
+            question: "Can you actually not sink in the Dead Sea?",
+            answer:
+              "Correct — the salt concentration is high enough that a normal adult floats without any effort. Try to stand upright in deeper water and your legs simply come back up on their own.",
+          },
+          {
+            question: "How long should you spend at the Dead Sea?",
+            answer:
+              "A half-day is typical and sufficient. Most visitors get diminishing returns after the first hour or two in the water, and the mud ritual plus a shower rounds out the experience naturally.",
+          },
+          {
+            question: "Is the Dead Sea safe for kids?",
+            answer:
+              "Yes, with supervision. The sting from any open cut and the risk of a splash reaching the eyes make close supervision important for younger children specifically.",
+          },
+          {
+            question: "Can you combine the Dead Sea with Petra or Wadi Rum on the same trip?",
+            answer:
+              "Yes — it's a standard stop on multi-day Jordan itineraries, usually scheduled toward the end since it requires minimal walking and pairs naturally with a travel day.",
+          },
+          {
+            question: "Do you need to book a resort in advance?",
+            answer:
+              "It's worth reserving ahead during peak season, though many day-access passes can also be arranged the same day. A private guide handling logistics removes the guesswork entirely.",
+          },
+        ],
+        "Dead Sea FAQ"
+      ),
+      p(
+        "The Dead Sea isn't a place you go to be active — it's the opposite, a deliberately slow stop after days of climbing through Petra's Siq or hiking Wadi Rum's dunes. Go in expecting exactly that, pack a change of clothes and a little patience for the salt, and it delivers on the one thing it promises: water that holds you up whether you're trying or not."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Add the Dead Sea to a Jordan Itinerary",
+        body: "See how a Dead Sea day fits into a private Jordan trip built around Petra, Wadi Rum, and Amman.",
+        buttonLabel: "Plan Your Jordan Trip",
+        buttonHref: "/tours/jordan-5-day-highlights",
+      },
     ],
   },
   {
@@ -6475,17 +7059,93 @@ export const stories: Story[] = [
     publishedAt: "2026-02-08T09:00:00+02:00",
     primaryKeyword: "is jordan safe to visit",
     secondaryKeywords: ["jordan safety", "jordan travel safety", "is amman safe"],
-    seoTitle: "Is Jordan Safe to Visit? | Egypt Eye",
-    seoDescription: "A straight answer on Jordan's safety for travelers — what the record actually shows, and what regional headlines tend to get wrong.",
+    relatedTours: toursBySlug("jordan-5-day-highlights", "3-days-jordan", "amman-city-tour", "petra-day-tour-from-amman"),
+    seoTitle: "Is Jordan Safe to Visit? A Straight Answer | Egypt Eye",
+    seoDescription: "Jordan's real safety record for travelers, why regional headlines mislead, and practical precautions for Amman, Petra, and Wadi Rum.",
     body: [
-      p("Jordan is consistently ranked among the more stable countries in the region, and the numbers back that up — violent crime against tourists is rare, and the tourist sites (Petra, Wadi Rum, Amman, the Dead Sea) see heavy daily foot traffic without incident."),
-      h2("Where the confusion comes from"),
-      p("Jordan borders several countries that do make regional headlines, and travelers sometimes read that proximity as a direct risk to Jordan itself. In practice, the border regions covered by news coverage are not the areas any standard itinerary passes through — Petra, Wadi Rum, Amman, and the Dead Sea sit well within the country's stable interior."),
+      p(
+        "This question comes up constantly, usually from people who are otherwise sold on a Jordan trip but have seen a headline about the wider Middle East and started second-guessing the whole plan. The short answer is that Jordan is one of the more stable, tourism-friendly countries in the region, and its safety record for visitors reflects that — but the longer answer is worth walking through, because the source of the confusion is specific and easy to correct."
+      ),
+      h2("What the Record Actually Shows"),
+      p(
+        "Jordan has spent decades building tourism infrastructure around Petra, Wadi Rum, Amman, and the Dead Sea, and it depends economically on people continuing to visit those places. Violent crime against tourists is rare, and it's not the kind of rare that comes with an asterisk — the major sites see heavy daily foot traffic from travelers of every nationality without incident, year after year. Petty theft exists the way it does in any tourist destination, but Jordan doesn't carry the kind of scam-heavy, high-pressure hustle culture that catches out first-time visitors in some other parts of the world."
+      ),
+      p(
+        "The Jordanian tourist police, present at every major site, are a genuinely useful resource rather than a decorative one — they patrol Petra and the Citadel in Amman specifically, speak English, and are there to help with exactly the kind of minor issue a traveler might run into. That visible, dedicated presence is part of why the country's tourism sector has stayed resilient even during periods when regional headlines were loud."
+      ),
+      h2("Where the Confusion Comes From"),
+      p(
+        "Jordan borders Syria, Iraq, Israel and the West Bank, and Saudi Arabia — several of which generate the kind of headlines that make people uneasy about the whole region, without much geographic specificity. Travelers sometimes read that proximity as a direct risk to Jordan itself, but a shared border on a map doesn't tell you anything about what a specific itinerary actually passes through. The areas any standard Jordan itinerary covers — Amman, Petra, Wadi Rum, the Dead Sea, Jerash — sit well within the country's stable interior, hundreds of kilometers from any border area that makes international news."
+      ),
+      p(
+        "It's a pattern seen with a lot of countries that share a map with conflict zones: the headline is about the region, the itinerary is about a handful of well-protected, well-trafficked sites nowhere near it. Jordan has managed this dynamic better than most of its neighbors specifically because its government treats tourism as a strategic priority, not an afterthought."
+      ),
+      h2("Solo and Women Travelers"),
+      p(
+        "Solo female travelers consistently report feeling comfortable in Jordan, more so than in many destinations with a similar reputation gap between perception and reality. Amman is a walkable, modern capital with a large expat and diplomatic community, and the country's tourism economy means locals in and around the major sites are used to independent travelers of every kind. That said, dressing modestly outside resort areas and hiring a private guide for more remote stretches — particularly overnight stays in Wadi Rum — removes most of the friction a first-time solo visitor might otherwise navigate on their own."
+      ),
       ...bullets([
-        "Standard travel precautions apply — watch belongings in crowded areas, use reputable transport",
-        "Solo female travelers generally report feeling safe, particularly with a private guide",
-        "Check your own government's current travel advisory before booking, as a matter of course",
+        "Standard travel precautions apply everywhere — watch belongings in crowded markets, use licensed taxis or a private driver rather than hailing informally",
+        "Solo female travelers generally report feeling safe, particularly with a private guide arranging transport and accommodation",
+        "Petra, Wadi Rum, Amman, and the Dead Sea are the four pillars of almost every itinerary, and all four see constant, incident-free tourist traffic",
+        "Tap water is treated in major cities but most travelers stick to bottled water as a matter of routine, not a safety concern specific to Jordan",
+        "Check your own government's current travel advisory before booking, as a matter of course — advisories update for reasons unrelated to tourist areas and it's worth five minutes to confirm",
       ]),
+      callout(
+        "If a specific concern is driving the hesitation — a recent news story, a particular region, a family member's worry — a private guide who lives and works in Jordan year-round is a better source of current, ground-level information than a general news search.",
+        { title: "When in Doubt, Ask Someone Local", tone: "Info" }
+      ),
+      h2("Wadi Rum and Overnight Camps"),
+      p(
+        "Wadi Rum, the desert where much of Lawrence of Arabia was filmed, is the one part of a typical Jordan itinerary that feels genuinely remote — and it is, in the sense that there's no cell coverage in stretches of the valley and the nearest town is a fair drive away. That remoteness is also exactly why it's safe: the Bedouin families who run the camps and lead jeep tours out there have been doing it for generations, know the terrain intimately, and their livelihood depends entirely on visitors having a good, safe experience. Overnight stays in a fixed or luxury desert camp are comfortable and well-established as an activity, not an improvised one, and it's one of the more memorable nights of most Jordan trips precisely because it feels far from anywhere while actually being well looked after."
+      ),
+      h2("Road Travel and Everyday Safety"),
+      p(
+        "Road quality on the main routes connecting Amman, the Dead Sea, Petra, and Wadi Rum is generally good, and the King's Highway — the older, more scenic route south — is a genuinely pleasant drive rather than a risk to plan around. Driving standards can be more assertive than visitors from some countries are used to, which is one of the practical reasons most travelers use a private driver rather than a rental car; it also means someone experienced is handling the roads while you look out the window at the landscape instead. Food and water safety follow familiar international-travel logic — stick to bottled water, eat at busy, well-reviewed places, and the food itself, largely fresh, olive-oil-forward Levantine cooking, tends to sit easily with most travelers."
+      ),
+      h2("Practical Precautions Worth Taking"),
+      p(
+        "None of this means treating Jordan as risk-free in the way a trip to a quiet European town might be — it means treating it the way any well-run international trip deserves: sensible precautions rather than heightened anxiety. Keep copies of your passport and travel documents separate from the originals, use hotel safes for valuables, and let a private driver or guide handle transport between cities rather than navigating unfamiliar routes independently at night. None of this is Jordan-specific advice so much as it's just good travel practice, and it applies whether the destination is Amman or anywhere else."
+      ),
+      p(
+        "Traveling with a private guide changes the calculation considerably, beyond just safety — it means someone who knows the current situation on the ground, handles logistics, and can adjust plans in real time if anything ever warranted it. For Petra and Wadi Rum specifically, a guide also means access to context and stories that a self-guided visit simply won't surface."
+      ),
+      faq(
+        [
+          {
+            question: "Is Amman safe to walk around at night?",
+            answer:
+              "Yes, in the areas travelers typically stay and visit — downtown, Rainbow Street, the Citadel area. Standard city sense applies: stick to busier, well-lit streets and use a taxi for longer distances after dark.",
+          },
+          {
+            question: "Is it safe to travel to Jordan right now?",
+            answer:
+              "Generally yes — Jordan's tourist sites continue to operate normally with heavy daily visitor traffic. Check your own government's current travel advisory before booking, since it reflects the most up-to-date official assessment.",
+          },
+          {
+            question: "Is Petra safe for solo travelers?",
+            answer:
+              "Yes. Petra sees constant tourist traffic, has a visible tourist police presence, and is one of the most consistently visited sites in the country without incident, whether visiting solo or with a group.",
+          },
+          {
+            question: "Do I need to worry about Jordan's borders with Syria or Israel?",
+            answer:
+              "No standard tourist itinerary goes anywhere near those border regions. Petra, Wadi Rum, Amman, and the Dead Sea all sit well within Jordan's stable interior.",
+          },
+        ],
+        "Jordan Safety FAQ"
+      ),
+      p(
+        "Jordan earns its reputation as one of the more relaxed countries to visit in the Middle East precisely because it has spent decades protecting that reputation. The headlines that give people pause are almost never about the places their itinerary will actually take them. Do the usual due diligence, check the current advisory, and go."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Plan a Private Jordan Trip",
+        body: "See how a guided Jordan itinerary covering Amman, Petra, Wadi Rum, and the Dead Sea comes together.",
+        buttonLabel: "Explore Jordan Trips",
+        buttonHref: "/tours/jordan-5-day-highlights",
+      },
     ],
   },
 
@@ -6505,18 +7165,102 @@ export const stories: Story[] = [
     publishedAt: "2026-02-09T09:00:00+02:00",
     primaryKeyword: "egyptian currency guide",
     secondaryKeywords: ["egyptian pounds", "money in egypt", "atms in egypt"],
+    relatedTours: toursBySlug("cairo-giza-nile-cruise-signature-trip", "8-day-essential-egypt-nile-cruise", "3-day-cairo-giza", "1-day-giza-tour"),
     seoTitle: "Egyptian Pounds: A Practical Money Guide | Egypt Eye",
-    seoDescription: "How money actually works in Egypt — cash vs. cards, ATMs, and what to budget for day-to-day spending.",
+    seoDescription: "How money actually works in Egypt — cash vs. cards, ATMs, exchange rates, and what to realistically budget for day-to-day travel spending.",
     body: [
-      p("Egypt runs largely on cash for everyday spending — tips, small purchases, market stalls, and many local restaurants — while hotels, larger restaurants, and most tour operators accept cards without issue."),
-      h2("Getting cash"),
+      p(
+        "Money in Egypt is less complicated than most first-time visitors expect, but it runs on a different rhythm than a lot of Western travel — more cash-dependent, more small-denomination-dependent, and with a few quirks around currency that are worth knowing before you land rather than figuring out at a Cairo ATM at midnight. This guide covers what actually works day to day: the currency itself, cash versus cards, getting money out, and what to budget cash for specifically."
+      ),
+      h2("How Egypt's Currency Works"),
+      p(
+        "The Egyptian pound (EGP), sometimes written as LE for livre égyptienne, is the official currency, and it's the one you'll be handling for the vast majority of purchases. Like most currencies without a fixed peg, its exchange rate against the dollar and euro moves over time, so it's worth checking a current rate shortly before your trip rather than relying on a number from months earlier — the practical effect of a shifting rate is usually in your favor as a foreign visitor, since Egypt has historically been an affordable destination relative to the quality of what you get."
+      ),
+      p(
+        "A few specific costs are priced or payable in foreign currency rather than pounds — most notably the Egypt entry visa, which can typically be paid in US dollars or euros at the airport or purchased online in advance, and some Nile cruise cabins and specialty excursions that are quoted in dollars for booking simplicity. Everything else, from a bottle of water to a taxi fare to a tip, is pounds."
+      ),
+      h2("Cash vs. Cards"),
+      p(
+        "Egypt runs largely on cash for everyday spending — tips, small purchases, market stalls in Khan el-Khalili, and many local restaurants — while hotels, larger restaurants, and most established tour operators accept cards without issue. The practical rule of thumb: assume card acceptance at anything with a fixed storefront and a price list, and assume cash everywhere else, particularly anything transactional and personal, like a tip to a guide or a small purchase from a street vendor."
+      ),
+      p(
+        "Visa and Mastercard are the most widely accepted card networks; American Express is accepted in fewer places, mostly larger hotels and international chains. It's worth notifying your bank of your travel dates before departure, as it is anywhere abroad, since an unexpected charge from Cairo is a classic trigger for a fraud hold on a card that otherwise works fine — and getting that resolved from a hotel room overseas is far more annoying than a two-minute call before you leave home."
+      ),
+      h2("Getting Cash"),
       ...bullets([
-        "ATMs are widely available in cities and tourist areas; airport ATMs are a reliable first stop on arrival",
-        "USD and EUR are easy to exchange at banks and official exchange offices",
-        "Keep a stock of smaller denomination notes for tips and small vendors — breaking large notes is often awkward",
+        "ATMs are widely available in cities and tourist areas; airport ATMs are a reliable first stop right after landing",
+        "USD and EUR are easy to exchange at banks and official exchange offices, and rates are generally fair and transparent at licensed locations",
+        "Keep a stock of smaller denomination notes for tips and small vendors — breaking a large note for a small purchase is often awkward and sometimes simply not possible on the spot",
+        "Avoid street-corner money changers outside official banks or exchange bureaus, however good the posted rate looks",
+        "Withdraw a reasonable amount rather than making frequent small withdrawals, since many Egyptian ATMs charge a flat fee per transaction regardless of amount",
       ]),
-      h2("What to budget cash for"),
-      p("Tips (baksheesh) are a genuine part of daily transactions in Egypt — for guides, drivers, hotel staff, and bathroom attendants at some sites. Carrying a mix of small notes solves most of this."),
+      h2("What to Budget Cash For"),
+      p(
+        "Tips, known locally as baksheesh, are a genuine part of daily transactions in Egypt, not an optional extra layered on top — for guides, drivers, hotel staff, felucca captains, and bathroom attendants at many sites, who often expect a small coin. Carrying a mix of small notes solves most of this before it becomes an awkward fumble for change in front of someone you're trying to thank properly."
+      ),
+      p(
+        "Beyond tipping, plan for cash at markets (where haggling is normal and cash gives you more room to negotiate than a card would), for smaller local restaurants and street food, for bathroom access at some public and tourist sites, and for any last-minute souvenir picked up outside a formal shop. A rough daily cash allowance covering tips, incidentals, and a market purchase or two tends to cover most travelers comfortably."
+      ),
+      callout(
+        "Break large notes at your hotel front desk or a bank before heading out for the day — it's a far more reliable way to get usable small bills than hoping a vendor can make change on the spot.",
+        { title: "A Simple Habit That Saves Friction", tone: "Info" }
+      ),
+      h2("Haggling and Market Pricing"),
+      p(
+        "Markets like Khan el-Khalili in Cairo run on negotiated prices, not fixed ones, and cash is what makes that negotiation work — a vendor has far less reason to move on price for a card payment than for cash in hand. The starting price a vendor quotes to an obvious tourist is rarely the price a local would pay, and that's expected on both sides; haggling here isn't confrontational, it's closer to a friendly, expected part of the transaction. A relaxed, good-humored back-and-forth gets better results than an aggressive one, and walking away, even briefly, is often what closes a fair price."
+      ),
+      p(
+        "For larger purchases — a rug, jewelry, a papyrus painting, anything with real value — it's worth taking your time, comparing a couple of shops rather than buying from the first one, and asking your guide for a sense of what a reasonable price actually looks like before you commit. Fixed-price government-affiliated shops exist for some categories, like certain papyrus and perfume outlets, and those are a useful reference point even if you end up buying elsewhere."
+      ),
+      h2("Keeping Your Money Secure"),
+      p(
+        "Split your cash rather than carrying it all in one place — some in a money belt or the hotel safe, a smaller working amount in a day bag or pocket. Hotel safes are standard in mid-range and upscale properties and are worth using for passports, spare cards, and any cash you're not spending that day. None of this reflects a particular risk specific to Egypt so much as ordinary travel sense, but it's easy to skip when you're excited to get out the door toward the Pyramids on your first morning."
+      ),
+      h2("Common Money Mistakes to Avoid"),
+      ...bullets([
+        "Arriving with no local currency at all and assuming cards will cover everything — they won't, especially for tips and markets",
+        "Not exchanging enough small denominations, then struggling to tip appropriately throughout the day",
+        "Using unofficial money changers for a marginally better rate and ending up shortchanged or with counterfeit notes",
+        "Forgetting that the visa fee may need to be paid in foreign currency, not pounds, depending on how it's arranged",
+        "Not telling your bank about travel dates, which can result in a card being declined mid-trip",
+        "Converting leftover pounds back to home currency at the airport at the last minute, where rates are consistently the worst of the trip",
+      ]),
+      faq(
+        [
+          {
+            question: "Should I exchange money before I arrive in Egypt or after?",
+            answer:
+              "Either works, but exchanging or withdrawing after arrival, at the airport or a bank in Cairo, generally gets a fairer rate than exchanging small amounts of Egyptian pounds abroad before departure, where rates tend to be worse.",
+          },
+          {
+            question: "Are US dollars accepted directly in Egypt?",
+            answer:
+              "In some tourist-facing contexts, yes — particularly for the entry visa and certain cruise or excursion bookings — but for day-to-day spending, pounds are what you'll actually be using.",
+          },
+          {
+            question: "Is it safe to use ATMs in Egypt?",
+            answer:
+              "Yes, particularly ATMs attached to bank branches, hotels, or airports. As anywhere, cover the keypad when entering your PIN and avoid ATMs that look tampered with or are in isolated locations.",
+          },
+          {
+            question: "How much cash should I carry per day?",
+            answer:
+              "Enough to cover tips, a market purchase or two, and incidentals — small, frequent withdrawals from ATMs as needed work better than carrying a large amount of cash for the whole trip.",
+          },
+        ],
+        "Egypt Money FAQ"
+      ),
+      p(
+        "None of this is complicated once you've done it once — a card for hotels and bigger restaurants, a stock of small pound notes for everything else, and a sensible cash withdrawal plan that avoids repeated ATM fees. Get that rhythm sorted in your first day or two, usually while a private guide or driver is already handling the bigger logistics of getting you from the airport to your first stop, and the rest of the trip runs on autopilot from there."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Planning an Egypt Trip?",
+        body: "Let us build a private Egypt itinerary around your dates and pace, with the logistics — including the practical stuff like this — already handled.",
+        buttonLabel: "Start Planning",
+        buttonHref: "/customize",
+      },
     ],
   },
   {
@@ -6534,18 +7278,98 @@ export const stories: Story[] = [
     publishedAt: "2026-02-10T09:00:00+02:00",
     primaryKeyword: "tipping in egypt",
     secondaryKeywords: ["baksheesh egypt", "how much to tip in egypt"],
-    seoTitle: "Tipping in Egypt: A Practical Guide | Egypt Eye",
-    seoDescription: "How tipping (baksheesh) actually works in Egypt — who to tip, roughly how much, and why it matters more here than in many destinations.",
+    relatedTours: toursBySlug("cairo-giza-nile-cruise-signature-trip", "8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor", "1-day-giza-tour"),
+    seoTitle: "Tipping in Egypt: A Practical Guide to Baksheesh | Egypt Eye",
+    seoDescription: "How tipping, or baksheesh, actually works in Egypt — who to tip, roughly how much, and why it functions differently than tipping elsewhere.",
     body: [
-      p("Tipping in Egypt, known locally as baksheesh, is woven more tightly into daily transactions than it tends to be in many other destinations. Many service-sector wages are built around the expectation of tips, which makes them a genuine part of how people earn a living, not an optional bonus."),
-      h2("Who to tip"),
+      p(
+        "Tipping in Egypt, known locally as baksheesh, is woven more tightly into daily life than it tends to be in most other destinations. It isn't the loosely optional gesture it can feel like elsewhere — many service-sector wages across the tourism industry are structured around the expectation of tips, which makes them a genuine part of how people earn a living rather than a bonus layered on top of an already sufficient salary. Understanding that context changes how the whole practice feels: less like an added cost, more like a normal, expected part of how transactions work here."
+      ),
+      h2("Why Baksheesh Works Differently Here"),
+      p(
+        "The word baksheesh covers more ground than the English word 'tip' does. It applies to the driver who's spent the day with you, but also to the man who unlocks a normally closed tomb chamber for a better look, the person who offers to take your photo at a viewpoint, or the attendant who hands you tissue in a bathroom that has no other staffing budget. In a country where tourism is one of the largest sources of income and formal wages in the sector can be modest, baksheesh functions as a real, meaningful supplement — not a courtesy extended to people who don't need it."
+      ),
+      p(
+        "None of this means tipping is a minefield of unspoken obligations. It means going in with small notes ready and a general sense of who falls into the expectation, which is what the rest of this guide covers."
+      ),
+      h2("Who to Tip"),
       ...bullets([
-        "Your driver and guide, typically per day of service",
-        "Hotel staff — porters, housekeeping",
-        "Restaurant waitstaff, on top of any service charge already included",
-        "Bathroom attendants at many public and tourist sites, who often expect a small coin",
+        "Your driver and guide, typically tipped per day of service — this is one of the most consistent and expected tips of an Egypt trip",
+        "Hotel staff — porters who handle luggage, housekeeping, and sometimes concierge staff who arrange something specific for you",
+        "Restaurant waitstaff, on top of any service charge already included on the bill, since that service charge doesn't always reach the staff directly",
+        "Bathroom attendants at many public and tourist sites, who often expect a small coin for toilet paper or simply for keeping the facility running",
+        "Felucca captains and crew on a Nile sail, especially for a longer or private sailing",
+        "Site guards or caretakers who unlock an extra chamber, point out a detail, or offer to take your photo at a good angle",
       ]),
-      callout("Carrying small Egyptian pound notes solves most tipping situations before they become awkward — you rarely want to be handing over a large note for a small tip.", { tone: "Info" }),
+      h2("How Much Is Reasonable"),
+      p(
+        "There's no single official rate, and anyone who quotes you an exact number with total confidence is guessing as much as anyone else — the honest answer is that it scales with the service and the person. A private guide or driver spending a full day with you, arranging logistics and sharing real expertise, sits at the higher end of the scale. A bathroom attendant or a quick photo favor sits at the very low end — a single small coin or note is genuinely sufficient and appreciated, not an insult."
+      ),
+      p(
+        "A useful mental model: think in terms of a modest daily amount for people who spend meaningful time with you (guides, drivers), and small, frequent coin-level tips for brief interactions (bathroom attendants, someone who opens a door). If you're traveling with a private tour operator, ask in advance what's typical for that specific itinerary — a good operator will tell you plainly rather than leave you guessing, and it removes any awkwardness on the day."
+      ),
+      callout(
+        "Carrying small Egyptian pound notes and coins solves most tipping situations before they become awkward — you rarely want to be handing over a large note for a small tip, and vendors and attendants often can't make change on the spot.",
+        { title: "The One Habit That Fixes Most of This", tone: "Info" }
+      ),
+      h2("Situations That Trip People Up"),
+      ...bullets([
+        "Restaurants that add a service charge automatically — it's still customary to leave something additional for the waitstaff directly, since the added charge doesn't always go to them",
+        "Group tours where tipping is sometimes pooled and collected by the tour leader — ask how it's structured rather than assuming you should also tip individuals separately",
+        "Cruise ships, where tipping for cabin staff and crew is often expected at the end of the sailing, sometimes with a suggested pooled amount posted near the front desk",
+        "Persistent requests for baksheesh from people who provided no real service — a polite decline is completely normal and doesn't require an explanation",
+      ]),
+      h2("Tipping at Specific Experiences"),
+      p(
+        "Certain Egypt experiences come with their own small tipping customs that are worth knowing before you're in the moment. A hot-air balloon flight over Luxor's West Bank typically involves a tip for the pilot and ground crew at the end of the flight, especially if the landing and champagne toast go smoothly. Camel and horse handlers at the Giza Pyramids expect a tip for the ride itself, separate from whatever fee was already negotiated or included — and it's worth agreeing on that fee clearly before mounting, since ambiguity here is a common source of tension for first-time visitors. Sound and light shows, museum guards who point out a detail, and site security who wave you toward a good photo spot all fall into the small-coin category."
+      ),
+      p(
+        "On a Nile cruise, tipping tends to be more structured — many ships suggest a per-day amount for the general cabin and dining crew, collected in a pooled box near the end of the sailing, plus a separate, smaller tip for the cruise director or your personal butler if the ship offers that level of service. Your cruise operator or private guide will typically walk you through the specifics before the final day, so it's rarely something you need to work out on your own from scratch."
+      ),
+      h2("A Few Cultural Notes"),
+      p(
+        "Hospitality runs deep in Egyptian culture more broadly, well beyond the tourism industry, and baksheesh sits inside that same tradition rather than apart from it — a small exchange that acknowledges effort and builds goodwill, not unlike offering tea to a guest. Egyptians themselves tip within their own daily lives, for parking attendants, delivery, and countless small services, so as a visitor you're not navigating a system invented for tourists. You're participating in a norm that predates tourism by a long way, which is part of why skipping it entirely tends to read as more than just a missed courtesy."
+      ),
+      h2("It's Not Just Transactional"),
+      p(
+        "There's a warmth to how tipping functions in Egypt that's easy to miss if you only think of it as a financial obligation. A tip is often also a small acknowledgment — of someone's knowledge, their effort, the extra minute they took to make sure you saw something properly. Guides and drivers who do this work well take real pride in it, and a tip offered with a genuine thank-you lands very differently than one handed over silently and quickly. It costs nothing extra to make that small exchange a warm one."
+      ),
+      faq(
+        [
+          {
+            question: "Is tipping mandatory in Egypt?",
+            answer:
+              "Not legally mandatory, but functionally expected across the tourism sector. Skipping it entirely, especially for guides, drivers, and hotel staff, is noticeably out of step with local norms.",
+          },
+          {
+            question: "Should I tip in Egyptian pounds or US dollars?",
+            answer:
+              "Egyptian pounds are generally preferred and easier for recipients to use immediately, though US dollars are widely accepted as tips too. Small denominations matter more than the currency itself.",
+          },
+          {
+            question: "Do I need to tip if a service charge is already on the bill?",
+            answer:
+              "It's still customary to leave something for waitstaff directly, since a service charge doesn't always reach staff the way a direct tip does.",
+          },
+          {
+            question: "How do I tip a private guide for a multi-day trip?",
+            answer:
+              "Typically as a lump sum at the end of the trip, or per day if you prefer — either works, and a reputable tour operator can advise on what's standard for your specific itinerary.",
+          },
+        ],
+        "Tipping in Egypt FAQ"
+      ),
+      p(
+        "Baksheesh can feel like one more thing to track on a trip that already involves a lot of logistics, but in practice it becomes second nature within the first day or two — a small note here, a coin there, a genuine thank-you attached to each one. Go in with a stock of small bills and a bit of context for why it matters here, and it stops being a source of anxiety and becomes just another small, human part of traveling through Egypt, the same way remembering to say shukran does."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Travel With Guides Who Get It Right",
+        body: "Our private guides and drivers make trips like this feel effortless — including the small stuff like this.",
+        buttonLabel: "Start Planning",
+        buttonHref: "/customize",
+      },
     ],
   },
   {
@@ -6563,16 +7387,97 @@ export const stories: Story[] = [
     publishedAt: "2026-02-11T09:00:00+02:00",
     primaryKeyword: "sim card egypt",
     secondaryKeywords: ["internet in egypt", "egypt sim card tourist"],
+    relatedTours: toursBySlug("cairo-giza-nile-cruise-signature-trip", "8-day-essential-egypt-nile-cruise", "white-desert-safari-bahariya", "1-day-giza-tour"),
     seoTitle: "SIM Cards & Staying Connected in Egypt | Egypt Eye",
-    seoDescription: "How to get a local SIM in Egypt, what coverage is like outside major cities, and Wi-Fi reliability at hotels.",
+    seoDescription: "How to get a local SIM or eSIM in Egypt, what coverage is really like outside major cities, and how reliable hotel Wi-Fi actually is.",
     body: [
-      p("A local SIM is the simplest way to stay connected in Egypt, and it's easy to buy — kiosks at Cairo International Airport sell tourist SIMs from the major carriers (Vodafone, Orange, Etisalat) with data packages ready to go, and you'll need your passport to register it."),
+      p(
+        "Staying connected in Egypt is easier than a lot of first-time visitors assume, but the details matter more than they do in a lot of destinations — coverage varies sharply between cities and desert, and knowing what to expect before you land saves an afternoon fumbling with carrier menus in a language you may not read. This guide covers getting a SIM or eSIM, what coverage actually looks like across the places most itineraries visit, and how to think about Wi-Fi versus mobile data for the trip overall."
+      ),
+      h2("Getting a Local SIM"),
+      p(
+        "A local SIM is the simplest way to stay connected, and it's genuinely easy to buy. Kiosks at Cairo International Airport sell tourist SIMs from the major carriers — Vodafone, Orange, and Etisalat — with data packages ready to activate on the spot, and staff at these kiosks are used to travelers and typically speak enough English to walk you through it. You'll need your passport to register the SIM, which is standard practice across Egypt and most of the region, so keep it accessible rather than buried in checked luggage."
+      ),
+      p(
+        "All three major carriers offer broadly similar coverage and pricing for tourist data packages, so the choice between them rarely matters much — pick whichever kiosk has the shortest line, or ask your driver or guide which one they use, since local recommendations tend to reflect real-world performance better than marketing claims. Packages are usually available in a range of data sizes and validity periods, so match it to your trip length rather than guessing."
+      ),
+      h2("Or Skip the Kiosk: eSIMs"),
+      p(
+        "If you're only visiting for a short trip, or you'd rather have data working the moment you land rather than after finding a kiosk, an eSIM purchased before departure is a straightforward alternative. Several international eSIM providers cover Egypt specifically, and setup takes a few minutes through an app before you even leave home. The tradeoff is usually price — physical SIMs bought at the airport tend to be cheaper for longer stays and often come with more generous data allowances, so for a longer Egypt and Jordan trip, a physical SIM after landing is usually the better value."
+      ),
+      h2("What Coverage Actually Looks Like"),
       ...bullets([
-        "Coverage is strong in Cairo, Luxor, Aswan, and Red Sea resort towns",
-        "Coverage thins out in the deep desert (White Desert, parts of Sinai) — don't rely on it there",
-        "Hotel Wi-Fi is generally reliable in mid-range and upscale properties, less consistent at budget options",
+        "Coverage is strong and reliable in Cairo, Giza, Luxor, Aswan, and the Red Sea resort towns like Hurghada and Sharm El Sheikh",
+        "Alexandria and the Nile Delta region are also well covered, as is Amman and Jordan's main tourist corridor if your trip continues across the border",
+        "Coverage thins out noticeably in the deep desert — the White Desert, Siwa Oasis, and remote stretches of Sinai away from the coast — so don't count on it there",
+        "Even where signal exists in remote areas, expect slower speeds than in the cities; treat any connectivity out there as a bonus, not a given",
+        "On a Nile cruise, signal generally holds along the river corridor between Luxor and Aswan, though it can dip briefly in quieter stretches",
       ]),
-      p("If you're only visiting for a short trip, an eSIM purchased before arrival is another straightforward option, though physical SIMs from the airport are usually cheaper for longer stays."),
+      callout(
+        "Download offline maps, translation packs, and anything else you might need before heading into the desert or Sinai's interior — don't assume you'll be able to pull them up once you're out there.",
+        { title: "Prepare Before You Lose Signal", tone: "Safety" }
+      ),
+      h2("Hotel and Resort Wi-Fi"),
+      p(
+        "Hotel Wi-Fi is generally reliable in mid-range and upscale properties across Cairo, Luxor, Aswan, and the Red Sea coast, and most hotels in this category include it at no extra charge. It tends to be less consistent at budget properties and in more remote desert camps, where bandwidth is naturally more limited by the location itself. Nile cruise ships typically offer Wi-Fi as well, though signal quality can vary with the boat's position on the river, and it's rarely fast enough for heavy video calls — treat it as sufficient for messaging and email rather than a home-office replacement."
+      ),
+      p(
+        "Desert camps, including overnight stays in Wadi Rum on the Jordan side of a combined itinerary, are the one context where you should plan for genuinely limited or no connectivity. Most travelers find this is actually part of the appeal rather than a drawback — a night under a full desert sky is arguably better experienced without a phone lighting up every few minutes."
+      ),
+      h2("What You'll Actually Use Data For"),
+      p(
+        "Most travelers underestimate how much they'll actually reach for data on an Egypt trip, and it's worth planning a package generous enough to cover it. Real-time translation for menus and signage, navigation apps for walking around Cairo or Alexandria independently, staying in touch with a driver or guide over WhatsApp, and uploading photos and video from the day — all of that adds up faster than a short weekend trip elsewhere might. A mid-size data package, rather than the smallest option a kiosk offers, tends to be worth the small extra cost for a trip of a week or more."
+      ),
+      p(
+        "It's also worth downloading offline Google Maps for Cairo, Luxor, and Aswan before you fly, even if you expect to have data throughout. It's a useful backup for the rare dead zone, and offline maps load faster in general than pulling live data over a slower connection, which matters more than it sounds like when you're trying to confirm a turn from the back of a taxi weaving through Cairo traffic."
+      ),
+      h2("Choosing a Data Package"),
+      p(
+        "Tourist SIM packages at the airport kiosks are usually tiered by data allowance and validity period — a few days, a week, two weeks, and so on — and staff will help you pick based on how long you're staying and what you plan to do with it. If your trip includes both Egypt and Jordan, or continues on to another country afterward, ask specifically whether the package includes any regional roaming, since some carrier promotions do and it can save buying a second SIM the moment you cross a border."
+      ),
+      h2("A Few Practical Tips"),
+      ...bullets([
+        "Set your phone's data roaming settings correctly before you land, so you're not accidentally paying international roaming rates from your home carrier",
+        "Keep a small paper note of your local number in case you need to give it to a driver, hotel, or tour operator",
+        "WhatsApp is the default communication tool for most tour operators and drivers in Egypt — install it before your trip if you don't already have it, since it's how day-of logistics usually get confirmed",
+        "A portable power bank is worth packing alongside your SIM plan, since a day of navigation, photos, and messaging drains a phone faster than usual, and outlets aren't always within easy reach mid-tour",
+      ]),
+      faq(
+        [
+          {
+            question: "Can I use my home SIM with roaming instead of buying a local one?",
+            answer:
+              "You can, but international roaming rates are almost always significantly more expensive than a local tourist SIM or eSIM, especially for data-heavy use like maps and photo uploads.",
+          },
+          {
+            question: "Is Wi-Fi reliable enough for video calls in Egypt?",
+            answer:
+              "In most mid-range and upscale hotels, yes, though quality can dip during peak hours. On Nile cruises and in desert camps, expect it to be less consistent and plan accordingly.",
+          },
+          {
+            question: "Do I need a SIM in Jordan too if my trip includes both countries?",
+            answer:
+              "Yes, Jordanian carriers are separate from Egyptian ones, so you'll need a new SIM or a regional eSIM plan when you cross over, available at Amman's airport in the same way as Cairo's.",
+          },
+          {
+            question: "Will my phone even work in Egypt technically?",
+            answer:
+              "Almost certainly, as long as it's unlocked and supports the local network bands, which is standard for most phones sold internationally in the last several years. If your phone is locked to a home carrier, check with them before you travel — an eSIM is often the easier workaround in that case.",
+          },
+        ],
+        "Staying Connected FAQ"
+      ),
+      p(
+        "None of this needs much advance planning — a SIM at the airport kiosk or an eSIM set up before you fly, both take a few minutes and solve nearly everything for the rest of the trip. The only real adjustment is mental: accept that the desert and the odd stretch of Sinai will disconnect you for a while, and treat that as one of the more welcome parts of the itinerary rather than an inconvenience to route around. Some of the best moments of an Egypt trip — a felucca sail at sunset, the quiet of a desert camp at night — are better without a screen in hand anyway."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Planning an Egypt Trip?",
+        body: "We handle the logistics — including the practical details like this — so you can focus on the trip itself.",
+        buttonLabel: "Start Planning",
+        buttonHref: "/customize",
+      },
     ],
   },
   {
@@ -6590,18 +7495,97 @@ export const stories: Story[] = [
     publishedAt: "2026-02-12T09:00:00+02:00",
     primaryKeyword: "what to wear in egypt temples",
     secondaryKeywords: ["mosque dress code egypt", "egypt dress code"],
-    seoTitle: "What to Wear at Egypt's Temples & Mosques | Egypt Eye",
-    seoDescription: "Dress code guidance for ancient temples, mosques, and churches in Egypt — what's actually required versus general courtesy.",
+    relatedTours: toursBySlug("islamic-coptic-cairo-walking-tour", "st-catherine-monastery-sinai-tour", "egyptian-museum-coptic-cairo-tour", "mount-sinai-sunrise-hike"),
+    seoTitle: "Egypt Dress Code: Temples, Mosques & Churches | Egypt Eye",
+    seoDescription: "Dress code guidance for ancient temples, working mosques, and Coptic churches in Egypt — what's actually required versus general courtesy.",
     body: [
-      p("Ancient temples (Karnak, Luxor Temple, Abu Simbel) have no formal dress code, though lightweight, sun-covering clothing is more about the heat than any rule. Active mosques and churches are different — modest dress is expected, and some ask for it explicitly."),
-      h2("For working mosques"),
+      p(
+        "Egypt mixes three very different categories of site in a single trip, and each one carries a different, sometimes unspoken, set of expectations around what to wear. Ancient temples like Karnak and Abu Simbel are archaeological sites, not places of active worship, and have no formal dress code at all. Working mosques and churches are a different matter entirely — they're places people actively pray in today, and modest dress there is a real expectation, occasionally an enforced one. Getting this right isn't complicated, but it's worth knowing before your first morning out, rather than working it out on the steps of a mosque with a scarf-less head."
+      ),
+      h2("Ancient Temples: No Formal Dress Code, But..."),
+      p(
+        "Karnak, Luxor Temple, the Valley of the Kings, Abu Simbel — none of these enforce a dress code, because they're monuments rather than active religious spaces. What actually governs what you should wear here is the climate, not custom: Upper Egypt's heat is intense for a large part of the year, and lightweight, breathable, sun-covering clothing is about comfort and sun protection far more than any rule. Loose long sleeves and lightweight trousers or a long skirt tend to hold up better across a full day of walking between monuments than shorts and a tank top, even setting cultural considerations aside entirely."
+      ),
+      p(
+        "That said, a small amount of general modesty is still worth keeping in mind at these sites, mainly because Egypt overall leans more conservative than a beach resort, and you'll be moving between temple visits and towns, markets, and restaurants where locals live their everyday lives. Nothing forces the issue at Karnak, but showing up in what you'd wear to a Red Sea beach club feels noticeably out of step once you're standing in a market or a local restaurant afterward."
+      ),
+      h2("Working Mosques: What's Actually Expected"),
+      p(
+        "Mosques that see regular tourist visits — the Mohamed Ali Mosque and Sultan Hassan Mosque in Cairo among the most visited — are still active places of worship, and the expectations there are more concrete than at an ancient temple. This isn't a matter of personal preference or vague courtesy; it's a real, generally enforced standard, and staff at the entrance will often turn away or offer a covering to visitors who arrive underdressed."
+      ),
       ...bullets([
-        "Shoulders and knees covered, for both men and women",
-        "Women typically need a headscarf — many mosques that see tourist visits keep spares at the entrance",
-        "Shoes come off before entering the prayer hall",
+        "Shoulders and knees covered, for both men and women — this is the baseline expectation at every working mosque",
+        "Women typically need a headscarf covering the hair; many mosques that regularly host tourist visits keep spares available at the entrance for exactly this reason",
+        "Loose, non-form-fitting clothing is preferred over anything tight, for both men and women",
+        "Shoes come off before entering the prayer hall itself — carrying a small bag for your shoes makes this considerably less awkward",
+        "Fridays are the main weekly prayer day, and some mosques restrict or limit tourist visits around midday prayer time specifically",
       ]),
-      h2("For churches (Coptic Cairo, monasteries)"),
-      p("Similar modesty applies — covered shoulders and knees is the safe default. St. Catherine's Monastery in Sinai, an active monastery rather than a museum, is stricter about this than most tourist sites."),
+      callout(
+        "Pack a lightweight scarf in your day bag any day your itinerary includes a mosque visit — even where spares are available at the entrance, having your own means one less thing to coordinate, and it doubles as sun protection for the rest of the day.",
+        { title: "The One Thing Worth Carrying", tone: "Info" }
+      ),
+      h2("Churches and Monasteries"),
+      p(
+        "Coptic Cairo's cluster of historic churches — the Hanging Church, Saints Sergius and Bacchus, the Coptic Museum grounds — expects the same general modesty as mosques do: shoulders and knees covered is the safe, reliable default. These sites see a steady stream of both tourists and worshippers, and the atmosphere tends to be a little more relaxed about enforcement than a working mosque, but dressing modestly is still the right call and the respectful one, regardless of enforcement."
+      ),
+      p(
+        "St. Catherine's Monastery, tucked at the base of Mount Sinai, is stricter about this than most tourist sites in Egypt, ancient temple or otherwise. It's a living, functioning Greek Orthodox monastery, not a museum, with monks still resident and a centuries-old rhythm of daily life and prayer that visitors are guests within, not spectators of. Long trousers or skirts and covered shoulders are expected of everyone, and arriving underdressed here is more likely to actually get you turned away than at almost any other site on a typical Egypt itinerary — worth remembering if a sunrise hike up Mount Sinai is part of your plan, since the temptation to dress for the hike alone is real."
+      ),
+      h2("Beyond Religious Sites: Everyday Modesty"),
+      p(
+        "Once you step outside temples and museums into everyday Cairo, Luxor, or Aswan, there's no legal dress requirement for tourists, but a bit of general modesty makes daily life noticeably smoother, particularly for women. Egypt is a predominantly conservative Muslim-majority country, and while resort areas along the Red Sea and hotel pools operate on their own more relaxed norms, walking through a city market or a residential neighborhood in very short shorts or a low-cut top tends to draw more attention than most travelers want. This isn't a rule anyone will enforce — it's simply a read on the room that makes the day easier."
+      ),
+      p(
+        "A practical middle ground works well across almost the whole trip: knee-length or longer bottoms, tops that cover the shoulders, and something breathable enough for the heat. It's the same silhouette that works at ancient temples anyway, so packing for religious sites and packing for everyday city walking largely overlap — one wardrobe covers both without much extra thought."
+      ),
+      h2("A Practical Packing List"),
+      ...bullets([
+        "A lightweight, opaque scarf or shawl — doubles as a headscarf, a shoulder cover, and sun protection in one item",
+        "At least one pair of loose, long trousers or a long skirt that pack down small, even on a hot-weather trip",
+        "A couple of short-sleeve or three-quarter-sleeve tops that can be layered under a scarf if shoulders need covering",
+        "Slip-on shoes or sandals — makes the shoes-off requirement at mosques far less of a production",
+        "A small tote or bag specifically for carrying shoes once they're off, so you're not holding them awkwardly through the visit",
+      ]),
+      h2("Balancing Heat and Modesty"),
+      p(
+        "The genuine challenge in Egypt, especially between late spring and early autumn, is dressing modestly without overheating, and it's a solvable one rather than a real conflict. Natural fabrics — linen, lightweight cotton — breathe far better than synthetic blends at covering the same amount of skin, and loose, flowing cuts move air around the body in a way that tight, covering clothing doesn't. A wide-brimmed hat and a scarf that can shift between headscarf, shoulder cover, and neck shade as needed does more practical work in a single item than most people expect from packing one extra thing."
+      ),
+      faq(
+        [
+          {
+            question: "Do men need to cover their legs at mosques and churches too?",
+            answer:
+              "Yes — the shoulders-and-knees standard applies to men as well as women. Shorts are generally not appropriate at working mosques or at St. Catherine's Monastery specifically.",
+          },
+          {
+            question: "Do I need a headscarf to visit the Egyptian Museum or ancient temples?",
+            answer:
+              "No — museums and ancient temple sites like Karnak, Luxor Temple, and Abu Simbel have no dress code requiring a headscarf, since they aren't active places of worship.",
+          },
+          {
+            question: "What happens if I show up underdressed at a mosque?",
+            answer:
+              "Most mosques that see regular tourist traffic keep spare scarves or wraps at the entrance and will offer one rather than turn you away outright, though some stricter or less tourist-oriented mosques may decline entry.",
+          },
+          {
+            question: "Is the dress code stricter in Cairo than in Luxor or Aswan?",
+            answer:
+              "Not meaningfully — the same general standards apply nationwide at working religious sites. What varies more is the setting: a resort town on the Red Sea is more relaxed overall than a market street in central Cairo.",
+          },
+        ],
+        "Dress Code FAQ"
+      ),
+      p(
+        "None of this requires an overhauled wardrobe — one scarf, one pair of loose trousers, and a general instinct to cover shoulders and knees at anything actively religious carries you through the whole trip. Ancient temples give you far more room to breathe, literally, and the sites that do have real expectations make them easy enough to meet once you know what they are."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Explore Cairo's Religious Heritage",
+        body: "Walk through Islamic Cairo and Coptic Cairo with a private guide who knows exactly what each site expects.",
+        buttonLabel: "See the Walking Tour",
+        buttonHref: "/tours/islamic-coptic-cairo-walking-tour",
+      },
     ],
   },
   {
@@ -6612,7 +7596,7 @@ export const stories: Story[] = [
     category: "Travel Guides",
     tags: ["Cairo", "Trip Planning"],
     author: editorialTeam,
-    excerpt: "Cairo's traffic has a reputation for a reason — here's what actually works for getting around.",
+    excerpt: "Cairo's traffic has a reputation for a reason — here's what actually works for getting around, from ride-hailing apps and the metro to why most sightseeing days run on a private driver.",
     imageLabel: "Cairo Skyline",
     imageTone: "giza",
     image: "/photos/pexels-35549688.jpg",
@@ -6620,17 +7604,46 @@ export const stories: Story[] = [
     publishedAt: "2026-02-13T09:00:00+02:00",
     primaryKeyword: "getting around cairo",
     secondaryKeywords: ["cairo traffic", "cairo metro", "cairo transport"],
-    seoTitle: "Getting Around Cairo: Traffic, Taxis & Metro | Egypt Eye",
-    seoDescription: "How to actually get around Cairo — traffic patterns, ride-hailing apps, the metro, and why a private driver solves most of it.",
+    relatedTours: toursBySlug("3-day-cairo-giza", "1-day-giza-tour", "islamic-coptic-cairo-walking-tour", "cairo-by-night-tour"),
+    seoTitle: "Getting Around Cairo: Traffic, Taxis & the Metro",
+    seoDescription: "How to actually get around Cairo — traffic patterns, Uber and Careem, the metro, taxis, and why a private driver solves most of it at once.",
     body: [
-      p("Cairo's traffic is genuinely intense, and it doesn't follow the rush-hour logic you might expect elsewhere — congestion can hit at almost any hour, and travel times between two points can vary wildly depending on when you leave."),
+      p("Cairo has around 20 million people living in a metro area that was never built for this many cars, and the traffic reflects that. It's one of the first things visitors notice, and one of the first things they ask about once they've landed. This guide walks through what actually works for getting around — ride-hailing apps, the metro, taxis, and why nearly every well-run Cairo tour is built around a private driver rather than any of the above. Get this part sorted and the rest of your Cairo days go a lot more smoothly."),
+      h2("Why Cairo Traffic Doesn't Follow the Rules You're Used To"),
+      p("In most cities, traffic follows a rhythm — heavy during the morning and evening commute, lighter midday and late at night. Cairo doesn't really work that way. Congestion can hit at 11 AM or 9 PM as easily as at 8 AM, and a route that takes twenty minutes on a Tuesday can take an hour on a Thursday for no reason anyone can quite explain. Lane markings are more of a suggestion than a rule, and a road built for three lanes of traffic often carries five. None of this is unsafe in the way it looks from the back seat — Cairo drivers are, on the whole, remarkably skilled at close-quarters maneuvering — but it takes some getting used to as a passenger."),
+      p("The practical upshot is that travel-time estimates from a map app are a starting point, not a guarantee. If you have a flight to catch or a timed entry booked somewhere — the Egyptian Museum, a sound and light show — build in real buffer. Forty-five minutes to an hour of slack for anything crossing the city is reasonable, more around the Nile bridges during peak periods."),
+      h2("Ride-Hailing Apps: Uber and Careem"),
+      p("Uber and Careem both operate widely in Cairo and are the easiest way to get around independently. Prices are fixed at booking, which removes the negotiation that comes with flagging a taxi on the street, and both apps work fine in English. A few things worth knowing: drivers sometimes call to confirm your exact pickup point, since Cairo's street numbering and building layout can be confusing even with an accurate GPS pin. It helps to reference a nearby landmark — a hotel, a well-known café — rather than relying on the address alone. Traffic circles and one-way systems near the Nile can also mean your driver takes what looks like a strange route. That's usually the actual fastest way through, not a scenic detour."),
+      p("Rides within a single neighborhood are inexpensive; longer cross-city trips, say from Downtown to Giza, cost more but are still reasonable by international standards. These apps are genuinely good for point-to-point trips — dinner, a specific shop, back to your hotel — but they're less suited to a day with five stops, since you're re-booking, and re-explaining your pickup point, at every single one."),
+      h2("The Cairo Metro"),
+      p("Cairo's metro is fast, cheap, and — this surprises people — genuinely well run. It's one of the oldest metro systems in Africa, with three operating lines, and during rush hour it will get you across the city faster than any car will. There's a designated women-only car, usually the front two, which most female travelers find comfortable, though it does get crowded at peak times like anywhere else."),
+      p("The catch for tourists is that the metro doesn't reach most of what you're actually here to see. There's no station near the Pyramids, none convenient to Islamic Cairo's mosques and markets, and the stops serving the Egyptian Museum and Downtown, while useful, drop you into dense foot traffic rather than at a site entrance. It's a solid option if you're staying centrally and want to cover ground along Line 1 or 2 without hassle. It's not a realistic way to structure a full sightseeing day."),
+      h2("Taxis"),
+      p("Cairo's white cabs technically run on meters, though in practice many drivers prefer to negotiate a fare upfront with visitors. If you do flag a street taxi, agree on the price before getting in, and have a rough sense of a fair rate in mind — hotel doormen and concierge staff will usually give you an accurate number if you ask. Taxis hailed directly from a hotel stand tend to run at inflated tourist rates; walking a block or two and flagging one on the street, or just using a ride-hailing app instead, both avoid this."),
+      h2("A Private Driver: The Standard Approach"),
+      p("For anyone doing actual sightseeing — Giza and Saqqara one day, Islamic and Coptic Cairo the next, the Egyptian Museum and a felucca sail on a third — a private driver for the day is what almost every well-run Cairo itinerary is built around, and it's the model we use across our own tours. It removes every piece of the friction above at once: no fare negotiation, no re-booking between stops, no explaining a pickup point five times a day, and no risk of a ride-hailing app struggling to find you outside a monument in an area with patchy GPS. Your driver waits at each site, adjusts if you want an extra half hour somewhere, and navigates the specific traffic patterns of that day rather than whatever a map app guessed that morning."),
+      callout("Crossing the street in Cairo takes some nerve the first time. Traffic doesn't reliably stop for pedestrians, and crosswalks are more decorative than functional. The trick locals use: walk at a steady, predictable pace and let drivers judge around you, rather than stopping and starting. Crossing alongside an Egyptian who's already stepping into traffic is the easiest way to learn the rhythm.", { title: "How to Actually Cross the Street", tone: "Safety" }),
+      h2("Getting To and From Cairo International Airport"),
+      p("Cairo International Airport (CAI) sits northeast of the city center, and the drive into Downtown or Giza varies enormously depending on time of day — anywhere from about 30 minutes with no traffic to well over an hour and a half during a bad stretch. If your trip includes an airport transfer, arranging it in advance through your hotel or tour operator, rather than relying on the taxi stand outside arrivals, saves both money and a fair amount of stress on arrival day, especially after a long flight."),
+      h2("A Few More Practical Notes"),
       ...bullets([
-        "Ride-hailing apps (Uber, Careem) are widely used and generally reliable for point-to-point trips",
-        "The Cairo Metro is fast and cheap but doesn't reach most tourist sites directly",
-        "A private driver removes the guesswork entirely — the standard approach for multi-stop sightseeing days",
-        "Crossing the street as a pedestrian takes some nerve; watch how locals do it before attempting it yourself",
+        "Seatbelts exist in the back seat of most cars but aren't always easy to find or expected to be used — ask your driver if you'd like one buckled",
+        "Friday mornings are noticeably quieter, since Friday is the start of the weekend in Egypt and many people are still off the roads",
+        "Bridges over the Nile, especially near Zamalek and Downtown, back up badly in early evening — worth avoiding if your schedule allows",
+        "If you're staying in Giza or near the Pyramids rather than Downtown, factor extra time for almost any trip into the city center",
       ]),
-      p("For a short trip focused on sightseeing, a private vehicle for the day is almost always the simplest option — it removes the need to negotiate fares, navigate unfamiliar routes, or plan around traffic."),
+      faq(
+        [
+          { question: "Is Uber reliable in Cairo?", answer: "Yes — both Uber and Careem work well and are widely used by tourists and locals alike. Fixed pricing at booking and in-app payment make them one of the simplest options for independent point-to-point trips." },
+          { question: "Do Cairo taxis use meters?", answer: "Officially yes, though many drivers prefer to negotiate a fare with visitors rather than run the meter. Agreeing on a price before you get in avoids any confusion at the end of the ride." },
+          { question: "How long does it take to get from Giza to Downtown Cairo?", answer: "Roughly 30 to 45 minutes with light traffic, but well over an hour during a bad patch — Cairo traffic doesn't follow a predictable rush-hour pattern, so it's worth building in buffer either direction." },
+          { question: "Is the Cairo Metro safe and easy for tourists to use?", answer: "It's safe, cheap, and easy to navigate, with signage in English as well as Arabic. Its main limitation for visitors is coverage — it doesn't reach Giza, Islamic Cairo, or most other major sightseeing areas directly." },
+          { question: "Should I rent a car and drive myself in Cairo?", answer: "Most visitors don't, and we'd steer you away from it too. Between the lack of consistent lane discipline, unfamiliar road patterns, and the mental load of navigating a new city on top of driving, a private driver is both less stressful and often not much more expensive once you account for parking." },
+        ],
+        "Getting Around Cairo: Frequently Asked Questions"
+      ),
+      p("None of this is meant to make Cairo sound intimidating — millions of people navigate this city every single day, and once you understand the logic, or lack of it, it stops feeling chaotic and starts feeling like its own kind of order. The easiest way to spend your time actually enjoying Cairo, rather than managing how you get around it, is to hand the driving to someone who does it every day."),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Skip the Traffic Logistics", body: "Our Cairo and Giza tours run on a private driver and guide from the moment you land, so getting around is never something you have to think about.", buttonLabel: "See Cairo Tours", buttonHref: "/tours/3-day-cairo-giza" },
     ],
   },
   {
@@ -6641,25 +7654,60 @@ export const stories: Story[] = [
     category: "Travel Guides",
     tags: ["Trip Planning"],
     author: editorialTeam,
-    excerpt: "How travelers actually move between Egypt's major cities, and which option fits which trip.",
+    excerpt: "How travelers actually move between Egypt's major cities, and which option — a short domestic flight or the overnight sleeper train — fits which kind of trip.",
     imageLabel: "Nile Valley",
     imageTone: "nile",
     image: "/photos/pexels-5265481.jpg",
     publishedAt: "2026-02-14T09:00:00+02:00",
     primaryKeyword: "cairo to luxor flight or train",
     secondaryKeywords: ["egypt domestic flights", "egypt sleeper train"],
-    seoTitle: "Domestic Flights vs. Trains in Egypt | Egypt Eye",
-    seoDescription: "Flying versus taking the train between Cairo, Luxor, and Aswan — travel times, comfort, and which suits which itinerary.",
+    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor", "4-day-nile-cruise-luxor-aswan", "epic-8-day-egypt-escapade"),
+    seoTitle: "Domestic Flights vs. Trains in Egypt: Which to Pick",
+    seoDescription: "Flying versus the overnight sleeper train between Cairo, Luxor, and Aswan — real travel times, comfort tradeoffs, and which suits which itinerary.",
     body: [
-      p("Cairo, Luxor, and Aswan are connected by both domestic flights and an overnight sleeper train, and which makes sense depends mostly on how much time you have."),
-      h2("Domestic flights"),
-      p("Roughly an hour in the air, versus most of a day (or night) by train or road. For travelers with a fixed number of days, flying is the standard choice — it's what most of our own multi-city itineraries are built around."),
-      h2("The overnight sleeper train"),
-      p("An overnight cabin between Cairo and Luxor/Aswan doubles as both transport and a night's accommodation — a genuinely different, slower-paced way to cover the distance, and one some travelers specifically seek out for the experience itself rather than the efficiency."),
+      p("Most Egypt itineraries eventually run into the same question: how do you actually get from Cairo down to Luxor and Aswan, or back again? The distances are real — Aswan sits roughly 900 kilometers south of Cairo — and covering them is usually the biggest logistics decision in planning a multi-city trip. Two options handle nearly all of it: a short domestic flight, or an overnight sleeper train. Here's what each one actually involves, and which fits which kind of trip."),
+      h2("Domestic Flights"),
+      p("Flying is fast — roughly an hour in the air between Cairo and Luxor, or Cairo and Aswan — and it's the backbone of most multi-city Egypt itineraries, including our own. EgyptAir and a couple of smaller domestic carriers run multiple flights a day on these routes, so schedules are generally flexible. For travelers working with a fixed number of days, which is most people, flying is the default choice — it turns what would be an eight-to-ten-hour overland trip into an hour in the air plus the usual airport time on either end."),
+      p("The tradeoff is that flying is just transport. You land, and that's it — no scenery, no sense of covering ground, and Egypt's domestic terminals, while functional, aren't going to be a highlight of the trip either way. For an itinerary built around seeing as much as possible in a set window, that's a fair trade."),
+      h2("The Overnight Sleeper Train"),
+      p("The alternative is an overnight sleeper cabin between Cairo and Luxor or Aswan, which does something a flight can't: it doubles as a night's accommodation. You board in the evening, sleep more or less through the journey, and step off the next morning already in Upper Egypt, having used a night you'd otherwise have spent in a hotel bed. The pace is slower and the cabins are basic rather than luxurious, but there's a genuine appeal to it — watching the Nile Valley go by at dawn, arriving into Luxor or Aswan the way travelers have for over a century, instead of through an airport terminal."),
+      p("This isn't the choice for everyone. The train takes roughly ten to twelve hours, schedules can run late, and a light sleeper will feel it the next day. It suits travelers with some flexibility built into their schedule, who see the journey itself as part of the experience — not travelers trying to maximize sightseeing hours on a tight timeline."),
+      h2("Which One Fits Your Trip"),
       ...bullets([
-        "Flying: about an hour, best for time-limited itineraries",
-        "Overnight train: roughly 10-12 hours, doubles as accommodation, more of an experience than a shortcut",
+        "Flying: about an hour in the air, most reliable for a fixed itinerary, the standard choice for multi-city trips of a week or less",
+        "Overnight train: roughly 10-12 hours, doubles as a night's accommodation, better suited to travelers with flexible time who want the journey itself",
+        "Both routes — Cairo-Luxor and Cairo-Aswan — are served daily, so availability is rarely the deciding factor; trip length and personal preference usually are",
+        "A private Nile cruise between Luxor and Aswan handles that shorter middle leg separately, by boat, regardless of which option you pick for the Cairo connection",
       ]),
+      h2("What We Build Our Itineraries Around"),
+      p("For nearly all of our multi-day Egypt itineraries — the kind that cover Cairo, Luxor, and Aswan inside a week or two — we build around domestic flights for the Cairo connection, simply because it protects the days you actually want to spend at the sites rather than in transit. Travelers who specifically want the sleeper train experience can absolutely build it in; it just tends to work better as one leg of the journey, say the return to Cairo, rather than both, so you're not giving up two full sightseeing days to travel time."),
+      callout("If you do take the sleeper train, book the cabin, not a seat, and bring your own snacks and water. Food service on board is limited, and having your own supply makes the ten-plus hours considerably more comfortable.", { title: "If You Take the Train", tone: "Info" }),
+      h2("Getting Between Luxor and Aswan"),
+      p("The shorter stretch between Luxor and Aswan — about three to four hours by road, or covered by boat as part of a Nile cruise — works differently from the Cairo connection. Most travelers cover this leg either by cruise ship, typically over three to four days with stops at Edfu and Kom Ombo along the way, or by private car with the same temple stops, rather than by flight or overnight train, since the distance doesn't really call for either."),
+      h2("Reaching Abu Simbel From Aswan"),
+      p("Abu Simbel sits far south of Aswan, close to the Sudanese border, and it works as a separate leg of its own. Most travelers reach it either by a short domestic flight from Aswan, which takes well under an hour and is the standard choice for anyone with a limited schedule, or by an early-morning road convoy across the desert, which takes several hours each way. The flight is simpler and more common on shorter itineraries; the road option suits travelers who prefer overland travel or whose schedule has room for a very early start and a long but genuinely striking desert drive."),
+      h2("Cost and Comfort, Practically Speaking"),
+      p("Domestic flights in Egypt are generally inexpensive by international standards, and the overnight train's cabin fare tends to run cheaper still — though once you factor in that the train replaces a hotel night, the real cost difference narrows considerably. Comfort is the bigger variable between the two: flights are short and predictable, while the train's sleeper cabins are functional rather than plush, with shared bathroom facilities and a rhythm that takes some adjusting to on a first overnight journey. Neither option requires much advance planning beyond booking a seat or cabin, since both routes run daily in both directions."),
+      h2("What About Driving the Distance Yourself"),
+      p("A few travelers ask about covering the full Cairo-to-Luxor or Cairo-to-Aswan distance by private car instead of flying or taking the train. It's technically possible, but it's rarely the right call. The drive runs close to a full day each way on desert highway, without the scenery payoff of the train or the time savings of a flight, and it eats into days that are much better spent at the sites themselves. Where a private car does make real sense is the shorter Luxor-to-Aswan leg, where stops at Edfu and Kom Ombo along the way turn the drive into part of the sightseeing itself, rather than a chore to get through."),
+      ...bullets([
+        "Both the Cairo-Luxor and Cairo-Aswan flight and train routes run daily, so last-minute schedule changes are rarely a major problem",
+        "Domestic flight baggage allowances tend to be smaller than international ones — worth checking if you're mid-trip with extra luggage picked up along the way",
+        "Sleeper train cabins should be booked as a private cabin, not an individual seat, for anything resembling a comfortable night",
+        "Airport check-in for domestic flights in Egypt is usually quick, but arrive with a reasonable buffer during Egypt's busier travel months",
+      ]),
+      faq(
+        [
+          { question: "How long is the flight from Cairo to Luxor?", answer: "About an hour in the air, similar to Cairo to Aswan. Add the usual airport time on either end — domestic flights in Egypt generally board efficiently, but it's still worth arriving with a reasonable buffer." },
+          { question: "Is the overnight train from Cairo to Luxor comfortable?", answer: "It's basic rather than luxurious — a sleeper cabin with bunks, shared bathroom facilities, and limited food service — but it's a genuinely different way to make the trip, and many travelers who take it once are glad they did." },
+          { question: "Can I fly one way and take the train the other?", answer: "Yes, and it's a good way to get a taste of the train experience without giving up two full days to overland travel — most travelers who mix the two fly down and take the overnight train back to Cairo, or vice versa." },
+          { question: "Do I need to book domestic flights in Egypt in advance?", answer: "It's worth booking ahead, especially during Egypt's busier travel months from autumn through spring, though EgyptAir runs the Cairo-Luxor-Aswan routes frequently enough that last-minute availability isn't usually a major problem." },
+          { question: "Is the overnight train safe?", answer: "Yes — the sleeper service between Cairo and Luxor and Aswan is a long-established, regularly used route for both Egyptian and international travelers, with cabin attendants on board throughout the journey." },
+        ],
+        "Flights vs. Trains: Frequently Asked Questions"
+      ),
+      p("There's no wrong answer here — it comes down to how much time you have and what kind of experience you want the travel itself to be. Most itineraries we build use flights to protect time at the sites, with the option to swap in the sleeper train for travelers who want it as part of the story of the trip, not just a means of getting from one city to the next."),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Let Us Handle the Logistics", body: "Every multi-city itinerary we plan already accounts for the best way to move between Cairo, Luxor, and Aswan — you just show up.", buttonLabel: "See Multi-City Itineraries", buttonHref: "/tours/8-day-essential-egypt-nile-cruise" },
     ],
   },
   {
@@ -6670,24 +7718,60 @@ export const stories: Story[] = [
     category: "Travel Guides",
     tags: ["Family Travel", "Trip Planning"],
     author: editorialTeam,
-    excerpt: "Practical notes on traveling Egypt as a family — pacing, heat, and which sites hold kids' attention.",
+    excerpt: "Practical notes on traveling Egypt as a family — pacing, heat, which sites hold kids' attention, and why the trips that go smoothly all share the same shape.",
     imageLabel: "Giza Pyramids",
     imageTone: "giza",
     image: "/photos/pexels-34812111.jpg",
     publishedAt: "2026-02-15T09:00:00+02:00",
     primaryKeyword: "egypt family travel",
     secondaryKeywords: ["egypt with kids", "family trip to egypt"],
-    seoTitle: "Egypt With Kids: Practical Family Travel Tips | Egypt Eye",
-    seoDescription: "What actually works for a family trip to Egypt — pacing, heat management, and which sites hold kids' attention.",
+    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor", "cairo-felucca-sunset-sail", "cairo-luxor-hurghada-beach-combo"),
+    seoTitle: "Egypt With Kids: Practical Family Travel Tips",
+    seoDescription: "What actually works for a family trip to Egypt — smart pacing, heat management, which sites hold kids' attention, and where to build in downtime.",
     body: [
-      p("Egypt works well as a family destination, but the trips that go smoothly tend to share a few things in common: shorter sightseeing blocks, built-in pool or beach time, and a private guide who can read a tired kid before a full-blown meltdown starts."),
+      p("Egypt is a genuinely good family destination — kids tend to respond to it in ways that surprise their parents, mummies and pyramids being about as compelling a pitch as ancient history ever makes to an eight-year-old. But the family trips that actually go well share a specific shape: shorter sightseeing blocks, real downtime built into the schedule, and a pace that flexes around your kids rather than a fixed itinerary that doesn't care whether anyone's had a nap. Here's what that looks like in practice."),
+      h2("Structure Your Days Around the Heat, Not the Other Way Around"),
+      p("Egypt's heat is the single biggest factor in how a family day actually goes, more than any site on the itinerary. Mornings are cooler and less crowded, which makes them the right time for anything major — Giza, Karnak, the Valley of the Kings. By early afternoon, especially between roughly April and October, the heat is enough to wear down even enthusiastic adults, let alone kids. Building your day around a morning at the main site, lunch somewhere air-conditioned, and a quieter afternoon — pool, hotel, a shorter indoor stop — works far better than trying to pack in a second major site before evening."),
+      p("This is one of the clearest places where a private guide and driver pay off with kids specifically. A group tour runs on a schedule set for the group, but a private day can start earlier to beat both heat and crowds, and end earlier too, once you can read that everyone's done."),
+      h2("Which Sites Actually Hold Kids' Attention"),
+      p("Not every site lands the same way with children, and it's worth being honest about that rather than trying to do everything. The Pyramids of Giza work on scale alone — kids get that these are enormous and old in a way that needs no explanation. The Egyptian Museum and the Grand Egyptian Museum both do very well, especially anything involving mummies, which reliably captures kids' imaginations more than a room of stone statues does. Valley of the Kings tombs work for many kids too, particularly with a guide who can turn the wall paintings into a story rather than a lecture on iconography."),
+      p("Long unbroken temple visits, on the other hand — Karnak's full scale, or a third or fourth temple in a single day — tend to be where kids' patience runs out first. It's not that the sites aren't remarkable; it's that they ask for a kind of sustained attention that's a lot to ask of a child on their third temple before lunch. Picking two strong stops over four thin ones almost always makes for a better day."),
       ...bullets([
-        "Schedule major sites (Giza, Karnak) for the morning, before the heat peaks",
-        "Build in downtime — a hotel pool afternoon does more for a family trip's success than a fourth temple",
-        "The Egyptian Museum and Grand Egyptian Museum both hold kids' interest well, especially anything mummy-related",
-        "A private vehicle and guide, rather than group tours, lets the pace flex around your kids rather than a fixed schedule",
+        "Giza Pyramids and the Sphinx — scale sells itself, no explanation needed",
+        "The Grand Egyptian Museum and Egyptian Museum — mummies are the reliable highlight",
+        "Valley of the Kings — a couple of well-chosen tombs with a guide who narrates rather than lectures",
+        "A felucca sail on the Nile — low-key, scenic, and a welcome change of pace from walking sites",
+        "A hot air balloon at sunrise in Luxor, for older kids who can handle an early wake-up — genuinely memorable",
       ]),
-      callout("A Nile cruise segment is often the easiest stretch of an Egypt trip with kids — meals, a pool (on many boats), and the scenery all happen without anyone needing to be herded anywhere.", { tone: "Highlight" }),
+      h2("Build In Real Downtime"),
+      p("This is the part that's easy to under-plan and expensive to skip. A hotel pool afternoon, a slow lunch, an evening with nothing scheduled — these do more for how a family trip actually feels, day to day, than adding a fourth site to the itinerary ever will. Many of the hotels used on Nile cruises and in Cairo, Luxor, and coastal stops have pools, and a cruise segment in particular tends to be the easiest stretch of a family Egypt trip: meals, scenery, and often a pool all happen on board, without anyone needing to be shepherded anywhere."),
+      callout("A Nile cruise segment is often the easiest stretch of a family Egypt trip. Meals, a pool on many boats, and constantly changing scenery all happen without anyone needing to be herded from place to place — genuinely useful with younger kids who tire of repeated site visits.", { title: "The Easy Stretch", tone: "Highlight" }),
+      h2("Practical Notes for Traveling With Kids in Egypt"),
+      ...bullets([
+        "Sun protection matters more here than almost anywhere else you've traveled — hats, high-SPF sunscreen, and a refillable water bottle for each kid, non-negotiable",
+        "Pack snacks for the car; meal times on a sightseeing day don't always line up with a hungry kid's schedule",
+        "Bathroom access varies at outdoor sites — plan around known stops like hotels and visitor centers rather than assuming facilities everywhere",
+        "Egyptians are, on the whole, extremely warm toward traveling families and kids specifically — expect friendly attention, not indifference",
+        "A private vehicle means car seats can be arranged in advance if you're traveling with younger children — worth flagging when you book",
+      ]),
+      h2("How Much Egypt Is Too Much for a Family Trip"),
+      p("Families sometimes worry about overreaching, and it's a fair concern — but the fix isn't cutting Egypt down to a token stop. It's pacing a longer trip correctly. A week that mixes Cairo and Giza with a Nile cruise segment and maybe a couple of relaxed days on the Red Sea coast at the end gives kids enough variety that no single day has to carry the whole trip, and gives the adults enough of the major sites that the trip doesn't feel compromised either. Trying to cover the same ground in three rushed days, on the other hand, is where family trips to Egypt tend to go wrong — not because of the destination, but because of the pace."),
+      p("A Nile cruise segment specifically tends to be the part of a family itinerary that surprises parents most. It removes the daily packing and unpacking that comes with changing hotels, gives kids a predictable rhythm of meals and free time between shore excursions, and turns transit — usually the hardest part of traveling with children — into something closer to relaxing on a boat. Pairing a few days in Cairo and Giza with a cruise segment, rather than trying to cover the same ground entirely by road, is one of the simplest ways to make a longer trip feel manageable."),
+      h2("Food and Health Notes for Traveling With Kids"),
+      p("Egyptian food is generally kid-friendly once you know where to steer — grilled chicken, rice, flatbread, and simple pasta dishes are available almost everywhere, including at hotels and on cruise ships, so pickier eaters aren't left with nothing. Bottled water is the standard for kids and adults alike; it's inexpensive and available constantly, at hotels, on board, and at every rest stop along the way. If your child has specific dietary needs or allergies, mentioning it to your guide in advance means meals and restaurant stops can be planned around it rather than negotiated on the spot."),
+      p("It's also worth packing a small kit of familiar remedies from home — the usual fever reducer, something for an upset stomach, and any regular medications — since finding an exact match for a specific home-brand product isn't always straightforward outside major cities. Pharmacies are common and well stocked in Cairo, Luxor, and the main tourist areas, and pharmacists are generally used to helping travelers, but having the basics with you from the start avoids a mid-trip errand."),
+      faq(
+        [
+          { question: "What's the best age to bring kids to Egypt?", answer: "There's no strict cutoff, but most families find the trip lands best from around age six or seven up, once kids can walk moderate distances and sit through a guided explanation without losing interest. Younger kids can absolutely still have a great trip — it just leans more heavily on pool time, a Nile cruise, and shorter, well-chosen stops." },
+          { question: "Is Egypt safe for families?", answer: "Yes — Egypt's major tourist sites see families constantly, and Egyptians are generally warm and welcoming toward traveling kids specifically. The same common-sense precautions that apply to any international trip apply here: reputable transport, a licensed guide, and normal awareness of your surroundings." },
+          { question: "How many days should a family trip to Egypt be?", answer: "A week to ten days lets you cover Cairo and Giza plus a Nile cruise segment without rushing. Shorter trips are possible and can still work well, but they leave less room for the downtime that makes family travel here go smoothly." },
+          { question: "Do Egyptian hotels and cruise ships have pools?", answer: "Most hotels used on family itineraries do, and many Nile cruise ships have a small pool or sun deck as well — worth confirming when booking if it's a priority for your family." },
+          { question: "What should we pack that we might not think of?", answer: "Beyond sun protection, a few electrolyte packets for hot days, a light jacket for cooler desert evenings in winter, and any specific snacks your kids rely on, since familiar options aren't always easy to find outside major cities." },
+        ],
+        "Family Travel in Egypt: Frequently Asked Questions"
+      ),
+      p("The families who come back from Egypt saying it was one of their best trips are, almost without exception, the ones who let the trip breathe — fewer sites, more downtime, and a guide who's watching the kids as closely as the itinerary. Egypt gives children something that's genuinely hard to manufacture: history they can touch and stand inside, on a scale no picture book quite prepares them for."),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Plan a Family Trip That Actually Works", body: "We build every family itinerary around real kid-pace — shorter sightseeing blocks, built-in downtime, and a private guide who reads the room.", buttonLabel: "Start Planning", buttonHref: "/customize" },
     ],
   },
   {
@@ -6698,23 +7782,51 @@ export const stories: Story[] = [
     category: "Travel Guides",
     tags: ["Trip Planning", "Solo Travel"],
     author: editorialTeam,
-    excerpt: "Practical notes for solo travelers — safety, cost, and why a private guide changes the math.",
+    excerpt: "Practical notes for solo travelers — safety, cost, where the real friction is, and why a private guide changes the math more than you'd expect.",
     imageLabel: "Luxor Temple",
     imageTone: "luxor",
     image: "/photos/pexels-15131543.jpg",
     publishedAt: "2026-02-16T09:00:00+02:00",
     primaryKeyword: "solo travel egypt",
     secondaryKeywords: ["egypt solo trip", "traveling egypt alone"],
-    seoTitle: "Traveling Egypt Solo: A Practical Guide | Egypt Eye",
-    seoDescription: "What solo travelers should know before a trip to Egypt — safety, logistics, and why a private guide often makes more sense than a group tour.",
+    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "3-day-cairo-giza", "4-day-nile-cruise-luxor-aswan"),
+    seoTitle: "Traveling Egypt Solo: A Practical Guide",
+    seoDescription: "What solo travelers should know before a trip to Egypt — real safety notes, cost logistics, and why a private guide often beats going fully independent.",
     body: [
-      p("Solo travel in Egypt is common and generally straightforward, though the country's sites are spread out enough that navigating independently — public transport, entrance logistics, negotiating with unofficial guides at site entrances — adds real friction that a private guide removes entirely."),
+      p("Egypt is one of the more approachable solo destinations in the region, and more people travel it alone than you might expect — but it's also a country where the sites are spread out, addresses are inconsistent, and navigating independently adds a layer of friction that doesn't exist in a lot of other solo-friendly destinations. This isn't a safety warning so much as a logistics one: solo travel here works well once you know where the friction actually is and how most solo travelers deal with it."),
+      h2("What Solo Travel in Egypt Actually Involves"),
+      p("The country's major sites — Giza, Luxor's East and West Banks, Aswan's temples — aren't clustered in a compact walkable center the way a lot of solo-friendly cities are. Getting between them independently means public transport that doesn't always run on a predictable schedule, entrance logistics at sites that can be confusing on a first visit, and, at some of the busier tourist areas, unofficial guides and vendors who approach solo travelers more persistently than they do people traveling in a visible group. None of this is dangerous. It's just tiring in a way that adds up over a multi-day trip, especially if you're managing it all yourself on top of the sightseeing itself."),
+      p("This is the practical reason most solo travelers in Egypt end up booking at least some element of private guiding, even ones who'd normally travel fully independently elsewhere. It's less about safety and more about time and mental energy — a private guide removes ticket lines, entrance negotiation, transport logistics, and the steady stream of unofficial offers at site entrances, all at once."),
+      h2("The Cost Math Most Solo Travelers Get Wrong"),
+      p("A private guide costs more per person traveling alone than it does split among a group of four — that part's obvious. What's less obvious until you're there is how much time and hassle that cost buys back. A guided day at the Pyramids or in Luxor moves through ticket queues, security checks, and site navigation in a fraction of the time an independent visit takes, and it removes the low-grade stress of constantly fielding offers from unofficial guides, camel touts, and photo-op vendors who target visitors traveling without one. For a lot of solo travelers, once they've weighed a wasted morning against a guide's day rate, it stops looking like a splurge and starts looking like the sensible option."),
+      h2("Safety, Realistically"),
+      p("Egypt's major tourist areas are well used to visitors, and solo travelers — including solo women — generally report feeling safe at the sites themselves, particularly with a guide alongside. The standard precautions that apply to independent travel anywhere apply here too: use reputable transport rather than flagging unmarked taxis, stick with licensed guides rather than unofficial ones who approach you at a site entrance, and keep the same street-smart habits you'd use in any unfamiliar city. Evenings in Cairo, Luxor, and Egypt's coastal towns are generally fine for a solo traveler to walk in well-lit, populated areas — hotel districts, Nile corniches, main shopping streets — using the same judgment you'd apply anywhere else."),
+      callout("Unofficial 'guides' who approach you at site entrances, offering to show you around for a tip, are a genuine nuisance for solo travelers specifically — they target people who look like they're navigating alone. A polite, firm decline works; if you already have a guide with you, they generally leave you alone entirely.", { title: "About Unofficial Guides", tone: "Safety" }),
+      h2("Where Solo Travelers Actually Meet People"),
+      p("One thing solo travelers sometimes worry about — traveling alone meaning a lonelier trip — tends not to hold up in practice. Nile cruises put you around other travelers at meals and on deck; small-group add-ons at major sites do the same; and Egyptian hospitality itself does a lot of the social work, since guides, drivers, and hotel staff tend to be genuinely warm and conversational rather than transactional. Solo travelers who want company find it easily. Solo travelers who want to just watch the Nile go by in peace can do that too — the trip flexes either way, which is part of what makes it work well solo in the first place."),
+      h2("Solo Dining and Evenings"),
+      p("Eating alone is one of the small frictions solo travelers mention most, and Egypt handles it better than a lot of destinations. Hotel restaurants and cruise ship dining rooms are entirely used to solo guests, and staff tend to be attentive rather than awkward about a table for one. In Cairo, Luxor, and coastal towns, a lot of restaurant culture leans toward shared, casual spaces — a koshary counter, a busy grill — where eating solo barely registers as unusual at all. Evenings are generally straightforward too: stick to the same well-lit, populated areas you'd choose in any city, and a solo dinner or an evening walk along the Nile corniche is a normal, comfortable part of the trip rather than something to plan around."),
+      h2("Budgeting for a Solo Trip"),
+      p("The per-person cost of traveling Egypt alone runs higher than the same trip split between two or four people, largely because private guiding and transport — the pieces that make the most difference to how smoothly a solo trip goes — don't get cheaper just because there's one traveler instead of several. Where solo travelers can genuinely manage cost is trip length and structure: a tightly planned week in Cairo, Giza, and on a Nile cruise delivers the core of what Egypt offers without stretching a solo budget across a longer, more expensive multi-city itinerary. Joining a small-group add-on for certain excursions, rather than booking every single day as fully private, is another way some solo travelers balance cost against the convenience of a guide."),
+      h2("A Realistic Solo Itinerary Shape"),
       ...bullets([
-        "A private guide costs more per person alone than split among a group, but often less than the time and hassle saved",
-        "Standard safety precautions apply, as anywhere — stick to reputable transport and licensed guides",
-        "Solo travelers, including women, generally report feeling safe at Egypt's major sites, particularly with a guide",
-        "Evenings in Cairo, Luxor, and coastal towns are generally fine to walk in well-lit, populated areas",
+        "3-4 days in Cairo and Giza, with a private guide for the Pyramids, Saqqara, and the Egyptian Museum",
+        "A Nile cruise segment between Luxor and Aswan — built-in social time, minimal independent logistics",
+        "A day or two at the end on the Red Sea coast to decompress before flying home",
+        "Domestic flights rather than overland travel between cities, to keep transit days simple and predictable",
       ]),
+      faq(
+        [
+          { question: "Is it safe for a woman to travel alone in Egypt?", answer: "Solo women travel Egypt regularly and generally report feeling safe at the country's major sites, particularly with a guide. The usual precautions — reputable transport, licensed guides, normal street awareness in the evening — apply here as they would anywhere." },
+          { question: "Is a private guide really necessary for solo travel in Egypt?", answer: "Not strictly necessary, but it makes a real practical difference — it removes ticket lines, transport logistics, and the constant stream of unofficial offers at site entrances that target travelers who look like they're navigating alone." },
+          { question: "Will I be lonely traveling Egypt solo?", answer: "Most solo travelers find the opposite — Nile cruises, guided day tours, and Egypt's generally warm hospitality all create natural social contact, while still leaving room to travel at your own pace when you want to." },
+          { question: "What's the biggest logistical challenge for solo travelers in Egypt?", answer: "Getting between and around sites independently — public transport doesn't run predictably, entrance logistics can be confusing on a first visit, and unofficial guides target solo-looking travelers specifically. A private guide solves all of it at once." },
+          { question: "Should I book a group tour instead of going fully independent?", answer: "A private guide, rather than a large group tour, tends to suit solo travelers best — you get the logistics handled without losing the flexibility to set your own pace, linger where you want, or skip what doesn't interest you." },
+        ],
+        "Solo Travel in Egypt: Frequently Asked Questions"
+      ),
+      p("Solo travel in Egypt rewards a bit of pragmatism more than it rewards toughing it out independently. The travelers who have the best time alone here aren't the ones proving they can navigate every site on their own — they're the ones who spend their energy on the Pyramids and the Valley of the Kings instead of on ticket queues and taxi negotiations."),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Travel Egypt Solo, Without the Logistics", body: "Our private tours are built for exactly this — a guide and driver who handle the friction, so your solo trip is about Egypt, not logistics.", buttonLabel: "Plan Your Solo Trip", buttonHref: "/customize" },
     ],
   },
   {
@@ -6725,29 +7837,57 @@ export const stories: Story[] = [
     category: "Travel Guides",
     tags: ["Trip Planning", "Budget Travel"],
     author: editorialTeam,
-    excerpt: "Where to save, and where cutting corners in Egypt tends to backfire.",
+    excerpt: "Where to save, where cutting corners in Egypt tends to backfire, and how to build a tighter-budget trip that still feels like Egypt at its best.",
     imageLabel: "Giza Pyramids",
     imageTone: "giza",
     image: "/photos/pexels-28682219.jpg",
     publishedAt: "2026-02-17T09:00:00+02:00",
     primaryKeyword: "egypt budget travel",
     secondaryKeywords: ["cheap egypt trip", "egypt on a budget"],
-    seoTitle: "Egypt on a Budget: What's Worth Paying For | Egypt Eye",
-    seoDescription: "Where to genuinely save money on an Egypt trip, and where cutting corners — especially on guides and transport — tends to backfire.",
+    relatedTours: toursBySlug("3-day-cairo-giza", "1-day-giza-tour", "4-day-nile-cruise-luxor-aswan", "5-day-giza-cairo-alexandria"),
+    seoTitle: "Egypt on a Budget: What's Actually Worth Paying For",
+    seoDescription: "Where to genuinely save money on an Egypt trip, and where cutting corners — especially on guides and transport — tends to backfire fast.",
     body: [
-      p("Egypt can be visited on a range of budgets, but a few costs are worth protecting even on a tight one, because skimping on them tends to cost more in frustration than it saves in cash."),
-      h2("Worth paying for"),
+      p("Egypt is one of the better value destinations for the sheer scale of what you see — but 'budget' still needs a bit of nuance here, because a few costs are worth protecting even on a tight trip. Cutting the wrong corner in Egypt doesn't usually save money in the end; it tends to cost more in wasted time, overcharging, or a genuinely miserable afternoon in the heat. This is a practical breakdown of where to spend deliberately and where you can actually cut back without the trip suffering for it."),
+      h2("What's Worth Paying For, Even on a Tight Budget"),
+      p("A licensed guide at the major sites tops this list, and not for a sentimental reason. Unofficial 'guides' who approach travelers at entrances — Giza, Karnak, the Valley of the Kings — are a well-known source of both overcharging and flatly wrong information, and they specifically target travelers who look like they're navigating alone or unprepared. A licensed guide costs more upfront but eliminates that entire category of problem, and turns a walk past old stones into something you actually understand."),
+      p("Reputable or private transport is the second one, particularly for airport transfers. An unmarked taxi outside arrivals at Cairo airport, after a long flight, is exactly the moment travelers get overcharged or, worse, end up somewhere other than intended. Arranging a transfer in advance, through your hotel or as part of a tour, costs a bit more than gambling on a street taxi, but it removes a genuinely stressful arrival-day scenario."),
+      p("A mid-range hotel with reliable air conditioning is the third, and it's less of a luxury than it sounds in a country where daytime temperatures regularly climb well past what most travelers are used to. A budget room with an air conditioning unit that struggles or cuts out overnight turns a good trip into an exhausted one within a couple of days — this is one of the few places where the cheapest option genuinely undermines the trip."),
       ...bullets([
-        "A licensed guide at major sites — unofficial guides at entrances are a common source of overcharging and misinformation",
-        "Private or reputable transport over unmarked taxis, especially for airport transfers",
-        "A mid-range hotel with reliable air conditioning — Egypt's heat makes this less of a luxury than it sounds",
+        "A licensed guide at major sites, especially Giza, Karnak, and the Valley of the Kings",
+        "Private or reputable transport, particularly airport transfers",
+        "A hotel with dependable air conditioning, even if it means a slightly higher room rate",
+        "Bottled or filtered water throughout the trip — tap water isn't recommended for visitors, and dehydration in Egypt's climate is a real risk, not a minor inconvenience",
       ]),
-      h2("Where you can genuinely save"),
+      h2("Where You Can Genuinely Save"),
+      p("Street food and local restaurants, away from hotel dining rooms and the restaurants directly facing major tourist sites, are both considerably cheaper and, honestly, often better — koshary, ful medames, and grilled kebab from a busy local spot are a highlight for a lot of travelers, not a compromise. Domestic trains instead of flights save money on the Cairo-Luxor-Aswan connections if you have the extra time to spare, though the tradeoff is time and comfort, not just cost."),
+      p("Shopping in local markets rather than tourist-focused shops near major sites is another real saving, with the understanding that some negotiation is expected and normal — starting well below the asking price isn't rude here, it's how the transaction is meant to work. And traveling in Egypt's shoulder seasons, spring and autumn, avoiding both the peak winter crowds and the height of summer heat, tends to bring better rates on hotels and cruises without meaningfully compromising the experience."),
       ...bullets([
-        "Street food and local restaurants over hotel dining",
-        "Domestic trains over flights, if you have time to spare",
-        "Shopping in local markets rather than tourist-focused shops, with some negotiation expected",
+        "Street food and local restaurants over hotel dining and site-adjacent tourist restaurants",
+        "Domestic trains instead of flights, if your schedule has room for the extra time",
+        "Local markets over tourist shops, with friendly negotiation expected as part of the process",
+        "Shoulder-season travel, spring or autumn, for better hotel and cruise rates without peak-season crowds",
       ]),
+      h2("Hidden Costs to Plan Around"),
+      p("A few costs catch budget travelers off guard because they're easy to forget when totaling up a trip. Entrance fees at Egypt's major sites are charged per site, and they add up quickly if you're visiting several temples and museums in a single city — Karnak, Luxor Temple, the Valley of the Kings, and the Egyptian Museum are each a separate ticket. Tipping, known locally as baksheesh, is a genuine part of the culture here, expected in small amounts for guides, drivers, hotel staff, and even the attendants who point out a particular tomb feature or unlock a side chapel — budgeting a modest daily amount for this in advance avoids it feeling like a constant, awkward negotiation in the moment."),
+      p("Bottled water and soft drinks at hotels and site cafés often carry a noticeable markup over what you'd pay at a local shop, so picking up a supply of water in town before a day of sightseeing is a small habit that adds up to a real saving over a multi-day trip. None of these costs are large individually, but together they're often the gap between a budget that felt right on paper and one that felt tight in practice."),
+      h2("Building a Budget Itinerary That Doesn't Feel Like a Compromise"),
+      p("The trap with a tight Egypt budget isn't spending too little — it's spending it in the wrong order. Trying to save on the guide and the transport while still booking every major site tends to produce the worst version of an Egypt trip: rushed, confusing, and vulnerable to the overcharging and misinformation that unofficial guides specialize in. A tighter budget works much better when it trims the number of sites and the length of the trip rather than the quality of how you experience the sites you do include. A focused three or four days in Cairo and Giza, done properly with a licensed guide, beats a rushed week trying to cover everything on the cheap."),
+      callout("The single most common budget mistake in Egypt is saving money on the guide and transport for the Pyramids specifically, since that's where unofficial touts are most aggressive and prices for camel rides, photo spots, and 'inside access' get quoted wildly above what they're worth. Spend deliberately here — it's the one site where cutting corners costs the most, both in money and in how the visit actually feels.", { title: "Where Budget Trips Go Wrong Most Often", tone: "Info" }),
+      h2("A Realistic Lower-Cost Structure"),
+      p("For travelers working with a genuinely tight budget, a shorter, well-planned trip usually beats a longer, thinly stretched one. Three to five days concentrated on Cairo and Giza, with a licensed guide and private transport for the sites that matter most, gives you the essential Egypt experience without the costs that come with a longer multi-city trip — domestic flights, additional hotel nights, a Nile cruise segment. If a Nile cruise is part of the plan, a shorter cruise, around four days between Luxor and Aswan, delivers most of the experience of a longer one at a meaningfully lower cost."),
+      faq(
+        [
+          { question: "Can you visit Egypt on a tight budget?", answer: "Yes — Egypt offers real value relative to what you see, especially if you concentrate a shorter trip on Cairo and Giza rather than stretching a tight budget across a longer multi-city itinerary." },
+          { question: "Is it worth paying for a guide if I'm on a budget?", answer: "Generally yes, particularly at Giza, Karnak, and the Valley of the Kings, where unofficial touts are most aggressive and most likely to overcharge or mislead budget-conscious travelers specifically." },
+          { question: "What's the cheapest way to get between Cairo, Luxor, and Aswan?", answer: "The overnight sleeper train is generally cheaper than flying and doubles as a night's accommodation, though it takes considerably longer — worth it if your schedule has room, less so on a tight timeline." },
+          { question: "Is street food in Egypt safe for tourists?", answer: "Busy, high-turnover stalls are generally a safe and excellent option — locals eating there is usually a good sign. Stick to freshly cooked food and bottled water, and it's one of the best budget moves you can make." },
+          { question: "How many days is enough for a budget Egypt trip?", answer: "Three to five focused days in Cairo and Giza cover the essentials well. Longer trips are absolutely worthwhile if the budget allows, but a shorter, well-guided trip beats a longer one stretched too thin." },
+        ],
+        "Budget Egypt Travel: Frequently Asked Questions"
+      ),
+      p("The best budget Egypt trips aren't the ones that cut every cost equally — they're the ones that spend deliberately on the handful of things, a licensed guide, reliable transport, decent air conditioning, that actually determine whether the trip feels smooth or exhausting, and save everywhere else without a second thought."),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "A Well-Planned Trip Doesn't Have to Cost More", body: "We build focused, well-guided itineraries at every budget level — tell us your range and we'll show you what it actually buys.", buttonLabel: "Get a Custom Quote", buttonHref: "/customize" },
     ],
   },
   {
@@ -6758,24 +7898,53 @@ export const stories: Story[] = [
     category: "Travel Guides",
     tags: ["Trip Planning", "Luxury Travel"],
     author: editorialTeam,
-    excerpt: "What a higher-end Egypt itinerary actually buys you, beyond the obvious hotel upgrade.",
+    excerpt: "What a higher-end Egypt itinerary actually buys you, beyond the obvious hotel upgrade — timing, access, a private Nile vessel, and a schedule built around you.",
     imageLabel: "Nile Valley",
     imageTone: "nile",
     image: "/photos/pexels-15131486.jpg",
     publishedAt: "2026-02-18T09:00:00+02:00",
     primaryKeyword: "luxury egypt trip",
     secondaryKeywords: ["luxury egypt travel", "private egypt tour luxury"],
-    seoTitle: "A Luxury Egypt Trip: What Changes | Egypt Eye",
-    seoDescription: "What a higher-end Egypt itinerary actually buys beyond a nicer hotel — timing, access, and privacy at major sites.",
+    relatedTours: toursBySlug("10-day-private-luxurious-trip", "private-yacht-nile-cruise-luxor-aswan", "overnight-dahabiya-sail-esna-edfu", "cairo-giza-nile-cruise-signature-trip"),
+    seoTitle: "A Luxury Egypt Trip: What Actually Changes",
+    seoDescription: "What a higher-end Egypt itinerary really buys beyond a nicer hotel — early site access, a private Nile vessel, and a pace built around you.",
     body: [
-      p("The obvious upgrade in a luxury Egypt trip is the hotel, but the bigger difference is usually in timing and access — private early entry before general opening hours, a dahabiya or private yacht instead of a shared cruise ship, and a schedule built entirely around your own pace rather than a group's."),
+      p("The word 'luxury' in the context of an Egypt trip gets attached to hotels almost by default, and the hotels genuinely are part of it. But the bigger difference a higher-end Egypt itinerary actually buys isn't a nicer room. It's timing and access: getting into the Pyramid's interior chambers or Abu Simbel before the day's crowds arrive, sailing the Nile on a private vessel instead of a shared multi-cabin cruise ship, and having a schedule built entirely around your own pace rather than a group's. Here's what actually changes."),
+      h2("Access and Timing, Not Just the Sites Themselves"),
+      p("This is the part that surprises first-time luxury travelers to Egypt: the sites themselves don't change. Everyone who visits Giza sees the same three pyramids; everyone at Abu Simbel sees the same colossal statues of Ramses II. What changes is when you see them and how many other people are seeing them with you. Early or after-hours access — before general opening at the Pyramid interior, or a dawn arrival at Abu Simbel ahead of the bulk of the day's visitors — is where a higher-end itinerary earns its price most directly. The difference between standing in the Great Hypostyle Hall at Karnak alone in the early morning light versus mid-afternoon surrounded by a dozen tour groups isn't subtle. It's close to a different experience of the same place."),
+      h2("A Private Nile Vessel Instead of a Shared Cruise Ship"),
+      p("Most Nile cruises run on multi-cabin ships carrying anywhere from a few dozen to well over a hundred passengers, with a fixed schedule of stops, meal times, and shore excursions set for the whole boat. A privately chartered vessel — a dahabiya, a traditional sailboat, smaller and slower, powered partly by wind, or a private motor yacht — changes that structure completely. Meals happen when you want them, stops at Edfu or Kom Ombo happen at the hour that avoids the crowds rather than whenever the ship's schedule dictates, and there's no group of strangers to coordinate around. For travelers who've done a standard Nile cruise before and want to see the same stretch of river differently, this is usually the single biggest upgrade available."),
+      h2("A Dedicated Egyptologist, Not a Shared Guide"),
+      p("On a group tour, your guide is explaining Karnak to thirty people at once, at a pace and depth set for the group's lowest common denominator. A dedicated Egyptologist, traveling with just you or your party, can go as deep as you want on the history that actually interests you, skip what doesn't, and adjust the entire day's pace around your questions rather than a fixed script. This matters more than it sounds like it would — the difference between a guide reciting facts to a crowd and a genuine expert having a conversation with you about a temple's history is, for a lot of travelers, the whole difference between a good trip and a great one."),
+      h2("The Freedom to Linger, or to Skip"),
+      p("A fixed group itinerary allocates a set amount of time per site, whether or not that time matches what you're actually feeling. A private, higher-end itinerary flexes both ways: if the Valley of the Kings has genuinely captured your attention, you stay another forty-five minutes without anyone else's schedule suffering for it. If a site turns out to be less compelling to your particular group than expected, you move on early and use that time somewhere else instead. This flexibility is subtle on paper but it's one of the things repeat luxury travelers to Egypt mention most — the sense that the day is actually built around them, not the reverse."),
+      callout("The single highest-value luxury upgrade for most first-time Egypt travelers isn't the hotel — it's early access at the Pyramids and a dedicated Egyptologist for the Cairo and Giza days specifically. It's where crowds are heaviest and where a private, well-timed visit makes the most dramatic difference.", { title: "Where to Spend First", tone: "Highlight" }),
+      h2("What This Looks Like Across a Full Itinerary"),
       ...bullets([
-        "Early or after-hours access at sites like the Pyramid interior or Abu Simbel, avoiding the bulk of daytime crowds",
-        "A privately chartered Nile vessel instead of a multi-cabin cruise ship",
-        "A dedicated Egyptologist rather than a shared group guide",
-        "Flexibility to linger at a site that's caught your interest, or skip one that hasn't",
+        "Early or after-hours entry at the Pyramid interior, Abu Simbel, or other high-traffic major sites",
+        "A privately chartered dahabiya or motor yacht for the Nile leg, rather than a shared multi-cabin cruise ship",
+        "A dedicated Egyptologist for the full trip, rather than a rotating or shared group guide",
+        "A flexible daily schedule that can extend a site visit or skip one entirely based on your actual interest",
+        "Higher-end accommodation throughout, including properties with direct views of major sites where available",
       ]),
-      p("The sites themselves don't change — everyone sees the same Pyramids — but how crowded they feel, and how much you're rushed through them, changes considerably."),
+      h2("Extending the Trip: The Red Sea and the Desert"),
+      p("A luxury Egypt itinerary doesn't have to end at Aswan. Pairing the Nile leg with a few days on the Red Sea coast — Hurghada, El Gouna, or Marsa Alam — adds a genuinely different register to the trip, one built around resort-level comfort, private beach access, and diving or snorkeling on reefs that are among the best accessible anywhere in the world. It's a natural close to a longer itinerary: temples and tombs for the first stretch, then a shift into pure relaxation for the last few days, without the logistics of starting an entirely separate trip."),
+      p("Egypt's Western Desert offers a quieter version of the same idea for travelers who want something further off the standard route. A private guide into the White Desert or Siwa Oasis trades crowded monuments for landscape and stillness — chalk formations lit orange at sunset, natural springs, a night sky with none of the light pollution that reaches the Nile Valley. It's not for every itinerary, but for travelers who've already done Cairo, Luxor, and the Nile and want to see a side of Egypt fewer visitors reach, it's worth the extra days."),
+      h2("Is It Worth the Cost"),
+      p("For travelers visiting Egypt once and wanting to see it at its best, without the crowds, the group-tour pacing, or the compromises of a shared cruise ship, the answer tends to be yes, and it's rarely the hotel upgrade alone that makes the case. It's the cumulative effect of standing at the major sites before the crowds, moving at your own pace, and having an expert guide who's actually talking to you rather than a group. Travelers who've done both a standard group-tour version of Egypt and a private, higher-end one almost always describe the second as feeling like a genuinely different trip to the same country, not just a nicer version of the same one."),
+      p("The upgrade also tends to compound over the length of a trip rather than staying flat. One extra-early morning at the Pyramids is memorable on its own; a full itinerary built around that same principle, at every major site over ten or fourteen days, changes the character of the entire trip. It's less about any single splurge and more about consistently removing the parts of a standard itinerary — queues, crowds, a fixed group pace — that get in the way of actually experiencing the place."),
+      faq(
+        [
+          { question: "What actually makes an Egypt trip 'luxury' beyond the hotel?", answer: "Timing and access above all — early or after-hours entry at major sites, a private Nile vessel instead of a shared cruise ship, and a dedicated Egyptologist rather than a shared group guide. The sites are the same; how crowded and rushed they feel is what changes." },
+          { question: "What is a dahabiya, and is it worth it over a standard cruise ship?", answer: "A dahabiya is a traditional Nile sailboat, smaller and quieter than a standard multi-cabin cruise ship, typically carrying a handful of cabins rather than dozens. It trades some of a big ship's amenities for privacy, a slower pace, and a genuinely different feel to sailing the Nile." },
+          { question: "Can I get early access to the Pyramids or Abu Simbel?", answer: "Yes, through arranged private access ahead of general opening hours or timed to arrive before the bulk of the day's visitors — this is one of the most impactful upgrades available and worth prioritizing on a luxury itinerary." },
+          { question: "How many days should a luxury Egypt trip be?", answer: "Ten to fourteen days lets you cover Cairo, a private Nile sail between Luxor and Aswan, and time to properly linger at major sites without rushing, though shorter, more focused luxury trips work well too if time is limited." },
+          { question: "Is a private Egyptologist different from a standard tour guide?", answer: "Meaningfully, yes — a dedicated Egyptologist works with just your party, can go as deep or as light as you want on any given site, and adjusts the day's pace around your actual interest rather than a fixed script for a group." },
+        ],
+        "Luxury Egypt Travel: Frequently Asked Questions"
+      ),
+      p("The Pyramids don't get any bigger and Abu Simbel doesn't get any older for the price of a nicer trip. What changes is how much of Egypt you actually get to experience on your own terms, and for most travelers who make that upgrade once, it's hard to imagine visiting any other way."),
+      { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Experience Egypt at Its Best", body: "From private Nile sailing to early access at major sites, our luxury itineraries are built entirely around your pace.", buttonLabel: "Plan a Private Journey", buttonHref: "/tours/10-day-private-luxurious-trip" },
     ],
   },
   {
