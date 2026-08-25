@@ -89,7 +89,7 @@ export function Navbar({
           </span>
         </Link>
 
-        <nav className="hidden items-center justify-end gap-x-6 lg:flex lg:flex-1 lg:px-6">
+        <nav className="hidden items-center justify-start gap-x-6 lg:flex lg:flex-1 lg:px-6">
           {primaryNav.map((item) => (
             <Link
               key={item.href}
