@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { usePathname } from "next/navigation";
 
 type Message = { role: "user" | "assistant"; content: string };
 
@@ -8,6 +9,7 @@ const GREETING =
   "Hi! I'm the Egypt Eye assistant. Ask me about our tours, destinations, what's included, or how booking works — I'm happy to help.";
 
 export function ChatWidget({ whatsappLink }: { whatsappLink: string }) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -18,6 +20,10 @@ export function ChatWidget({ whatsappLink }: { whatsappLink: string }) {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, status]);
+
+  // Hidden on the homepage only, per request — still available everywhere
+  // else on the site.
+  if (pathname === "/") return null;
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();

@@ -13,9 +13,7 @@ import { TourCard } from "@/components/TourCard";
 import { DestinationsPanel } from "@/components/DestinationsPanel";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
-import { StoryCard } from "@/components/StoryCard";
 import { Reveal } from "@/components/Reveal";
-import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
 import {
@@ -25,7 +23,6 @@ import {
   getHomepage,
   getPhotoshoots,
   getSiteSettings,
-  getStories,
   getTestimonials,
   getTours,
 } from "@/sanity/fetchers";
@@ -37,14 +34,13 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const [site, home, tours, experiences, photoshoots, testimonials, stories, faqs, destinationHubs] = await Promise.all([
+  const [site, home, tours, experiences, photoshoots, testimonials, faqs, destinationHubs] = await Promise.all([
     getSiteSettings(),
     getHomepage(),
     getTours(),
     getExperiences(),
     getPhotoshoots(),
     getTestimonials(),
-    getStories(),
     getFaqs(),
     getDestinationHubs(),
   ]);
@@ -53,10 +49,8 @@ export default async function Home() {
   // A small curated set for the homepage teaser — the full searchable
   // catalog lives on /tours, not inline here.
   const popularTours = tours.filter((t) => t.featured).slice(0, 4);
-  // Prefer editor-flagged Stories for the homepage teaser; fall back to the
-  // most recent if none are flagged yet.
-  const featuredStories = stories.filter((s) => s.featured);
-  const homepageStories = (featuredStories.length > 0 ? featuredStories : stories).slice(0, 2);
+  // Homepage teaser only — the full list lives on /photoshoots.
+  const homepagePhotoshoots = photoshoots.slice(0, 2);
 
   return (
     <>
@@ -75,18 +69,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Trust bar */}
-      <section className="pb-14 pt-24 sm:pt-20">
-        <Container>
-          <Reveal>
-            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} badges={site.trustBadges} />
-          </Reveal>
-        </Container>
-      </section>
-
       {/* Popular Tours — a small curated preview; the full searchable
           catalog lives on /tours, not inline on the homepage. */}
-      <section className="py-4">
+      <section className="py-4 pt-24 sm:pt-20">
         <Container>
           <Reveal>
             <SectionHeading
@@ -117,6 +102,34 @@ export default async function Home() {
         </Container>
       </section>
 
+      {/* Photoshoots — just a two-item teaser; the full catalog lives on
+          /photoshoots. */}
+      <section className="bg-sand-dim py-16">
+        <Container>
+          <Reveal>
+            <SectionHeading
+              eyebrow={home.photoshootsSection.eyebrow}
+              title={home.photoshootsSection.title}
+              description={home.photoshootsSection.description}
+              align="center"
+            />
+          </Reveal>
+          <Reveal delay={100} className="mx-auto mt-10 grid max-w-4xl gap-6">
+            {homepagePhotoshoots.map((p) => (
+              <PhotoshootCard key={p.slug} photoshoot={p} />
+            ))}
+          </Reveal>
+          <Reveal delay={150} className="mt-10 flex justify-center">
+            <Link
+              href="/photoshoots"
+              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+            >
+              View All Photoshoots
+            </Link>
+          </Reveal>
+        </Container>
+      </section>
+
       {/* Destinations panel */}
       <section className="py-14">
         <Container>
@@ -127,8 +140,37 @@ export default async function Home() {
               description={home.destinationsSection.description}
             />
           </Reveal>
-          <Reveal delay={100} className="mt-10">
+          <Reveal delay={100}>
             <DestinationsPanel photos={site.destinationPhotos} tours={tours} destinations={site.destinations} />
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Design Your Dream Tour / Custom Tours CTA */}
+      <section className="py-16">
+        <Container>
+          <Reveal>
+            <div className="grid items-center gap-10 rounded-3xl border border-gold/20 bg-cream p-10 sm:p-14 lg:grid-cols-[1.2fr_1fr]">
+              <div>
+                <SectionHeading
+                  eyebrow={home.customCta.eyebrow}
+                  title={home.customCta.title}
+                  description={home.customCta.description}
+                />
+                <Link
+                  href="/customize"
+                  className="mt-6 inline-block rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
+                >
+                  {home.customCta.buttonLabel}
+                </Link>
+              </div>
+              <SmartImage
+                image={site.customizeImage.image}
+                tone={site.customizeImage.tone}
+                label="Customize Your Tour"
+                className="aspect-square w-full rounded-2xl"
+              />
+            </div>
           </Reveal>
         </Container>
       </section>
@@ -137,6 +179,35 @@ export default async function Home() {
       <section className="py-6">
         <Container>
           <ExploreEgyptPromo hubs={destinationHubs} />
+        </Container>
+      </section>
+
+      {/* Reviews — only shown once real, collected testimonials exist in the
+          CMS. No placeholder or illustrative quotes are ever displayed here. */}
+      {testimonials.length > 0 && (
+        <section className="bg-ink py-16">
+          <Container>
+            <Reveal>
+              <SectionHeading
+                eyebrow={home.reviewsSection.eyebrow}
+                title={home.reviewsSection.title}
+                description={`${average}★ average across ${reviewCount} reviews`}
+                align="center"
+              />
+            </Reveal>
+          </Container>
+          <Reveal delay={100} className="mt-10">
+            <ReviewsMarquee testimonials={testimonials} href="/about" />
+          </Reveal>
+        </section>
+      )}
+
+      {/* Trust bar */}
+      <section className="py-14">
+        <Container>
+          <Reveal>
+            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} badges={site.trustBadges} />
+          </Reveal>
         </Container>
       </section>
 
@@ -226,54 +297,6 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* Photoshoots */}
-      <section className="bg-sand-dim py-16">
-        <Container>
-          <Reveal>
-            <SectionHeading
-              eyebrow={home.photoshootsSection.eyebrow}
-              title={home.photoshootsSection.title}
-              description={home.photoshootsSection.description}
-              align="center"
-            />
-          </Reveal>
-          <Reveal delay={100} className="mx-auto mt-10 grid max-w-4xl gap-6">
-            {photoshoots.map((p) => (
-              <PhotoshootCard key={p.slug} photoshoot={p} />
-            ))}
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* Custom Tours CTA */}
-      <section className="py-16">
-        <Container>
-          <Reveal>
-            <div className="grid items-center gap-10 rounded-3xl border border-gold/20 bg-cream p-10 sm:p-14 lg:grid-cols-[1.2fr_1fr]">
-              <div>
-                <SectionHeading
-                  eyebrow={home.customCta.eyebrow}
-                  title={home.customCta.title}
-                  description={home.customCta.description}
-                />
-                <Link
-                  href="/customize"
-                  className="mt-6 inline-block rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
-                >
-                  {home.customCta.buttonLabel}
-                </Link>
-              </div>
-              <SmartImage
-                image={site.customizeImage.image}
-                tone={site.customizeImage.tone}
-                label="Customize Your Tour"
-                className="aspect-square w-full rounded-2xl"
-              />
-            </div>
-          </Reveal>
-        </Container>
-      </section>
-
       {/* Trust stats — real, computed catalog numbers plus whatever's been
           filled in under Site Settings → Trust stats bar (years operating,
           guest count, review-platform rating). Nothing here is invented. */}
@@ -285,26 +308,6 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* Reviews — only shown once real, collected testimonials exist in the
-          CMS. No placeholder or illustrative quotes are ever displayed here. */}
-      {testimonials.length > 0 && (
-        <section className="bg-ink py-16">
-          <Container>
-            <Reveal>
-              <SectionHeading
-                eyebrow={home.reviewsSection.eyebrow}
-                title={home.reviewsSection.title}
-                description={`${average}★ average across ${reviewCount} reviews`}
-                align="center"
-              />
-            </Reveal>
-          </Container>
-          <Reveal delay={100} className="mt-10">
-            <ReviewsMarquee testimonials={testimonials} href="/about" />
-          </Reveal>
-        </section>
-      )}
-
       {/* FAQ */}
       <section className="py-16">
         <Container className="mx-auto max-w-3xl">
@@ -313,34 +316,6 @@ export default async function Home() {
           </Reveal>
           <Reveal delay={100} className="mt-10">
             <FaqAccordion faqs={faqs} />
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* Stories */}
-      <section className="py-16">
-        <Container>
-          <Reveal>
-            <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
-              <SectionHeading eyebrow={home.storiesSection.eyebrow} title={home.storiesSection.title} />
-              <Link href="/stories" className="text-sm font-semibold text-gold-dark hover:underline">
-                {home.storiesSection.linkLabel}
-              </Link>
-            </div>
-          </Reveal>
-          <Reveal delay={100} className="mt-10 grid gap-8 sm:grid-cols-2">
-            {homepageStories.map((s) => (
-              <StoryCard key={s.slug} story={s} />
-            ))}
-          </Reveal>
-        </Container>
-      </section>
-
-      {/* Newsletter / 4% off */}
-      <section className="py-16">
-        <Container>
-          <Reveal>
-            <NewsletterSignup source="homepage" />
           </Reveal>
         </Container>
       </section>
