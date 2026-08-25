@@ -48,18 +48,19 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
-// experiences, photoshoots, ratings, destinationHubs, testimonials, stories,
-// faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
+// experiences, photoshoots, ratings, nav, destinationHubs, testimonials,
+// stories, faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
 // signatureExperiences, authors, events, homepage, listingPages. E.g. to seed just the new Stories system (which needs
 // authors/events/signatureExperiences to exist first for its references):
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,stories
 //
-// `only=ratings` is the safe one to re-run any time after editing ratings in
-// content/tours.ts / experiences.ts / photoshoots.ts — it only patches the
-// `rating` field on each existing document (unlike `tours`/`experiences`/
-// `photoshoots`, which do a full createOrReplace and would wipe any other
-// field edited directly in the Studio since the last full migration):
+// `only=ratings` and `only=nav` are the safe ones to re-run any time — they
+// only patch the `rating` field (per tour/experience/photoshoot) or the
+// `nav` field (on siteSettings) respectively, unlike `tours`/`experiences`/
+// `photoshoots`/`siteSettings`, which do a full createOrReplace and would
+// wipe any other field edited directly in the Studio since the last full
+// migration:
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=ratings
 
@@ -226,6 +227,17 @@ export async function GET(request: NextRequest) {
       );
       results.push(`rating: photoshoot-${ph.slug}`);
     }
+  }
+
+  // Same reasoning as `ratings` above: a scoped patch on just the `nav`
+  // field, so it's safe to re-run after adding/removing a nav item without
+  // touching (and potentially wiping) the hero slideshow photos or banner
+  // images already uploaded on this same siteSettings document.
+  if (shouldRun("nav")) {
+    tx.patch("siteSettings", (p) =>
+      p.set({ nav: site.nav.map((n) => ({ ...n, _type: "object", _key: key() })) })
+    );
+    results.push("nav: siteSettings");
   }
 
   if (shouldRun("destinationHubs")) {
