@@ -1289,87 +1289,110 @@ export const stories: Story[] = [
     relatedExperience: herEgyptExperience,
     primaryKeyword: "women traveling to egypt",
     secondaryKeywords: ["is egypt safe for women", "solo female travel egypt", "what to wear in egypt as a woman"],
-    relatedTours: toursBySlug("10-day-private-luxurious-trip"),
-    seoTitle: "A Woman's Guide to Traveling Egypt Well",
+    relatedTours: toursBySlug("10-day-private-luxurious-trip", "8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor"),
+    seoTitle: "Egypt Travel for Women: A Grounded, Honest Guide",
     seoDescription:
       "What women travelers actually encounter in Egypt, what's worth preparing for, and what tends to get overstated online — a grounded, honest guide.",
     body: [
+      p(
+        "Egypt draws an enormous number of women travelers every year — solo, in pairs, and in groups — and the overwhelming majority have a genuinely good trip. That said, it's fair to want real information rather than either extreme: neither the alarmist warnings some corners of the internet traffic in, nor a blanket \"don't worry about it\" that skips useful detail entirely. Here's what actually shapes a woman's trip to Egypt, from the first market stall to the last temple courtyard."
+      ),
+      h2("What You're Actually Likely to Encounter"),
+      p(
+        "The most common friction women report isn't danger — it's persistent attention in crowded areas: vendors who don't take a polite no the first time, or unsolicited comments in busy markets and streets. It's rarely threatening, but it can be tiring over a long trip if you're navigating it alone, without a guide who can run interference. Tourist police are visibly present at every major site, and violent crime against tourists is genuinely rare."
+      ),
+      h2("What Actually Helps"),
+      p(
+        "A private guide changes this more than almost anything else — vendors and touts direct their attention differently toward a group traveling with a local guide than toward visibly independent travelers, and having someone who can navigate a situation in Arabic, calmly and immediately, removes most of the friction entirely. Modest, breathable clothing — covered shoulders and knees, loose rather than tight — is comfortable in the heat regardless of gender, and also draws less unwanted attention in more conservative areas outside tourist zones. None of this requires dressing differently from how you'd naturally dress for a hot, dusty, walking-heavy trip."
+      ),
+      h2("What to Wear, Realistically"),
+      p(
+        "Modesty in Egypt is less about strict rules and more about blending in comfortably. Shoulders and knees covered is the general standard outside resort pools and Nile cruise sundecks — think a loose linen shirt over lightweight trousers, a maxi dress, or wide-leg pants with a breathable top. None of this needs to feel like a costume; the goal is comfortable, sun-smart clothing that also reads as respectful in markets, temples, and mosques."
+      ),
+      ...bullets([
+        "A few loose, lightweight layers rather than tight clothing — better for the heat and for blending in",
+        "A scarf or light shawl, useful for covering shoulders at religious sites and for sun protection on exposed felucca or cruise decks",
+        "Comfortable flat shoes for uneven temple stone and market cobbles",
+        "A swimsuit is fine at hotel pools, Nile cruise sundecks, and private beach clubs — cover up when walking between the pool and your room",
+      ]),
+      h2("Solo Travel vs. Traveling With a Guide"),
+      p(
+        "Plenty of women do see Egypt solo, and plenty have a wonderful time doing it — trains between cities are straightforward, hotels are used to independent travelers, and major sites are well signed. What changes most with a private guide isn't safety in the dramatic sense; it's the day-to-day friction. A good guide handles ticket lines, steers unwanted attention away before it starts, and can answer the kind of question you might not think to ask a stranger."
+      ),
+      p(
+        "For a first trip to Egypt, or for anyone who'd rather spend two weeks enjoying temples than managing logistics, a private guide is worth the cost difference over a public group tour. It also means the pace is yours — lingering at Karnak an extra hour, skipping a site that doesn't interest you, without twenty other travelers' preferences in the mix."
+      ),
+      h2("What to Look for in an Operator"),
+      p(
+        "Not every operator plans a trip the same way, and the difference shows up fastest for women traveling solo or in a small group. Ask specifically who your guide will be, whether it's the same guide across multiple days or a different person at each stop, and whether female travelers are something the company has actually built experience around rather than treating as an edge case. A company that answers these questions specifically and quickly is generally the one that's thought it through."
+      ),
+      p(
+        "It's also worth asking about vehicle standards, hotel vetting, and what happens if a flight is delayed or a plan needs to change mid-trip — the answers tell you more about how a company handles the unexpected than any marketing copy does. A private, licensed guide who stays with your group for the length of the trip, rather than a rotating cast of local pickups at each site, tends to be the difference between a trip that feels handled and one that feels like a series of transactions."
+      ),
+      h2("Practical Comfort: Bathrooms, Hygiene, and Health"),
+      p(
+        "Public restrooms at major tourist sites are generally functional, though it's worth carrying tissue or wipes and a little local currency for attendants, who often expect a small tip. Sanitary products are available in pharmacies and supermarkets in Cairo, Luxor, Aswan, and resort towns, but the selection skews toward pads more than tampons — if you have a strong preference, it's worth packing enough for the trip rather than counting on finding your exact brand."
+      ),
+      p(
+        "Heat and long touring days are a bigger factor than anything else — carry water, wear a hat, and don't underestimate how quickly a full day walking between open-air temples in the sun adds up. Egypt's tap water isn't recommended for drinking; bottled water is cheap and everywhere, including on every private tour we run."
+      ),
+      h2("How Different Cities and Regions Feel"),
+      p(
+        "Cairo carries the most street-level attention simply because it's the biggest, busiest city on the itinerary — Khan el-Khalili market and downtown streets have the most vendor energy. Luxor and Aswan are calmer and more geared toward temple-going travelers, with a naturally slower pace. Red Sea resort towns like Hurghada and Sharm El Sheikh, along with Nile cruise ships, run closest to a standard international resort experience, with far less of the market dynamic that shows up in Cairo."
+      ),
+      p(
+        "None of this means avoiding Cairo — it means knowing what to expect there so it doesn't catch you off guard, which is exactly the kind of texture a good private guide navigates without you having to think about it."
+      ),
+      callout(
+        "A private guide who's briefed on your itinerary in advance is worth more here than almost any other single decision — it changes how vendors and touts approach your group entirely, and it means someone is always nearby who can step in, translate, or simply say no on your behalf.",
+        { title: "The Single Biggest Difference", tone: "Highlight" }
+      ),
+      h2("Where a Different Kind of Trip Helps"),
+      p(
+        "This is exactly why we built Her Egypt as its own Signature Experience rather than treating \"women's travel\" as a checkbox on a standard tour — it's designed from the ground up around the pace, comfort, and specific questions that come up on a trip built for women, with hosts who've thought through the details in advance rather than improvising them on the day. It isn't the only way to see Egypt well as a woman, but it's built for exactly this."
+      ),
+      faq([
+        {
+          question: "Is it safe for a woman to travel alone in Egypt?",
+          answer:
+            "Yes, in the sense that violent crime against tourists is rare and major sites have visible tourist police. The main friction solo women report is persistent vendor attention, which a private guide largely eliminates rather than any serious danger.",
+        },
+        {
+          question: "What should women avoid wearing in Egypt?",
+          answer:
+            "Very tight or very sheer clothing draws more attention than it's worth, and sleeveless or short clothing outside a resort pool is best paired with a scarf or light layer for covering up at temples and mosques.",
+        },
+        {
+          question: "Can women travel to Egypt during Ramadan?",
+          answer:
+            "Yes — the daytime pace is a little slower in some areas since many people are fasting, but tourist sites, hotels, and restaurants that cater to visitors operate as usual.",
+        },
+        {
+          question: "Do I need to cover my hair in Egypt?",
+          answer:
+            "No — head covering isn't required or expected of visitors outside of specific religious sites, where a scarf may be asked for at the entrance and is easy to keep on hand.",
+        },
+        {
+          question: "Is it appropriate to shake hands or make eye contact?",
+          answer:
+            "Generally yes with guides, hotel staff, and anyone in a tourism role. In more conservative settings outside tourist areas, taking a cue from the other person rather than initiating is a reasonable default.",
+        },
+        {
+          question: "Is it worth traveling to Egypt as a woman in a group vs. going solo?",
+          answer:
+            "Both work well. A small group of friends or a women-only trip tends to draw less street-level attention than a single woman traveling alone, but plenty of solo women travel Egypt comfortably with the right guide and a sensibly planned itinerary.",
+        },
+      ]),
+      p(
+        "Egypt has been welcoming women travelers for as long as it's been welcoming travelers at all, and the version of the country you actually experience — market stalls, temple courtyards, a felucca sail at sunset — has very little to do with the warnings a search engine surfaces first. Prepare sensibly, choose the right kind of guide, and go."
+      ),
       {
-        _type: "block",
-        _key: "p1",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p1s1",
-            text: "Egypt draws an enormous number of women travelers every year — solo, in pairs, and in groups — and the overwhelming majority have a genuinely good trip. That said, it's fair to want real information rather than either extreme: neither the alarmist warnings some corners of the internet traffic in, nor a blanket \"don't worry about it\" that skips useful detail entirely.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h1",
-        style: "h2",
-        children: [{ _type: "span", _key: "h1s1", text: "What You're Actually Likely to Encounter", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p2",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p2s1",
-            text: "The most common friction women report isn't danger — it's persistent attention in crowded areas: vendors who don't take a polite no the first time, or unsolicited comments in busy markets and streets. It's rarely threatening, but it can be tiring over a long trip if you're navigating it alone, without a guide who can run interference. Tourist police are visibly present at every major site, and violent crime against tourists is genuinely rare.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h2",
-        style: "h2",
-        children: [{ _type: "span", _key: "h2s1", text: "What Actually Helps", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p3",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p3s1",
-            text: "A private guide changes this more than almost anything else — vendors and touts direct their attention differently toward a group traveling with a local guide than toward visibly independent travelers, and having someone who can navigate a situation in Arabic, calmly and immediately, removes most of the friction entirely. Modest, breathable clothing — covered shoulders and knees, loose rather than tight — is comfortable in the heat regardless of gender, and also draws less unwanted attention in more conservative areas outside tourist zones. None of this requires dressing differently from how you'd naturally dress for a hot, dusty, walking-heavy trip.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "h3",
-        style: "h2",
-        children: [{ _type: "span", _key: "h3s1", text: "Where a Different Kind of Trip Helps", marks: [] }],
-        markDefs: [],
-      },
-      {
-        _type: "block",
-        _key: "p4",
-        style: "normal",
-        children: [
-          {
-            _type: "span",
-            _key: "p4s1",
-            text: "This is exactly why we built Her Egypt as its own Signature Experience rather than treating \"women's travel\" as a checkbox on a standard tour — it's designed from the ground up around the pace, comfort, and specific questions that come up on a trip built for women, with hosts who've thought through the details in advance rather than improvising them on the day. It isn't the only way to see Egypt well as a woman, but it's built for exactly this.",
-            marks: [],
-          },
-        ],
-        markDefs: [],
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Plan a Trip Built Around You",
+        body: "Tell us your dates, your pace, and what matters most, and we'll build a private Egypt itinerary with a guide who gets it right from day one.",
+        buttonLabel: "Start Planning",
+        buttonHref: "/customize",
       },
     ],
   },
@@ -2092,14 +2115,25 @@ export const stories: Story[] = [
     destinations: ["Cairo", "Luxor", "Aswan"],
     primaryKeyword: "egypt visa",
     secondaryKeywords: ["egypt e-visa", "egypt visa cost", "egypt visa requirements", "how to get an egypt visa"],
-    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise"),
-    seoTitle: "Egypt Visa Guide 2026: e-Visa Cost, Requirements, and How to Apply",
+    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "10-day-private-luxurious-trip"),
+    seoTitle: "Egypt Visa Guide 2026: e-Visa Cost, Requirements, How to Apply",
     seoDescription:
       "Everything to know about the Egypt e-visa in 2026 — cost, processing time, requirements, and the common mistakes that delay applications.",
     body: [
       p(
-        "Most visitors to Egypt need a visa, and the easiest route for the vast majority of travelers is the official e-visa — applied for online, before you fly, with no visit to an embassy required."
+        "Most visitors to Egypt need a visa, and the easiest route for the vast majority of travelers is the official e-visa — applied for online, before you fly, with no visit to an embassy required. Here's exactly how the process works, what it costs, and where first-time applicants tend to trip up."
       ),
+      h2("How to Apply, Step by Step"),
+      p(
+        "The whole process runs through Egypt's official e-visa portal and takes most travelers well under half an hour to complete, aside from the waiting period for approval."
+      ),
+      ...bullets([
+        "Go to the official Egypt e-visa portal and create an account with a valid email address",
+        "Fill in your passport details and travel dates exactly as they appear on your passport",
+        "Upload a digital passport-style photo and a scan of your passport's photo page",
+        "Choose single-entry or multiple-entry and pay the application fee by debit or credit card",
+        "Wait for the approval email, then download and save the PDF — you'll need it at check-in and on arrival",
+      ]),
       h2("Single-Entry or Multiple-Entry"),
       p(
         "The e-visa comes in two forms. A single-entry visa allows a stay of up to 30 days and is valid for use within 3 months of issue; a multiple-entry visa allows up to 30 days per visit and stays valid for 6 months, useful if your trip includes a side visit elsewhere and a return to Egypt. As of 2026, official fees run around $30 for single-entry and $65 for multiple-entry."
@@ -2115,9 +2149,51 @@ export const stories: Story[] = [
         "Your travel dates and a valid email address for the approved visa PDF",
         "A debit or credit card for the application fee",
       ]),
-      h2("Timing"),
+      h2("Timing: When to Apply"),
       p(
-        "Processing typically takes around 3 business days, though it can occasionally take longer. Apply at least a week before departure to leave room for that, and save the approved visa PDF — you'll be asked to show it on arrival alongside your passport."
+        "Processing typically takes around 3 business days, though it can occasionally run longer during busy travel periods. Apply at least a week before departure to build in a buffer, and avoid applying so early that your visa's validity window doesn't comfortably cover your actual travel dates. Airlines sometimes ask to see the approved visa PDF at check-in, so keep a copy accessible on your phone as well as a printed one in your travel documents."
+      ),
+      h2("Common Mistakes That Delay Approval"),
+      p("Most delays and rejections trace back to a small handful of avoidable errors."),
+      ...bullets([
+        "Entering your name or passport number slightly differently than it appears on your passport",
+        "Uploading a photo that doesn't meet the portal's size or background requirements",
+        "Applying with a passport that expires within six months of your travel dates",
+        "Paying through an unofficial third-party site that charges more and processes slower than the real portal",
+        "Applying too close to departure, leaving no buffer if the review takes longer than usual",
+      ]),
+      h2("Do You Need an e-Visa at All?"),
+      p(
+        "Requirements vary by nationality, and it's worth checking the official portal directly for your passport rather than assuming — a small number of nationalities either aren't eligible for the e-visa and need to apply through an embassy, or fall under a different arrangement entirely. If you're transiting through Egypt without leaving the airport, you generally don't need a visa at all; check with your airline if your layover involves a terminal change."
+      ),
+      h2("Why the e-Visa Replaced the Old Paper Process"),
+      p(
+        "Egypt's e-visa system replaced what used to be a slower process involving a paper visa stamp bought at certain embassies, or exchanged for cash at the airport on arrival. Moving the whole thing online means it happens before you fly, at a fixed official price, with no need to carry exact cash for a stamp at the border — a real improvement for anyone who's dealt with the older system on a previous trip to the region."
+      ),
+      h2("Applying With Family or a Group"),
+      p(
+        "Each traveler needs their own individual e-visa application and approval, including children — there's no single visa that covers multiple passports, even when everyone is traveling together and booking the same trip. It's worth applying for the whole group at the same time so everyone's approval PDFs are ready together, rather than having one family member's visa clear days ahead of everyone else's."
+      ),
+      p(
+        "If you're booking through a tour operator, it's still your responsibility to apply for your own visa unless the operator has explicitly told you otherwise — a private guide can advise you on the process, but the application itself goes through the official portal under each traveler's own name."
+      ),
+      h2("What to Expect at Immigration on Arrival"),
+      p(
+        "Landing in Egypt with an approved e-visa is a fairly routine process, but knowing the shape of it in advance makes it faster."
+      ),
+      ...bullets([
+        "Have your printed or digital e-visa PDF ready alongside your physical passport, even if you also showed it at check-in",
+        "Immigration counters typically take a photo and fingerprints as part of standard passport control, which is routine and quick",
+        "Your passport gets stamped with your entry date — check it before you walk away, since a missing or incorrect stamp can cause problems at departure",
+        "Keep the visa PDF accessible for the rest of your trip; some hotels ask to see it at check-in alongside your passport",
+      ]),
+      h2("If Something Goes Wrong: Rejections and Fixes"),
+      p(
+        "Most rejections trace back to a mismatch between the application and the passport — a name spelled slightly differently, a photo that doesn't meet spec, or a passport too close to its expiry date. If your application is rejected, the portal generally explains why, and reapplying with the corrected information usually resolves it well before your travel date, provided you applied with enough lead time in the first place. If you're traveling within the next day or two and something has gone wrong, contacting your airline or, if you're already booked with a tour operator, your Egypt-based contact directly is faster than troubleshooting alone."
+      ),
+      h2("Keeping Your Visa Documents Safe While Traveling"),
+      p(
+        "Save your approved e-visa PDF in at least two places — your email, a cloud drive, and a printed copy in your travel documents folder — so a dead phone or a lost bag doesn't leave you without proof of an approved visa. It's also worth screenshotting the confirmation page in case the email is delayed. None of this needs to be complicated; it just needs to exist somewhere you can reach quickly at an airport counter, half asleep after a long flight."
       ),
       faq([
         {
@@ -2135,7 +2211,37 @@ export const stories: Story[] = [
           answer:
             "As of 2026, the official e-visa fee is roughly $30 for single-entry and $65 for multiple-entry. Prices on unofficial sites are often significantly higher.",
         },
+        {
+          question: "What's the difference between an e-visa and a visa on arrival?",
+          answer:
+            "The e-visa is applied for online before you travel and is generally cheaper and faster than visa-on-arrival, which is issued at the airport for eligible nationalities and involves a line after a long flight.",
+        },
+        {
+          question: "Can I extend my Egypt visa once I'm there?",
+          answer:
+            "Yes, extensions are possible through Egypt's immigration offices for travelers who decide to stay longer, though it's simpler to apply for the correct visa length upfront if you already know your travel dates.",
+        },
+        {
+          question: "Do children need their own Egypt e-visa?",
+          answer: "Yes — every traveler, regardless of age, needs an individual approved e-visa tied to their own passport.",
+        },
+        {
+          question: "What if I lose my printed visa while traveling in Egypt?",
+          answer:
+            "As long as you have access to the approval email or a saved copy of the PDF, you can reprint it or show it digitally — the visa is tied to your passport record, not the paper copy itself.",
+        },
       ]),
+      p(
+        "The e-visa is one of the more painless parts of planning an Egypt trip once you know where to apply and what the form actually asks for. Get it done a week or two out, save the PDF somewhere you can find it in an airport line, and the rest of the planning gets to be the fun part."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Let Us Handle the Logistics",
+        body: "Beyond the visa, a private Egypt itinerary means every transfer, ticket, and detail is arranged before you land.",
+        buttonLabel: "Explore Egypt Tours",
+        buttonHref: "/tours",
+      },
     ],
   },
   {
@@ -2154,7 +2260,7 @@ export const stories: Story[] = [
     destinations: ["Cairo", "Luxor", "Aswan", "Sinai", "Red Sea"],
     primaryKeyword: "is egypt safe to visit",
     secondaryKeywords: ["egypt safety 2026", "is egypt safe for tourists", "sharm el sheikh safe", "sinai travel advisory"],
-    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "10-day-private-luxurious-trip"),
+    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "10-day-private-luxurious-trip", "sharm-el-sheikh-day-trip-from-cairo"),
     seoTitle: "Is Egypt Safe to Visit in 2026? A Grounded Answer",
     seoDescription:
       "What Egypt's travel advisories actually say, what the main tourist areas are like on the ground, and the real distinction between South Sinai and North Sinai.",
@@ -2174,6 +2280,55 @@ export const stories: Story[] = [
       p(
         "The realistic risk most tourists encounter isn't danger — it's persistent vendors, occasional overcharging, and the ordinary hassle of a busy tourist market. Violent crime against visitors is rare. Traveling with a licensed guide, sticking to your itinerary's arranged transport rather than unmarked taxis, and keeping copies of your passport and visa are the same sensible habits that apply in any major destination."
       ),
+      h2("Getting Around Safely"),
+      p(
+        "Private, arranged transport is the norm for tourism in Egypt, and it's also the simplest safety habit to adopt — a licensed driver and a vehicle arranged through your tour operator or hotel beats flagging down an unmarked taxi, especially at night. Domestic flights between Cairo, Luxor, Aswan, and Hurghada are frequent and normal; overnight trains between Cairo and Luxor or Aswan are a well-worn tourist route as well."
+      ),
+      p(
+        "If you do need a taxi outside an arranged transfer, agree on the fare before getting in rather than after, and favor hotel-arranged or app-based rides where available over hailing one on the street. None of this is different from the same-city precautions travelers already take in most major destinations — it just matters slightly more in a place where the language and currency are unfamiliar."
+      ),
+      h2("Money, Scams, and Everyday Hassle"),
+      p(
+        "The most common negative experience tourists report in Egypt isn't crime — it's overcharging, insistent vendors, and the odd unofficial \"guide\" offering to show you something for a tip. None of it is dangerous, but it can wear on a trip if you're not expecting it. Agreeing on a taxi fare before getting in, keeping small bills on hand, and politely declining unsolicited offers of help at sites covers most of it."
+      ),
+      p(
+        "Tourist police are stationed at every major site specifically to manage this kind of friction, and a private guide who's used to the local rhythm handles almost all of it before you even notice it's happening."
+      ),
+      h2("Health and Food Safety"),
+      p(
+        "Stick to bottled or filtered water, and food from restaurants and hotels used to serving tourists is very safe — the standard travel precaution of easing into street food gradually, rather than diving in on day one, applies here the same as anywhere. Basic travel insurance covering medical care is worth having, as it is for any international trip."
+      ),
+      h2("Heat and Environmental Safety"),
+      p(
+        "The more realistic day-to-day risk for most visitors isn't crime, it's the sun. Egypt's major sites are open-air, shade is minimal, and summer heat inland is genuinely intense. Carrying water, wearing a hat, pacing outdoor time around the coolest hours, and not underestimating how quickly a full day of walking between temples adds up matters more to most trips than any security consideration. Nile cruises and Red Sea resorts add water safety to the list — following posted flag warnings at beaches and staying within marked swimming or snorkeling areas covers the basics."
+      ),
+      h2("What Egypt's Tourism Security Actually Looks Like"),
+      p(
+        "Every major site — the Pyramids, the Egyptian Museum, Karnak, the Valley of the Kings — has a visible security presence and bag or metal detector checks at the entrance, which is now standard practice at major tourist attractions worldwide rather than something unique to Egypt. Hotels catering to international travelers generally have their own security checks at the entrance as well. None of this is meant to be alarming in person — it reads as routine within the first day of a trip, the same as airport security becomes routine after the first pass."
+      ),
+      h2("Is Egypt Safe for Solo and Women Travelers?"),
+      p(
+        "Yes, broadly — women travel to Egypt solo or in groups every year without incident, and the same core advice applies: stick to arranged transport, dress for the heat and the culture, and consider a private guide if you're traveling alone. It's a big enough topic that we've covered it in more depth separately."
+      ),
+      h2("What About Old Warnings You've Seen Online?"),
+      p(
+        "A lot of the most alarming Egypt travel content still circulating online is years, sometimes over a decade, out of date — written during a period of heightened instability that doesn't reflect the country's tourist areas today. Checking current, dated advisories rather than an old blog post or forum thread is worth the extra few minutes, especially since search results don't always surface the most recent information first."
+      ),
+      h2("A Quick Word on Political Context"),
+      p(
+        "Egypt's overall advisory level reflects the same general regional context that applies across much of the wider Middle East and North Africa, rather than anything specific to the day-to-day tourist experience. It's the same broad category many popular destinations carry, worth reading in that context rather than assuming it singles Egypt out. Tourism is a major part of Egypt's economy, and the areas travelers actually visit are treated accordingly — well-maintained, well-staffed, and used to hosting visitors from everywhere."
+      ),
+      h2("Small Practical Precautions Worth Knowing"),
+      ...bullets([
+        "Shake out shoes before putting them on after a desert camp or overnight stay near the dunes",
+        "Keep photocopies (digital or paper) of your passport and visa separate from the originals",
+        "Save your guide's and hotel's contact numbers before setting out each day",
+        "Stick to well-lit, populated areas at night and use arranged transport rather than wandering unfamiliar streets alone — ordinary big-city sense rather than anything Egypt-specific",
+      ]),
+      callout(
+        "Egypt has hosted international tourism for well over a century, through every kind of global headline. The tourist areas travelers actually visit are calm, well-patrolled, and set up specifically to host visitors — the risk that a headline suggests and the risk you'll actually encounter at Karnak or on a Nile cruise are two very different things.",
+        { tone: "Safety", title: "Our Honest Take" }
+      ),
       faq([
         {
           question: "Is it safe to travel to Cairo?",
@@ -2188,7 +2343,32 @@ export const stories: Story[] = [
           answer:
             "Northern and Middle Sinai, and areas near the western border with Libya, carry stronger travel advisories. These are not part of any standard tourist itinerary.",
         },
+        {
+          question: "Do I need travel insurance for Egypt?",
+          answer:
+            "It's not legally required for most nationalities, but it's a sensible standard precaution for any international trip, covering medical care and trip disruptions.",
+        },
+        {
+          question: "Is it safe to drink the tap water in Egypt?",
+          answer: "No — stick to bottled or filtered water, which is inexpensive and available everywhere, including on every guided tour.",
+        },
+        {
+          question: "Should I check travel advisories again close to my trip?",
+          answer:
+            "Yes, as routine practice for any international trip — checking again a week or two before departure takes a few minutes and is worth doing regardless of destination.",
+        },
       ]),
+      p(
+        "The honest read is this: Egypt's tourist regions are safe, functioning, and set up to host millions of visitors a year, and the areas under genuine travel advisories are nowhere near a standard itinerary. Go in informed rather than anxious, travel with a licensed guide, and you'll likely spend more time thinking about the temples than about safety at all."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Travel With a Trusted Local Team",
+        body: "Every Egypt Eye itinerary runs with licensed guides, vetted drivers, and arranged transport from the moment you land.",
+        buttonLabel: "See Our Tours",
+        buttonHref: "/tours",
+      },
     ],
   },
   {
@@ -2213,7 +2393,7 @@ export const stories: Story[] = [
       "What a budget, mid-range, and luxury Egypt trip actually costs per day — plus how Nile cruise and accommodation pricing scales with comfort.",
     body: [
       p(
-        "Egypt can be genuinely affordable or genuinely luxurious, and the honest answer to \"how much will this cost\" depends entirely on which end of that range you're aiming for. Here's roughly how the numbers break down."
+        "Egypt can be genuinely affordable or genuinely luxurious, and the honest answer to \"how much will this cost\" depends entirely on which end of that range you're aiming for. Here's roughly how the numbers break down, and where the money actually goes."
       ),
       h2("Three Rough Tiers"),
       p(
@@ -2223,14 +2403,87 @@ export const stories: Story[] = [
       p(
         "Accommodation is the widest range of any category — a basic double room can run $10 to $40 a night, while five-star Nile-view or desert-lodge properties run $250 to $600 or more. A multi-night cruise between Luxor and Aswan follows a similar spread: standard cruise cabins on a 3- or 4-night sailing often run somewhere in the $150 to $250 range per person, while a luxury dahabiya sailing or a high-end cabin can run into the high hundreds or beyond, per night."
       ),
+      h2("Flights: International and Domestic"),
+      p(
+        "International flights to Cairo vary enormously by origin and season, and are worth pricing separately well before your trip since they're often the single largest line item. Domestic flights between Cairo, Luxor, Aswan, and Hurghada are short and relatively affordable compared to the international leg, and save real time versus the equivalent overland journey — most multi-city itineraries mix a flight or two with a Nile cruise rather than driving the full length of the Nile Valley."
+      ),
+      h2("Meals and Daily Spending"),
+      p(
+        "Food is one of the more affordable parts of an Egypt trip regardless of which tier you're traveling in. Local restaurants and street-style food are inexpensive; hotel restaurants and tourist-area dining cost more, closer to what you'd pay at home. A reasonable daily food budget outside of what's already included in a tour package stays modest at local spots and rises quickly at resort and five-star hotel restaurants."
+      ),
+      h2("Tipping: The Cost People Forget to Budget For"),
+      p(
+        "Tipping, known locally as baksheesh, is a genuine part of the economy in Egypt's tourism sector and worth budgeting for separately rather than treating as an afterthought. Guides, drivers, felucca captains, hotel staff, and restroom attendants at tourist sites all expect small tips as a normal part of the transaction. It adds up over a multi-day trip, so it's worth setting aside a specific amount of small-denomination local currency for this rather than being caught short."
+      ),
+      h2("Entry Tickets and Extras"),
+      p(
+        "Site entry tickets for major monuments — the Giza Plateau, the Egyptian Museum, Karnak, the Valley of the Kings — are a real cost on top of accommodation and touring, and a few sites (the Great Pyramid's interior, certain tombs) charge extra for entry beyond the base ticket. Photography permits, a hot air balloon ride in Luxor, and optional add-ons like a felucca sunset sail or a dinner cruise are worth budgeting separately, since they're not always included in a base tour price."
+      ),
+      h2("Ways to Manage the Cost Without Cutting the Wrong Corners"),
+      p(
+        "Traveling in shoulder season (spring or autumn) rather than peak winter months, choosing a shorter but well-planned itinerary over an overly ambitious one, and booking a private guide rather than assuming a big group tour is automatically cheaper (it often isn't, once quality and time are factored in) are the moves that actually change the number without changing the experience for the worse."
+      ),
+      h2("Nile Cruise vs. Land-Only Itinerary"),
+      p(
+        "Whether a Nile cruise belongs in your budget or not changes the shape of your trip more than almost any other decision. A cruise bundles accommodation, most meals, and transport between Luxor, Kom Ombo, Edfu, and Aswan into a single nightly rate, which often works out efficient once you account for what you'd otherwise spend on hotels and private transfers covering the same ground. A land-only itinerary — staying in hotels and driving between sites — gives more flexibility to linger somewhere longer, at the cost of arranging more transitions yourself, or through your guide, along the way."
+      ),
+      h2("Group Size and Per-Person Cost"),
+      p(
+        "Private touring is priced per group more than per person in most cases, which means the per-person cost drops meaningfully as a group grows — a private guide and vehicle for two people costs roughly the same as for four, so a family or a group of friends traveling together often lands closer to mid-range pricing per person even while getting a fully private, guide-led trip. This is one of the more overlooked ways to get luxury-adjacent touring without a luxury-tier budget."
+      ),
+      h2("Currency and Payment Practicalities"),
+      p(
+        "Egypt's currency is the Egyptian pound, and while major hotels, cruise ships, and larger shops accept credit cards, cash is still the norm for tipping, small vendors, and local markets. ATMs are widely available in Cairo, Luxor, Aswan, and resort towns, and withdrawing local currency as you go tends to work out better than arriving with a large amount of pre-exchanged cash. It's worth keeping a mix of small and larger denominations on hand, since small bills matter most for the day-to-day tipping that adds up over a trip."
+      ),
       callout(
         "These figures are general market context, not what we charge — every Egypt Eye itinerary is quoted individually once we know your dates, group size, and the level of comfort you want, so you always know the actual number before booking.",
         { tone: "Info", title: "A Note on Our Own Pricing" }
+      ),
+      h2("Souvenirs and Shopping"),
+      p(
+        "Papyrus art, spices, cotton textiles, and small alabaster or stone carvings are the most common souvenirs, and prices in markets are almost always negotiable — a starting price is rarely the real price. Budgeting a separate, modest amount for shopping keeps it from blending into your daily spending money, and buying from a guide's recommended, reputable shops tends to mean better quality and fairer starting prices than a blind market stall."
+      ),
+      h2("What's Usually Included vs. Extra"),
+      p(
+        "Most well-run tour packages include accommodation, guided touring, entry tickets to the sites on the itinerary, transport between stops, and many or most meals. What's typically extra: your international flight, travel insurance, tipping, alcoholic drinks, optional add-ons like a hot air balloon ride or a photoshoot experience, and any personal shopping. Reading a quote line by line for exactly what's covered avoids surprises once you're actually there."
       ),
       h2("A Sample Ten-Day Trip"),
       p(
         "A well-paced ten-day mid-range trip covering Cairo, Giza, and a Luxor-to-Aswan cruise typically lands somewhere between $2,500 and $4,000 per person, including domestic flights or trains, guided touring, and most meals — excluding the international flight to Egypt itself."
       ),
+      faq([
+        {
+          question: "Is Egypt an expensive country to visit?",
+          answer:
+            "Not compared to most international destinations — a mid-range Egypt trip is generally more affordable than an equivalent trip to Western Europe, even accounting for Nile cruises and domestic flights.",
+        },
+        {
+          question: "How much should I budget for tipping in Egypt?",
+          answer:
+            "It varies by trip length and group size, but setting aside a dedicated amount of small local currency notes specifically for tipping guides, drivers, and staff over a multi-day trip is worth planning for in advance rather than figuring out day by day.",
+        },
+        {
+          question: "Are Nile cruises worth the cost?",
+          answer:
+            "For most travelers, yes — a Nile cruise between Luxor and Aswan covers a stretch of Egypt's most important sites (Kom Ombo, Edfu, Aswan's temples) efficiently, with accommodation, most meals, and transport between sites all bundled into one price.",
+        },
+        {
+          question: "Does traveling in a larger group lower the cost per person?",
+          answer:
+            "Often, yes, for private touring specifically — a guide and vehicle are typically priced per group rather than per person, so the per-person cost drops as more people share the same private arrangement.",
+        },
+      ]),
+      p(
+        "The real answer to what an Egypt trip costs is whichever number matches the trip you actually want — and the useful next step isn't guessing at averages, it's getting a specific quote for specific dates, so you know the real number before you book anything."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Get a Real Quote for Your Trip",
+        body: "Tell us your dates, group size, and the level of comfort you're after, and we'll put together an itinerary with an actual price attached.",
+        buttonLabel: "Request a Custom Quote",
+        buttonHref: "/customize",
+      },
     ],
   },
   {
@@ -2249,13 +2502,13 @@ export const stories: Story[] = [
     destinations: ["Cairo", "Luxor", "Aswan"],
     primaryKeyword: "what to pack for egypt",
     secondaryKeywords: ["egypt packing list", "what to wear in egypt", "egypt travel essentials"],
-    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise"),
+    relatedTours: toursBySlug("6-day-cairo-giza-luxor", "8-day-essential-egypt-nile-cruise", "hurghada-red-sea-diving-snorkeling"),
     seoTitle: "What to Pack for Egypt: A Practical, Season-Aware Packing List",
     seoDescription:
       "A realistic Egypt packing list — clothing, sun protection, and the small essentials that make a difference on a walking-heavy, sun-heavy trip.",
     body: [
       p(
-        "Egypt is hot, dusty, and full of open-air sites with very little shade, which should shape most of what goes in your suitcase more than anything else."
+        "Egypt is hot, dusty, and full of open-air sites with very little shade, which should shape most of what goes in your suitcase more than anything else. Here's what actually earns a spot in the bag, and what you can safely leave behind."
       ),
       h2("Clothing"),
       p(
@@ -2272,6 +2525,96 @@ export const stories: Story[] = [
       p(
         "A portable phone charger or power bank, a downloaded copy of your e-visa, a few small-denomination local currency notes for tipping, and any prescription medication in its original packaging. If you're visiting between June and August, pack lighter and looser than you think you need to — temperatures inland regularly pass 40°C (104°F)."
       ),
+      h2("Documents and Money"),
+      p(
+        "Keep both digital and printed copies of your passport photo page, your approved e-visa PDF, and any tour or hotel confirmations — a phone with a dead battery at an airport counter is a bad time to need one of these. Bring a mix of payment methods: a couple of major credit cards for hotels and larger purchases, plus enough cash for tipping, market stalls, and small vendors who don't take cards."
+      ),
+      h2("Electronics"),
+      p(
+        "Egypt runs on 220V with European-style two-pin round sockets, so a universal adapter is worth packing if you're not already carrying one. A portable power bank matters more here than on most trips — long days out at temple sites with a phone running GPS and a camera drain a battery fast, and outlets aren't always available where you're touring. A dust-resistant camera bag or case is worth it if you're bringing real camera gear into the desert or onto a felucca."
+      ),
+      h2("Health and Toiletries"),
+      p(
+        "Pack any prescription medication in its original packaging with enough supply for the full trip, plus basics like rehydration salts, anti-diarrheal medication, and mild pain relief — pharmacies are common in cities but not always convenient mid-tour. Hand sanitizer and a small pack of tissues are useful at sites where restroom supplies can be inconsistent. Sunscreen is worth buying before you arrive if you have a specific formula you rely on, since selection varies."
+      ),
+      h2("Packing Differently by Region"),
+      p(
+        "A Nile cruise calls for slightly dressier evening options — many cruise ships have a somewhat elevated dinner dress code, and a light dress or collared shirt covers it. A Red Sea or Sinai add-on (Hurghada, Sharm El Sheikh, Dahab) means swimwear, reef-safe sunscreen, and a rash guard if you're snorkeling or diving. A desert overnight in Siwa or the White Desert means warmer layers than the rest of the itinerary would suggest — desert nights get cold fast, even after a scorching day."
+      ),
+      h2("Packing by Season"),
+      p(
+        "Summer (June through August) means lightweight, loose, breathable everything, and packing less rather than more — temperatures inland regularly pass 40°C (104°F), and heavy fabric becomes a liability, not a comfort. Winter (November through February) is comfortable by day but genuinely cool at night and on the water, so a packable jacket or fleece earns its space. Spring and autumn sit in between and are the easiest seasons to pack for."
+      ),
+      callout(
+        "Most hotels and Nile cruise ships offer same- or next-day laundry service, often at a low cost. It's a genuinely useful way to pack lighter for a longer trip rather than bringing two weeks of clothing for a two-week itinerary.",
+        { tone: "Info", title: "Laundry Is Easier Than You Think" }
+      ),
+      h2("What Not to Bring"),
+      p(
+        "A few things first-timers pack out of habit end up as dead weight. A full separate outfit for every single day isn't necessary given how easy laundry service is — two or three versatile, mix-and-match pieces cover far more ground than a suitcase full of single-use outfits. Heavy jeans are uncomfortable in the daytime heat almost everywhere on a standard itinerary; save denim, if you bring it at all, for a cool desert evening. And formal wear beyond one nice outfit for a cruise dinner or a special evening is rarely needed outside of a five-star city hotel."
+      ),
+      h2("Carry-On Essentials"),
+      p(
+        "Pack your first day's essentials in your carry-on rather than checked luggage, in case a bag is delayed — a change of clothes, any medication, your e-visa printout, phone charger, and basic toiletries. Long-haul flights into Cairo often land at odd hours, and having what you need for a same-day tour start without waiting on checked baggage makes the first day far less stressful."
+      ),
+      h2("Packing for a Photoshoot Add-On"),
+      p(
+        "If your itinerary includes a professional photoshoot — a flying-dress session on the dunes, a sunrise shoot at the Pyramids — bring the actual outfit or dress you want photographed in, plus a backup, along with comfortable shoes for getting to the location itself even if you change once there. Wind is a real factor in open desert, so a dress with some structure photographs more predictably than something very sheer or lightweight in a strong breeze."
+      ),
+      h2("What You Can Easily Buy Once You're There"),
+      p(
+        "Egypt's markets and pharmacies cover more than travelers expect — sunscreen, hats, scarves, and basic toiletries are all easy to find in Cairo, Luxor, Aswan, and resort towns, so a forgotten item rarely derails a trip. This is worth remembering if you're trying to pack lighter for a long flight; a scarf bought in Khan el-Khalili doubles as both a practical item and a genuine souvenir."
+      ),
+      h2("Modesty at Religious Sites, Specifically"),
+      p(
+        "Mosques and churches on a typical itinerary — inside Islamic Cairo, Coptic Cairo, or a stop at a monastery in Sinai — generally ask for shoulders and knees covered, and some mosques ask visitors to remove shoes before entering carpeted prayer areas. A scarf that can quickly cover shoulders or hair, and shoes that slip on and off easily, make these stops smoother without needing a separate outfit."
+      ),
+      h2("A Sample Packing Checklist"),
+      ...bullets([
+        "5-7 lightweight, breathable outfits mixing tops, bottoms, and one dressier option for a cruise dinner",
+        "A scarf or light shawl for temples, mosques, and sun coverage on open decks",
+        "A warm layer — light jacket or fleece — for desert nights and winter mornings",
+        "Broken-in walking shoes plus sandals for boat days and resort time",
+        "Wide-brimmed hat, UV-protective sunglasses, and high-SPF sunscreen",
+        "A reusable water bottle",
+        "Universal power adapter and a portable charger",
+        "Printed and digital copies of your passport, e-visa, and tour confirmations",
+        "A small first-aid kit with basic medication and any prescriptions in original packaging",
+        "Swimwear and reef-safe sunscreen if your trip includes the Red Sea or Sinai",
+      ]),
+      faq([
+        {
+          question: "Do I need to cover my head in Egypt?",
+          answer:
+            "No, head covering isn't required or expected of visitors, though a scarf is worth keeping handy for the few religious sites that ask for shoulders and hair covered at the entrance.",
+        },
+        {
+          question: "Can I wear shorts in Egypt?",
+          answer:
+            "At resorts, on Nile cruise decks, and around hotel pools, yes. Elsewhere — markets, temples, cities — knee-length or longer is more comfortable both culturally and for sun protection.",
+        },
+        {
+          question: "What shoes are best for Egypt?",
+          answer:
+            "Comfortable, broken-in closed-toe shoes for temple sites, which have uneven stone floors and a lot of walking, plus sandals for boat days and resort time.",
+        },
+        {
+          question: "Should I bring my own snorkel gear to the Red Sea?",
+          answer:
+            "Not necessary — reputable dive and snorkel operators supply well-maintained gear, though bringing your own mask is reasonable if you have a strong fit preference.",
+        },
+      ]),
+      p(
+        "None of this is a complicated packing list — it's mostly about leaning into the heat rather than fighting it, keeping a warm layer within reach for the evenings, and packing documents like you'll actually need them at 6 a.m. before a balloon ride. Get that right and the rest of the trip takes care of itself."
+      ),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Ready to Plan the Itinerary Around It",
+        body: "Once your suitcase is sorted, let's sort the trip — a private Egypt itinerary built around your dates and pace.",
+        buttonLabel: "Browse Egypt Tours",
+        buttonHref: "/tours",
+      },
     ],
   },
   {
