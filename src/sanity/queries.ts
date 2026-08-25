@@ -146,7 +146,7 @@ export const aboutPageQuery = groq`*[_type == "aboutPage"][0] {
 
 export const contactPageQuery = groq`*[_type == "contactPage"][0] {
   heroEyebrow, heroHeadline, heroImage,
-  whatsappCardDescription, emailCardDescription, urgentCardDescription,
+  whatsappCardDescription, emailCardDescription,
   policiesEyebrow, policiesTitle
 }`;
 

@@ -17,7 +17,6 @@ export const site = {
     email: "info@egypteyetravel.com",
     whatsapp: "+20 127 414 4599",
     whatsappLink: "https://wa.me/201274144599",
-    urgentBooking: "+20 122 907 9801",
   },
   socials: {
     instagram: "https://instagram.com/egypteyetravel",
@@ -36,7 +35,6 @@ export const site = {
     { label: "Customize Your Tour", href: "/customize" },
     { label: "Stories", href: "/stories" },
     { label: "About", href: "/about" },
-    { label: "Contact", href: "/contact" },
   ],
   trustBadges: [
     {
@@ -62,7 +60,6 @@ export const site = {
     contactLabel: "Contact",
     followLabel: "Follow",
     whatsappPrefix: "WhatsApp: ",
-    urgentBookingPrefix: "Urgent booking: ",
     location: "Cairo, Egypt",
   },
   policies: {

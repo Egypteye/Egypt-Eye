@@ -31,7 +31,7 @@ export default function NotFound() {
           Browse Tours
         </Link>
         <Link
-          href="/contact"
+          href="/about#contact"
           className="rounded-full border border-black/10 px-6 py-3 text-sm font-semibold text-ink-soft transition hover:bg-sand-dim"
         >
           Contact Us

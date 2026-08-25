@@ -134,7 +134,6 @@ export const siteSettings = defineType({
         defineField({ name: "email", title: "Email", type: "string" }),
         defineField({ name: "whatsapp", title: "WhatsApp (display)", type: "string" }),
         defineField({ name: "whatsappLink", title: "WhatsApp link (https://wa.me/...)", type: "url" }),
-        defineField({ name: "urgentBooking", title: "Urgent booking phone", type: "string" }),
       ],
     }),
 
@@ -254,7 +253,6 @@ export const siteSettings = defineType({
         defineField({ name: "contactLabel", title: "\"Contact\" column heading", type: "string" }),
         defineField({ name: "followLabel", title: "\"Follow\" column heading", type: "string" }),
         defineField({ name: "whatsappPrefix", title: "WhatsApp line prefix", type: "string" }),
-        defineField({ name: "urgentBookingPrefix", title: "Urgent booking line prefix", type: "string" }),
         defineField({ name: "location", title: "Location line (e.g. \"Cairo, Egypt\")", type: "string" }),
       ],
     }),

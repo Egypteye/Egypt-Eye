@@ -4,18 +4,19 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TestimonialCard } from "@/components/TestimonialCard";
-import { getAboutPage, getSiteSettings, getTestimonials } from "@/sanity/fetchers";
+import { getAboutPage, getContactPage, getSiteSettings, getTestimonials } from "@/sanity/fetchers";
 
 export const metadata = {
-  title: "About Egypt Eye Travel and Tours",
+  title: "About & Contact — Egypt Eye Travel and Tours",
   description:
-    "We show you Egypt, take care of you, customize the trip, and professionally capture it — tour operator, experience company, and photography studio in one.",
+    "We show you Egypt, take care of you, customize the trip, and professionally capture it — tour operator, experience company, and photography studio in one. Reach us via WhatsApp or email.",
 };
 
 export default async function AboutPage() {
-  const [site, page, testimonials] = await Promise.all([
+  const [site, page, contact, testimonials] = await Promise.all([
     getSiteSettings(),
     getAboutPage(),
+    getContactPage(),
     getTestimonials(),
   ]);
   const featuredTestimonials = testimonials.slice(0, 6);
@@ -92,6 +93,72 @@ export default async function AboutPage() {
                   {name}
                 </span>
               ))}
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* Contact — folded in here rather than a separate /contact page. */}
+      <section id="contact" className="bg-sand-dim py-20">
+        <Container>
+          <SectionHeading eyebrow={contact.heroEyebrow} title="Get in Touch" align="center" />
+          <div className="mx-auto mt-10 grid max-w-3xl gap-8 sm:grid-cols-2">
+            <a
+              href={site.contact.whatsappLink}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm transition hover:border-gold/30 hover:shadow-lg hover:shadow-black/5"
+            >
+              <p className="text-sm font-semibold uppercase tracking-wide text-gold-dark">
+                WhatsApp
+              </p>
+              <p className="mt-2 font-display text-xl font-semibold text-ink">
+                {site.contact.whatsapp}
+              </p>
+              <p className="mt-1 text-sm text-ink-soft/70">{contact.whatsappCardDescription}</p>
+            </a>
+
+            <a
+              href={`mailto:${site.contact.email}`}
+              className="rounded-2xl border border-black/5 bg-cream p-8 shadow-sm transition hover:border-gold/30 hover:shadow-lg hover:shadow-black/5"
+            >
+              <p className="text-sm font-semibold uppercase tracking-wide text-gold-dark">
+                Email
+              </p>
+              <p className="mt-2 font-display text-xl font-semibold text-ink">
+                {site.contact.email}
+              </p>
+              <p className="mt-1 text-sm text-ink-soft/70">{contact.emailCardDescription}</p>
+            </a>
+          </div>
+
+          <div className="mt-16">
+            <SectionHeading eyebrow={contact.policiesEyebrow} title={contact.policiesTitle} align="center" />
+            <div className="mx-auto mt-10 grid max-w-3xl gap-8 sm:grid-cols-2">
+              <div className="rounded-2xl bg-cream p-6 shadow-sm">
+                <p className="font-display text-lg font-semibold text-ink">Deposit &amp; Payment</p>
+                <p className="mt-2 text-sm text-ink-soft/75">{site.policies.deposit}</p>
+                <p className="mt-2 text-sm text-ink-soft/75">{site.policies.currency}</p>
+              </div>
+              <div className="rounded-2xl bg-cream p-6 shadow-sm">
+                <p className="font-display text-lg font-semibold text-ink">Children&rsquo;s Pricing</p>
+                <ul className="mt-2 space-y-1 text-sm text-ink-soft/75">
+                  {site.policies.children.map((c) => (
+                    <li key={c.age}>
+                      <span className="font-medium text-ink">{c.age}:</span> {c.price}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2 text-xs text-ink-soft/60">{site.policies.childrenNote}</p>
+              </div>
+              <div className="rounded-2xl bg-cream p-6 shadow-sm">
+                <p className="font-display text-lg font-semibold text-ink">Your Voucher</p>
+                <p className="mt-2 text-sm text-ink-soft/75">{site.policies.voucher}</p>
+              </div>
+              <div className="rounded-2xl bg-cream p-6 shadow-sm">
+                <p className="font-display text-lg font-semibold text-ink">Cancellation Policy</p>
+                <p className="mt-2 text-sm text-ink-soft/75">{site.policies.cancellation}</p>
+              </div>
             </div>
           </div>
         </Container>

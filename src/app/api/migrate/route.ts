@@ -397,7 +397,6 @@ export async function GET(request: NextRequest) {
       heroImage: { _type: "object", tone: contactPage.heroImage.tone },
       whatsappCardDescription: contactPage.whatsappCardDescription,
       emailCardDescription: contactPage.emailCardDescription,
-      urgentCardDescription: contactPage.urgentCardDescription,
       policiesEyebrow: contactPage.policiesEyebrow,
       policiesTitle: contactPage.policiesTitle,
     });

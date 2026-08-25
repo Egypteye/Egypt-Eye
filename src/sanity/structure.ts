@@ -34,7 +34,7 @@ export const structure: StructureResolver = (S) =>
           S.document().schemaType("aboutPage").documentId("aboutPage")
         ),
       S.listItem()
-        .title("Contact Page")
+        .title("Contact Info (shown on the About page)")
         .child(
           S.document().schemaType("contactPage").documentId("contactPage")
         ),

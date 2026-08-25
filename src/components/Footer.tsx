@@ -57,9 +57,6 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                 {site.footer.whatsappPrefix}{site.contact.whatsapp}
               </a>
             </li>
-            <li className="text-cream/50">
-              {site.footer.urgentBookingPrefix}{site.contact.urgentBooking}
-            </li>
           </ul>
         </div>
 

@@ -261,7 +261,6 @@ export type SiteSettings = {
     email?: string;
     whatsapp?: string;
     whatsappLink?: string;
-    urgentBooking?: string;
   };
   socials?: {
     instagram?: string;
@@ -308,7 +307,6 @@ export type SiteSettings = {
     contactLabel?: string;
     followLabel?: string;
     whatsappPrefix?: string;
-    urgentBookingPrefix?: string;
     location?: string;
   };
   policies?: {
@@ -391,7 +389,6 @@ export type ResolvedSiteSettings = {
     email: string;
     whatsapp: string;
     whatsappLink: string;
-    urgentBooking: string;
   };
   socials: {
     instagram: string;
@@ -437,7 +434,6 @@ export type ResolvedSiteSettings = {
     contactLabel: string;
     followLabel: string;
     whatsappPrefix: string;
-    urgentBookingPrefix: string;
     location: string;
   };
 };
@@ -534,7 +530,6 @@ export type ContactPage = {
   heroImage?: { image?: SanityImage; tone?: ImageTone };
   whatsappCardDescription?: string;
   emailCardDescription?: string;
-  urgentCardDescription?: string;
   policiesEyebrow?: string;
   policiesTitle?: string;
 };
@@ -545,7 +540,6 @@ export type ResolvedContactPage = {
   heroImage: { image?: SanityImage; tone: ImageTone };
   whatsappCardDescription: string;
   emailCardDescription: string;
-  urgentCardDescription: string;
   policiesEyebrow: string;
   policiesTitle: string;
 };

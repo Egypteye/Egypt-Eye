@@ -29,7 +29,6 @@ export const contactPage = defineType({
     }),
     defineField({ name: "whatsappCardDescription", title: "WhatsApp card caption", type: "string" }),
     defineField({ name: "emailCardDescription", title: "Email card caption", type: "string" }),
-    defineField({ name: "urgentCardDescription", title: "Urgent Booking card caption", type: "string" }),
     defineField({ name: "policiesEyebrow", title: "Policies section eyebrow", type: "string" }),
     defineField({ name: "policiesTitle", title: "Policies section title", type: "string" }),
   ],

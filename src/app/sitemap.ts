@@ -33,8 +33,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/photoshoots`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/stories`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/customize`, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.4 },
-    { url: `${siteUrl}/contact`, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.5 },
   ];
 
   const tourRoutes: MetadataRoute.Sitemap = tourSlugs.map((slug) => ({

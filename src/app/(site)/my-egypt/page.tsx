@@ -263,7 +263,6 @@ export default async function MyEgyptPage() {
               <a href={`mailto:${site.contact.email}`} className="text-ink-soft/70 hover:text-ink">
                 {site.contact.email}
               </a>
-              <p className="text-ink-soft/50">Urgent (while traveling): {site.contact.urgentBooking}</p>
             </div>
           </InfoCard>
         </Container>

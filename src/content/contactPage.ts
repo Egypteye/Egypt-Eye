@@ -12,7 +12,6 @@ export const contactPage: ResolvedContactPage = {
   },
   whatsappCardDescription: "Fastest way to reach us",
   emailCardDescription: "For detailed enquiries",
-  urgentCardDescription: "Same-day or in-country support",
   policiesEyebrow: "Good to Know",
   policiesTitle: "Booking Policies",
 };

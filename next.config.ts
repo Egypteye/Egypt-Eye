@@ -37,6 +37,13 @@ const nextConfig: NextConfig = {
         destination: "/stories/best-travel-agencies-in-egypt-2026-guide",
         permanent: true,
       },
+      // Contact was folded into the About page (one page, not two) —
+      // redirect rather than 404 for old links/bookmarks.
+      {
+        source: "/contact",
+        destination: "/about#contact",
+        permanent: true,
+      },
     ];
   },
 };
