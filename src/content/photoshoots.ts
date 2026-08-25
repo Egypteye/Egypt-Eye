@@ -148,6 +148,34 @@ export const photoshoots: Photoshoot[] = [
     delivery: ["Professionally edited image gallery", "Raw, unedited photos the same day"],
     destinations: ["Giza"],
   },
+  {
+    slug: "pyramids-proposal-romance-setup",
+    title: "Pyramids Proposal Romance Setup",
+    duration: "1 hour",
+    rating: null,
+    price: { amount: 150, currency: "USD" },
+    locations: ["Giza Pyramids", "Nine Pyramids View"],
+    imageLabel: "Pyramids Proposal Setup",
+    imageTone: "giza",
+    image: "/photos/pexels-28682219.jpg",
+    description:
+      "A private, beautifully styled proposal setup overlooking the Pyramids of Giza — romantic decorations, flowers, and candlelight, arranged and ready before you arrive, so all that's left is the moment itself. Prices start from $150, depending on the setup and style you choose. This is enquiry-only — our team confirms your setup, styling, and pricing directly with you.",
+    goodFor: ["Engagements & proposals", "Couples"],
+    included: [
+      "Romantic decorations",
+      "Flowers and floral arrangements",
+      "Candles and romantic lighting",
+      "Elegant proposal setup",
+      "Personalized decoration options",
+      "Professional setup completed before you arrive",
+    ],
+    addOns: ["Pyramids Proposal Photoshoot — professional photography & fully edited photos, from $250"],
+    delivery: [
+      "The setup fully styled and ready before you arrive",
+      "Optional: professional photography and a fully edited photo gallery with the Pyramids Proposal Photoshoot add-on",
+    ],
+    destinations: ["Giza"],
+  },
 ];
 
 export function getPhotoshootBySlug(slug: string) {

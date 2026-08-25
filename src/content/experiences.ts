@@ -76,6 +76,27 @@ export const experiences: Experience[] = [
     ],
     destinations: ["Cairo"],
   },
+  {
+    slug: "pyramids-proposal-romance-setup",
+    title: "Pyramids Proposal Romance Setup",
+    duration: "1 hour",
+    rating: null,
+    price: { amount: 150, currency: "USD" },
+    imageLabel: "Pyramids Proposal Setup",
+    imageTone: "giza",
+    image: "/photos/pexels-18291196.jpg",
+    description:
+      "A private, beautifully styled proposal setup overlooking the Pyramids of Giza — romantic decorations, flowers, and candlelight, arranged and ready before you arrive, so all that's left is the moment itself. Prices start from $150, depending on the setup and style you choose. Want it captured too? Add the Pyramids Proposal Photoshoot, starting from $250, for professional photography and fully edited photos. This is enquiry-only — our team confirms your setup, styling, and pricing directly with you.",
+    included: [
+      "Romantic decorations",
+      "Flowers and floral arrangements",
+      "Candles and romantic lighting",
+      "Elegant proposal setup",
+      "Personalized decoration options",
+      "Professional setup completed before you arrive",
+    ],
+    destinations: ["Giza"],
+  },
 ];
 
 export function getExperienceBySlug(slug: string) {
