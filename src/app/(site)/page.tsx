@@ -71,7 +71,7 @@ export default async function Home() {
             mobile (fields stack 2-up) than on desktop (one row). The section
             below reserves enough top padding to clear that fixed amount. */}
         <div className="absolute inset-x-0 bottom-0 z-10 translate-y-12 px-5 sm:translate-y-10 sm:px-8">
-          <SearchBar className="mx-auto max-w-4xl" destinations={site.destinations} />
+          <SearchBar className="mx-auto max-w-4xl" />
         </div>
       </section>
 

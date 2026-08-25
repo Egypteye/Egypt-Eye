@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import type { Destination } from "@/content/types";
 
 const COUNTRIES = [
   { value: "egypt", label: "Egypt" },
@@ -24,17 +23,13 @@ const SERVICES = [
 
 export function SearchBar({
   className = "",
-  destinations,
 }: {
   className?: string;
-  destinations: readonly Destination[];
 }) {
   const router = useRouter();
   const [country, setCountry] = useState("egypt");
-  const [city, setCity] = useState("all");
   const [duration, setDuration] = useState("all");
   const [service, setService] = useState("tours");
-  const egyptCities = destinations.filter((d) => d.name !== "Jordan");
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -47,8 +42,6 @@ export function SearchBar({
     const params = new URLSearchParams();
     if (country === "jordan") {
       params.set("type", "jordan");
-    } else if (city !== "all") {
-      params.set("city", city);
     }
     if (duration !== "all") params.set("duration", duration);
 
@@ -67,10 +60,7 @@ export function SearchBar({
         </span>
         <select
           value={country}
-          onChange={(e) => {
-            setCountry(e.target.value);
-            setCity("all");
-          }}
+          onChange={(e) => setCountry(e.target.value)}
           className="rounded bg-transparent text-sm font-medium text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
           {COUNTRIES.map((c) => (
@@ -80,26 +70,6 @@ export function SearchBar({
           ))}
         </select>
       </label>
-
-      {country === "egypt" && (
-        <label className="flex flex-1 flex-col gap-1 px-3 py-1">
-          <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
-            Location
-          </span>
-          <select
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            className="rounded bg-transparent text-sm font-medium text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
-          >
-            <option value="all">Any city</option>
-            {egyptCities.map((d) => (
-              <option key={d.name} value={d.name}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-        </label>
-      )}
 
       <label className="flex flex-1 flex-col gap-1 px-3 py-1">
         <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
