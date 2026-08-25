@@ -429,6 +429,7 @@ export function EgyptMap({
                 className={sharedClassName}
                 style={style}
                 onClick={() => setOpenCitySlug(null)}
+                scroll={false}
               >
                 {inner}
               </Link>

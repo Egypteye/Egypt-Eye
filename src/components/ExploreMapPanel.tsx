@@ -68,6 +68,7 @@ export function ExploreMapPanel({
           <Link
             key={hub.slug}
             href={`/explore-egypt/${hub.slug}`}
+            scroll={false}
             className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
               hub.slug === selectedSlug
                 ? "border-gold-dark bg-gold/15 text-gold-dark"
