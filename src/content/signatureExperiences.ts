@@ -824,4 +824,247 @@ export const signatureExperiences: SignatureExperience[] = [
       },
     ],
   },
+  {
+    status: "published",
+    order: 4,
+    slug: "complete-14-day-egypt-journey",
+    name: "The Complete 14-Day Egypt Journey",
+    forWhom:
+      "For groups who want to see all of Egypt in one trip — Giza, Cairo, the Siwa Oasis, a Nile cruise through Aswan and Luxor, and Red Sea days in Hurghada — on one continuous, privately guided route.",
+    emotionalHeadline: "Every Region of Egypt, One Seamless Itinerary.",
+    shortDescription:
+      "A 14-day private group itinerary built for 10 travelers — the Pyramids of Giza, Old Cairo, three days in the Siwa Oasis, a Nile cruise from Aswan to Luxor, and Red Sea days in Hurghada — with a certified Egyptologist guide throughout. From $1,550 per person for the guided touring itinerary; flights, hotels, and visa are arranged separately.",
+    heroImageTone: "giza",
+    heroImage: "/photos/pexels-31133003.jpg",
+    duration: "14 days",
+    groupSize: "Private group — built for 10 travelers",
+    luxuryLevel: "Standard Nile Cruise included, upgradable to a higher tier for $450 per person",
+    location: "Giza · Cairo · Siwa Oasis · Aswan · Luxor · Hurghada",
+    price: {
+      amount: 1550,
+      note: "From $1,550 per person for the guided touring itinerary — flights, hotels, and visa arranged separately",
+    },
+    whoIsThisForTitle: "Who This Is For",
+    whoIsThisForBody:
+      "This is built for a group of travelers — the itinerary is designed around 10 adults — who want to see Egypt in full: not just Cairo and Giza, but the Siwa Oasis, a Nile cruise through Aswan and Luxor, and Red Sea days in Hurghada, all on one continuous, privately guided route. Dates are set around your group's schedule rather than a fixed departure.",
+    whyWeCreatedThisTitle: "Why We Created This",
+    whyWeCreatedThisBody:
+      "Most Egypt itineraries pick a region — Cairo and the Nile, or the Red Sea, or the Western Desert — and leave the rest for another trip. This one doesn't. Over 14 days it links Giza and Cairo's icons, three days in the Siwa Oasis, a full Nile cruise from Aswan into Luxor, and beach and adventure days in Hurghada, with one certified Egyptologist guide and one team handling every transfer in between.",
+    experienceIntro:
+      "Fourteen days moving from the Pyramids of Giza through the Siwa Oasis, a Nile cruise from Aswan to Luxor, and Red Sea days in Hurghada — here's the route.",
+    experienceHighlights: [
+      {
+        title: "Giza & Cairo, thoroughly covered",
+        description:
+          "The Pyramids of Giza with a camel or horse ride and a professional photoshoot, the Grand Sphinx, Old Cairo's Coptic churches, the National Civilizations Museum, and Khan el-Khalili's old market.",
+      },
+      {
+        title: "Three days in the Siwa Oasis",
+        description:
+          "The Temple of the Oracle, lunch in the shade of the palm trees, one of Siwa's hot springs, sunset at Fitnas Island, Cleopatra's Bath, and swimming in Siwa's salt lakes, with nights at a desert camp.",
+      },
+      {
+        title: "A Nile cruise from Aswan to Luxor",
+        description:
+          "Philae Temple and the High Dam in Aswan, an optional early-morning excursion to Abu Simbel, Kom Ombo Temple, an optional stop at Edfu Temple, and Karnak and Luxor Temples on arrival in Luxor.",
+      },
+      {
+        title: "Red Sea days in Hurghada",
+        description:
+          "A day on a yacht with a stop at Orange Bay, and a full ATV adventure day, before departing from Hurghada airport.",
+      },
+    ],
+    itineraryDays: [
+      {
+        dayNumber: 1,
+        title: "Arrival Day",
+        description: "Landing in Cairo and settling in before the trip begins.",
+        items: [
+          { time: "Flexible", title: "Pick up from Cairo Airport", description: "Met on arrival and taken to your hotel in a private car.", location: "Cairo International Airport", category: "Travel", includedOrOptional: "included" },
+          { time: "Flexible", title: "Transfer to the hotel", description: "A private car transfer from the airport to your Cairo hotel.", category: "Travel", includedOrOptional: "included" },
+          { time: "Flexible", title: "Check in and resting", description: "Check-in and a free evening to rest after the flight.", category: "Free Time", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 2,
+        title: "Giza Tour Day",
+        items: [
+          { time: "09:00", title: "Pick up from the hotel", description: "Departure for the Pyramids of Giza.", category: "Travel", includedOrOptional: "included" },
+          { time: "Morning", title: "Pyramids of Giza", description: "Heading to the Pyramids of Giza, with a camel or horse ride.", location: "Giza", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Morning", title: "Professional photoshoot at the Pyramids", description: "A professional photoshoot with the Pyramids as the backdrop.", location: "Giza", category: "Photoshoot", includedOrOptional: "included" },
+          { time: "Midday", title: "The Grand Sphinx", description: "A visit to the Great Sphinx of Giza.", location: "Giza", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Midday", title: "Oils and essence factory", description: "A stop at a local oils and essence factory.", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Lunch", description: "An included lunch during the day's touring.", category: "Dining", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Back to the hotel", description: "Return transfer to the hotel.", category: "Travel", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 3,
+        title: "Cairo Tour Day",
+        items: [
+          { time: "Morning", title: "Pick up from the hotel", description: "Departure for Old Cairo.", category: "Travel", includedOrOptional: "included" },
+          { time: "Morning", title: "Coptic churches", description: "Old Cairo's historic Coptic churches.", location: "Old Cairo", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Midday", title: "The National Civilizations Museum", description: "A visit to the National Museum of Egyptian Civilization.", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Lunch", description: "An included lunch during the day's touring.", category: "Dining", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Khan el-Khalili, the old market", description: "Time to explore Khan el-Khalili's historic bazaar.", location: "Khan el-Khalili", category: "Free Time", includedOrOptional: "included" },
+          { time: "Evening", title: "Back to the hotel", description: "Return transfer to the hotel.", category: "Travel", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 4,
+        title: "Siwa Tour Day",
+        description: "The road to the Siwa Oasis, arriving in the early morning.",
+        items: [
+          { time: "Evening", title: "Pick up from the hotel", description: "Departure for the Siwa Oasis.", category: "Travel", includedOrOptional: "included" },
+          { time: "Overnight", title: "Hitting Siwa's road", description: "The overnight drive out to Siwa.", category: "Travel", includedOrOptional: "included" },
+          { time: "Early morning", title: "Arriving in Siwa", description: "Arriving in Siwa early in the morning.", location: "Siwa", category: "Travel", includedOrOptional: "included" },
+          { time: "Morning", title: "Temple of the Oracle", description: "A visit to the Temple of the Oracle (Temple of Amun).", location: "Siwa", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Midday", title: "Lunch in the shade of the palm trees", description: "Lunch in the shade of Siwa's palm trees.", location: "Siwa", category: "Dining", includedOrOptional: "included" },
+          { time: "Afternoon", title: "One of Siwa's hot springs", description: "Time to relax at one of Siwa's natural hot springs.", location: "Siwa", category: "Free Time", includedOrOptional: "included" },
+          { time: "Evening", title: "Sunset at Fitnas Island", description: "Watching the sunset at Fitnas Island.", location: "Siwa", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Evening", title: "Dinner", description: "Dinner in Siwa.", category: "Dining", includedOrOptional: "included" },
+          { time: "Night", title: "Drop off by Siwa's camp", description: "Drop-off at your desert camp for the night.", location: "Siwa", category: "Travel", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 5,
+        title: "Siwa Tour Day",
+        items: [
+          { time: "Morning", title: "Pick up from camp", description: "Departure from the desert camp.", category: "Travel", includedOrOptional: "included" },
+          { time: "Morning", title: "Cleopatra's Bath", description: "Exploring Cleopatra's Bath, a natural spring.", location: "Siwa", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Midday", title: "Egyptian lunch", description: "An included Egyptian lunch.", category: "Dining", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Swimming in the Salt Lakes", description: "Swimming in Siwa's natural salt lakes.", location: "Siwa", category: "Free Time", includedOrOptional: "included" },
+          { time: "Evening", title: "Back to the camp", description: "Return to the desert camp.", category: "Travel", includedOrOptional: "included" },
+          { time: "Night", title: "Overnight at the camp", description: "A second overnight stay at the desert camp.", location: "Siwa", category: "Free Time", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 6,
+        title: "Siwa Tour Day",
+        description: "The road back to Cairo.",
+        items: [
+          { time: "Morning", title: "Pick up from camp", description: "Departure from the desert camp.", category: "Travel", includedOrOptional: "included" },
+          { time: "Day", title: "Hitting the road back to Cairo", description: "The drive back from Siwa to Cairo.", category: "Travel", includedOrOptional: "included" },
+          { time: "Evening", title: "Relaxing at the hotel", description: "A free evening back at your Cairo hotel.", category: "Free Time", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 7,
+        title: "Aswan Tour Day",
+        description: "Flying to Aswan and boarding the Nile cruise.",
+        items: [
+          { time: "Flexible", title: "Pick-up from hotel", description: "Transfer to Cairo Airport.", category: "Travel", includedOrOptional: "included" },
+          { time: "Flexible", title: "Drop off by Cairo airport", description: "Drop-off for your flight to Aswan.", location: "Cairo Airport", category: "Travel", includedOrOptional: "included" },
+          { time: "Flexible", title: "Pick up from Aswan airport", description: "Met on arrival in Aswan.", location: "Aswan Airport", category: "Travel", includedOrOptional: "included" },
+          { time: "Flexible", title: "Check-in on the Nile Cruise", description: "Boarding your Nile cruise ship.", location: "Aswan", category: "Travel", includedOrOptional: "included" },
+          { time: "Flexible", title: "Lunch on board", description: "Lunch aboard the cruise ship.", category: "Dining", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Philae Temple", description: "A visit to Philae Temple.", location: "Aswan", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Afternoon", title: "High Dam", description: "A visit to the Aswan High Dam.", location: "Aswan", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Unfinished Obelisk", description: "A view of the Unfinished Obelisk.", location: "Aswan", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Evening", title: "Dinner & overnight in Aswan", description: "Dinner and an overnight stay aboard the ship.", category: "Dining", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 8,
+        title: "Aswan Tour Day",
+        items: [
+          { time: "04:00", title: "Drive to Abu Simbel Temples", description: "An early-morning drive to the Abu Simbel Temples.", location: "Abu Simbel", category: "Travel", includedOrOptional: "optional", notes: "Marked optional in the itinerary." },
+          { time: "Morning", title: "Temples of Ramses II & Nefertari", description: "Exploring the temples of Ramses II and Nefertari at Abu Simbel.", location: "Abu Simbel", category: "Sightseeing", includedOrOptional: "optional", notes: "Marked optional in the itinerary." },
+          { time: "Midday", title: "Return to the cruise & lunch", description: "Returning to the ship for lunch on board.", category: "Dining", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Cruise begins sailing", description: "The ship departs Aswan and begins sailing the Nile.", category: "Travel", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Kom Ombo Temple", description: "A self-guided visit to Kom Ombo Temple when the cruise docks.", location: "Kom Ombo", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Evening", title: "Dinner & overnight on board", description: "Dinner and an overnight stay aboard the ship.", category: "Dining", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 9,
+        title: "Edfu-Luxor Tour Day",
+        items: [
+          { time: "Morning", title: "Breakfast on board", description: "Breakfast aboard the cruise ship.", category: "Dining", includedOrOptional: "included" },
+          { time: "Morning", title: "Continue sailing through the Nile", description: "The ship continues sailing toward Luxor.", category: "Travel", includedOrOptional: "included" },
+          { time: "Morning", title: "Edfu Temple", description: "A self-guided visit to Edfu Temple during the cruise stop.", location: "Edfu", category: "Sightseeing", includedOrOptional: "optional", notes: "Marked optional in the itinerary." },
+          { time: "Midday", title: "Cross the Esna Lock", description: "Sailing through the Esna Lock.", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Arrive in Luxor", description: "The cruise arrives in Luxor.", location: "Luxor", category: "Travel", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Luxor's East Bank", description: "Exploring Luxor's East Bank.", location: "Luxor", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Evening", title: "Karnak Temple & Luxor Temple", description: "Visits to the Karnak Temple complex and Luxor Temple.", location: "Luxor", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Night", title: "Dinner & overnight in Luxor", description: "Dinner and an overnight stay aboard the ship.", category: "Dining", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 10,
+        title: "Luxor West Tour Day",
+        description: "Luxor's West Bank, then a transfer to Hurghada.",
+        items: [
+          { time: "Morning", title: "Breakfast on board & check-out", description: "Breakfast aboard the ship and disembarkation.", category: "Dining", includedOrOptional: "included" },
+          { time: "Morning", title: "The West Bank", description: "Crossing to Luxor's West Bank.", location: "Luxor West Bank", category: "Travel", includedOrOptional: "included" },
+          { time: "Morning", title: "Valley of the Kings", description: "The UNESCO-listed Valley of the Kings.", location: "Luxor West Bank", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Midday", title: "Temple of Hatshepsut", description: "A colonnaded temple surrounded by cliffs.", location: "Luxor West Bank", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Midday", title: "Colossi of Memnon", description: "A stop at the Colossi of Memnon.", location: "Luxor West Bank", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Transfer to Hurghada", description: "The drive from Luxor to Hurghada.", category: "Travel", includedOrOptional: "included" },
+          { time: "Evening", title: "Check in & rest", description: "Arrival at your Hurghada hotel, check-in, and a free evening.", location: "Hurghada", category: "Free Time", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 11,
+        title: "Hurghada Tour Day",
+        items: [
+          { time: "Morning", title: "Pick up from the hotel", description: "Departure for the day's yacht trip.", category: "Travel", includedOrOptional: "included" },
+          { time: "Day", title: "A day on a yacht", description: "A full day out on a yacht along the Red Sea.", location: "Hurghada", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Afternoon", title: "Orange Bay", description: "A stop at Orange Bay.", location: "Hurghada", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Evening", title: "Back to the hotel", description: "Return transfer to the hotel.", category: "Travel", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 12,
+        title: "Hurghada Tour Day",
+        items: [
+          { time: "Morning", title: "Pick up from the hotel", description: "Departure for the ATV excursion.", category: "Travel", includedOrOptional: "included" },
+          { time: "Day", title: "ATV experience", description: "A full ATV adventure day in the desert outside Hurghada.", location: "Hurghada", category: "Sightseeing", includedOrOptional: "included" },
+          { time: "Evening", title: "Back to the hotel", description: "Return transfer to the hotel.", category: "Travel", includedOrOptional: "included" },
+        ],
+      },
+      {
+        dayNumber: 13,
+        title: "Departure Day",
+        items: [
+          { time: "Flexible", title: "Pick up from the hotel", description: "Transfer to Hurghada Airport for your departure flight.", category: "Travel", includedOrOptional: "included" },
+          { time: "Flexible", title: "Heading to Hurghada airport", description: "Drop-off for your flight home.", location: "Hurghada Airport", category: "Travel", includedOrOptional: "included" },
+        ],
+      },
+    ],
+    careTitle: "One Guide, One Itinerary, Every Region of Egypt Covered",
+    careIntro:
+      "Everything below is arranged before you land — one certified Egyptologist guide and one team handling every transfer, from Giza to the Red Sea.",
+    careItems: [
+      "A professional, certified English-speaking Egyptologist guide",
+      "All in-town private transfers",
+      "Admission and entry fees to all historical sites mentioned",
+      "Parking fees and road tolls during the whole itinerary",
+      "All the tours and activities mentioned in the program",
+      "24-hour follow-up and service during the whole itinerary",
+      "Standard-level Nile cruise accommodation",
+    ],
+    faqs: [
+      {
+        question: "What's included in the $1,550 per person price, and what isn't?",
+        answer:
+          "The $1,550 per person covers the guided touring itinerary — a certified Egyptologist guide, all in-town private transfers, admission fees to every historical site mentioned, parking fees and road tolls, all tours and activities mentioned in the program, and 24-hour follow-up throughout. It also includes Standard-level Nile cruise accommodation; upgrading the cruise to a higher tier is $450 extra per person. Flights, hotels, and your visa are not included and are arranged separately.",
+      },
+      {
+        question: "What's not included?",
+        answer:
+          "Tipping for guides and drivers, optional tours and tickets, PCR test fees, any tours or meals not mentioned in the program, and shopping or souvenirs — along with flights, hotels, and your visa.",
+      },
+      {
+        question: "What optional tours can I add?",
+        answer:
+          "Optional tours and excursions are priced separately and chosen based on personal preference: ATV in Giza ($45), Jumping Horse in Giza ($25), Nile Cruise Dinner in Cairo ($45), Nile Felucca in Cairo ($25), Hot Air Balloon in Luxor ($110), and Edfu & Kom Ombo in Aswan ($120) — all per person. The Abu Simbel excursion on Day 8 and the Edfu Temple stop on Day 9 are also marked optional within the core itinerary.",
+      },
+      {
+        question: "Is this a fixed group departure, or built around us?",
+        answer:
+          "This itinerary is built around your group — it's designed for 10 travelers, with dates to be confirmed with our reservations team rather than a fixed set departure.",
+      },
+    ],
+  },
 ];
