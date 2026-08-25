@@ -29,13 +29,15 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 // Uses createOrReplace with deterministic IDs, which does a FULL document
 // replace — any field not included in the payload below gets wiped, not
-// preserved. For tours/experiences/photoshoots specifically, `image` and
-// `gallery` (fields with no local-content equivalent, typically set by
-// uploading a real photo directly in the Studio) are the exception: this
-// route fetches whatever's currently set for those first and folds it back
-// into the payload, so re-running it never wipes a Studio-uploaded photo.
-// Any OTHER field edited directly in the Studio (e.g. SEO overrides) still
-// follows normal full-replace semantics and gets discarded on re-run.
+// preserved. For tours/experiences/photoshoots (`image`/`gallery`),
+// destinationHubs (`image`), events (`backgroundImage`), and
+// signatureExperiences (`heroImage`/`gallery`) — fields that are typically
+// set by uploading a real photo directly in the Studio rather than edited
+// in the local content files — this route fetches whatever's currently set
+// first and folds it back into the payload, so re-running it never wipes a
+// Studio-uploaded photo. Any OTHER field edited directly in the Studio
+// (e.g. SEO overrides) still follows normal full-replace semantics and
+// gets discarded on re-run.
 //
 // All mutations are queued onto ONE Sanity transaction and committed together
 // at the end, rather than sent as separate requests. This matters for
@@ -108,6 +110,35 @@ export async function GET(request: NextRequest) {
       `*[_type in ["tour","experience","photoshoot"]]{_id, image, gallery}`
     );
     existingMedia = new Map(rows.map((r) => [r._id, { image: r.image, gallery: r.gallery }]));
+  }
+
+  // Same reasoning as `existingMedia` above, for the three other document
+  // types whose createOrReplace payloads previously omitted their
+  // Studio-only media fields entirely (silently wiping them on every
+  // re-run): destinationHub.image, event.backgroundImage, and
+  // signatureExperience.heroImage/gallery.
+  let existingHubMedia = new Map<string, { image?: unknown }>();
+  if (shouldRun("destinationHubs")) {
+    const rows = await client.fetch<{ _id: string; image?: unknown }[]>(
+      `*[_type == "destinationHub"]{_id, image}`
+    );
+    existingHubMedia = new Map(rows.map((r) => [r._id, { image: r.image }]));
+  }
+
+  let existingEventMedia = new Map<string, { backgroundImage?: unknown }>();
+  if (shouldRun("events")) {
+    const rows = await client.fetch<{ _id: string; backgroundImage?: unknown }[]>(
+      `*[_type == "event"]{_id, backgroundImage}`
+    );
+    existingEventMedia = new Map(rows.map((r) => [r._id, { backgroundImage: r.backgroundImage }]));
+  }
+
+  let existingSignatureMedia = new Map<string, { heroImage?: unknown; gallery?: unknown }>();
+  if (shouldRun("signatureExperiences")) {
+    const rows = await client.fetch<{ _id: string; heroImage?: unknown; gallery?: unknown }[]>(
+      `*[_type == "signatureExperience"]{_id, heroImage, gallery}`
+    );
+    existingSignatureMedia = new Map(rows.map((r) => [r._id, { heroImage: r.heroImage, gallery: r.gallery }]));
   }
 
   if (shouldRun("tours")) {
@@ -242,8 +273,9 @@ export async function GET(request: NextRequest) {
 
   if (shouldRun("destinationHubs")) {
     for (const [i, d] of destinationHubs.entries()) {
+      const id = `destinationHub-${d.slug}`;
       tx.createOrReplace({
-        _id: `destinationHub-${d.slug}`,
+        _id: id,
         _type: "destinationHub",
         name: d.name,
         slug: { _type: "slug", current: d.slug },
@@ -254,6 +286,7 @@ export async function GET(request: NextRequest) {
         mapX: d.mapX,
         mapY: d.mapY,
         mood: d.mood,
+        image: existingHubMedia.get(id)?.image,
         imageTone: d.imageTone,
         order: i,
       });
@@ -435,8 +468,9 @@ export async function GET(request: NextRequest) {
 
   if (shouldRun("signatureExperiences")) {
     for (const e of signatureExperiences) {
+      const id = `signatureExperience-${e.slug}`;
       tx.createOrReplace({
-        _id: `signatureExperience-${e.slug}`,
+        _id: id,
         _type: "signatureExperience",
         status: e.status,
         order: e.order,
@@ -445,7 +479,9 @@ export async function GET(request: NextRequest) {
         forWhom: e.forWhom,
         emotionalHeadline: e.emotionalHeadline,
         shortDescription: e.shortDescription,
+        heroImage: existingSignatureMedia.get(id)?.heroImage,
         heroImageTone: e.heroImageTone,
+        gallery: existingSignatureMedia.get(id)?.gallery,
         duration: e.duration,
         groupSize: e.groupSize,
         luxuryLevel: e.luxuryLevel,
@@ -506,8 +542,9 @@ export async function GET(request: NextRequest) {
   if (shouldRun("events")) {
     for (const ev of events) {
       if (!ev.slug) continue;
+      const id = `event-${ev.slug}`;
       tx.createOrReplace({
-        _id: `event-${ev.slug}`,
+        _id: id,
         _type: "event",
         name: ev.name,
         targetDateTime: ev.targetDateTime,
@@ -515,6 +552,7 @@ export async function GET(request: NextRequest) {
         locationName: ev.locationName,
         displayTitle: ev.displayTitle,
         supportingText: ev.supportingText,
+        backgroundImage: existingEventMedia.get(id)?.backgroundImage ?? ev.backgroundImage,
         backgroundTone: ev.backgroundTone,
         dayOfMessage: ev.dayOfMessage,
         endedMessage: ev.endedMessage,
