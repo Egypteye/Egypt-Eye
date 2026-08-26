@@ -55,7 +55,7 @@ export default async function AccountPage() {
   if (!user) redirect("/account/login?next=/account");
 
   const supabase = await createServerSupabaseClient();
-  const [{ data: journeys }, { data: reservations }, { data: discountCodes }] = await Promise.all([
+  const [{ data: journeys }, { data: reservations }, { data: discountCodes }, { data: agent }] = await Promise.all([
     supabase
       .from("journeys")
       .select("id, name, notes, updated_at, journey_items(id, item_type, slug, title, subtitle)")
@@ -70,11 +70,13 @@ export default async function AccountPage() {
       .from("discount_codes")
       .select("id, code, status, expires_at, discount_campaigns(name, discount_type, value)")
       .order("created_at", { ascending: false }),
+    supabase.from("travel_agents").select("status, partner_discount_percent").eq("user_id", user.id).maybeSingle(),
   ]);
 
   const typedJourneys = (journeys ?? []) as unknown as JourneyRow[];
   const typedReservations = (reservations ?? []) as ReservationRow[];
   const typedCodes = (discountCodes ?? []) as unknown as DiscountCodeRow[];
+  const typedAgent = agent as { status: "active" | "suspended"; partner_discount_percent: number } | null;
 
   return (
     <section className="bg-sand py-14 sm:py-20">
@@ -95,6 +97,21 @@ export default async function AccountPage() {
         </div>
 
         <div className="flex flex-col gap-8">
+          {typedAgent?.status === "active" && (
+            <div className="rounded-3xl border border-gold/20 bg-ink p-6 sm:p-8">
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light">Travel Agent Partner</p>
+              <h3 className="mt-2 font-display text-xl font-semibold text-cream">
+                Your {typedAgent.partner_discount_percent}% partner rate is ready
+              </h3>
+              <Link
+                href="/agent-portal"
+                className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
+              >
+                Go to Partner Portal
+              </Link>
+            </div>
+          )}
+
           {typedCodes.length > 0 && (
             <div>
               <h2 className="mb-4 font-display text-lg font-semibold text-ink">Your Egypt Eye Offer</h2>

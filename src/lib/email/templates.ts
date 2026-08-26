@@ -307,6 +307,7 @@ export function travelAgentApplicationEmail({
   services,
   estimatedBookings,
   message,
+  reviewUrl,
 }: {
   companyName: string;
   contactName: string;
@@ -317,6 +318,7 @@ export function travelAgentApplicationEmail({
   services: string;
   estimatedBookings: string;
   message?: string;
+  reviewUrl: string;
 }) {
   const rows: [string, string][] = [
     ["Company", companyName],
@@ -346,6 +348,7 @@ export function travelAgentApplicationEmail({
           ? `<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">Message</p><p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(message)}</p>`
           : ""
       }
+      ${ctaButton("Review Application", reviewUrl)}
       <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to respond directly to ${escapeHtml(contactName)}.</p>
     `,
     footerHtml: `Sent from the Travel Agent application form on ${escapeHtml(SITE_URL)}/travel-agents.`,
@@ -353,9 +356,51 @@ export function travelAgentApplicationEmail({
 
   const text = `New Travel Agent Application\n${companyName}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n${
     message ? `\nMessage:\n${message}\n` : ""
-  }\nReply to this email to respond directly to ${contactName}.`;
+  }\nReview: ${reviewUrl}\n\nReply to this email to respond directly to ${contactName}.`;
 
   return { subject: `New Travel Agent Application: ${companyName}`, html, text };
+}
+
+export function travelAgentApprovedEmail({
+  contactName,
+  companyName,
+  discountPercent,
+  loginUrl,
+}: {
+  contactName: string;
+  companyName: string;
+  discountPercent: number;
+  loginUrl: string;
+}) {
+  const html = baseLayout({
+    preheader: `${companyName} is now an approved Egypt Eye travel agent partner.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(contactName)},</p>
+      <p style="margin:0 0 16px;">Great news — <strong>${escapeHtml(companyName)}</strong> is approved as an Egypt Eye Travel Agent Partner. You now have a ${discountPercent}% partner rate on our tours, experiences, and photoshoots.</p>
+      <p style="margin:0 0 16px;">Sign in (or create your free account using this same email address, ${escapeHtml(contactName)}) to reach your partner portal — your rate, our full catalog, and every booking you place will be right there.</p>
+      ${ctaButton("Go to My Partner Portal", loginUrl)}
+      <p style="margin:16px 0 0;font-size:13px;color:#556;">Building an itinerary for a client? Reply to this email or reach us on WhatsApp and we'll quote it at your partner rate directly.</p>
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — Travel Agent Partner Program.`,
+  });
+  const text = `Hi ${contactName},\n\n${companyName} is approved as an Egypt Eye Travel Agent Partner with a ${discountPercent}% partner rate.\n\nSign in or create your account with this same email to reach your partner portal: ${loginUrl}\n\nBuilding an itinerary for a client? Reply to this email and we'll quote it at your partner rate.`;
+
+  return { subject: "You're approved — Egypt Eye Travel Agent Partner Program", html, text };
+}
+
+export function travelAgentRejectedEmail({ contactName, companyName }: { contactName: string; companyName: string }) {
+  const html = baseLayout({
+    preheader: `An update on your Egypt Eye Travel Agent Program application.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(contactName)},</p>
+      <p style="margin:0 0 16px;">Thank you for your interest in the Egypt Eye Travel Agent Partner Program on behalf of <strong>${escapeHtml(companyName)}</strong>. After review, we're not able to move forward with a partnership at this time.</p>
+      <p style="margin:0 0 16px;">This isn't necessarily final — we're happy to revisit this as your agency grows, or if your focus shifts closer to what we're set up to support. You're always welcome to reach out directly with any questions.</p>
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — Travel Agent Partner Program.`,
+  });
+  const text = `Hi ${contactName},\n\nThank you for your interest in the Egypt Eye Travel Agent Partner Program on behalf of ${companyName}. After review, we're not able to move forward with a partnership at this time.\n\nThis isn't necessarily final — we're happy to revisit this as your agency grows. You're always welcome to reach out directly with any questions.`;
+
+  return { subject: "An update on your Egypt Eye Travel Agent application", html, text };
 }
 
 export function collaborationApplicationEmail({

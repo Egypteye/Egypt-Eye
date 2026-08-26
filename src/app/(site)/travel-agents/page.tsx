@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { TravelAgentForm } from "./TravelAgentForm";
 
 export const metadata: Metadata = {
@@ -48,7 +48,14 @@ export default function TravelAgentsPage() {
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="nile" className="absolute inset-0" />
+        <SmartImage
+          image="/photos/pexels-20954992.jpg"
+          tone="nile"
+          alt="Nile riverfront with a felucca sailboat and cruise ships in Egypt"
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">Travel Agent Program</p>

@@ -55,7 +55,7 @@ export function TravelAgentForm() {
           phone: form.get("phone"),
           website: form.get("website"),
           country: form.get("country"),
-          services: services.join(", "),
+          services,
           estimatedBookings: form.get("estimatedBookings"),
           message: form.get("message"),
         }),
