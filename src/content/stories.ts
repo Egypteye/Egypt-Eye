@@ -4179,6 +4179,9 @@ export const stories: Story[] = [
       p(
         "Abu Simbel isn't a convenient stop, and it was never meant to be — Ramesses II built it at the edge of his empire on purpose, to be seen and felt by anyone approaching from the south, friend or rival. Getting there today asks for a similar kind of commitment, whether that's an early alarm and a long drive, a short flight, or a slow approach by water. For almost everyone who actually makes the trip, that commitment is exactly what makes the arrival worth it."
       ),
+      p(
+        "Pack for the day rather than just the site: sunscreen, a hat, and more water than feels necessary, since the road convoy makes limited stops and the facade itself offers almost no shade until later in the morning. Bring a fully charged camera or phone too — between the drive out, the temples themselves, and the trip back, it ends up being one of the longer single days of an Egypt itinerary, and one most travelers are glad they didn't skip."
+      ),
       {
         _type: "ctaBlock",
         _key: nextBlockKey("cta"),
@@ -5085,6 +5088,9 @@ export const stories: Story[] = [
       ),
       p(
         "People remember this night less for any single detail and more for the whole shape of it — the long dark climb, the cold wait at the top, and then a sunrise that makes all of it make sense at once. It's not a relaxing morning, and it isn't meant to be one. It's one of the few experiences in Egypt built entirely around effort and timing rather than a monument, and that's exactly why it stays with people."
+      ),
+      p(
+        "Most groups depart from Sharm El Sheikh or Dahab in the late evening, drive to the base of the mountain, and start climbing well before midnight, which means the whole outing — drive, climb, sunrise, monastery, and the drive back — fills a single very long day and night. Getting a couple of hours of rest that afternoon before setting out makes a real difference to how the climb feels."
       ),
       {
         _type: "ctaBlock",
