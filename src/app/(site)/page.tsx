@@ -184,38 +184,6 @@ export default async function Home() {
         </Container>
       </section>
 
-      {/* Pharaoh's Challenge — seasonal gamified-marketing promo. Deliberately
-          placed low on the page, not the hero, per the campaign spec. Links
-          to /pharaoh-challenge, which handles its own active/inactive state
-          — this banner always shows; if the campaign isn't running the page
-          itself explains that rather than the homepage needing to know. */}
-      <section className="py-6">
-        <Container>
-          <Reveal>
-            <Link
-              href="/pharaoh-challenge"
-              className="group block overflow-hidden rounded-3xl border border-gold/25 bg-[radial-gradient(ellipse_at_top_left,_#2a2118_0%,_#1b2a20_60%,_#12190f_100%)] px-8 py-12 text-center transition hover:border-gold/40 sm:px-14 sm:py-16"
-            >
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">
-                Limited-Time Challenge
-              </p>
-              <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-4xl">
-                Play &amp; Win — The Pharaoh&rsquo;s Challenge
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-lg text-cream/70">
-                Five Ancient-Egypt-inspired chambers. One attempt. A discount reward that grows the deeper you go.
-              </p>
-              <span className="mt-7 inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-base font-semibold text-ink transition group-hover:bg-gold-light">
-                Enter the Challenge
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
-            </Link>
-          </Reveal>
-        </Container>
-      </section>
-
       {/* Reviews — only shown once real, collected testimonials exist in the
           CMS. No placeholder or illustrative quotes are ever displayed here. */}
       {testimonials.length > 0 && (
@@ -371,6 +339,39 @@ export default async function Home() {
                 {home.finalCta.buttonLabel}
               </a>
             </div>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Pharaoh's Challenge — seasonal gamified-marketing promo. Deliberately
+          the very last section on the page, not the hero, per the campaign
+          spec. Links to /pharaoh-challenge, which handles its own
+          active/inactive state — this banner always shows; if the campaign
+          isn't running the page itself explains that rather than the
+          homepage needing to know. */}
+      <section className="pb-16">
+        <Container>
+          <Reveal>
+            <Link
+              href="/pharaoh-challenge"
+              className="group block overflow-hidden rounded-3xl border border-gold/25 bg-[radial-gradient(ellipse_at_top_left,_#2a2118_0%,_#1b2a20_60%,_#12190f_100%)] px-8 py-12 text-center transition hover:border-gold/40 sm:px-14 sm:py-16"
+            >
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">
+                Limited-Time Challenge
+              </p>
+              <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-4xl">
+                Play &amp; Win — The Pharaoh&rsquo;s Challenge
+              </h2>
+              <p className="mx-auto mt-4 max-w-xl text-lg text-cream/70">
+                Five Ancient-Egypt-inspired chambers. One attempt. A discount reward that grows the deeper you go.
+              </p>
+              <span className="mt-7 inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-base font-semibold text-ink transition group-hover:bg-gold-light">
+                Enter the Challenge
+                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+            </Link>
           </Reveal>
         </Container>
       </section>
