@@ -6,10 +6,10 @@ import type { Price } from "@/content/types";
 // discount math), this component just never renders it. Kept as a single
 // component so every card/detail page that used to show a dollar figure
 // automatically shows a consistent "enquire" message instead.
-export function PriceTag({ price }: { price: Price }) {
+export function PriceTag({ price }: { price: Price | null | undefined }) {
   return (
     <span className="text-sm font-semibold uppercase tracking-wide text-nile">
-      {price.note ?? "Enquire for Pricing"}
+      {price?.note ?? "Enquire for Pricing"}
     </span>
   );
 }
