@@ -195,6 +195,7 @@ export default async function Home() {
                 title={home.reviewsSection.title}
                 description={`${average}★ average across ${reviewCount} reviews`}
                 align="center"
+                tone="dark"
               />
             </Reveal>
           </Container>
