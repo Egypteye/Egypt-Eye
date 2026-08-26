@@ -41,9 +41,11 @@ export async function createHotel(formData: FormData) {
     slug = `${baseSlug}-${attempt}`;
   }
 
+  const propertyType = formData.get("propertyType") === "apartment" ? "apartment" : "hotel";
+
   const { data } = await supabase
     .from("hotels")
-    .insert({ name, slug, location, short_description: shortDescription, enabled: false })
+    .insert({ name, slug, location, short_description: shortDescription, property_type: propertyType, enabled: false })
     .select("id")
     .single();
 
@@ -59,6 +61,7 @@ export async function updateHotel(hotelId: string, formData: FormData) {
     .from("hotels")
     .update({
       name: String(formData.get("name") ?? "").trim(),
+      property_type: formData.get("propertyType") === "apartment" ? "apartment" : "hotel",
       location: String(formData.get("location") ?? "").trim(),
       short_description: String(formData.get("shortDescription") ?? "").trim(),
       full_description: String(formData.get("fullDescription") ?? "").trim(),

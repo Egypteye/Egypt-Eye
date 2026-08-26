@@ -36,6 +36,7 @@ type Hotel = {
   deal_description: string | null;
   child_family_policy: string | null;
   enabled: boolean;
+  property_type: "hotel" | "apartment";
 };
 
 type Room = {
@@ -127,6 +128,13 @@ export default async function AdminHotelEditPage({ params }: { params: Promise<{
               <input name="location" defaultValue={typedHotel.location} required className={inputClass} />
             </label>
           </div>
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            Property type
+            <select name="propertyType" defaultValue={typedHotel.property_type} className={inputClass}>
+              <option value="hotel">Hotel</option>
+              <option value="apartment">Apartment / Long-Stay (like Spacey)</option>
+            </select>
+          </label>
           <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
             Short description (shown on the hotel card)
             <input name="shortDescription" defaultValue={typedHotel.short_description} required className={inputClass} />

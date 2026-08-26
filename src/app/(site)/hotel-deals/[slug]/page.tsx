@@ -4,8 +4,12 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { RateRequestButton } from "../RateRequestButton";
-import { getHotelBySlug, type HotelRoom } from "@/lib/hotels";
+import { getHotelBySlug, isRateExpired, type HotelRoom } from "@/lib/hotels";
 import { resolveMetadata } from "@/content/seo";
+
+function formatPrice(amount: number): string {
+  return `$${amount.toLocaleString("en-US")}`;
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -32,15 +36,25 @@ function RateTable({ room }: { room: HotelRoom }) {
           </tr>
         </thead>
         <tbody>
-          {rates.map((rate) => (
-            <tr key={rate.id} className="border-t border-black/5">
-              <td className="px-4 py-3 capitalize text-ink">{rate.occupancy}</td>
-              <td className="px-4 py-3 text-ink-soft/70">{rate.meal_plan}</td>
-              <td className="px-4 py-3 text-right font-semibold">
-                <span className="text-ink-soft/60">Contact us for latest rate</span>
-              </td>
-            </tr>
-          ))}
+          {rates.map((rate) => {
+            const showPrice = !rate.contact_for_rate && rate.price_per_night != null && !isRateExpired(rate);
+            return (
+              <tr key={rate.id} className="border-t border-black/5">
+                <td className="px-4 py-3 capitalize text-ink">{rate.occupancy}</td>
+                <td className="px-4 py-3 text-ink-soft/70">{rate.meal_plan}</td>
+                <td className="px-4 py-3 text-right font-semibold">
+                  {showPrice ? (
+                    <span className="text-ink">
+                      {formatPrice(rate.price_per_night!)}
+                      <span className="ml-1 text-xs font-normal text-ink-soft/50">/ night</span>
+                    </span>
+                  ) : (
+                    <span className="text-ink-soft/60">Contact us for latest rate</span>
+                  )}
+                </td>
+              </tr>
+            );
+          })}
           {rates.length === 0 && (
             <tr>
               <td colSpan={3} className="px-4 py-4 text-center text-ink-soft/50">
@@ -141,8 +155,8 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
                 className="mt-5 w-full"
               />
               <p className="mt-3 text-xs text-ink-soft/50">
-                Rates below are Egypt Eye deal rates, not live booking availability — we confirm the final price and
-                availability with you before you book.
+                Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel
+                conditions. Send an enquiry to confirm the latest available rate.
               </p>
             </div>
           </div>
@@ -151,7 +165,11 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
 
       <section className="bg-sand-dim py-16">
         <Container>
-          <SectionHeading eyebrow="Rooms &amp; Rates" title="Room Types &amp; Current Rates" />
+          <SectionHeading
+            eyebrow="Rooms &amp; Rates"
+            title="Room Types &amp; Indicative Rates"
+            description="Rates shown are indicative, not guaranteed. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate."
+          />
           <div className="mt-10 flex flex-col gap-8">
             {rooms.map((room) => (
               <div key={room.id} className="rounded-2xl bg-cream p-6 shadow-sm">

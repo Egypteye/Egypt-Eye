@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 };
 
 export default async function HotelDealsPage() {
-  const hotels = await getEnabledHotels();
+  const allHotels = await getEnabledHotels();
+  const hotels = allHotels.filter((h) => h.property_type !== "apartment");
+  const apartments = allHotels.filter((h) => h.property_type === "apartment");
 
   return (
     <>
@@ -43,7 +45,7 @@ export default async function HotelDealsPage() {
         <Container>
           <SectionHeading
             title={`${hotels.length} hotel${hotels.length === 1 ? "" : "s"} with current deals`}
-            description="Rates shown are Egypt Eye's negotiated deal rates, not live booking-engine availability — we confirm final pricing and availability with you directly."
+            description="Rates shown are indicative Egypt Eye deal rates, not live booking-engine availability. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate."
           />
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {hotels.map((hotel) => (
@@ -57,6 +59,23 @@ export default async function HotelDealsPage() {
           )}
         </Container>
       </section>
+
+      {apartments.length > 0 && (
+        <section className="bg-sand-dim py-16">
+          <Container>
+            <SectionHeading
+              eyebrow="Not a Hotel — A Home"
+              title="Luxury Long-Stay Apartments"
+              description="A different kind of stay: premium, Airbnb-style apartments for travellers who want more space, more privacy, and a home-like base — couples, families, groups, and longer stays. Send an enquiry for availability and rates."
+            />
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {apartments.map((hotel) => (
+                <HotelCard key={hotel.id} hotel={hotel} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
     </>
   );
 }

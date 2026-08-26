@@ -41,6 +41,7 @@ export type Hotel = {
   child_family_policy: string | null;
   enabled: boolean;
   display_order: number;
+  property_type: "hotel" | "apartment";
 };
 
 export type HotelWithRooms = Hotel & { rooms: HotelRoom[] };

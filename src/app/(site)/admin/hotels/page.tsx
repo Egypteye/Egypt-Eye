@@ -8,7 +8,14 @@ import { createHotel } from "./actions";
 
 export const metadata = { title: "Hotels", robots: { index: false, follow: false } };
 
-type HotelRow = { id: string; name: string; location: string; enabled: boolean; display_order: number };
+type HotelRow = {
+  id: string;
+  name: string;
+  location: string;
+  enabled: boolean;
+  display_order: number;
+  property_type: "hotel" | "apartment";
+};
 
 export default async function AdminHotelsPage() {
   const user = await getCurrentUser();
@@ -17,7 +24,7 @@ export default async function AdminHotelsPage() {
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase
     .from("hotels")
-    .select("id, name, location, enabled, display_order")
+    .select("id, name, location, enabled, display_order, property_type")
     .order("display_order", { ascending: true });
 
   const hotels = (data ?? []) as HotelRow[];
@@ -57,6 +64,14 @@ export default async function AdminHotelsPage() {
             placeholder="One-line description for the card"
             className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold"
           />
+          <select
+            name="propertyType"
+            defaultValue="hotel"
+            className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold sm:col-span-3"
+          >
+            <option value="hotel">Hotel</option>
+            <option value="apartment">Apartment / Long-Stay (like Spacey)</option>
+          </select>
           <button
             type="submit"
             className="sm:col-span-3 rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"
@@ -71,6 +86,7 @@ export default async function AdminHotelsPage() {
           <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
             <tr>
               <th className="px-4 py-3">Name</th>
+              <th className="px-4 py-3">Type</th>
               <th className="px-4 py-3">Location</th>
               <th className="px-4 py-3">Status</th>
               <th className="px-4 py-3" />
@@ -83,6 +99,9 @@ export default async function AdminHotelsPage() {
                   <Link href={`/admin/hotels/${h.id}`} className="font-medium text-ink hover:text-gold-dark">
                     {h.name}
                   </Link>
+                </td>
+                <td className="px-4 py-3 text-ink-soft/70">
+                  {h.property_type === "apartment" ? "Apartment" : "Hotel"}
                 </td>
                 <td className="px-4 py-3 text-ink-soft/70">{h.location}</td>
                 <td className="px-4 py-3">

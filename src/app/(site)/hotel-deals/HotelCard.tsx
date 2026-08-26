@@ -3,8 +3,13 @@ import { SmartImage } from "@/components/SmartImage";
 import type { Hotel } from "@/lib/hotels";
 
 export function HotelCard({ hotel }: { hotel: Hotel }) {
+  const isApartment = hotel.property_type === "apartment";
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5">
+    <div
+      className={`group flex flex-col overflow-hidden rounded-2xl border bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5 ${
+        isApartment ? "border-gold/30 ring-1 ring-gold/10" : "border-black/5"
+      }`}
+    >
       <SmartImage
         image={hotel.photos[0]}
         tone="nile"
@@ -13,10 +18,16 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
         className="h-52 w-full transition duration-500 group-hover:scale-105"
       />
       <div className="flex flex-1 flex-col gap-3 p-5">
-        {hotel.deal_headline && (
-          <span className="w-fit rounded-full bg-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-dark">
-            {hotel.deal_headline}
+        {isApartment ? (
+          <span className="w-fit rounded-full bg-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream">
+            Luxury Long-Stay Apartment
           </span>
+        ) : (
+          hotel.deal_headline && (
+            <span className="w-fit rounded-full bg-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-dark">
+              {hotel.deal_headline}
+            </span>
+          )
         )}
         <h3 className="font-display text-lg font-semibold leading-snug text-ink">{hotel.name}</h3>
         <p className="text-sm text-ink-soft/60">{hotel.location}</p>
@@ -34,7 +45,7 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
           href={`/hotel-deals/${hotel.slug}`}
           className="mt-auto inline-flex items-center justify-center rounded-full bg-ink py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
         >
-          View Rates
+          {isApartment ? "View Details" : "View Rates"}
         </Link>
       </div>
     </div>
