@@ -98,6 +98,12 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   animation: fade-up 0.7s ease-out both;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
 .bg-hieroglyph-pattern {
   background-image: radial-gradient(circle at 1px 1px, rgba(140, 109, 31, 0.18) 1px, transparent 0);
   background-size: 22px 22px;

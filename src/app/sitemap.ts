@@ -34,6 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/experiences`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/photoshoots`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/hotel-deals`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${siteUrl}/pharaoh-challenge`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${siteUrl}/transfers`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/stories`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/customize`, changeFrequency: "monthly", priority: 0.7 },
