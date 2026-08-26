@@ -176,7 +176,11 @@ export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   const result = await safeFetch<Story | null>(storyBySlugQuery, { slug });
   const local = localStories.find((s) => s.slug === slug);
   if (!result) return local;
-  return result.image ? result : { ...result, image: local?.image };
+  return {
+    ...result,
+    image: result.image || local?.image,
+    body: result.body && result.body.length > 0 ? result.body : local?.body,
+  };
 }
 
 export async function getDestinationHubs(): Promise<DestinationHub[]> {
