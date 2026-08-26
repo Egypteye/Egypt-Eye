@@ -49,6 +49,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
+  if (clean(body.company, 100)) {
+    // Honeypot.
+    return NextResponse.json({ ok: true });
+  }
+
   const itemType = clean(body.itemType, 20);
   const itemSlug = clean(body.itemSlug, 200);
   const itemTitle = clean(body.itemTitle, 200);

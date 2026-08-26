@@ -10,7 +10,7 @@ import { TourCard } from "@/components/TourCard";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
-import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
+import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
 const categoryLabels: Record<string, string> = {
   "one-day": "One-Day Trip",
@@ -56,10 +56,18 @@ export default async function TourDetailPage({
     { name: "Tours", path: "/tours" },
     { name: tour.title, path: `/tours/${tour.slug}` },
   ]);
+  const touristTrip = touristTripJsonLd({
+    name: tour.title,
+    description: tour.tagline,
+    image: tour.image,
+    path: `/tours/${tour.slug}`,
+    rating: tour.rating,
+  });
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
       <section className="relative">
         <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />

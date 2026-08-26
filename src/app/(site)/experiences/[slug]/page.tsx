@@ -9,7 +9,7 @@ import { Gallery } from "@/components/Gallery";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { getExperienceBySlug, getExperiences, getSiteSettings } from "@/sanity/fetchers";
-import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
+import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
 export async function generateStaticParams() {
   const experiences = await getExperiences();
@@ -46,10 +46,18 @@ export default async function ExperienceDetailPage({
     { name: "Extra Experiences", path: "/experiences" },
     { name: experience.title, path: `/experiences/${experience.slug}` },
   ]);
+  const touristTrip = touristTripJsonLd({
+    name: experience.title,
+    description: experience.description,
+    image: experience.image,
+    path: `/experiences/${experience.slug}`,
+    rating: experience.rating,
+  });
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
       <section className="py-14">
       <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>

@@ -3,11 +3,13 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { TravelAgentForm } from "./TravelAgentForm";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Travel Agent Partner Program",
   description:
-    "Join the Egypt Eye Travel Agent Program for special partner rates, a dedicated specialist, and full support booking private tours and experiences across Egypt & Jordan.",
+    "Join the Egypt Eye Travel Agent Program for special partner rates, a dedicated specialist, and full booking support across Egypt & Jordan.",
+  alternates: { canonical: `${siteUrl}/travel-agents` },
 };
 
 const BENEFITS = [

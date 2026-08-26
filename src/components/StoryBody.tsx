@@ -29,7 +29,7 @@ const components: PortableTextComponents = {
       return (
         <figure className="my-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={src} alt={value.caption || ""} className="w-full rounded-2xl" />
+          <img src={src} alt={value.caption || "Photo from this story"} loading="lazy" className="w-full rounded-2xl" />
           {value.caption && (
             <figcaption className="mt-2 text-center text-sm text-ink-soft/55">{value.caption}</figcaption>
           )}
@@ -68,6 +68,7 @@ const components: PortableTextComponents = {
               className="absolute inset-0 h-full w-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
+              loading="lazy"
             />
           </div>
           {value.caption && (

@@ -52,10 +52,18 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // untouched), add `&only=` with a comma-separated list of: tours,
 // experiences, photoshoots, ratings, nav, destinationHubs, testimonials,
 // stories, faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
-// signatureExperiences, authors, events, homepage, listingPages. E.g. to seed just the new Stories system (which needs
-// authors/events/signatureExperiences to exist first for its references):
+// signatureExperiences, authors, events, homepage, listingPages. IMPORTANT:
+// stories reference tours (relatedTours) and signatureExperiences reference
+// hosts/authors/events — always include every type a document you're
+// migrating references, or Sanity will reject the whole transaction with a
+// "references non-existent document" error (this happened in production
+// once already from an incomplete `only=` list). When in doubt, omit `only`
+// entirely for a full resync — it's safe to re-run (see media-preservation
+// notes above) and guarantees every cross-reference resolves. E.g. to seed
+// just the new Stories system (which needs authors/events/
+// signatureExperiences/tours to exist first for its references):
 //
-//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,stories
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,tours,stories
 //
 // `only=ratings` and `only=nav` are the safe ones to re-run any time — they
 // only patch the `rating` field (per tour/experience/photoshoot) or the

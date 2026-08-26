@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
 
 export const metadata = { title: "Reservations", robots: { index: false, follow: false } };
@@ -25,6 +27,8 @@ const STATUS_STYLE: Record<string, string> = {
 };
 
 export default async function AdminReservationsPage() {
+  const user = await getCurrentUser();
+  if (!user || (user.role !== "admin" && user.role !== "reservations")) redirect("/account/login?next=/admin/reservations");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase

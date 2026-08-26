@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../../NotConfiguredNotice";
 import {
   addDocument,
@@ -26,6 +27,8 @@ type JourneyItem = { type: string; slug: string; title: string };
 type ChangeRequest = { id: string; request_type: string; payload: { title?: string; slug?: string; note?: string }; status: string; created_at: string };
 
 export default async function AdminReservationDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const user = await getCurrentUser();
+  if (!user || (user.role !== "admin" && user.role !== "reservations")) redirect("/account/login?next=/admin/reservations");
   const { id } = await params;
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const supabase = createAdminSupabaseClient();

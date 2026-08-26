@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { loadExploreEgyptData } from "../data";
 import { ExploreEgyptView } from "../ExploreEgyptView";
 import { getDestinationHubs, getListingPages } from "@/sanity/fetchers";
+import { resolveMetadata } from "@/content/seo";
 
 export async function generateStaticParams() {
   const hubs = await getDestinationHubs();
@@ -19,10 +20,12 @@ export async function generateMetadata({
   const hub = hubs.find((h) => h.slug === slug);
   if (!hub) return {};
 
-  return {
+  return resolveMetadata({
     title: `${hub.name} — Explore Egypt`,
     description: `${hub.tagline}. Discover the tours, experiences, and photoshoots Egypt Eye offers in ${hub.name}, and add them to your journey.`,
-  };
+    image: hub.image,
+    path: `/explore-egypt/${hub.slug}`,
+  });
 }
 
 export default async function ExploreEgyptDestinationPage({

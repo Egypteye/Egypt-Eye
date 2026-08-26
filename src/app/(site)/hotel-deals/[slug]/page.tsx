@@ -5,15 +5,18 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { RateRequestButton } from "../RateRequestButton";
 import { getHotelBySlug, type HotelRoom } from "@/lib/hotels";
+import { resolveMetadata } from "@/content/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const hotel = await getHotelBySlug(slug);
   if (!hotel) return {};
-  return {
+  return resolveMetadata({
     title: `${hotel.name} — Egypt Eye Hotel Deals`,
     description: hotel.short_description,
-  };
+    image: hotel.photos[0],
+    path: `/hotel-deals/${hotel.slug}`,
+  });
 }
 
 function RateTable({ room }: { room: HotelRoom }) {

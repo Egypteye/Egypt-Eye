@@ -7,11 +7,13 @@ import { Reveal } from "@/components/Reveal";
 import { getListingPages, getStories } from "@/sanity/fetchers";
 import { estimateReadingTime } from "@/content/readingTime";
 import { StoriesGrid } from "./StoriesGrid";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Egypt Travel Stories & Journal",
   description:
     "Editorial travel writing from Egypt Eye — the history, the places, and the rare moments worth building a trip around.",
+  alternates: { canonical: `${siteUrl}/stories` },
 };
 
 export default async function StoriesPage() {

@@ -17,11 +17,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Too many requests. Please try again later." }, { status: 429 });
   }
 
-  let body: { fields?: SubmittedField[]; subject?: unknown; replyToEmail?: unknown };
+  let body: { fields?: SubmittedField[]; subject?: unknown; replyToEmail?: unknown; company?: unknown };
   try {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  if (typeof body.company === "string" && body.company.trim()) {
+    // Honeypot.
+    return NextResponse.json({ ok: true });
   }
 
   const fields = Array.isArray(body.fields)
@@ -30,7 +35,8 @@ export async function POST(request: NextRequest) {
           (f): f is { label: string; value: string } =>
             typeof f?.label === "string" && typeof f?.value === "string" && f.value.trim().length > 0
         )
-        .map((f) => ({ label: f.label.trim(), value: f.value.trim() }))
+        .map((f) => ({ label: f.label.trim().slice(0, 100), value: f.value.trim().slice(0, 2000) }))
+        .slice(0, 30)
     : [];
 
   if (fields.length === 0) {

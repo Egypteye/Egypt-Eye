@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TransferBookingForm } from "./TransferBookingForm";
 import { transfersPage } from "@/content/transfers";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Private Transfers in Cairo & Giza",
   description:
-    "Book a private airport, hotel, or intercity transfer in Cairo and Giza — choose your vehicle, see the price instantly, or request a quote for anything unusual.",
+    "Book a private airport, hotel, or intercity transfer in Cairo and Giza — choose your vehicle and request a quote in a few clicks.",
+  alternates: { canonical: `${siteUrl}/transfers` },
 };
 
 export default function TransfersPage() {
@@ -18,7 +20,14 @@ export default function TransfersPage() {
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="nile" className="absolute inset-0" />
+        <SmartImage
+          image="/photos/pexels-31133003.jpg"
+          tone="nile"
+          alt="Road near the Pyramids of Giza with Cairo's skyline in the background"
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{page.heroEyebrow}</p>
@@ -31,8 +40,8 @@ export default function TransfersPage() {
         <Container>
           <SectionHeading
             eyebrow="Book a Transfer"
-            title="Get a price in a few clicks"
-            description="Most Cairo & Giza routes, plus Alexandria, Ain Sokhna, and Fayoum, price instantly. Anything else, we'll quote by email."
+            title="Request a transfer in a few clicks"
+            description="Most Cairo & Giza routes, plus Alexandria, Ain Sokhna, and Fayoum, are covered. Anything else, we'll quote by email."
           />
           <div className="mx-auto mt-10 max-w-4xl">
             <TransferBookingForm />

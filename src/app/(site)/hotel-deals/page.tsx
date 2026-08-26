@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { HotelCard } from "./HotelCard";
 import { getEnabledHotels } from "@/lib/hotels";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Hotel Deals in Egypt",
   description: "Hotels with current Egypt Eye partner rates across Cairo, Giza, and the Red Sea coast.",
+  alternates: { canonical: `${siteUrl}/hotel-deals` },
 };
 
 export default async function HotelDealsPage() {
@@ -16,7 +18,14 @@ export default async function HotelDealsPage() {
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="redsea" className="absolute inset-0" />
+        <SmartImage
+          image="/photos/pexels-31166900.jpg"
+          tone="redsea"
+          alt="A Red Sea resort beach with sun loungers and umbrellas"
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">Hotel Deals</p>

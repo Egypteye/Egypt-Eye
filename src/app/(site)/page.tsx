@@ -16,6 +16,7 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { Reveal } from "@/components/Reveal";
 import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
+import { siteUrl } from "@/content/seo";
 import {
   getDestinationHubs,
   getExperiences,
@@ -31,6 +32,7 @@ export const metadata: Metadata = {
   title: "Private Egypt Tours & Travel Experiences",
   description:
     "Private, guided tours across Egypt — Cairo, Luxor, Aswan, and the Red Sea — with professional photography built in. Custom itineraries, concierge support.",
+  alternates: { canonical: siteUrl },
 };
 
 export default async function Home() {

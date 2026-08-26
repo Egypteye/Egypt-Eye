@@ -1,5 +1,7 @@
+import { redirect } from "next/navigation";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
 import { updateRateRequestStatus } from "./actions";
 
@@ -29,6 +31,8 @@ const STATUS_STYLES: Record<RateRequest["status"], string> = {
 };
 
 export default async function AdminHotelRateRequestsPage() {
+  const user = await getCurrentUser();
+  if (!user || (user.role !== "admin" && user.role !== "reservations")) redirect("/account/login?next=/admin/hotel-rate-requests");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
   const supabase = createAdminSupabaseClient();
   const { data } = await supabase

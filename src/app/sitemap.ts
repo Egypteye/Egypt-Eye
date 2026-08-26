@@ -7,22 +7,24 @@ import {
   getPhotoshoots,
   getStories,
 } from "@/sanity/fetchers";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://egypt-eye.vercel.app";
+import { getEnabledHotels } from "@/lib/hotels";
+import { siteUrl } from "@/content/seo";
 
 // Slugs that 301-redirect elsewhere (see next.config.ts) — keep them out of
 // the sitemap even if the underlying Sanity document hasn't been removed yet.
 const REDIRECTED_STORY_SLUGS = new Set(["best-travel-agencies-in-egypt-2025-guide"]);
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories, destinationHubs] = await Promise.all([
-    getAllTourSlugs(),
-    getExperiences(),
-    getPhotoshoots(),
-    getAllSignatureExperienceSlugs(),
-    getStories(),
-    getDestinationHubs(),
-  ]);
+  const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories, destinationHubs, hotels] =
+    await Promise.all([
+      getAllTourSlugs(),
+      getExperiences(),
+      getPhotoshoots(),
+      getAllSignatureExperienceSlugs(),
+      getStories(),
+      getDestinationHubs(),
+      getEnabledHotels(),
+    ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
@@ -31,10 +33,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/tours`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/experiences`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/photoshoots`, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${siteUrl}/hotel-deals`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${siteUrl}/transfers`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/stories`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/customize`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${siteUrl}/testimonials`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/travel-agents`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/collaborate`, changeFrequency: "monthly", priority: 0.5 },
   ];
+
+  const hotelRoutes: MetadataRoute.Sitemap = hotels.map((h) => ({
+    url: `${siteUrl}/hotel-deals/${h.slug}`,
+    changeFrequency: "weekly",
+    priority: 0.65,
+  }));
 
   const tourRoutes: MetadataRoute.Sitemap = tourSlugs.map((slug) => ({
     url: `${siteUrl}/tours/${slug}`,
@@ -80,6 +93,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...tourRoutes,
     ...experienceRoutes,
     ...photoshootRoutes,
+    ...hotelRoutes,
     ...signatureExperienceRoutes,
     ...storyRoutes,
     ...destinationRoutes,

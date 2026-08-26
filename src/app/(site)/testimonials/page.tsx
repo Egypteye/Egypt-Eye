@@ -5,11 +5,13 @@ import { Reveal } from "@/components/Reveal";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { getOverallRating } from "@/content/aggregate";
 import { getExperiences, getPhotoshoots, getTestimonials, getTours } from "@/sanity/fetchers";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Traveler Reviews & Testimonials",
   description:
     "Real words from real Egypt Eye travelers — private tours, photoshoots, and experiences across Egypt and Jordan.",
+  alternates: { canonical: `${siteUrl}/testimonials` },
 };
 
 export default async function TestimonialsPage() {

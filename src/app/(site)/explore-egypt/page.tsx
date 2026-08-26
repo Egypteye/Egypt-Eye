@@ -3,11 +3,13 @@ import { notFound } from "next/navigation";
 import { loadExploreEgyptData } from "./data";
 import { ExploreEgyptView } from "./ExploreEgyptView";
 import { getListingPages } from "@/sanity/fetchers";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Explore Egypt — Interactive Destination Map",
   description:
-    "An interactive map of Egypt's must-see destinations — Cairo, Giza, Luxor, Aswan, Abu Simbel, Siwa, and the Red Sea coast — with the real tours, experiences, and photoshoots available at each.",
+    "An interactive map of Egypt's must-see destinations — Cairo, Luxor, Aswan, and the Red Sea coast — with real tours and experiences available at each.",
+  alternates: { canonical: `${siteUrl}/explore-egypt` },
 };
 
 export default async function ExploreEgyptPage() {

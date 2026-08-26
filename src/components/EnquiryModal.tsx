@@ -56,6 +56,11 @@ export function EnquiryModal({
     setError("");
 
     const form = new FormData(e.currentTarget);
+    if ((form.get("company") as string)?.trim()) {
+      setStatus("success");
+      return;
+    }
+
     const payload = {
       itemType,
       itemSlug,
@@ -146,6 +151,13 @@ export function EnquiryModal({
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6">
+            <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
+              <label>
+                Company
+                <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
+
             <Field label="Full Name" htmlFor="enq-name">
               <input id="enq-name" name="name" type="text" required maxLength={200} className={inputClass} />
             </Field>

@@ -28,6 +28,26 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        // Applies everywhere, including /admin and /account — baseline
+        // hardening with no effect on normal page behavior. A full
+        // Content-Security-Policy is deliberately not included here: it
+        // needs to be scoped carefully around the embedded Sanity Studio
+        // at /studio (which relies on inline styles/scripts) and would
+        // risk breaking it without being able to test that live from this
+        // environment.
+        source: "/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       // The 2025 travel-agency guide was consolidated into the 2026 guide

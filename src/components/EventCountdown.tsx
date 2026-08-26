@@ -81,6 +81,7 @@ export function EventCountdown({ event }: { event: EventCountdownData }) {
         image={event.backgroundImage}
         tone={event.backgroundTone}
         className="absolute inset-0 opacity-50"
+        sizes="(max-width: 768px) 100vw, 768px"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/80 to-ink" />
       <div className="bg-star-field animate-drift-stars absolute inset-0 opacity-60" aria-hidden="true" />

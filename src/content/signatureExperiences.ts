@@ -5,7 +5,6 @@
 // before this goes fully live — flip status to "published" in the Studio
 // once that's done.
 import type { SignatureExperience } from "./types";
-import { hosts } from "./hosts";
 
 export const signatureExperiences: SignatureExperience[] = [
   {
@@ -220,7 +219,6 @@ export const signatureExperiences: SignatureExperience[] = [
       "Special requests, timing, and the small logistics you'd otherwise carry yourself",
       "One point of contact for anything that comes up",
     ],
-    hosts,
     faqs: [
       {
         question: "Do I need to travel with someone, or can I come alone?",
@@ -444,7 +442,6 @@ export const signatureExperiences: SignatureExperience[] = [
       "Meals as noted in the itinerary",
       "One point of contact for anything that comes up",
     ],
-    hosts,
     faqs: [
       {
         question: "Is the eclipse viewing location guaranteed?",

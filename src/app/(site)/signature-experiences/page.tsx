@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
 import { Reveal } from "@/components/Reveal";
 import { getListingPages, getSignatureExperiences } from "@/sanity/fetchers";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Signature Experiences",
   description:
     "Curated Egypt travel experiences designed around a specific person and need — the destination is part of the answer, not the whole plan.",
+  alternates: { canonical: `${siteUrl}/signature-experiences` },
 };
 
 export default async function SignatureExperiencesPage() {
@@ -19,7 +21,14 @@ export default async function SignatureExperiencesPage() {
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="desert" className="absolute inset-0" />
+        <SmartImage
+          image="/photos/pexels-6322875.jpg"
+          tone="desert"
+          alt="The colossal statues at Abu Simbel temple"
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />
         <Container className="relative flex min-h-[46vh] flex-col justify-end gap-4 pb-16 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{page.heroEyebrow}</p>

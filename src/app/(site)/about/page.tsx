@@ -5,11 +5,13 @@ import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { getAboutPage, getContactPage, getSiteSettings, getTestimonials } from "@/sanity/fetchers";
+import { siteUrl } from "@/content/seo";
 
 export const metadata = {
   title: "About & Contact — Egypt Eye Travel and Tours",
   description:
-    "We show you Egypt, take care of you, customize the trip, and professionally capture it — tour operator, experience company, and photography studio in one. Reach us via WhatsApp or email.",
+    "We show you Egypt, take care of you, and professionally capture it — tour operator, experience company, and photography studio in one.",
+  alternates: { canonical: `${siteUrl}/about` },
 };
 
 export default async function AboutPage() {

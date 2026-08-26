@@ -2,15 +2,17 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { ToursGrid } from "./ToursGrid";
 import { getListingPages, getTours } from "@/sanity/fetchers";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Private Tours Across Egypt & Jordan",
   description:
     "Private, guided tours across Egypt and Jordan — one-day trips, multi-day itineraries, and Nile cruises. Every tour includes a private vehicle and guide.",
+  alternates: { canonical: `${siteUrl}/tours` },
 };
 
 export default async function ToursPage() {
@@ -21,7 +23,14 @@ export default async function ToursPage() {
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="luxor" className="absolute inset-0" />
+        <SmartImage
+          image="/photos/pexels-36518565.jpg"
+          tone="luxor"
+          alt="Painted hieroglyphic columns at Luxor Temple"
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{page.heroEyebrow}</p>

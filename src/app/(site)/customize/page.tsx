@@ -4,11 +4,13 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { Reveal } from "@/components/Reveal";
 import { CustomizeForm } from "./CustomizeForm";
 import { getCustomizePage, getSiteSettings } from "@/sanity/fetchers";
+import { siteUrl } from "@/content/seo";
 
 export const metadata = {
   title: "Customize Your Tour",
   description:
     "Tell us your dates, interests, and pace — we'll design a private Egypt or Jordan itinerary around you.",
+  alternates: { canonical: `${siteUrl}/customize` },
 };
 
 export default async function CustomizePage() {

@@ -3,9 +3,11 @@ import type { SanityImage } from "./types";
 import { urlForImage } from "@/sanity/image";
 import type { PageSeo } from "./types";
 
-// Falls back to the current Vercel URL until a custom domain is attached —
-// set NEXT_PUBLIC_SITE_URL in Vercel's env vars once one is.
-export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://egypt-eye.vercel.app";
+// The single source of truth for the site's canonical domain — every other
+// file that needs it (robots.ts, sitemap.ts, email templates, etc.) should
+// import this rather than redefining its own fallback, so they can't drift
+// out of sync with each other the way robots.ts/sitemap.ts once did.
+export const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 
 // Shared metadata resolution for every detail page: an editorial SEO
 // override (title/description/canonical/OG image/noindex) layered over
@@ -47,6 +49,48 @@ export function resolveMetadata({
       description: resolvedDescription,
       images: ogImageUrl ? [ogImageUrl] : undefined,
     },
+  };
+}
+
+// TouristTrip structured data for tour/experience/photoshoot detail pages —
+// deliberately carries no `offers`/price field, since prices are not shown
+// to customers anywhere on the site (business decision) and structured
+// data must match what a visitor actually sees on the page.
+export function touristTripJsonLd({
+  name,
+  description,
+  image,
+  path,
+  rating,
+}: {
+  name: string;
+  description: string;
+  image?: SanityImage;
+  path: string;
+  rating?: { score: number; count: number } | null;
+}) {
+  const imageUrl = urlForImage(image)?.width(1200).height(630).url();
+  return {
+    "@context": "https://schema.org",
+    "@type": "TouristTrip",
+    name,
+    description,
+    ...(imageUrl ? { image: imageUrl } : {}),
+    url: `${siteUrl}${path}`,
+    provider: {
+      "@type": "TravelAgency",
+      name: "Egypt Eye Travel and Tours",
+      url: siteUrl,
+    },
+    ...(rating && rating.count > 0
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: rating.score,
+            reviewCount: rating.count,
+          },
+        }
+      : {}),
   };
 }
 

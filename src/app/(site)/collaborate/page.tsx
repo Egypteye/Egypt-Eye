@@ -3,11 +3,13 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { CollaborateForm } from "./CollaborateForm";
+import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Collaborate With Egypt Eye",
   description:
     "Content creators and influencers — apply to collaborate with Egypt Eye for sponsored trips, content partnerships, and press coverage across Egypt & Jordan.",
+  alternates: { canonical: `${siteUrl}/collaborate` },
 };
 
 const WHAT_WE_LOOK_FOR = [
