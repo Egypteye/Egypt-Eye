@@ -169,6 +169,23 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   animation: drift-stars 180s linear infinite;
 }
 
+/* A slow breathing glow, used on the homepage Pharaoh's Challenge promo's
+   Eye of Ra icon — reads as "alive"/inviting without being distracting. */
+@keyframes glow-pulse {
+  0%, 100% {
+    filter: drop-shadow(0 0 10px rgba(228, 200, 120, 0.55));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 24px rgba(228, 200, 120, 0.9));
+    transform: scale(1.08);
+  }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;

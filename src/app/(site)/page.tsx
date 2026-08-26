@@ -15,6 +15,7 @@ import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { Reveal } from "@/components/Reveal";
 import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
+import { Glyph } from "./pharaoh-challenge/glyphs";
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
 import { siteUrl } from "@/content/seo";
 import {
@@ -354,23 +355,78 @@ export default async function Home() {
           <Reveal>
             <Link
               href="/pharaoh-challenge"
-              className="group block overflow-hidden rounded-3xl border border-gold/25 bg-[radial-gradient(ellipse_at_top_left,_#2a2118_0%,_#1b2a20_60%,_#12190f_100%)] px-8 py-12 text-center transition hover:border-gold/40 sm:px-14 sm:py-16"
+              className="group relative block overflow-hidden rounded-3xl border border-gold/30 bg-[radial-gradient(ellipse_at_top,_#3a2f1a_0%,_#22331f_45%,_#0d130c_100%)] px-8 py-14 text-center shadow-[0_0_60px_-15px_rgba(228,200,120,0.35)] transition hover:border-gold/50 hover:shadow-[0_0_80px_-10px_rgba(228,200,120,0.5)] sm:px-14 sm:py-20"
             >
-              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">
-                Limited-Time Challenge
-              </p>
-              <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-4xl">
-                Play &amp; Win — The Pharaoh&rsquo;s Challenge
-              </h2>
-              <p className="mx-auto mt-4 max-w-xl text-lg text-cream/70">
-                Five Ancient-Egypt-inspired chambers. One attempt. A discount reward that grows the deeper you go.
-              </p>
-              <span className="mt-7 inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-base font-semibold text-ink transition group-hover:bg-gold-light">
-                Enter the Challenge
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
+              {/* Hairline diagonal texture, matching the /pharaoh-challenge page itself */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 opacity-[0.08]"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(90deg, #e4c878 0, #e4c878 1px, transparent 1px, transparent 22px)",
+                }}
+              />
+              {/* Radiant gold burst behind the title */}
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[420px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_rgba(228,200,120,0.3)_0%,_transparent_70%)] opacity-70 transition-opacity duration-700 group-hover:opacity-100"
+              />
+
+              {/* Scattered corner glyphs for pharaonic texture */}
+              <Glyph
+                index={1}
+                className="pointer-events-none absolute left-4 top-4 h-7 w-7 -rotate-12 text-gold/25 sm:left-10 sm:top-10 sm:h-11 sm:w-11"
+              />
+              <Glyph
+                index={2}
+                className="pointer-events-none absolute right-4 top-4 h-7 w-7 rotate-12 text-gold/25 sm:right-10 sm:top-10 sm:h-11 sm:w-11"
+              />
+              <Glyph
+                index={3}
+                className="pointer-events-none absolute bottom-4 left-4 h-7 w-7 rotate-6 text-gold/20 sm:bottom-10 sm:left-10 sm:h-11 sm:w-11"
+              />
+              <Glyph
+                index={4}
+                className="pointer-events-none absolute bottom-4 right-4 h-7 w-7 -rotate-6 text-gold/20 sm:bottom-10 sm:right-10 sm:h-11 sm:w-11"
+              />
+
+              <div className="relative">
+                <Glyph index={0} className="animate-glow-pulse mx-auto h-12 w-12 text-gold" />
+                <p className="mt-4 text-sm font-semibold uppercase tracking-[0.35em] text-gold-light">
+                  Limited-Time Challenge
+                </p>
+                <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-5xl">
+                  Play &amp; Win — The Pharaoh&rsquo;s Challenge
+                </h2>
+                <p className="mx-auto mt-4 max-w-xl text-lg text-cream/75">
+                  Five Ancient-Egypt-inspired chambers. One attempt. A discount reward that grows the deeper you go.
+                </p>
+
+                {/* Five-chamber teaser strip */}
+                <div className="mx-auto mt-8 flex max-w-md items-center justify-center">
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <div key={i} className="flex items-center">
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full border border-gold/30 bg-gold/10 text-gold-light transition group-hover:border-gold/60 sm:h-12 sm:w-12">
+                        <Glyph index={i} className="h-5 w-5 sm:h-6 sm:w-6" />
+                      </span>
+                      {i < 4 && <span className="mx-1.5 h-px w-4 bg-gold/25 sm:mx-2.5 sm:w-8" />}
+                    </div>
+                  ))}
+                </div>
+
+                <span className="mt-9 inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3.5 text-base font-semibold text-ink transition group-hover:bg-gold-light">
+                  Enter the Challenge
+                  <svg
+                    viewBox="0 0 20 20"
+                    className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </span>
+              </div>
             </Link>
           </Reveal>
         </Container>
