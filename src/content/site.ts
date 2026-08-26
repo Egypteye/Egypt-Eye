@@ -29,7 +29,7 @@ export const site = {
     { label: "Signature Experiences", href: "/signature-experiences" },
     { label: "Best Seller Tours", href: "/tours" },
     { label: "Extra Experiences", href: "/experiences" },
-    { label: "Photoshoots", href: "/photoshoots" },
+    { label: "Unique Photoshoots", href: "/photoshoots" },
     { label: "Transfers", href: "/transfers" },
     { label: "Hotel Deals", href: "/hotel-deals" },
     { label: "Customize Your Tour", href: "/customize" },
