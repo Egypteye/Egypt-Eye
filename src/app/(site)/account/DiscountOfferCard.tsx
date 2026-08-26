@@ -29,7 +29,7 @@ export function DiscountOfferCard({ code }: { code: DiscountCode }) {
   const [copied, setCopied] = useState(false);
   const label =
     code.discount_campaigns?.discount_type === "fixed"
-      ? `$${code.discount_campaigns.value} OFF`
+      ? "Special Offer"
       : `${code.discount_campaigns?.value ?? 4}% OFF`;
 
   async function handleCopy() {

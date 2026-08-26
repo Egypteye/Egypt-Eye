@@ -4,7 +4,7 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { RateRequestButton } from "../RateRequestButton";
-import { getHotelBySlug, isRateExpired, type HotelRoom } from "@/lib/hotels";
+import { getHotelBySlug, type HotelRoom } from "@/lib/hotels";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -14,10 +14,6 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     title: `${hotel.name} — Egypt Eye Hotel Deals`,
     description: hotel.short_description,
   };
-}
-
-function formatPrice(amount: number, currency: string) {
-  return `${currency === "USD" ? "$" : currency + " "}${amount % 1 === 0 ? amount : amount.toFixed(2)}`;
 }
 
 function RateTable({ room }: { room: HotelRoom }) {
@@ -33,22 +29,15 @@ function RateTable({ room }: { room: HotelRoom }) {
           </tr>
         </thead>
         <tbody>
-          {rates.map((rate) => {
-            const showContact = rate.contact_for_rate || rate.price_per_night == null || isRateExpired(rate);
-            return (
-              <tr key={rate.id} className="border-t border-black/5">
-                <td className="px-4 py-3 capitalize text-ink">{rate.occupancy}</td>
-                <td className="px-4 py-3 text-ink-soft/70">{rate.meal_plan}</td>
-                <td className="px-4 py-3 text-right font-semibold">
-                  {showContact ? (
-                    <span className="text-ink-soft/60">Contact us for latest rate</span>
-                  ) : (
-                    <span className="text-ink">{formatPrice(rate.price_per_night!, rate.currency)}</span>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
+          {rates.map((rate) => (
+            <tr key={rate.id} className="border-t border-black/5">
+              <td className="px-4 py-3 capitalize text-ink">{rate.occupancy}</td>
+              <td className="px-4 py-3 text-ink-soft/70">{rate.meal_plan}</td>
+              <td className="px-4 py-3 text-right font-semibold">
+                <span className="text-ink-soft/60">Contact us for latest rate</span>
+              </td>
+            </tr>
+          ))}
           {rates.length === 0 && (
             <tr>
               <td colSpan={3} className="px-4 py-4 text-center text-ink-soft/50">

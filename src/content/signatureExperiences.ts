@@ -476,14 +476,14 @@ export const signatureExperiences: SignatureExperience[] = [
     forWhom: "For travelers who want Egypt's essentials — Cairo, Giza, Aswan, and a Nile cruise to Luxor — on one set departure, fully arranged, without piecing it together themselves.",
     emotionalHeadline: "One Set Departure. Every Detail Already Arranged.",
     shortDescription:
-      "An 8-day group departure from 22–30 November 2026, covering Cairo, Giza, Aswan, and a Nile cruise to Luxor, with a private certified Egyptologist guide throughout. Choose a 3★ or 5★ hotel — both pair with a 5★ Nile Cruise — with rates starting from $1,500 per person.",
+      "An 8-day group departure from 22–30 November 2026, covering Cairo, Giza, Aswan, and a Nile cruise to Luxor, with a private certified Egyptologist guide throughout. Choose a 3★ or 5★ hotel — both pair with a 5★ Nile Cruise. Contact us for current rates.",
     heroImageTone: "nile",
     heroImage: "/photos/pexels-37559132.jpg",
     duration: "8 days",
     groupSize: "Set group departure — book your spot",
     luxuryLevel: "Choice of 3★ or 5★ hotel, both paired with a 5★ Nile Cruise",
     location: "Cairo · Giza · Aswan · Luxor · Nile Cruise",
-    price: { amount: 1500, note: "From $1,500 per person, double occupancy" },
+    price: { amount: 1500 },
     whoIsThisForTitle: "Who This Is For",
     whoIsThisForBody:
       "This is for travelers who want Egypt's core route — the Pyramids, Old Cairo, Aswan, Abu Simbel, and a Nile cruise into Luxor — without spending weeks arranging hotels, internal flights, a cruise, and a guide themselves. It's a set departure: everyone travels the same dates, 22–30 November 2026, with a private certified Egyptologist guide throughout and every transfer, entrance fee, and cruise night already arranged.",
@@ -660,7 +660,7 @@ export const signatureExperiences: SignatureExperience[] = [
       {
         question: "What are the hotel and cruise tier options?",
         answer:
-          "Two tiers: a 5★ hotel (Giza Palace or similar) with a 5★ Premium Nile Cruise (MS Concerto or similar) — $2,000 per person double, $3,500 single. Or a 3★ hotel (Pyramids New Height or similar) with a 5★ Standard Nile Cruise (Semiramis II or similar) — $1,500 per person double, $2,400 single. All rates are per person.",
+          "Two tiers: a 5★ hotel (Giza Palace or similar) with a 5★ Premium Nile Cruise (MS Concerto or similar), or a 3★ hotel (Pyramids New Height or similar) with a 5★ Standard Nile Cruise (Semiramis II or similar). Contact us for current rates on either tier, for double or single occupancy.",
       },
       {
         question: "What's not included?",
@@ -849,16 +849,15 @@ export const signatureExperiences: SignatureExperience[] = [
       "For groups who want to see all of Egypt in one trip — Giza, Cairo, the Siwa Oasis, a Nile cruise through Aswan and Luxor, and Red Sea days in Hurghada — on one continuous, privately guided route.",
     emotionalHeadline: "Every Region of Egypt, One Seamless Itinerary.",
     shortDescription:
-      "A 14-day private group itinerary built for 10 travelers — the Pyramids of Giza, Old Cairo, three days in the Siwa Oasis, a Nile cruise from Aswan to Luxor, and Red Sea days in Hurghada — with a certified Egyptologist guide throughout. From $1,550 per person for the guided touring itinerary; flights, hotels, and visa are arranged separately.",
+      "A 14-day private group itinerary built for 10 travelers — the Pyramids of Giza, Old Cairo, three days in the Siwa Oasis, a Nile cruise from Aswan to Luxor, and Red Sea days in Hurghada — with a certified Egyptologist guide throughout. The guided touring itinerary is quoted separately from flights, hotels, and visa.",
     heroImageTone: "giza",
     heroImage: "/photos/pexels-31133003.jpg",
     duration: "14 days",
     groupSize: "Private group — built for 10 travelers",
-    luxuryLevel: "Standard Nile Cruise included, upgradable to a higher tier for $450 per person",
+    luxuryLevel: "Standard Nile Cruise included, upgradable to a higher tier on request",
     location: "Giza · Cairo · Siwa Oasis · Aswan · Luxor · Hurghada",
     price: {
       amount: 1550,
-      note: "From $1,550 per person for the guided touring itinerary — flights, hotels, and visa arranged separately",
     },
     whoIsThisForTitle: "Who This Is For",
     whoIsThisForBody:
@@ -1066,9 +1065,9 @@ export const signatureExperiences: SignatureExperience[] = [
     ],
     faqs: [
       {
-        question: "What's included in the $1,550 per person price, and what isn't?",
+        question: "What's included in the guided touring itinerary price, and what isn't?",
         answer:
-          "The $1,550 per person covers the guided touring itinerary — a certified Egyptologist guide, all in-town private transfers, admission fees to every historical site mentioned, parking fees and road tolls, all tours and activities mentioned in the program, and 24-hour follow-up throughout. It also includes Standard-level Nile cruise accommodation; upgrading the cruise to a higher tier is $450 extra per person. Flights, hotels, and your visa are not included and are arranged separately.",
+          "The guided touring itinerary price covers a certified Egyptologist guide, all in-town private transfers, admission fees to every historical site mentioned, parking fees and road tolls, all tours and activities mentioned in the program, and 24-hour follow-up throughout. It also includes Standard-level Nile cruise accommodation; upgrading the cruise to a higher tier is available for an extra per-person fee. Flights, hotels, and your visa are not included and are arranged separately.",
       },
       {
         question: "What's not included?",
@@ -1078,7 +1077,7 @@ export const signatureExperiences: SignatureExperience[] = [
       {
         question: "What optional tours can I add?",
         answer:
-          "Optional tours and excursions are priced separately and chosen based on personal preference: ATV in Giza ($45), Jumping Horse in Giza ($25), Nile Cruise Dinner in Cairo ($45), Nile Felucca in Cairo ($25), Hot Air Balloon in Luxor ($110), and Edfu & Kom Ombo in Aswan ($120) — all per person. The Abu Simbel excursion on Day 8 and the Edfu Temple stop on Day 9 are also marked optional within the core itinerary.",
+          "Optional tours and excursions are priced separately and chosen based on personal preference: ATV in Giza, Jumping Horse in Giza, Nile Cruise Dinner in Cairo, Nile Felucca in Cairo, Hot Air Balloon in Luxor, and Edfu & Kom Ombo in Aswan — ask us for current rates. The Abu Simbel excursion on Day 8 and the Edfu Temple stop on Day 9 are also marked optional within the core itinerary.",
       },
       {
         question: "Is this a fixed group departure, or built around us?",

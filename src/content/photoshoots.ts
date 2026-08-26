@@ -159,7 +159,7 @@ export const photoshoots: Photoshoot[] = [
     imageTone: "giza",
     image: "/photos/pexels-28682219.jpg",
     description:
-      "A private, beautifully styled proposal setup overlooking the Pyramids of Giza — romantic decorations, flowers, and candlelight, arranged and ready before you arrive, so all that's left is the moment itself. Prices start from $150, depending on the setup and style you choose. This is enquiry-only — our team confirms your setup, styling, and pricing directly with you.",
+      "A private, beautifully styled proposal setup overlooking the Pyramids of Giza — romantic decorations, flowers, and candlelight, arranged and ready before you arrive, so all that's left is the moment itself. Pricing depends on the setup and style you choose. This is enquiry-only — our team confirms your setup, styling, and pricing directly with you.",
     goodFor: ["Engagements & proposals", "Couples"],
     included: [
       "Romantic decorations",
@@ -169,7 +169,7 @@ export const photoshoots: Photoshoot[] = [
       "Personalized decoration options",
       "Professional setup completed before you arrive",
     ],
-    addOns: ["Pyramids Proposal Photoshoot — professional photography & fully edited photos, from $250"],
+    addOns: ["Pyramids Proposal Photoshoot — professional photography & fully edited photos"],
     delivery: [
       "The setup fully styled and ready before you arrive",
       "Optional: professional photography and a fully edited photo gallery with the Pyramids Proposal Photoshoot add-on",

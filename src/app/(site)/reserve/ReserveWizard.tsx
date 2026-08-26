@@ -288,7 +288,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                 </div>
               </Field>
               {discountState.checked && discountState.valid && (
-                <p className="text-sm font-semibold text-nile">✓ Code applied — ${discountState.discountAmount.toLocaleString()} off</p>
+                <p className="text-sm font-semibold text-nile">✓ Code applied — your discount will be included in your quote</p>
               )}
               {discountState.checked && !discountState.valid && <p className="text-sm text-terracotta">{discountState.reason}</p>}
               <p className="text-xs text-ink-soft/50">Have a 4% off code from our newsletter? Enter it here.</p>
@@ -296,14 +296,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
           )}
 
           {step === 4 && (
-            <ReviewStep
-              form={form}
-              titles={allTitles}
-              subtotal={subtotal}
-              hasUnpriced={priced.length < details.tours.length + details.experiences.length + details.photoshoots.length}
-              discountState={discountState}
-              submitError={submitError}
-            />
+            <ReviewStep form={form} titles={allTitles} discountState={discountState} submitError={submitError} />
           )}
 
           <div className="mt-8 flex items-center justify-between gap-3">
@@ -354,20 +347,15 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 function ReviewStep({
   form,
   titles,
-  subtotal,
-  hasUnpriced,
   discountState,
   submitError,
 }: {
   form: FormData;
   titles: string[];
-  subtotal: number;
-  hasUnpriced: boolean;
   discountState: DiscountState;
   submitError: string;
 }) {
-  const discountAmount = discountState.checked && discountState.valid ? discountState.discountAmount : 0;
-  const total = subtotal > 0 ? Math.round((subtotal - discountAmount) * 100) / 100 : null;
+  const hasDiscount = discountState.checked && discountState.valid;
 
   return (
     <div className="flex flex-col gap-5 text-sm">
@@ -400,33 +388,10 @@ function ReviewStep({
       )}
 
       <div className="rounded-2xl border border-gold/20 bg-sand-dim p-4">
-        {subtotal > 0 ? (
-          <div className="flex flex-col gap-1.5">
-            <div className="flex justify-between">
-              <span className="text-ink-soft/70">Trip estimate</span>
-              <span className="font-medium text-ink">${subtotal.toLocaleString()}</span>
-            </div>
-            {discountAmount > 0 && (
-              <div className="flex justify-between text-nile">
-                <span>Discount</span>
-                <span>-${discountAmount.toLocaleString()}</span>
-              </div>
-            )}
-            <div className="mt-1 flex justify-between border-t border-black/10 pt-1.5 text-base font-semibold text-ink">
-              <span>Estimated total</span>
-              <span>${total?.toLocaleString()}</span>
-            </div>
-            <p className="mt-2 text-xs text-ink-soft/60">
-              This is an estimate based on listed pricing{hasUnpriced ? " for the items that have one" : ""}. The final
-              amount depends on your confirmed itinerary — our team will follow up with exact pricing.
-            </p>
-          </div>
-        ) : (
-          <p className="text-xs text-ink-soft/70">
-            Your journey includes custom-quoted experiences, so we&rsquo;ll confirm your exact pricing directly
-            {discountAmount > 0 || (discountState.checked && discountState.valid) ? " — your discount code will be applied to that quote." : "."}
-          </p>
-        )}
+        <p className="text-xs text-ink-soft/70">
+          We&rsquo;ll confirm your exact pricing directly once we&rsquo;ve reviewed your journey
+          {hasDiscount ? " — your discount code will be applied to that quote." : "."}
+        </p>
       </div>
 
       {submitError && <p className="text-sm text-terracotta">{submitError}</p>}
@@ -475,28 +440,10 @@ function Confirmation({
             Travelers: <span className="font-medium text-ink">{form.travelersAdults} adult{form.travelersAdults === 1 ? "" : "s"}{form.travelersChildren > 0 ? `, ${form.travelersChildren} child${form.travelersChildren === 1 ? "" : "ren"}` : ""}</span>
           </p>
 
-          {confirmation.total !== null ? (
-            <div className="mt-4 border-t border-black/5 pt-4 text-sm">
-              <div className="flex justify-between">
-                <span className="text-ink-soft/70">Trip estimate</span>
-                <span>${confirmation.subtotal?.toLocaleString()}</span>
-              </div>
-              {confirmation.discountAmount > 0 && (
-                <div className="flex justify-between text-nile">
-                  <span>Discount used</span>
-                  <span>-${confirmation.discountAmount.toLocaleString()}</span>
-                </div>
-              )}
-              <div className="mt-1 flex justify-between text-base font-semibold text-ink">
-                <span>Estimated total</span>
-                <span>${confirmation.total.toLocaleString()}</span>
-              </div>
-            </div>
-          ) : (
-            <p className="mt-4 border-t border-black/5 pt-4 text-sm text-ink-soft/70">
-              We&rsquo;ll follow up with your confirmed pricing.
-            </p>
-          )}
+          <p className="mt-4 border-t border-black/5 pt-4 text-sm text-ink-soft/70">
+            We&rsquo;ll follow up with your confirmed pricing
+            {confirmation.discountAmount > 0 ? ", with your discount code applied." : "."}
+          </p>
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">

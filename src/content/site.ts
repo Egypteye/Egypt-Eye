@@ -66,7 +66,7 @@ export const site = {
     deposit:
       "A 20% down payment secures your reservation. The remaining balance can be paid in cash or via PayPal at the end of the day or tour.",
     currency:
-      "Prices are displayed in USD. You may pay in USD, Euro, or British Pound. Once your tour is confirmed, the price is guaranteed not to change.",
+      "You may pay in USD, Euro, or British Pound. Once your tour is confirmed, the rate we quote you is guaranteed not to change.",
     children: [
       { age: "1–4 years", price: "Free" },
       { age: "5–8 years", price: "25% of tour price" },

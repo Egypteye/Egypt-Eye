@@ -95,22 +95,17 @@ export function reservationConfirmationEmail({
   itemTitles,
   tripStartDate,
   discountAmount,
-  totalEstimate,
 }: {
   guestName: string;
   reference: string;
   itemTitles: string[];
   tripStartDate: string | null;
   discountAmount: number;
-  totalEstimate: number | null;
 }) {
   const itemsHtml = itemTitles.length
     ? `<ul style="margin:0 0 16px;padding-left:20px;">${itemTitles.map((t) => `<li>${escapeHtml(t)}</li>`).join("")}</ul>`
     : "";
-  const pricingHtml =
-    totalEstimate !== null
-      ? `<p style="margin:0 0 16px;">Estimated total${discountAmount > 0 ? ` (after your discount)` : ""}: <strong>$${totalEstimate.toLocaleString()}</strong></p>`
-      : `<p style="margin:0 0 16px;font-size:13px;color:#556;">Your final price will be confirmed with you directly, since part of your journey is custom-quoted.</p>`;
+  const pricingHtml = `<p style="margin:0 0 16px;font-size:13px;color:#556;">We&rsquo;ll follow up with your confirmed pricing${discountAmount > 0 ? ", with your discount code applied" : ""}.</p>`;
 
   const html = baseLayout({
     preheader: `Your Egypt journey is on its way — reference ${reference}.`,
@@ -126,7 +121,7 @@ export function reservationConfirmationEmail({
     `,
     footerHtml: `Questions? Just reply to this email — Egypt Eye Travel and Tours.`,
   });
-  const text = `Hi ${guestName},\n\nYour Egypt journey is on its way. Reference: ${reference}\n${tripStartDate ? `Trip start: ${new Date(tripStartDate).toLocaleDateString()}\n` : ""}${itemTitles.length ? `\n${itemTitles.join("\n")}\n` : ""}\n${totalEstimate !== null ? `Estimated total: $${totalEstimate.toLocaleString()}` : "Your final price will be confirmed with you directly."}`;
+  const text = `Hi ${guestName},\n\nYour Egypt journey is on its way. Reference: ${reference}\n${tripStartDate ? `Trip start: ${new Date(tripStartDate).toLocaleDateString()}\n` : ""}${itemTitles.length ? `\n${itemTitles.join("\n")}\n` : ""}\nWe'll follow up with your confirmed pricing${discountAmount > 0 ? ", with your discount code applied" : ""}.`;
   return { subject: `Your Egypt journey is on its way — ${reference}`, html, text };
 }
 

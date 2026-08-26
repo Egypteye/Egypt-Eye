@@ -65,7 +65,7 @@ export async function validateDiscountCode({
   if (campaign.min_booking_value && subtotal > 0 && subtotal < campaign.min_booking_value) {
     return {
       valid: false,
-      reason: `This code needs a minimum estimated trip value of $${campaign.min_booking_value.toLocaleString()}.`,
+      reason: "This code requires a larger trip — it doesn't apply to your current journey yet.",
     };
   }
 

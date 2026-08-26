@@ -155,7 +155,6 @@ export async function POST(request: NextRequest) {
     itemTitles: journeySnapshot.map((i) => i.title),
     tripStartDate,
     discountAmount: finalDiscountAmount,
-    totalEstimate: subtotal > 0 ? Math.round((subtotal - finalDiscountAmount) * 100) / 100 : null,
   });
   await sendIdempotentEmail({
     idempotencyKey: `reservation-confirmation:${reservation.id}`,

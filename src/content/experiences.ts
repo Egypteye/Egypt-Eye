@@ -86,7 +86,7 @@ export const experiences: Experience[] = [
     imageTone: "giza",
     image: "/photos/pexels-18291196.jpg",
     description:
-      "A private, beautifully styled proposal setup overlooking the Pyramids of Giza — romantic decorations, flowers, and candlelight, arranged and ready before you arrive, so all that's left is the moment itself. Prices start from $150, depending on the setup and style you choose. Want it captured too? Add the Pyramids Proposal Photoshoot, starting from $250, for professional photography and fully edited photos. This is enquiry-only — our team confirms your setup, styling, and pricing directly with you.",
+      "A private, beautifully styled proposal setup overlooking the Pyramids of Giza — romantic decorations, flowers, and candlelight, arranged and ready before you arrive, so all that's left is the moment itself. Pricing depends on the setup and style you choose. Want it captured too? Add the Pyramids Proposal Photoshoot for professional photography and fully edited photos. This is enquiry-only — our team confirms your setup, styling, and pricing directly with you.",
     included: [
       "Romantic decorations",
       "Flowers and floral arrangements",

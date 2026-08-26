@@ -393,16 +393,7 @@ export function TransferBookingForm() {
       {/* Live quote */}
       <div className="mb-8 flex flex-col items-center gap-1.5 rounded-2xl bg-ink px-6 py-6 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light">{routeSummary()}</p>
-        {quote.kind === "priced" ? (
-          <p className="font-display text-3xl font-semibold text-cream">
-            ${quote.amount}
-            <span className="ml-1 text-sm font-sans font-normal text-cream/60">
-              {isPrivateDriver && !isDailyRate ? `for ${durationHours}h` : "one-way"}
-            </span>
-          </p>
-        ) : (
-          <p className="font-display text-xl font-semibold text-cream">We&rsquo;ll send you a quote for this route</p>
-        )}
+        <p className="font-display text-xl font-semibold text-cream">We&rsquo;ll send you a quote for this route</p>
       </div>
 
       {/* Step 4 — contact */}
@@ -444,7 +435,7 @@ export function TransferBookingForm() {
         disabled={status === "sending"}
         className="w-full rounded-full bg-ink py-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : quote.kind === "priced" ? `Request This Transfer — $${quote.amount}` : "Request a Quote"}
+        {status === "sending" ? "Sending…" : "Request This Transfer"}
       </button>
 
       {status === "error" && (

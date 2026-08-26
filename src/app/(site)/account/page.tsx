@@ -165,14 +165,9 @@ export default async function AccountPage() {
                         {r.travelers_children > 0 ? `, ${r.travelers_children} child${r.travelers_children === 1 ? "" : "ren"}` : ""}
                       </p>
                     </div>
-                    <div className="flex items-center gap-4">
-                      {r.total_estimate !== null && (
-                        <span className="text-sm font-semibold text-ink">${r.total_estimate.toLocaleString()}</span>
-                      )}
-                      <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold text-gold-dark">
-                        {STATUS_LABEL[r.status] ?? r.status}
-                      </span>
-                    </div>
+                    <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold text-gold-dark">
+                      {STATUS_LABEL[r.status] ?? r.status}
+                    </span>
                   </div>
                 ))}
               </div>

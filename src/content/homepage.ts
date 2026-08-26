@@ -21,7 +21,7 @@ export const homepage: ResolvedHomepage = {
     badge: "First Flying Dresses in Egypt",
     title: "Egypt's First Flying Dress Photoshoot",
     body:
-      "A flowing dress, a private photographer, and secret, uncrowded locations at the Pyramids Rooftop, sand dunes, or Fayoum Oasis — Egypt Eye's signature photoshoot, from $199.",
+      "A flowing dress, a private photographer, and secret, uncrowded locations at the Pyramids Rooftop, sand dunes, or Fayoum Oasis — Egypt Eye's signature photoshoot.",
     buttonLabel: "See the Flying Dress Experience",
   },
   redSea: {
