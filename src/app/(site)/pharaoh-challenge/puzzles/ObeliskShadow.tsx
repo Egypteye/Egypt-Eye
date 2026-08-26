@@ -94,7 +94,7 @@ export function ObeliskShadow({ config, onSolved }: PuzzleProps) {
           style={{ left: `${sunX}%`, top: `${sunY}%` }}
         />
       </div>
-      <p className="text-sm text-cream/60">
+      <p className="text-base text-cream/60">
         {solved ? "The shadow falls true. The obelisk has shown the way." : "Move the sun — watch where the shadow falls."}
       </p>
     </div>

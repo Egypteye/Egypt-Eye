@@ -95,24 +95,24 @@ export function PharaohChallengeClient({
   return (
     <div className="mx-auto max-w-xl">
       {error && (
-        <p className="mb-6 rounded-xl border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-center text-sm text-terracotta">
+        <p className="mb-6 rounded-xl border border-terracotta/30 bg-terracotta/10 px-4 py-3 text-center text-base text-terracotta">
           {error}
         </p>
       )}
 
       {phase === "intro" && (
         <div className="flex flex-col items-center gap-6 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light/80">{campaign.theme}</p>
-          <h1 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{campaign.name}</h1>
-          <p className="max-w-md text-cream/70">{campaign.story_intro}</p>
-          <p className="text-xs text-cream/40">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">{campaign.theme}</p>
+          <h1 className="font-display text-4xl font-semibold text-cream sm:text-5xl">{campaign.name}</h1>
+          <p className="max-w-md text-lg text-cream/70">{campaign.story_intro}</p>
+          <p className="text-sm text-cream/40">
             One attempt per account. Sign in to begin — your progress is saved as you go.
           </p>
           <button
             type="button"
             onClick={handleBegin}
             disabled={pending}
-            className="rounded-full bg-gold px-8 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light disabled:opacity-60"
+            className="rounded-full bg-gold px-8 py-3.5 text-base font-semibold text-ink transition hover:bg-gold-light disabled:opacity-60"
           >
             {pending ? "Opening the way…" : "Begin the Challenge"}
           </button>
@@ -130,9 +130,9 @@ export function PharaohChallengeClient({
 
       {phase === "cleared" && clearedTier && attempt && (
         <div className="flex flex-col items-center gap-6 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light/80">Chamber Cleared</p>
-          <h2 className="font-display text-2xl font-semibold text-cream sm:text-3xl">{clearedTier.name}</h2>
-          <p className="max-w-sm text-cream/70">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">Chamber Cleared</p>
+          <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{clearedTier.name}</h2>
+          <p className="max-w-sm text-lg text-cream/70">
             You&rsquo;ve secured a {REWARD_VALUES[clearedTier.tier_number]}% reward. Continue deeper for a better one,
             or stop here and claim what you&rsquo;ve won.
           </p>
@@ -141,7 +141,7 @@ export function PharaohChallengeClient({
               <button
                 type="button"
                 onClick={handleContinue}
-                className="rounded-full bg-gold px-7 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
+                className="rounded-full bg-gold px-7 py-3 text-base font-semibold text-ink transition hover:bg-gold-light"
               >
                 Continue to Chamber {attempt.current_tier}
               </button>
@@ -150,7 +150,7 @@ export function PharaohChallengeClient({
               type="button"
               onClick={handleClaim}
               disabled={pending}
-              className="rounded-full border border-cream/25 px-7 py-3 text-sm font-semibold text-cream/80 transition hover:bg-cream/10 disabled:opacity-60"
+              className="rounded-full border border-cream/25 px-7 py-3 text-base font-semibold text-cream/80 transition hover:bg-cream/10 disabled:opacity-60"
             >
               {pending ? "Sealing your reward…" : `Claim My ${REWARD_VALUES[clearedTier.tier_number]}% & Stop Here`}
             </button>
@@ -166,22 +166,25 @@ export function PharaohChallengeClient({
             alt=""
             className="h-16 w-16 drop-shadow-[0_0_25px_rgba(228,200,120,0.7)]"
           />
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light/80">The Threshold Opens</p>
-          <h2 className="font-display text-2xl font-semibold text-cream sm:text-3xl">{campaign.story_outro}</h2>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">The Threshold Opens</p>
+          <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{campaign.story_outro}</h2>
           {rewardCode ? (
             <div className="rounded-2xl border border-gold/30 bg-cream/5 px-6 py-5">
-              <p className="text-sm text-cream/60">Your reward code</p>
-              <p className="mt-1 font-mono text-xl font-bold tracking-wide text-gold-light">{rewardCode}</p>
+              <p className="text-base text-cream/60">Your reward code</p>
+              <p className="mt-1 font-mono text-2xl font-bold tracking-wide text-gold-light">{rewardCode}</p>
             </div>
           ) : (
-            <p className="text-cream/70">Your reward is saved to your account.</p>
+            <p className="text-lg text-cream/70">Your reward is saved to your account.</p>
           )}
           <ShareAchievement
             campaignId={campaign.id}
+            campaignName={campaign.name}
+            tierName={clearedTier?.name ?? campaign.name}
+            rewardPercent={REWARD_VALUES[attempt?.highest_tier_completed ?? 0] ?? 0}
             shareUrl={shareUrl}
             shareText="I just made it through the Pharaoh's Challenge at Egypt Eye 𓁿 — try it yourself:"
           />
-          <Link href="/account" className="text-sm font-semibold text-gold-light underline underline-offset-4">
+          <Link href="/account" className="text-base font-semibold text-gold-light underline underline-offset-4">
             View my reward in My Account
           </Link>
         </div>

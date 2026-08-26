@@ -30,15 +30,15 @@ export function PuzzleFrame({
         }}
       />
       <div className="relative flex flex-col items-center gap-2 text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light/80">
+        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">
           Chamber {tierNumber} of 5 — {name}
         </p>
-        <p className="max-w-md text-sm text-cream/70">{flavorText}</p>
+        <p className="max-w-md text-base text-cream/70">{flavorText}</p>
       </div>
 
       <div className="relative mt-8 flex flex-col items-center">{children}</div>
 
-      {hint && <p className="relative mt-6 text-center text-xs text-cream/40">{hint}</p>}
+      {hint && <p className="relative mt-6 text-center text-sm text-cream/40">{hint}</p>}
     </div>
   );
 }

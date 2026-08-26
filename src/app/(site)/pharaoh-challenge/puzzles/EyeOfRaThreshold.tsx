@@ -129,7 +129,7 @@ export function EyeOfRaThreshold({ config, onSolved }: PuzzleProps) {
           </div>
         )}
       </div>
-      <p className="text-sm text-cream/60">
+      <p className="text-base text-cream/60">
         {solved ? "All three rings turn as one. The Eye opens." : "Turn each ring — drag near its band — until all three align."}
       </p>
     </div>

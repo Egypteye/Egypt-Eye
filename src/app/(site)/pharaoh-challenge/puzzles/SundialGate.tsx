@@ -89,7 +89,7 @@ export function SundialGate({ config, onSolved }: PuzzleProps) {
           <div className="pointer-events-none absolute inset-0 rounded-full shadow-[0_0_60px_20px_rgba(228,200,120,0.55)] transition-opacity duration-500" />
         )}
       </div>
-      <p className="text-sm text-cream/60">
+      <p className="text-base text-cream/60">
         {solved ? "The disc catches the light — the gate slides open." : "Drag the disc to align it with the mark."}
       </p>
     </div>

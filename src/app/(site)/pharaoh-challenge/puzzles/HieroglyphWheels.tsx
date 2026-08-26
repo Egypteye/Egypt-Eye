@@ -35,7 +35,7 @@ export function HieroglyphWheels({ config, onSolved }: PuzzleProps) {
   return (
     <div className="flex flex-col items-center gap-8">
       <div className="flex flex-col items-center gap-2">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light/70">Match this combination</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-light/70">Match this combination</p>
         <div className="flex gap-3 rounded-2xl border border-gold/20 bg-black/20 px-4 py-3">
           {target.map((g, i) => (
             <Glyph key={i} index={g} className="h-7 w-7 text-gold" />
@@ -77,7 +77,7 @@ export function HieroglyphWheels({ config, onSolved }: PuzzleProps) {
         ))}
       </div>
 
-      <p className="text-sm text-cream/60">
+      <p className="text-base text-cream/60">
         {solved ? "The wheels lock into place. Stone grinds against stone as the way opens." : "Turn each wheel to match the key above."}
       </p>
     </div>

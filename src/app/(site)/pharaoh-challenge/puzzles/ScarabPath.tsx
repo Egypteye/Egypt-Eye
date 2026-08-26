@@ -95,7 +95,7 @@ export function ScarabPath({ config, onSolved }: PuzzleProps) {
           );
         })}
       </div>
-      <p className="text-sm text-cream/60">
+      <p className="text-base text-cream/60">
         {phase === "showing" && "Watch the path the light takes…"}
         {phase === "input" && "Now walk it yourself — tap the tiles in order."}
         {phase === "solved" && "The stones settle. The way is clear."}
