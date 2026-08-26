@@ -17,7 +17,7 @@ import {
   getSignatureExperienceBySlug,
   getSiteSettings,
 } from "@/sanity/fetchers";
-import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
+import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
 export async function generateStaticParams() {
   const slugs = await getAllSignatureExperienceSlugs();
@@ -72,10 +72,17 @@ export default async function SignatureExperienceDetailPage({
     { name: "Signature Experiences", path: "/signature-experiences" },
     { name: experience.name, path: `/signature-experiences/${experience.slug}` },
   ]);
+  const touristTrip = touristTripJsonLd({
+    name: experience.name,
+    description: experience.shortDescription,
+    image: experience.heroImage,
+    path: `/signature-experiences/${experience.slug}`,
+  });
 
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
       {/* Hero */}
       <section className="relative">
         <SmartImage
