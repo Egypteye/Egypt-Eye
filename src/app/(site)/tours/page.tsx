@@ -40,10 +40,13 @@ export default async function ToursPage() {
 
       <section className="py-16">
         <Container>
+          <h2 className="text-balance font-display text-2xl font-semibold text-ink lg:hidden">
+            {sectionTitle}
+          </h2>
           <div className="hidden lg:block">
             <SectionHeading title={sectionTitle} description={page.sectionDescription} />
           </div>
-          <div className="mt-10">
+          <div className="mt-6 lg:mt-10">
             <Suspense fallback={null}>
               <ToursGrid tours={tours} />
             </Suspense>
