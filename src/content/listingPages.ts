@@ -6,7 +6,7 @@ import type { ResolvedListingPages } from "./types";
 
 export const listingPages: ResolvedListingPages = {
   tours: {
-    heroEyebrow: "Popular Tours",
+    heroEyebrow: "Best Seller Tours",
     heroTitle: "Tours Across All Egypt & Jordan",
     sectionTitleTemplate: "{count} private, guided itineraries",
     sectionDescription:

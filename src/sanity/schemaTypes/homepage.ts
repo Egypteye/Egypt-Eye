@@ -2,7 +2,7 @@ import { defineField, defineType } from "sanity";
 
 // Singleton — every static marketing block on the homepage that isn't
 // already covered by Site Settings (hero slides, trust stats, trust
-// badges) or a live content query (Popular Tours' cards, Reviews'
+// badges) or a live content query (Best Seller Tours' cards, Reviews'
 // testimonials, FAQ items, Stories' cards). Photos for the Flying Dress,
 // Red Sea, Nine Pyramids, and Customize blocks live in Site Settings
 // (they're shared banner images), not duplicated here.
@@ -15,7 +15,7 @@ export const homepage = defineType({
   title: "Homepage",
   type: "document",
   fields: [
-    block("popularTours", "Popular Tours section", [
+    block("popularTours", "Best Seller Tours section", [
       defineField({ name: "eyebrow", title: "Eyebrow", type: "string" }),
       defineField({ name: "title", title: "Title", type: "string" }),
       defineField({ name: "description", title: "Description", type: "text", rows: 2 }),

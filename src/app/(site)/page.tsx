@@ -71,7 +71,7 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Popular Tours — a small curated preview; the full searchable
+      {/* Best Seller Tours — a small curated preview; the full searchable
           catalog lives on /tours, not inline on the homepage. */}
       <section className="py-4 pt-24 sm:pt-20">
         <Container>

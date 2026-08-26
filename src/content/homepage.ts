@@ -5,11 +5,11 @@ import type { ResolvedHomepage } from "./types";
 
 export const homepage: ResolvedHomepage = {
   popularTours: {
-    eyebrow: "Popular Tours",
+    eyebrow: "Best Seller Tours",
     title: "Tours Travelers Book Most",
     description:
       "A curated set of our most-loved itineraries — the ones we'd recommend first if you told us nothing else about your trip.",
-    primaryButtonLabel: "See Popular Tours",
+    primaryButtonLabel: "See Best Seller Tours",
     secondaryButtonLabel: "Browse All Tours",
   },
   destinationsSection: {

@@ -17,7 +17,7 @@ export const tour = defineType({
     defineField({
       name: "featured",
       title: "Featured on the homepage",
-      description: "Turn on to include this tour in the homepage's curated Popular Tours selection. Leave off and it still appears on /tours.",
+      description: "Turn on to include this tour in the homepage's curated Best Seller Tours selection. Leave off and it still appears on /tours.",
       type: "boolean",
       initialValue: false,
     }),

@@ -631,7 +631,7 @@ export type SignatureExperience = {
 
 // Singleton — every static marketing block on the homepage that isn't
 // already covered by Site Settings (hero slides, trust stats) or a live
-// content query (Popular Tours' cards, Reviews' testimonials, FAQ items,
+// content query (Best Seller Tours' cards, Reviews' testimonials, FAQ items,
 // Stories' cards). Each block mirrors one homepage section 1:1.
 export type Homepage = {
   popularTours?: { eyebrow?: string; title?: string; description?: string; primaryButtonLabel?: string; secondaryButtonLabel?: string };

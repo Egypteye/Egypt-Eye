@@ -1,7 +1,7 @@
 import type { Tour } from "./types";
 import { experiences } from "./experiences";
 
-// Popular Tours — edit durations, ratings, itineraries, and pricing here.
+// Best Seller Tours — edit durations, ratings, itineraries, and pricing here.
 // price.amount = null means "Contact for pricing" (shown as "Get a Quote").
 
 // Cross-links a Cairo/Giza tour to a couple of the short Extra Experiences
