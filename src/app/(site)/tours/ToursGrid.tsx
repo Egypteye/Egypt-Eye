@@ -105,7 +105,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
   return (
     <div className="grid gap-10 lg:grid-cols-[260px_1fr] lg:items-start lg:gap-10">
       {/* Filters sidebar */}
-      <aside className="rounded-2xl border border-black/5 bg-cream p-6 lg:sticky lg:top-24">
+      <aside className="hidden rounded-2xl border border-black/5 bg-cream p-6 lg:sticky lg:top-24 lg:block">
         <div className="flex items-center justify-between">
           <p className="font-display text-base font-semibold text-ink">Filter Tours</p>
           {activeFilterCount > 0 && (
