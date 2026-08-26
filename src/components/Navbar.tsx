@@ -10,7 +10,7 @@ import type { CurrentUser } from "@/lib/auth/session";
 // Only these stay visible in the desktop nav bar; every other site.nav item
 // (Home is already reachable via the logo) is tucked into the "More"
 // dropdown so the bar doesn't get crowded as the nav list grows.
-const PRIMARY_NAV_LABELS = ["Best Seller Tours", "Customize Your Tour", "Unique Photoshoots"];
+const PRIMARY_NAV_LABELS = ["Best Seller Tours", "Signature Experiences", "Unique Photoshoots"];
 
 export function Navbar({
   siteSettings: site,
@@ -94,7 +94,11 @@ export function Navbar({
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap text-[13px] font-medium text-ink-soft transition hover:text-gold-dark"
+              className={`whitespace-nowrap text-[13px] font-medium transition ${
+                item.label === "Signature Experiences"
+                  ? "text-gold-dark hover:text-gold"
+                  : "text-ink-soft hover:text-gold-dark"
+              }`}
             >
               {item.label}
             </Link>
