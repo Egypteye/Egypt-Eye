@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
-import { PlaceholderImage } from "@/components/PlaceholderImage";
+import { SmartImage } from "@/components/SmartImage";
 import { CollaborateForm } from "./CollaborateForm";
 
 export const metadata: Metadata = {
@@ -29,7 +29,14 @@ export default function CollaboratePage() {
   return (
     <>
       <section className="relative">
-        <PlaceholderImage tone="desert" className="absolute inset-0" />
+        <SmartImage
+          image="/photos/pexels-15131539.jpg"
+          tone="desert"
+          alt="Detailed hieroglyphic reliefs on temple columns in Egypt"
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">Collaborate</p>
