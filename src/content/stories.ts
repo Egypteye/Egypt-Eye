@@ -8355,15 +8355,78 @@ export const stories: Story[] = [
     publishedAt: "2026-02-24T09:00:00+02:00",
     primaryKeyword: "rosetta stone explained",
     secondaryKeywords: ["rosetta stone history", "how hieroglyphics were decoded"],
-    seoTitle: "The Rosetta Stone Explained | Egypt Eye",
-    seoDescription: "How the Rosetta Stone's three parallel scripts finally let scholars decode hieroglyphics, 1,400 years after the writing system fell out of use.",
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "memphis-saqqara-dahshur-tour", "3-day-cairo-giza"),
+    seoTitle: "The Rosetta Stone Explained: How Hieroglyphics Were Decoded",
+    seoDescription: "How the Rosetta Stone's three parallel scripts finally let scholars decode hieroglyphics in 1822, 1,400 years after the writing system fell silent.",
     body: [
-      p("By the time Napoleon's troops found the Rosetta Stone in 1799, nobody had been able to read hieroglyphics for roughly 1,400 years — the script had fallen out of use as Egypt shifted to Coptic and Greek, and the knowledge to read it simply died out."),
-      h2("Three scripts, one decree"),
-      p("The stone carries the same royal decree, from 196 BCE, written in three scripts: hieroglyphics, Demotic (an everyday Egyptian script), and Ancient Greek — which scholars could still read. That gave them a way in."),
-      h2("Champollion's breakthrough"),
-      p("It took until 1822 for French scholar Jean-François Champollion to fully crack the system, realizing hieroglyphics combined phonetic sounds with symbolic meaning rather than being purely pictorial. His work reopened a language that had been unreadable for well over a millennium."),
-      callout("The original Rosetta Stone is held at the British Museum, not in Egypt — a fact that still generates real debate over repatriation of Egyptian antiquities.", { tone: "Info" }),
+      p("By the time French soldiers found the Rosetta Stone in 1799, nobody on Earth had been able to read hieroglyphics for roughly 1,400 years. The script hadn't been used in centuries — Egypt had shifted first to Demotic, then to Coptic and Greek, and the knowledge required to read the old pictorial writing simply died out along with the priesthood that had kept it alive. Temple walls, tomb paintings, obelisks, and papyri covered in hieroglyphs sat in plain sight across Egypt for well over a millennium, and nobody could tell you what any of it actually said. The stone that changed that is a broken slab of dark grey-pink granodiorite, and its story involves a fort in the Nile Delta, a bitter Anglo-French rivalry, and one obsessive French scholar who beat everyone else to the answer by a matter of months."),
+      h2("A Chance Find in the Nile Delta"),
+      p("The stone was found in July 1799 by French soldiers working under Napoleon Bonaparte's Egyptian campaign, during construction work reinforcing a fort near the town of Rosetta (Rashid in Arabic), on the western edge of the Nile Delta not far from Alexandria. Napoleon's expedition had brought along a large team of scholars and scientists specifically to study Egypt's antiquities, language, and natural history, and the officer overseeing the fort's rebuilding, Pierre-François Bouchard, recognized immediately that the slab covered in three different blocks of text was significant enough to send to the expedition's scientific commission in Cairo."),
+      p("What Bouchard's men had actually found was a fragment — roughly a meter tall, broken along the top and one side, with pieces missing from all three inscriptions. It isn't a complete document by any means, but it was complete enough, because the same text had been carved three separate times, in three different scripts, on the same stone."),
+      h2("What's Actually Written On It"),
+      p("The inscription is a decree issued by a council of Egyptian priests in 196 BCE, gathered at Memphis to affirm the royal cult of the reigning pharaoh, Ptolemy V Epiphanes, a Greek-descended ruler who was still a child when he took the throne. The text itself is fairly bureaucratic as ancient inscriptions go — it lists honors granted to the young king, confirms tax exemptions and benefits for the temples, and orders that the decree be copied and displayed in every major temple across Egypt, in the sacred script, in the script of the people, and in Greek, so that everyone in the kingdom could understand it regardless of which language they read."),
+      ...bullets([
+        "Hieroglyphic script at the top — the formal, ceremonial writing used for temple and monumental inscriptions since ancient times",
+        "Demotic script in the middle — the everyday cursive script ordinary Egyptians used for contracts, letters, and administrative records in this period",
+        "Ancient Greek at the bottom — the language of Egypt's Ptolemaic rulers, still readable by scholars in 1799 without any special decoding",
+      ]),
+      p("That last point is the entire reason the stone became so important. Nobody could read the hieroglyphs, and Demotic was nearly as much of a mystery, but classically trained European scholars could read the Greek without any trouble at all. If the same decree had been carved three times, then the Greek text was effectively a translation key sitting right next to the two scripts nobody could understand."),
+      h2("From French Discovery to British Museum"),
+      p("The stone didn't stay French for long. After Napoleon's army was defeated in Egypt, the British and Ottoman forces that took control negotiated the Capitulation of Alexandria in 1801, under which a number of antiquities the French had collected, including the Rosetta Stone, were surrendered to the British as part of the terms. It arrived in England in 1802 and has been on display at the British Museum ever since, apart from a brief period during the First World War when it was moved underground for safekeeping. Egypt has periodically requested its return over the decades, and the question of where the stone properly belongs remains a live one, tangled up in the much larger, ongoing debate over antiquities taken from Egypt during the colonial era."),
+      h2("The Race to Crack the Code"),
+      p("Having a translation key didn't mean the puzzle solved itself. Scholars across Europe spent two decades working on the stone, chasing a fundamental assumption that turned out to be wrong: that hieroglyphs were purely symbolic, each sign standing for an idea or an object rather than a sound, the way a modern road sign works rather than the way an alphabet does. Under that assumption, progress stalled for years."),
+      p("The English polymath Thomas Young made an important early breakthrough around 1814, noticing that a cluster of hieroglyphic signs enclosed in an oval loop — what's now called a cartouche — appeared to spell out the foreign name Ptolemy phonetically, sign by sound, rather than symbolically. That was the first real crack in the old assumption that hieroglyphs carried no phonetic value at all. Young made real progress but never fully generalized the insight into a working system for reading hieroglyphic text more broadly."),
+      h2("Champollion's Breakthrough"),
+      p("It was the French scholar Jean-François Champollion who finally broke the system open in 1822, building on Young's cartouche work but pushing it much further. Champollion had been obsessed with Egyptian scripts since childhood and had spent years teaching himself Coptic, the last living descendant of the ancient Egyptian language, on a hunch that it might hold clues to the older writing system. Comparing the cartouches for Ptolemy on the Rosetta Stone with a second cartouche for Cleopatra found on an obelisk from Philae, Champollion worked out which hieroglyphic signs corresponded to which sounds in both royal names, and realized the system combined phonetic signs with symbolic and ideographic ones simultaneously, rather than being purely one or the other."),
+      p("He announced the discovery in a now-famous letter to the Académie des Inscriptions in Paris, generally known as the Lettre à M. Dacier, on September 27, 1822. Within a few years, working with a growing body of hieroglyphic and Coptic material, Champollion had developed the foundations of what's still essentially the working method Egyptologists use to read hieroglyphic texts today. A writing system that had gone unread for roughly fourteen centuries was suddenly legible again, and the door opened to genuinely understanding Egypt's own written record of itself, rather than relying entirely on secondhand accounts from Greek and Roman writers."),
+      callout(
+        "The Rosetta Stone itself has been in the British Museum in London since 1802, not in Egypt — a fact that surprises a lot of first-time visitors who expect to find it in the Egyptian Museum in Cairo. Egypt has requested its return multiple times, and it remains one of the more prominent unresolved cases in the wider debate over repatriating antiquities removed during the colonial era.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      h2("Why It Mattered Far Beyond One Stone"),
+      p("Cracking hieroglyphics didn't just make one inscription readable. It reopened three thousand years of Egyptian history to direct study for the first time since antiquity — temple walls, tomb inscriptions, royal decrees, medical texts, and personal letters that had been sitting untranslated in plain sight across the country. Before Champollion's work, what was known about ancient Egypt came almost entirely through Greek and Roman historians writing centuries after the fact, filtered through their own biases and misunderstandings. After it, Egyptologists could read the pharaohs' own words, in their own language, for the first time in over a thousand years."),
+      p("That shift is part of why the Rosetta Stone carries such outsized symbolic weight today, well beyond its actual content, which is a fairly routine piece of Ptolemaic-era temple bureaucracy. It isn't famous for what it says. It's famous for what it made possible."),
+      h2("Seeing the Story Today, in Egypt"),
+      p("The original stone stays in London, but its story is very much part of a Cairo visit. The Egyptian Museum in Tahrir Square displays a replica of the Rosetta Stone alongside its enormous collection of the very hieroglyphic material Champollion's breakthrough eventually made readable — statues, sarcophagi, stelae, and papyri covered in the script that spent fourteen centuries as an unsolved puzzle. Standing in front of a wall of hieroglyphic inscriptions at Karnak, Luxor Temple, or inside a tomb in the Valley of the Kings carries a different weight once you understand that every one of those carvings was, for most of modern history, simply unreadable decoration, and that a single broken slab of granodiorite is the reason they aren't anymore."),
+      faq(
+        [
+          {
+            question: "Where is the Rosetta Stone now?",
+            answer:
+              "The original has been in the British Museum in London since 1802, after being surrendered by French forces to the British under the terms of the Capitulation of Alexandria in 1801. Egypt has repeatedly requested its return. The Egyptian Museum in Cairo displays a replica.",
+          },
+          {
+            question: "Who actually decoded the Rosetta Stone?",
+            answer:
+              "French scholar Jean-François Champollion is credited with the full breakthrough in 1822, though English polymath Thomas Young made important earlier progress around 1814, identifying that some hieroglyphic cartouches spelled foreign names phonetically. Champollion built on that insight and generalized it into a working system.",
+          },
+          {
+            question: "What language is written on the Rosetta Stone?",
+            answer:
+              "The same decree, from 196 BCE, appears three times in three scripts: Egyptian hieroglyphics, Demotic (the everyday Egyptian script of the time), and Ancient Greek. Scholars could already read the Greek, which gave them a way into the two Egyptian scripts.",
+          },
+          {
+            question: "Why couldn't anyone read hieroglyphics before the Rosetta Stone?",
+            answer:
+              "Hieroglyphic writing fell out of everyday use as Egypt shifted to Demotic and later Coptic and Greek, and the specialized knowledge needed to read it, once held by temple priests, died out over the following centuries. The last known hieroglyphic inscription dates to the late 4th century CE, after which the script went unread for roughly 1,400 years.",
+          },
+          {
+            question: "What does the Rosetta Stone actually say?",
+            answer:
+              "It's a priestly decree from 196 BCE honoring the young pharaoh Ptolemy V, confirming temple privileges and tax benefits, and ordering the decree to be displayed across Egypt in three scripts so people could read it regardless of which one they knew. The content itself is fairly routine administrative and religious business.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p("The Rosetta Stone isn't a spectacular object to look at on its own — a broken grey slab covered in dense, weathered text doesn't compete visually with a gilded funerary mask or a temple full of painted columns. What it did is the actual story, and it's a genuinely good one: a chance discovery during a military campaign, a scramble between rival scholars, and one obsessive Frenchman who finally gave a silent civilization its voice back after fourteen centuries."),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See the Collection the Stone Unlocked",
+        body: "Visit the Egyptian Museum in Cairo with a private Egyptologist who can walk you through the hieroglyphic inscriptions Champollion's breakthrough finally made readable.",
+        buttonLabel: "Book the Museum Tour",
+        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
+      },
     ],
   },
   {
@@ -8841,17 +8904,76 @@ export const stories: Story[] = [
     publishedAt: "2026-03-02T09:00:00+02:00",
     primaryKeyword: "islamic cairo architecture",
     secondaryKeywords: ["cairo mosques", "medieval cairo"],
-    seoTitle: "Islamic Cairo's Architecture: A Guide | Egypt Eye",
-    seoDescription: "A short guide to Islamic Cairo's architecture — minarets, mashrabiya screens, and why the district holds one of the densest concentrations of medieval Islamic monuments in the world.",
+    relatedTours: toursBySlug("islamic-coptic-cairo-walking-tour", "khan-el-khalili-food-walking-tour", "cairo-by-night-tour"),
+    seoTitle: "Islamic Cairo's Architecture: A Traveler's Guide",
+    seoDescription: "A guide to Islamic Cairo's architecture — minarets, mashrabiya screens, and muqarnas — and why the district holds one of the world's densest clusters of medieval Islamic monuments.",
     body: [
-      p("Cairo holds one of the highest concentrations of medieval Islamic architecture anywhere in the world — hundreds of mosques, madrasas, and mausoleums dating from the 7th century through the Ottoman period, many still standing largely intact along Al-Muizz Street and the surrounding district."),
+      p("Cairo holds one of the highest concentrations of medieval Islamic architecture anywhere on Earth — hundreds of mosques, madrasas, mausoleums, and public fountains dating from the 7th century through the Ottoman era, a huge share of them still standing largely intact along Al-Muizz Street and the tangle of lanes around it. Nowhere else lets you walk through nearly thirteen centuries of continuous Islamic building history on foot, in a single afternoon, without a museum wall or a reconstruction in sight."),
+      p("Here's what actually explains that density, the vocabulary worth knowing before you go, and which buildings reward the time even if you only have half a day."),
+      h2("Why So Much Survived Here"),
+      p("Cairo's architectural density comes down to something fairly simple: the city kept building, uninterrupted, for over a thousand years, and it was rarely destroyed in the process. Cities like Baghdad were devastated by the Mongol invasions in the 13th century, wiping out centuries of Islamic architecture in the process. Cairo largely escaped that fate. Successive dynasties — Fatimid, Ayyubid, Mamluk, and Ottoman — each built their own monuments here rather than starting over elsewhere, layering new mosques, schools, and fountains onto a city that already had centuries of them standing."),
+      p("The city's roots actually predate what's usually called 'Islamic Cairo' by a few centuries. The Arab conqueror Amr ibn al-As founded Fustat, Egypt's first Islamic capital, in 642 CE, just south of what's now central Cairo, and built the mosque that still bears his name — generally considered the oldest mosque in Africa, though what stands there today has been rebuilt many times over the centuries. The area now known as Islamic Cairo, centered on Al-Muizz Street, dates to the Fatimid dynasty's founding of a new walled city, al-Qahira, in 969 CE — the root of the modern city's Arabic name, Al-Qahira."),
+      h2("The Vocabulary Worth Knowing"),
+      p("A handful of recurring architectural features show up across nearly every building in the district, and recognizing them makes the whole area far more legible than it looks on a first pass."),
       ...bullets([
-        "Minarets — the tall towers used for the call to prayer, styles varying by era and dynasty",
-        "Mashrabiya — carved wooden lattice screens on windows, letting airflow through while blocking direct sun and outside view",
-        "Muqarnas — honeycomb-like decorative vaulting often found over doorways and domes",
-        "Sabil-kuttabs — combined public water fountains and Quranic schools, a distinctly Cairene building type",
+        "Minarets — the tall towers used to call the faithful to prayer, with silhouettes that shift noticeably by era: Fatimid minarets tend toward simple, stepped forms, Mamluk minarets carry elaborate stone carving and multiple tiers, and Ottoman minarets are slender and pencil-shaped, closer to what you'd see in Istanbul.",
+        "Mashrabiya — carved wooden lattice screens fitted over windows and balconies, letting air and filtered light through while blocking direct sun and shielding the people inside from outside view, a genuinely effective piece of pre-electric climate design.",
+        "Muqarnas — honeycomb-like decorative vaulting, built up from small carved niches stacked in tiers, commonly found over doorways, in domed ceilings, and transitioning a square room into a round dome above it.",
+        "Sabil-kuttabs — a distinctly Cairene building type combining a public drinking-water fountain (sabil) on the ground floor with a Quranic school (kuttab) for children on the floor above, funded as a charitable endowment by wealthy patrons.",
+        "Ablaq — alternating bands of light and dark stone, usually cream limestone and red or black granite, used on facades and archways for a striking striped effect that's especially associated with Mamluk-era buildings.",
+        "Wikalas — multi-story merchant inns built around a central courtyard, combining ground-floor storage and shops with upper-floor lodging for traveling traders, functioning as the era's version of a combined warehouse and hotel.",
       ]),
-      p("Walking Al-Muizz Street end to end is, in effect, walking through several centuries of Islamic architectural styles laid out consecutively along one road."),
+      h2("Walking Al-Muizz Street"),
+      p("Al-Muizz Street is the single best way to take all of this in, because it runs directly through the heart of Fatimid Cairo and is lined, almost without interruption, by monuments from every major period of the city's Islamic architecture. Walking it end to end is, in effect, walking through several centuries of architectural styles laid out consecutively along one road, close enough together that the shifts between them become genuinely visible rather than abstract."),
+      p("Al-Azhar Mosque, founded in 970 CE not long after the Fatimids established the city, anchors one end of the district and remains one of the oldest continuously operating universities in the world, still teaching today alongside its role as a working mosque. Sultan Hassan Mosque-Madrasa, built in the mid-14th century under the Mamluks, is on an entirely different scale — a massive complex with soaring portals and one of the largest domed spaces in medieval Islamic architecture, built to house four separate schools of Islamic law simultaneously, one in each of its four great iwans. Bab Zuweila, one of the last surviving gates of the old Fatimid city walls, still stands nearby with two minarets rising from its towers, and climbing it gives one of the best rooftop views over the district's skyline of domes and minarets."),
+      h2("Beyond Al-Muizz Street"),
+      p("A few essential sites sit outside the main strip and are worth building into a longer visit. Ibn Tulun Mosque, completed in 879 CE, is the oldest mosque in Cairo that survives largely in its original form, with a distinctive spiral minaret whose external staircase was reportedly inspired by the Great Mosque of Samarra in Iraq — a rare piece of architectural cross-pollination visible in stone. Its enormous, largely open courtyard, ringed by simple pointed arches, feels almost austere compared to the dense ornamentation of later Mamluk buildings, and that plainness is part of what makes it worth seeing — it shows how much the style would change over the following centuries."),
+      p("The Cairo Citadel, begun in 1176 by Salah al-Din (Saladin) as a defensive fortress overlooking the city, went on to house Egypt's rulers for nearly 700 years. The Mosque of Muhammad Ali, built inside the Citadel in the 19th century, breaks from the older medieval styles entirely — its Ottoman-influenced silhouette, with a large central dome and slender pencil minarets, was a deliberate architectural statement by a ruler modeling himself on Istanbul rather than continuing the Mamluk tradition. Seeing it right after the older Fatimid and Mamluk buildings on Al-Muizz Street makes the stylistic jump unmistakable."),
+      callout(
+        "Bab Zuweila's gate towers are climbable for a small fee, and the view from the top over Islamic Cairo's rooftops, domes, and minarets is one of the best vantage points in the district — worth timing for the late afternoon, when the light softens and the call to prayer starts echoing across the skyline from multiple mosques at once.",
+        { title: "Good to Know", tone: "Highlight" }
+      ),
+      h2("Practical Notes for Visiting"),
+      p("Modest dress is expected at any active mosque — shoulders and knees covered, and women should bring a scarf to cover their hair before entering prayer halls, though most major mosques keep scarves available to borrow at the entrance. Shoes come off before stepping onto carpeted prayer areas, which is standard practice rather than a special accommodation for tourists. Friday mornings can mean restricted access to some mosques around the main midday prayer, so it's worth checking ahead if a specific site is essential to your plan."),
+      p("The district gets genuinely hot and crowded by midday, and a lot of the appeal — quiet courtyards, filtered light through mashrabiya screens, the layered detail on a muqarnas ceiling — is easier to actually appreciate with fewer people around and less heat radiating off the stone. Pairing an early start with a guide who can point out which century you're standing in, building by building, turns what can otherwise feel like an undifferentiated maze of old buildings into a genuinely readable timeline."),
+      faq(
+        [
+          {
+            question: "How much time should I set aside for Islamic Cairo?",
+            answer:
+              "Half a day covers Al-Muizz Street's main monuments, Al-Azhar Mosque, and Bab Zuweila at a reasonable pace. A full day lets you add Ibn Tulun Mosque and the Cairo Citadel, which sit a bit further out from the main strip.",
+          },
+          {
+            question: "Why is it called Islamic Cairo?",
+            answer:
+              "The name refers to the historic walled city founded by the Fatimid dynasty in 969 CE, al-Qahira, and the surrounding medieval district built up around it over the following centuries by the Fatimid, Ayyubid, Mamluk, and Ottoman dynasties in turn — as distinct from Coptic Cairo's older Christian quarter and the modern city that grew up later.",
+          },
+          {
+            question: "What's the oldest mosque in Cairo?",
+            answer:
+              "Ibn Tulun Mosque, completed in 879 CE, is the oldest that survives largely in its original architectural form. The Mosque of Amr ibn al-As, in nearby Fustat, is older still (642 CE) but has been rebuilt many times over the centuries.",
+          },
+          {
+            question: "Do I need to dress a certain way to visit the mosques?",
+            answer:
+              "Yes — shoulders and knees covered for everyone, and women should bring a scarf for their hair before entering prayer areas, though most major mosques have scarves available at the door. Shoes come off before stepping onto carpeted prayer areas.",
+          },
+          {
+            question: "Can I combine Islamic Cairo with Coptic Cairo in one day?",
+            answer: "Yes, and it's a natural pairing — they're a short taxi ride apart, showing two very different, equally deep layers of Cairo's religious and architectural history within the same day.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p("Islamic Cairo isn't a preserved district behind glass. Most of these mosques are still active places of worship, the markets around Khan el-Khalili still trade the way they have for centuries, and the call to prayer still rolls across the same skyline of minarets it has for well over a thousand years. That's what separates it from a purely archaeological visit — you're not just looking at medieval architecture, you're walking through a neighborhood that never stopped using it."),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Walk Islamic Cairo With an Expert Guide",
+        body: "See Al-Muizz Street, Al-Azhar Mosque, and Bab Zuweila with a private guide who can place each building in its century and its dynasty.",
+        buttonLabel: "Book the Walking Tour",
+        buttonHref: "/tours/islamic-coptic-cairo-walking-tour",
+      },
     ],
   },
   {
@@ -9217,13 +9339,74 @@ export const stories: Story[] = [
     publishedAt: "2026-03-07T09:00:00+02:00",
     primaryKeyword: "valley of the queens",
     secondaryKeywords: ["nefertari tomb", "luxor west bank"],
-    seoTitle: "Valley of the Queens Guide | Egypt Eye",
+    relatedTours: toursBySlug("valley-of-the-kings-hatshepsut-temple-tour", "luxor-west-bank-day-tour", "2-day-luxor-tour"),
+    seoTitle: "Valley of the Queens Guide: Nefertari's Tomb & More",
     seoDescription: "A guide to the Valley of the Queens on Luxor's West Bank — home to Nefertari's tomb, widely considered the most beautifully decorated in Egypt.",
     body: [
-      p("The Valley of the Queens sits a short distance from the Valley of the Kings and holds the tombs of royal wives, princes, and princesses — smaller in scale than the kings' tombs nearby, but in several cases better preserved."),
-      h2("Nefertari's tomb"),
-      p("The valley's centerpiece is the tomb of Nefertari, Ramesses II's principal wife — widely regarded as the most beautifully decorated tomb in all of Egypt, with vivid, still-vibrant color that's rare at this age. Access is limited and usually requires a separate, higher-cost ticket due to preservation concerns."),
-      p("Several other tombs in the valley are included in the standard entrance fee and are well worth the visit even without the Nefertari add-on."),
+      p("The Valley of the Queens sits a short distance southwest of the Valley of the Kings, on the same stretch of Luxor's West Bank, and it holds a very different collection of tombs — royal wives, princes, and princesses rather than pharaohs themselves. The ancient Egyptians called it Ta-Set-Neferu, roughly 'the place of beauty' or 'the place of the royal children,' and while the tombs here are generally smaller in scale than the kings' tombs nearby, several of them, most famously Nefertari's, hold some of the best-preserved painted decoration anywhere in Egypt."),
+      p("Here's what's actually in the valley, why Nefertari's tomb is treated so differently from every other site in Egypt, and how to plan a visit that makes sense alongside the rest of a West Bank day."),
+      h2("A Valley for Queens, Princes, and Princesses"),
+      p("Roughly 90 tombs have been identified in the Valley of the Queens, dating mostly to the New Kingdom, when it became the established burial ground for royal wives and royal children rather than the pharaohs themselves, who were buried nearby in the Valley of the Kings. The two valleys sit close together for a practical reason as well as a symbolic one — both are cut into the same limestone hills on the West Bank, chosen because the terrain offered natural concealment and because the pyramid-shaped peak overlooking the area, known to the ancient Egyptians as 'the Peak,' was associated with a guardian goddess watching over the whole necropolis."),
+      p("Most of the tombs here are considerably more modest than a king's tomb — shorter corridors, fewer chambers, less elaborate architecture — which makes sense given that even a royal wife or child didn't command the same resources as a reigning pharaoh. But 'modest' is relative in this context. Several tombs, decorated for particularly favored or powerful queens, carry painting quality that rivals anything in the Valley of the Kings, just on a smaller physical scale."),
+      h2("Nefertari's Tomb: The Best-Preserved Painting in Egypt"),
+      p("The valley's centerpiece, by a wide margin, is the tomb of Nefertari, the principal wife of Ramesses II and clearly one of the most beloved figures in his life, judging by how much he built in her honor — including the smaller of the two temples at Abu Simbel. Her tomb, designated QV66, was rediscovered in 1904 by the Italian archaeologist Ernesto Schiaparelli, and what he found inside is generally considered the single most beautifully decorated tomb in all of Egypt."),
+      p("The walls carry vivid, still-vibrant scenes showing Nefertari's journey through the afterlife, guided by gods and goddesses, drawn from the Book of the Dead and related funerary texts — Isis leading her by the hand, Nefertari playing senet (an ancient board game connected to the passage into the afterlife), offerings being made to a whole roster of deities. The color has survived in a condition that's genuinely rare for a tomb this old, largely because the tomb sat sealed and undisturbed for so long, and later benefited from an intensive conservation project led by the Getty Conservation Institute in the 1980s and 1990s that stabilized flaking plaster and addressed salt damage threatening the paintings."),
+      p("That same fragility is exactly why access to the tomb today is so tightly controlled. Humidity from visitors' breath was actively damaging the plaster and pigment, so entry now requires a separate, considerably higher-cost ticket on top of general Valley of the Queens admission, with a capped number of visitors allowed inside on any given day and firm time limits once you're in. It's worth the extra cost for most travelers who make it this far into Luxor, but it's also worth knowing in advance that this isn't an impulse add-on you decide on at the gate — availability can be limited, especially in peak season."),
+      h2("What Else Is Worth Seeing in the Valley"),
+      p("Nefertari's tomb draws most of the attention, understandably, but several other tombs in the valley are included in the standard entrance ticket and are genuinely worth the visit on their own merits, particularly for travelers who've already used their budget or their patience on Nefertari."),
+      ...bullets([
+        "The tomb of Amunherkhepshef (QV55) — a son of Ramesses III who died young, with detailed, well-preserved scenes of the prince being introduced to various gods by his father, and an unusually poignant funerary display believed to include the remains of a miscarried fetus, tied to a related, still-debated theory about the boy's death.",
+        "The tomb of Titi (QV52) — a queen from the 20th dynasty whose exact husband remains uncertain, with vividly painted scenes of the four Sons of Horus and various protective deities.",
+        "The tomb of Khaemwaset (QV44) — another son of Ramesses III, decorated with scenes similar in style and quality to Amunherkhepshef's tomb nearby, both offering a genuinely close look at Ramesses III-era painting without the premium ticket price.",
+      ]),
+      p("Which specific tombs are open on any given day rotates, partly for conservation reasons and partly to manage foot traffic, so it's worth checking locally or asking your guide which tombs are currently accessible rather than assuming a fixed roster."),
+      h2("How It Compares to the Valley of the Kings"),
+      p("Travelers often ask whether it's worth visiting both valleys on the same West Bank day, and the honest answer is that they offer genuinely different things. The Valley of the Kings has the scale, the sheer number of major tombs, and headline names like Tutankhamun and Seti I. The Valley of the Queens is quieter, considerably less crowded, and lets you get close to painting of comparable quality in a more intimate setting, especially once you've paid for Nefertari's tomb specifically. If your time and budget only stretch to one, the Valley of the Kings is the more essential stop for most first-time visitors — but the Valley of the Queens rewards travelers who've already covered the big-name sites and want something quieter and, in the case of Nefertari's tomb, arguably more visually spectacular."),
+      callout(
+        "Entry to Nefertari's tomb requires a separate ticket from general Valley of the Queens admission, is capped in daily visitor numbers, and comes with a strict time limit once inside — usually around ten minutes. Buy it as early in the day as you can, since availability can run out, and treat it as a distinct planning decision rather than something you'll simply add at the gate.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      h2("Planning Your Visit"),
+      p("The Valley of the Queens is a short drive from the Valley of the Kings and pairs naturally with a West Bank day that also includes Hatshepsut's Temple at Deir el-Bahari and, time permitting, Deir el-Medina, the nearby village where the workers who actually carved and painted these tombs lived. Give yourself an hour for the general valley and its included tombs, and add another twenty to thirty minutes, including the wait, if you're visiting Nefertari's tomb. As with anywhere on the West Bank, an early start beats the midday heat and the tour bus crowds that build up as the morning goes on."),
+      faq(
+        [
+          {
+            question: "Is Nefertari's tomb worth the extra ticket cost?",
+            answer:
+              "For most travelers who've made it this far into a Luxor itinerary, yes. It's widely regarded as the best-preserved and most beautifully painted tomb in Egypt, and the extra ticket and capped visitor numbers exist specifically to protect that condition, which makes the experience feel genuinely special rather than routine.",
+          },
+          {
+            question: "How is the Valley of the Queens different from the Valley of the Kings?",
+            answer:
+              "The Valley of the Kings holds tombs built for reigning pharaohs and is larger, more crowded, and generally more elaborate in scale. The Valley of the Queens holds tombs for royal wives, princes, and princesses — smaller individually, but quieter to visit, with several tombs offering painting quality that rivals the kings' tombs nearby.",
+          },
+          {
+            question: "How many tombs are in the Valley of the Queens?",
+            answer:
+              "Roughly 90 have been identified, though only a rotating handful are open to the public on any given day, partly to manage foot traffic and partly for ongoing conservation reasons.",
+          },
+          {
+            question: "How long does a visit to the Valley of the Queens take?",
+            answer:
+              "About an hour for the general valley and its included tombs, plus an extra 20 to 30 minutes if you're also visiting Nefertari's tomb, factoring in the wait and the time limit once inside.",
+          },
+          {
+            question: "Can I take photos inside the tombs?",
+            answer:
+              "Photography rules can vary and change, particularly inside Nefertari's tomb given its fragility, so it's worth checking current rules at the ticket office or with your guide before you go rather than assuming.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p("Most visitors to Luxor's West Bank spend their energy on the Valley of the Kings and never make it to the quieter valley next door, which is understandable given limited time, but it means missing what might be the single best-preserved piece of ancient Egyptian painting anywhere in the country. Nefertari's tomb alone is worth restructuring a day around, and the valley around it holds enough besides to make the detour worthwhile even without it."),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See the West Bank's Best-Kept Tombs",
+        body: "Pair the Valley of the Kings with the Valley of the Queens and Hatshepsut's Temple on a private West Bank day, with a guide who knows which tombs are open and worth the extra ticket.",
+        buttonLabel: "Book the West Bank Tour",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      },
     ],
   },
   {
@@ -9242,11 +9425,72 @@ export const stories: Story[] = [
     publishedAt: "2026-03-08T09:00:00+02:00",
     primaryKeyword: "ramesseum luxor",
     secondaryKeywords: ["ramses ii mortuary temple", "ozymandias temple"],
-    seoTitle: "The Ramesseum: A Guide | Egypt Eye",
-    seoDescription: "A guide to the Ramesseum, Ramses II's mortuary temple on Luxor's West Bank — the fallen colossus that inspired Shelley's 'Ozymandias.'",
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "valley-of-the-kings-hatshepsut-temple-tour", "2-day-luxor-tour"),
+    seoTitle: "The Ramesseum Guide: Ramses II's Mortuary Temple",
+    seoDescription: "A guide to the Ramesseum, Ramses II's mortuary temple on Luxor's West Bank — the fallen colossus behind Shelley's 'Ozymandias' and a quieter alternative to Karnak.",
     body: [
-      p("The Ramesseum was Ramses II's mortuary temple, built to sustain his cult after death — and it's the site of a fallen colossal statue, once over 17 meters tall, that partly inspired Percy Bysshe Shelley's poem 'Ozymandias,' about the inevitable decay of even the greatest monuments."),
-      p("Compared to Karnak or Luxor Temple, the Ramesseum sees relatively few visitors, which makes it one of the more atmospheric West Bank stops — enough quiet to actually take in the scale of what's left standing, and what's fallen."),
+      p("The Ramesseum was Ramses II's mortuary temple, built on Luxor's West Bank to sustain his cult and provide offerings for his spirit after death, the same basic purpose behind every major mortuary temple in the area. What makes it different from its neighbors is a broken, toppled colossus lying in its first court — a fallen giant that helped inspire one of the most famous poems in the English language, and a level of quiet that most of Luxor's headline sites lost decades ago."),
+      p("Here's what the Ramesseum actually is, the real story behind its connection to Shelley's 'Ozymandias,' and what's worth your time once you're standing among the ruins."),
+      h2("A Temple Built to Outlast Its Builder"),
+      p("Construction on the Ramesseum began early in the reign of Ramses II, in the 13th century BCE, and continued for roughly two decades — a scale of investment entirely typical of a pharaoh whose building program across Egypt was among the most extensive of any ruler in the country's history. The ancient Egyptians didn't call it the Ramesseum; that name was given to the site by the French scholar Jean-François Champollion, the same Egyptologist who cracked hieroglyphics using the Rosetta Stone, when he visited the ruins in the 1820s. Its actual ancient name referenced Ramses II's throne name, User-maat-re, tied to the concept of a 'House of Millions of Years' meant to sustain the pharaoh's spirit and legacy indefinitely."),
+      p("Like Medinet Habu and the other mortuary temples scattered across the West Bank, the Ramesseum wasn't a tomb — Ramses II himself is buried in the Valley of the Kings. It was a working temple complex where priests performed daily rituals and offerings to keep the pharaoh's cult, and by extension his place in the afterlife, properly maintained. Attached storerooms, workshops, and a small palace structure supported an entire community of priests and staff whose job was to keep those rituals running for generations after the king's death."),
+      h2("The Fallen Colossus and 'Ozymandias'"),
+      p("The temple's most famous feature is what's left of a single, once-enormous granite statue of the seated Ramses II that stood in the first court — estimated at somewhere around 17 to 19 meters tall when intact and reportedly among the largest freestanding statues ever carved in ancient Egypt. It now lies toppled and fragmented, a giant stone head and torso separated from an enormous broken lower body, cracked apart by a combination of ancient earthquake damage and the sheer difficulty of quarrying, transporting, and erecting a piece of stone that size in the first place."),
+      p("That image of a shattered colossal statue, half-buried and inscribed with a boastful royal name, is what fed directly into Percy Bysshe Shelley's 1818 poem 'Ozymandias' — 'Ozymandias' being the Greek rendering of Ramses II's throne name, User-maat-re. Shelley wrote the poem after hearing reports that a separate colossal fragment of Ramses II, a huge carved head and torso known as the 'Younger Memnon,' had been removed from the Ramesseum by the Italian adventurer and engineer Giovanni Belzoni in 1816 and was being shipped to the British Museum, where it arrived in 1818 and remains on display today. Shelley likely never saw either statue in person; the poem was inspired by the news of the piece's journey and by classical accounts of Egyptian monumental ruin, and it's become the definitive literary meditation on the gap between a ruler's self-proclaimed permanence and the reality of decay."),
+      h2("What's Still Standing"),
+      p("Beyond the fallen colossus, the Ramesseum retains a genuinely substantial amount of its original layout for a site that sees so few visitors. Two ruined pylons still mark the original entrance, and beyond them the first and second courts, along with the remains of a hypostyle hall whose surviving columns give a real sense of scale even with much of the roof and upper structure long gone."),
+      ...bullets([
+        "The fallen colossus of Ramses II — the toppled, fragmented granite statue that inspired 'Ozymandias,' lying in the first court roughly where it fell.",
+        "The hypostyle hall — a forest of surviving papyrus-capital columns, smaller than Karnak's but atmospheric precisely because there's no crowd competing for the view.",
+        "The astronomical ceiling — a smaller chamber preserving one of ancient Egypt's clearest surviving calendar and star charts, useful to modern Egyptologists in helping pin down the dating of Ramses II's reign.",
+        "The mudbrick vaulted storerooms (granaries) — extensive rear structures that once held grain and supplies for the temple's staff, among the better-preserved examples of ancient Egyptian storage architecture.",
+        "Scattered reliefs depicting Ramses II's military campaigns, including scenes from the Battle of Kadesh, a conflict he commemorated on temple walls across Egypt.",
+      ]),
+      h2("Why It's Worth the Detour"),
+      p("Compared to Karnak or Luxor Temple, the Ramesseum sees relatively few visitors on any given day, and that quiet is exactly what makes it worth adding to a West Bank itinerary rather than skipping it for a headline site. There's enough space and stillness here to actually take in the scale of what's fallen — the immense broken statue, the wide-open courts, the way the ruins sprawl without a single tour group blocking the view. It's a very different register of experience from the density and crowd noise of Karnak's Hypostyle Hall, and for travelers who've already covered the major sites, it can end up being one of the more memorable stops precisely because of how uncrowded it is."),
+      p("It also rewards visitors who've read 'Ozymandias' beforehand, or who take a few minutes to read it on-site. Standing next to the actual broken statue that fed into the poem's imagery — even if it's not technically the exact fragment Shelley was reacting to — gives the poem's central image a physical weight that's hard to get any other way."),
+      callout(
+        "The Ramesseum sits roughly between the Colossi of Memnon and Medinet Habu on Luxor's West Bank, making it easy to fold into the same half-day as either without much extra driving. Because it draws far fewer visitors than Karnak or the Valley of the Kings, it's also one of the more comfortable stops to visit around midday if your schedule requires it, without fighting the same crowds.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      faq(
+        [
+          {
+            question: "Is the Ramesseum worth visiting if I've already seen Karnak and the Valley of the Kings?",
+            answer:
+              "Yes, particularly for the contrast. It's quieter, less crowded, and the fallen colossus and its connection to Shelley's 'Ozymandias' give it a different kind of interest than the larger, more elaborately preserved sites nearby.",
+          },
+          {
+            question: "Is the statue at the Ramesseum the exact one that inspired 'Ozymandias'?",
+            answer:
+              "Not precisely. Shelley's poem was inspired by reports of a separate colossal fragment of Ramses II, the 'Younger Memnon,' being shipped from the Ramesseum to the British Museum in 1816 to 1818. The still-fallen colossus at the temple site itself is a different, even larger statue that never left Egypt, but it carries the same imagery and symbolism.",
+          },
+          {
+            question: "How long does a visit to the Ramesseum take?",
+            answer: "About 45 minutes to an hour at a comfortable pace, less than the two to three hours a proper visit to Karnak requires.",
+          },
+          {
+            question: "Who built the Ramesseum, and why?",
+            answer:
+              "Ramses II, beginning early in his reign in the 13th century BCE, as his mortuary temple — a site meant to sustain his cult and receive offerings on his behalf after his death, separate from his actual tomb in the Valley of the Kings.",
+          },
+          {
+            question: "Can I combine the Ramesseum with other West Bank sites in one day?",
+            answer:
+              "Easily. It sits close to Medinet Habu and the Colossi of Memnon, and a private West Bank day can reasonably include the Ramesseum alongside the Valley of the Kings and Hatshepsut's Temple with good planning.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p("The Ramesseum makes its point without needing a crowd to do it. A pharaoh who built more monuments to himself than almost any other ruler in Egyptian history is represented here by a shattered statue lying in the sand, inscribed with a name that once meant absolute permanence. It's a quieter lesson than Karnak teaches, and arguably a more honest one."),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Add the Ramesseum to Your West Bank Day",
+        body: "See the fallen colossus and the quieter ruins of Ramses II's mortuary temple alongside the Valley of the Kings and Hatshepsut's Temple with a private Egyptologist guide.",
+        buttonLabel: "Book the West Bank Tour",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      },
     ],
   },
   {
@@ -9265,11 +9509,75 @@ export const stories: Story[] = [
     publishedAt: "2026-03-09T09:00:00+02:00",
     primaryKeyword: "medinet habu luxor",
     secondaryKeywords: ["ramses iii temple", "medinet habu temple"],
-    seoTitle: "Medinet Habu: A Guide | Egypt Eye",
-    seoDescription: "A guide to Medinet Habu, Ramses III's mortuary temple on Luxor's West Bank — among the best-preserved temples in Egypt, with original color still visible.",
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "valley-of-the-kings-hatshepsut-temple-tour", "2-day-luxor-tour"),
+    seoTitle: "Medinet Habu Guide: Ramses III's Mortuary Temple",
+    seoDescription: "A guide to Medinet Habu, Ramses III's mortuary temple on Luxor's West Bank — among Egypt's best-preserved temples, with original color still on the walls.",
     body: [
-      p("Medinet Habu, the mortuary temple of Ramses III, is often cited by Egyptologists as one of the best-preserved temples in the country — the fortified enclosure walls, the reliefs depicting his military campaigns against the 'Sea Peoples,' and traces of original paint that have survived on parts of the ceiling."),
-      p("It's less visited than Karnak or the Valley of the Kings despite the preservation quality, which makes it a good addition for travelers with an extra half-day on the West Bank and an interest in seeing color and detail that's faded almost entirely elsewhere."),
+      p("Medinet Habu is the mortuary temple of Ramses III, and Egyptologists routinely point to it as one of the best-preserved temples anywhere in the country — fortified enclosure walls that still stand to an unusual height, battle reliefs carved in extraordinary detail, and traces of the original paint surviving in places where color has vanished almost everywhere else in Egypt. It sees a fraction of the visitors Karnak or the Valley of the Kings draw, which makes it one of the better-kept surprises on Luxor's West Bank for anyone with an extra half-day to spend."),
+      p("Here's what makes Medinet Habu different from the other mortuary temples nearby, the story behind its fortress-like design, and why the battle scenes on its walls are worth slowing down for."),
+      h2("Ramses III and a Temple Built for Defense"),
+      p("Ramses III, who ruled in the 20th dynasty during the 12th century BCE, is generally regarded as the last of Egypt's great warrior-pharaohs, reigning at a genuinely turbulent moment when Egypt faced repeated invasion attempts, most famously from the loose coalition of groups modern historians call the Sea Peoples. His mortuary temple at Medinet Habu reflects that anxiety directly in its architecture: instead of the open pylon-and-courtyard layout typical of most Egyptian temples, the whole complex is ringed by massive fortified walls, entered through a striking gatehouse modeled on the fortified 'migdol' gates used in contemporary Syrian and Near Eastern military architecture. It's a temple that was actually built to be defensible, not just symbolically imposing."),
+      p("That gatehouse carries some of the site's more unusual decoration, including scenes of Ramses III relaxing in a domestic setting surrounded by women of his court — a striking contrast to the martial imagery covering most of the rest of the complex. There's a dark postscript to that image: Ramses III was ultimately the victim of a palace assassination plot, the so-called Harem Conspiracy, organized by a secondary wife attempting to place her own son on the throne. Modern forensic analysis of his mummy has confirmed he died of a wound to the throat, an ending at odds with the domestic security the gatehouse imagery might suggest."),
+      h2("The Battle Reliefs"),
+      p("The temple's exterior and interior walls are covered in some of the most detailed and best-preserved battle reliefs anywhere in Egypt, depicting Ramses III's military campaigns against the Sea Peoples and against Libyan forces on Egypt's western frontier. The naval battle scenes in particular are remarkable — among the earliest detailed depictions of naval warfare to survive from anywhere in the ancient world, showing Egyptian and enemy ships locked in combat along the Nile Delta coast, with a level of narrative detail (individual figures, capsizing boats, hand-to-hand fighting) that goes well beyond the more formulaic battle scenes found on many other temple walls."),
+      ...bullets([
+        "The Sea Peoples naval battle reliefs — dense, dramatic scenes of ship-to-ship combat along Egypt's coast, among the earliest surviving detailed depictions of naval warfare anywhere.",
+        "The Libyan campaign reliefs — parallel scenes documenting Ramses III's land campaigns against Libyan forces pressing on Egypt's western border.",
+        "The fortified migdol gatehouse — modeled on Near Eastern military architecture, a rare defensive design applied to what's fundamentally a religious structure.",
+        "Traces of original paint — visible in protected corners and higher sections of the walls and ceiling, giving a genuine sense of how vividly colored these reliefs looked when new.",
+        "The small Temple of Amun — an earlier 18th-dynasty structure inside the same enclosure, predating Ramses III's main temple by roughly two centuries.",
+      ]),
+      h2("Color That Survived Where Almost Nothing Else Did"),
+      p("What sets Medinet Habu apart from Karnak or Luxor Temple for a lot of visitors isn't the scale, it's the color. Reliefs that would have been painted across the board in ancient Egypt have mostly lost that pigment to three thousand years of sun, sand, and handling, but sections of Medinet Habu, particularly in more sheltered corners and up near the ceiling where touch and weathering did less damage, retain patches of genuinely vivid original paint — reds, blues, and yellows that give a much clearer sense of how overwhelming these spaces were meant to look than the bare stone visible at most other sites."),
+      p("That preservation is part of a broader pattern at Medinet Habu. The temple's fortified walls didn't just deter ancient invaders; they also sheltered the complex from some of the erosion and stone-robbing that damaged more exposed sites over the centuries, which is a large part of why it's held up so well relative to its age."),
+      h2("A Temple That Became a Town"),
+      p("Medinet Habu's story doesn't end with ancient Egypt. During the Christian era, a fortified town called Djeme grew up inside and around the temple's protective walls, reusing the existing fortifications the way later communities across Egypt often repurposed abandoned monumental structures. That settlement remained inhabited for centuries into the medieval period, and its mudbrick houses were only cleared away during major excavation work in the early 20th century, led by the Oriental Institute of the University of Chicago under archaeologist James Henry Breasted, which is also why so much of what's visible today has been so carefully documented and studied — Medinet Habu was one of the most systematically excavated and recorded sites in Egypt during that era of American-led fieldwork."),
+      p("A smaller temple within the same enclosure, dedicated to Amun and originally built under Hatshepsut and Thutmose III in the 18th dynasty, predates Ramses III's main temple by roughly two centuries and continued to be modified by later rulers, making the whole site a genuine palimpsest of building activity spanning well over a thousand years within one set of fortified walls."),
+      callout(
+        "Medinet Habu is genuinely less crowded than the Valley of the Kings or Karnak at almost any time of day, which makes it one of the more comfortable West Bank stops to schedule mid-morning or even midday if your itinerary is tight, without fighting the same tour bus crowds you'll hit at the headline sites.",
+        { title: "Good to Know", tone: "Highlight" }
+      ),
+      h2("Planning a Visit"),
+      p("Medinet Habu sits close to the Colossi of Memnon and isn't far from the Ramesseum, making it easy to combine with either on a West Bank day that has room for a fourth or fifth stop beyond the Valley of the Kings and Hatshepsut's Temple. Budget around an hour to ninety minutes to see the site properly — enough time to walk both pylons, take in the battle reliefs at a pace that lets you actually pick out individual figures and scenes, and step into the smaller Amun temple within the enclosure. Morning light works well for photography here, and the relative quiet means you're rarely competing with a crowd for a clear view of any particular relief."),
+      faq(
+        [
+          {
+            question: "Why is Medinet Habu considered so well preserved?",
+            answer:
+              "Its unusually thick fortified walls sheltered the complex from centuries of erosion and stone-robbing that damaged more exposed sites, and its relative obscurity compared to Karnak or Luxor Temple meant less handling and foot traffic wearing down surfaces and pigment over time.",
+          },
+          {
+            question: "What do the battle reliefs at Medinet Habu actually show?",
+            answer:
+              "Detailed scenes of Ramses III's military campaigns against the Sea Peoples, including one of the earliest detailed naval battle depictions to survive from the ancient world, alongside separate reliefs documenting his campaigns against Libyan forces on Egypt's western frontier.",
+          },
+          {
+            question: "Is Medinet Habu worth visiting alongside the Valley of the Kings?",
+            answer:
+              "Yes, if you have the time. It's a different kind of site — a fortified mortuary temple rather than rock-cut tombs — and its preservation quality and relative quiet make it a strong addition to a fuller West Bank day rather than a replacement for the valley itself.",
+          },
+          {
+            question: "How did Ramses III die?",
+            answer:
+              "He was the target of a palace assassination plot known as the Harem Conspiracy, organized by a secondary wife attempting to place her son on the throne. Modern forensic examination of his mummy confirmed he died from a wound to the throat.",
+          },
+          {
+            question: "Why is there a smaller temple inside the same enclosure?",
+            answer:
+              "An earlier temple to Amun, built under Hatshepsut and Thutmose III roughly two centuries before Ramses III's reign, stands within the same walled complex, making Medinet Habu a site with layered construction spanning well over a thousand years.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p("Medinet Habu rewards exactly the kind of unhurried attention that's harder to give at Luxor's more crowded sites. Walk the battle reliefs slowly, look for the patches of surviving color up near the ceiling, and it's easy to come away thinking this quieter fortress-temple, not Karnak, was the most genuinely impressive stop of the day."),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Add Medinet Habu to Your West Bank Day",
+        body: "See Ramses III's fortified mortuary temple alongside the Valley of the Kings and Hatshepsut's Temple with a private Egyptologist guide who knows where the original color still survives.",
+        buttonLabel: "Book the West Bank Tour",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      },
     ],
   },
   {
@@ -9288,11 +9596,72 @@ export const stories: Story[] = [
     publishedAt: "2026-03-10T09:00:00+02:00",
     primaryKeyword: "colossi of memnon",
     secondaryKeywords: ["colossi of memnon luxor", "amenhotep iii statues"],
-    seoTitle: "The Colossi of Memnon: A Guide | Egypt Eye",
-    seoDescription: "The Colossi of Memnon on Luxor's West Bank — two 18-meter seated statues, all that survives of what was once Egypt's largest mortuary temple.",
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "valley-of-the-kings-hatshepsut-temple-tour", "2-day-luxor-tour"),
+    seoTitle: "The Colossi of Memnon: A Guide to Luxor's Singing Statues",
+    seoDescription: "The Colossi of Memnon on Luxor's West Bank — two 18-meter statues, all that survives above ground of what was once Egypt's largest mortuary temple.",
     body: [
-      p("The two seated statues known as the Colossi of Memnon, each roughly 18 meters tall, once flanked the entrance to Amenhotep III's mortuary temple — a complex that, in its day, was reportedly the largest religious structure in Egypt, larger even than Karnak. Almost none of it survives beyond these two figures."),
-      p("They sit directly beside the main road on the West Bank, making them one of the easiest stops to fold into any Luxor itinerary — usually a brief photo stop rather than a dedicated visit, but a genuine reminder of how much has been lost even from Egypt's largest monuments."),
+      p("The two seated statues known as the Colossi of Memnon are usually the first thing visitors see on Luxor's West Bank, sitting right beside the main road, and they're also one of the more misleading sights in Egypt if you don't know the story behind them. They aren't a monument on their own. They're the last visible fragment of what was once, by some estimates, the largest religious complex ever built in ancient Egypt — larger even than Karnak — almost all of which has vanished."),
+      p("Here's who they actually depict, why an entire temple disappeared around them, and the strange Roman-era legend that gave them the wrong name entirely."),
+      h2("Two Statues, One Vanished Temple"),
+      p("Both colossi depict Amenhotep III, seated on his throne, hands resting on his knees, each carved from a single massive block of quartzite sandstone and standing roughly 18 meters tall. They were quarried near modern Cairo, at Gebel el-Ahmar, and transported some 675 kilometers south to Luxor around 1350 BCE — an enormous logistical undertaking on its own, long before either statue was carved or raised into position flanking the entrance pylon of Amenhotep III's mortuary temple."),
+      p("That temple, in its day, was reportedly the largest religious structure ever built in Egypt, surpassing even Karnak in scale. Almost none of it survives above ground today. Built on the low floodplain near the Nile rather than on higher, more stable desert ground, the temple suffered repeated flood damage over the centuries, and later pharaohs, most notably Merneptah and Ramses II, quarried its stone to reuse in their own building projects — a common practice in ancient Egypt, where an earlier ruler's monument was often treated as a convenient source of pre-cut building material rather than something sacrosanct. What's left today, beyond the two colossi, is mostly foundation work, buried beneath the fields and visible only through ongoing excavation."),
+      h2("The Wrong Name and a Singing Statue"),
+      p("The name 'Colossi of Memnon' has nothing to do with Amenhotep III or ancient Egyptian mythology at all. Greek and Roman visitors touring Egypt centuries later misidentified the statues as Memnon, a mythological Ethiopian king killed by the Greek hero Achilles during the Trojan War, and the name stuck permanently despite having no connection to who the statues actually represent."),
+      p("The legend grew considerably stranger after an earthquake around 27 BCE cracked the northern statue. From that point on, visitors reported that the damaged statue emitted a strange sound around dawn — most likely caused by dew evaporating rapidly inside the newly formed cracks as the stone warmed in the morning sun. Roman tourists interpreted the sound as the mythical Memnon calling out to greet his mother, Eos, the goddess of dawn. The phenomenon became famous enough across the Roman world that emperors, including Hadrian, reportedly traveled specifically to hear it, and roughly a hundred inscriptions carved by visitors into the statue's legs and base, recording their names and whether they'd heard the sound, still survive today."),
+      ...bullets([
+        "The 'singing' was most likely caused by dew evaporating through cracks in the earthquake-damaged stone as temperatures rose after dawn, though the exact mechanism was never definitively confirmed at the time.",
+        "Roman tourists carved roughly 100 inscriptions into the statue's base and legs between around 20 BCE and 196 CE, many recording whether they personally heard the sound on their visit.",
+        "The Roman emperor Septimius Severus had the damaged statue repaired around 199 CE, reconstructing its upper portion with additional stone blocks — and the singing reportedly stopped entirely once the repair was complete.",
+        "The statues have stood in essentially the same spot, facing east toward the Nile and the rising sun, for roughly 3,400 years.",
+      ]),
+      h2("A Temple Slowly Being Rediscovered"),
+      p("For most of modern history, the colossi stood essentially alone in agricultural fields, with almost nothing visible of the temple they once guarded. That's been changing. An ongoing German-Egyptian archaeological mission, working at the site since the 1990s, has excavated substantial portions of the original temple's foundations and uncovered other massive statuary that had been buried for millennia, including additional colossal figures of Amenhotep III, a number of large sphinxes, and a colossal statue of the lion-headed goddess Sekhmet. The work has gradually confirmed just how vast the original complex actually was, and it's slowly turning what used to be a two-minute photo stop into a site with genuine ongoing archaeological interest."),
+      h2("Visiting Today"),
+      p("For most travelers, the Colossi of Memnon remain a brief stop rather than a dedicated visit — the statues sit directly beside the main West Bank road, easily viewed from a pulled-over vehicle in five or ten minutes on the way to the Valley of the Kings, Hatshepsut's Temple, or Medinet Habu. That's a reasonable way to see them, but it's worth pairing even a quick stop with a little context, since the statues themselves say almost nothing about the temple that once stood behind them without a guide or some prior reading to fill in what's missing."),
+      p("Both figures show real weathering and damage from the millennia they've spent exposed to flooding, wind-blown sand, and, in the northern statue's case, earthquake cracking, but the overall seated pose and the scale are still unmistakable up close in a way photographs rarely capture. Smaller figures carved beside Amenhotep III's legs, representing his mother Mutemwiya and his principal wife Queen Tiye, are worth looking for as well — a reminder that even a monument built purely to overwhelm with scale still carried personal, dynastic detail for anyone who took the time to look closely rather than just taking in the size."),
+      p("Because the site requires no separate ticket to view from the roadside, it's an easy stop to build flexibility around — worth a longer pause if your guide has time to walk you closer and point out the ongoing excavation work behind the statues, or a genuinely quick five-minute look if your day's itinerary is already tightly packed with the Valley of the Kings and Hatshepsut's Temple ahead of you."),
+      callout(
+        "The Colossi of Memnon sit directly on the main road most West Bank itineraries already pass, making them one of the easiest stops in Luxor to add without extra driving time — but the real story is behind the statues, not in them, so it's worth a guide pointing out the ongoing excavation work rather than treating it purely as a photo stop.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      faq(
+        [
+          {
+            question: "Who do the Colossi of Memnon actually represent?",
+            answer:
+              "Amenhotep III, an 18th-dynasty pharaoh, seated on his throne. The name 'Memnon' comes from a later Greek and Roman misidentification connecting the statues to a mythological Ethiopian king from the Trojan War, and it has no real connection to who the statues depict.",
+          },
+          {
+            question: "Why did the statues 'sing'?",
+            answer:
+              "After an earthquake cracked the northern statue around 27 BCE, it began emitting a sound around dawn, most likely caused by dew evaporating through the new cracks as morning temperatures rose. Roman tourists interpreted it as a mythological greeting to the goddess of dawn. The sound stopped after repairs around 199 CE.",
+          },
+          {
+            question: "Why is there almost nothing left of Amenhotep III's temple?",
+            answer:
+              "Built on the low Nile floodplain rather than higher desert ground, the temple suffered repeated flood damage over the centuries, and later pharaohs quarried much of its stone for their own building projects, a common practice in ancient Egypt.",
+          },
+          {
+            question: "Is there still excavation happening at the site?",
+            answer:
+              "Yes. A German-Egyptian archaeological mission has been excavating the temple grounds behind the colossi since the 1990s, uncovering additional statues, sphinxes, and foundation work that's revealed the temple's original scale.",
+          },
+          {
+            question: "How long should I spend at the Colossi of Memnon?",
+            answer: "Most visitors spend five to fifteen minutes here as a stop on the way to other West Bank sites, since the statues sit directly beside the main road and require no separate ticket to view from outside.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p("There's something genuinely striking about two 18-meter statues standing essentially alone in open fields, staring east toward a temple that's almost entirely gone. It's one of the more direct lessons Egypt offers on how much even the largest ancient monuments can lose to flooding, later reuse, and time, and it's worth the five minutes it takes to actually look at them properly rather than snapping a photo from a moving car."),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "See What's Left, and What's Been Found Since",
+        body: "Stop at the Colossi of Memnon on your way to the Valley of the Kings and Hatshepsut's Temple, with a private guide who can explain what the ongoing excavation has uncovered.",
+        buttonLabel: "Book the West Bank Tour",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      },
     ],
   },
   {
@@ -9311,18 +9680,78 @@ export const stories: Story[] = [
     publishedAt: "2026-03-11T09:00:00+02:00",
     primaryKeyword: "siwa oasis guide",
     secondaryKeywords: ["siwa oasis egypt", "siwa travel guide"],
-    seoTitle: "Siwa Oasis Travel Guide | Egypt Eye",
+    relatedTours: toursBySlug("siwa-oasis", "white-desert-safari-bahariya", "bahariya-oasis-2-day-safari"),
+    seoTitle: "Siwa Oasis Travel Guide: Egypt's Remote Desert Escape",
     seoDescription: "A guide to Siwa Oasis — Egypt's most remote major oasis, its distinct Berber culture, salt lakes, and the Oracle Temple Alexander the Great once visited.",
     body: [
-      p("Siwa Oasis sits close to the Libyan border, roughly eight hours by road from Cairo — remote enough that it developed a genuinely distinct culture, with its own Berber (Amazigh) language, separate from the rest of Egypt."),
-      h2("What's there"),
+      p("Siwa Oasis sits close to the Libyan border, roughly eight hours by road from Cairo, and that distance is exactly why it feels so different from everywhere else in Egypt. Isolated for most of its history from the Nile Valley by hundreds of kilometers of open desert, Siwa developed its own language, its own architecture, its own social customs, and its own relationship with the outside world — one where Alexander the Great made a special detour to consult an oracle, and where salt lakes let you float the way you would in the Dead Sea. It's not a quick add-on to a Cairo or Luxor trip. It's a destination that rewards travelers willing to give it real time."),
+      p("Here's what actually sets Siwa apart, what's worth seeing once you're there, and how to plan around the drive that keeps it this unspoiled."),
+      h2("Why Siwa Feels Like a Different Country"),
+      p("Siwa's isolation isn't a modern travel-brochure exaggeration. For most of its history, the oasis was reachable only by a punishing multi-day desert crossing, and that separation from the Nile Valley let a genuinely distinct culture take root and persist. Siwans speak Siwi, a Berber (Amazigh) language entirely unrelated to Arabic, and many residents still use it as a first language at home alongside Egyptian Arabic. That linguistic and cultural distinctiveness connects Siwa more closely, in some respects, to Berber communities across North Africa than to the rest of Egypt, and it shows up in everything from local dress to marriage customs to the town's traditional social structure."),
+      p("The road from Cairo runs west along the Mediterranean coast to Marsa Matrouh before turning south into the desert for the final stretch — a long day of driving, but a manageable one on a properly paved modern road, a considerable improvement over the multi-day camel caravans that once made this journey. Most visitors treat the drive itself as part of the experience, watching the landscape shift from coastal green to open desert to the sudden, startling burst of palm groves that signals Siwa itself."),
+      h2("The Oracle Temple and Alexander the Great"),
+      p("Siwa's most historically significant site is the Temple of the Oracle of Amun, perched on the rocky outcrop of Aghurmi at the edge of town. In antiquity, this oracle carried enough prestige across the Mediterranean world that Alexander the Great made a deliberate detour here in 331 BCE, after conquering Egypt, specifically to consult it — a journey of real difficulty and risk even for a conquering army, which says something about how seriously the oracle's reputation was taken. According to ancient accounts, the oracle's priests greeted him in a way he interpreted as confirmation of divine parentage, reinforcing his claim to be the son of the god Zeus-Ammon, a moment that became part of the Alexander legend for centuries afterward."),
+      p("Walking through the ruined temple today, and the older fortified settlement built up around it, gives a real sense of why this remote spot carried such weight in the ancient world — a genuinely isolated sanctuary, difficult to reach and therefore harder to doubt, in an era when distance itself lent an oracle credibility."),
+      h2("Shali Fortress and Siwan Architecture"),
+      p("The old town center of Siwa is dominated by Shali Fortress, a dramatic multi-story citadel built from kershef, a traditional local building material made from salt-rich mud and rock, mixed and dried in a way that kept buildings naturally cool in the desert heat. Shali was inhabited for centuries, but a rare, unusually heavy rainstorm in 1926 badly damaged large sections of the kershef construction, since the material dissolves when soaked rather than simply eroding gradually. Much of the old fortress was abandoned afterward, and what remains today is a striking, half-melted ruin rising above the modern town, climbable in sections and genuinely atmospheric, especially near sunset when the light picks out the texture of the crumbling walls."),
       ...bullets([
-        "The Oracle Temple, which Alexander the Great reportedly traveled here specifically to consult",
-        "Shali Fortress, a centuries-old mudbrick citadel that dominates the town's skyline",
-        "Salt lakes with high enough mineral content to float in, similar in effect to the Dead Sea",
-        "Palm groves and freshwater springs that make Siwa genuinely green against the surrounding desert",
+        "The Temple of the Oracle of Amun at Aghurmi — where Alexander the Great reportedly consulted the oracle in 331 BCE",
+        "Shali Fortress — the old kershef citadel town, largely abandoned after flood damage in 1926, now a dramatic ruin overlooking modern Siwa",
+        "Cleopatra's Bath (Ain Juba) — a natural freshwater spring pool that's been used by locals and visitors for bathing for generations",
+        "Siwa's salt lakes — several lakes with mineral content high enough to float in effortlessly, similar in effect to the Dead Sea",
+        "The Great Sand Sea — a vast dune field on Siwa's outskirts, popular for jeep safaris, sandboarding, and overnight desert camping",
+        "Palm and olive groves — Siwa is one of Egypt's major date and olive producing regions, and the greenery against the surrounding desert is genuinely striking",
       ]),
-      p("Siwa's distance from Cairo means it suits travelers with time to spend, rather than a quick add-on — most visits run two to three days given the drive."),
+      h2("Salt Lakes, Springs, and the Great Sand Sea"),
+      p("Siwa's landscape outside the town is defined by water in a way that surprises a lot of first-time visitors to a desert destination. Several salt lakes ring the oasis, with mineral concentrations high enough that floating requires almost no effort, the same basic effect that makes the Dead Sea famous, and freshwater springs like Cleopatra's Bath offer a cooler, more conventional swim. Between the salt lakes and the springs, Siwa has more genuinely swimmable water than almost anywhere else in Egypt's Western Desert."),
+      p("Beyond the cultivated palm groves, the Great Sand Sea begins — one of the largest sand seas on Earth, a rolling expanse of dunes that stretches deep into the Libyan desert. Jeep safaris out into the dunes, often combined with sandboarding and an overnight camp under a sky free of almost any light pollution, are one of the most popular add-ons for travelers who've already spent a day or two in the oasis itself and want to see the desert that surrounds it."),
+      h2("Siwan Culture and Craft"),
+      p("Siwa has its own distinct craft traditions that are worth seeking out specifically, rather than assuming they're the same as what you'd find in Cairo's markets. Traditional Siwan silver jewelry, historically an important part of a bride's wedding dowry and dress, carries patterns and forms distinct from silverwork found elsewhere in Egypt, and local workshops still produce pieces using techniques passed down through generations. Basket weaving, embroidery, and pottery are similarly distinct, tied to Siwa's particular Berber heritage rather than mainstream Egyptian craft traditions."),
+      p("Dates and olives form the backbone of Siwa's local economy, and the oasis is one of Egypt's most significant producers of both — palm groves and olive orchards stretch across much of the cultivated land around the town, irrigated by natural springs rather than the Nile itself, which is part of what makes Siwa's agricultural rhythm feel so distinct from the rest of the country."),
+      callout(
+        "The 1926 storm that damaged Shali Fortress wasn't a one-off disaster so much as a demonstration of kershef's core weakness — it's an excellent, naturally cooling building material in a place that almost never sees rain, but it dissolves quickly when it does. Modern Siwan builders still use kershef for its insulating properties, but usually now with better waterproofing than the old fortress ever had.",
+        { title: "Good to Know", tone: "Info" }
+      ),
+      h2("Planning a Visit"),
+      p("Siwa's distance from Cairo means it suits travelers with real time to spend rather than a quick add-on — most visits run two to three days at minimum once you account for the drive each way, and travelers who can spare three or four days get considerably more out of it, with room for the oracle temple, Shali, the salt lakes, and a proper desert safari rather than rushing through all of it in one packed day. The cooler months, roughly October through April, are by far the more comfortable time to visit; Siwa's summer heat is intense even by Egyptian desert standards, and a lot of the appeal of the salt lakes and springs is considerably more pleasant without triple-digit afternoon temperatures working against you."),
+      faq(
+        [
+          {
+            question: "How do you get to Siwa Oasis?",
+            answer:
+              "Almost entirely by road — the standard route runs from Cairo west along the Mediterranean coast to Marsa Matrouh, then south into the desert to Siwa, a journey of roughly eight hours total. There's no regular commercial passenger flight service to the oasis.",
+          },
+          {
+            question: "How many days should I spend in Siwa?",
+            answer:
+              "At least two to three days given the length of the drive each way, and three to four days if you want unhurried time at the oracle temple, Shali Fortress, the salt lakes, and a desert safari into the Great Sand Sea without rushing.",
+          },
+          {
+            question: "Is Siwa's culture really different from the rest of Egypt?",
+            answer:
+              "Yes, genuinely. Siwans speak Siwi, a Berber (Amazigh) language unrelated to Arabic, and the oasis developed its own distinct architecture, dress, and social customs over centuries of relative isolation from the Nile Valley.",
+          },
+          {
+            question: "What's the best time of year to visit Siwa?",
+            answer: "Roughly October through April. Summers in Siwa are intensely hot even by Egyptian desert standards, which makes the cooler months considerably more comfortable for exploring the town, the lakes, and the surrounding dunes.",
+          },
+          {
+            question: "Can you actually float in Siwa's salt lakes?",
+            answer:
+              "Yes. Several of Siwa's salt lakes have mineral concentrations high enough that floating takes almost no effort, similar in effect to the Dead Sea, and they're one of the more distinctive things to do in the oasis alongside the freshwater springs.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p("Siwa isn't on the way to anywhere else in Egypt, which is precisely the point. Getting there takes deliberate planning, but what's waiting — a language, an architecture, and a set of customs that developed in genuine isolation from the rest of the country, plus salt lakes, palm groves, and dunes stretching to the Libyan border — is one of the more distinctive travel experiences Egypt has to offer, and one that rewards exactly the kind of unhurried visit its remoteness makes almost unavoidable."),
+      {
+        _type: "ctaBlock",
+        _key: nextBlockKey("cta"),
+        title: "Make the Journey to Siwa",
+        body: "See the Oracle Temple, Shali Fortress, and Siwa's salt lakes on a private desert itinerary built around the drive from Cairo.",
+        buttonLabel: "Explore Siwa Oasis",
+        buttonHref: "/tours/siwa-oasis",
+      },
     ],
   },
   {
