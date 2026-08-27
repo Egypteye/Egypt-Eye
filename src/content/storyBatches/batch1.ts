@@ -97,7 +97,7 @@ export const stories: Story[] = [
       ),
       h2("Sites That Need a Guide's Context to Be Worth the Entry Fee"),
       p(
-        "The itinerary lists Karnak, Luxor Temple, and the Valley of the Kings the same way it lists everything else — a name, a bullet point, done. What it doesn't account for is how differently those sites read with and without context. Karnak without a guide is, honestly, a lot of impressive stone; Karnak with someone who can point out which pylon was added by which pharaoh, why the hypostyle hall's columns are carved the way they are, and what the avenue of ram-headed sphinxes actually represented, is a different experience entirely. The Valley of the Kings is even more dependent on this — the tombs you're allowed to enter rotate, some require a separate ticket, and without someone explaining what you're looking at on the walls, the difference between one tomb and the next can be hard to appreciate. An AI itinerary has no way to know which tombs are open on a given week, let alone how to make the visit worth the ticket price beyond simply "going."
+        "The itinerary lists Karnak, Luxor Temple, and the Valley of the Kings the same way it lists everything else — a name, a bullet point, done. What it doesn't account for is how differently those sites read with and without context. Karnak without a guide is, honestly, a lot of impressive stone; Karnak with someone who can point out which pylon was added by which pharaoh, why the hypostyle hall's columns are carved the way they are, and what the avenue of ram-headed sphinxes actually represented, is a different experience entirely. The Valley of the Kings is even more dependent on this — the tombs you're allowed to enter rotate, some require a separate ticket, and without someone explaining what you're looking at on the walls, the difference between one tomb and the next can be hard to appreciate. An AI itinerary has no way to know which tombs are open on a given week, let alone how to make the visit worth the ticket price beyond simply \"going.\""
       ),
       h2("The Details That Never Made the Draft"),
       p(
@@ -218,6 +218,9 @@ export const stories: Story[] = [
       p(
         "This is where the gap opens. The AI draft had no way to know that a specific temple was mid-renovation that month, that one stretch of desert road gets a police convoy requirement at certain hours, or that a particular guide known for excellent English happened to be booked solid that week. It couldn't judge which hotel, despite strong reviews, sat inconveniently far from the sites scheduled for that day. None of this is a knowledge gap AI can simply be prompted out of — it's live, local, and changes month to month, which means it has to come from someone with current eyes on the ground, not a model trained on a snapshot of the internet."
       ),
+      p(
+        "Some of it is smaller than a renovation notice, too. Which entrance at the Grand Egyptian Museum has the shorter line at 9 a.m. versus 1 p.m. Which felucca captains actually keep to their departure times and which don't. Whether this week's Nile water level affects which dock a cruise ship can actually use in Aswan. None of that shows up in any dataset an AI model was trained on, because it's the kind of knowledge that only exists in the heads of people who were there this month, not last year."
+      ),
       h2("Round Three: Reading the Traveler"),
       p(
         "A good local planner adjusts a schedule based on things a form field can't capture — noticing that a couple is clearly more interested in photography than in reading every hieroglyph, or that a family with young kids needs a slower, shorter morning than the itinerary originally assumed. AI planning tools respond to what you type, but they don't read a room, and Egypt's demanding pace, especially in shoulder and summer months, rewards a planner who can adjust on the fly rather than one who built a static plan around a generic \"traveler profile.\""
@@ -225,6 +228,10 @@ export const stories: Story[] = [
       h2("Round Four: When Something Goes Wrong"),
       p(
         "This round isn't close. A flight delay, a sudden closure, a change in the weather over the Red Sea — an AI-generated itinerary is a fixed document with no ability to respond to any of it. A local team reroutes in real time: swapping the order of two days, calling ahead to hold a dinner reservation, or simply making the judgment call that a tired traveler should skip the third temple of the day rather than push through it. This is the round that actually determines whether a trip feels well-run or chaotic, and it's the one place AI planning has no answer at all."
+      ),
+      h2("Round Five: Budget and Value"),
+      p(
+        "AI is genuinely decent at ballpark numbers — it can tell you that a mid-range 8-day Egypt trip runs roughly such-and-such per person, and that figure is usually in the right neighborhood. Where it falls short is knowing where an extra hundred dollars actually buys something meaningfully better versus where it's simply markup. It doesn't know that upgrading one specific Nile cruise cabin category gets you a genuinely larger balcony while another \"upgrade\" on a different ship barely changes the room. It doesn't know which guide is worth paying more for because they've spent fifteen years specializing in the Amarna period, and which added fee on a quote is just padding. A local team prices a trip against what similar travelers have actually experienced for that spend, not against an average pulled from public listings."
       ),
       h2("Where the Human Team Wins Decisively"),
       p(
@@ -337,6 +344,10 @@ export const stories: Story[] = [
       p(
         "Cairo is a city of roughly 20 million people, and its traffic is exactly as intense as that number suggests. Walking is genuinely rewarding in specific pockets — Islamic Cairo's old streets, the corniche along the Nile, downtown's older blocks — but crossing the city to get from the pyramids to the Egyptian Museum to Khan el-Khalili on foot or by figuring out public transport solo is a way to lose most of a day to logistics rather than sightseeing. A private driver solves this cleanly, and it's one of the few cities where hiring one isn't a luxury upgrade so much as the actual efficient way to see the city, solo traveler or not."
       ),
+      h2("Is It Actually Safe to Travel Egypt Alone?"),
+      p(
+        "This is the question underneath most of the others, so it's worth answering directly rather than dancing around it. Egypt's major tourist circuits — Cairo's central neighborhoods, Luxor, Aswan, the Red Sea coast — see a heavy, steady flow of independent travelers, including plenty of solo ones, and violent crime targeting tourists is genuinely rare across all of them. The more common friction points are mundane: overly persistent vendors, taxi drivers quoting inflated fares to someone traveling alone, the occasional feeling of being singled out simply for standing around looking like you're deciding where to go next. None of that is dangerous so much as tiring, and it fades considerably once you're moving with a plan rather than visibly figuring one out on a street corner — which is a large part of why organized transport and a private driver matter as much for comfort as for efficiency."
+      ),
       h2("The Real Question Isn't Solo — It's Distance"),
       p(
         "The bigger planning question for a solo Egypt trip has almost nothing to do with traveling alone and everything to do with the country's geography. Cairo, Luxor, and Aswan are genuinely far apart — Luxor sits roughly 700 kilometers south of Cairo, and Aswan another few hours beyond that. A solo traveler has three realistic ways to cover that ground: a short domestic flight (the fastest and most common choice), an overnight sleeper train between Cairo and Luxor or Aswan (a genuinely fun, low-effort way to cover distance while you sleep), or a private car for a more flexible, stop-where-you-want pace. None of these options changes meaningfully because you're traveling alone — the logistics are identical to a group's — which is worth knowing before overthinking the \"solo\" part of the trip."
@@ -344,6 +355,9 @@ export const stories: Story[] = [
       h2("Where You'll Actually Meet People"),
       p(
         "One of the better-kept secrets of solo travel in Egypt is how naturally social a supposedly solo trip can become. A multi-day Nile cruise puts you at shared meal tables and shared shore excursions with a rotating group of other travelers, most of them also happy to talk. Small-group day tours in Luxor or Aswan work the same way — you show up solo, spend the day with four or five other travelers, and often end it with dinner plans that weren't on the itinerary that morning. A solo base trip doesn't have to mean a solo experience at every hour of every day, and Egypt's tour structure makes that especially easy to fall into without trying."
+      ),
+      p(
+        "The Red Sea coast adds a third version of this same pattern. A dive liveaboard or a day boat out of Hurghada puts a solo traveler in a small group by default — dive buddies are typically paired up regardless of how you booked — and it's one of the easiest places in Egypt to end a solo trip having made a handful of genuine travel friends along the way, almost as a byproduct of how the activity itself is structured."
       ),
       h2("Luxor and Aswan on Your Own"),
       p(
@@ -458,11 +472,15 @@ export const stories: Story[] = [
       ),
       h2("Street Attention: What to Expect and How to Handle It"),
       p(
-        "The most common thing solo female travelers report in Egypt isn't danger — it's attention. Vendors calling out, occasional comments, a level of directness on the street that's more intense than many Western cities. It's worth naming plainly rather than dancing around it, because the surprise of it catches unprepared travelers off guard more than the attention itself does. The practical approach that works for most women is the same one that works in any country with this dynamic: a confident, brief acknowledgment or a flat "no thank you" and continuing to walk works better than stopping to engage, and it stops being unsettling once it's expected rather than a shock. Tourist-heavy areas around major sites see the most of it; it thins out considerably away from the main circuits."
+        "The most common thing solo female travelers report in Egypt isn't danger — it's attention. Vendors calling out, occasional comments, a level of directness on the street that's more intense than many Western cities. It's worth naming plainly rather than dancing around it, because the surprise of it catches unprepared travelers off guard more than the attention itself does. The practical approach that works for most women is the same one that works in any country with this dynamic: a confident, brief acknowledgment or a flat \"no thank you\" and continuing to walk works better than stopping to engage, and it stops being unsettling once it's expected rather than a shock. Tourist-heavy areas around major sites see the most of it; it thins out considerably away from the main circuits."
       ),
       h2("Dress: What Actually Matters"),
       p(
         "Modest dress — shoulders and knees covered, looser rather than fitted clothing — isn't about following a strict rule so much as it noticeably reduces unwanted attention and shows cultural respect, particularly at religious sites, which is worth doing regardless. It's less restrictive in practice than it sounds: lightweight linen trousers, loose midi dresses, and a scarf that doubles as sun protection and a quick head cover at a mosque cover almost every situation a trip actually presents. Resort areas along the Red Sea coast are considerably more relaxed about this than Cairo, Luxor, or Aswan, and it's fine to dress differently between those settings rather than packing for the strictest version of the whole trip."
+      ),
+      h2("The Other Side of the Attention: Genuine Hospitality"),
+      p(
+        "It's worth balancing the street-attention conversation with the part that gets talked about less: Egyptian hospitality toward women traveling alone is, more often than not, warm and genuinely protective rather than intrusive. Hotel staff who quietly make sure you've got a safe taxi arranged before you head out, a shop owner who waves off a pushier vendor nearby, an older woman on a train who strikes up conversation and ends up feeling like an ally for the rest of the ride — these moments come up constantly in accounts from women who've actually done the trip, and they tend to outweigh the friction once a traveler has a few days of context under her belt. Neither side of this — the attention or the hospitality — cancels the other out. Both are part of an honest picture of what the trip is actually like."
       ),
       h2("Cairo After Dark, and Getting Around"),
       p(
@@ -475,6 +493,9 @@ export const stories: Story[] = [
       h2("Luxor and Aswan for a Woman Traveling Alone"),
       p(
         "Both cities are noticeably calmer and more slow-paced than Cairo, and most solo female travelers find them easier, not harder. The same logistics apply as they would for any solo traveler here — the Valley of the Kings and Abu Simbel both require organized transport rather than wandering — but the social dynamic softens considerably outside Cairo's density. Aswan's Nubian villages and Luxor's West Bank are typically visited with a guide anyway, which removes the question of navigating unfamiliar, spread-out sites alone as a woman and simply folds it into how everyone visits those places regardless of gender or group size."
+      ),
+      p(
+        "A Nile cruise deserves a specific mention here, because it solves several of these questions simultaneously. It puts a solo female traveler in a contained, well-staffed environment for several days straight, seats her with other travelers at meals by default, and removes the after-dark transport question almost entirely, since the boat itself is both hotel and transportation. It's one of the more comfortable ways to cover the Luxor-to-Aswan stretch solo, for exactly that combination of built-in structure and built-in company."
       ),
       h2("Where a Private Guide and Driver Change the Math"),
       p(
@@ -518,7 +539,7 @@ export const stories: Story[] = [
         "Frequently Asked Questions"
       ),
       p(
-        "None of this is meant to talk anyone out of going alone — it's the opposite. Egypt rewards women who travel it solo with some of the same monuments and moments every traveler comes for, and the honest preparation above is exactly what turns "should I go" into a trip you actually enjoy rather than one you spend managing."
+        "None of this is meant to talk anyone out of going alone — it's the opposite. Egypt rewards women who travel it solo with some of the same monuments and moments every traveler comes for, and the honest preparation above is exactly what turns \"should I go\" into a trip you actually enjoy rather than one you spend managing."
       ),
       cta({
         title: "Travel With Local Support Built In",
@@ -529,7 +550,3 @@ export const stories: Story[] = [
     ],
   },
 ];
-
-export function getStoryBySlug(slug: string) {
-  return stories.find((s) => s.slug === slug);
-}
