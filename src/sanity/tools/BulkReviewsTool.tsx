@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useClient } from "sanity";
 import { apiVersion } from "../env";
+import { reviewDuplicateKey } from "@/lib/testimonials/normalize";
 
 // A custom Studio pane (registered in structure.ts, right under
 // "Testimonials") for pasting many real reviews at once instead of
@@ -64,6 +65,7 @@ export default function BulkReviewsTool() {
   const [status, setStatus] = useState<"idle" | "importing" | "done" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [importedCount, setImportedCount] = useState(0);
+  const [skippedDuplicateCount, setSkippedDuplicateCount] = useState(0);
 
   const { reviews, issues } = parseReviews(raw);
 
@@ -72,11 +74,32 @@ export default function BulkReviewsTool() {
     setStatus("importing");
     setErrorMessage("");
     try {
-      const existing = await client.fetch<{ order: number | null }[]>(`*[_type == "testimonial"]{order}`);
+      const existing = await client.fetch<{ order: number | null; name?: string; quote?: string }[]>(
+        `*[_type == "testimonial"]{order, name, quote}`
+      );
       let nextOrder = existing.reduce((max, t) => Math.max(max, t.order ?? 0), 0) + 1;
 
-      const tx = client.transaction();
+      // Skip anything that's already a testimonial in Sanity, or a repeat
+      // within this same paste — same reviewer name + same quote text,
+      // ignoring case/punctuation/whitespace. This is what actually stops
+      // duplicates from piling up (re-pasting the same batch, or a source
+      // list that already had repeats), rather than just cleaning them up
+      // after the fact.
+      const seenKeys = new Set(existing.map((t) => reviewDuplicateKey(t.name, t.quote)));
+      const toImport: typeof reviews = [];
+      let skipped = 0;
       for (const r of reviews) {
+        const key = reviewDuplicateKey(r.name, r.quote);
+        if (seenKeys.has(key)) {
+          skipped++;
+          continue;
+        }
+        seenKeys.add(key);
+        toImport.push(r);
+      }
+
+      const tx = client.transaction();
+      for (const r of toImport) {
         tx.create({
           _type: "testimonial",
           name: r.name,
@@ -87,7 +110,8 @@ export default function BulkReviewsTool() {
       }
       await tx.commit();
 
-      setImportedCount(reviews.length);
+      setImportedCount(toImport.length);
+      setSkippedDuplicateCount(skipped);
       setStatus("done");
       setRaw("");
     } catch (err) {
@@ -182,8 +206,12 @@ export default function BulkReviewsTool() {
 
       {status === "done" && (
         <p style={{ marginTop: 16, color: "#15803d", fontSize: 14 }}>
-          ✓ Imported {importedCount} review{importedCount === 1 ? "" : "s"}. They&rsquo;ll appear in the
-          Testimonials list, and on the site&rsquo;s homepage Reviews section within a minute.
+          ✓ Imported {importedCount} review{importedCount === 1 ? "" : "s"}
+          {skippedDuplicateCount > 0
+            ? ` (skipped ${skippedDuplicateCount} as duplicate${skippedDuplicateCount === 1 ? "" : "s"} of an existing review).`
+            : "."}{" "}
+          They&rsquo;ll appear in the Testimonials list, and on the site&rsquo;s homepage Reviews section within a
+          minute.
         </p>
       )}
       {status === "error" && <p style={{ marginTop: 16, color: "#b91c1c", fontSize: 14 }}>{errorMessage}</p>}
