@@ -228,6 +228,16 @@ export const stories: Story[] = [
       p(
         "A traditional felucca — Egypt's classic wooden sailboat, still used on the Nile much as it has been for centuries — runs on wind, not a motor, which means no engine noise, no scheduled stops, and generally no wifi to speak of. An hour or two on one, drifting past the riverbank at whatever pace the wind allows, is a small, easy way to build genuine stillness into a trip that otherwise moves at a temple-a-day pace. It's not marketed as a wellness activity. It's just what sailing a felucca has always been."
       ),
+      p(
+        "The boats themselves are simple by design — a wide wooden hull, a single tall sail, a bench running along the sides, nothing that requires a plug or a password. Feluccas have carried goods and passengers on the Nile for centuries, long before anyone thought to describe silence as a luxury, and the version you sail today isn't a recreation of that history so much as a continuation of it. There's no set route or schedule the way a cruise ship runs one; the boat goes where the wind lets it, and a good captain reads that wind rather than fighting it. It tends to be the moment on a longer Egypt itinerary that travelers mention afterward with the most surprise — not because it was the most dramatic thing they saw, but because it was the only stretch of the trip with nothing scheduled inside it at all."
+      ),
+      h2("Putting Together a Trip Built Around This"),
+      p(
+        "None of this requires restructuring an entire Egypt itinerary around the word \"detox.\" It works better as a deliberate stretch built into a longer trip — a couple of days in the Western Desert or Siwa slotted in after the more scheduled, sight-heavy days in Cairo and Luxor, so the contrast actually registers. Arriving in the desert straight off a packed few days of temples and traffic makes the quiet land differently than it would as the very first stop on a trip, before there's anything to unplug from yet."
+      ),
+      p(
+        "A workable shape for this: a few days on the standard Cairo–Luxor–Aswan route to see the sites that brought you to Egypt in the first place, then two or three days pointed at the Western Desert or Siwa specifically, with a felucca sail or an early temple visit worked in on either end as a smaller, easier version of the same idea. You don't need to choose between the monuments and the quiet. The trip works better when both are in it."
+      ),
       callout(
         "None of this requires telling your hotel or your travel companions you're \"doing a detox.\" Most of Egypt's Western Desert and its quieter stretches of Nile simply don't have reliable signal — the disconnection happens on its own, which for a lot of travelers is easier to actually stick to than a deliberate phone-free pledge.",
         { title: "Good to Know", tone: "Info" }
@@ -350,9 +360,16 @@ export const stories: Story[] = [
       p(
         "Cleanliness held real cultural and religious weight in ancient Egypt — priests in particular were required to bathe multiple times a day as part of ritual purity, and bathing more broadly was tied to both practical hygiene and spiritual life in a way that gave it more weight than it holds in a lot of ancient societies. That combination — physical care treated as inseparable from wellbeing rather than as an indulgence layered on top of it — is close to the exact pitch modern wellness tourism makes today, several thousand years later."
       ),
+      h2("Beauty Rituals Documented in the Historical Record"),
+      p(
+        "Beyond bathing and skin treatments, ancient Egyptian cosmetic practice was genuinely sophisticated, and much of it is documented rather than assumed. Kohl, ground from minerals like galena, was worn by men and women alike — partly for its look, and there's also long-standing scholarly discussion around its use offering some protection against the region's harsh sun glare and eye irritation, though this is an area where the historical record and modern medical understanding don't map onto each other cleanly. The blue lotus flower appears repeatedly in tomb paintings and texts, associated with both scent and ritual significance, and henna use for hair and skin dates back thousands of years, still practiced across Egypt today in largely recognizable form. None of these were vanity practices layered on top of daily life — they were daily life, part of the same broader culture that treated the body as something worth deliberate care."
+      ),
       h2("Where This History Meets a Modern Trip"),
       p(
         "The clearest modern equivalent to those salt-based ancient treatments sits in Siwa Oasis, where natural salt lakes — genuinely comparable in mineral concentration to the Dead Sea — are still used today much as they likely were centuries ago. Floating in one requires no effort at all; the water does the work. It's not a manufactured spa experience built for tourists — the lakes were there long before tourism was, and Siwans have used them for generations."
+      ),
+      p(
+        "Siwa adds a second layer to this beyond the lakes themselves: the oasis's natural hot and cold springs, including the well-known Cleopatra's Spring, have drawn visitors for their reputed restorative qualities for a very long time, well before the term \"wellness tourism\" existed to describe what people were actually doing there. The combination of salt lake, spring, and the oasis's own slower pace of life is closer to a naturally occurring wellness retreat than anything built specifically to market itself as one."
       ),
       p(
         "Along the Red Sea coast, the connection is more about pace than direct historical lineage. Purpose-built resort towns like El Gouna and Soma Bay were designed from the ground up for slower travel — lagoons, calm water, and considerably less nightlife than Hurghada or Sharm El Sheikh nearby. A day built around Soma Bay's quieter stretch of coast, or a Red Sea day with genuinely nothing scheduled beyond the water and the sand, gives a trip the kind of unhurried block of time that the ancient bathing culture, in its own way, treated as essential rather than optional."
@@ -490,6 +507,16 @@ export const stories: Story[] = [
       ),
       p(
         "The third, and maybe most overlooked, mistake is missing what the market sits next to. Al-Hussein Mosque, one of Cairo's most significant religious sites, borders the market directly, and the wider historic core around it — the medieval gates, the mosques and madrasas along Al-Muizz Street — is easily walkable from the same spot. Visitors who see Khan el-Khalili as an isolated shopping stop, rather than one piece of a much larger historic district, walk right past most of what makes the neighborhood worth the trip in the first place."
+      ),
+      p(
+        "A fourth, quieter mistake is skipping the food entirely. The lanes around Khan el-Khalili are as much a food destination as a shopping one — small stalls selling koshary, grilled meats, fresh juice, and pastries that have nothing to do with the tourist-facing restaurants closer to the main strip. It's the kind of eating that requires either local knowledge or a guide who already knows which stall is actually good, since nothing about a stall's appearance from the outside tells you that on its own."
+      ),
+      h2("The Best Time of Day to Actually Go"),
+      p(
+        "Khan el-Khalili changes considerably depending on when you arrive. Mid-morning through early afternoon is when the tourist-facing lane is busiest and loudest, vendors calling out to every passing group and the main strip at its most crowded. Early evening, once the day's heat has broken and the lanterns strung above the alleys start to light up, is when the market feels most like itself — locals doing their evening shopping, tea shops filling up, a slower rhythm that the midday tourist crush doesn't allow for. If your schedule allows any flexibility at all, trade a midday visit for a couple of hours after 5pm and the difference is immediate."
+      ),
+      p(
+        "During Ramadan specifically, the market shifts again — quieter through the day, then genuinely lively after the iftar meal breaks the fast, with food stalls and sweets sellers doing their heaviest trade of the year. It's a different, arguably more interesting version of Khan el-Khalili than the one most visitors see, if your trip happens to line up with it."
       ),
       p("A short list of what actually changes a Khan el-Khalili visit from a rushed stop into real time well spent:"),
       ...bullets([

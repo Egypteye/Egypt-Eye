@@ -225,6 +225,9 @@ export const stories: Story[] = [
       p(
         "A good local planner adjusts a schedule based on things a form field can't capture — noticing that a couple is clearly more interested in photography than in reading every hieroglyph, or that a family with young kids needs a slower, shorter morning than the itinerary originally assumed. AI planning tools respond to what you type, but they don't read a room, and Egypt's demanding pace, especially in shoulder and summer months, rewards a planner who can adjust on the fly rather than one who built a static plan around a generic \"traveler profile.\""
       ),
+      p(
+        "This shows up in small, cumulative ways across a real trip. A planner who's actually met you for a pre-trip call knows whether you'd rather skip the souvenir stop and add another hour at Karnak instead, or whether the opposite is true. An AI itinerary, by contrast, treats every traveler with the same stated interests identically, because it has no memory of who you actually are beyond the prompt you typed once."
+      ),
       h2("Round Four: When Something Goes Wrong"),
       p(
         "This round isn't close. A flight delay, a sudden closure, a change in the weather over the Red Sea — an AI-generated itinerary is a fixed document with no ability to respond to any of it. A local team reroutes in real time: swapping the order of two days, calling ahead to hold a dinner reservation, or simply making the judgment call that a tired traveler should skip the third temple of the day rather than push through it. This is the round that actually determines whether a trip feels well-run or chaotic, and it's the one place AI planning has no answer at all."
@@ -268,7 +271,7 @@ export const stories: Story[] = [
         "Frequently Asked Questions"
       ),
       p(
-        "AI is a genuinely useful opening move for an Egypt trip, and there's no reason to skip that fast first draft. Just don't mistake it for the finished plan — the rounds that actually decide whether a trip goes smoothly are the ones a person, not a model, has to win."
+        "AI is a genuinely useful opening move for an Egypt trip, and there's no reason to skip that fast first draft. Just don't mistake it for the finished plan — the rounds that actually decide whether a trip goes smoothly are the ones a person, not a model, has to win. Use AI for the brainstorm, then hand the result to someone who's actually stood where you're about to stand."
       ),
       cta({
         title: "Let a Real Team Build It",
