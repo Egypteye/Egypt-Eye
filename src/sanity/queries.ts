@@ -140,8 +140,7 @@ export const customizePageQuery = groq`*[_type == "customizePage"][0] {
 export const aboutPageQuery = groq`*[_type == "aboutPage"][0] {
   heroEyebrow, heroHeadline, heroImage,
   storyEyebrow, storyTitle,
-  whatWeDoEyebrow, whatWeDoTitle, whatWeDoDescription,
-  teamEyebrow, teamTitle, teamDescription, teamMembers
+  whatWeDoEyebrow, whatWeDoTitle, whatWeDoDescription
 }`;
 
 export const contactPageQuery = groq`*[_type == "contactPage"][0] {

@@ -433,10 +433,6 @@ export async function GET(request: NextRequest) {
       whatWeDoEyebrow: aboutPage.whatWeDoEyebrow,
       whatWeDoTitle: aboutPage.whatWeDoTitle,
       whatWeDoDescription: aboutPage.whatWeDoDescription,
-      teamEyebrow: aboutPage.teamEyebrow,
-      teamTitle: aboutPage.teamTitle,
-      teamDescription: aboutPage.teamDescription,
-      teamMembers: [...aboutPage.teamMembers],
     });
     results.push("aboutPage");
   }

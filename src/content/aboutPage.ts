@@ -16,23 +16,4 @@ export const aboutPage: ResolvedAboutPage = {
   whatWeDoTitle: "Travel + Photography + Personalization + Hospitality",
   whatWeDoDescription:
     "Four pillars, one team, delivered on every trip — from a two-hour photoshoot to a ten-day private journey.",
-  teamEyebrow: "Meet the Team",
-  teamTitle: "The people behind your trip",
-  teamDescription:
-    "Our travelers consistently mention the team by name — friendly, safe, flexible, and always reachable. Here are a few of the faces you might meet.",
-  teamMembers: [
-    "Fady",
-    "Beshoy",
-    "Jonathan",
-    "Marco",
-    "Yousif",
-    "Michael",
-    "Mena",
-    "Tommy",
-    "David",
-    "Mark",
-    "Bavly",
-    "George",
-    "Bahi",
-  ],
 };

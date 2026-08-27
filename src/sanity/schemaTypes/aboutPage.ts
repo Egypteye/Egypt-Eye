@@ -31,15 +31,6 @@ export const aboutPage = defineType({
     defineField({ name: "whatWeDoEyebrow", title: "\"What We Do\" section eyebrow", type: "string" }),
     defineField({ name: "whatWeDoTitle", title: "\"What We Do\" section title", type: "string" }),
     defineField({ name: "whatWeDoDescription", title: "\"What We Do\" section description", type: "text" }),
-    defineField({ name: "teamEyebrow", title: "Team section eyebrow", type: "string" }),
-    defineField({ name: "teamTitle", title: "Team section title", type: "string" }),
-    defineField({ name: "teamDescription", title: "Team section description", type: "text" }),
-    defineField({
-      name: "teamMembers",
-      title: "Team member names",
-      type: "array",
-      of: [{ type: "string" }],
-    }),
   ],
   preview: { prepare: () => ({ title: "About Page" }) },
 });

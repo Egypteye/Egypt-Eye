@@ -78,25 +78,6 @@ export default async function AboutPage() {
               ))}
             </div>
           </div>
-
-          <div>
-            <SectionHeading
-              eyebrow={page.teamEyebrow}
-              title={page.teamTitle}
-              align="center"
-              description={page.teamDescription}
-            />
-            <div className="mt-8 flex flex-wrap justify-center gap-3">
-              {page.teamMembers.map((name) => (
-                <span
-                  key={name}
-                  className="rounded-full bg-sand-dim px-4 py-2 text-sm font-medium text-ink-soft"
-                >
-                  {name}
-                </span>
-              ))}
-            </div>
-          </div>
         </Container>
       </section>
 

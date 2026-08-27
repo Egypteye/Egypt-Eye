@@ -503,10 +503,6 @@ export type AboutPage = {
   whatWeDoEyebrow?: string;
   whatWeDoTitle?: string;
   whatWeDoDescription?: string;
-  teamEyebrow?: string;
-  teamTitle?: string;
-  teamDescription?: string;
-  teamMembers?: string[];
 };
 
 export type ResolvedAboutPage = {
@@ -518,10 +514,6 @@ export type ResolvedAboutPage = {
   whatWeDoEyebrow: string;
   whatWeDoTitle: string;
   whatWeDoDescription: string;
-  teamEyebrow: string;
-  teamTitle: string;
-  teamDescription: string;
-  teamMembers: readonly string[];
 };
 
 export type ContactPage = {

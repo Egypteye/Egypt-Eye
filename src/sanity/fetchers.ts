@@ -376,8 +376,6 @@ export async function getAboutPage(): Promise<ResolvedAboutPage> {
       tone: result.heroImage?.tone ?? localAboutPage.heroImage.tone,
       image: result.heroImage?.image ?? localAboutPage.heroImage.image,
     },
-    teamMembers:
-      result.teamMembers && result.teamMembers.length > 0 ? result.teamMembers : localAboutPage.teamMembers,
   };
 }
 
