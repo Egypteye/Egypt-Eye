@@ -1,8 +1,10 @@
-import type { Story, StoryBodyBlock, StoryFaqItem } from "./types";
+import type { Story } from "./types";
 import { authors } from "./authors";
 import { events } from "./events";
 import { signatureExperiences } from "./signatureExperiences";
 import { tours } from "./tours";
+import { nextBlockKey, p, h2, bullets, callout, faq } from "./storyBlocks";
+import { trendStories } from "./storyBatches";
 
 const editorialTeam = authors[0];
 const eclipseEvent = events[0];
@@ -11,58 +13,6 @@ const herEgyptExperience = signatureExperiences.find((e) => e.slug === "her-egyp
 
 function toursBySlug(...slugs: string[]) {
   return slugs.map((slug) => tours.find((t) => t.slug === slug)).filter((t): t is (typeof tours)[number] => Boolean(t));
-}
-
-// Small body-block builders used by the SEO content batch below, so a new
-// article's copy doesn't have to hand-write Portable Text block/span
-// boilerplate for every paragraph.
-let blockKeySeq = 0;
-function nextBlockKey(prefix: string) {
-  blockKeySeq += 1;
-  return `${prefix}${blockKeySeq}`;
-}
-
-function p(text: string): StoryBodyBlock {
-  return {
-    _type: "block",
-    _key: nextBlockKey("p"),
-    style: "normal",
-    children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
-    markDefs: [],
-  } as StoryBodyBlock;
-}
-
-function h2(text: string): StoryBodyBlock {
-  return {
-    _type: "block",
-    _key: nextBlockKey("h"),
-    style: "h2",
-    children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
-    markDefs: [],
-  } as StoryBodyBlock;
-}
-
-function bullets(items: string[]): StoryBodyBlock[] {
-  return items.map(
-    (text) =>
-      ({
-        _type: "block",
-        _key: nextBlockKey("li"),
-        style: "normal",
-        listItem: "bullet",
-        level: 1,
-        children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
-        markDefs: [],
-      }) as StoryBodyBlock
-  );
-}
-
-function callout(body: string, opts?: { title?: string; tone?: "Info" | "Safety" | "Highlight" }): StoryBodyBlock {
-  return { _type: "calloutBlock", _key: nextBlockKey("callout"), title: opts?.title, body, tone: opts?.tone ?? "Highlight" };
-}
-
-function faq(faqs: StoryFaqItem[], title?: string): StoryBodyBlock {
-  return { _type: "faqBlock", _key: nextBlockKey("faq"), title, faqs };
 }
 
 // Stories / blog listing.
@@ -10994,6 +10944,7 @@ export const stories: Story[] = [
       { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Plan Your Egypt & Jordan Trip", body: "From a 9-day combined route to the full 14-day classic journey, we'll build the itinerary around your dates and pace.", buttonLabel: "See Egypt & Jordan Tours", buttonHref: "/tours/9-day-egypt-jordan-combo" },
     ],
   },
+  ...trendStories,
 ];
 
 export function getStoryBySlug(slug: string) {
