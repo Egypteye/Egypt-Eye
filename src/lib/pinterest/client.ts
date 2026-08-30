@@ -6,7 +6,12 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 // calls). Handles the OAuth token exchange/refresh and the one Pinterest
 // endpoint this integration actually needs (creating a Pin).
 
-const API_BASE = "https://api.pinterest.com/v5";
+// Trial-access Pinterest apps can only create Pins against the sandbox API,
+// not production — set PINTEREST_API_BASE_URL to
+// "https://api-sandbox.pinterest.com/v5" temporarily to record the Standard
+// Access application's required demo video, then remove the env var (or set
+// it back to the default) once Standard Access is approved.
+const API_BASE = process.env.PINTEREST_API_BASE_URL || "https://api.pinterest.com/v5";
 const OAUTH_TOKEN_URL = `${API_BASE}/oauth/token`;
 
 // Refresh a bit before actual expiry so a slow request never straddles the
