@@ -23,7 +23,7 @@ export async function GET() {
   authorizeUrl.searchParams.set("client_id", appId);
   authorizeUrl.searchParams.set("redirect_uri", pinterestRedirectUri());
   authorizeUrl.searchParams.set("response_type", "code");
-  authorizeUrl.searchParams.set("scope", "boards:read,pins:read,pins:write");
+  authorizeUrl.searchParams.set("scope", "boards:read,boards:write,pins:read,pins:write");
   authorizeUrl.searchParams.set("state", state);
 
   const response = NextResponse.redirect(authorizeUrl);

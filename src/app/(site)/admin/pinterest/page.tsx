@@ -104,6 +104,12 @@ export default async function AdminPinterestPage({
                 existing stories.
               </p>
             </div>
+            <a
+              href="/api/pinterest/oauth/start"
+              className="whitespace-nowrap text-sm font-medium text-ink-soft/60 underline decoration-dotted underline-offset-4 transition hover:text-ink"
+            >
+              Reconnect Pinterest
+            </a>
           </div>
 
           <dl className="mt-5 grid grid-cols-2 gap-4 border-t border-black/5 pt-5 sm:grid-cols-3">
