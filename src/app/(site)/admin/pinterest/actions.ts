@@ -6,10 +6,11 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { getPinterestConnection, listBoards } from "@/lib/pinterest/client";
 import { pinUnpinnedStories } from "@/lib/pinterest/sync";
 
-export async function pinRemainingStories() {
+export async function pinRemainingStories(): Promise<{ pinned: number; remaining: number; errors: string[] }> {
   await requireAdmin();
-  await pinUnpinnedStories({ limit: 25 });
+  const result = await pinUnpinnedStories({ limit: 25 });
   revalidatePath("/admin/pinterest");
+  return result;
 }
 
 export async function selectBoard(formData: FormData) {

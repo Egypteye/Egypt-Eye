@@ -3,9 +3,17 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
 import { getPinterestStatus } from "./data";
-import { pinRemainingStories, selectBoard } from "./actions";
+import { selectBoard } from "./actions";
+import { PinRemainingButton } from "./PinRemainingButton";
 
 export const metadata = { title: "Pinterest", robots: { index: false, follow: false } };
+
+// Server Actions on this page (pinRemainingStories in particular, which
+// pins up to 25 stories one at a time) run under this same duration budget —
+// without it Vercel caps them at the 10s default and kills the loop midway
+// with no visible error. Matches the maxDuration already set on
+// /api/pinterest/sync/route.ts, which runs the identical routine on cron.
+export const maxDuration = 60;
 
 const ERROR_MESSAGES: Record<string, string> = {
   state_mismatch: "That connection attempt looked invalid (state mismatch) — please try connecting again.",
@@ -105,18 +113,7 @@ export default async function AdminPinterestPage({
           </dl>
 
           {status.remainingCount > 0 && (
-            <form action={pinRemainingStories} className="mt-5 border-t border-black/5 pt-5">
-              <button
-                type="submit"
-                className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
-              >
-                Pin Remaining Stories ({Math.min(status.remainingCount, 25)} this click)
-              </button>
-              <p className="mt-2 text-xs text-ink-soft/50">
-                Pins up to 25 at a time to stay well under Pinterest&rsquo;s rate limits — click again if{" "}
-                {status.remainingCount} is more than that.
-              </p>
-            </form>
+            <PinRemainingButton remainingCount={status.remainingCount} />
           )}
         </div>
       )}
