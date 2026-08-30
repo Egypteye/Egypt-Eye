@@ -308,6 +308,19 @@ export const story = defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "pinterestPinId",
+      title: "Pinterest Pin ID",
+      description: "Set automatically once this story has been pinned to Pinterest — also doubles as the guard that stops it from ever being pinned twice. Don't edit by hand.",
+      type: "string",
+      readOnly: true,
+    }),
+    defineField({
+      name: "pinterestPinnedAt",
+      title: "Pinned to Pinterest at",
+      type: "datetime",
+      readOnly: true,
+    }),
   ],
   orderings: [
     { title: "Newest first", name: "publishedDesc", by: [{ field: "publishedAt", direction: "desc" }] },

@@ -99,6 +99,35 @@ returns an error instead of sending.
    don't apply to already-running deployments). Submit the Customize Your
    Tour form once to confirm the email arrives.
 
+## Setting up the Pinterest integration
+
+Every published Story (blog article) gets pinned to Pinterest automatically —
+a photo, an SEO-friendly title/description, and a link back to the article —
+both as a one-time backfill of everything already published, and on its own for
+every new story going forward. Nothing is ever pinned twice. See `/admin/pinterest`
+for connection status and to run the initial backfill.
+
+1. Create a **Pinterest Business account** if you don't already have one (or
+   convert a personal account — free, in Pinterest's settings), then a
+   **Developer App** at [developers.pinterest.com/apps](https://developers.pinterest.com/apps).
+2. On that app's settings, add this as an allowed **redirect URI** (use your
+   real domain): `https://yourdomain.com/api/pinterest/oauth/callback`
+3. In Vercel → Project → Settings → Environment Variables, add:
+   - `PINTEREST_APP_ID` and `PINTEREST_APP_SECRET` — from the app you just
+     created.
+   - `CRON_SECRET` — any random string you make up. This is what proves the
+     hourly sync request in `vercel.json` actually came from Vercel's own
+     scheduler, not a random visitor hitting the URL.
+4. Run the new `supabase/migrations/0016_pinterest_connection.sql` migration
+   in the Supabase SQL editor (same as every other migration in
+   `supabase/migrations/`) — this is where the Pinterest connection (access
+   token, refresh token, which board to pin to) is stored.
+5. Redeploy, then visit `/admin/pinterest`: click **Connect Pinterest**,
+   authorize Egypt Eye on Pinterest, pick which board new Pins should go to,
+   then click **Pin Remaining Stories** (repeatable — it does 25 at a time) to
+   work through the backfill of everything already published. After that,
+   the hourly cron job takes over for every new story on its own.
+
 ## Setting up the AI chat widget
 
 A floating chat button (bottom-right, above the WhatsApp button) lets visitors
