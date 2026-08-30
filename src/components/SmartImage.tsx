@@ -15,7 +15,7 @@ export function SmartImage({
   alt = "",
   className = "",
   priority = false,
-  sizes = "(max-width: 768px) 100vw, 50vw",
+  sizes = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw",
 }: {
   image?: SanityImageType;
   tone: ImageTone | string;
@@ -24,11 +24,16 @@ export function SmartImage({
   className?: string;
   priority?: boolean;
   // Must match how large the image actually renders — this is what Next.js
-  // uses to pick which source resolution to serve. The default assumes a
-  // ~half-width card; full-bleed banners/heroes (`absolute inset-0` at
-  // 100vw) MUST pass sizes="100vw" or they get served a half-resolution
-  // image stretched across the whole screen, which looks blurry/low-quality
-  // even though the original upload is perfectly sharp.
+  // uses to pick which source resolution to serve. The default is
+  // calibrated for a grid card (TourCard/StoryCard/PhotoshootCard/etc. all
+  // rely on it as-is — they render 2-4 per row on desktop, never full-bleed);
+  // full-bleed banners/heroes (`absolute inset-0` at 100vw) MUST pass
+  // sizes="100vw" or they get served an undersized image stretched across
+  // the whole screen, which looks blurry/low-quality even though the
+  // original upload is perfectly sharp. Getting this wrong in either
+  // direction either blurs a hero or silently balloons data transfer
+  // (a card rendered at ~300px fetching a 50vw-wide image on a wide
+  // desktop monitor can be 3-4x the bytes it actually needs).
   sizes?: string;
 }) {
   const src = urlForImage(image)?.url();
