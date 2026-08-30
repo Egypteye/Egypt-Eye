@@ -2,10 +2,13 @@ import "server-only";
 import { createClient } from "next-sanity";
 import { apiVersion, dataset, projectId } from "@/sanity/env";
 import { siteUrl } from "@/content/seo";
+import { stories as localStories } from "@/content/stories";
 import type { SanityImage } from "@/content/types";
 import { getPinterestConnection, createPin } from "./client";
 import { resolvePinImageUrl } from "./image";
 import { buildPinCopy } from "./caption";
+
+const localImageBySlug = new Map(localStories.map((s) => [s.slug, s.image]));
 
 type UnpinnedStoryRow = {
   _id: string;
@@ -62,7 +65,11 @@ export async function pinUnpinnedStories({ limit = 25 }: { limit?: number } = {}
 
   for (const story of stories) {
     try {
-      const imageUrl = resolvePinImageUrl(story.image);
+      // Mirrors the fallback in src/sanity/fetchers.ts: /api/migrate never
+      // wrote an `image` onto story documents in Sanity, so this fills the
+      // gap from the same local content the rest of the site falls back to,
+      // rather than leaving newer stories permanently unpinnable.
+      const imageUrl = resolvePinImageUrl(story.image ?? localImageBySlug.get(story.slug));
       if (!imageUrl) {
         errors.push(`${story.slug}: no image to pin.`);
         continue;
