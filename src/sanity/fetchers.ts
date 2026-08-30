@@ -59,7 +59,18 @@ import type {
   Tour,
 } from "@/content/types";
 
-const REVALIDATE_SECONDS = 60;
+// Governs every Sanity fetch site-wide (all tours, stories, experiences,
+// listing pages, homepage — everything routes through safeFetch below).
+// Was 60s, which meant any real traffic kept every page regenerating in the
+// background roughly once a minute — Sanity content only ever changes when
+// someone edits it in Studio, so that was needlessly burning Vercel's Fluid
+// Active CPU / ISR write budget for freshness nobody needed. There's no
+// on-demand revalidation webhook from Sanity wired up (yet), so this is
+// still the only thing that makes a Studio edit show up live — 1 hour is a
+// reasonable wait for content that isn't time-critical. Lower it for a
+// specific launch/promo, or add a Sanity webhook calling revalidatePath()
+// for instant updates without needing a short global window.
+const REVALIDATE_SECONDS = 3600;
 
 // Sanity documents from an earlier migration can predate a field (like a
 // newly-curated photo) that only exists in the local content files so far.
