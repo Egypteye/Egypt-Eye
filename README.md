@@ -257,6 +257,14 @@ Deploy to **[Vercel](https://vercel.com)**:
 Point your real domain at the Vercel project under Settings → Domains once
 you're ready to go live.
 
+**If a push doesn't show up under Deployments** (rare, but the GitHub→Vercel
+webhook for a given push can occasionally drop): clicking **Redeploy** on an
+existing deployment won't fix it — that button rebuilds the exact same commit
+that deployment already used, it doesn't pull anything newer. If the branch's
+latest commit truly isn't listed at all under Deployments, push a small new
+commit (even a trivial one) to re-trigger a fresh webhook delivery, or use
+`vercel --prod` from the CLI to force a deploy of the current `HEAD` directly.
+
 ### If you need static shared hosting instead (e.g. Hostinger)
 
 This is a real trade-off, not a small setting: static hosting can't run
