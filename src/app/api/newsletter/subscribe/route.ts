@@ -14,7 +14,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 
-type SubscribeBody = { email?: unknown; firstName?: unknown; source?: unknown };
+type SubscribeBody = { email?: unknown; firstName?: unknown; source?: unknown; company?: unknown };
 
 export async function POST(request: NextRequest) {
   if (!supabaseAdminConfigured) {
@@ -31,6 +31,13 @@ export async function POST(request: NextRequest) {
     body = await request.json();
   } catch {
     return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  if (typeof body.company === "string" && body.company.trim()) {
+    // Honeypot — a real visitor never fills this hidden field in. Report
+    // success so a bot has no signal to adapt against, without sending
+    // any email or writing a row.
+    return NextResponse.json({ ok: true, alreadySubscribed: false });
   }
 
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";

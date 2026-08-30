@@ -29,22 +29,57 @@ const nextConfig: NextConfig = {
     ],
   },
   async headers() {
+    // The public site (everything except /studio) loads no third-party
+    // scripts and makes no client-side requests beyond same-origin /api/*
+    // routes, Supabase (auth + the "avatars" storage bucket), the Sanity
+    // image CDN, and the YouTube/Vimeo embeds a Story's videoEmbedBlock can
+    // reference — confirmed by grepping for fetch()/script tags/external
+    // clients across src/app and src/components before writing this list,
+    // so tightening it here shouldn't break anything currently in use.
+    // script-src still allows 'unsafe-inline' for Next's own hydration
+    // bootstrap and this site's inline JSON-LD <script> tags — a stricter,
+    // nonce-based policy is possible but needs middleware + per-page nonce
+    // plumbing this pass doesn't attempt.
+    const publicCsp = [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline'",
+      "style-src 'self' 'unsafe-inline'",
+      "img-src 'self' data: https://cdn.sanity.io https://images.pexels.com https://*.supabase.co",
+      "font-src 'self' data:",
+      "connect-src 'self' https://*.supabase.co",
+      "frame-src 'self' https://www.youtube.com https://player.vimeo.com",
+      "frame-ancestors 'self'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "object-src 'none'",
+      "upgrade-insecure-requests",
+    ].join("; ");
+
     return [
       {
         // Applies everywhere, including /admin and /account — baseline
-        // hardening with no effect on normal page behavior. A full
-        // Content-Security-Policy is deliberately not included here: it
-        // needs to be scoped carefully around the embedded Sanity Studio
-        // at /studio (which relies on inline styles/scripts) and would
-        // risk breaking it without being able to test that live from this
-        // environment.
+        // hardening with no effect on normal page behavior.
         source: "/:path*",
         headers: [
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+          },
         ],
+      },
+      {
+        // The public site gets a real CSP. /studio is excluded (see below)
+        // — the embedded Sanity Studio needs a much looser policy (blob:
+        // URLs, web workers, its own asset/API origins) that isn't worth
+        // reverse-engineering without being able to test it live; Studio is
+        // already behind Sanity's own login, so it's lower-risk to leave
+        // unrestricted here than to risk silently breaking content editing.
+        source: "/:path((?!studio).*)",
+        headers: [{ key: "Content-Security-Policy", value: publicCsp }],
       },
     ];
   },

@@ -17,6 +17,7 @@ export function NewsletterSignup({
     const form = new FormData(e.currentTarget);
     const email = ((form.get("email") as string) ?? "").trim();
     const firstName = ((form.get("firstName") as string) ?? "").trim();
+    const company = ((form.get("company") as string) ?? "").trim();
 
     setStatus("sending");
     setErrorMessage("");
@@ -24,7 +25,7 @@ export function NewsletterSignup({
       const res = await fetch("/api/newsletter/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, firstName: firstName || undefined, source }),
+        body: JSON.stringify({ email, firstName: firstName || undefined, source, company }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Something went wrong.");
@@ -46,7 +47,13 @@ export function NewsletterSignup({
 
   if (variant === "compact") {
     return (
-      <form id="newsletter" onSubmit={handleSubmit} className="flex flex-col gap-2 sm:flex-row">
+      <form id="newsletter" onSubmit={handleSubmit} className="relative flex flex-col gap-2 sm:flex-row">
+        <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
+          <label>
+            Company
+            <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+          </label>
+        </div>
         <label className="sr-only" htmlFor="newsletter-email-compact">
           Email address
         </label>
@@ -83,7 +90,13 @@ export function NewsletterSignup({
           discount.
         </p>
 
-        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-3 sm:flex-row">
+        <form onSubmit={handleSubmit} className="relative mt-8 flex flex-col gap-3 sm:flex-row">
+          <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
+            <label>
+              Company
+              <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+            </label>
+          </div>
           <label className="sr-only" htmlFor="newsletter-firstname">
             First name (optional)
           </label>

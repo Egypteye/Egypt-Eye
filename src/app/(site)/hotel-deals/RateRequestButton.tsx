@@ -95,6 +95,7 @@ function RateRequestModal({
           name: form.get("name"),
           email: form.get("email"),
           message: form.get("message"),
+          company: form.get("company"),
         }),
       });
       if (!res.ok) {
@@ -161,7 +162,13 @@ function RateRequestModal({
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6">
+          <form onSubmit={handleSubmit} className="relative flex flex-col gap-4 p-6">
+            <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
+              <label>
+                Company
+                <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+              </label>
+            </div>
             <p className="text-sm text-ink-soft/70">
               The rates shown are our current Egypt Eye deal rates, not live availability. Tell us your dates and
               we&rsquo;ll confirm the latest price, availability, and any current discount by email.
