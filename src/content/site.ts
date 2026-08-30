@@ -34,6 +34,7 @@ export const site = {
     { label: "Hotel Deals", href: "/hotel-deals" },
     { label: "Customize Your Tour", href: "/customize" },
     { label: "Stories", href: "/stories" },
+    { label: "Partner With Us", href: "/partners" },
     { label: "About", href: "/about" },
   ],
   trustBadges: [

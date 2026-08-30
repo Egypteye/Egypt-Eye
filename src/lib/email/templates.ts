@@ -440,6 +440,51 @@ export function collaborationApplicationEmail({
   return { subject: `New Collaboration Application: ${fullName}`, html, text };
 }
 
+export function affiliateApplicationEmail({
+  fullName,
+  email,
+  websiteOrPlatform,
+  audienceSize,
+  promotionMethods,
+  reviewUrl,
+}: {
+  fullName: string;
+  email: string;
+  websiteOrPlatform: string;
+  audienceSize: string;
+  promotionMethods: string;
+  reviewUrl: string;
+}) {
+  const rows: [string, string][] = [
+    ["Name", fullName],
+    ["Email", email],
+    ["Website / platform", websiteOrPlatform],
+    ["Audience size", audienceSize || "Not provided"],
+    ["Promotion methods", promotionMethods],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const html = baseLayout({
+    preheader: `${fullName} applied to the Egypt Eye Affiliate Program.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Affiliate Application</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(fullName)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${ctaButton("Review in Admin", reviewUrl)}
+    `,
+    footerHtml: `Sent from the Affiliate Program application form on ${escapeHtml(SITE_URL)}/affiliate.`,
+  });
+
+  const text = `New Affiliate Application\n${fullName}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n\nReview: ${reviewUrl}`;
+
+  return { subject: `New Affiliate Application: ${fullName}`, html, text };
+}
+
 export function hotelRateRequestEmail({
   hotelName,
   roomName,

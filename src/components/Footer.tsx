@@ -6,7 +6,7 @@ import { Container } from "./Container";
 export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   return (
     <footer className="mt-24 border-t border-white/10 bg-ink text-cream">
-      <Container className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
+      <Container className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-5">
         <div>
           <div className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center rounded-full p-1 ring-1 ring-gold/40">
@@ -82,18 +82,33 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
             </li>
           </ul>
         </div>
+
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-cream/50">Partner With Us</p>
+          <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
+            <li>
+              <Link href="/travel-agents" className="hover:text-gold-light">
+                Travel Agents
+              </Link>
+            </li>
+            <li>
+              <Link href="/affiliate" className="hover:text-gold-light">
+                Affiliate Program
+              </Link>
+            </li>
+            <li>
+              <Link href="/collaborate" className="hover:text-gold-light">
+                Creators &amp; Influencers
+              </Link>
+            </li>
+          </ul>
+        </div>
       </Container>
 
       <div className="border-t border-white/10 py-6">
         <Container className="flex flex-col items-center justify-between gap-3 text-xs text-cream/40 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. All rights reserved.</p>
           <div className="flex items-center gap-4">
-            <Link href="/travel-agents" className="hover:text-cream/70">
-              Travel Agents
-            </Link>
-            <Link href="/collaborate" className="hover:text-cream/70">
-              Collaborate
-            </Link>
             <Link href="/privacy" className="hover:text-cream/70">
               Privacy Policy
             </Link>

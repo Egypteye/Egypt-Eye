@@ -12,6 +12,40 @@ export const metadata: Metadata = {
   alternates: { canonical: `${siteUrl}/collaborate` },
 };
 
+const WHAT_YOU_GET = [
+  {
+    title: "A Fully Hosted Experience",
+    description: "Tour, guide, and access arranged around what you're there to create — not a generic itinerary.",
+  },
+  {
+    title: "A Story Worth Telling",
+    description: "Access most visitors don't get — private timing, real conversations, and moments built for a real narrative, not a stock shot.",
+  },
+  {
+    title: "A Team That Gets Content",
+    description: "We plan around your shot list and posting schedule, not the other way around.",
+  },
+  {
+    title: "Long-Term Relationships",
+    description: "The best collaborations become repeat ones — return trips, new destinations, an ongoing partnership.",
+  },
+];
+
+const STEPS = [
+  {
+    title: "Apply",
+    description: "Tell us about your platform, your audience, and what you'd want to create.",
+  },
+  {
+    title: "We Review & Reply",
+    description: "Every application is reviewed personally — expect a response within a couple of weeks.",
+  },
+  {
+    title: "We Build the Trip Together",
+    description: "Dates, itinerary, and deliverables agreed before you travel — no surprises on either side.",
+  },
+];
+
 const WHAT_WE_LOOK_FOR = [
   {
     title: "Genuine Storytelling",
@@ -49,6 +83,37 @@ export default function CollaboratePage() {
             Content creators and influencers — apply for a sponsored trip, content partnership, or press coverage
             with Egypt Eye.
           </p>
+        </Container>
+      </section>
+
+      <section className="py-16">
+        <Container>
+          <SectionHeading eyebrow="What You Get" title="Built Around Your Content, Not Ours" />
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {WHAT_YOU_GET.map((item) => (
+              <div key={item.title} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
+                <p className="font-display text-base font-semibold text-ink">{item.title}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-sand-dim py-20">
+        <Container>
+          <SectionHeading eyebrow="How It Works" title="From Application to Trip" align="center" />
+          <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
+            {STEPS.map((s, i) => (
+              <div key={s.title} className="rounded-2xl bg-cream p-6 text-center shadow-sm">
+                <span className="mx-auto flex h-9 w-9 items-center justify-center rounded-full bg-gold/20 text-sm font-bold text-gold-dark">
+                  {i + 1}
+                </span>
+                <p className="mt-4 font-display text-base font-semibold text-ink">{s.title}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{s.description}</p>
+              </div>
+            ))}
+          </div>
         </Container>
       </section>
 
