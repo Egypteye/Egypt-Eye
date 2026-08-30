@@ -69,6 +69,32 @@ Sanity for you:
    (or just don't reuse the URL) so the endpoint can't be triggered by
    anyone who happens to guess it.
 
+## Setting up instant content updates
+
+By default, a page you edit in Studio can take up to an hour to show up on
+the live site (a deliberate tradeoff to keep hosting costs down — see the
+comment on `REVALIDATE_SECONDS` in `src/sanity/fetchers.ts`). This makes
+publishing show up immediately instead, via a webhook Sanity calls the
+moment you hit Publish.
+
+1. In Vercel → Project → Settings → Environment Variables, add
+   `SANITY_REVALIDATE_SECRET` — any random string you make up yourself
+   (same idea as `CRON_SECRET` / `MIGRATE_SECRET` above).
+2. In [sanity.io/manage](https://sanity.io/manage) → your project → **API →
+   Webhooks**, click **Create webhook**:
+   - **Name**: anything, e.g. "Revalidate site"
+   - **URL**: `https://yoursite.com/api/sanity/revalidate`
+   - **Dataset**: `production`
+   - **Trigger on**: Create, Update, and Delete (leave the filter blank —
+     it should fire for every document type)
+   - **HTTP method**: `POST`
+   - **HTTP Headers**: add one — `Authorization` = `Bearer YOUR_SECRET`
+     (the exact same string as `SANITY_REVALIDATE_SECRET` in Vercel)
+   - Save.
+3. Redeploy so Vercel picks up the new environment variable. From then on,
+   publishing anything in Studio refreshes the live site within a few
+   seconds — no need to wait, and no need to touch this again.
+
 ## Setting up email delivery (Resend)
 
 The **Customize Your Tour** form (`/customize`) submits to `/api/customize-request`,
