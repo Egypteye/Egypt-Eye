@@ -116,7 +116,7 @@ for connection status and to run the initial backfill.
    - `PINTEREST_APP_ID` and `PINTEREST_APP_SECRET` — from the app you just
      created.
    - `CRON_SECRET` — any random string you make up. This is what proves the
-     hourly sync request in `vercel.json` actually came from Vercel's own
+     daily sync request in `vercel.json` actually came from Vercel's own
      scheduler, not a random visitor hitting the URL.
 4. Run the new `supabase/migrations/0016_pinterest_connection.sql` migration
    in the Supabase SQL editor (same as every other migration in
@@ -126,7 +126,9 @@ for connection status and to run the initial backfill.
    authorize Egypt Eye on Pinterest, pick which board new Pins should go to,
    then click **Pin Remaining Stories** (repeatable — it does 25 at a time) to
    work through the backfill of everything already published. After that,
-   the hourly cron job takes over for every new story on its own.
+   the daily cron job takes over for every new story on its own (Vercel
+   Hobby plans only allow once-a-day crons — an hourly schedule fails
+   deployment outright rather than silently downgrading).
 
 ## Setting up the AI chat widget
 
