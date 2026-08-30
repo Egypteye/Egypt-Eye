@@ -1,0 +1,51 @@
+name: Sanity content backup
+
+# Weekly automated export of the "production" Sanity dataset (every tour,
+# experience, photoshoot, story, testimonial, site setting — everything
+# editable in Studio) as a downloadable, restorable archive. This is a real
+# backup, not a screenshot of the data: `sanity dataset export` produces an
+# NDJSON + assets tarball that `sanity dataset import` can restore from
+# directly if a dataset is ever lost or badly corrupted by a bad edit.
+#
+# Requires one repo secret: SANITY_AUTH_TOKEN — a token with at least
+# "Viewer" permission, created at https://www.sanity.io/manage under the
+# project's API tab, added under this repo's Settings -> Secrets and
+# variables -> Actions. Without it this workflow will fail at the export
+# step (visible in the Actions tab) rather than silently doing nothing.
+#
+# Can also be run on demand from the Actions tab ("Run workflow").
+on:
+  schedule:
+    - cron: "0 3 * * 1" # Every Monday at 03:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Export Sanity dataset
+        env:
+          # The Sanity CLI picks this up automatically — no --token flag
+          # exists on `datasets export`. The project ID below is not
+          # secret: it's already public in the deployed site's client
+          # bundle (see NEXT_PUBLIC_SANITY_PROJECT_ID).
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+        run: |
+          if [ -z "$SANITY_AUTH_TOKEN" ]; then
+            echo "::error::SANITY_AUTH_TOKEN secret is not set — see the comment at the top of this workflow file for how to create one."
+            exit 1
+          fi
+          npx --yes sanity@latest datasets export production "sanity-backup-$(date +%Y-%m-%d).tar.gz" --project eoashi0y
+
+      - name: Upload backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-backup-${{ github.run_id }}
+          path: sanity-backup-*.tar.gz
+          retention-days: 90
