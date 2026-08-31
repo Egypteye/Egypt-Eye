@@ -41,7 +41,7 @@ jobs:
             echo "::error::SANITY_AUTH_TOKEN secret is not set — see the comment at the top of this workflow file for how to create one."
             exit 1
           fi
-          npx --yes sanity@latest datasets export production "sanity-backup-$(date +%Y-%m-%d).tar.gz" --project eoashi0y
+          npx --yes sanity@latest datasets export production "sanity-backup-$(date +%Y-%m-%d).tar.gz" --project-id eoashi0y
 
       - name: Upload backup artifact
         uses: actions/upload-artifact@v4
