@@ -104,13 +104,6 @@ export function Navbar({
             </Link>
           ))}
 
-          <Link
-            href="/pharaoh-challenge"
-            className="whitespace-nowrap text-[13px] font-semibold text-gold-dark transition hover:text-gold"
-          >
-            Play &amp; Win
-          </Link>
-
           {moreNav.length > 0 && (
             <div className="relative" ref={moreRef}>
               <button
@@ -215,13 +208,6 @@ export function Navbar({
                 {item.label}
               </Link>
             ))}
-            <Link
-              href="/pharaoh-challenge"
-              className="rounded-lg px-3 py-2.5 text-sm font-semibold text-gold-dark hover:bg-sand-dim"
-              onClick={() => setOpen(false)}
-            >
-              Play &amp; Win
-            </Link>
             <Link
               href="/my-journey"
               className="mt-2 flex items-center justify-center gap-1.5 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2.5 text-sm font-semibold text-gold-dark"
