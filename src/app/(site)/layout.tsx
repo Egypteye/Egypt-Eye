@@ -1,7 +1,6 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
-import { ChatWidget } from "@/components/ChatWidget";
 import { JourneySyncBridge } from "@/components/JourneySyncBridge";
 import { NewsletterPopup } from "@/components/NewsletterPopup";
 import { getSiteSettings } from "@/sanity/fetchers";
@@ -23,7 +22,6 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <main id="main-content" className="flex-1">{children}</main>
       <Footer siteSettings={siteSettings} />
       <WhatsAppButton whatsappLink={siteSettings.contact.whatsappLink} />
-      <ChatWidget whatsappLink={siteSettings.contact.whatsappLink} />
       <NewsletterPopup />
     </div>
   );

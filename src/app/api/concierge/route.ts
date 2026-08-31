@@ -6,11 +6,10 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { checkRateLimit } from "@/lib/rateLimit";
 
-// "Ask Egypt Eye" — same Gemini setup as the public chat widget
-// (src/app/api/chat/route.ts), but requires a real session and only ever
-// sees the logged-in customer's own reservation (fetched server-side by
-// their user id, never trusted from the client). Every question and answer
-// is logged to concierge_requests for staff visibility.
+// "Ask Egypt Eye" — a Gemini-backed concierge that requires a real session
+// and only ever sees the logged-in customer's own reservation (fetched
+// server-side by their user id, never trusted from the client). Every
+// question and answer is logged to concierge_requests for staff visibility.
 
 const MODEL = "gemini-3.6-flash";
 const MAX_MESSAGES = 20;

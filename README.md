@@ -156,14 +156,16 @@ for connection status and to run the initial backfill.
    Hobby plans only allow once-a-day crons — an hourly schedule fails
    deployment outright rather than silently downgrading).
 
-## Setting up the AI chat widget
+## Setting up the AI concierge
 
-A floating chat button (bottom-right, above the WhatsApp button) lets visitors
-ask questions and get answers grounded in the site's real tours, experiences,
-policies, and FAQs (`src/content/chatContext.ts` builds that context;
-`src/app/api/chat/route.ts` sends it to the model). It's explicitly instructed
-never to invent a price or a detail that isn't in that context — for anything
-it doesn't know, it points the visitor to WhatsApp instead of guessing.
+There's no public chat widget on the site (removed by request — it used to
+float bottom-right above the WhatsApp button). The one remaining AI feature is
+**"Ask Egypt Eye"**, the concierge inside a customer's **My Egypt** portal
+after they've reserved a tour (`src/app/api/concierge/route.ts`) — it only
+ever answers using that signed-in customer's own reservation details, grounded
+in the site's real tours/policies/FAQs (`src/content/chatContext.ts`), and is
+explicitly instructed never to invent a price or a detail that isn't in that
+context.
 
 It runs on **Google Gemini's free tier** — no credit card required.
 
@@ -171,8 +173,8 @@ It runs on **Google Gemini's free tier** — no credit card required.
    sign in with a Google account, and click **Create API key**.
 2. In Vercel → Project → Settings → Environment Variables, add:
    - `GEMINI_API_KEY` — the key from step 1
-3. Redeploy. Until this is set, the widget still appears but shows a message
-   pointing to WhatsApp instead of a broken chat.
+3. Redeploy. Until this is set, "Ask Egypt Eye" shows an error instead of
+   answering — nothing else on the site depends on this key.
 
 The free tier's rate limit is generous for a small business site; if you ever
 outgrow it, the same code works with a paid Gemini key with no changes.

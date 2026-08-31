@@ -70,10 +70,9 @@ export function AddToJourneyButton({
 // popup, built from everything already in the journey rather than a single
 // just-added item.
 //
-// `bottom-40` (not `bottom-4`) clears the WhatsApp button (bottom-6, 56px
-// tall) and the chat widget's launcher (bottom-24, 56px tall) stacked above
-// it — at bottom-4 this toast's own suggestion rows sat right underneath
-// both, so their "+Add" targets were unreachable.
+// `bottom-24` (not `bottom-4`) clears the WhatsApp button (bottom-6, 56px
+// tall) — at bottom-4 this toast's own suggestion rows sat right underneath
+// it, so its "+Add" targets were unreachable.
 export function SuggestionToast({
   label,
   suggestions,
@@ -85,7 +84,7 @@ export function SuggestionToast({
 }) {
   return (
     <div
-      className="animate-fade-up fixed inset-x-4 bottom-40 z-50 mx-auto max-w-sm rounded-2xl border border-gold/20 bg-ink p-4 shadow-2xl shadow-black/20 sm:inset-x-auto sm:right-4"
+      className="animate-fade-up fixed inset-x-4 bottom-24 z-50 mx-auto max-w-sm rounded-2xl border border-gold/20 bg-ink p-4 shadow-2xl shadow-black/20 sm:inset-x-auto sm:right-4"
       role="status"
     >
       <div className="flex items-start justify-between gap-3">

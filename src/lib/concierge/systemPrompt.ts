@@ -3,10 +3,11 @@ import { buildChatContext } from "@/content/chatContext";
 import { site } from "@/content/site";
 import type { ReservationRecord } from "@/lib/myEgypt";
 
-// Grounds "Ask Egypt Eye" in both the site's real catalog (same context the
-// public chat widget uses) and this ONE customer's own reservation — never
-// another customer's data, since the caller always passes the reservation
-// already scoped to the logged-in user (see /api/concierge/route.ts).
+// Grounds "Ask Egypt Eye" in both the site's real catalog
+// (src/content/chatContext.ts) and this ONE customer's own reservation —
+// never another customer's data, since the caller always passes the
+// reservation already scoped to the logged-in user (see
+// /api/concierge/route.ts).
 export function buildConciergeSystemPrompt({
   firstName,
   reservation,
