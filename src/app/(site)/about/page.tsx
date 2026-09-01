@@ -4,6 +4,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TestimonialCard } from "@/components/TestimonialCard";
+import { SocialLinks } from "@/components/SocialLinks";
 import { getAboutPage, getContactPage, getSiteSettings, getTestimonials } from "@/sanity/fetchers";
 import { siteUrl } from "@/content/seo";
 
@@ -113,6 +114,11 @@ export default async function AboutPage() {
               </p>
               <p className="mt-1 text-sm text-ink-soft/70">{contact.emailCardDescription}</p>
             </a>
+          </div>
+
+          <div className="mt-10 flex flex-col items-center gap-3">
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">Follow Along</p>
+            <SocialLinks site={site} tone="light" />
           </div>
 
           <div className="mt-16">

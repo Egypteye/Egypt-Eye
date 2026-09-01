@@ -3,6 +3,8 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { CollaborateForm } from "./CollaborateForm";
+import { SocialLinks } from "@/components/SocialLinks";
+import { getSiteSettings } from "@/sanity/fetchers";
 import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
@@ -61,7 +63,9 @@ const WHAT_WE_LOOK_FOR = [
   },
 ];
 
-export default function CollaboratePage() {
+export default async function CollaboratePage() {
+  const site = await getSiteSettings();
+
   return (
     <>
       <section className="relative">
@@ -127,6 +131,13 @@ export default function CollaboratePage() {
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{item.description}</p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 flex flex-col items-center gap-3 text-center">
+            <p className="text-sm text-ink-soft/70">
+              Have a look at what we&rsquo;re already making before you apply:
+            </p>
+            <SocialLinks site={site} tone="light" />
           </div>
         </Container>
       </section>

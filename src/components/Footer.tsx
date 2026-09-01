@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import type { ResolvedSiteSettings } from "@/content/types";
 import { Container } from "./Container";
+import { SocialLinks } from "./SocialLinks";
 
 export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   return (
@@ -64,23 +65,7 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           <p className="text-sm font-semibold uppercase tracking-wide text-cream/50">
             {site.footer.followLabel}
           </p>
-          <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
-            <li>
-              <a href={site.socials.instagram} target="_blank" rel="noreferrer" className="hover:text-gold-light">
-                Instagram
-              </a>
-            </li>
-            <li>
-              <a href={site.socials.facebook} target="_blank" rel="noreferrer" className="hover:text-gold-light">
-                Facebook
-              </a>
-            </li>
-            <li>
-              <a href={site.socials.tiktok} target="_blank" rel="noreferrer" className="hover:text-gold-light">
-                TikTok
-              </a>
-            </li>
-          </ul>
+          <SocialLinks site={site} tone="dark" includeWhatsApp className="mt-4" />
         </div>
 
         <div>

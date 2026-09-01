@@ -266,6 +266,8 @@ export type SiteSettings = {
     instagram?: string;
     facebook?: string;
     tiktok?: string;
+    youtube?: string;
+    pinterest?: string;
   };
   heroImages?: {
     image?: SanityImage;
@@ -394,6 +396,8 @@ export type ResolvedSiteSettings = {
     instagram: string;
     facebook: string;
     tiktok: string;
+    youtube?: string;
+    pinterest?: string;
   };
   nav: readonly { label: string; href: string }[];
   heroImages: readonly {

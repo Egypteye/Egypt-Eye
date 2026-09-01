@@ -18,10 +18,20 @@ export const site = {
     whatsapp: "+20 127 414 4599",
     whatsappLink: "https://wa.me/201274144599",
   },
+  // The real accounts. Share-sheet tracking parameters (mibextid, igsi,
+  // _r/_t, feature=shared) are stripped — they identify whoever copied the
+  // link, add nothing for visitors, and these bare profile URLs are the
+  // canonical ones. Also feed the Organization JSON-LD's `sameAs` in
+  // src/app/layout.tsx, which is how search engines tie these profiles to
+  // the business, so they must stay real and current.
   socials: {
-    instagram: "https://instagram.com/egypteyetravel",
-    facebook: "https://facebook.com/egypteyetravel",
-    tiktok: "https://tiktok.com/@egypteyetravel",
+    instagram: "https://www.instagram.com/egypt_eye_",
+    facebook: "https://www.facebook.com/egypteyess",
+    tiktok: "https://www.tiktok.com/@egypt.eye1",
+    youtube: "https://www.youtube.com/@egypt_eye_",
+    // Pinterest's own share shortlink — it redirects to the profile. Left as
+    // issued because the canonical profile URL wasn't available to verify.
+    pinterest: "https://pin.it/6sBXRcNyB",
   },
   nav: [
     { label: "Home", href: "/" },

@@ -145,6 +145,8 @@ export const siteSettings = defineType({
         defineField({ name: "instagram", title: "Instagram", type: "url" }),
         defineField({ name: "facebook", title: "Facebook", type: "url" }),
         defineField({ name: "tiktok", title: "TikTok", type: "url" }),
+        defineField({ name: "youtube", title: "YouTube", type: "url" }),
+        defineField({ name: "pinterest", title: "Pinterest", type: "url" }),
       ],
     }),
 
