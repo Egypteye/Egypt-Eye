@@ -39,7 +39,37 @@ export const experience = defineType({
       of: [{ type: "image", options: { hotspot: true }, fields: [imageCreditField()] }],
     }),
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
+    defineField({
+      name: "location",
+      title: "Where it runs",
+      description: "The specific place, e.g. \"Wadi El Rayan, Fayoum Oasis\" or \"Gharb Soheil, Aswan\".",
+      type: "string",
+    }),
+    defineField({
+      name: "steps",
+      title: "What you'll do",
+      description: "The run of the activity, stop by stop, in order.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "activityStep",
+          fields: [
+            defineField({ name: "title", title: "Stop / stage", type: "string", validation: (r) => r.required() }),
+            defineField({ name: "description", title: "What happens", type: "text", rows: 3, validation: (r) => r.required() }),
+          ],
+          preview: { select: { title: "title", subtitle: "description" } },
+        },
+      ],
+    }),
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
+    defineField({
+      name: "goodToKnow",
+      title: "Good to know",
+      description: "Honest practicalities — start times, fitness, best season, what to bring.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
     defineField({
       name: "destinations",
       title: "Destinations",

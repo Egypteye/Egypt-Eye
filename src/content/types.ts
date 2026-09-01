@@ -63,6 +63,26 @@ export type Tour = {
   seo?: PageSeo;
 };
 
+// Where a photo came from, for anything that isn't Egypt Eye's own
+// photography. Mirrors imageCreditField() in sanity/schemaTypes/objects.ts so
+// a locally-defined activity can carry the same provenance a CMS-uploaded
+// photo does — which is what lets an Unsplash hero be traced back to its
+// photographer and its licence long after it was chosen.
+export type ImageCredit = {
+  source: string;
+  creator?: string;
+  /** The photo's own page on the source site, not the raw file URL. */
+  sourceUrl?: string;
+  license?: string;
+};
+
+// One step of what actually happens on an activity, in order. Deliberately
+// not `ItineraryDay` — these are hours inside a single outing, not days.
+export type ActivityStep = {
+  title: string;
+  description: string;
+};
+
 export type Experience = {
   slug: string;
   title: string;
@@ -72,9 +92,16 @@ export type Experience = {
   imageLabel?: string;
   image?: SanityImage;
   imageTone: ImageTone;
+  imageCredit?: ImageCredit;
   gallery?: SanityImage[];
   description: string;
+  /** The specific place this runs, e.g. "Wadi El Rayan, Fayoum Oasis". */
+  location?: string;
+  /** The run of the day, stop by stop. */
+  steps?: ActivityStep[];
   included: string[];
+  /** Practical expectations — timings, fitness, seasonality, what to bring. */
+  goodToKnow?: string[];
   destinations?: string[];
   relatedTours?: Tour[];
   seo?: PageSeo;

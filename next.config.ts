@@ -19,6 +19,16 @@ const nextConfig: NextConfig = {
         hostname: "images.pexels.com",
       },
       {
+        // Hero photography for the destination activities, hot-linked from
+        // Unsplash's own CDN rather than re-hosted — which is what the
+        // Unsplash API Guidelines ask integrations to do. Each activity in
+        // content/activities.ts carries the photographer and the photo's
+        // Unsplash page in `imageCredit`. Served through next/image, so these
+        // reach the browser from this origin and need no CSP img-src change.
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
         // Customer-uploaded profile pictures, served from the public
         // "avatars" Storage bucket (see supabase/migrations/0010_profile_avatars.sql).
         // Wildcarded so this keeps working if the project ever moves to a

@@ -37,9 +37,9 @@ export const listingPages: ResolvedListingPages = {
   experiences: {
     heroEyebrow: "Extra Experiences",
     heroTitle: "Make Any Tour More Memorable",
-    sectionTitle: "Short experiences, big memories",
+    sectionTitle: "Activities across Egypt, by destination",
     sectionDescription:
-      "Add one of these to any tour, or book it on its own — each runs about an hour and is easy to slot into your schedule.",
+      "Everything from a one-hour camel ride at Giza to two nights camping in the White Desert. Add one to a tour, or build a trip around it — every activity below is one we run ourselves.",
   },
   photoshoots: {
     heroEyebrow: "Photoshoot Packages",

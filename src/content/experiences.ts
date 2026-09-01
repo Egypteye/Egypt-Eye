@@ -1,9 +1,15 @@
 import type { Experience } from "./types";
+import { activities } from "./activities";
 
-// Extra Experiences — short add-on activities. Prices and ratings are as listed
-// on the current site.
+// Extra Experiences — short add-on activities. Prices and ratings on the six
+// below are as listed on the current site.
+//
+// The wider activity catalogue — the researched day trips and overnights
+// organised by destination — lives in ./activities.ts and is appended at the
+// bottom of this file, so `experiences` stays the single list every fetcher,
+// page and Journey lookup reads.
 
-export const experiences: Experience[] = [
+const houseExperiences: Experience[] = [
   {
     slug: "quiet-nile-felucca-tour",
     title: "Quiet Nile Felucca Tour",
@@ -102,3 +108,7 @@ export const experiences: Experience[] = [
 export function getExperienceBySlug(slug: string) {
   return experiences.find((e) => e.slug === slug);
 }
+
+// One list, two sources: the original Cairo/Giza add-ons first, then the
+// destination activity catalogue.
+export const experiences: Experience[] = [...houseExperiences, ...activities];

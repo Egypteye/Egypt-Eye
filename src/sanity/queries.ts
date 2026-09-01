@@ -50,12 +50,13 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, included, destinations
+  image, imageTone, description, location, included, destinations
 }`;
 
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, gallery, description, included, destinations,
+  image, imageTone, gallery, description, location,
+  steps[]{title, description}, included, goodToKnow, destinations,
   relatedTours[]->{${relatedTourFields}},
   seo
 `;
