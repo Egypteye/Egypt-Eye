@@ -17,6 +17,12 @@ const PAGE_URL = `${siteUrl}/pharaoh-challenge`;
 // sharer.php and other link-preview crawlers render a card for this page at
 // all; without it, a crawler that can't find any og:* tags on the page shows
 // nothing, which is why sharing previously looked like it "did nothing."
+// Auth-gated: this segment reads the signed-in user server-side, so it must
+// never be statically prerendered. Declared explicitly rather than inferred
+// from cookie access, so a build missing the Supabase env vars fails loudly
+// instead of silently shipping a cached logged-out page.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,

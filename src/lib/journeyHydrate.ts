@@ -1,4 +1,9 @@
-import { getDestinationHubBySlug, getExperienceBySlug, getPhotoshootBySlug, getTourBySlug } from "@/sanity/fetchers";
+import {
+  getDestinationHubsBySlugs,
+  getExperiencesBySlugs,
+  getPhotoshootsBySlugs,
+  getToursBySlugs,
+} from "@/sanity/fetchers";
 import type { DestinationHub, Experience, Photoshoot, Tour } from "@/content/types";
 
 export type JourneyRef = { type: "tour" | "experience" | "photoshoot" | "destination"; slug: string };
@@ -14,21 +19,23 @@ export type HydratedJourney = {
 // localStorage "My Journey" shortlist back into full, live CMS records.
 // Shared by /api/journey (My Journey page) and /api/reservations (pricing
 // + eligibility at submission time) so both always see the same real data.
+//
+// One batched query per content type rather than one per saved item: this
+// previously fanned out into a separate Sanity request for every slug — up
+// to 50 per lookup, on two of the highest-intent pages on the site. The
+// per-slug fallback, ordering and drop-if-missing behaviour is unchanged;
+// the *BySlugs fetchers reuse the exact merge helpers the single-slug
+// lookups use.
 export async function hydrateJourneyRefs(items: JourneyRef[]): Promise<HydratedJourney> {
   const slugsFor = (type: JourneyRef["type"]) =>
     [...new Set(items.filter((i) => i?.type === type && typeof i.slug === "string").map((i) => i.slug))];
 
   const [tours, experiences, photoshoots, destinations] = await Promise.all([
-    Promise.all(slugsFor("tour").map((slug) => getTourBySlug(slug))),
-    Promise.all(slugsFor("experience").map((slug) => getExperienceBySlug(slug))),
-    Promise.all(slugsFor("photoshoot").map((slug) => getPhotoshootBySlug(slug))),
-    Promise.all(slugsFor("destination").map((slug) => getDestinationHubBySlug(slug))),
+    getToursBySlugs(slugsFor("tour")),
+    getExperiencesBySlugs(slugsFor("experience")),
+    getPhotoshootsBySlugs(slugsFor("photoshoot")),
+    getDestinationHubsBySlugs(slugsFor("destination")),
   ]);
 
-  return {
-    tours: tours.filter((t): t is Tour => Boolean(t)),
-    experiences: experiences.filter((e): e is Experience => Boolean(e)),
-    photoshoots: photoshoots.filter((p): p is Photoshoot => Boolean(p)),
-    destinations: destinations.filter((d): d is DestinationHub => Boolean(d)),
-  };
+  return { tours, experiences, photoshoots, destinations };
 }

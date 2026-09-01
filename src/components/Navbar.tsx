@@ -5,25 +5,22 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type { ResolvedSiteSettings } from "@/content/types";
 import { useJourneyItems } from "@/lib/journey";
-import type { CurrentUser } from "@/lib/auth/session";
+import { useSessionUser } from "@/lib/auth/useSessionUser";
 
 // Only these stay visible in the desktop nav bar; every other site.nav item
 // (Home is already reachable via the logo) is tucked into the "More"
 // dropdown so the bar doesn't get crowded as the nav list grows.
 const PRIMARY_NAV_LABELS = ["Best Seller Tours", "Signature Experiences", "Unique Photoshoots"];
 
-export function Navbar({
-  siteSettings: site,
-  currentUser,
-}: {
-  siteSettings: ResolvedSiteSettings;
-  currentUser: CurrentUser | null;
-}) {
+export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   const [open, setOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const journeyCount = useJourneyItems().length;
+  // Presentation only — which account link/avatar to show. Every protected
+  // page still authorizes server-side; see useSessionUser's own comment.
+  const currentUser = useSessionUser();
 
   const primaryNav = PRIMARY_NAV_LABELS.map((label) => site.nav.find((item) => item.label === label)).filter(
     (item): item is (typeof site.nav)[number] => Boolean(item)

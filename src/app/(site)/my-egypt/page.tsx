@@ -13,6 +13,12 @@ import { PackingChecklist } from "./PackingChecklist";
 import { AddExperienceButton } from "./AddExperienceButton";
 import { ConciergeWidget } from "./ConciergeWidget";
 
+// Auth-gated: this segment reads the signed-in user server-side, so it must
+// never be statically prerendered. Declared explicitly rather than inferred
+// from cookie access, so a build missing the Supabase env vars fails loudly
+// instead of silently shipping a cached logged-out page.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "My Egypt",
   robots: { index: false, follow: true },

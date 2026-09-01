@@ -27,12 +27,25 @@ export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(orde
   highlights, included, excluded, itinerary, ${priceFields}
 }`;
 
-export const tourBySlugQuery = groq`*[_type == "tour" && slug.current == $slug && hidden != true][0] {
+// Shared by the single-slug and batched (`in $slugs`) variants below, so the
+// two can never drift into returning different shapes for the same document.
+const tourDetailFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
   highlights, included, excluded, itinerary,
   relatedExperiences[]->{${relatedExtraExperienceFields}},
   ${priceFields}, seo
+`;
+
+export const tourBySlugQuery = groq`*[_type == "tour" && slug.current == $slug && hidden != true][0] {
+  ${tourDetailFields}
+}`;
+
+// Batched lookup for the My Journey shortlist — one request for every saved
+// tour instead of one request per tour. Callers re-order the result to match
+// the slugs they asked for; GROQ makes no ordering promise here.
+export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slugs && hidden != true] {
+  ${tourDetailFields}
 }`;
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
@@ -40,11 +53,19 @@ export const experiencesQuery = groq`*[_type == "experience"] | order(order asc)
   image, imageTone, description, included, destinations
 }`;
 
-export const experienceBySlugQuery = groq`*[_type == "experience" && slug.current == $slug][0] {
+const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, included, destinations,
   relatedTours[]->{${relatedTourFields}},
   seo
+`;
+
+export const experienceBySlugQuery = groq`*[_type == "experience" && slug.current == $slug][0] {
+  ${experienceDetailFields}
+}`;
+
+export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.current in $slugs] {
+  ${experienceDetailFields}
 }`;
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
@@ -52,17 +73,33 @@ export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc)
   locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations
 }`;
 
-export const photoshootBySlugQuery = groq`*[_type == "photoshoot" && slug.current == $slug][0] {
+const photoshootDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, seo
+`;
+
+export const photoshootBySlugQuery = groq`*[_type == "photoshoot" && slug.current == $slug][0] {
+  ${photoshootDetailFields}
+}`;
+
+export const photoshootsBySlugsQuery = groq`*[_type == "photoshoot" && slug.current in $slugs] {
+  ${photoshootDetailFields}
 }`;
 
 export const destinationHubsQuery = groq`*[_type == "destinationHub"] | order(order asc) {
   "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, mood, image, imageTone, order
 }`;
 
-export const destinationHubBySlugQuery = groq`*[_type == "destinationHub" && slug.current == $slug][0] {
+const destinationHubFields = groq`
   "slug": slug.current, name, region, tagline, intro, matchNames, mapX, mapY, mood, image, imageTone, order
+`;
+
+export const destinationHubBySlugQuery = groq`*[_type == "destinationHub" && slug.current == $slug][0] {
+  ${destinationHubFields}
+}`;
+
+export const destinationHubsBySlugsQuery = groq`*[_type == "destinationHub" && slug.current in $slugs] {
+  ${destinationHubFields}
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {

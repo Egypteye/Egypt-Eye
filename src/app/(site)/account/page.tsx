@@ -8,6 +8,12 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { DiscountOfferCard } from "./DiscountOfferCard";
 import { JourneyList } from "./JourneyList";
 
+// Auth-gated: this segment reads the signed-in user server-side, so it must
+// never be statically prerendered. Declared explicitly rather than inferred
+// from cookie access, so a build missing the Supabase env vars fails loudly
+// instead of silently shipping a cached logged-out page.
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "My Account",
   robots: { index: false, follow: true },

@@ -4,10 +4,16 @@ import { WhatsAppButton } from "@/components/WhatsAppButton";
 import { JourneySyncBridge } from "@/components/JourneySyncBridge";
 import { NewsletterPopup } from "@/components/NewsletterPopup";
 import { getSiteSettings } from "@/sanity/fetchers";
-import { getCurrentUser } from "@/lib/auth/session";
 
+// Deliberately does NOT resolve the signed-in user here. getCurrentUser()
+// reads cookies(), which opts this layout — and therefore every page nested
+// under it — out of static generation, so the whole public site was being
+// server-rendered per request. Navbar and JourneySyncBridge are both client
+// components and now read the session themselves for presentation only
+// (see src/lib/auth/useSessionUser.ts); pages that need real authorization
+// still call getCurrentUser()/requireAdmin() server-side and stay dynamic.
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const [siteSettings, currentUser] = await Promise.all([getSiteSettings(), getCurrentUser()]);
+  const siteSettings = await getSiteSettings();
 
   return (
     <div className="flex min-h-full flex-col">
@@ -17,8 +23,8 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       >
         Skip to content
       </a>
-      <JourneySyncBridge userId={currentUser?.id ?? null} />
-      <Navbar siteSettings={siteSettings} currentUser={currentUser} />
+      <JourneySyncBridge />
+      <Navbar siteSettings={siteSettings} />
       <main id="main-content" className="flex-1">{children}</main>
       <Footer siteSettings={siteSettings} />
       <WhatsAppButton whatsappLink={siteSettings.contact.whatsappLink} />

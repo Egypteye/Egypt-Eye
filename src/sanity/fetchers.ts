@@ -5,13 +5,16 @@ import {
   contactPageQuery,
   customizePageQuery,
   destinationHubBySlugQuery,
+  destinationHubsBySlugsQuery,
   destinationHubsQuery,
   experienceBySlugQuery,
+  experiencesBySlugsQuery,
   experiencesQuery,
   faqsQuery,
   homepageQuery,
   listingPagesQuery,
   photoshootBySlugQuery,
+  photoshootsBySlugsQuery,
   photoshootsQuery,
   signatureExperienceBySlugQuery,
   signatureExperiencesQuery,
@@ -20,6 +23,7 @@ import {
   storyBySlugQuery,
   testimonialsQuery,
   tourBySlugQuery,
+  toursBySlugsQuery,
   toursQuery,
 } from "./queries";
 import { tours as localTours } from "@/content/tours";
@@ -122,11 +126,29 @@ export async function getTours(): Promise<Tour[]> {
   return result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours;
 }
 
-export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  const result = await safeFetch<Tour | null>(tourBySlugQuery, { slug });
+// The single-slug and batched lookups below share this, so "what happens when
+// Sanity has no row / no image for this slug" is defined in exactly one place.
+function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined {
   const local = localTours.find((t) => t.slug === slug);
   if (!result) return local;
   return result.image ? result : { ...result, image: local?.image };
+}
+
+export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
+  return mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug);
+}
+
+// One request for the whole set instead of one per slug (see
+// src/lib/journeyHydrate.ts). Returns in the order the slugs were asked for
+// — GROQ doesn't guarantee ordering — and drops slugs that resolve to
+// nothing, matching the single-slug path's behaviour.
+export async function getToursBySlugs(slugs: string[]): Promise<Tour[]> {
+  if (slugs.length === 0) return [];
+  const results = await safeFetch<Tour[]>(toursBySlugsQuery, { slugs });
+  const bySlug = new Map((results ?? []).map((t) => [t.slug, t]));
+  return slugs
+    .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
+    .filter((t): t is Tour => Boolean(t));
 }
 
 export async function getAllTourSlugs(): Promise<string[]> {
@@ -154,11 +176,23 @@ export async function getExperiences(): Promise<Experience[]> {
     : withLocalExperienceRelations(localExperiences);
 }
 
-export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
-  const result = await safeFetch<Experience | null>(experienceBySlugQuery, { slug });
+function mergeExperienceWithLocal(result: Experience | null, slug: string): Experience | undefined {
   const local = localExperiences.find((e) => e.slug === slug);
   if (!result) return local && withLocalExperienceRelations([local])[0];
   return result.image ? result : { ...result, image: local?.image };
+}
+
+export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
+  return mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug);
+}
+
+export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience[]> {
+  if (slugs.length === 0) return [];
+  const results = await safeFetch<Experience[]>(experiencesBySlugsQuery, { slugs });
+  const bySlug = new Map((results ?? []).map((e) => [e.slug, e]));
+  return slugs
+    .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
+    .filter((e): e is Experience => Boolean(e));
 }
 
 export async function getPhotoshoots(): Promise<Photoshoot[]> {
@@ -166,11 +200,23 @@ export async function getPhotoshoots(): Promise<Photoshoot[]> {
   return result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots;
 }
 
-export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
-  const result = await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug });
+function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Photoshoot | undefined {
   const local = localPhotoshoots.find((p) => p.slug === slug);
   if (!result) return local;
   return result.image ? result : { ...result, image: local?.image };
+}
+
+export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
+  return mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
+}
+
+export async function getPhotoshootsBySlugs(slugs: string[]): Promise<Photoshoot[]> {
+  if (slugs.length === 0) return [];
+  const results = await safeFetch<Photoshoot[]>(photoshootsBySlugsQuery, { slugs });
+  const bySlug = new Map((results ?? []).map((p) => [p.slug, p]));
+  return slugs
+    .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
+    .filter((p): p is Photoshoot => Boolean(p));
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
@@ -199,11 +245,26 @@ export async function getDestinationHubs(): Promise<DestinationHub[]> {
   return result && result.length > 0 ? withLocalImageFallback(result, localDestinationHubs) : localDestinationHubs;
 }
 
-export async function getDestinationHubBySlug(slug: string): Promise<DestinationHub | undefined> {
-  const result = await safeFetch<DestinationHub | null>(destinationHubBySlugQuery, { slug });
+function mergeDestinationHubWithLocal(result: DestinationHub | null, slug: string): DestinationHub | undefined {
   const local = localDestinationHubs.find((d) => d.slug === slug);
   if (!result) return local;
   return result.image ? result : { ...result, image: local?.image };
+}
+
+export async function getDestinationHubBySlug(slug: string): Promise<DestinationHub | undefined> {
+  return mergeDestinationHubWithLocal(
+    await safeFetch<DestinationHub | null>(destinationHubBySlugQuery, { slug }),
+    slug
+  );
+}
+
+export async function getDestinationHubsBySlugs(slugs: string[]): Promise<DestinationHub[]> {
+  if (slugs.length === 0) return [];
+  const results = await safeFetch<DestinationHub[]>(destinationHubsBySlugsQuery, { slugs });
+  const bySlug = new Map((results ?? []).map((d) => [d.slug, d]));
+  return slugs
+    .map((slug) => mergeDestinationHubWithLocal(bySlug.get(slug) ?? null, slug))
+    .filter((d): d is DestinationHub => Boolean(d));
 }
 
 export async function getFaqs(): Promise<Faq[]> {

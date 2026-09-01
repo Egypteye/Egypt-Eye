@@ -3,6 +3,12 @@ import { redirect } from "next/navigation";
 import { Container } from "@/components/Container";
 import { getCurrentUser } from "@/lib/auth/session";
 
+// Auth-gated: this segment reads the signed-in user server-side, so it must
+// never be statically prerendered. Declared explicitly rather than inferred
+// from cookie access, so a build missing the Supabase env vars fails loudly
+// instead of silently shipping a cached logged-out page.
+export const dynamic = "force-dynamic";
+
 const FULL_NAV = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/discounts", label: "Discounts" },
