@@ -33,6 +33,7 @@ import { testimonials as localTestimonials } from "@/content/testimonials";
 import { stories as localStories } from "@/content/stories";
 import { faqs as localFaqs } from "@/content/faq";
 import { site as localSite } from "@/content/site";
+import { destinationPhotos as localDestinationPhotos } from "@/content/destinationPhotos";
 import { customizePage as localCustomizePage } from "@/content/customizePage";
 import { aboutPage as localAboutPage } from "@/content/aboutPage";
 import { contactPage as localContactPage } from "@/content/contactPage";
@@ -342,10 +343,45 @@ const defaultBanners = {
 // all-or-nothing swap, so filling in just one field in the Studio (e.g. only
 // the WhatsApp number) doesn't blank out everything else that hasn't been
 // touched yet.
+// Site Settings > Destinations panel photos is an override list, not a
+// replacement one: an entry uploaded in Studio wins for that destination, and
+// every destination it doesn't mention keeps its curated default from
+// content/destinationPhotos.ts. Merging name by name (rather than taking
+// Sanity's array wholesale) is what stops a single upload from blanking the
+// other nine tiles and sending them back to reusing their linked tour's photo
+// — which is how Red Sea, Sharm El Sheikh and Hurghada ended up identical.
+function mergeDestinationPhotos(
+  fromSanity: { name?: string; image?: import("@/content/types").SanityImage }[] | undefined
+): ResolvedSiteSettings["destinationPhotos"] {
+  const overrides = new Map<string, import("@/content/types").SanityImage>();
+  for (const entry of fromSanity ?? []) {
+    if (entry.name && entry.image) overrides.set(entry.name, entry.image);
+  }
+
+  const merged = localDestinationPhotos.map((p) => ({
+    name: p.name,
+    image: overrides.get(p.name) ?? p.image,
+  }));
+
+  // A destination added in Studio that has no local default still gets its
+  // photo through, rather than silently falling back to a tour photo.
+  const known = new Set(localDestinationPhotos.map((p) => p.name));
+  for (const [name, image] of overrides) {
+    if (!known.has(name)) merged.push({ name, image });
+  }
+
+  return merged;
+}
+
 export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
   const result = await safeFetch<SiteSettings>(siteSettingsQuery);
   if (!result) {
-    return { ...localSite, heroImages: defaultHeroImages, ...defaultBanners, destinationPhotos: [] };
+    return {
+      ...localSite,
+      heroImages: defaultHeroImages,
+      ...defaultBanners,
+      destinationPhotos: mergeDestinationPhotos(undefined),
+    };
   }
 
   // Every entry needs its required fields filled in before it's usable — a
@@ -395,7 +431,7 @@ export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
       tone: result.customizeImage?.tone ?? defaultBanners.customizeImage.tone,
       image: result.customizeImage?.image ?? defaultBanners.customizeImage.image,
     },
-    destinationPhotos: result.destinationPhotos ?? [],
+    destinationPhotos: mergeDestinationPhotos(result.destinationPhotos),
     policies: {
       ...localSite.policies,
       ...result.policies,

@@ -1,4 +1,5 @@
 import type { Experience } from "./types";
+import { unsplashCredit, unsplashUrl } from "./unsplash";
 
 // Activities / Extra Experiences — the add-on outings Egypt Eye runs around
 // the country, organised by destination on /experiences.
@@ -33,15 +34,9 @@ import type { Experience } from "./types";
 // source stays identifiable. Replacing any of these with Egypt Eye's own
 // photography is an improvement — swap the `image` and drop the `imageCredit`.
 
-// Unsplash serves resized derivatives from the photo's own path. 1600px wide
-// covers the largest slot any of these render in (the detail-page hero).
-function unsplash(photoPath: string): string {
-  return `https://images.unsplash.com/${photoPath}?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600`;
-}
-
-function credit(creator: string, sourceUrl: string) {
-  return { source: "Unsplash", creator, sourceUrl, license: "Unsplash License" };
-}
+// Shared with the homepage destination tiles — see ./unsplash.ts.
+const unsplash = unsplashUrl;
+const credit = unsplashCredit;
 
 export const activities: Experience[] = [
   // ── Giza ───────────────────────────────────────────────────────────────
