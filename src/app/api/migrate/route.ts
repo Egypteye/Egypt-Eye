@@ -207,7 +207,16 @@ export async function GET(request: NextRequest) {
         image: existingMedia.get(id)?.image,
         gallery: existingMedia.get(id)?.gallery,
         description: e.description,
+        location: e.location,
+        // Array items need their own _key or Sanity rejects the document.
+        steps: e.steps?.map((step) => ({
+          _type: "activityStep",
+          _key: key(),
+          title: step.title,
+          description: step.description,
+        })),
         included: e.included,
+        goodToKnow: e.goodToKnow,
         destinations: e.destinations,
         order: i,
       });
