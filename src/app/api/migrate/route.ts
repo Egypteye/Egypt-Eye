@@ -113,12 +113,27 @@ export async function GET(request: NextRequest) {
   // this migration was re-run for a type that already had them. Fetching
   // whatever's currently set and folding it back into each payload below
   // makes re-running this endpoint safe even after Studio photo uploads.
-  let existingMedia = new Map<string, { image?: unknown; gallery?: unknown }>();
+  //
+  // `rating` gets the same treatment, for the same reason: it DOES have a
+  // local-content equivalent (tours.ts/experiences.ts/photoshoots.ts), but
+  // that local value is a one-time snapshot from whenever it was last
+  // written into the content file — it's the real review count/score, kept
+  // current by editing it in Studio as new reviews come in, not by editing
+  // the repo. A full resync unconditionally overwriting `rating` from the
+  // local snapshot would silently roll back every rating to that stale
+  // number the moment ANY tour/experience/photoshoot field changed and
+  // needed re-migrating — which is exactly what happened running
+  // `only=tours,experiences,...` to seed unrelated new content. `existing`
+  // wins whenever the document already has a rating; the local value is
+  // used only to seed a brand-new document that doesn't have one yet. The
+  // dedicated `only=ratings` pass below remains the deliberate, explicit way
+  // to push an updated local rating into Sanity.
+  let existingMedia = new Map<string, { image?: unknown; gallery?: unknown; rating?: unknown }>();
   if (shouldRun("tours") || shouldRun("experiences") || shouldRun("photoshoots")) {
-    const rows = await client.fetch<{ _id: string; image?: unknown; gallery?: unknown }[]>(
-      `*[_type in ["tour","experience","photoshoot"]]{_id, image, gallery}`
+    const rows = await client.fetch<{ _id: string; image?: unknown; gallery?: unknown; rating?: unknown }[]>(
+      `*[_type in ["tour","experience","photoshoot"]]{_id, image, gallery, rating}`
     );
-    existingMedia = new Map(rows.map((r) => [r._id, { image: r.image, gallery: r.gallery }]));
+    existingMedia = new Map(rows.map((r) => [r._id, { image: r.image, gallery: r.gallery, rating: r.rating }]));
   }
 
   // Same reasoning as `existingMedia` above, for the three other document
@@ -191,7 +206,8 @@ export async function GET(request: NextRequest) {
         destinations: t.destinations,
         travelStyle: t.travelStyle,
         featured: t.featured,
-        rating: t.rating ? { _type: "rating", ...t.rating } : undefined,
+        rating:
+          existingMedia.get(id)?.rating ?? (t.rating ? { _type: "rating", ...t.rating } : undefined),
         badge: t.badge,
         imageTone: t.imageTone,
         image: existingMedia.get(id)?.image,
@@ -222,7 +238,8 @@ export async function GET(request: NextRequest) {
         title: e.title,
         slug: { _type: "slug", current: e.slug },
         duration: e.duration,
-        rating: e.rating ? { _type: "rating", ...e.rating } : undefined,
+        rating:
+          existingMedia.get(id)?.rating ?? (e.rating ? { _type: "rating", ...e.rating } : undefined),
         price: { _type: "price", ...e.price },
         relatedTours: e.relatedTours?.map((t) => ({
           _type: "reference",
@@ -259,7 +276,8 @@ export async function GET(request: NextRequest) {
         title: p.title,
         slug: { _type: "slug", current: p.slug },
         duration: p.duration,
-        rating: p.rating ? { _type: "rating", ...p.rating } : undefined,
+        rating:
+          existingMedia.get(id)?.rating ?? (p.rating ? { _type: "rating", ...p.rating } : undefined),
         price: { _type: "price", ...p.price },
         locations: p.locations,
         imageTone: p.imageTone,
