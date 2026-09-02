@@ -30,14 +30,15 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // Uses createOrReplace with deterministic IDs, which does a FULL document
 // replace — any field not included in the payload below gets wiped, not
 // preserved. For tours/experiences/photoshoots (`image`/`gallery`),
-// destinationHubs (`image`), events (`backgroundImage`), and
-// signatureExperiences (`heroImage`/`gallery`) — fields that are typically
-// set by uploading a real photo directly in the Studio rather than edited
-// in the local content files — this route fetches whatever's currently set
-// first and folds it back into the payload, so re-running it never wipes a
-// Studio-uploaded photo. Any OTHER field edited directly in the Studio
-// (e.g. SEO overrides) still follows normal full-replace semantics and
-// gets discarded on re-run.
+// destinationHubs (`image`), events (`backgroundImage`),
+// signatureExperiences (`heroImage`/`gallery`), and siteSettings
+// (`heroImages`, the four banner photos, `destinationPhotos`) — fields that
+// are typically set by uploading a real photo directly in the Studio rather
+// than edited in the local content files — this route fetches whatever's
+// currently set first and folds it back into the payload, so re-running it
+// never wipes a Studio-uploaded photo. Any OTHER field edited directly in
+// the Studio (e.g. SEO overrides) still follows normal full-replace
+// semantics and gets discarded on re-run.
 //
 // All mutations are queued onto ONE Sanity transaction and committed together
 // at the end, rather than sent as separate requests. This matters for
@@ -147,6 +148,31 @@ export async function GET(request: NextRequest) {
       `*[_type == "signatureExperience"]{_id, heroImage, gallery}`
     );
     existingSignatureMedia = new Map(rows.map((r) => [r._id, { heroImage: r.heroImage, gallery: r.gallery }]));
+  }
+
+  // Same reasoning again, for siteSettings' own image fields. These have no
+  // equivalent in content/site.ts at all — heroImages (the homepage hero
+  // slideshow), the four banner photos, and destinationPhotos are Studio-only
+  // — so unlike the merges above there's nothing local to merge in; this
+  // purely preserves what's already there. Missing this one meant every
+  // siteSettings migration (the full endpoint with no `only=`, or explicitly
+  // `only=siteSettings`) silently wiped every uploaded hero slide photo (and
+  // its headline/subtext/link), all four banner photos, and any destination
+  // photo overrides back to blank — the homepage would then fall back to
+  // gradient placeholders and the local slide defaults.
+  let existingSiteSettingsMedia: {
+    heroImages?: unknown;
+    flyingDressImage?: unknown;
+    redSeaImage?: unknown;
+    ninePyramidsImage?: unknown;
+    customizeImage?: unknown;
+    destinationPhotos?: unknown;
+  } = {};
+  if (shouldRun("siteSettings")) {
+    existingSiteSettingsMedia =
+      (await client.fetch<typeof existingSiteSettingsMedia>(
+        `*[_type == "siteSettings"][0]{heroImages, flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage, destinationPhotos}`
+      )) ?? {};
   }
 
   if (shouldRun("tours")) {
@@ -351,6 +377,14 @@ export async function GET(request: NextRequest) {
       positioning: site.positioning,
       contact: { _type: "object", ...site.contact },
       socials: { _type: "object", ...site.socials },
+      // Studio-only fields with no equivalent in content/site.ts — see the
+      // existingSiteSettingsMedia comment above.
+      heroImages: existingSiteSettingsMedia.heroImages,
+      flyingDressImage: existingSiteSettingsMedia.flyingDressImage,
+      redSeaImage: existingSiteSettingsMedia.redSeaImage,
+      ninePyramidsImage: existingSiteSettingsMedia.ninePyramidsImage,
+      customizeImage: existingSiteSettingsMedia.customizeImage,
+      destinationPhotos: existingSiteSettingsMedia.destinationPhotos,
       pillars: site.pillars.map((p) => ({ ...p, _type: "object", _key: key() })),
       trustStats: { _type: "object", ...site.trustStats },
       nav: site.nav.map((n) => ({ ...n, _type: "object", _key: key() })),
