@@ -25,7 +25,7 @@ export const site = {
   // src/app/layout.tsx, which is how search engines tie these profiles to
   // the business, so they must stay real and current.
   socials: {
-    instagram: "https://www.instagram.com/egypt_eye_",
+    instagram: "https://www.instagram.com/egypt_eye_/",
     facebook: "https://www.facebook.com/egypteyess",
     tiktok: "https://www.tiktok.com/@egypt.eye1",
     youtube: "https://www.youtube.com/@egypt_eye_",
