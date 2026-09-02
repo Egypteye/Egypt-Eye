@@ -8,6 +8,7 @@ import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
+import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
@@ -156,14 +157,13 @@ export default async function PhotoshootDetailPage({
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
           <PriceTag price={photoshoot.price} />
           <p className="mt-1 text-xs text-ink-soft/60">per session</p>
-          <a
-            href={site.contact.whatsappLink}
-            target="_blank"
-            rel="noreferrer"
+          <WhatsAppBookButton
+            whatsappLink={site.contact.whatsappLink}
+            context={{ page: "this photoshoot's page", item: photoshoot.title }}
             className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
           >
             Book on WhatsApp
-          </a>
+          </WhatsAppBookButton>
           <EnquiryButton itemType="photoshoot" itemTitle={photoshoot.title} itemSlug={photoshoot.slug} className="mt-3" />
 
           <div className="mt-4 border-t border-black/5 pt-4">

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { whatsappHref } from "@/lib/whatsapp";
 
 type Message = { role: "user" | "assistant"; content: string; suggestedRequest?: string | null; requestStatus?: "idle" | "sending" | "sent" };
 
@@ -104,7 +105,12 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
         {status === "error" && (
           <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-terracotta/10 px-4 py-2.5 text-sm text-terracotta">
             {errorMessage} Prefer to talk to a person? Message us on{" "}
-            <a href={whatsappLink} target="_blank" rel="noreferrer" className="underline">
+            <a
+              href={whatsappHref(whatsappLink, { page: "the My Egypt concierge chat", intro: "Hi, I have a question about my trip." })}
+              target="_blank"
+              rel="noreferrer"
+              className="underline"
+            >
               WhatsApp
             </a>
             .

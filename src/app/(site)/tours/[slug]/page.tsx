@@ -9,6 +9,7 @@ import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
+import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
@@ -103,14 +104,13 @@ export default async function TourDetailPage({
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">
-            <a
-              href={site.contact.whatsappLink}
-              target="_blank"
-              rel="noreferrer"
+            <WhatsAppBookButton
+              whatsappLink={site.contact.whatsappLink}
+              context={{ page: "this tour's page", item: tour.title }}
               className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
             >
               Plan My Trip
-            </a>
+            </WhatsAppBookButton>
             <a
               href={tour.itinerary ? "#itinerary" : "#details"}
               className="inline-flex items-center gap-1.5 rounded-full border border-cream/30 bg-cream/10 px-7 py-3.5 text-sm font-semibold text-cream backdrop-blur-sm transition hover:bg-cream/20"
@@ -226,14 +226,13 @@ export default async function TourDetailPage({
           <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
             <PriceTag price={tour.price} />
             <p className="mt-1 text-xs text-ink-soft/60">per person, private tour</p>
-            <a
-              href={site.contact.whatsappLink}
-              target="_blank"
-              rel="noreferrer"
+            <WhatsAppBookButton
+              whatsappLink={site.contact.whatsappLink}
+              context={{ page: "this tour's page", item: tour.title }}
               className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
             >
               Book on WhatsApp
-            </a>
+            </WhatsAppBookButton>
             <EnquiryButton itemType="tour" itemTitle={tour.title} itemSlug={tour.slug} className="mt-3" />
 
             <div className="mt-4 border-t border-black/5 pt-4">

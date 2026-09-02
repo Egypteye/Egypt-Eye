@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { ResolvedSiteSettings } from "@/content/types";
 import { Container } from "./Container";
 import { SocialLinks } from "./SocialLinks";
+import { WhatsAppBookButton } from "./WhatsAppBookButton";
 
 export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   return (
@@ -54,9 +55,13 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               </a>
             </li>
             <li>
-              <a href={site.contact.whatsappLink} target="_blank" rel="noreferrer" className="hover:text-gold-light">
+              <WhatsAppBookButton
+                whatsappLink={site.contact.whatsappLink}
+                context={{ page: "the site footer", intro: "Hi, I have a question." }}
+                className="hover:text-gold-light"
+              >
                 {site.footer.whatsappPrefix}{site.contact.whatsapp}
-              </a>
+              </WhatsAppBookButton>
             </li>
           </ul>
         </div>

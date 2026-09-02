@@ -12,6 +12,7 @@ import { CountdownBanner } from "./CountdownBanner";
 import { PackingChecklist } from "./PackingChecklist";
 import { AddExperienceButton } from "./AddExperienceButton";
 import { ConciergeWidget } from "./ConciergeWidget";
+import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
 // never be statically prerendered. Declared explicitly rather than inferred
@@ -114,14 +115,13 @@ export default async function MyEgyptPage() {
                   </li>
                 ))}
               </ul>
-              <a
-                href={site.contact.whatsappLink}
-                target="_blank"
-                rel="noreferrer"
+              <WhatsAppBookButton
+                whatsappLink={site.contact.whatsappLink}
+                context={{ page: "the My Egypt page", intro: "Hi, I have a question about my trip." }}
                 className="mt-4 inline-block text-sm font-semibold text-gold-dark underline"
               >
                 Need help? Talk to Egypt Eye
-              </a>
+              </WhatsAppBookButton>
             </div>
           )}
 
@@ -263,9 +263,13 @@ export default async function MyEgyptPage() {
 
           <InfoCard title="Important Contacts">
             <div className="flex flex-col gap-2 text-sm">
-              <a href={site.contact.whatsappLink} target="_blank" rel="noreferrer" className="font-semibold text-gold-dark underline">
+              <WhatsAppBookButton
+                whatsappLink={site.contact.whatsappLink}
+                context={{ page: "the My Egypt page", intro: "Hi, I have a question about my trip." }}
+                className="font-semibold text-gold-dark underline"
+              >
                 WhatsApp Egypt Eye — {site.contact.whatsapp}
-              </a>
+              </WhatsAppBookButton>
               <a href={`mailto:${site.contact.email}`} className="text-ink-soft/70 hover:text-ink">
                 {site.contact.email}
               </a>

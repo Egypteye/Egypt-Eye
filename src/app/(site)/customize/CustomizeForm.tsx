@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import type { CustomizeFormField, CustomizeFormSection, Destination, Interest, ResolvedSiteSettings } from "@/content/types";
 import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
+import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 
 const CHIPS_TYPES = new Set(["chips", "chips-destinations", "chips-interests"]);
 
@@ -210,9 +211,13 @@ export function CustomizeForm({
       {status === "sent" && (
         <p className="mt-3 text-center text-xs text-ink-soft/60">
           Thanks — your request has been sent. We&rsquo;ll reply by email soon. Prefer to chat now? Message us on{" "}
-          <a href={site.contact.whatsappLink} target="_blank" rel="noreferrer" className="underline">
+          <WhatsAppBookButton
+            whatsappLink={site.contact.whatsappLink}
+            context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
+            className="underline"
+          >
             WhatsApp
-          </a>
+          </WhatsAppBookButton>
           .
         </p>
       )}
@@ -220,9 +225,13 @@ export function CustomizeForm({
       {status === "error" && (
         <p className="mt-3 text-center text-xs text-terracotta">
           Something went wrong sending your request. Please message us directly on{" "}
-          <a href={site.contact.whatsappLink} target="_blank" rel="noreferrer" className="underline">
+          <WhatsAppBookButton
+            whatsappLink={site.contact.whatsappLink}
+            context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
+            className="underline"
+          >
             WhatsApp
-          </a>{" "}
+          </WhatsAppBookButton>{" "}
           or email{" "}
           <a href={`mailto:${site.contact.email}`} className="underline">
             {site.contact.email}

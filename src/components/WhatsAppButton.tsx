@@ -1,7 +1,64 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { whatsappHref } from "@/lib/whatsapp";
+
+// The floating chat bubble lives in the shared site layout, so it has no
+// page-specific data to work with — just the URL. That's enough to tell the
+// reservations team roughly where someone was on the site when they reached
+// for it, even though it can't name a specific tour/experience/photoshoot
+// the way each page's own "Book on WhatsApp" button can.
+const EXACT_PAGE_LABELS: Record<string, string> = {
+  "/": "the homepage",
+  "/tours": "the tours page",
+  "/experiences": "the experiences page",
+  "/photoshoots": "the photoshoots page",
+  "/signature-experiences": "the Signature Experiences page",
+  "/customize": "the Customize Your Tour page",
+  "/about": "the About page",
+  "/hotel-deals": "the Hotel Deals page",
+  "/stories": "the Stories page",
+  "/testimonials": "the Testimonials page",
+  "/explore-egypt": "the Explore Egypt page",
+  "/transfers": "the Transfers page",
+  "/travel-agents": "the Travel Agents page",
+  "/affiliate": "the Affiliate page",
+  "/collaborate": "the Collaborate page",
+  "/partners": "the Partners page",
+  "/my-journey": "the My Journey page",
+  "/my-egypt": "the My Egypt page",
+  "/pharaoh-challenge": "the Pharaoh's Challenge page",
+};
+
+// For a detail page (e.g. /tours/8-day-essential-egypt-nile-cruise) we don't
+// know the item's real title here, so this names the section instead of
+// guessing one from the slug.
+const SECTION_LABELS: Record<string, string> = {
+  tours: "a tour page",
+  experiences: "an experience page",
+  photoshoots: "a photoshoot page",
+  "signature-experiences": "a Signature Experience page",
+  stories: "a story page",
+  "explore-egypt": "a destination page",
+  "hotel-deals": "a hotel page",
+};
+
+function labelForPath(pathname: string): string {
+  if (EXACT_PAGE_LABELS[pathname]) return EXACT_PAGE_LABELS[pathname];
+  const [root] = pathname.split("/").filter(Boolean);
+  return (root && SECTION_LABELS[root]) || (root && EXACT_PAGE_LABELS[`/${root}`]) || "the website";
+}
+
 export function WhatsAppButton({ whatsappLink }: { whatsappLink: string }) {
+  const pathname = usePathname();
+  const href = whatsappHref(whatsappLink, {
+    page: labelForPath(pathname ?? "/"),
+    intro: "Hi, I have a question.",
+  });
+
   return (
     <a
-      href={whatsappLink}
+      href={href}
       target="_blank"
       rel="noreferrer"
       aria-label="Chat on WhatsApp"

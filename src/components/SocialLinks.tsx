@@ -1,4 +1,5 @@
 import type { ResolvedSiteSettings } from "@/content/types";
+import { whatsappHref } from "@/lib/whatsapp";
 
 // One definition of "where Egypt Eye is on social", rendered everywhere the
 // links appear (footer, About's Get in Touch, the creators programme page).
@@ -47,14 +48,30 @@ const LABELS: Record<string, string> = {
 // WhatsApp comes from `contact`, not `socials`: it's how people reach the
 // team, and it deliberately stays out of the Organization JSON-LD's `sameAs`
 // (which is for profile pages, not a chat link).
-export function getSocialPlatforms(site: ResolvedSiteSettings, includeWhatsApp: boolean): Platform[] {
+export function getSocialPlatforms(
+  site: ResolvedSiteSettings,
+  includeWhatsApp: boolean,
+  // Only meaningful when includeWhatsApp is true — every current caller
+  // renders this icon row in the footer, so that's the only label needed
+  // so far, but a future caller elsewhere on the site should pass its own.
+  whatsappPage = "the site footer"
+): Platform[] {
   const entries: [string, string | undefined][] = [
     ["instagram", site.socials.instagram],
     ["facebook", site.socials.facebook],
     ["tiktok", site.socials.tiktok],
     ["youtube", site.socials.youtube],
     ["pinterest", site.socials.pinterest],
-    ...(includeWhatsApp ? ([["whatsapp", site.contact.whatsappLink]] as [string, string | undefined][]) : []),
+    ...(includeWhatsApp
+      ? ([
+          [
+            "whatsapp",
+            site.contact.whatsappLink
+              ? whatsappHref(site.contact.whatsappLink, { page: whatsappPage, intro: "Hi, I have a question." })
+              : undefined,
+          ],
+        ] as [string, string | undefined][])
+      : []),
   ];
 
   // Skip anything unset — a Sanity siteSettings doc can leave a platform blank.

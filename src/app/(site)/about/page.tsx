@@ -5,6 +5,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { SocialLinks } from "@/components/SocialLinks";
+import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { Reveal } from "@/components/Reveal";
 import { Frame, IndexRow, Numeral, Photo, Rule, Wordmark } from "./parts";
 import {
@@ -641,10 +642,9 @@ export default async function AboutPage() {
         <Container>
           <SectionHeading eyebrow={contact.heroEyebrow} title="Get in Touch" align="center" />
           <div className="mx-auto mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
-            <a
-              href={site.contact.whatsappLink}
-              target="_blank"
-              rel="noreferrer"
+            <WhatsAppBookButton
+              whatsappLink={site.contact.whatsappLink}
+              context={{ page: "the About page", intro: "Hi, I have a question." }}
               className="group min-w-0 rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-gold/40"
             >
               <div className="h-full rounded-[1.375rem] bg-cream px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-7">
@@ -656,7 +656,7 @@ export default async function AboutPage() {
                 </p>
                 <p className="mt-1.5 text-sm text-ink-soft/70">{contact.whatsappCardDescription}</p>
               </div>
-            </a>
+            </WhatsAppBookButton>
 
             <a
               href={`mailto:${site.contact.email}`}
@@ -747,14 +747,13 @@ export default async function AboutPage() {
                 </svg>
               </span>
             </Link>
-            <a
-              href={site.contact.whatsappLink}
-              target="_blank"
-              rel="noreferrer"
+            <WhatsAppBookButton
+              whatsappLink={site.contact.whatsappLink}
+              context={{ page: "the About page" }}
               className="inline-flex items-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-cream/85 transition-colors duration-300 hover:border-gold/60 hover:text-gold-light"
             >
               Message Us on WhatsApp
-            </a>
+            </WhatsAppBookButton>
           </div>
         </Container>
       </section>

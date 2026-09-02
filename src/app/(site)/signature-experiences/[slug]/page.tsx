@@ -12,6 +12,7 @@ import { TestimonialCard } from "@/components/TestimonialCard";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { StoryCard } from "@/components/StoryCard";
 import { EnquiryButton } from "@/components/EnquiryButton";
+import { whatsappHref as buildWhatsAppHref } from "@/lib/whatsapp";
 import {
   getAllSignatureExperienceSlugs,
   getSignatureExperienceBySlug,
@@ -60,12 +61,13 @@ export default async function SignatureExperienceDetailPage({
   if (!experience) notFound();
 
   const isComingSoon = experience.status === "comingSoon";
-  const enquiryText = encodeURIComponent(
-    isComingSoon
-      ? `Hi! I'd like to be notified when "${experience.name}" is available.`
-      : `Hi! I'd love to know more about "${experience.name}."`
-  );
-  const whatsappHref = `${site.contact.whatsappLink}?text=${enquiryText}`;
+  const whatsappHref = buildWhatsAppHref(site.contact.whatsappLink, {
+    page: "this experience's page",
+    item: experience.name,
+    intro: isComingSoon
+      ? "Hi! I'd like to be notified when this becomes available."
+      : "Hi! I'd love to know more about this experience.",
+  });
   const ctaLabel = isComingSoon ? "Ask to Be Notified" : "Enquire About This Experience";
 
   const breadcrumbs = breadcrumbJsonLd([

@@ -15,6 +15,7 @@ import { ReviewsMarquee } from "@/components/ReviewsMarquee";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { Reveal } from "@/components/Reveal";
 import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
+import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { Glyph } from "./pharaoh-challenge/glyphs";
 import { getCatalogStats, getOverallRating } from "@/content/aggregate";
 import { siteUrl } from "@/content/seo";
@@ -331,14 +332,13 @@ export default async function Home() {
             <div className="flex flex-col items-center gap-5 rounded-3xl bg-gold/15 px-8 py-16 text-center">
               <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">{home.finalCta.title}</h2>
               <p className="max-w-xl text-ink-soft/80">{home.finalCta.body}</p>
-              <a
-                href={site.contact.whatsappLink}
-                target="_blank"
-                rel="noreferrer"
+              <WhatsAppBookButton
+                whatsappLink={site.contact.whatsappLink}
+                context={{ page: "the homepage" }}
                 className="rounded-full bg-ink px-8 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
               >
                 {home.finalCta.buttonLabel}
-              </a>
+              </WhatsAppBookButton>
             </div>
           </Reveal>
         </Container>
