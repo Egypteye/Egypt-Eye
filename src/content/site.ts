@@ -29,9 +29,7 @@ export const site = {
     facebook: "https://www.facebook.com/egypteyess",
     tiktok: "https://www.tiktok.com/@egypt.eye1",
     youtube: "https://www.youtube.com/@egypt_eye_",
-    // Pinterest's own share shortlink — it redirects to the profile. Left as
-    // issued because the canonical profile URL wasn't available to verify.
-    pinterest: "https://pin.it/6sBXRcNyB",
+    pinterest: "https://www.pinterest.com/EgyptEyeTours/",
   },
   nav: [
     { label: "Home", href: "/" },
