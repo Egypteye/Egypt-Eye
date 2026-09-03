@@ -242,6 +242,7 @@ src/lib/os/
   automation.ts     mutation-triggered rules and the hourly sweep
   audit.ts          the activity story and the forensic record
   analytics.ts      everything derived at read time
+  saved-views.ts    stored filter documents -> the filter URL
   actions/          server actions, each behind guarded()
 
 src/app/os/
@@ -252,6 +253,27 @@ src/app/os/
 src/components/os/  the shared component kit
 src/app/api/os/     search, pulse, calculate, cron, exports
 ```
+
+## Saved views are stored queries, not stored links
+
+A row in `os_saved_views` holds a `query` JSON document, and
+`src/lib/os/saved-views.ts` is the only thing that turns it into a screen. It
+translates the document into the same filter URL a person would land on by
+clicking the filters by hand, which has three consequences worth stating:
+
+- **Renaming a view changes nothing about what it shows.** Nothing matches on
+  the name.
+- **Editing the query is what changes the list**, and it takes effect the next
+  time anyone opens it — a view is re-run, never cached.
+- **A key the build cannot honour is reported, not dropped.** The chip carries
+  a marker and says which part of its query was ignored. A view that quietly
+  drops half its filters shows a confident, wrong list, which is worse than no
+  view at all.
+
+The same rule covers permissions. "High margin trips" filters on money, so for
+somebody without `trips.financials` the page runs the rest of the view and says
+plainly that the margin filter was left out — rather than showing an unfiltered
+list under a filtered heading.
 
 ## What is deliberately not built
 

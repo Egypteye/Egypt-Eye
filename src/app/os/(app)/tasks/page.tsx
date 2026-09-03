@@ -5,6 +5,7 @@ import { relativeTime, formatDateTime, todayInCairo, nowMs } from "@/lib/os/date
 import { PageHeader, NoAccess, Card, CardHeader, Badge, Stat, EmptyState, buttonClass } from "@/components/os/ui";
 import { TaskToggle } from "./TaskToggle";
 import { Icon } from "@/components/os/icons";
+import { SavedViews } from "@/components/os/SavedViews";
 import { scopeNote } from "@/lib/os/scope";
 
 export const dynamic = "force-dynamic";
@@ -26,10 +27,12 @@ export default async function TasksPage({
   const one = (key: string) => (Array.isArray(params[key]) ? params[key]![0] : params[key]) as string | undefined;
   const who = one("who") ?? "me";
   const showDone = one("done") === "1";
+  const overdueOnly = one("overdue") === "1";
 
   const tasks = await listTasks(actor, {
     mineOnly: who === "me",
     statuses: showDone ? ["todo", "in_progress", "blocked", "done"] : ["todo", "in_progress", "blocked"],
+    overdueOnly,
     limit: 300,
   });
 
@@ -75,15 +78,29 @@ export default async function TasksPage({
             Everyone
           </Link>
         ) : null}
-        <Link href={`/os/tasks?who=${who}&done=${showDone ? "0" : "1"}`} className="rounded-lg border border-os-line-strong bg-white px-2.5 py-1.5 text-[12.5px] font-medium text-os-muted hover:text-os-text">
+        <Link
+          href={`/os/tasks?who=${who}${showDone ? "&done=1" : ""}${overdueOnly ? "" : "&overdue=1"}`}
+          className={`rounded-lg px-2.5 py-1.5 text-[12.5px] font-medium transition ${
+            overdueOnly ? "bg-os-red text-white" : "border border-os-line-strong bg-white text-os-muted hover:text-os-text"
+          }`}
+        >
+          {overdueOnly ? "Overdue only ✕" : "Overdue only"}
+        </Link>
+        <Link href={`/os/tasks?who=${who}${overdueOnly ? "&overdue=1" : ""}&done=${showDone ? "0" : "1"}`} className="rounded-lg border border-os-line-strong bg-white px-2.5 py-1.5 text-[12.5px] font-medium text-os-muted hover:text-os-text">
           {showDone ? "Hide completed" : "Show completed"}
         </Link>
       </div>
 
+      <SavedViews resource="tasks" employeeId={actor.employeeId} className="mb-4" />
+
       {open.length === 0 ? (
         <EmptyState
-          title={who === "me" ? "Nothing on your list" : "No open tasks"}
-          description="Checklists generate themselves when a trip is created, so an empty list means the work is genuinely done."
+          title={overdueOnly ? "Nothing overdue" : who === "me" ? "Nothing on your list" : "No open tasks"}
+          description={
+            overdueOnly
+              ? "Nothing has passed its due date. Clear the filter to see everything that is still open."
+              : "Checklists generate themselves when a trip is created, so an empty list means the work is genuinely done."
+          }
           action={<Link href="/os/trips" className={buttonClass.secondary}>Go to trips</Link>}
           icon={<Icon.CheckSquare size={26} />}
         />

@@ -4,7 +4,7 @@ import { osdb, getOrg } from "@/lib/os/db";
 import { employeeUtilization, periodPresets } from "@/lib/os/analytics";
 import { todayInCairo } from "@/lib/os/dates";
 import { formatMoney } from "@/lib/os/money";
-import { PageHeader, NoAccess, Table, Th, Td, Badge, Stat, Avatar, EmptyState } from "@/components/os/ui";
+import { PageHeader, NoAccess, Table, Th, Td, Badge, Stat, Avatar, EmptyState, buttonClass } from "@/components/os/ui";
 import { Icon } from "@/components/os/icons";
 
 export const dynamic = "force-dynamic";
@@ -56,6 +56,11 @@ export default async function TeamPage() {
         eyebrow="Records"
         title="Team"
         description="Everyone who delivers the work, including freelance crew who have no login. A person exists here whether or not they can sign in."
+        actions={
+          can(actor, "team.create") ? (
+            <Link href="/os/team/new" className={buttonClass.gold}><Icon.Plus size={15} />Add a person</Link>
+          ) : null
+        }
       />
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -66,7 +71,12 @@ export default async function TeamPage() {
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState title="No team records yet" description="Add the people who run the operation, including crew who never sign in." icon={<Icon.Users size={26} />} />
+        <EmptyState
+          title="No team records yet"
+          description="Add the people who run the operation, including crew who never sign in."
+          icon={<Icon.Users size={26} />}
+          action={can(actor, "team.create") ? <Link href="/os/team/new" className={buttonClass.gold}>Add the first person</Link> : undefined}
+        />
       ) : (
         <Table>
           <thead>

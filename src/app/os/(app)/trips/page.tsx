@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { getActor, can } from "@/lib/os/actor";
-import { listTrips, type TripFilters } from "@/lib/os/trips";
+import { listTrips, financialFilterKeys, type TripFilters } from "@/lib/os/trips";
 import { getStatuses } from "@/lib/os/status";
 import { osdb, getOrg } from "@/lib/os/db";
 import { todayInCairo, addDays } from "@/lib/os/dates";
-import { PageHeader, EmptyState, buttonClass, NoAccess, Table, Th, Card } from "@/components/os/ui";
+import { PageHeader, EmptyState, buttonClass, NoAccess, Table, Th, Card, Notice } from "@/components/os/ui";
 import { TripRow } from "@/components/os/trip";
 import { Icon } from "@/components/os/icons";
 import { TripFilterBar } from "./TripFilterBar";
@@ -39,10 +39,20 @@ export default async function TripsPage({
   const preset: Record<string, { from?: string; to?: string }> = {
     upcoming: { from: today },
     today: { from: today, to: today },
+    tomorrow: { from: addDays(today, 1), to: addDays(today, 1) },
     week: { from: today, to: addDays(today, 6) },
     month: { from: today.slice(0, 8) + "01", to: addDays(today, 60) },
+    quarter: { from: addDays(today, -90), to: today },
     past: { to: addDays(today, -1) },
     all: {},
+  };
+
+  const backwards = range === "past" || range === "quarter";
+  const number = (key: string) => {
+    const raw = one(key);
+    if (raw == null || raw.trim() === "") return undefined;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : undefined;
   };
 
   const filters: TripFilters = {
@@ -54,23 +64,35 @@ export default async function TripsPage({
     typeKeys: many("type"),
     readiness: many("readiness") as TripFilters["readiness"],
     missingRole: one("missing"),
+    tag: one("tag"),
+    producesContent: one("produces") === "content",
+    balanceDue: one("balance") === "due",
+    marginPctGte: number("margin_gte"),
+    marginPctLt: number("margin_lt"),
     search: one("q"),
-    order: range === "past" ? "date_desc" : (one("sort") as TripFilters["order"]) ?? "date_asc",
+    order: backwards ? "date_desc" : (one("sort") as TripFilters["order"]) ?? "date_asc",
     limit: 300,
   };
 
   const org = await getOrg();
   const db = osdb();
 
-  const [trips, statuses, units, types, savedViews] = await Promise.all([
+  const [trips, statuses, units, types, savedViews, tags] = await Promise.all([
     listTrips(actor, filters),
     getStatuses(),
     db.from("os_business_units").select("id, key, name").eq("org_id", org.id).eq("active", true).order("sort_order"),
     db.from("os_trip_types").select("key, name").eq("org_id", org.id).eq("active", true).order("sort_order"),
     db.from("os_saved_views").select("id, name, query, icon").eq("org_id", org.id).eq("resource", "trips").eq("shared", true).order("sort_order"),
+    db.from("os_tags").select("key, label").eq("org_id", org.id).contains("applies_to", ["trip"]).order("key"),
   ]);
 
   const showMoney = can(actor, "trips.financials");
+
+  // A view that filters on margin or on an unpaid balance cannot run for
+  // somebody who is not allowed to see money. Rather than showing them an
+  // unfiltered list under a filtered heading, the page says which filter was
+  // dropped and why.
+  const droppedMoneyFilters = showMoney ? [] : financialFilterKeys(filters);
 
   return (
     <>
@@ -104,8 +126,23 @@ export default async function TripsPage({
         statuses={statuses.map((s) => ({ key: s.key, label: s.label }))}
         units={(units.data ?? []).map((u) => ({ id: u.id as string, name: u.name as string }))}
         types={(types.data ?? []).map((t) => ({ key: t.key as string, name: t.name as string }))}
-        savedViews={(savedViews.data ?? []).map((v) => ({ id: v.id as string, name: v.name as string }))}
+        tags={(tags.data ?? []).map((t) => ({ key: t.key as string, label: t.label as string }))}
+        savedViews={(savedViews.data ?? []).map((v) => ({
+          id: v.id as string,
+          name: v.name as string,
+          resource: "trips",
+          query: (v.query ?? {}) as Record<string, unknown>,
+        }))}
       />
+
+      {droppedMoneyFilters.length ? (
+        <div className="mt-4">
+          <Notice tone="amber" title={`The ${droppedMoneyFilters.join(" and ")} filter was not applied`}>
+            This view filters on figures your access does not include, so it has been left out rather than applied
+            silently. Everything else in the view ran normally.
+          </Notice>
+        </div>
+      ) : null}
 
       {trips.length === 0 ? (
         <Card className="mt-4">

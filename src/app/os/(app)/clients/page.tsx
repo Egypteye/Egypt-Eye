@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/os/dates";
 import { formatMoney } from "@/lib/os/money";
 import { PageHeader, NoAccess, Table, Th, Td, Badge, EmptyState, buttonClass, Stat } from "@/components/os/ui";
 import { Icon } from "@/components/os/icons";
+import { SavedViews } from "@/components/os/SavedViews";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Clients" };
@@ -130,6 +131,8 @@ export default async function ClientsPage({
         </select>
         <button type="submit" className={buttonClass.secondary}>Filter</button>
       </form>
+
+      <SavedViews resource="clients" employeeId={actor.employeeId} className="mb-4" />
 
       {rows.length === 0 ? (
         <EmptyState

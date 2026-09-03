@@ -64,12 +64,37 @@ export type TripFilters = {
   clientId?: string;
   readiness?: ("green" | "yellow" | "red")[];
   search?: string;
+  /**
+   * A crew role the trip does NOT have. Two values are not roles:
+   * `crew` means no confirmed or assigned person at all, and `media` means
+   * no media link has been attached yet.
+   */
   missingRole?: string;
+  /** Tag key, matched through os_taggings. */
   tag?: string;
+  /** Only trip types whose readiness contract includes a media folder. */
+  producesContent?: boolean;
+  /** Only trips where the client still owes money. Needs trips.financials. */
+  balanceDue?: boolean;
+  /** Margin band, in percent. Needs trips.financials. */
+  marginPctGte?: number;
+  marginPctLt?: number;
   limit?: number;
   order?: "date_asc" | "date_desc" | "readiness";
   includeArchived?: boolean;
 };
+
+/**
+ * Filters that read money, and therefore cannot be honoured for somebody who
+ * does not hold trips.financials. Callers ask so they can say so, rather than
+ * quietly returning an unfiltered list that looks filtered.
+ */
+export function financialFilterKeys(filters: TripFilters): string[] {
+  const keys: string[] = [];
+  if (filters.balanceDue) keys.push("unpaid balance");
+  if (filters.marginPctGte != null || filters.marginPctLt != null) keys.push("margin");
+  return keys;
+}
 
 const TRIP_SELECT =
   "id, ref, title, status, priority, trip_date, start_time, end_time, starts_at, duration_minutes, " +
@@ -106,6 +131,27 @@ export async function listTrips(actor: Actor, filters: TripFilters = {}): Promis
   if (filters.search) {
     const term = filters.search.replace(/[%,()]/g, " ").trim();
     if (term) query = query.or(`ref.ilike.%${term}%,title.ilike.%${term}%`);
+  }
+
+  // A tag lives in os_taggings, so resolve the matching trip ids first. An
+  // unknown tag key matches nothing rather than everything.
+  if (filters.tag) {
+    const { data: tag } = await db
+      .from("os_tags")
+      .select("id")
+      .eq("org_id", org.id)
+      .eq("key", filters.tag)
+      .maybeSingle();
+    const taggedIds: string[] = [];
+    if (tag?.id) {
+      const { data: taggings } = await db
+        .from("os_taggings")
+        .select("entity_id")
+        .eq("tag_id", tag.id as string)
+        .eq("entity_type", "trip");
+      for (const row of taggings ?? []) taggedIds.push(row.entity_id as string);
+    }
+    query = query.in("id", taggedIds.length ? taggedIds : [NO_MATCH]);
   }
 
   // Filtering by who is on the trip needs the assignment table first.
@@ -161,8 +207,45 @@ export async function listTrips(actor: Actor, filters: TripFilters = {}): Promis
 
   let items = trips.map((t) => toListItem(t, actor, crewByTrip.get(t.id) ?? [], readiness.get(t.id)));
 
-  if (filters.missingRole) {
+  if (filters.missingRole === "crew") {
+    // Nobody at all. The trip has a date and no human attached to it.
+    items = items.filter((t) => !t.crew.some((c) => c.employeeId));
+  } else if (filters.missingRole === "media") {
+    // Deliberately the same test readiness uses — any media link at all, so
+    // "missing a folder" means the same thing on both screens.
+    const { data: links } = await db.from("os_media_links").select("trip_id").in("trip_id", tripIds);
+    const withMedia = new Set((links ?? []).map((l) => l.trip_id as string));
+    items = items.filter((t) => !withMedia.has(t.id));
+  } else if (filters.missingRole) {
     items = items.filter((t) => !t.crew.some((c) => c.roleKey === filters.missingRole));
+  }
+
+  if (filters.producesContent) {
+    const { data: types } = await db.from("os_trip_types").select("key, requirements").eq("org_id", org.id);
+    const producing = new Set(
+      (types ?? [])
+        .filter((t) => Boolean((t.requirements as Record<string, boolean> | null)?.media_folder))
+        .map((t) => t.key as string),
+    );
+    items = items.filter((t) => t.typeKey && producing.has(t.typeKey));
+  }
+
+  // Money filters are only run for somebody who can see money. For anybody
+  // else `money` is absent from the payload entirely, so there is nothing to
+  // filter on — the caller is told through financialFilterKeys() and says so
+  // on screen rather than showing an unfiltered list under a filtered title.
+  if (can(actor, "trips.financials")) {
+    if (filters.balanceDue) {
+      items = items.filter((t) => t.money != null && t.money.sell - t.money.paid > 0.009);
+    }
+    if (filters.marginPctGte != null) {
+      const floor = filters.marginPctGte;
+      items = items.filter((t) => t.money != null && t.money.sell > 0 && t.money.marginPct >= floor);
+    }
+    if (filters.marginPctLt != null) {
+      const ceiling = filters.marginPctLt;
+      items = items.filter((t) => t.money != null && t.money.sell > 0 && t.money.marginPct < ceiling);
+    }
   }
   if (filters.statusCategory?.length) {
     // Category filtering needs the status table; do it in memory since the

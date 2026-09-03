@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { recordSignIn } from "@/lib/os/actions/session";
 import { Spinner } from "@/components/os/action";
 
 // Credentials never touch Egypt Eye code. Supabase Auth owns password
@@ -30,6 +31,11 @@ export function SignInForm() {
         setError("That email and password combination did not work.");
         return;
       }
+      // Who signed in, from what, and when. Recorded server-side from the
+      // session cookie — the browser never asserts an identity here — and
+      // deliberately awaited, so it happens while the session is fresh rather
+      // than racing the navigation away from this page.
+      await recordSignIn();
       router.replace("/os");
       router.refresh();
     } catch {

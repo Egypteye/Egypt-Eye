@@ -6,6 +6,7 @@ import { todayInCairo, formatDate } from "@/lib/os/dates";
 import { formatMoney } from "@/lib/os/money";
 import { PageHeader, NoAccess, Card, CardHeader, Badge, Stat, EmptyState, buttonClass } from "@/components/os/ui";
 import { Icon } from "@/components/os/icons";
+import { SavedViews } from "@/components/os/SavedViews";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Resources" };
@@ -31,6 +32,8 @@ export default async function ResourcesPage({
 
   const params = await searchParams;
   const kind = (Array.isArray(params.kind) ? params.kind[0] : params.kind) ?? "";
+  const statusParam = (Array.isArray(params.status) ? params.status[0] : params.status) ?? "";
+  const statuses = statusParam.split(",").map((s) => s.trim()).filter(Boolean);
 
   const db = osdb();
   const org = await getOrg();
@@ -41,6 +44,7 @@ export default async function ResourcesPage({
     .select("id, kind, code, name, description, status, condition, capacity, model, plate, color, size, home_base, current_location, cost_rate_amount, cost_rate_currency, insurance_expires_on, license_expires_on, notes")
     .eq("org_id", org.id).is("archived_at", null).order("kind").order("code");
   if (kind) query = query.eq("kind", kind);
+  if (statuses.length) query = query.in("status", statuses);
 
   const [{ data: resources }, utilization, { data: blocked }] = await Promise.all([
     query,
@@ -64,6 +68,11 @@ export default async function ResourcesPage({
         eyebrow="Records"
         title="Resources"
         description="Everything the operation books that is not a person. Availability here is real — a van in the workshop cannot be assigned to tomorrow's trip."
+        actions={
+          can(actor, "resources.create") ? (
+            <Link href="/os/resources/new" className={buttonClass.gold}><Icon.Plus size={15} />Register resource</Link>
+          ) : null
+        }
       />
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -82,10 +91,25 @@ export default async function ResourcesPage({
             {k.label}
           </Link>
         ))}
+        {statuses.length ? (
+          <Link
+            href={kind ? `/os/resources?kind=${kind}` : "/os/resources"}
+            className="rounded-lg border border-os-gold bg-os-gold-soft px-2.5 py-1.5 text-[12.5px] font-medium text-[#7a6415]"
+          >
+            {statuses.map((s) => s.replace(/_/g, " ")).join(", ")} ✕
+          </Link>
+        ) : null}
       </div>
 
+      <SavedViews resource="resources" employeeId={actor.employeeId} className="mb-4" />
+
       {rows.length === 0 ? (
-        <EmptyState title="No resources yet" description="Register the vehicles, dresses and equipment the operation depends on." icon={<Icon.Truck size={26} />} />
+        <EmptyState
+          title="No resources yet"
+          description="Register the vehicles, dresses and equipment the operation depends on."
+          icon={<Icon.Truck size={26} />}
+          action={can(actor, "resources.create") ? <Link href="/os/resources/new" className={buttonClass.gold}>Register the first one</Link> : undefined}
+        />
       ) : (
         <div className="space-y-6">
           {KINDS.filter((k) => !kind || k.key === kind).map((group) => {
@@ -174,12 +198,8 @@ export default async function ResourcesPage({
       ) : null}
 
       <p className="mt-6 text-[12px] text-os-faint">
-        Adding and editing resources needs the resources permission.{" "}
-        {can(actor, "resources.create") ? "Use the Admin centre to register new ones." : ""}
+        Adding and editing resources needs the resources permission.
       </p>
-      {can(actor, "resources.create") ? (
-        <Link href="/os/admin" className={`mt-2 ${buttonClass.secondary}`}>Admin centre</Link>
-      ) : null}
     </>
   );
 }

@@ -1,6 +1,8 @@
-import { getActor, canAny } from "@/lib/os/actor";
+import Link from "next/link";
+import { getActor, can, canAny } from "@/lib/os/actor";
 import { osdb, getOrg } from "@/lib/os/db";
-import { PageHeader, NoAccess, Card, CardHeader, Badge, Table, Th, Td, Notice } from "@/components/os/ui";
+import { PageHeader, NoAccess, Card, CardHeader, Badge, Table, Th, Td, Notice, buttonClass } from "@/components/os/ui";
+import { Icon } from "@/components/os/icons";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Catalog" };
@@ -159,7 +161,17 @@ export default async function CatalogPage() {
 
           <Card padded={false}>
             <div className="border-b border-os-line px-4 py-3">
-              <CardHeader title="Locations" subtitle="Where the operational knowledge lives" />
+              <CardHeader
+                title="Locations"
+                subtitle="Where the operational knowledge lives"
+                action={
+                  can(actor, "admin.catalog") ? (
+                    <Link href="/os/admin/catalog/locations/new" className={buttonClass.secondary}>
+                      <Icon.Plus size={14} />Add
+                    </Link>
+                  ) : null
+                }
+              />
             </div>
             <ul className="p-4">
               {(locations ?? []).map((location) => (

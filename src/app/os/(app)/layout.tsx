@@ -52,11 +52,28 @@ export default async function OsLayout({ children }: { children: React.ReactNode
     Boolean(item) && all.findIndex((other) => other?.href === item?.href) === index,
   ).slice(0, 4);
 
-  const paletteActions: PaletteAction[] = groups.flatMap((group) =>
-    group.items.map((item) => ({
-      href: item.href, label: item.label, icon: item.icon, description: item.description, group: group.label,
-    })),
-  );
+  // The palette is where people go to start something, not only to navigate,
+  // so the create routes are offered alongside the destinations — each one
+  // gated on the same permission the page behind it enforces.
+  const createActions: PaletteAction[] = ([
+    { permission: "trips.create", href: "/os/trips/new", label: "New trip", icon: "Trip", description: "Start the operational record for a closed booking." },
+    { permission: "clients.create", href: "/os/clients/new", label: "New client", icon: "Users", description: "One record per person or agency, matched against existing ones." },
+    { permission: "resources.create", href: "/os/resources/new", label: "Register a resource", icon: "Truck", description: "A vehicle, dress or piece of equipment." },
+    { permission: "suppliers.create", href: "/os/suppliers/new", label: "Register a supplier", icon: "Building", description: "A partner the operation pays." },
+    { permission: "team.create", href: "/os/team/new", label: "Add a person", icon: "Client", description: "Staff or freelance crew. Creates a record, not a login." },
+    { permission: "admin.catalog", href: "/os/admin/catalog/locations/new", label: "Add a location", icon: "Pin", description: "Access, permits and the best hour to be there." },
+  ] as const)
+    .filter((item) => holds(item.permission))
+    .map(({ href, label, icon, description }) => ({ href, label, icon, description, group: "Create" }));
+
+  const paletteActions: PaletteAction[] = [
+    ...createActions,
+    ...groups.flatMap((group) =>
+      group.items.map((item) => ({
+        href: item.href, label: item.label, icon: item.icon, description: item.description, group: group.label,
+      })),
+    ),
+  ];
 
   await getOrg();
   const unread = await unreadCount(actor.employeeId);

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { recordSignOut } from "@/lib/os/actions/session";
 import { Spinner } from "@/components/os/action";
 import { Icon } from "@/components/os/icons";
 
@@ -18,6 +19,8 @@ export function SignOutButton() {
   async function signOut(scope: "local" | "global") {
     setPending(scope);
     try {
+      // Recorded first, while the cookie can still prove who is leaving.
+      await recordSignOut(scope);
       const supabase = createClient();
       await supabase.auth.signOut({ scope });
       router.replace("/os/sign-in");

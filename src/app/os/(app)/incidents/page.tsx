@@ -7,6 +7,7 @@ import { PageHeader, NoAccess, Card, CardHeader, Badge, Stat, EmptyState } from 
 import { IncidentForm } from "./IncidentForm";
 import { IncidentActions } from "./IncidentActions";
 import { Icon } from "@/components/os/icons";
+import { SavedViews } from "@/components/os/SavedViews";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Incidents" };
@@ -14,10 +15,19 @@ export const metadata = { title: "Incidents" };
 // What went wrong, who owns it, and what was actually done. The resolution
 // field is required to close one, because an incident closed with no
 // resolution teaches the company nothing and the same thing happens again.
-export default async function IncidentsPage() {
+export default async function IncidentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const actor = await getActor();
   if (!actor) return null;
   if (!can(actor, "incidents.view")) return <NoAccess what="incidents" permission="incidents.view" />;
+
+  const params = await searchParams;
+  const one = (key: string) => ((Array.isArray(params[key]) ? params[key]![0] : params[key]) ?? "") as string;
+  const statusFilter = one("status").split(",").map((v) => v.trim()).filter(Boolean);
+  const severityFilter = one("severity").split(",").map((v) => v.trim()).filter(Boolean);
 
   const db = osdb();
   const org = await getOrg();
@@ -37,8 +47,10 @@ export default async function IncidentsPage() {
   ]);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const rows = (incidents ?? []) as any[];
+  let rows = (incidents ?? []) as any[];
   /* eslint-enable @typescript-eslint/no-explicit-any */
+  if (statusFilter.length) rows = rows.filter((i) => statusFilter.includes(i.status));
+  if (severityFilter.length) rows = rows.filter((i) => severityFilter.includes(i.severity));
   const open = rows.filter((i) => ["open", "investigating"].includes(i.status));
   const closed = rows.filter((i) => ["resolved", "closed"].includes(i.status));
   const critical = open.filter((i) => i.severity === "critical" || i.severity === "high");
@@ -51,6 +63,15 @@ export default async function IncidentsPage() {
         title="Incidents"
         description="Every problem, who owned it, and what was done. This is where the company learns rather than repeats."
       />
+
+      <div className="mb-4 flex flex-wrap items-center gap-1.5">
+        <SavedViews resource="incidents" employeeId={actor.employeeId} />
+        {statusFilter.length || severityFilter.length ? (
+          <Link href="/os/incidents" className="rounded-full border border-os-gold bg-os-gold-soft px-2.5 py-1 text-[12px] font-medium text-[#7a6415]">
+            {[...statusFilter, ...severityFilter].join(", ")} only ✕
+          </Link>
+        ) : null}
+      </div>
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Open" value={open.length} tone={open.length ? "amber" : undefined} />

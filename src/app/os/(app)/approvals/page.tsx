@@ -7,6 +7,7 @@ import { PageHeader, NoAccess, Card, CardHeader, Badge, Stat, EmptyState, Notice
 import { DecisionPanel } from "./DecisionPanel";
 import { RequestPanel } from "./RequestPanel";
 import { Icon } from "@/components/os/icons";
+import { SavedViews } from "@/components/os/SavedViews";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Approvals" };
@@ -30,10 +31,18 @@ const KIND_LABELS: Record<string, string> = {
   special_request: "Special request", assignment_override: "Forced scheduling conflict", other: "Other",
 };
 
-export default async function ApprovalsPage() {
+export default async function ApprovalsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const actor = await getActor();
   if (!actor) return null;
   if (!can(actor, "approvals.view")) return <NoAccess what="approvals" permission="approvals.view" />;
+
+  const params = await searchParams;
+  const statusParam = (Array.isArray(params.status) ? params.status[0] : params.status) ?? "";
+  const statusFilter = statusParam.split(",").map((v) => v.trim()).filter(Boolean);
 
   const db = osdb();
   const org = await getOrg();
@@ -52,8 +61,9 @@ export default async function ApprovalsPage() {
     .limit(120);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const rows = (data ?? []) as any[];
+  const all = (data ?? []) as any[];
   /* eslint-enable @typescript-eslint/no-explicit-any */
+  const rows = statusFilter.length ? all.filter((r) => statusFilter.includes(r.status)) : all;
   const pending = rows.filter((r) => r.status === "pending");
   const decided = rows.filter((r) => r.status !== "pending");
   const mine = pending.filter((r) => r.requested_by === actor.employeeId);
@@ -68,6 +78,15 @@ export default async function ApprovalsPage() {
         title="Approvals"
         description="What is waiting on somebody, and what was decided. Nothing that needed a decision disappears without one."
       />
+
+      <div className="mb-4 flex flex-wrap items-center gap-1.5">
+        <SavedViews resource="approvals" employeeId={actor.employeeId} />
+        {statusFilter.length ? (
+          <Link href="/os/approvals" className="rounded-full border border-os-gold bg-os-gold-soft px-2.5 py-1 text-[12px] font-medium text-[#7a6415]">
+            {statusFilter.join(", ")} only ✕
+          </Link>
+        ) : null}
+      </div>
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
         <Stat label="Pending" value={pending.length} tone={pending.length ? "amber" : undefined} />

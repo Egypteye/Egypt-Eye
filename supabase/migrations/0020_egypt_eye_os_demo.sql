@@ -1449,25 +1449,113 @@ where o.key = 'egypt-eye'
 -- Shared views are visible to everyone; the view grants nothing on its own,
 -- it just carries a filter. What each person sees when they open it is still
 -- decided by their own permissions and scope.
+-- ---------------------------------------------------------------------------
+-- Trips inherit the standing of the client who booked them. A trip for a VIP
+-- client is a VIP trip, and that is what the "VIP trips this month" saved view
+-- and the tag filter on the trips list actually read.
+-- ---------------------------------------------------------------------------
+insert into public.os_taggings (tag_id, entity_type, entity_id, tagged_by)
+select g.id, 'trip', t.id, t.created_by
+from public.os_orgs o
+join public.os_clients c on c.org_id = o.id
+join public.os_trips t on t.client_id = c.id
+join public.os_tags g on g.org_id = o.id and g.key = 'vip'
+where o.key = 'egypt-eye'
+  and c.vip
+  and not exists (
+    select 1 from public.os_taggings tg
+    where tg.tag_id = g.id and tg.entity_type = 'trip' and tg.entity_id = t.id
+  );
+
+insert into public.os_taggings (tag_id, entity_type, entity_id, tagged_by)
+select g.id, 'trip', t.id, t.created_by
+from public.os_orgs o
+join public.os_clients c on c.org_id = o.id
+join public.os_taggings ct on ct.entity_type = 'client' and ct.entity_id = c.id
+join public.os_tags ctg on ctg.id = ct.tag_id and ctg.key in ('luxury', 'family', 'couple')
+join public.os_trips t on t.client_id = c.id
+join public.os_tags g on g.org_id = o.id and g.key = ctg.key
+where o.key = 'egypt-eye'
+  and not exists (
+    select 1 from public.os_taggings tg
+    where tg.tag_id = g.id and tg.entity_type = 'trip' and tg.entity_id = t.id
+  );
+
+-- "Tomorrow, unassigned" asked for trips with nobody on them at all, which
+-- is not what tomorrow's board is ever short of — what it is short of is one
+-- specific role. It became two views that each answer a real question.
+-- Addressed by id so this can only ever rename one row, whatever state the
+-- table is in — a rename that could match twice would leave two views with
+-- the same name and no way to tell them apart.
+update public.os_saved_views
+set name = 'Nobody assigned yet'
+where id = (
+  select sv.id
+  from public.os_saved_views sv
+  join public.os_orgs o on o.id = sv.org_id
+  where o.key = 'egypt-eye'
+    and sv.employee_id is null
+    and sv.name = 'Tomorrow, unassigned'
+    and not exists (
+      select 1 from public.os_saved_views other
+      where other.org_id = sv.org_id and other.employee_id is null and other.name = 'Nobody assigned yet'
+    )
+  limit 1
+);
+
 insert into public.os_saved_views (org_id, employee_id, name, resource, query, shared, pinned, sort_order, icon)
 select o.id, null, v.name, v.resource, v.query::jsonb, true, v.pinned, v.sort_order, v.icon
 from public.os_orgs o
 cross join lateral (values
-  ('Tomorrow, unassigned','trips','{"when":"tomorrow","missing":"crew"}',true,1,'alert'),
-  ('Trips at risk','trips','{"readiness":["yellow","red"],"when":"upcoming"}',true,2,'warning'),
-  ('Missing a Google Drive folder','trips','{"produces_content":true,"missing":"media","status":["completed","content_pending"]}',true,3,'folder'),
-  ('VIP trips this month','trips','{"tag":"vip","when":"this_month"}',true,4,'star'),
-  ('High margin trips','trips','{"margin_pct_gte":45,"when":"last_90_days"}',true,5,'trending'),
-  ('Low margin trips','trips','{"margin_pct_lt":22,"when":"last_90_days"}',true,6,'trending-down'),
-  ('Unpaid balances','trips','{"balance_due":true}',true,7,'money'),
-  ('Pending approvals','approvals','{"status":"pending"}',true,8,'check'),
-  ('Open incidents','incidents','{"status":["open","investigating"]}',true,9,'alert'),
-  ('My overdue tasks','tasks','{"owner":"me","overdue":true}',true,10,'clock'),
-  ('Repeat customers','clients','{"tag":"repeat"}',true,11,'users'),
-  ('Resources in maintenance','resources','{"status":["maintenance","cleaning"]}',true,12,'tool')
+  ('Nobody assigned yet','trips','{"when":"upcoming","missing":"crew"}',true,1,'alert'),
+  ('Tomorrow, no driver','trips','{"when":"tomorrow","missing":"driver"}',true,2,'alert'),
+  ('Trips at risk','trips','{"readiness":["yellow","red"],"when":"upcoming"}',true,3,'warning'),
+  -- Every view states its own window. Without one it inherits the trips
+  -- page default of "upcoming", and a view about completed work would
+  -- silently show nothing.
+  ('Missing a Google Drive folder','trips','{"produces_content":true,"missing":"media","status":["completed","content_pending"],"when":"last_90_days"}',true,4,'folder'),
+  ('VIP trips this month','trips','{"tag":"vip","when":"this_month"}',true,5,'star'),
+  ('High margin trips','trips','{"margin_pct_gte":45,"when":"last_90_days"}',true,6,'trending'),
+  ('Low margin trips','trips','{"margin_pct_lt":22,"when":"last_90_days"}',true,7,'trending-down'),
+  ('Unpaid balances','trips','{"balance_due":true,"when":"all"}',true,8,'money'),
+  ('Pending approvals','approvals','{"status":"pending"}',true,9,'check'),
+  ('Open incidents','incidents','{"status":["open","investigating"]}',true,10,'alert'),
+  ('My overdue tasks','tasks','{"owner":"me","overdue":true}',true,11,'clock'),
+  ('Repeat customers','clients','{"tag":"repeat"}',true,12,'users'),
+  ('Resources in maintenance','resources','{"status":["maintenance","cleaning"]}',true,13,'tool')
 ) as v(name, resource, query, pinned, sort_order, icon)
 where o.key = 'egypt-eye'
   and not exists (select 1 from public.os_saved_views sv where sv.org_id = o.id and sv.name = v.name and sv.employee_id is null);
+
+-- The query document IS the view — src/lib/os/saved-views.ts translates it
+-- into the filter URL, and nothing anywhere matches on the view's name. So
+-- re-running this migration corrects a shared view whose query was written
+-- before the vocabulary settled, rather than leaving a stale one behind.
+-- Views a person saved for themselves (employee_id is not null) are theirs
+-- and are never touched.
+update public.os_saved_views sv
+set query = v.query::jsonb, sort_order = v.sort_order
+from public.os_orgs o,
+(values
+  ('Nobody assigned yet','{"when":"upcoming","missing":"crew"}',1),
+  ('Tomorrow, no driver','{"when":"tomorrow","missing":"driver"}',2),
+  ('Trips at risk','{"readiness":["yellow","red"],"when":"upcoming"}',3),
+  ('Missing a Google Drive folder','{"produces_content":true,"missing":"media","status":["completed","content_pending"],"when":"last_90_days"}',4),
+  ('VIP trips this month','{"tag":"vip","when":"this_month"}',5),
+  ('High margin trips','{"margin_pct_gte":45,"when":"last_90_days"}',6),
+  ('Low margin trips','{"margin_pct_lt":22,"when":"last_90_days"}',7),
+  ('Unpaid balances','{"balance_due":true,"when":"all"}',8),
+  ('Pending approvals','{"status":"pending"}',9),
+  ('Open incidents','{"status":["open","investigating"]}',10),
+  ('My overdue tasks','{"owner":"me","overdue":true}',11),
+  ('Repeat customers','{"tag":"repeat"}',12),
+  ('Resources in maintenance','{"status":["maintenance","cleaning"]}',13)
+) as v(name, query, sort_order)
+where sv.org_id = o.id
+  and o.key = 'egypt-eye'
+  and sv.employee_id is null
+  and sv.name = v.name
+  and (sv.query is distinct from v.query::jsonb or sv.sort_order is distinct from v.sort_order);
 
 -- ---------------------------------------------------------------------------
 -- A little history, so every entity has a story on its Activity tab.

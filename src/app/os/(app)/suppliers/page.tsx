@@ -4,7 +4,7 @@ import { supplierPerformance, periodPresets } from "@/lib/os/analytics";
 import { todayInCairo } from "@/lib/os/dates";
 import { formatMoney } from "@/lib/os/money";
 import { osdb, getOrg } from "@/lib/os/db";
-import { PageHeader, NoAccess, Table, Th, Td, Badge, Stat, EmptyState } from "@/components/os/ui";
+import { PageHeader, NoAccess, Table, Th, Td, Badge, Stat, EmptyState, buttonClass } from "@/components/os/ui";
 import { Icon } from "@/components/os/icons";
 
 export const dynamic = "force-dynamic";
@@ -39,6 +39,11 @@ export default async function SuppliersPage() {
         eyebrow="Records"
         title="Suppliers"
         description="Who we buy from, what we pay, and how often they cost us a morning."
+        actions={
+          can(actor, "suppliers.create") ? (
+            <Link href="/os/suppliers/new" className={buttonClass.gold}><Icon.Plus size={15} />Register supplier</Link>
+          ) : null
+        }
       />
 
       <div className="mb-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -56,7 +61,12 @@ export default async function SuppliersPage() {
       </div>
 
       {rows.length === 0 ? (
-        <EmptyState title="No suppliers yet" description="Register the partners the operation depends on, so their rates and reliability are company knowledge rather than one person's contacts list." icon={<Icon.Building size={26} />} />
+        <EmptyState
+          title="No suppliers yet"
+          description="Register the partners the operation depends on, so their rates and reliability are company knowledge rather than one person's contacts list."
+          icon={<Icon.Building size={26} />}
+          action={can(actor, "suppliers.create") ? <Link href="/os/suppliers/new" className={buttonClass.gold}>Register the first one</Link> : undefined}
+        />
       ) : (
         <Table>
           <thead>

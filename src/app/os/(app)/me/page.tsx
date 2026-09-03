@@ -14,6 +14,13 @@ import { SignOutButton } from "./SignOutButton";
 export const dynamic = "force-dynamic";
 export const metadata = { title: "My day" };
 
+const SESSION_EVENT: Record<string, string> = {
+  sign_in: "Signed in",
+  sign_out: "Signed out",
+  sign_out_all: "Signed out everywhere",
+  denied: "Access refused",
+};
+
 // ---------------------------------------------------------------------------
 // MY DAY — the field employee's whole relationship with the OS
 // ---------------------------------------------------------------------------
@@ -35,7 +42,7 @@ export default async function MyDayPage() {
   const today = todayInCairo();
   const db = osdb();
 
-  const [myTrips, myTasks, attendance, meetings] = await Promise.all([
+  const [myTrips, myTasks, attendance, meetings, logins] = await Promise.all([
     listTrips(actor, { employeeId: actor.employeeId, from: today, to: addDays(today, 14), order: "date_asc" }),
     can(actor, "tasks.view")
       ? listTasks(actor, { mineOnly: true, statuses: ["todo", "in_progress", "blocked"], limit: 40 })
@@ -47,6 +54,13 @@ export default async function MyDayPage() {
           .eq("employee_id", actor.employeeId)
           .limit(20)
       : Promise.resolve({ data: [] }),
+    // Everyone can see their own sign-in history without a permission, which
+    // is the point: it is how a person notices a session that is not theirs.
+    db.from("os_login_events")
+      .select("id, kind, at, ip, user_agent")
+      .eq("user_id", actor.userId)
+      .order("at", { ascending: false })
+      .limit(6),
   ]);
 
   const todayTrips = myTrips.filter((t) => t.tripDate === today);
@@ -307,6 +321,30 @@ export default async function MyDayPage() {
             <p className="mt-3 text-[11.5px] leading-relaxed text-os-muted">
               Signed in as {actor.email}. Your access is set by the roles above, and an administrator changes it.
             </p>
+
+            <Divider />
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-os-faint">Recent sessions</p>
+            {(logins.data ?? []).length ? (
+              <ul className="mt-2 space-y-1.5">
+                {(logins.data ?? []).map((event) => (
+                  <li key={event.id as string} className="flex items-baseline justify-between gap-3 text-[11.5px]">
+                    <span className="min-w-0">
+                      <span className="text-os-text">{SESSION_EVENT[event.kind as string] ?? (event.kind as string)}</span>
+                      {event.ip ? <span className="ml-1 os-nums text-os-faint">{event.ip as string}</span> : null}
+                    </span>
+                    <span className="shrink-0 text-os-faint">{relativeTime(event.at as string)}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-[11.5px] text-os-faint">
+                This is the first session recorded on your account.
+              </p>
+            )}
+            <p className="mt-2 text-[11px] leading-relaxed text-os-faint">
+              Do not recognise one of these? Sign out everywhere below, then change your password.
+            </p>
+
             <div className="mt-3">
               <SignOutButton />
             </div>
