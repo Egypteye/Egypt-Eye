@@ -62,6 +62,8 @@ export default async function OsLayout({ children }: { children: React.ReactNode
     { permission: "suppliers.create", href: "/os/suppliers/new", label: "Register a supplier", icon: "Building", description: "A partner the operation pays." },
     { permission: "team.create", href: "/os/team/new", label: "Add a person", icon: "Client", description: "Staff or freelance crew. Creates a record, not a login." },
     { permission: "admin.catalog", href: "/os/admin/catalog/locations/new", label: "Add a location", icon: "Pin", description: "Access, permits and the best hour to be there." },
+    { permission: "leads.create", href: "/os/reservations/new", label: "Log an enquiry", icon: "Chat", description: "Somebody asked. Record that it arrived and where from." },
+    { permission: "companies.create", href: "/os/partnerships/new", label: "Register a partner", icon: "Building", description: "An agency, operator or hotel that books through us." },
   ] as const)
     .filter((item) => holds(item.permission))
     .map(({ href, label, icon, description }) => ({ href, label, icon, description, group: "Create" }));

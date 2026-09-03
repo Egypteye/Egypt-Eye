@@ -27,7 +27,7 @@ export default async function TripOverview({ params }: { params: Promise<{ ref: 
   const readiness = await computeReadiness(trip.id);
   const db = osdb();
 
-  const [travelers, itinerary, activity, contentJob] = await Promise.all([
+  const [travelers, itinerary, activity, contentJob, commercial] = await Promise.all([
     db.from("os_trip_travelers")
       .select("is_lead, os_travelers ( full_name, relationship, age_category, dietary_notes, special_requirements )")
       .eq("trip_id", trip.id),
@@ -38,6 +38,17 @@ export default async function TripOverview({ params }: { params: Promise<{ ref: 
     can(actor, "content.view")
       ? db.from("os_content_jobs").select("id, stage, promised_at, delivered_at").eq("trip_id", trip.id).maybeSingle()
       : Promise.resolve({ data: null }),
+    // Where this trip came from commercially. The operation and the sale are
+    // the same system, so the trip knows which deal closed it and which
+    // partner's terms priced it.
+    can(actor, "deals.view")
+      ? db.from("os_trips")
+          .select(
+            "deal_id, company_id, agreement_id, commission_pct, commission_amount, currency, " +
+            "os_deals ( ref, title, pipeline, source ), os_companies ( id, name ), os_agreements ( ref, title )",
+          )
+          .eq("id", trip.id).maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -45,6 +56,7 @@ export default async function TripOverview({ params }: { params: Promise<{ ref: 
   const steps = (itinerary.data ?? []) as any[];
   const history = (activity.data ?? []) as any[];
   const content = contentJob.data as any;
+  const origin = commercial.data as any;
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   type ClientCard = {
@@ -226,6 +238,54 @@ export default async function TripOverview({ params }: { params: Promise<{ ref: 
             ) : null}
             {client.preferences ? (
               <p className="mt-3 rounded-lg bg-black/[0.03] px-3 py-2 text-[12.5px] leading-relaxed text-os-muted">{client.preferences}</p>
+            ) : null}
+          </Card>
+        ) : null}
+
+        {origin && (origin.os_deals || origin.os_companies) ? (
+          <Card>
+            <CardHeader title="Where this booking came from" subtitle="The commercial record behind the operation." />
+            <dl className="mt-3 space-y-2.5 text-[13px]">
+              {origin.os_deals ? (
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-[12px] text-os-muted">Deal</dt>
+                  <dd>
+                    <Link
+                      href={`/os/${origin.os_deals.pipeline === "b2c" ? "reservations" : "partnerships"}/deals/${origin.os_deals.ref}`}
+                      className="text-[12.5px] font-medium text-os-gold hover:underline"
+                    >
+                      {origin.os_deals.ref}
+                    </Link>
+                  </dd>
+                </div>
+              ) : null}
+              {origin.os_companies ? (
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-[12px] text-os-muted">Booked through</dt>
+                  <dd>
+                    <Link href={`/os/partnerships/${origin.os_companies.id}`} className="text-[12.5px] font-medium text-os-gold hover:underline">
+                      {origin.os_companies.name}
+                    </Link>
+                  </dd>
+                </div>
+              ) : null}
+              {origin.commission_pct != null && can(actor, "companies.terms") ? (
+                <div className="flex items-baseline justify-between gap-3">
+                  <dt className="text-[12px] text-os-muted">Commission</dt>
+                  <dd className="os-nums text-[12.5px] font-medium text-os-text">
+                    {origin.commission_pct}%
+                    {origin.commission_amount != null
+                      ? ` · ${formatMoney(Number(origin.commission_amount), origin.currency ?? actor.baseCurrency)}`
+                      : ""}
+                  </dd>
+                </div>
+              ) : null}
+            </dl>
+            {origin.os_agreements && can(actor, "agreements.view") ? (
+              <p className="mt-3 text-[11px] leading-relaxed text-os-faint">
+                Priced under {origin.os_agreements.ref}, at the rate in force on {trip.tripDate} — not at today&apos;s rate.
+                Renegotiating the agreement later cannot restate what this trip earned.
+              </p>
             ) : null}
           </Card>
         ) : null}

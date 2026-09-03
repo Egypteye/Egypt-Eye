@@ -45,6 +45,17 @@ export const NAV: NavGroup[] = [
     ],
   },
   {
+    // The commercial half of the company. Two workspaces over ONE data model:
+    // a lead, a deal and a person are the same tables on both sides, and the
+    // pipeline column is what makes them read differently.
+    label: "Sell",
+    items: [
+      { href: "/os/reservations", label: "Reservations", icon: "Client", permissions: ["leads.view", "deals.view"], description: "B2C — enquiries, quotes and bookings" },
+      { href: "/os/partnerships", label: "Partnerships", icon: "Building", permissions: ["companies.view", "deals.view"], description: "B2B — partners, pipeline and agreements" },
+      { href: "/os/commercial", label: "Commercial reporting", icon: "Chart", permissions: ["commercial.analytics"], description: "Pipeline, conversion, sources and partner revenue" },
+    ],
+  },
+  {
     label: "Records",
     items: [
       { href: "/os/clients", label: "Clients", icon: "Client", permissions: ["clients.view"], description: "Every guest and agency, with their whole history" },

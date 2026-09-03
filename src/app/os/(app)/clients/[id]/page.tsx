@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getActor, can } from "@/lib/os/actor";
 import { osdb, getOrg } from "@/lib/os/db";
 import { listTrips } from "@/lib/os/trips";
+import { clientCompanies } from "@/lib/os/commercial/companies";
+import { listDeals } from "@/lib/os/commercial/deals";
 import { formatDate, relativeTime, todayInCairo } from "@/lib/os/dates";
 import { formatMoney } from "@/lib/os/money";
 import { PageHeader, NoAccess, Card, CardHeader, Badge, Stat, EmptyState, Divider, buttonClass } from "@/components/os/ui";
@@ -48,7 +50,7 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
     return <NoAccess what="this client" permission="clients.view" />;
   }
 
-  const [{ data: travelers }, { data: tags }, { data: taggings }, { data: feedback }, { data: incidents }] = await Promise.all([
+  const [{ data: travelers }, { data: tags }, { data: taggings }, { data: feedback }, { data: incidents }, memberships, openDeals] = await Promise.all([
     db.from("os_travelers").select("id, full_name, relationship, age_category, nationality, dietary_notes, special_requirements")
       .eq("client_id", id).is("archived_at", null),
     db.from("os_tags").select("id, key, label, color").eq("org_id", org.id),
@@ -59,6 +61,12 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
     can(actor, "incidents.view")
       ? db.from("os_incidents").select("id, ref, title, severity, status, occurred_at, os_trips ( ref )").in("trip_id", allTrips.map((t) => t.id).length ? allTrips.map((t) => t.id) : ["00000000-0000-0000-0000-000000000000"])
       : Promise.resolve({ data: null }),
+    // The B2B half of this person. There is no separate contacts table, so
+    // somebody who books privately AND works at an agency is this one record
+    // with a membership — which is the only reason both halves can be shown
+    // together at all.
+    can(actor, "companies.view") ? clientCompanies(id) : Promise.resolve([]),
+    can(actor, "deals.view") ? listDeals(actor, { clientId: id, statuses: ["open"], limit: 20 }) : Promise.resolve([]),
   ]);
 
   const tagById = new Map((tags ?? []).map((t) => [t.id as string, t]));
@@ -189,6 +197,61 @@ export default async function ClientPage({ params }: { params: Promise<{ id: str
         </div>
 
         <div className="space-y-5">
+          {memberships.length ? (
+            <Card>
+              <CardHeader
+                title="Also works with us commercially"
+                subtitle="One record, both relationships. Their private bookings above are the same person."
+              />
+              <ul className="mt-3 space-y-2.5">
+                {memberships.map((m) => (
+                  <li key={m.membershipId}>
+                    <Link href={`/os/partnerships/${m.companyId}`} className="text-[13px] font-medium text-os-gold hover:underline">
+                      {m.name}
+                    </Link>
+                    <p className="text-[11.5px] text-os-muted">
+                      {m.jobTitle ?? m.kind.replace(/_/g, " ")}
+                      {" · "}
+                      {m.decisionRole.replace(/_/g, " ")}
+                      {m.isPrimary ? " · main contact" : ""}
+                      {!m.current ? " · former" : ""}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-[11px] leading-relaxed text-os-faint">
+                No second record was created for the commercial side. Splitting a person in two is how a company loses the
+                fact that its best agency contact is also a guest.
+              </p>
+            </Card>
+          ) : null}
+
+          {openDeals.length ? (
+            <Card>
+              <CardHeader title="Open deals" subtitle="Being negotiated right now." />
+              <ul className="mt-3 space-y-2">
+                {openDeals.map((deal) => (
+                  <li key={deal.id} className="flex items-baseline justify-between gap-3">
+                    <Link
+                      href={`/os/${deal.pipeline === "b2c" ? "reservations" : "partnerships"}/deals/${deal.ref}`}
+                      className="min-w-0 text-[12.5px] font-medium text-os-text hover:text-os-gold"
+                    >
+                      {deal.title}
+                      <span className="os-nums block text-[11px] font-normal text-os-faint">
+                        {deal.ref} · {deal.stageLabel}
+                      </span>
+                    </Link>
+                    {deal.money ? (
+                      <span className="os-nums shrink-0 text-[12px] font-medium text-os-text">
+                        {deal.money.currency} {Math.round(deal.money.value).toLocaleString()}
+                      </span>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          ) : null}
+
           <Card>
             <CardHeader title="Profile" />
             <dl className="mt-3 space-y-2.5 text-[13px]">

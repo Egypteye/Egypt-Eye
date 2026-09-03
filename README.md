@@ -256,7 +256,7 @@ second database to create.
    - `CRON_SECRET` — any random string you make up. It protects the hourly
      automation sweep. `vercel.json` already schedules the call.
 
-2. In Supabase → SQL Editor, run these four files from `supabase/migrations/`,
+2. In Supabase → SQL Editor, run these files from `supabase/migrations/`,
    in order. All are safe to re-run.
 
    - `0018_egypt_eye_os_core.sql` — the schema
@@ -265,6 +265,15 @@ second database to create.
      fastest way to see what the product does; every trip is dated relative to
      the day you run it)
    - `0021_egypt_eye_os_functions.sql` — reference sequences and search
+   - `0022_egypt_eye_commercial.sql` — the commercial layer: partner
+     companies, leads, deals, agreements and the links back to trips. It also
+     promotes any existing `kind = 'agency'` client into a company, keeping
+     the person as its contact — nothing is deleted and no history moves.
+   - `0023_egypt_eye_commercial_config.sql` — commercial permissions, the two
+     pipelines and their stages, lost reasons and the published lead-scoring
+     rules
+   - `0024_egypt_eye_commercial_demo.sql` — commercial demo data (optional),
+     which connects to the trips 0020 already created
 
 3. Link your own login to a staff record. Sign up at `/account/signup` if you
    have not, then in the SQL Editor:

@@ -29,6 +29,9 @@ It is deliberately **not** an inbox, not a booking engine, and not a CRM.
 | **Work** | Checklists generated from the service's template, approvals with real separation of duties, and incidents that cannot be closed without a resolution. |
 | **Content** | The post-shoot pipeline from raw upload to a verified client delivery link. |
 | **Knowledge** | The things only a veteran knows: which gate, which permit, what wind speed makes a flying dress unusable. |
+| **Reservations (B2C)** | Enquiries with a response-time clock, an explainable score, and the pipeline from first message to closed booking. |
+| **Partnerships (B2B)** | Agencies, operators and hotels; their people, their pipeline, their contracts, and a relationship health score that grades Egypt Eye as much as it grades them. |
+| **Agreements** | Commission and net rates, effective-dated and superseded, so the rate that priced a booking last spring stays resolvable forever. |
 | **Administration** | A live permission matrix, an append-only audit log, and an honest list of which automations are actually running. |
 
 ---
@@ -243,6 +246,7 @@ src/lib/os/
   audit.ts          the activity story and the forensic record
   analytics.ts      everything derived at read time
   saved-views.ts    stored filter documents -> the filter URL
+  commercial/       leads, deals, partners, agreements, scoring, health
   actions/          server actions, each behind guarded()
 
 src/app/os/
@@ -253,6 +257,46 @@ src/app/os/
 src/components/os/  the shared component kit
 src/app/api/os/     search, pulse, calculate, cron, exports
 ```
+
+## B2C and B2B are two workspaces, not two systems
+
+The commercial layer is one data model with two lenses on it. `os_deals` has a
+`pipeline` column; Reservations filters it to `b2c` and Partnerships to `b2b`.
+The same tasks, approvals, quotes, audit log and activity feed stand behind
+both, which is why "how much is open across the business" is a single query and
+why a B2C guest who turns out to run an agency is re-pointed rather than
+re-entered.
+
+Three decisions carry most of that weight:
+
+**A person is `os_clients`. There is no contacts table.** A traveller who books
+for themselves and a person who books for an agency are the same row. What
+joins them to a company is `os_client_companies` — a membership, not a copy —
+so the same person can be a B2C customer in their own right and a contact at
+two agencies at once. The partner page's "Also a customer" column exists only
+because of this; with a separate contacts table it would be unanswerable.
+A company is genuinely different from a person, so `os_companies` is new: it
+has contracts, terms, several contacts, and it outlives any of them.
+
+**Every score carries its reasons.** Lead score and relationship health are
+arithmetic over published rules, not models. The rules live in
+`os_lead_score_rules` with a points value and an `explanation` written for a
+salesperson to read; the matched rules are stored on the record beside the
+number, and `ScoreBreakdown` is the only component that renders a score — it
+always renders the list too. A rule with an empty explanation does not run.
+Disagreeing with a score means editing a configuration row, which makes it a
+company decision rather than a developer's opinion compiled into the build.
+
+**Commercial terms are superseded, never edited.** `os_agreement_terms` is
+effective-dated with a GiST exclusion constraint stopping two terms covering
+the same service, tier and party size on the same day. `resolveTerm` therefore
+always takes a date, and there is deliberately no "the current commission"
+function anywhere — a booking made in March that travels in September is a
+question with two right answers depending on which one the business means.
+
+Stage requirements are configuration too, and a refusal always names what is
+missing: *"Nobody at this company is recorded as able to decide — B2B deals
+stall here more than anywhere else"* rather than a greyed-out button.
 
 ## Saved views are stored queries, not stored links
 
@@ -279,8 +323,10 @@ list under a filtered heading.
 
 Being honest about the edges is part of the product:
 
-- **No customer inbox.** Meta and WhatsApp keep that job. The OS starts after
-  the deal is closed.
+- **No customer inbox.** Meta and WhatsApp keep that job. A lead records that
+  an enquiry ARRIVED — where from, how fast it was answered, what became of it
+  — which is the part nobody can reconstruct from a DM thread six months
+  later. The OS does not receive, thread or send messages.
 - **No payment processing.** Finance is a ledger of what happened, so
   *"what is outstanding"* has an answer without opening three systems.
 - **No payroll.** Attendance answers "who is working today" for operations and

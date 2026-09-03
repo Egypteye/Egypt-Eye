@@ -33,6 +33,15 @@ export const PERMISSION_KEYS = [
   "admin.users", "admin.roles", "admin.units", "admin.catalog", "admin.templates",
   "admin.tags", "admin.automations", "admin.settings", "admin.integrations", "admin.audit",
   "ai.ask", "ai.act", "ai.admin",
+  // Commercial — B2C Reservations and B2B Sales & Partnerships, mirrored from
+  // supabase/migrations/0023_egypt_eye_commercial_config.sql.
+  "leads.view", "leads.create", "leads.edit", "leads.assign",
+  "deals.view", "deals.create", "deals.edit", "deals.stage", "deals.value",
+  "deals.close", "deals.assign", "deals.convert",
+  "companies.view", "companies.create", "companies.edit", "companies.terms", "companies.credit",
+  "agreements.view", "agreements.create", "agreements.edit", "agreements.activate",
+  "engagements.view", "engagements.log",
+  "commercial.discount", "commercial.analytics", "commercial.export",
 ] as const;
 
 export type PermissionKey = (typeof PERMISSION_KEYS)[number];
@@ -75,4 +84,10 @@ export const PERMISSION_MODULES: { key: string; label: string; description: stri
   { key: "analytics", label: "Analytics", description: "Operational and financial reporting." },
   { key: "admin", label: "Administration", description: "Configuration of the system itself." },
   { key: "ai", label: "AI", description: "The assistant layer and its action ledger." },
+  { key: "leads", label: "Enquiries", description: "Enquiries that have arrived, before they are qualified." },
+  { key: "deals", label: "Pipeline", description: "Opportunities in both the B2C and B2B pipelines." },
+  { key: "companies", label: "Partners", description: "Agencies, operators, hotels and their commercial terms." },
+  { key: "agreements", label: "Agreements", description: "Contracts with partners and the terms in force." },
+  { key: "engagements", label: "Contact history", description: "Calls, meetings and messages logged against a relationship." },
+  { key: "commercial", label: "Commercial", description: "Discounts, commercial reporting and exports." },
 ];
