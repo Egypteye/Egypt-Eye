@@ -88,8 +88,47 @@ const nextConfig: NextConfig = {
         // reverse-engineering without being able to test it live; Studio is
         // already behind Sanity's own login, so it's lower-risk to leave
         // unrestricted here than to risk silently breaking content editing.
-        source: "/:path((?!studio).*)",
+        //
+        // /os is excluded from THIS policy and given its own, stricter one
+        // below: the internal operating system loads no third-party anything,
+        // so it can afford a tighter list than the marketing site.
+        source: "/:path((?!studio|os).*)",
         headers: [{ key: "Content-Security-Policy", value: publicCsp }],
+      },
+      {
+        // Egypt Eye OS. Deliberately tighter than the public site's policy:
+        // the OS loads no third-party scripts, styles, fonts or images at
+        // all. Its only network destinations are same-origin API routes and
+        // Supabase (auth plus the avatars storage bucket), and the only
+        // remote images it renders are employee avatars from that bucket.
+        //
+        // frame-ancestors 'none' is deliberate — an internal operations tool
+        // has no reason to be embeddable anywhere, and clickjacking a
+        // "confirm this assignment" button is a real if unglamorous risk.
+        source: "/os/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline'",
+              "style-src 'self' 'unsafe-inline'",
+              "img-src 'self' data: blob: https://*.supabase.co",
+              "font-src 'self' data:",
+              "connect-src 'self' https://*.supabase.co",
+              "frame-src 'none'",
+              "frame-ancestors 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "object-src 'none'",
+              "upgrade-insecure-requests",
+            ].join("; "),
+          },
+          // Internal operational data must never be cached by an
+          // intermediary, and must never be indexed.
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Cache-Control", value: "no-store, must-revalidate" },
+        ],
       },
     ];
   },

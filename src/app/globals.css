@@ -22,6 +22,39 @@
   --color-nile-light: #8faa8f;
   --color-terracotta: #a8562e;
   --color-cream: #fffdf8;
+
+  /* -------------------------------------------------------------------
+     EGYPT EYE OS palette.
+
+     The internal operating system is a different product from the public
+     website and needs a different surface: denser, cooler, and calm enough
+     to stare at for eight hours. It keeps the brand's Antique Gold as its
+     single accent so the two feel related, but drops the warm sand ground
+     and the serif body face, both of which fight against tables and dense
+     operational data.
+
+     Prefixed `os-` so it can never collide with the marketing palette.
+     ------------------------------------------------------------------- */
+  --color-os-ink: #0d1512;
+  --color-os-ink-2: #16211c;
+  --color-os-ink-3: #223029;
+  --color-os-canvas: #f6f6f3;
+  --color-os-card: #ffffff;
+  --color-os-line: #e4e3dc;
+  --color-os-line-strong: #d2d0c6;
+  --color-os-text: #16211c;
+  --color-os-muted: #67736d;
+  --color-os-faint: #8d9791;
+  --color-os-gold: #c9a227;
+  --color-os-gold-soft: #f5ead0;
+  --color-os-green: #2f7a55;
+  --color-os-green-soft: #e3f1e9;
+  --color-os-amber: #b26105;
+  --color-os-amber-soft: #fbeedc;
+  --color-os-red: #b3261e;
+  --color-os-red-soft: #fbe6e4;
+  --color-os-blue: #2b5f7a;
+  --color-os-blue-soft: #e2eef4;
 }
 
 @theme inline {
@@ -40,6 +73,27 @@
   --color-nile-light: var(--color-nile-light);
   --color-terracotta: var(--color-terracotta);
   --color-cream: var(--color-cream);
+
+  --color-os-ink: var(--color-os-ink);
+  --color-os-ink-2: var(--color-os-ink-2);
+  --color-os-ink-3: var(--color-os-ink-3);
+  --color-os-canvas: var(--color-os-canvas);
+  --color-os-card: var(--color-os-card);
+  --color-os-line: var(--color-os-line);
+  --color-os-line-strong: var(--color-os-line-strong);
+  --color-os-text: var(--color-os-text);
+  --color-os-muted: var(--color-os-muted);
+  --color-os-faint: var(--color-os-faint);
+  --color-os-gold: var(--color-os-gold);
+  --color-os-gold-soft: var(--color-os-gold-soft);
+  --color-os-green: var(--color-os-green);
+  --color-os-green-soft: var(--color-os-green-soft);
+  --color-os-amber: var(--color-os-amber);
+  --color-os-amber-soft: var(--color-os-amber-soft);
+  --color-os-red: var(--color-os-red);
+  --color-os-red-soft: var(--color-os-red-soft);
+  --color-os-blue: var(--color-os-blue);
+  --color-os-blue-soft: var(--color-os-blue-soft);
 
   --font-sans: var(--font-body);
   --font-serif: var(--font-display);
@@ -193,4 +247,73 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ---------------------------------------------------------------------------
+   EGYPT EYE OS
+   ---------------------------------------------------------------------------
+   Scoped to `.os-root`, which wraps the whole /os route group, so none of it
+   can reach the marketing site. The OS sets its own font stack: the site's
+   Cormorant is a display serif and is genuinely hard to scan in a table of
+   forty trips, which is what most of this product is.
+   --------------------------------------------------------------------------- */
+.os-root {
+  font-family: var(--font-os), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--color-os-text);
+  background: var(--color-os-canvas);
+  font-feature-settings: "cv02", "cv03", "cv04", "tnum";
+  -webkit-tap-highlight-color: transparent;
+}
+
+.os-root h1,
+.os-root h2,
+.os-root h3,
+.os-root h4 {
+  font-family: var(--font-os), ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.015em;
+}
+
+/* Numbers in tables must line up vertically or they cannot be compared. */
+.os-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.os-wordmark {
+  font-family: var(--font-display), Georgia, serif;
+  letter-spacing: 0.24em;
+}
+
+/* Sidebar scroll without a visible bar stealing eight pixels of nav width. */
+.os-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+}
+.os-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+.os-scroll::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.16); border-radius: 999px; }
+.os-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* A focus ring that is visible on both the dark nav and the light canvas. */
+.os-root :focus-visible {
+  outline: 2px solid var(--color-os-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@keyframes os-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+.os-fade { animation: os-fade-in 160ms ease-out both; }
+
+@keyframes os-pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.os-live-dot { animation: os-pulse-dot 2s ease-in-out infinite; }
+
+@media print {
+  .os-no-print { display: none !important; }
+  .os-root { background: #fff; }
+  .os-print-sheet { box-shadow: none !important; border: none !important; }
+  @page { margin: 14mm; }
 }

@@ -5,6 +5,12 @@ A Next.js site for egypteyetravel.com with a built-in content backend
 testimonials, FAQ, and site-wide settings are all editable from a login page
 at `/studio`, no code required.
 
+This repository also contains **Egypt Eye OS**, the company's internal
+operating system, at `/os`. It is a separate product sharing one identity
+provider: the public site sells the trip, and the OS runs it. See
+**[EGYPT-EYE-OS.md](EGYPT-EYE-OS.md)** for what it does, how to switch it on,
+and how it is built.
+
 ## Editing content (the day-to-day way)
 
 Once Sanity is set up (see below) and the site is deployed, go to
@@ -228,6 +234,53 @@ Customize Your Tour flow. The `reservations` table is deliberately shaped so
 a real checkout (Stripe, using its Coupons/Promotion Codes API rather than a
 second parallel discount system) can be added later without a rework — see
 `supabase/migrations/0001_init.sql`'s comments.
+
+## Setting up Egypt Eye OS (the internal operating system)
+
+Egypt Eye OS lives at **`yoursite.com/os`**. It is where the company operates
+*after* the reservation desk closes a deal — trips, crew, vehicles, dresses,
+suppliers, costs, approvals, incidents, the content pipeline, and the knowledge
+that would otherwise live in one person's head.
+
+It runs on the same Supabase project as customer accounts, so there is no
+second database to create.
+
+1. Add two environment variables in Vercel → Settings → Environment Variables:
+
+   - `SUPABASE_SERVICE_ROLE_KEY` — from supabase.com → your project → Project
+     Settings → API → **service_role**. Never expose this to the browser and
+     never prefix it `NEXT_PUBLIC_`. The OS needs it because every internal
+     table has Row Level Security enabled with no client policy at all — the
+     browser's key can read and write nothing there, and all access goes
+     through server code that checks a permission first.
+   - `CRON_SECRET` — any random string you make up. It protects the hourly
+     automation sweep. `vercel.json` already schedules the call.
+
+2. In Supabase → SQL Editor, run these four files from `supabase/migrations/`,
+   in order. All are safe to re-run.
+
+   - `0018_egypt_eye_os_core.sql` — the schema
+   - `0019_egypt_eye_os_config.sql` — permissions, roles, services, statuses
+   - `0020_egypt_eye_os_demo.sql` — realistic demo data (optional, but the
+     fastest way to see what the product does; every trip is dated relative to
+     the day you run it)
+   - `0021_egypt_eye_os_functions.sql` — reference sequences and search
+
+3. Link your own login to a staff record. Sign up at `/account/signup` if you
+   have not, then in the SQL Editor:
+
+   ```sql
+   update public.os_employees
+   set user_id = (select id from auth.users where email = 'you@egypteyetravel.com')
+   where code = 'EE-001';   -- the Owner in the demo data
+   ```
+
+4. Open `yoursite.com/os`.
+
+To see how the permission system behaves, link your account to a different code
+and reload — `EE-003` (Operations) plans and staffs every trip but cannot see a
+selling price anywhere, while `EE-017` (Driver) sees only their own runs. The
+full list is in [EGYPT-EYE-OS.md](EGYPT-EYE-OS.md).
 
 ## Images
 

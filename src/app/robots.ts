@@ -7,7 +7,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/studio", "/api/"],
+        // /os is the internal operating system. It is behind
+        // authentication regardless, but there is no reason for a crawler to
+        // spend requests discovering that.
+        disallow: ["/studio", "/api/", "/os"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
