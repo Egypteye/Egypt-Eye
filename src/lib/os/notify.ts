@@ -9,7 +9,7 @@ import { osdb, getOrg } from "./db";
 // that mattered — "tomorrow's 05:45 trip has no driver" — is lost in the pile.
 //
 // So: three levels only, a required category, and a dedupe key. The unique
-// index on (employee_id, dedupe_key) where read_at is null means the hourly
+// index on (employee_id, dedupe_key) where read_at is null means the
 // readiness sweep can shout about the same missing driver every hour without
 // producing twenty-four identical lines; it produces one, until someone reads
 // it or fixes it.

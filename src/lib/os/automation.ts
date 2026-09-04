@@ -15,7 +15,7 @@ import { todayInCairo, addDays, formatTime } from "./dates";
 //     checklist and opens its channel; assigning someone notifies them.
 //
 //   * ON A SCHEDULE — runSweep() is called by /api/os/cron, which a Vercel
-//     cron (or any scheduler) hits hourly. It does the time-based work:
+//     cron (or any scheduler) hits on a schedule. It does the time-based work:
 //     re-checking readiness inside the 24-hour horizon, chasing missing media,
 //     escalating stalled approvals.
 //

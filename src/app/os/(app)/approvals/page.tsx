@@ -208,7 +208,7 @@ export default async function ApprovalsPage({
 
           {overdue.length ? (
             <Notice tone="red" title={`${overdue.length} approval${overdue.length === 1 ? " is" : "s are"} past deadline`}>
-              These have escalated, or will on the next hourly sweep.
+              These have escalated, or will on the next sweep.
             </Notice>
           ) : null}
         </div>

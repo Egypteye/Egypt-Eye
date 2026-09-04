@@ -60,7 +60,7 @@ export default async function AutomationsPage() {
       {!lastSweep ? (
         <div className="mb-5">
           <Notice tone="amber" title="The scheduled sweep has never run">
-            The hourly work — re-checking readiness inside the 24-hour horizon, chasing missing media, escalating stalled
+            The scheduled work — re-checking readiness inside the 24-hour horizon, chasing missing media, escalating stalled
             approvals — runs when a scheduler calls <code className="rounded bg-black/10 px-1">/api/os/cron</code> with the
             CRON_SECRET. On Vercel that is a cron entry in vercel.json. Until then everything else still works; only the
             time-based rules are idle.
@@ -128,7 +128,7 @@ export default async function AutomationsPage() {
             silently — they run inside the action that caused them.
           </li>
           <li>
-            <span className="font-medium text-os-text">On a schedule.</span> The hourly sweep does the time-based work. Every
+            <span className="font-medium text-os-text">On a schedule.</span> The daily sweep does the time-based work. Every
             run is written to os_automation_runs, so &ldquo;did the 24-hour check actually run last night&rdquo; has an answer
             rather than an assumption.
           </li>

@@ -312,8 +312,12 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
 .os-live-dot { animation: os-pulse-dot 2s ease-in-out infinite; }
 
 @media print {
+  /* Everything here is .os- scoped. `@page` is deliberately NOT set: it is a
+     document-level at-rule that cannot be confined to a subtree, so setting a
+     margin here would silently change how the public website prints too. The
+     browser default is fine, and the OS is not worth a side effect on a page
+     a customer might print. */
   .os-no-print { display: none !important; }
   .os-root { background: #fff; }
   .os-print-sheet { box-shadow: none !important; border: none !important; }
-  @page { margin: 14mm; }
 }

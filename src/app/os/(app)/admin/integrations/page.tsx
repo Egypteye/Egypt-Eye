@@ -54,7 +54,7 @@ export default async function IntegrationsPage() {
     },
     {
       name: "Scheduled sweep",
-      purpose: "The hourly readiness check, media chasing and approval escalation.",
+      purpose: "The scheduled readiness check, media chasing and approval escalation.",
       status: cronLive ? "live" : "ready",
       detail: cronLive
         ? "CRON_SECRET is set. Point a scheduler at /api/os/cron once an hour — on Vercel, a cron entry in vercel.json."

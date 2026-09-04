@@ -92,7 +92,14 @@ const nextConfig: NextConfig = {
         // /os is excluded from THIS policy and given its own, stricter one
         // below: the internal operating system loads no third-party anything,
         // so it can afford a tighter list than the marketing site.
-        source: "/:path((?!studio|os).*)",
+        //
+        // The exclusions are anchored to whole path SEGMENTS on purpose. A
+        // bare `(?!os)` would also exclude any future top-level page whose
+        // slug merely starts with those letters — /osiris-tours is an
+        // entirely plausible page on an Egypt site — and it would lose its
+        // Content-Security-Policy header silently, which is the worst way to
+        // lose one.
+        source: "/:path((?!studio$|studio/|os$|os/).*)",
         headers: [{ key: "Content-Security-Policy", value: publicCsp }],
       },
       {

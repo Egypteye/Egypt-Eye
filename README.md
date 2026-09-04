@@ -253,8 +253,19 @@ second database to create.
      table has Row Level Security enabled with no client policy at all — the
      browser's key can read and write nothing there, and all access goes
      through server code that checks a permission first.
-   - `CRON_SECRET` — any random string you make up. It protects the hourly
-     automation sweep. `vercel.json` already schedules the call.
+   - `CRON_SECRET` — any random string you make up. It protects the
+     automation sweep. `vercel.json` already schedules the call, daily at
+     05:00 UTC (07:00 in Cairo), so the overnight alerts land before anyone
+     starts work.
+
+     The daily cadence is deliberate: Vercel's Hobby plan allows two cron
+     jobs and will only trigger them once a day, and this project already
+     uses one for the Pinterest sync. On Pro you can change that schedule to
+     `0 * * * *` for an hourly sweep, which makes the enquiry response-time
+     alert markedly more useful — it is the one thing in the sweep where a
+     day's delay costs something real. Nothing else in the OS depends on how
+     often it runs, and the endpoint returns 503 rather than running open if
+     `CRON_SECRET` is missing.
 
 2. In Supabase → SQL Editor, run these files from `supabase/migrations/`,
    in order. All are safe to re-run.

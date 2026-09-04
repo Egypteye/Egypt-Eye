@@ -9,7 +9,7 @@ export const maxDuration = 60;
 // The scheduled half of the automation engine.
 //
 // Point a scheduler at this once an hour. On Vercel that is a cron entry in
-// vercel.json; anywhere else, any hourly HTTP call works. It does the
+// vercel.json; anywhere else, any scheduled HTTP call works. It does the
 // time-based work that no user action can trigger: re-checking readiness
 // inside the 24-hour horizon, chasing shoots with no uploaded media, and
 // escalating approvals that have sat too long.
