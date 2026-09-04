@@ -9,6 +9,8 @@ import { todayInCairo } from "../dates";
 import { notify, employeesWithRole } from "../notify";
 import { getStages, stageBlockers } from "../commercial/pipeline";
 import { resolveTerm } from "../commercial/agreements";
+import { calculate } from "../pricing";
+import { quoteSendability, discountApprovalThreshold } from "../commercial/quotes";
 import type { Pipeline } from "../commercial/types";
 
 // ---------------------------------------------------------------------------
@@ -1311,4 +1313,425 @@ async function nextRef(fn: string, prefix: string): Promise<string> {
     "References cannot be allocated",
     `The ${prefix} sequence is missing. Apply the commercial migration before using this screen.`,
   );
+}
+
+// ===========================================================================
+// QUOTES
+// ===========================================================================
+//
+// A quote is what makes a deal advanceable: the Quoted stage requires one, and
+// before this existed that requirement was unclearable. Three rules run
+// through everything below.
+//
+//   * The totals are computed SERVER-SIDE from the price book, at the rates in
+//     force on the travel date. Nothing the browser sends is trusted as a
+//     price — the client picks items and quantities, and the server decides
+//     what they cost.
+//
+//   * A line with no rate on that date REFUSES the quote rather than pricing
+//     at zero. The calculator already declines to guess; saving must not be
+//     the place a guess sneaks in.
+//
+//   * A discount at or beyond the configured percentage needs an approval
+//     BEFORE the quote can be sent, and the refusal names the approval. This
+//     is the rule os_approval_rules has carried since 0023; this is where it
+//     is finally enforced rather than described.
+
+export async function createQuoteForDeal(input: {
+  dealId: string;
+  title?: string | null;
+  tier: string;
+  tripDate: string;
+  guestsAdults: number;
+  guestsChildren?: number;
+  lines: { priceItemId: string; qty: number }[];
+  sellOverride?: number | null;
+  validUntil?: string | null;
+  notes?: string | null;
+  makePrimary?: boolean;
+}): Promise<ActionResult<{ id: string; ref: string; sellTotal: number; discountPct: number | null }>> {
+  return guarded("pricing.calculate", async (actor) => {
+    if (!input.lines.length) return fail("A quote needs at least one line");
+    if (!input.tripDate) {
+      return fail("A quote needs a travel date", "Rates are resolved by date, so there is nothing to price against without one.");
+    }
+
+    const db = osdb();
+    const org = await getOrg();
+
+    const { data: deal } = await db
+      .from("os_deals")
+      .select("id, ref, pipeline, status, client_id, company_id, stage_id, currency, trip_type_id, unit_id")
+      .eq("id", input.dealId)
+      .maybeSingle();
+    if (!deal) return fail("That deal no longer exists");
+    const row = deal as Raw;
+    if (row.status !== "open") return fail(`This deal is ${row.status}`, "Quotes belong to open deals.");
+
+    // Priced here, from the price book, at the rates in force on the travel
+    // date. The browser sends items and quantities; it never sends a price.
+    const result = await calculate({
+      lines: input.lines,
+      tripDate: input.tripDate,
+      tier: input.tier,
+      currency: row.currency ?? org.baseCurrency,
+      sellOverride: input.sellOverride ?? null,
+    });
+
+    const unpriced = result.lines.filter((l) => l.missing);
+    if (unpriced.length) {
+      return fail(
+        "Some lines have no rate on that date",
+        "Add the missing rates to the price book first. Pricing them at zero would put a number on a proposal that nobody can stand behind.",
+        unpriced.map((l) => ({
+          label: l.label,
+          detail: `No rate effective on ${input.tripDate}. Add one under the price book.`,
+        })),
+      );
+    }
+
+    const listTotal = Math.round(result.lines.reduce((t, l) => t + l.sell, 0) * 100) / 100;
+    const discountPct = listTotal > 0 && result.sellTotal < listTotal
+      ? Math.round(((listTotal - result.sellTotal) / listTotal) * 1000) / 10
+      : null;
+
+    const { data: seq } = await db.rpc("nextval_os_quote_ref");
+    const ref = `Q-${seq ?? Date.now().toString().slice(-5)}`;
+
+    // A partner booking is priced under the terms in force on the travel date.
+    // If none covers it, the quote still saves — but nothing is assumed, and
+    // the screen says the commission could not be resolved.
+    let agreementId: string | null = null;
+    if (row.company_id) {
+      const resolved = await resolveTerm(row.company_id as string, input.tripDate, {
+        tripTypeId: row.trip_type_id ?? null,
+        tier: input.tier,
+        guests: input.guestsAdults + (input.guestsChildren ?? 0),
+      });
+      agreementId = resolved?.agreement.id ?? null;
+    }
+
+    const { data: created, error } = await db.from("os_quotes").insert({
+      org_id: org.id,
+      ref,
+      client_id: row.client_id,
+      trip_type_id: row.trip_type_id,
+      unit_id: row.unit_id,
+      deal_id: row.id,
+      company_id: row.company_id,
+      agreement_id: agreementId,
+      title: input.title?.trim() || `${row.ref} — ${result.tier?.label ?? input.tier}`,
+      tier: input.tier,
+      trip_date: input.tripDate,
+      guests_adults: input.guestsAdults,
+      guests_children: input.guestsChildren ?? 0,
+      currency: result.currency,
+      cost_total: result.costTotal,
+      sell_total: result.sellTotal,
+      margin_amount: result.marginAmount,
+      margin_pct: result.marginPct,
+      valid_until: input.validUntil || null,
+      status: "draft",
+      notes: input.notes?.trim() || null,
+      created_by: actor.employeeId,
+    }).select("id").single();
+    if (error) throw error;
+
+    const quoteId = created.id as string;
+
+    // Each line keeps the rate it resolved to and the window that rate covered,
+    // so the quote can explain itself long after the price book has moved on.
+    const { error: lineError } = await db.from("os_quote_lines").insert(
+      result.lines.map((line, index) => ({
+        quote_id: quoteId,
+        seq: index + 1,
+        price_item_id: line.priceItemId,
+        rate_id: line.rateId,
+        label: line.label,
+        category: line.category,
+        qty: line.qty,
+        unit_cost: line.unitCost,
+        unit_sell: line.unitSell,
+        currency: line.currency,
+        notes: line.rateWindow,
+      })),
+    );
+    if (lineError) throw lineError;
+
+    await db.from("os_deal_quotes").insert({ deal_id: row.id, quote_id: quoteId, label: input.title?.trim() || null });
+
+    // The deal's value follows its primary quote, so the forecast stops being
+    // somebody's estimate the moment a real price exists.
+    const dealUpdate: Record<string, unknown> = { last_activity_at: new Date().toISOString() };
+    if (input.makePrimary !== false) {
+      dealUpdate.primary_quote_id = quoteId;
+      dealUpdate.value_amount = result.sellTotal;
+      dealUpdate.currency = result.currency;
+      if (!row.requested_date) dealUpdate.requested_date = input.tripDate;
+    }
+    await db.from("os_deals").update(dealUpdate).eq("id", row.id);
+
+    await record(
+      actor,
+      {
+        entityType: "deal",
+        entityId: row.id,
+        verb: "quoted",
+        summary: `${ref} priced at ${result.currency} ${result.sellTotal.toFixed(2)}${discountPct ? `, ${discountPct}% below the price book` : ""}.`,
+        meta: { quoteRef: ref, discountPct },
+      },
+      {
+        action: "quote.create",
+        entityLabel: ref,
+        after: {
+          dealRef: row.ref, tier: input.tier, tripDate: input.tripDate,
+          listTotal, sellTotal: result.sellTotal, discountPct, currency: result.currency,
+        },
+      },
+    );
+
+    revalidatePath("/os/reservations");
+    revalidatePath("/os/partnerships");
+
+    const threshold = await discountApprovalThreshold();
+    const needsApproval = discountPct != null && discountPct >= threshold;
+
+    return ok(
+      { id: quoteId, ref, sellTotal: result.sellTotal, discountPct },
+      needsApproval
+        ? `${ref} saved as a draft. It is ${discountPct}% below the price book, so it needs an approval before it can be sent.`
+        : `${ref} saved at ${result.currency} ${result.sellTotal.toFixed(2)}.`,
+    );
+  });
+}
+
+/**
+ * Raise the discount approval for a quote.
+ *
+ * Reuses the ordinary approvals machinery — one approvals system, one
+ * separation-of-duties rule, one place a decision is recorded. The rule this
+ * evaluates has been in os_approval_rules since the commercial config
+ * migration; this is where it bites.
+ */
+export async function requestQuoteDiscount(quoteId: string, reason: string): Promise<ActionResult> {
+  return guarded("commercial.discount", async (actor) => {
+    if (!reason.trim()) {
+      return fail("Say why the discount is worth giving", "The person deciding has only what you write here.");
+    }
+
+    const db = osdb();
+    const org = await getOrg();
+
+    const sendability = await quoteSendability(quoteId);
+    const { data: quote } = await db
+      .from("os_quotes").select("id, ref, sell_total, currency, deal_id").eq("id", quoteId).maybeSingle();
+    if (!quote) return fail("That quote no longer exists");
+
+    if (sendability.discountPct == null || sendability.discountPct < sendability.threshold) {
+      return fail(
+        "This quote does not need an approval",
+        `It is within the ${sendability.threshold}% the company allows without one. Send it.`,
+      );
+    }
+    if (sendability.approvalStatus === "pending") {
+      return fail(`${sendability.approvalRef} is already waiting on a decision`);
+    }
+    if (sendability.approvalStatus === "approved") {
+      return fail(`${sendability.approvalRef} has already been approved`, "The quote can be sent.");
+    }
+
+    const { data: rule } = await db.from("os_approval_rules")
+      .select("id, approver_role_key, escalate_after_hours")
+      .eq("org_id", org.id).eq("key", "commercial_discount").eq("active", true).maybeSingle();
+    const approverRole = (rule?.approver_role_key as string) ?? "management";
+
+    const { data: seq } = await db.rpc("nextval_os_approval_ref");
+
+    const { data: created, error } = await db.from("os_approvals").insert({
+      org_id: org.id,
+      ref: `AP-${seq ?? Date.now().toString().slice(-4)}`,
+      kind: "discount",
+      title: `${sendability.discountPct}% discount on ${quote.ref}`,
+      detail: reason.trim(),
+      amount: quote.sell_total,
+      currency: quote.currency,
+      status: "pending",
+      requested_by: actor.employeeId,
+      approver_role_key: approverRole,
+      rule_id: rule?.id ?? null,
+      quote_id: quoteId,
+      deal_id: quote.deal_id,
+      due_at: new Date(Date.now() + Number(rule?.escalate_after_hours ?? 8) * 3_600_000).toISOString(),
+    }).select("id, ref").single();
+    if (error) throw error;
+
+    await db.from("os_approval_events").insert({
+      approval_id: created.id, employee_id: actor.employeeId, action: "requested", note: reason.trim(),
+    });
+
+    await notify({
+      employeeIds: await employeesWithRole(approverRole),
+      level: "warning",
+      category: "approval",
+      title: `Discount approval: ${sendability.discountPct}% on ${quote.ref}`,
+      body: reason.trim().slice(0, 160),
+      href: "/os/approvals",
+      entityType: "approval",
+      entityId: created.id as string,
+    });
+
+    await record(
+      actor,
+      {
+        entityType: "quote",
+        entityId: quoteId,
+        verb: "approval_requested",
+        summary: `${actor.name} asked for a ${sendability.discountPct}% discount on ${quote.ref}.`,
+      },
+      { action: "quote.discount_request", entityLabel: created.ref as string, after: { quoteRef: quote.ref, discountPct: sendability.discountPct, reason } },
+    );
+
+    revalidatePath("/os/approvals");
+    revalidatePath("/os/reservations");
+    revalidatePath("/os/partnerships");
+    return ok(undefined, `${created.ref} raised with ${approverRole.replace(/_/g, " ")}. The quote can be sent once it is approved.`);
+  });
+}
+
+/**
+ * Send a quote.
+ *
+ * This is where the discount rule is actually enforced. The screen disables
+ * the button for the same reason this refuses, because both read
+ * quoteSendability — but the screen was never the boundary.
+ */
+export async function sendQuote(quoteId: string): Promise<ActionResult> {
+  return guarded("deals.edit", async (actor) => {
+    const db = osdb();
+
+    const sendability = await quoteSendability(quoteId);
+    if (!sendability.sendable) {
+      return fail(
+        "This quote cannot be sent yet",
+        sendability.reason ?? "Something about it is not ready.",
+        sendability.discountPct != null && sendability.discountPct >= sendability.threshold
+          ? [{
+              label: `${sendability.discountPct}% discount`,
+              detail: `The company needs a decision at or beyond ${sendability.threshold}%. Raise the approval on this quote${sendability.approvalRef ? ` (${sendability.approvalRef} is the last one)` : ""}.`,
+            }]
+          : undefined,
+      );
+    }
+
+    const { data: quote } = await db
+      .from("os_quotes").select("id, ref, deal_id, sell_total, currency").eq("id", quoteId).maybeSingle();
+    if (!quote) return fail("That quote no longer exists");
+
+    const now = new Date().toISOString();
+    const { error } = await db.from("os_quotes").update({ status: "sent", sent_at: now }).eq("id", quoteId);
+    if (error) throw error;
+
+    // Sending the proposal IS the move to the proposing stage. Making somebody
+    // do it twice is how a pipeline stops reflecting what happened.
+    let moved: string | null = null;
+    if (quote.deal_id) {
+      const { data: deal } = await db
+        .from("os_deals").select("id, ref, pipeline, stage_id, stage_entered_at, status").eq("id", quote.deal_id).maybeSingle();
+      const dealRow = deal as Raw;
+      if (dealRow && dealRow.status === "open") {
+        const stages = await getStages(dealRow.pipeline);
+        const current = stages.find((s) => s.id === dealRow.stage_id);
+        const proposing = stages.find((s) => s.category === "proposing");
+        if (proposing && current && current.sortOrder < proposing.sortOrder) {
+          const daysInPrevious =
+            Math.round(((Date.now() - Date.parse(dealRow.stage_entered_at)) / 86_400_000) * 100) / 100;
+          await db.from("os_deals").update({
+            stage_id: proposing.id,
+            stage_entered_at: now,
+            last_activity_at: now,
+            probability_pct: null,
+            probability_source: "stage",
+          }).eq("id", dealRow.id);
+          await db.from("os_deal_stage_history").insert({
+            deal_id: dealRow.id,
+            from_stage_id: dealRow.stage_id,
+            to_stage_id: proposing.id,
+            from_status: "open",
+            to_status: "open",
+            changed_by: actor.employeeId,
+            note: `${quote.ref} sent.`,
+            days_in_previous_stage: daysInPrevious,
+          });
+          moved = proposing.label;
+        } else {
+          await db.from("os_deals").update({ last_activity_at: now }).eq("id", dealRow.id);
+        }
+      }
+    }
+
+    // Sending a proposal is contact. It counts on the relationship's history
+    // like any other conversation, so the last-contact date stays true.
+    await db.from("os_engagements").insert({
+      org_id: (await getOrg()).id,
+      kind: "proposal_sent",
+      direction: "outbound",
+      channel: "Quote",
+      deal_id: quote.deal_id,
+      summary: `${quote.ref} sent at ${quote.currency} ${Number(quote.sell_total ?? 0).toFixed(2)}.`,
+      outcome: "neutral",
+      happened_at: now,
+      employee_id: actor.employeeId,
+    });
+
+    await record(
+      actor,
+      { entityType: "quote", entityId: quoteId, verb: "sent", summary: `${quote.ref} sent to the client.` },
+      { action: "quote.send", entityLabel: quote.ref as string, after: { sentAt: now, movedTo: moved } },
+    );
+
+    revalidatePath("/os/reservations");
+    revalidatePath("/os/partnerships");
+    return ok(undefined, moved ? `${quote.ref} sent, and the deal moved to ${moved}.` : `${quote.ref} sent.`);
+  });
+}
+
+export async function decideQuote(quoteId: string, outcome: "accepted" | "declined", note: string): Promise<ActionResult> {
+  return guarded("deals.edit", async (actor) => {
+    const db = osdb();
+    const { data: quote } = await db.from("os_quotes").select("id, ref, status, deal_id").eq("id", quoteId).maybeSingle();
+    if (!quote) return fail("That quote no longer exists");
+    if (quote.status !== "sent") {
+      return fail(`This quote is ${quote.status}`, "Only a sent quote can come back with an answer.");
+    }
+
+    const now = new Date().toISOString();
+    const { error } = await db.from("os_quotes").update({ status: outcome, decided_at: now }).eq("id", quoteId);
+    if (error) throw error;
+
+    await db.from("os_engagements").insert({
+      org_id: (await getOrg()).id,
+      kind: "message",
+      direction: "inbound",
+      deal_id: quote.deal_id,
+      summary: `${quote.ref} ${outcome}.${note.trim() ? ` ${note.trim()}` : ""}`,
+      outcome: outcome === "accepted" ? "positive" : "negative",
+      happened_at: now,
+      employee_id: actor.employeeId,
+    });
+
+    await record(
+      actor,
+      { entityType: "quote", entityId: quoteId, verb: outcome, summary: `${quote.ref} ${outcome}.` },
+      { action: `quote.${outcome}`, entityLabel: quote.ref as string, after: { note } },
+    );
+
+    revalidatePath("/os/reservations");
+    revalidatePath("/os/partnerships");
+    return ok(
+      undefined,
+      outcome === "accepted"
+        ? `${quote.ref} accepted. Mark the deal won when the deposit is in — that is what raises the trip.`
+        : `${quote.ref} declined, and it is on the record.`,
+    );
+  });
 }

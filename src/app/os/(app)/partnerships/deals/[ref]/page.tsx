@@ -4,6 +4,8 @@ import { getActor, can } from "@/lib/os/actor";
 import { getDeal, dealStageHistory } from "@/lib/os/commercial/deals";
 import { getStages, stageBlockers } from "@/lib/os/commercial/pipeline";
 import { resolveTerm, describeTerm } from "@/lib/os/commercial/agreements";
+import { dealQuotes, quoteSendability, discountApprovalThreshold } from "@/lib/os/commercial/quotes";
+import { getPriceItems, getTiers } from "@/lib/os/pricing";
 import { osdb, getOrg } from "@/lib/os/db";
 import { formatDate, relativeTime, todayInCairo } from "@/lib/os/dates";
 import { formatMoney } from "@/lib/os/money";
@@ -11,6 +13,7 @@ import { PageHeader, NoAccess, Card, CardHeader, Badge, Notice, Stat, Divider, b
 import { Icon } from "@/components/os/icons";
 import { StagePill } from "@/components/os/commercial";
 import { DealControls } from "./DealControls";
+import { QuotePanel } from "./QuotePanel";
 import { EngagementLog } from "../../EngagementLog";
 
 export const dynamic = "force-dynamic";
@@ -36,7 +39,7 @@ export default async function DealPage({ params }: { params: Promise<{ ref: stri
   const org = await getOrg();
   const workspace = deal.pipeline === "b2c" ? "reservations" : "partnerships";
 
-  const [stages, history, { data: reasons }, { data: engagements }, { data: tasks }, { data: trips }] = await Promise.all([
+  const [stages, history, { data: reasons }, { data: engagements }, { data: tasks }, { data: trips }, quotes, priceItems, tiers, discountThreshold] = await Promise.all([
     getStages(deal.pipeline),
     dealStageHistory(deal.id),
     db.from("os_lost_reasons").select("key, label, controllable, pipeline").eq("org_id", org.id).eq("active", true).order("sort_order"),
@@ -49,7 +52,21 @@ export default async function DealPage({ params }: { params: Promise<{ ref: stri
       ? db.from("os_tasks").select("id, title, status, due_at").eq("deal_id", deal.id).order("due_at", { nullsFirst: false })
       : Promise.resolve({ data: [] }),
     db.from("os_deal_trips").select("os_trips ( ref, title, trip_date, status )").eq("deal_id", deal.id),
+    dealQuotes(actor, deal.id),
+    can(actor, "pricing.calculate") ? getPriceItems() : Promise.resolve([]),
+    can(actor, "pricing.calculate") ? getTiers() : Promise.resolve([]),
+    discountApprovalThreshold(),
   ]);
+
+  // Whether each quote may be sent is decided server-side and handed to the
+  // panel, so the disabled button and the action's refusal are the same
+  // computation rather than two that can drift.
+  const quotesWithSendability = await Promise.all(
+    quotes.map(async (quote) => {
+      const s = await quoteSendability(quote.id);
+      return { ...quote, sendable: s.sendable, sendReason: s.reason, approvalRef: s.approvalRef, approvalStatus: s.approvalStatus };
+    }),
+  );
 
   // What is standing between this deal and each stage it could move to,
   // computed server-side so the page shows the real answer rather than a
@@ -144,6 +161,23 @@ export default async function DealPage({ params }: { params: Promise<{ ref: stri
               )}
             </Card>
           ) : null}
+
+          <QuotePanel
+            dealId={deal.id}
+            dealRef={deal.ref}
+            quotes={quotesWithSendability}
+            priceItems={priceItems.map((p) => ({ id: p.id, name: p.name, category: p.category, unitLabel: p.unitLabel }))}
+            tiers={tiers.map((t) => ({ key: t.key, label: t.label }))}
+            defaultTripDate={deal.requestedDate ?? todayInCairo()}
+            defaultGuests={deal.guests ?? 2}
+            threshold={discountThreshold}
+            can={{
+              build: can(actor, "pricing.calculate") && deal.status === "open",
+              send: can(actor, "deals.edit"),
+              discount: can(actor, "commercial.discount"),
+              margins: can(actor, "pricing.margins"),
+            }}
+          />
 
           {can(actor, "engagements.view") ? (
             <EngagementLog

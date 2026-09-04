@@ -561,6 +561,85 @@ where o.key = 'egypt-eye'
 
 
 -- ---------------------------------------------------------------------------
+-- QUOTES — because a deal past the quoting stage must have one
+-- ---------------------------------------------------------------------------
+-- The Quote sent stage refuses a deal with nothing priced attached, so seeding
+-- a deal into that stage without a quote would show a state the application
+-- itself forbids. These are the quotes those two deals were moved on the
+-- strength of.
+--
+-- Each line records the rate it resolved to and the window that rate covered,
+-- exactly as the application writes them, so the quote can still explain
+-- itself long after the price book has moved on.
+insert into public.os_quotes (
+  org_id, ref, client_id, deal_id, trip_type_id, unit_id, title, tier, trip_date,
+  guests_adults, guests_children, currency, cost_total, sell_total, margin_amount, margin_pct,
+  valid_until, status, sent_at, notes, created_by, created_at
+)
+select o.id,
+       'Q-' || lpad(nextval('public.os_quote_ref_seq')::text, 5, '0'),
+       d.client_id, d.id, d.trip_type_id, d.unit_id,
+       v.title, v.tier, d.requested_date,
+       v.adults, 0, d.currency,
+       v.cost, v.sell, v.sell - v.cost,
+       round(((v.sell - v.cost) / nullif(v.sell, 0)) * 100, 2),
+       current_date + v.valid_days, v.status,
+       now() - make_interval(days => v.sent_days_ago),
+       v.notes, d.owner_employee_id, now() - make_interval(days => v.sent_days_ago)
+from public.os_orgs o
+cross join lateral (values
+  ('Laura Pettersen — flying dress, Wadi El Rayan', 'Sunrise at Wadi El Rayan, two dresses', 'standard',
+   2, 268.00, 740.00, 21, 2, 'sent',
+   'Two dress options priced. A sunrise start means a 04:00 pickup from Cairo, which she has agreed to.'),
+  ('Ricardo Alves — surprise proposal shoot', 'Proposal shoot with a second photographer', 'premium',
+   2, 610.00, 1650.00, 14, 4, 'sent',
+   'Second photographer positioned at distance so she does not see it coming. He is asking whether that one can come out.')
+) as v(deal_title, title, tier, adults, cost, sell, valid_days, sent_days_ago, status, notes)
+join public.os_deals d on d.org_id = o.id and d.title = v.deal_title
+where o.key = 'egypt-eye'
+  and not exists (select 1 from public.os_quotes q where q.deal_id = d.id);
+
+insert into public.os_quote_lines (quote_id, seq, price_item_id, rate_id, label, category, qty, unit_cost, unit_sell, currency, notes)
+select q.id, v.seq, pi.id, r.id, pi.name, pi.category, v.qty,
+       r.cost_amount, coalesce(r.sell_amount, round(r.cost_amount * 2.4, 2)), r.currency,
+       to_char(r.valid_from, 'YYYY-MM-DD') || ' → ' || coalesce(to_char(r.valid_to, 'YYYY-MM-DD'), 'ongoing')
+from public.os_orgs o
+cross join lateral (values
+  ('Sunrise at Wadi El Rayan, two dresses',     1, 'photographer_4h',     1),
+  ('Sunrise at Wadi El Rayan, two dresses',     2, 'dress_rental',        2),
+  ('Sunrise at Wadi El Rayan, two dresses',     3, 'vehicle_van7',        1),
+  ('Sunrise at Wadi El Rayan, two dresses',     4, 'driver_long',         1),
+  ('Sunrise at Wadi El Rayan, two dresses',     5, 'fayoum_protectorate', 2),
+  ('Sunrise at Wadi El Rayan, two dresses',     6, 'editing_standard',    1),
+  ('Proposal shoot with a second photographer', 1, 'photographer_4h',     1),
+  ('Proposal shoot with a second photographer', 2, 'photographer_2h',     1),
+  ('Proposal shoot with a second photographer', 3, 'photo_permit_giza',   2),
+  ('Proposal shoot with a second photographer', 4, 'vehicle_vip',         1),
+  ('Proposal shoot with a second photographer', 5, 'coordinator_day',     1),
+  ('Proposal shoot with a second photographer', 6, 'editing_express',     1)
+) as v(quote_title, seq, item_key, qty)
+join public.os_quotes q on q.org_id = o.id and q.title = v.quote_title
+join public.os_price_items pi on pi.org_id = o.id and pi.key = v.item_key
+join lateral (
+  select r.* from public.os_rates r
+  where r.price_item_id = pi.id
+    and coalesce(q.trip_date, current_date) between r.valid_from and coalesce(r.valid_to, '9999-12-31')
+  order by r.valid_from desc limit 1
+) r on true
+where o.key = 'egypt-eye'
+  and not exists (select 1 from public.os_quote_lines ql where ql.quote_id = q.id and ql.seq = v.seq);
+
+insert into public.os_deal_quotes (deal_id, quote_id)
+select q.deal_id, q.id from public.os_quotes q
+where q.deal_id is not null
+  and not exists (select 1 from public.os_deal_quotes dq where dq.deal_id = q.deal_id and dq.quote_id = q.id);
+
+update public.os_deals d
+set primary_quote_id = q.id
+from public.os_quotes q
+where q.deal_id = d.id and d.primary_quote_id is null;
+
+-- ---------------------------------------------------------------------------
 -- ENGAGEMENTS — the record that a conversation happened
 -- ---------------------------------------------------------------------------
 -- Not messages. What a colleague picking the relationship up on Monday needs
@@ -739,10 +818,19 @@ cross join lateral (values
 join public.os_agreements a on a.org_id = o.id and a.title = v.agreement_title
 left join public.os_trip_types tt on tt.org_id = o.id and tt.key = v.type_key
 where o.key = 'egypt-eye'
+  -- Matched on the term's NATURAL key — the agreement, the service and the
+  -- tier it covers — never on the computed date. The dates here are relative
+  -- to current_date, so re-running this migration on a later day would
+  -- otherwise compute a different effective_from, miss the row it already
+  -- created, and insert a second term overlapping the first. The exclusion
+  -- constraint would catch it, but a migration that only re-runs cleanly on
+  -- the day it was first applied is not idempotent.
   and not exists (
     select 1 from public.os_agreement_terms t
-    where t.agreement_id = a.id and t.effective_from = current_date - v.from_days_ago
+    where t.agreement_id = a.id
       and coalesce(t.trip_type_id::text, '-') = coalesce(tt.id::text, '-')
+      and coalesce(t.tier, '-') = coalesce(v.tier, '-')
+      and t.basis = v.basis
   );
 
 -- The 15% term supersedes the 12% one. Pointing at it is what lets the
