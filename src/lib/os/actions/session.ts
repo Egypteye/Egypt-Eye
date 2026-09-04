@@ -2,8 +2,8 @@
 
 import { headers } from "next/headers";
 import { osdb, getOrg, osConfigured } from "../db";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { supabaseConfigured } from "@/lib/supabase/env";
+import { osServerClient } from "../supabase/server";
+import { osSupabaseConfigured } from "../supabase/env";
 
 // ---------------------------------------------------------------------------
 // SIGN-IN VISIBILITY
@@ -54,10 +54,10 @@ export async function recordSignOut(scope: "local" | "global"): Promise<void> {
 }
 
 async function writeLoginEvent(kind: LoginKind | null): Promise<void> {
-  if (!supabaseConfigured || !osConfigured) return;
+  if (!osSupabaseConfigured || !osConfigured) return;
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = await osServerClient();
     const { data } = await supabase.auth.getUser();
     const user = data.user;
     if (!user) return;

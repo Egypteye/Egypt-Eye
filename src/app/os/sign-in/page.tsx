@@ -1,10 +1,10 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SignInForm } from "./SignInForm";
 import { getActor } from "@/lib/os/actor";
 import { osConfigured } from "@/lib/os/db";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { supabaseConfigured } from "@/lib/supabase/env";
+import { osServerClient } from "@/lib/os/supabase/server";
+import { osSupabaseConfigured } from "@/lib/os/supabase/env";
+import { NotStaffPanel } from "./NotStaffPanel";
 
 export const dynamic = "force-dynamic";
 
@@ -20,11 +20,15 @@ export default async function OsSignInPage() {
   }
 
   // Distinguish the two "you cannot get in" cases, because the fix is
-  // completely different. Signed in but not staff is an administrator task;
-  // signed out is a password.
+  // completely different. Authenticated but not linked to a staff record is
+  // an administrator task; signed out is a password.
+  //
+  // This reads the OS project's session, not the website's. Somebody signed
+  // into egypteyetravel.com as a customer is simply not signed in here — the
+  // two are different Supabase projects and neither knows about the other.
   let signedInEmail: string | null = null;
-  if (supabaseConfigured) {
-    const supabase = await createServerSupabaseClient();
+  if (osSupabaseConfigured) {
+    const supabase = await osServerClient();
     const { data } = await supabase.auth.getUser();
     signedInEmail = data.user?.email ?? null;
   }
@@ -40,27 +44,16 @@ export default async function OsSignInPage() {
         </div>
 
         {signedInEmail ? (
-          <div className="rounded-2xl bg-white p-6">
-            <h2 className="text-[15px] font-semibold text-os-text">This account is not on the Egypt Eye team</h2>
-            <p className="mt-2 text-[13px] leading-relaxed text-os-muted">
-              You are signed in as <span className="font-medium text-os-text">{signedInEmail}</span>, and that address is
-              not linked to a staff record. An administrator links an account under Admin, Users and access.
-            </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              <Link href="/account" className="rounded-lg border border-os-line-strong px-3 py-2 text-[13px] font-medium text-os-text hover:bg-black/[0.03]">
-                Go to my customer account
-              </Link>
-              <Link href="/" className="rounded-lg px-3 py-2 text-[13px] font-medium text-os-muted hover:text-os-text">
-                Back to the website
-              </Link>
-            </div>
-          </div>
+          <NotStaffPanel email={signedInEmail} />
         ) : (
           <SignInForm />
         )}
 
-        <p className="mt-6 text-center text-[12px] text-white/35">
+        <p className="mt-6 text-center text-[12px] leading-relaxed text-white/35">
           Egypt Eye OS is accessible from any device with a browser. Add it to your home screen for one-tap access.
+          <span className="mt-1.5 block">
+            Staff accounts are separate from customer accounts on the website — signing in here does not sign you in there.
+          </span>
         </p>
       </div>
     </div>

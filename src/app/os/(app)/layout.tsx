@@ -119,18 +119,20 @@ function SetupNotice({ title, detail }: { title?: string; detail?: string } = {}
         </h1>
         <p className="mt-3 text-[13.5px] leading-relaxed text-os-muted">
           {detail ??
-            "The OS runs on the same Supabase project as the website. Add the environment variables below, then run the migrations in supabase/migrations/ in order."}
+            "The OS runs on its OWN Supabase project, separate from the website's. Create a second project, add the variables below from it, then run migrations 0018 onward IN THAT PROJECT."}
         </p>
         <ul className="mt-4 space-y-1.5 text-[12.5px] text-os-muted">
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_SUPABASE_URL</code></li>
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">SUPABASE_SERVICE_ROLE_KEY</code></li>
+          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_OS_SUPABASE_URL</code></li>
+          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_OS_SUPABASE_ANON_KEY</code></li>
+          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">OS_SUPABASE_SERVICE_ROLE_KEY</code></li>
         </ul>
         <p className="mt-4 text-[12.5px] leading-relaxed text-os-muted">
           The migrations are <code>0018_egypt_eye_os_core.sql</code> (schema),{" "}
           <code>0019_egypt_eye_os_config.sql</code> (roles and permissions, required),{" "}
-          <code>0020_egypt_eye_os_demo.sql</code> (demo data, optional) and{" "}
-          <code>0021_egypt_eye_os_functions.sql</code>.
+          <code>0020_egypt_eye_os_demo.sql</code> (demo data, optional),{" "}
+          <code>0021_egypt_eye_os_functions.sql</code>, then{" "}
+          <code>0022</code>–<code>0024</code> for the commercial layer. Migrations{" "}
+          <code>0001</code>–<code>0017</code> belong to the website and must not be run here.
         </p>
         <Link href="/" className="mt-6 inline-block text-[13px] font-semibold text-os-gold hover:underline">
           ← Back to the website

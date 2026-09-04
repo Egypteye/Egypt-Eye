@@ -38,7 +38,13 @@ It is deliberately **not** an inbox, not a booking engine, and not a CRM.
 
 ## Getting it running
 
-The OS shares the website's Supabase project. There is no second database.
+The OS runs on its OWN Supabase project, separate from the website's — a
+different database with its own users, not a new table set in the same one.
+It is the strongest isolation available: the OS is not connected to the
+customer database at all, so no query and no misconfigured permission can
+reach across it, staff never land in the customer book, and a key leaked on
+one side exposes nothing on the other. There is deliberately no fallback
+between the two.
 
 **1. Add the service-role key.** In Vercel → Settings → Environment Variables:
 

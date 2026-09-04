@@ -1,7 +1,7 @@
 import "server-only";
 import { cache } from "react";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { supabaseConfigured } from "@/lib/supabase/env";
+import { osServerClient } from "./supabase/server";
+import { osSupabaseConfigured } from "./supabase/env";
 import { osdb, getOrg, OsForbiddenError } from "./db";
 import { PERMISSION_KEYS, widerScope, type PermissionKey, type Scope } from "./permissions";
 
@@ -60,9 +60,9 @@ export class OsNotStaffError extends Error {
 }
 
 export const getActor = cache(async (): Promise<Actor | null> => {
-  if (!supabaseConfigured) return null;
+  if (!osSupabaseConfigured) return null;
 
-  const supabase = await createServerSupabaseClient();
+  const supabase = await osServerClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();

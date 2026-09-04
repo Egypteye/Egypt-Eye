@@ -242,17 +242,32 @@ Egypt Eye OS lives at **`yoursite.com/os`**. It is where the company operates
 suppliers, costs, approvals, incidents, the content pipeline, and the knowledge
 that would otherwise live in one person's head.
 
-It runs on the same Supabase project as customer accounts, so there is no
-second database to create.
+It runs on its **own Supabase project**, separate from the website's. Not new
+tables in the same database — a different database, with its own users. That
+is the strongest isolation available: the OS is not connected to the customer
+database at all, so no query anybody writes and no permission anybody
+misconfigures can reach across. Staff sign in with accounts that do not exist
+on the website, so a member of staff never lands in your customer book, and a
+key leaked on one side exposes nothing on the other.
 
-1. Add two environment variables in Vercel → Settings → Environment Variables:
+1. **Create a second Supabase project** at supabase.com, alongside the one the
+   website already uses. The free tier covers two.
 
-   - `SUPABASE_SERVICE_ROLE_KEY` — from supabase.com → your project → Project
-     Settings → API → **service_role**. Never expose this to the browser and
-     never prefix it `NEXT_PUBLIC_`. The OS needs it because every internal
-     table has Row Level Security enabled with no client policy at all — the
-     browser's key can read and write nothing there, and all access goes
-     through server code that checks a permission first.
+2. Add these environment variables in Vercel → Settings → Environment
+   Variables, taking the first three from the NEW project's Project Settings →
+   API:
+
+   - `NEXT_PUBLIC_OS_SUPABASE_URL` and `NEXT_PUBLIC_OS_SUPABASE_ANON_KEY` —
+     the OS project's URL and anon key. Deliberately distinct from the
+     website's `NEXT_PUBLIC_SUPABASE_*`, and there is **no fallback** between
+     them: if these are missing the OS refuses to start and says so, rather
+     than silently using the website's database.
+   - `OS_SUPABASE_SERVICE_ROLE_KEY` — that project's **service_role** key.
+     Never expose it to the browser and never prefix it `NEXT_PUBLIC_`. The OS
+     needs it because every internal table has Row Level Security enabled with
+     no client policy at all — the browser's key can read and write nothing
+     there, and all access goes through server code that checks a permission
+     first.
    - `CRON_SECRET` — any random string you make up. It protects the
      automation sweep. `vercel.json` already schedules the call, daily at
      05:00 UTC (07:00 in Cairo), so the overnight alerts land before anyone
@@ -267,8 +282,9 @@ second database to create.
      often it runs, and the endpoint returns 503 rather than running open if
      `CRON_SECRET` is missing.
 
-2. In Supabase → SQL Editor, run these files from `supabase/migrations/`,
-   in order. All are safe to re-run.
+3. In the **OS project's** SQL Editor — not the website's — run these files
+   from `supabase/migrations/`, in order. All are safe to re-run. Migrations
+   0001–0017 belong to the website and must NOT be run here.
 
    - `0018_egypt_eye_os_core.sql` — the schema
    - `0019_egypt_eye_os_config.sql` — permissions, roles, services, statuses
@@ -286,8 +302,10 @@ second database to create.
    - `0024_egypt_eye_commercial_demo.sql` — commercial demo data (optional),
      which connects to the trips 0020 already created
 
-3. Link your own login to a staff record. Sign up at `/account/signup` if you
-   have not, then in the SQL Editor:
+4. Create your staff login **in the OS project** — Supabase → Authentication →
+   Users → Add user — then link it to an employee record in that same
+   project's SQL Editor. This is a different account from any customer login
+   you have on the website; the two projects do not know about each other.
 
    ```sql
    update public.os_employees
@@ -295,7 +313,7 @@ second database to create.
    where code = 'EE-001';   -- the Owner in the demo data
    ```
 
-4. Open `yoursite.com/os`.
+5. Open `yoursite.com/os`.
 
 To see how the permission system behaves, link your account to a different code
 and reload — `EE-003` (Operations) plans and staffs every trip but cannot see a

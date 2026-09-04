@@ -38,7 +38,7 @@ export default async function IntegrationsPage() {
 
   // What is actually wired, established by looking at the environment rather
   // than by asserting it.
-  const supabaseLive = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
+  const supabaseLive = Boolean(process.env.NEXT_PUBLIC_OS_SUPABASE_URL && process.env.OS_SUPABASE_SERVICE_ROLE_KEY);
   const emailLive = Boolean(process.env.RESEND_API_KEY);
   const cronLive = Boolean(process.env.CRON_SECRET);
 
@@ -50,7 +50,7 @@ export default async function IntegrationsPage() {
       detail: supabaseLive
         ? "Connected. Auth owns credentials and sessions; every os_ table has row-level security enabled with no client policy, so only server code reaches them."
         : "Not configured. The OS cannot run without it.",
-      requires: supabaseLive ? undefined : "NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY",
+      requires: supabaseLive ? undefined : "NEXT_PUBLIC_OS_SUPABASE_URL, NEXT_PUBLIC_OS_SUPABASE_ANON_KEY and OS_SUPABASE_SERVICE_ROLE_KEY",
     },
     {
       name: "Scheduled sweep",

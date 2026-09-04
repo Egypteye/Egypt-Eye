@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
+import { osBrowserClient } from "@/lib/os/supabase/client";
 import { recordSignIn } from "@/lib/os/actions/session";
 import { Spinner } from "@/components/os/action";
+import { ForgotPassword } from "./ForgotPassword";
 
 // Credentials never touch Egypt Eye code. Supabase Auth owns password
 // hashing, sessions, refresh tokens, verification and reset; this form hands
@@ -23,7 +23,7 @@ export function SignInForm() {
     setPending(true);
     setError(null);
     try {
-      const supabase = createClient();
+      const supabase = osBrowserClient();
       const { error: signInError } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (signInError) {
         // Never say which half was wrong: that turns the form into a way of
@@ -83,11 +83,7 @@ export function SignInForm() {
         {pending ? "Signing in…" : "Sign in"}
       </button>
 
-      <p className="mt-4 text-center text-[12px] text-os-muted">
-        <Link href="/account/forgot-password" className="font-medium text-os-gold hover:underline">
-          Forgot your password?
-        </Link>
-      </p>
+      <ForgotPassword email={email} />
     </form>
   );
 }

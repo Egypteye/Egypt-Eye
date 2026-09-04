@@ -1,6 +1,6 @@
 import "server-only";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
-import { supabaseAdminConfigured } from "@/lib/supabase/env";
+import { osSupabaseAdminConfigured, osSupabaseEnv } from "./supabase/env";
 
 // ---------------------------------------------------------------------------
 // The ONLY database handle Egypt Eye OS uses.
@@ -23,18 +23,18 @@ import { supabaseAdminConfigured } from "@/lib/supabase/env";
 let cached: SupabaseClient | null = null;
 
 export function osdb(): SupabaseClient {
-  if (!supabaseAdminConfigured) {
+  if (!osSupabaseAdminConfigured) {
     throw new OsNotConfiguredError();
   }
   if (cached) return cached;
-  cached = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+  cached = createClient(osSupabaseEnv().url, process.env.OS_SUPABASE_SERVICE_ROLE_KEY!, {
     auth: { autoRefreshToken: false, persistSession: false },
     db: { schema: "public" },
   });
   return cached;
 }
 
-export const osConfigured = supabaseAdminConfigured;
+export const osConfigured = osSupabaseAdminConfigured;
 
 /** The OS cannot run without Supabase credentials. Pages catch this and render setup guidance. */
 export class OsNotConfiguredError extends Error {
@@ -97,7 +97,7 @@ export function friendlyError(error: unknown): { title: string; detail?: string 
     return {
       title: "Egypt Eye OS is not connected to a database yet",
       detail:
-        "Add NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY, then run the migrations in supabase/migrations/.",
+        "Add NEXT_PUBLIC_OS_SUPABASE_URL, NEXT_PUBLIC_OS_SUPABASE_ANON_KEY and OS_SUPABASE_SERVICE_ROLE_KEY — the OS runs on its own Supabase project, separate from the website's — then run migrations 0018 onward in it.",
     };
   }
   if (error instanceof OsForbiddenError) {
