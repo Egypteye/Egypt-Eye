@@ -242,32 +242,33 @@ Egypt Eye OS lives at **`yoursite.com/os`**. It is where the company operates
 suppliers, costs, approvals, incidents, the content pipeline, and the knowledge
 that would otherwise live in one person's head.
 
-It runs on its **own Supabase project**, separate from the website's. Not new
-tables in the same database — a different database, with its own users. That
-is the strongest isolation available: the OS is not connected to the customer
-database at all, so no query anybody writes and no permission anybody
-misconfigures can reach across. Staff sign in with accounts that do not exist
-on the website, so a member of staff never lands in your customer book, and a
-key leaked on one side exposes nothing on the other.
+It runs on the **same Supabase project as the website**, on purpose. That is
+what lets a trip point at the reservation that created it, an OS client be the
+same person as a website profile, and a concierge request become a lead — with
+real foreign keys and real joins. Postgres cannot join across two Supabase
+projects, so the alternative would be syncing copies between databases: stale
+data, another thing to break, and two versions of the same customer.
 
-1. **Create a second Supabase project** at supabase.com, alongside the one the
-   website already uses. The free tier covers two.
+The separation that matters is still there. Every OS table is prefixed `os_`
+with Row Level Security on and no client policy, the OS migrations touch no
+website table, and nothing in `src/lib/os/*` writes to one. What protects the
+website is operational rather than architectural — see **Protecting the
+website** below.
 
-2. Add these environment variables in Vercel → Settings → Environment
+If you ever need hard isolation instead, setting `NEXT_PUBLIC_OS_SUPABASE_URL`
+(plus its anon and service-role keys) points the OS at a separate project. You
+lose the linking above, so only do it if the OS does not need website data.
+
+1. Add these environment variables in Vercel → Settings → Environment
    Variables, taking the first three from the NEW project's Project Settings →
    API:
 
-   - `NEXT_PUBLIC_OS_SUPABASE_URL` and `NEXT_PUBLIC_OS_SUPABASE_ANON_KEY` —
-     the OS project's URL and anon key. Deliberately distinct from the
-     website's `NEXT_PUBLIC_SUPABASE_*`, and there is **no fallback** between
-     them: if these are missing the OS refuses to start and says so, rather
-     than silently using the website's database.
-   - `OS_SUPABASE_SERVICE_ROLE_KEY` — that project's **service_role** key.
-     Never expose it to the browser and never prefix it `NEXT_PUBLIC_`. The OS
-     needs it because every internal table has Row Level Security enabled with
-     no client policy at all — the browser's key can read and write nothing
-     there, and all access goes through server code that checks a permission
-     first.
+   - `SUPABASE_SERVICE_ROLE_KEY` — your existing project's **service_role**
+     key, from Project Settings → API. Never expose it to the browser and
+     never prefix it `NEXT_PUBLIC_`. The OS needs it because every internal
+     table has Row Level Security enabled with no client policy at all — the
+     browser's key can read and write nothing there, and all access goes
+     through server code that checks a permission first.
    - `CRON_SECRET` — any random string you make up. It protects the
      automation sweep. `vercel.json` already schedules the call, daily at
      05:00 UTC (07:00 in Cairo), so the overnight alerts land before anyone
@@ -282,9 +283,9 @@ key leaked on one side exposes nothing on the other.
      often it runs, and the endpoint returns 503 rather than running open if
      `CRON_SECRET` is missing.
 
-3. In the **OS project's** SQL Editor — not the website's — run these files
-   from `supabase/migrations/`, in order. All are safe to re-run. Migrations
-   0001–0017 belong to the website and must NOT be run here.
+2. In Supabase → SQL Editor, run these files from `supabase/migrations/`, in
+   order. All are safe to re-run, and none of them touches a website table.
+   **Take a backup first** — see below.
 
    - `0018_egypt_eye_os_core.sql` — the schema
    - `0019_egypt_eye_os_config.sql` — permissions, roles, services, statuses
@@ -302,10 +303,8 @@ key leaked on one side exposes nothing on the other.
    - `0024_egypt_eye_commercial_demo.sql` — commercial demo data (optional),
      which connects to the trips 0020 already created
 
-4. Create your staff login **in the OS project** — Supabase → Authentication →
-   Users → Add user — then link it to an employee record in that same
-   project's SQL Editor. This is a different account from any customer login
-   you have on the website; the two projects do not know about each other.
+3. Link your own login to a staff record. Sign up at `/account/signup` if you
+   have not, then in the SQL Editor:
 
    ```sql
    update public.os_employees
@@ -313,7 +312,27 @@ key leaked on one side exposes nothing on the other.
    where code = 'EE-001';   -- the Owner in the demo data
    ```
 
-5. Open `yoursite.com/os`.
+4. Open `yoursite.com/os`.
+
+### Protecting the website
+
+The website is the business, and it shares a database with the OS. Three
+things keep that safe, in order of how much they matter:
+
+1. **Turn on daily backups and point-in-time recovery** in Supabase. This is
+   the one that counts. If somebody wrecks OS data on a Tuesday, PITR restores
+   to Tuesday morning without you rebuilding anything by hand. On the free
+   tier there is no backup worth relying on, which is the main reason to be on
+   a paid plan once the OS is live.
+
+2. **Run migrations deliberately.** Take a backup, paste one file, read what
+   it says, then the next. They are additive and safe to re-run, but the SQL
+   editor is the one place a person can do real damage in a second.
+
+3. **Deploy the OS on its own, not alongside a website change.** They share a
+   deployment, so a broken build takes both down. Ship OS changes separately
+   and check the preview URL first; a Vercel rollback is one click, but it is
+   easier not to need one.
 
 To see how the permission system behaves, link your account to a different code
 and reload — `EE-003` (Operations) plans and staffs every trip but cannot see a

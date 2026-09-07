@@ -1,49 +1,64 @@
 // ---------------------------------------------------------------------------
-// THE OS RUNS ON ITS OWN SUPABASE PROJECT
+// WHICH SUPABASE PROJECT THE OS TALKS TO
 // ---------------------------------------------------------------------------
-// Egypt Eye OS does NOT share the public website's database. It has its own
-// Supabase project, its own auth, and its own users — which is what makes the
-// isolation real rather than a matter of discipline:
+// By DEFAULT the OS shares the website's Supabase project. That is deliberate,
+// and it is the whole reason the OS can be an operating system rather than a
+// parallel universe: a trip can point at the reservation that created it, an
+// OS client can be the same person as a website profile, and a concierge
+// request can become a lead — with real foreign keys and real joins, resolved
+// in one query. Postgres cannot join across two Supabase projects, so the
+// alternative is syncing copies between databases, which means stale data, a
+// new thing to break, and two versions of the same customer.
 //
-//   * The OS physically cannot read a website table. It is not connected to
-//     that database at all, so there is no query anybody could write, no
-//     permission anybody could misconfigure, and no migration that could
-//     reach across.
-//   * Staff sign in with accounts that do not exist on the website. A member
-//     of staff never appears in the customer book, and the website's
-//     "create a profile on signup" trigger never fires for them.
-//   * A leaked OS key exposes operational data and no customer accounts. A
-//     leaked website key exposes no operational data. One blast radius each.
+// The trade is a shared blast radius, and it is managed rather than ignored:
 //
-// THERE IS DELIBERATELY NO FALLBACK to the website's project. If these
-// variables are missing the OS refuses to run and says so. Falling back would
-// mean a single forgotten environment variable silently pointing the whole
-// operating system at the customer database and creating its tables there —
-// exactly the outcome the separation exists to prevent.
+//   * Every OS table is prefixed `os_`, has RLS on with no client policy, and
+//     has anon/authenticated revoked. The website's browser key can read
+//     nothing there, and the OS migrations touch no website table.
+//   * Nothing in src/lib/os/* writes to a website table. Reading them is the
+//     point; writing them is not, and there is no code that does.
+//   * The real protection is operational: daily backups and point-in-time
+//     recovery on the database, and running migrations deliberately. See the
+//     README.
 //
-// This file is deliberately free of any Next.js import so that both the
-// browser client and the server client can read it without dragging
-// server-only APIs into a client bundle.
+// SEPARATE PROJECT MODE. Setting NEXT_PUBLIC_OS_SUPABASE_URL (plus its anon
+// and service-role keys) points the OS at a different project instead. That
+// buys hard isolation and costs the linking above — no joins to reservations,
+// profiles or concierge requests. Only choose it if the OS does not need
+// website data.
 // ---------------------------------------------------------------------------
 
-const url = process.env.NEXT_PUBLIC_OS_SUPABASE_URL;
-const anonKey = process.env.NEXT_PUBLIC_OS_SUPABASE_ANON_KEY;
+const osUrl = process.env.NEXT_PUBLIC_OS_SUPABASE_URL;
+const osAnonKey = process.env.NEXT_PUBLIC_OS_SUPABASE_ANON_KEY;
+const siteUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const siteAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-/** Whether the OS has its own project configured. Pages check this and render setup guidance. */
+/** True when the OS has been pointed at a project of its own. */
+export const osUsesOwnProject = Boolean(osUrl && osAnonKey);
+
+const url = osUrl ?? siteUrl;
+const anonKey = osAnonKey ?? siteAnonKey;
+
+/** The service-role key for whichever project the OS is using. */
+export function osServiceRoleKey(): string | undefined {
+  return osUsesOwnProject
+    ? process.env.OS_SUPABASE_SERVICE_ROLE_KEY
+    : process.env.SUPABASE_SERVICE_ROLE_KEY;
+}
+
+/** Whether the OS can reach a database at all. Pages check this and render setup guidance. */
 export const osSupabaseConfigured = Boolean(url && anonKey);
 
-export const osSupabaseAdminConfigured = Boolean(
-  osSupabaseConfigured && process.env.OS_SUPABASE_SERVICE_ROLE_KEY,
-);
+export const osSupabaseAdminConfigured = Boolean(osSupabaseConfigured && osServiceRoleKey());
 
-/** The OS project's URL and anon key, or a thrown error naming what is missing. */
+/** The project the OS talks to, or a thrown error naming exactly what is missing. */
 export function osSupabaseEnv(): { url: string; anonKey: string } {
   if (!url || !anonKey) {
     throw new Error(
-      "Egypt Eye OS is not connected to its own Supabase project yet. Add " +
-        "NEXT_PUBLIC_OS_SUPABASE_URL and NEXT_PUBLIC_OS_SUPABASE_ANON_KEY. These are " +
-        "deliberately separate from the website's NEXT_PUBLIC_SUPABASE_* variables: " +
-        "the OS runs on its own database and never falls back to the website's.",
+      "Egypt Eye OS has no database to talk to. It shares the website's Supabase " +
+        "project by default, so add NEXT_PUBLIC_SUPABASE_URL and " +
+        "NEXT_PUBLIC_SUPABASE_ANON_KEY. To run the OS on a separate project " +
+        "instead, set NEXT_PUBLIC_OS_SUPABASE_URL and NEXT_PUBLIC_OS_SUPABASE_ANON_KEY.",
     );
   }
   return { url, anonKey };

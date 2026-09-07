@@ -38,13 +38,19 @@ It is deliberately **not** an inbox, not a booking engine, and not a CRM.
 
 ## Getting it running
 
-The OS runs on its OWN Supabase project, separate from the website's — a
-different database with its own users, not a new table set in the same one.
-It is the strongest isolation available: the OS is not connected to the
-customer database at all, so no query and no misconfigured permission can
-reach across it, staff never land in the customer book, and a key leaked on
-one side exposes nothing on the other. There is deliberately no fallback
-between the two.
+The OS shares the website's Supabase project. That is deliberate: it is what
+lets a trip point at the reservation that created it, an OS client be the same
+person as a website profile, and a concierge request become a lead — with real
+foreign keys, resolved in one query. Postgres cannot join across two projects,
+so isolating them would mean syncing copies, which trades a small risk for
+stale data and two versions of every customer.
+
+The separation that matters is still enforced: every OS table is prefixed
+`os_` with RLS on and no client policy, the migrations touch no website table,
+and nothing in `src/lib/os/*` writes to one. What protects the website is
+operational — backups, point-in-time recovery, and running migrations
+deliberately. Pointing `NEXT_PUBLIC_OS_SUPABASE_URL` at a separate project is
+supported if hard isolation ever matters more than the linking.
 
 **1. Add the service-role key.** In Vercel → Settings → Environment Variables:
 

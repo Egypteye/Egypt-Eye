@@ -119,12 +119,12 @@ function SetupNotice({ title, detail }: { title?: string; detail?: string } = {}
         </h1>
         <p className="mt-3 text-[13.5px] leading-relaxed text-os-muted">
           {detail ??
-            "The OS runs on its OWN Supabase project, separate from the website's. Create a second project, add the variables below from it, then run migrations 0018 onward IN THAT PROJECT."}
+            "The OS shares the website's Supabase project so it can read reservations, profiles and requests directly. Add the variables below, then run migrations 0018 onward."}
         </p>
         <ul className="mt-4 space-y-1.5 text-[12.5px] text-os-muted">
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_OS_SUPABASE_URL</code></li>
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_OS_SUPABASE_ANON_KEY</code></li>
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">OS_SUPABASE_SERVICE_ROLE_KEY</code></li>
+          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_SUPABASE_URL</code></li>
+          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
+          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">SUPABASE_SERVICE_ROLE_KEY</code></li>
         </ul>
         <p className="mt-4 text-[12.5px] leading-relaxed text-os-muted">
           The migrations are <code>0018_egypt_eye_os_core.sql</code> (schema),{" "}
