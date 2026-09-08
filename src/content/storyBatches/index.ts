@@ -9,5 +9,6 @@ import { stories as batch7 } from "./batch7";
 import { stories as batch8 } from "./batch8";
 import { stories as batch9 } from "./batch9";
 import { stories as batch10 } from "./batch10";
+import { stories as batch11 } from "./batch11";
 
-export const trendStories: Story[] = [...batch1, ...batch2, ...batch3, ...batch4, ...batch5, ...batch6, ...batch7, ...batch8, ...batch9, ...batch10];
+export const trendStories: Story[] = [...batch1, ...batch2, ...batch3, ...batch4, ...batch5, ...batch6, ...batch7, ...batch8, ...batch9, ...batch10, ...batch11];
