@@ -7,6 +7,15 @@ const STORY_CATEGORIES = [
   "Travel Guides",
   "Behind the Scenes",
   "News",
+  // Added for the world-trends cohort: global stories that find a real,
+  // specific Egypt angle rather than travel-guide content. Kept as five
+  // broad clusters rather than one per micro-topic, matching how varied
+  // the existing five categories already are.
+  "Tech & AI",
+  "Geopolitics & Economy",
+  "Science & Space",
+  "Wellness & Longevity",
+  "Culture & Trends",
 ];
 
 // Story body: standard rich text + images, plus a small set of reusable
