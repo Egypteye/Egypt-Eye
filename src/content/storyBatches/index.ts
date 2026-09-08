@@ -12,5 +12,6 @@ import { stories as batch10 } from "./batch10";
 import { stories as batch11 } from "./batch11";
 import { stories as batch12 } from "./batch12";
 import { stories as batch13 } from "./batch13";
+import { stories as batch14 } from "./batch14";
 
-export const trendStories: Story[] = [...batch1, ...batch2, ...batch3, ...batch4, ...batch5, ...batch6, ...batch7, ...batch8, ...batch9, ...batch10, ...batch11, ...batch12, ...batch13];
+export const trendStories: Story[] = [...batch1, ...batch2, ...batch3, ...batch4, ...batch5, ...batch6, ...batch7, ...batch8, ...batch9, ...batch10, ...batch11, ...batch12, ...batch13, ...batch14];
