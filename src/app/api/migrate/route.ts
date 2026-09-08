@@ -31,14 +31,20 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // replace — any field not included in the payload below gets wiped, not
 // preserved. For tours/experiences/photoshoots (`image`/`gallery`),
 // destinationHubs (`image`), events (`backgroundImage`),
-// signatureExperiences (`heroImage`/`gallery`), and siteSettings
-// (`heroImages`, the four banner photos, `destinationPhotos`) — fields that
-// are typically set by uploading a real photo directly in the Studio rather
-// than edited in the local content files — this route fetches whatever's
-// currently set first and folds it back into the payload, so re-running it
-// never wipes a Studio-uploaded photo. Any OTHER field edited directly in
-// the Studio (e.g. SEO overrides) still follows normal full-replace
-// semantics and gets discarded on re-run.
+// signatureExperiences (`heroImage`/`gallery`), stories (`image`), and
+// siteSettings (`heroImages`, the four banner photos, `destinationPhotos`)
+// — fields that are typically set by uploading a real photo directly in the
+// Studio rather than edited in the local content files — this route
+// fetches whatever's currently set first and folds it back into the
+// payload, so re-running it never wipes a Studio-uploaded photo. Any OTHER
+// field edited directly in the Studio (e.g. SEO overrides) still follows
+// normal full-replace semantics and gets discarded on re-run.
+//
+// `rating` on tours/experiences/photoshoots gets the same preserve-existing
+// treatment, for a related but distinct reason: it DOES have a local-content
+// equivalent, but that local value is a stale one-time snapshot, not
+// something meant to track the real, current review count. `only=ratings`
+// remains the deliberate, explicit way to push an updated local rating in.
 //
 // All mutations are queued onto ONE Sanity transaction and committed together
 // at the end, rather than sent as separate requests. This matters for
@@ -188,6 +194,20 @@ export async function GET(request: NextRequest) {
       (await client.fetch<typeof existingSiteSettingsMedia>(
         `*[_type == "siteSettings"][0]{heroImages, flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage, destinationPhotos}`
       )) ?? {};
+  }
+
+  // Same reasoning again, for the story cover photo. Unlike `body`, `title`,
+  // etc. — which really are code-authored and are supposed to be fully
+  // replaced by re-running this migration — `image` is the one story field
+  // that's actually set by uploading a photo in the Studio after the fact,
+  // exactly like tours/experiences/photoshoots above. It was never included
+  // in the stories createOrReplace payload at all, which means every past
+  // run of `only=stories` (or a full resync) has been silently wiping every
+  // published story's cover photo back to blank.
+  let existingStoryMedia = new Map<string, { image?: unknown }>();
+  if (shouldRun("stories")) {
+    const rows = await client.fetch<{ _id: string; image?: unknown }[]>(`*[_type == "story"]{_id, image}`);
+    existingStoryMedia = new Map(rows.map((r) => [r._id, { image: r.image }]));
   }
 
   if (shouldRun("tours")) {
@@ -669,6 +689,7 @@ export async function GET(request: NextRequest) {
         tags: s.tags,
         author: s.author ? { _type: "reference", _ref: `author-${s.author.slug}` } : undefined,
         excerpt: s.excerpt,
+        image: existingStoryMedia.get(`story-${s.slug}`)?.image,
         imageTone: s.imageTone,
         body: s.body?.map((b) => ({ ...migrateBodyBlock(b), _key: b._key ?? key() })),
         relatedExperience: s.relatedExperience
