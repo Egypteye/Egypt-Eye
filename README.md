@@ -270,18 +270,16 @@ lose the linking above, so only do it if the OS does not need website data.
      browser's key can read and write nothing there, and all access goes
      through server code that checks a permission first.
    - `CRON_SECRET` — any random string you make up. It protects the
-     automation sweep. `vercel.json` already schedules the call, daily at
-     05:00 UTC (07:00 in Cairo), so the overnight alerts land before anyone
-     starts work.
+     automation sweep, which `vercel.json` schedules hourly. That cadence
+     needs a Vercel plan above Hobby, which only triggers crons once a day;
+     on Hobby, change the schedule to something like `0 5 * * *` and
+     everything still works, just on a daily rhythm.
 
-     The daily cadence is deliberate: Vercel's Hobby plan allows two cron
-     jobs and will only trigger them once a day, and this project already
-     uses one for the Pinterest sync. On Pro you can change that schedule to
-     `0 * * * *` for an hourly sweep, which makes the enquiry response-time
-     alert markedly more useful — it is the one thing in the sweep where a
-     day's delay costs something real. Nothing else in the OS depends on how
-     often it runs, and the endpoint returns 503 rather than running open if
-     `CRON_SECRET` is missing.
+     Hourly matters for exactly one thing: the enquiry response-time alert,
+     where a day's delay costs something real. The rest of the sweep —
+     readiness re-checks, chasing missing media, escalating stalled
+     approvals — does not care. The endpoint returns 503 rather than running
+     open if `CRON_SECRET` is missing.
 
 2. In Supabase → SQL Editor, run these files from `supabase/migrations/`, in
    order. All are safe to re-run, and none of them touches a website table.
@@ -313,6 +311,28 @@ lose the linking above, so only do it if the OS does not need website data.
    ```
 
 4. Open `yoursite.com/os`.
+
+### Undoing it
+
+`supabase/tools/reset-egypt-eye-os.sql` removes the OS again: every `os_`
+table, view, function, sequence and trigger, and nothing else. It is the
+answer to two situations — the migrations went somewhere you did not want, or
+you have finished looking at the demo data and want to start entering real
+records against an empty schema. For the second, run the reset and then
+migrations 0018, 0019, 0021, 0022 and 0023, skipping 0020 and 0024, which are
+the demo records.
+
+It is deliberately not in `supabase/migrations/`, so nothing that runs that
+folder in order can ever pick it up. It runs inside one transaction and it
+refuses to start at all if it finds a table whose name begins with `os` but
+not `os_` — that would be a table it cannot prove is the OS's, and it will not
+guess. Either every `os_` object goes or none of them do.
+
+Verified by installing all 24 migrations into an empty Postgres 16, running
+the reset, and diffing: all 132 OS objects gone, all 255 website objects and
+all 26 website row counts byte-identical, and the migrations reinstall clean
+afterwards. It still deletes data and it is still not undoable, so take a
+backup first.
 
 ### Protecting the website
 
