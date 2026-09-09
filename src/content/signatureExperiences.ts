@@ -36,25 +36,25 @@ export const signatureExperiences: SignatureExperience[] = [
         title: "Slow mornings, on purpose",
         description:
           "No 6 a.m. meeting points. Breakfast is unhurried, often with a view, and the day starts when you're ready for it to.",
-        image: "/photos/pexels-30119016.jpg",
+        image: "https://images.unsplash.com/photo-1687877465679-8020c83c75c1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "A photographer, not a selfie stick",
         description:
           "A professional travels with you through the moments worth keeping — the Pyramids at golden hour, dinner on the Nile — so you're in the photos instead of taking them.",
-        image: "/photos/pexels-30899056.jpg",
+        image: "https://images.unsplash.com/photo-1584904939065-6864ccc1fcab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "The icons, without the crowds' pace",
         description:
           "You'll still see the Pyramids, the museum, the markets — timed and guided so you're not competing with a tour bus schedule to enjoy them.",
-        image: "/photos/pexels-28013721.jpg",
+        image: "https://images.unsplash.com/photo-1716639154447-98e6cd8de2e8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "Time that belongs to no one else",
         description:
           "Every day holds real, unscheduled hours — a spa afternoon, a nap, a wander through the souq alone — with nobody's needs to weigh against yours.",
-        image: "/photos/pexels-22643843.jpg",
+        image: "https://images.unsplash.com/photo-1494194069000-cb794f31d82c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
     ],
     itineraryDays: [
@@ -274,25 +274,25 @@ export const signatureExperiences: SignatureExperience[] = [
         title: "West Bank before the heat",
         description:
           "The Valley of the Kings and Hatshepsut's temple in the cool of the morning, finished well before midday — both for comfort and to leave the afternoon completely clear.",
-        image: "/photos/pexels-18934702.jpg",
+        image: "https://images.unsplash.com/photo-1695178234643-9656316a0e66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "A viewing setup built for looking straight up",
         description:
           "At maximum eclipse the sun sits almost directly overhead in Luxor — around 82° up. We're planning shaded, reclined seating rather than folding chairs, so six minutes of looking up is comfortable, not a neck strain.",
-        image: "/photos/pexels-15131573.jpg",
+        image: "https://images.unsplash.com/photo-1786644488698-9e0eb7504b25?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "Certified eclipse protection, briefed properly",
         description:
           "Certified solar viewers for every guest, with a plain-language safety briefing the evening before — not a leaflet handed out five minutes before totality.",
-        image: "/photos/pexels-36549458.jpg",
+        image: "https://images.unsplash.com/photo-1786692382298-1c0e0197c527?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "A moment to actually process it",
         description:
           "No rushing to the next stop the second totality ends. Time built in afterward to sit with what just happened, before the day continues.",
-        image: "/photos/pexels-18934711.jpg",
+        image: "https://images.unsplash.com/photo-1712630287876-91cac3a292ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
     ],
     itineraryDays: [
@@ -494,25 +494,25 @@ export const signatureExperiences: SignatureExperience[] = [
         title: "Giza, with a professional photoshoot",
         description:
           "The Pyramids of Giza, a camel or horse ride, the Grand Sphinx, and a professional photoshoot at the Pyramids, followed by a visit to the Grand Egyptian Museum.",
-        image: "/photos/pexels-15272456.jpg",
+        image: "https://images.unsplash.com/photo-1643667996984-fcc69743449d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "Old Cairo in a day",
         description:
           "Coptic Cairo's churches, the National Civilizations Museum, and Khan el-Khalili's old market — Cairo's historic and Islamic quarters, covered together.",
-        image: "/photos/pexels-13754840.jpg",
+        image: "https://images.unsplash.com/photo-1683377426440-0dc9f3b39041?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "A Nile cruise from Aswan to Luxor",
         description:
           "Philae Temple, the Nubian Village, Kom Ombo, and Edfu's Horus Temple, sailing between them aboard your Nile cruise ship, with dinner and overnight stays on board.",
-        image: "/photos/pexels-32286115.jpg",
+        image: "https://images.unsplash.com/photo-1774692085898-a53a1f04dc5c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "A full day at Abu Simbel",
         description:
           "An early departure from the cruise for Abu Simbel's colossal temples, before returning to the ship — one of the trip's dedicated full days.",
-        image: "/photos/pexels-6322875.jpg",
+        image: "https://images.unsplash.com/photo-1742262379112-eacb2813ca6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
     ],
     itineraryDays: [
@@ -705,25 +705,25 @@ export const signatureExperiences: SignatureExperience[] = [
         title: "A private Pyramids tour and photoshoot",
         description:
           "The Pyramids of Giza with a private guide, followed by an exclusive professional photoshoot at the Pyramids — the same iconic backdrop, captured properly.",
-        image: "/photos/pexels-15272084.jpg",
+        image: "https://images.unsplash.com/photo-1566288623394-377af472d81b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "The Grand Egyptian Museum",
         description:
           "A visit to the Grand Egyptian Museum, Cairo's newest and most significant museum, with time to actually take it in rather than rush through.",
-        image: "/photos/pexels-13754840.jpg",
+        image: "https://images.unsplash.com/photo-1708090753053-97d9a0367420?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "Khan el-Khalili & Old Cairo",
         description:
           "The atmosphere of historic Cairo — Khan el-Khalili's bazaar and the old city, on foot, at your pace.",
-        image: "/photos/pexels-36772036.jpg",
+        image: "https://images.unsplash.com/photo-1574936293035-134adffbeb6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "A private driver, start to finish",
         description:
           "Airport pickup, private transportation for both days, and full assistance throughout — nothing shared, nothing rushed.",
-        image: "/photos/pexels-37923846.jpg",
+        image: "https://images.unsplash.com/photo-1779366242929-f8dec9849b75?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
     ],
     itineraryDays: [
@@ -869,25 +869,25 @@ export const signatureExperiences: SignatureExperience[] = [
         title: "Giza & Cairo, thoroughly covered",
         description:
           "The Pyramids of Giza with a camel or horse ride and a professional photoshoot, the Grand Sphinx, Old Cairo's Coptic churches, the National Civilizations Museum, and Khan el-Khalili's old market.",
-        image: "/photos/pexels-15126865.jpg",
+        image: "https://images.unsplash.com/photo-1597500993730-613ee0eab73b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "Three days in the Siwa Oasis",
         description:
           "The Temple of the Oracle, lunch in the shade of the palm trees, one of Siwa's hot springs, sunset at Fitnas Island, Cleopatra's Bath, and swimming in Siwa's salt lakes, with nights at a desert camp.",
-        image: "/photos/pexels-16580393.jpg",
+        image: "https://images.unsplash.com/photo-1727359714097-7c8f5e96023f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "A Nile cruise from Aswan to Luxor",
         description:
           "Philae Temple and the High Dam in Aswan, an optional early-morning excursion to Abu Simbel, Kom Ombo Temple, an optional stop at Edfu Temple, and Karnak and Luxor Temples on arrival in Luxor.",
-        image: "/photos/pexels-19820463.jpg",
+        image: "https://images.unsplash.com/photo-1704643764116-3dc727840b2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
       {
         title: "Red Sea days in Hurghada",
         description:
           "A day on a yacht with a stop at Orange Bay, and a full ATV adventure day, before departing from Hurghada airport.",
-        image: "/photos/pexels-31166900.jpg",
+        image: "https://images.unsplash.com/photo-1777553203575-ebd3be8f89a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
       },
     ],
     itineraryDays: [
