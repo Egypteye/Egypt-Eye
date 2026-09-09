@@ -12,6 +12,11 @@ import { activities } from "./activities";
 const houseExperiences: Experience[] = [
   {
     slug: "quiet-nile-felucca-tour",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "A step down into the boat, then seated sailing for the hour. No swimming and no walking involved.",
+    },
     title: "Quiet Nile Felucca Tour",
     duration: "1 hour",
     rating: { score: 4.87, count: 3 },
@@ -30,6 +35,11 @@ const houseExperiences: Experience[] = [
   },
   {
     slug: "atv-quad-bikes-sahara",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "An hour riding a quad bike over open desert. No experience needed, but the terrain is bumpy and it works your arms and shoulders.",
+    },
     title: "ATV Quad Bikes at Pyramids' Sahara Desert",
     duration: "1 hour",
     rating: { score: 4.98, count: 8 },
@@ -48,6 +58,11 @@ const houseExperiences: Experience[] = [
   },
   {
     slug: "nile-cruise-dinner-show",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Seated at a table for the evening, with a short step aboard at the dock.",
+    },
     title: "Nile Cruise Dinner + Belly Dancer & Oriental Shows",
     duration: "1 hour",
     rating: { score: 4.92, count: 5 },
@@ -66,6 +81,11 @@ const houseExperiences: Experience[] = [
   },
   {
     slug: "food-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Several hours on foot between food stops, on uneven pavement and through busy streets — with plenty of sitting down along the way.",
+    },
     title: "Food Tour",
     duration: "1 hour",
     rating: { score: 4.79, count: 6 },
@@ -84,6 +104,11 @@ const houseExperiences: Experience[] = [
   },
   {
     slug: "pyramids-proposal-romance-setup",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "A short walk from the vehicle to the setup on level ground. Everything is arranged before you arrive.",
+    },
     title: "Pyramids Proposal Romance Setup",
     duration: "1 hour",
     rating: null,

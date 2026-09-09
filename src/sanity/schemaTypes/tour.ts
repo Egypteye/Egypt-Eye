@@ -93,6 +93,20 @@ export const tour = defineType({
       of: [{ type: "itineraryDay" }],
     }),
     defineField({
+      name: "physicalLevel",
+      title: "Physical activity level",
+      description: "Shown as a small bar near the top of the tour page.",
+      type: "physicalLevel",
+    }),
+    defineField({
+      name: "mapStops",
+      title: "Map stops (optional override)",
+      description:
+        "Leave empty for almost every tour: the \"Where You'll Go\" map builds itself from Destinations above. Only fill this in when Destinations can't carry the route — a region tag like 'Jordan' that isn't a single point, or a visiting order that differs from the order destinations are listed in.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
       name: "relatedExperiences",
       title: "Related Extra Experiences",
       description: "Add-on experiences that pair naturally with this tour — shown as \"Make It Yours\" on the tour page.",

@@ -60,6 +60,16 @@ export type Tour = {
   itinerary?: ItineraryDay[];
   relatedExperiences?: Experience[];
   price: Price;
+  physicalLevel?: PhysicalLevel;
+  /**
+   * Explicit stops for the "Where You'll Go" map, in visiting order. Left
+   * unset on most tours: the map resolves `destinations` against the same
+   * projected coordinates the Explore Egypt map uses, so a new tour maps
+   * itself. Set this only where `destinations` can't carry the route —
+   * region tags like "Jordan" that aren't a single point, or an order that
+   * differs from how the destinations happen to be listed.
+   */
+  mapStops?: string[];
   seo?: PageSeo;
 };
 
@@ -83,6 +93,18 @@ export type ActivityStep = {
   description: string;
 };
 
+// How physically demanding a tour or experience actually is. Four tiers so
+// the on-page bar reads at a glance, plus a `note` that says what the effort
+// concretely consists of for THAT outing (stairs, deep sand, a boat ladder,
+// time in the saddle) — the tier alone can't tell someone whether the hard
+// part is their knees or the heat.
+export type PhysicalLevelTier = "easy" | "moderate" | "active" | "challenging";
+
+export type PhysicalLevel = {
+  tier: PhysicalLevelTier;
+  note: string;
+};
+
 export type Experience = {
   slug: string;
   title: string;
@@ -104,6 +126,9 @@ export type Experience = {
   goodToKnow?: string[];
   destinations?: string[];
   relatedTours?: Tour[];
+  physicalLevel?: PhysicalLevel;
+  /** See Tour.mapStops. Usually one place for an experience. */
+  mapStops?: string[];
   seo?: PageSeo;
 };
 

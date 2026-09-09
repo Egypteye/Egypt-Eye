@@ -10,6 +10,9 @@ import { TourCard } from "@/components/TourCard";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
+import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
+import { RouteMap } from "@/components/RouteMap";
+import { resolveStops } from "@/lib/placeCoords";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
@@ -52,6 +55,9 @@ export default async function TourDetailPage({
 
   const allTours = await getTours();
   const related = allTours.filter((t) => t.slug !== tour.slug && t.category === tour.category).slice(0, 3);
+  // `mapStops` is the explicit override; almost every tour falls through to
+  // its own destination tags, so a newly added tour maps itself.
+  const mapStops = resolveStops(tour.mapStops ?? tour.destinations);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Tours", path: "/tours" },
@@ -128,6 +134,12 @@ export default async function TourDetailPage({
               <span>📍 {tour.destinations.join(", ")}</span>
             </div>
 
+            {tour.physicalLevel && (
+              <div className="mt-6">
+                <PhysicalLevelBar level={tour.physicalLevel} />
+              </div>
+            )}
+
             <div id="details" className="mt-8 scroll-mt-24">
               <h2 className="font-display text-2xl font-semibold text-ink">
                 About this tour
@@ -169,6 +181,20 @@ export default async function TourDetailPage({
                     </li>
                   ))}
                 </ol>
+              </div>
+            )}
+
+            {mapStops.length > 0 && (
+              <div className="mt-10">
+                <h2 className="font-display text-2xl font-semibold text-ink">
+                  Where You&rsquo;ll Go
+                </h2>
+                <p className="mt-2 text-sm text-ink-soft/70">
+                  {mapStops.length === 1
+                    ? "The single base for this tour."
+                    : "The main stops, in the order you'll visit them."}
+                </p>
+                <RouteMap stops={mapStops} singleLabel={mapStops[0]?.name} />
               </div>
             )}
 

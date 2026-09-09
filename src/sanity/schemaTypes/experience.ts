@@ -78,6 +78,20 @@ export const experience = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "physicalLevel",
+      title: "Physical activity level",
+      description: "Shown as a small bar near the top of the experience page.",
+      type: "physicalLevel",
+    }),
+    defineField({
+      name: "mapStops",
+      title: "Map stops (optional override)",
+      description:
+        "Leave empty unless Destinations above can't place this on the map — the \"Where You'll Go\" map builds itself from them.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
       name: "relatedTours",
       title: "Related Tours",
       description: "Tours this experience pairs naturally with — shown as \"Available On\" on this page.",

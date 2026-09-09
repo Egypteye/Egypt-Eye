@@ -42,6 +42,11 @@ export const activities: Experience[] = [
   // ── Giza ───────────────────────────────────────────────────────────────
   {
     slug: "camel-ride-giza-pyramids",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Mounting a kneeling camel and an hour or two in the saddle on soft sand. Long trousers and closed shoes are considerably more comfortable than shorts and sandals.",
+    },
     title: "Camel Ride at the Pyramids of Giza",
     duration: "1–2 hours",
     location: "Giza Plateau, Giza",
@@ -99,6 +104,11 @@ export const activities: Experience[] = [
   },
   {
     slug: "dahshur-village-farm-experience",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A full day of village walking on dirt paths and farm ground. Going down inside the Red Pyramid is steep, low-ceilinged and warm — and completely optional.",
+    },
     title: "Village & Farm Experience in Dahshur",
     duration: "Full day (about 8 hours)",
     location: "Dahshur, Giza Governorate",
@@ -163,6 +173,11 @@ export const activities: Experience[] = [
   // ── Cairo ──────────────────────────────────────────────────────────────
   {
     slug: "nile-kayaking-cairo",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Two hours paddling on flat, sheltered water. No experience needed and the guide stays alongside, but it's two hours of steady arm work.",
+    },
     title: "Kayaking on the Nile in Cairo",
     duration: "About 3 hours door to door (2 hours on the water)",
     location: "Maadi, Cairo",
@@ -216,6 +231,11 @@ export const activities: Experience[] = [
   // ── Fayoum ─────────────────────────────────────────────────────────────
   {
     slug: "fayoum-desert-safari",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Around five hours of driving in total, repeated climbs in and out of a 4x4, and soft-sand walking between sites. Sandboarding can be done sitting down.",
+    },
     title: "4×4 Desert Safari in Fayoum Oasis",
     duration: "Full day (about 10 hours from Cairo)",
     location: "Wadi El Rayan & Wadi El Hitan, Fayoum",
@@ -283,6 +303,11 @@ export const activities: Experience[] = [
   },
   {
     slug: "fayoum-overnight-camping",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Desert driving, walking on soft sand, and a night at a camp with deliberately basic facilities. Nights from November to February get properly cold.",
+    },
     title: "Overnight Camping in Fayoum Oasis",
     duration: "2 days, 1 night",
     location: "Magic Lake & Wadi El Rayan, Fayoum",
@@ -347,6 +372,11 @@ export const activities: Experience[] = [
   },
   {
     slug: "fayoum-stargazing",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Mostly sitting still in the dark, well away from any light. The cold is the only real demand — it drops sharply after sunset in every season.",
+    },
     title: "Stargazing in Fayoum Oasis",
     duration: "Evening into the early hours, with an optional overnight",
     location: "Wadi El Hitan, Fayoum",
@@ -403,6 +433,11 @@ export const activities: Experience[] = [
   },
   {
     slug: "fayoum-kayaking",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Flat, sheltered water with a guide alongside. Mornings are calmer; the wind gets up across the lakes in the afternoon and makes it harder work.",
+    },
     title: "Kayaking in Fayoum Oasis",
     duration: "Half day, or added to a Fayoum day tour",
     location: "Magic Lake & Lake Qarun, Fayoum",
@@ -454,6 +489,11 @@ export const activities: Experience[] = [
   },
   {
     slug: "tunis-village-pottery",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "About two hours seated at the wheel. Messy rather than strenuous — wear something you don't mind getting clay on.",
+    },
     title: "Pottery Experience in Tunis Village, Fayoum",
     duration: "About 2 hours at the wheel",
     location: "Tunis Village, above Lake Qarun, Fayoum",
@@ -513,6 +553,11 @@ export const activities: Experience[] = [
   // ── Ain Sokhna ─────────────────────────────────────────────────────────
   {
     slug: "ain-sokhna-private-yacht",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Boarding at the marina, then a day on deck at your own pace. Swimming from the boat is optional.",
+    },
     title: "Private Yacht Experience in Ain Sokhna",
     duration: "Full day (about 10 hours from Cairo)",
     location: "Ain Sokhna Marina, Red Sea",
@@ -575,6 +620,11 @@ export const activities: Experience[] = [
   // ── Luxor ──────────────────────────────────────────────────────────────
   {
     slug: "luxor-hot-air-balloon",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A 4:00am pickup and a climb in and out over the side of the basket, then standing for the 45 to 60 minutes airborne. The flight itself is smooth.",
+    },
     title: "Hot Air Balloon Experience in Luxor",
     duration: "About 4 hours door to door (45–60 minutes airborne)",
     location: "Luxor West Bank",
@@ -634,6 +684,11 @@ export const activities: Experience[] = [
   // ── Aswan ──────────────────────────────────────────────────────────────
   {
     slug: "nubian-village-aswan",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "A boat crossing with a step ashore, then flat walking on sand and village lanes at an unhurried pace.",
+    },
     title: "Nubian Village Visit in Aswan",
     duration: "Half day (about 3–4 hours)",
     location: "Gharb Soheil, Soheil Island, Aswan",
@@ -690,6 +745,11 @@ export const activities: Experience[] = [
   },
   {
     slug: "abu-simbel-excursion-aswan",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A 3:00am start and roughly three and a half hours on the road each way, with about two hours of level walking at the temples. The road, not the site, is the hard part.",
+    },
     title: "Abu Simbel Excursion from Aswan",
     duration: "Full day (about 8–10 hours)",
     location: "Abu Simbel, 280 km south of Aswan",
@@ -753,6 +813,11 @@ export const activities: Experience[] = [
   // ── Hurghada ───────────────────────────────────────────────────────────
   {
     slug: "giftun-island-yacht-trip",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Boat boarding, a tender ashore at the island, and reef snorkeling entered from the boat rather than a beach.",
+    },
     title: "Giftun Island Yacht Trip in Hurghada",
     duration: "Full day (about 8 hours)",
     location: "Giftun Island National Park (Mahmya), Hurghada",
@@ -813,6 +878,11 @@ export const activities: Experience[] = [
   },
   {
     slug: "orange-bay-yacht-trip",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Shallow, clear water off a sandbar, reached by boat. This is the trip for families and nervous swimmers — you can stand up in most of it.",
+    },
     title: "Orange Bay Yacht Trip in Hurghada",
     duration: "About 7 hours",
     location: "Orange Bay, Giftun Island, Hurghada",
@@ -874,6 +944,11 @@ export const activities: Experience[] = [
   // ── Marsa Alam ─────────────────────────────────────────────────────────
   {
     slug: "dolphin-house-marsa-alam",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "A 5:00am pickup, a crossing of over two hours each way, and quiet open-water snorkeling entered from the boat.",
+    },
     title: "Dolphin House Trip in Marsa Alam",
     duration: "Full day (about 8 hours)",
     location: "Sataya Reef (Dolphin House), off Hamata",
@@ -936,6 +1011,11 @@ export const activities: Experience[] = [
   // ── Sinai ──────────────────────────────────────────────────────────────
   {
     slug: "mount-sinai-climb",
+    physicalLevel: {
+      tier: "challenging",
+      note:
+        "A 2:00am start and two and a half to three and a half hours up in the dark, descending the roughly 3,750 Steps of Repentance. A camel covers most of the path up, but everyone walks the final 750 steps.",
+    },
     title: "Mount Sinai Climbing Experience from Saint Catherine",
     duration: "Overnight climb, with the monastery in the morning",
     location: "Mount Sinai & St Catherine's Monastery, South Sinai",
@@ -1001,6 +1081,11 @@ export const activities: Experience[] = [
   // ── Bahariya & the White Desert ─────────────────────────────────────────
   {
     slug: "white-desert-overnight-camping",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Four hours' drive each way before the desert driving even begins, walking on soft sand, and a camp night that gets close to freezing from November to February.",
+    },
     title: "White Desert Overnight Camping from Bahariya Oasis",
     duration: "2 days, 1 night",
     location: "White Desert National Park, via Bahariya Oasis",
@@ -1069,6 +1154,11 @@ export const activities: Experience[] = [
   // ── Siwa ───────────────────────────────────────────────────────────────
   {
     slug: "siwa-salt-lakes",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "The water is salt-saturated, so you float without any effort at all. The crusted edges are sharp underfoot — water shoes are genuinely worth packing.",
+    },
     title: "Salt Lakes Swimming & Floating Experience in Siwa Oasis",
     duration: "1–2 hours at the lakes, within a Siwa day",
     location: "Siwa Oasis salt lakes, Western Desert",

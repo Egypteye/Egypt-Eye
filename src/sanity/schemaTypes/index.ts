@@ -1,4 +1,4 @@
-import { ratingObject, priceObject, itineraryDayObject } from "./objects";
+import { ratingObject, priceObject, itineraryDayObject, physicalLevelObject } from "./objects";
 import { tour } from "./tour";
 import { experience } from "./experience";
 import { photoshoot } from "./photoshoot";
@@ -22,6 +22,7 @@ export const schemaTypes = [
   ratingObject,
   priceObject,
   itineraryDayObject,
+  physicalLevelObject,
   // Document types shown in the Studio's content list.
   tour,
   experience,

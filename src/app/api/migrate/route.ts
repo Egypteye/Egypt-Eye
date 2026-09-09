@@ -237,6 +237,8 @@ export async function GET(request: NextRequest) {
         included: t.included,
         excluded: t.excluded,
         itinerary: t.itinerary?.map((d) => ({ ...d, _type: "itineraryDay", _key: key() })),
+        physicalLevel: t.physicalLevel ? { _type: "physicalLevel", ...t.physicalLevel } : undefined,
+        mapStops: t.mapStops,
         relatedExperiences: t.relatedExperiences?.map((e) => ({
           _type: "reference",
           _ref: `experience-${e.slug}`,
@@ -281,6 +283,8 @@ export async function GET(request: NextRequest) {
         included: e.included,
         goodToKnow: e.goodToKnow,
         destinations: e.destinations,
+        physicalLevel: e.physicalLevel ? { _type: "physicalLevel", ...e.physicalLevel } : undefined,
+        mapStops: e.mapStops,
         order: i,
       });
       results.push(`experience: ${e.slug}`);

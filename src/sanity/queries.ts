@@ -32,7 +32,7 @@ export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(orde
 const tourDetailFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
-  highlights, included, excluded, itinerary,
+  highlights, included, excluded, itinerary, physicalLevel, mapStops,
   relatedExperiences[]->{${relatedExtraExperienceFields}},
   ${priceFields}, seo
 `;
@@ -57,6 +57,7 @@ const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
+  physicalLevel, mapStops,
   relatedTours[]->{${relatedTourFields}},
   seo
 `;

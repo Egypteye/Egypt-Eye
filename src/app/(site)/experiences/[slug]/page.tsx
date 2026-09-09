@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
+import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
+import { RouteMap } from "@/components/RouteMap";
+import { resolveStops } from "@/lib/placeCoords";
 import { SmartImage } from "@/components/SmartImage";
 import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
@@ -42,6 +45,10 @@ export default async function ExperienceDetailPage({
   const { slug } = await params;
   const [experience, site] = await Promise.all([getExperienceBySlug(slug), getSiteSettings()]);
   if (!experience) notFound();
+
+  // Most experiences run at a single place, so this usually resolves to one
+  // pin straight from the destination tags already on the record.
+  const mapStops = resolveStops(experience.mapStops ?? experience.destinations);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Extra Experiences", path: "/experiences" },
@@ -107,6 +114,22 @@ export default async function ExperienceDetailPage({
           <p className="mt-5 leading-relaxed text-ink-soft/80">
             {experience.description}
           </p>
+
+          {experience.physicalLevel && (
+            <div className="mt-6">
+              <PhysicalLevelBar level={experience.physicalLevel} />
+            </div>
+          )}
+
+          {mapStops.length > 0 && (
+            <div className="mt-10">
+              <h2 className="font-display text-xl font-semibold text-ink">Where You&rsquo;ll Go</h2>
+              <RouteMap
+                stops={mapStops}
+                singleLabel={experience.location ?? mapStops[0]?.name}
+              />
+            </div>
+          )}
 
           {experience.steps && experience.steps.length > 0 && (
             <div className="mt-10">
