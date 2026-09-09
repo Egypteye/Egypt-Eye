@@ -11137,6 +11137,40 @@ export const stories: Story[] = [
     title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
     category: "Travel Guides",
     tags: ["Flying Dress Photoshoot", "Egypt Photoshoots", "Giza Pyramids", "Fayoum", "Desert Photography"],
+    relatedStories: [
+      {
+        slug: "flying-dress-photoshoot-pyramids-giza",
+        title: "Flying Dress Photoshoot at the Pyramids of Giza",
+        excerpt:
+          "What it actually takes to shoot a flying dress photoshoot at the Pyramids of Giza — timing around site hours and crowds, the best angles, and what to expect on location.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-flying-dress-photoshoot-locations-egypt",
+        title: "Best Flying Dress Photoshoot Locations in Egypt",
+        excerpt:
+          "Comparing Egypt's best flying dress photoshoot locations — Giza's Pyramid backdrop, Fayoum's open dunes, and other desert settings — with real trade-offs on crowds, drive time, and light.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-to-wear-flying-dress-photoshoot",
+        title: "What to Wear (and Bring) for a Flying Dress Photoshoot",
+        excerpt:
+          "A practical packing and preparation guide for a flying dress photoshoot in Egypt — what to wear underneath, footwear, sun protection, and what to leave at the hotel.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-flying-dress-photoshoot",
+        title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
+        excerpt:
+          "Golden hour, wind, and season — a practical breakdown of the best time of day for a flying dress photoshoot in Egypt, and why timing matters more than almost any other decision.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
@@ -11280,6 +11314,32 @@ export const stories: Story[] = [
     title: "Flying Dress Photoshoot at the Pyramids of Giza",
     category: "Travel Guides",
     tags: ["Flying Dress Photoshoot", "Giza Pyramids", "Egypt Photoshoots", "Cairo"],
+    relatedStories: [
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-guide",
+        title: "The Complete Guide to a Pyramids Photoshoot in Giza",
+        excerpt:
+          "Everything involved in a professional Pyramids photoshoot at Giza — permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-for-pyramids-photoshoot",
+        title: "Best Time for a Pyramids Photoshoot: Sunrise, Sunset, or Midday?",
+        excerpt:
+          "Sunrise, sunset, or midday — a real comparison of light quality, heat, crowd levels, and site hours to help you pick the best time for a Pyramids photoshoot at Giza.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "What it actually takes to shoot a flying dress photoshoot at the Pyramids of Giza — timing around site hours and crowds, the best angles, and what to expect on location.",
@@ -11374,6 +11434,32 @@ export const stories: Story[] = [
     title: "What to Wear (and Bring) for a Flying Dress Photoshoot",
     category: "Travel Guides",
     tags: ["Flying Dress Photoshoot", "Packing Tips", "Egypt Photoshoots", "Desert Photography"],
+    relatedStories: [
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-flying-dress-photoshoot",
+        title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
+        excerpt:
+          "Golden hour, wind, and season — a practical breakdown of the best time of day for a flying dress photoshoot in Egypt, and why timing matters more than almost any other decision.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-flying-dress-photoshoot-locations-egypt",
+        title: "Best Flying Dress Photoshoot Locations in Egypt",
+        excerpt:
+          "Comparing Egypt's best flying dress photoshoot locations — Giza's Pyramid backdrop, Fayoum's open dunes, and other desert settings — with real trade-offs on crowds, drive time, and light.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "A practical packing and preparation guide for a flying dress photoshoot in Egypt — what to wear underneath, footwear, sun protection, and what to leave at the hotel.",
@@ -11479,6 +11565,32 @@ export const stories: Story[] = [
     title: "Best Flying Dress Photoshoot Locations in Egypt",
     category: "Travel Guides",
     tags: ["Flying Dress Photoshoot", "Giza Pyramids", "Fayoum", "Egypt Photoshoots", "Desert Photography"],
+    relatedStories: [
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "flying-dress-photoshoot-pyramids-giza",
+        title: "Flying Dress Photoshoot at the Pyramids of Giza",
+        excerpt:
+          "What it actually takes to shoot a flying dress photoshoot at the Pyramids of Giza — timing around site hours and crowds, the best angles, and what to expect on location.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "siwa-oasis-travel-guide",
+        title: "Siwa Oasis: Egypt's Most Remote Escape",
+        excerpt:
+          "A distinct Berber culture, salt lakes, and one of the quietest corners of Egypt's Western Desert.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "Comparing Egypt's best flying dress photoshoot locations — Giza's Pyramid backdrop, Fayoum's open dunes, and other desert settings — with real trade-offs on crowds, drive time, and light.",
@@ -11587,6 +11699,32 @@ export const stories: Story[] = [
     title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
     category: "Travel Guides",
     tags: ["Flying Dress Photoshoot", "Egypt Photoshoots", "Desert Photography", "Golden Hour"],
+    relatedStories: [
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-for-pyramids-photoshoot",
+        title: "Best Time for a Pyramids Photoshoot: Sunrise, Sunset, or Midday?",
+        excerpt:
+          "Sunrise, sunset, or midday — a real comparison of light quality, heat, crowd levels, and site hours to help you pick the best time for a Pyramids photoshoot at Giza.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-to-wear-flying-dress-photoshoot",
+        title: "What to Wear (and Bring) for a Flying Dress Photoshoot",
+        excerpt:
+          "A practical packing and preparation guide for a flying dress photoshoot in Egypt — what to wear underneath, footwear, sun protection, and what to leave at the hotel.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "Golden hour, wind, and season — a practical breakdown of the best time of day for a flying dress photoshoot in Egypt, and why timing matters more than almost any other decision.",
@@ -11680,6 +11818,40 @@ export const stories: Story[] = [
     title: "The Complete Guide to a Pyramids Photoshoot in Giza",
     category: "Travel Guides",
     tags: ["Pyramids Photoshoot", "Giza Pyramids", "Egypt Photoshoots", "Cairo"],
+    relatedStories: [
+      {
+        slug: "flying-dress-photoshoot-pyramids-giza",
+        title: "Flying Dress Photoshoot at the Pyramids of Giza",
+        excerpt:
+          "What it actually takes to shoot a flying dress photoshoot at the Pyramids of Giza — timing around site hours and crowds, the best angles, and what to expect on location.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-for-pyramids-photoshoot",
+        title: "Best Time for a Pyramids Photoshoot: Sunrise, Sunset, or Midday?",
+        excerpt:
+          "Sunrise, sunset, or midday — a real comparison of light quality, heat, crowd levels, and site hours to help you pick the best time for a Pyramids photoshoot at Giza.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Book a Private Photographer in Egypt",
+        excerpt:
+          "What to actually look for when booking a private photographer in Egypt — site access, editing turnaround, usage rights, and the red flags that separate a real operator from a freelancer.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "egypt-photoshoot-content-creators",
+        title: "Egypt Photoshoot Experiences for Content Creators and Influencers",
+        excerpt:
+          "What content creators and influencers actually need from an Egypt photoshoot — combined video and photo, fast turnaround, and locations built for both Reels and stills.",
+        imageTone: "desert",
+        category: "Culture & Trends",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "Everything involved in a professional Pyramids photoshoot at Giza — permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
@@ -11797,6 +11969,32 @@ export const stories: Story[] = [
     title: "Cairo Airport Transfer: The Complete Traveler's Guide",
     category: "Travel Guides",
     tags: ["Cairo Airport", "Airport Transfer", "Private Transfer", "Egypt Travel Tips"],
+    relatedStories: [
+      {
+        slug: "private-airport-transfer-vs-taxi-cairo",
+        title: "Private Cairo Airport Transfer vs. Taxi: What's the Difference?",
+        excerpt:
+          "A genuinely balanced comparison — when a Cairo airport taxi makes sense, when a pre-booked private transfer is worth it, and the real trade-offs between them.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "vip-meet-and-assist-cairo-airport",
+        title: "VIP Meet & Assist at Cairo Airport: What It Is and Who It's For",
+        excerpt:
+          "What a VIP meet & assist service at Cairo Airport actually involves — fast-track immigration, a representative at the gate, luggage handling — and who genuinely benefits from it.",
+        imageTone: "nile",
+        category: "Travel Guides",
+      },
+      {
+        slug: "private-transportation-egypt-guide",
+        title: "Private Transportation in Egypt: A Traveler's Guide",
+        excerpt:
+          "Why private transport matters more in Egypt than in most destinations — full-day touring, multi-city trips, and the real case for an air-conditioned private vehicle over public transport.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "What actually happens when you land at Cairo International Airport, why a pre-booked private transfer beats the taxi rank, and the real vehicle tiers available — sedan through VIP.",
@@ -11919,6 +12117,24 @@ export const stories: Story[] = [
     title: "Private Cairo Airport Transfer vs. Taxi: What's the Difference?",
     category: "Travel Guides",
     tags: ["Cairo Airport", "Airport Transfer", "Taxi", "Egypt Travel Tips"],
+    relatedStories: [
+      {
+        slug: "cairo-airport-transfer-guide",
+        title: "Cairo Airport Transfer: The Complete Traveler's Guide",
+        excerpt:
+          "What actually happens when you land at Cairo International Airport, why a pre-booked private transfer beats the taxi rank, and the real vehicle tiers available — sedan through VIP.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "vip-meet-and-assist-cairo-airport",
+        title: "VIP Meet & Assist at Cairo Airport: What It Is and Who It's For",
+        excerpt:
+          "What a VIP meet & assist service at Cairo Airport actually involves — fast-track immigration, a representative at the gate, luggage handling — and who genuinely benefits from it.",
+        imageTone: "nile",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "A genuinely balanced comparison — when a Cairo airport taxi makes sense, when a pre-booked private transfer is worth it, and the real trade-offs between them.",
@@ -12017,6 +12233,24 @@ export const stories: Story[] = [
     title: "VIP Meet & Assist at Cairo Airport: What It Is and Who It's For",
     category: "Travel Guides",
     tags: ["Cairo Airport", "VIP Service", "Meet and Assist", "Egypt Travel Tips"],
+    relatedStories: [
+      {
+        slug: "cairo-airport-transfer-guide",
+        title: "Cairo Airport Transfer: The Complete Traveler's Guide",
+        excerpt:
+          "What actually happens when you land at Cairo International Airport, why a pre-booked private transfer beats the taxi rank, and the real vehicle tiers available — sedan through VIP.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "private-airport-transfer-vs-taxi-cairo",
+        title: "Private Cairo Airport Transfer vs. Taxi: What's the Difference?",
+        excerpt:
+          "A genuinely balanced comparison — when a Cairo airport taxi makes sense, when a pre-booked private transfer is worth it, and the real trade-offs between them.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "What a VIP meet & assist service at Cairo Airport actually involves — fast-track immigration, a representative at the gate, luggage handling — and who genuinely benefits from it.",
@@ -12118,6 +12352,32 @@ export const stories: Story[] = [
     title: "Private Transportation in Egypt: A Traveler's Guide",
     category: "Travel Guides",
     tags: ["Private Transport", "Egypt Travel Tips", "Private Driver", "Egypt Tours"],
+    relatedStories: [
+      {
+        slug: "cairo-airport-transfer-guide",
+        title: "Cairo Airport Transfer: The Complete Traveler's Guide",
+        excerpt:
+          "What actually happens when you land at Cairo International Airport, why a pre-booked private transfer beats the taxi rank, and the real vehicle tiers available — sedan through VIP.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "vip-meet-and-assist-cairo-airport",
+        title: "VIP Meet & Assist at Cairo Airport: What It Is and Who It's For",
+        excerpt:
+          "What a VIP meet & assist service at Cairo Airport actually involves — fast-track immigration, a representative at the gate, luggage handling — and who genuinely benefits from it.",
+        imageTone: "nile",
+        category: "Travel Guides",
+      },
+      {
+        slug: "how-to-choose-a-private-tour-company-egypt",
+        title: "How to Choose a Private Tour Company in Egypt",
+        excerpt:
+          "The real questions to ask any Egypt tour operator before booking — is it actually private, is transport operator-owned, do guides speak your language, and what happens if something goes wrong.",
+        imageTone: "desert",
+        category: "Behind the Scenes",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "Why private transport matters more in Egypt than in most destinations — full-day touring, multi-city trips, and the real case for an air-conditioned private vehicle over public transport.",
@@ -12227,6 +12487,24 @@ export const stories: Story[] = [
     title: "Why Travelers Choose Egypt Eye Travel",
     category: "Behind the Scenes",
     tags: ["About Egypt Eye", "Private Tours", "Egypt Travel"],
+    relatedStories: [
+      {
+        slug: "how-to-choose-a-private-tour-company-egypt",
+        title: "How to Choose a Private Tour Company in Egypt",
+        excerpt:
+          "The real questions to ask any Egypt tour operator before booking — is it actually private, is transport operator-owned, do guides speak your language, and what happens if something goes wrong.",
+        imageTone: "desert",
+        category: "Behind the Scenes",
+      },
+      {
+        slug: "egypt-eye-travel-photography-experiences",
+        title: "Egypt Eye's Photography Experiences: Pyramids, Flying Dress, and More",
+        excerpt:
+          "A real overview of Egypt Eye's photoshoot experiences — Pyramids, flying dress, Fayoum, horseback, and proposal setups — and why content creation stays in-house.",
+        imageTone: "giza",
+        category: "Behind the Scenes",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "Not a list of superlatives — real, specific examples of how Egypt Eye actually runs trips: private-never-pooled tours, in-house photo and video, and real agency and VIP partnerships.",
@@ -12337,6 +12615,24 @@ export const stories: Story[] = [
     title: "How to Choose a Private Tour Company in Egypt",
     category: "Behind the Scenes",
     tags: ["Private Tours", "Egypt Travel Tips", "Tour Operators"],
+    relatedStories: [
+      {
+        slug: "why-travelers-choose-egypt-eye-travel",
+        title: "Why Travelers Choose Egypt Eye Travel",
+        excerpt:
+          "Not a list of superlatives — real, specific examples of how Egypt Eye actually runs trips: private-never-pooled tours, in-house photo and video, and real agency and VIP partnerships.",
+        imageTone: "giza",
+        category: "Behind the Scenes",
+      },
+      {
+        slug: "private-transportation-egypt-guide",
+        title: "Private Transportation in Egypt: A Traveler's Guide",
+        excerpt:
+          "Why private transport matters more in Egypt than in most destinations — full-day touring, multi-city trips, and the real case for an air-conditioned private vehicle over public transport.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "The real questions to ask any Egypt tour operator before booking — is it actually private, is transport operator-owned, do guides speak your language, and what happens if something goes wrong.",
@@ -12443,6 +12739,40 @@ export const stories: Story[] = [
     title: "Egypt Eye's Photography Experiences: Pyramids, Flying Dress, and More",
     category: "Behind the Scenes",
     tags: ["Photoshoots", "Flying Dress", "Egypt Travel", "Photography"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-guide",
+        title: "The Complete Guide to a Pyramids Photoshoot in Giza",
+        excerpt:
+          "Everything involved in a professional Pyramids photoshoot at Giza — permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Book a Private Photographer in Egypt",
+        excerpt:
+          "What to actually look for when booking a private photographer in Egypt — site access, editing turnaround, usage rights, and the red flags that separate a real operator from a freelancer.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "why-travelers-choose-egypt-eye-travel",
+        title: "Why Travelers Choose Egypt Eye Travel",
+        excerpt:
+          "Not a list of superlatives — real, specific examples of how Egypt Eye actually runs trips: private-never-pooled tours, in-house photo and video, and real agency and VIP partnerships.",
+        imageTone: "giza",
+        category: "Behind the Scenes",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "A real overview of Egypt Eye's photoshoot experiences — Pyramids, flying dress, Fayoum, horseback, and proposal setups — and why content creation stays in-house.",
@@ -12551,6 +12881,32 @@ export const stories: Story[] = [
     title: "Best Time for a Pyramids Photoshoot: Sunrise, Sunset, or Midday?",
     category: "Travel Guides",
     tags: ["Pyramids Photoshoot", "Giza Pyramids", "Egypt Photoshoots", "Photography Tips"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-guide",
+        title: "The Complete Guide to a Pyramids Photoshoot in Giza",
+        excerpt:
+          "Everything involved in a professional Pyramids photoshoot at Giza — permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "flying-dress-photoshoot-pyramids-giza",
+        title: "Flying Dress Photoshoot at the Pyramids of Giza",
+        excerpt:
+          "What it actually takes to shoot a flying dress photoshoot at the Pyramids of Giza — timing around site hours and crowds, the best angles, and what to expect on location.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-flying-dress-photoshoot",
+        title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
+        excerpt:
+          "Golden hour, wind, and season — a practical breakdown of the best time of day for a flying dress photoshoot in Egypt, and why timing matters more than almost any other decision.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "Sunrise, sunset, or midday — a real comparison of light quality, heat, crowd levels, and site hours to help you pick the best time for a Pyramids photoshoot at Giza.",
@@ -12655,6 +13011,32 @@ export const stories: Story[] = [
     title: "How to Book a Private Photographer in Egypt",
     category: "Travel Guides",
     tags: ["Private Photographer", "Egypt Photoshoots", "Giza Pyramids", "Travel Photography"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-guide",
+        title: "The Complete Guide to a Pyramids Photoshoot in Giza",
+        excerpt:
+          "Everything involved in a professional Pyramids photoshoot at Giza — permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "egypt-eye-travel-photography-experiences",
+        title: "Egypt Eye's Photography Experiences: Pyramids, Flying Dress, and More",
+        excerpt:
+          "A real overview of Egypt Eye's photoshoot experiences — Pyramids, flying dress, Fayoum, horseback, and proposal setups — and why content creation stays in-house.",
+        imageTone: "giza",
+        category: "Behind the Scenes",
+      },
+      {
+        slug: "egypt-photoshoot-content-creators",
+        title: "Egypt Photoshoot Experiences for Content Creators and Influencers",
+        excerpt:
+          "What content creators and influencers actually need from an Egypt photoshoot — combined video and photo, fast turnaround, and locations built for both Reels and stills.",
+        imageTone: "desert",
+        category: "Culture & Trends",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "What to actually look for when booking a private photographer in Egypt — site access, editing turnaround, usage rights, and the red flags that separate a real operator from a freelancer.",
@@ -12762,6 +13144,32 @@ export const stories: Story[] = [
     title: "Best Places in Egypt for Instagram-Worthy Photos",
     category: "Culture & Trends",
     tags: ["Instagram Spots", "Egypt Photoshoots", "Cairo", "Luxor", "Fayoum", "Siwa"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-guide",
+        title: "The Complete Guide to a Pyramids Photoshoot in Giza",
+        excerpt:
+          "Everything involved in a professional Pyramids photoshoot at Giza — permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "egypt-photoshoot-content-creators",
+        title: "Egypt Photoshoot Experiences for Content Creators and Influencers",
+        excerpt:
+          "What content creators and influencers actually need from an Egypt photoshoot — combined video and photo, fast turnaround, and locations built for both Reels and stills.",
+        imageTone: "desert",
+        category: "Culture & Trends",
+      },
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Book a Private Photographer in Egypt",
+        excerpt:
+          "What to actually look for when booking a private photographer in Egypt — site access, editing turnaround, usage rights, and the red flags that separate a real operator from a freelancer.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "Real, specific Instagram photo spots across Giza, Cairo, Luxor, Fayoum, and Siwa — genuinely useful for a traveler shooting with a phone or camera, not just a professional-shoot listicle.",
@@ -12867,6 +13275,32 @@ export const stories: Story[] = [
     title: "Egypt Photoshoot Experiences for Content Creators and Influencers",
     category: "Culture & Trends",
     tags: ["Content Creators", "Influencer Travel", "Egypt Photoshoots", "Giza Pyramids", "Reels"],
+    relatedStories: [
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Book a Private Photographer in Egypt",
+        excerpt:
+          "What to actually look for when booking a private photographer in Egypt — site access, editing turnaround, usage rights, and the red flags that separate a real operator from a freelancer.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-instagram-photo-spots-egypt",
+        title: "Best Places in Egypt for Instagram-Worthy Photos",
+        excerpt:
+          "Real, specific Instagram photo spots across Giza, Cairo, Luxor, Fayoum, and Siwa — genuinely useful for a traveler shooting with a phone or camera, not just a professional-shoot listicle.",
+        imageTone: "luxor",
+        category: "Culture & Trends",
+      },
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
     author: editorialTeam,
     excerpt:
       "What content creators and influencers actually need from an Egypt photoshoot — combined video and photo, fast turnaround, and locations built for both Reels and stills.",
