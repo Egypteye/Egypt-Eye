@@ -1,5 +1,5 @@
-import { getCatalogStats, getOverallRating } from "@/content/aggregate";
-import type { Experience, Photoshoot, ResolvedSiteSettings, Tour } from "@/content/types";
+import { getCatalogStats } from "@/content/aggregate";
+import type { Experience, Photoshoot, Rating, ResolvedSiteSettings, Tour } from "@/content/types";
 
 const icons: Record<string, React.ReactNode> = {
   shield: (
@@ -18,13 +18,15 @@ export function TrustBar({
   experiences,
   photoshoots,
   badges,
+  rating,
 }: {
   tours: Tour[];
   experiences: Experience[];
   photoshoots: Photoshoot[];
   badges: ResolvedSiteSettings["trustBadges"];
+  /** Egypt Eye's company-wide review figure — see content/aggregate.ts. */
+  rating: Rating;
 }) {
-  const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
   const catalogStats = getCatalogStats(tours, experiences, photoshoots);
 
   return (
@@ -43,7 +45,20 @@ export function TrustBar({
         </div>
       ))}
       <div className="grid grid-cols-2 gap-x-4 gap-y-6 bg-ink p-6 text-cream sm:col-span-3 sm:flex sm:items-center sm:justify-center sm:gap-8">
-        <Stat value={`${average}★`} label={`${reviewCount} reviews`} />
+        {rating && rating.count > 0 && (
+          <Stat
+            value={
+              typeof rating.score === "number"
+                ? `${rating.score.toFixed(1)}★`
+                : rating.count.toLocaleString()
+            }
+            label={
+              typeof rating.score === "number"
+                ? `${rating.count.toLocaleString()} reviews`
+                : "Traveler Reviews"
+            }
+          />
+        )}
         <Stat value={String(catalogStats.tourCount)} label="Private Tours" />
         <Stat value={String(catalogStats.destinationCount)} label="Destinations" />
         <Stat value={`${catalogStats.experienceCount + catalogStats.photoshootCount}`} label="Add-On Experiences" />

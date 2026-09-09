@@ -1,15 +1,30 @@
 import type { Rating as RatingType } from "@/content/types";
 
-// A single filled star + the numeric score + the review count — not a
-// five-icon star row (which implies a precise star-by-star breakdown we
-// don't have). Anything without a rating yet falls back to "New experience"
-// rather than showing a fabricated number.
-export function Rating({ rating }: { rating: RatingType }) {
+// The company's traveler-review figure, shown on every tour, experience and
+// photoshoot.
+//
+// Egypt Eye collects reviews in the WhatsApp follow-up after a trip or a
+// shoot, so a review is about the company rather than about one product —
+// there is no per-tour review data, and this deliberately doesn't pretend
+// otherwise. Naming Egypt Eye in the label is what keeps "1,247 reviews" on
+// a tour card an honest sentence instead of an implied claim that 1,247
+// people reviewed that one tour.
+//
+// Until reviews carry star values the count stands on its own, with no
+// score: a written review is real and worth counting, but it isn't a number
+// out of five. The average appears automatically once scores exist.
+export function Rating({ rating }: { rating?: RatingType }) {
   if (!rating || !rating.count) {
     return <span className="text-sm text-ink-soft/60">New experience</span>;
   }
+
+  const reviews = `${rating.count.toLocaleString()} Egypt Eye review${rating.count === 1 ? "" : "s"}`;
+
   return (
-    <span className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft">
+    <span
+      className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft"
+      title="Egypt Eye's traveler reviews, collected after every trip and shoot — company-wide, not specific to this item."
+    >
       <svg
         viewBox="0 0 20 20"
         fill="currentColor"
@@ -18,10 +33,14 @@ export function Rating({ rating }: { rating: RatingType }) {
       >
         <path d="M10 1.5l2.6 5.6 6.15.62-4.63 4.2 1.3 6.08L10 14.9l-5.42 3.1 1.3-6.08-4.63-4.2 6.15-.62L10 1.5z" />
       </svg>
-      <span className="font-semibold text-ink">{rating.score.toFixed(1)}</span>
-      <span className="text-ink-soft/60">
-        ({rating.count.toLocaleString()} review{rating.count === 1 ? "" : "s"})
-      </span>
+      {typeof rating.score === "number" ? (
+        <>
+          <span className="font-semibold text-ink">{rating.score.toFixed(1)}</span>
+          <span className="text-ink-soft/60">({reviews})</span>
+        </>
+      ) : (
+        <span className="font-semibold text-ink">{reviews}</span>
+      )}
     </span>
   );
 }

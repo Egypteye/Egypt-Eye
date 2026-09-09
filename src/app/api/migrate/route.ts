@@ -40,11 +40,14 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // field edited directly in the Studio (e.g. SEO overrides) still follows
 // normal full-replace semantics and gets discarded on re-run.
 //
-// `rating` on tours/experiences/photoshoots gets the same preserve-existing
-// treatment, for a related but distinct reason: it DOES have a local-content
-// equivalent, but that local value is a stale one-time snapshot, not
-// something meant to track the real, current review count. `only=ratings`
-// remains the deliberate, explicit way to push an updated local rating in.
+// `rating` on tours/experiences/photoshoots is no longer migrated content at
+// all. Egypt Eye collects reviews company-wide over WhatsApp rather than per
+// product, so the site computes one real figure from the Testimonials and
+// stamps it onto every item at read time (content/aggregate.ts + the
+// withCompanyRating helpers in sanity/fetchers.ts). Whatever sits in a
+// product's `rating` field in Sanity is ignored by the site; it is preserved
+// here only so a resync isn't gratuitously destructive, and `only=ratings`
+// now clears those leftovers out rather than seeding new ones.
 //
 // All mutations are queued onto ONE Sanity transaction and committed together
 // at the end, rather than sent as separate requests. This matters for
@@ -77,7 +80,8 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // `nav` field (on siteSettings) respectively, unlike `tours`/`experiences`/
 // `photoshoots`/`siteSettings`, which do a full createOrReplace and would
 // wipe any other field edited directly in the Studio since the last full
-// migration:
+// migration. Note that `only=ratings` now UNSETS every product rating, which
+// is the intended cleanup — see the note above:
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=ratings
 
@@ -120,20 +124,11 @@ export async function GET(request: NextRequest) {
   // whatever's currently set and folding it back into each payload below
   // makes re-running this endpoint safe even after Studio photo uploads.
   //
-  // `rating` gets the same treatment, for the same reason: it DOES have a
-  // local-content equivalent (tours.ts/experiences.ts/photoshoots.ts), but
-  // that local value is a one-time snapshot from whenever it was last
-  // written into the content file — it's the real review count/score, kept
-  // current by editing it in Studio as new reviews come in, not by editing
-  // the repo. A full resync unconditionally overwriting `rating` from the
-  // local snapshot would silently roll back every rating to that stale
-  // number the moment ANY tour/experience/photoshoot field changed and
-  // needed re-migrating — which is exactly what happened running
-  // `only=tours,experiences,...` to seed unrelated new content. `existing`
-  // wins whenever the document already has a rating; the local value is
-  // used only to seed a brand-new document that doesn't have one yet. The
-  // dedicated `only=ratings` pass below remains the deliberate, explicit way
-  // to push an updated local rating into Sanity.
+  // `rating` is still read back and folded in, but only so that a resync
+  // doesn't gratuitously wipe a field. The site no longer reads a product's
+  // stored rating: it derives one company-wide figure from the Testimonials
+  // and stamps it on at read time (see sanity/fetchers.ts). The local content
+  // files carry no ratings any more, so there is nothing to seed from.
   let existingMedia = new Map<string, { image?: unknown; gallery?: unknown; rating?: unknown }>();
   if (shouldRun("tours") || shouldRun("experiences") || shouldRun("photoshoots")) {
     const rows = await client.fetch<{ _id: string; image?: unknown; gallery?: unknown; rating?: unknown }[]>(
@@ -324,6 +319,11 @@ export async function GET(request: NextRequest) {
   // ratings in content/tours.ts) without wiping images, descriptions, or any
   // other field a real edit in the Studio may have changed since the last
   // full migration.
+  // Product ratings are no longer authored in content — the site computes one
+  // company-wide figure from the collected Testimonials and stamps it onto
+  // every item at read time (see content/aggregate.ts). So this pass now
+  // clears the stale per-product numbers out of the dataset rather than
+  // seeding new ones, which is exactly what `only=ratings` is for.
   if (shouldRun("ratings")) {
     for (const t of tours) {
       tx.patch(`tour-${t.slug}`, (p) =>

@@ -17,7 +17,7 @@ import { Reveal } from "@/components/Reveal";
 import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { Glyph } from "./pharaoh-challenge/glyphs";
-import { getCatalogStats, getOverallRating } from "@/content/aggregate";
+import { describeCompanyRating, getCatalogStats, getCompanyRating } from "@/content/aggregate";
 import { siteUrl } from "@/content/seo";
 import {
   getDestinationHubs,
@@ -48,7 +48,8 @@ export default async function Home() {
     getFaqs(),
     getDestinationHubs(),
   ]);
-  const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
+  // One real figure, from the reviews actually collected (see aggregate.ts).
+  const companyRating = getCompanyRating(testimonials);
   const { tourCount, destinationCount } = getCatalogStats(tours, experiences, photoshoots);
   // A small curated set for the homepage teaser — the full searchable
   // catalog lives on /tours, not inline here.
@@ -195,7 +196,7 @@ export default async function Home() {
               <SectionHeading
                 eyebrow={home.reviewsSection.eyebrow}
                 title={home.reviewsSection.title}
-                description={`${average}★ average across ${reviewCount} reviews`}
+                description={describeCompanyRating(companyRating) ?? undefined}
                 align="center"
                 tone="dark"
               />
@@ -211,7 +212,13 @@ export default async function Home() {
       <section className="py-14">
         <Container>
           <Reveal>
-            <TrustBar tours={tours} experiences={experiences} photoshoots={photoshoots} badges={site.trustBadges} />
+            <TrustBar
+              tours={tours}
+              experiences={experiences}
+              photoshoots={photoshoots}
+              badges={site.trustBadges}
+              rating={companyRating}
+            />
           </Reveal>
         </Container>
       </section>

@@ -67,7 +67,7 @@ export function touristTripJsonLd({
   description: string;
   image?: SanityImage;
   path: string;
-  rating?: { score: number; count: number } | null;
+  rating?: { score?: number; count: number } | null;
 }) {
   const imageUrl = urlForImage(image)?.width(1200).height(630).url();
   return {
@@ -82,7 +82,12 @@ export function touristTripJsonLd({
       name: "Egypt Eye Travel and Tours",
       url: siteUrl,
     },
-    ...(rating && rating.count > 0
+    // Only emitted once reviews actually carry star values. Egypt Eye's
+    // reviews come in over WhatsApp and are about the company, not about one
+    // tour, so a per-product AggregateRating would be a claim the data
+    // doesn't support — and an AggregateRating without a real ratingValue
+    // isn't valid markup anyway.
+    ...(rating && rating.count > 0 && typeof rating.score === "number"
       ? {
           aggregateRating: {
             "@type": "AggregateRating",

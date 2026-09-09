@@ -106,7 +106,7 @@ export const destinationHubsBySlugsQuery = groq`*[_type == "destinationHub" && s
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
-  name, quote, context
+  name, quote, context, score
 }`;
 
 // Lightweight experience summary used wherever a Story links to a

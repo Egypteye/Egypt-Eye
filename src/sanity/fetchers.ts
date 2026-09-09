@@ -26,6 +26,7 @@ import {
   toursBySlugsQuery,
   toursQuery,
 } from "./queries";
+import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
@@ -51,6 +52,7 @@ import type {
   Homepage,
   ListingPages,
   Photoshoot,
+  Rating,
   ResolvedAboutPage,
   ResolvedContactPage,
   ResolvedCustomizePage,
@@ -122,9 +124,39 @@ async function safeFetch<T>(query: string, params: Record<string, unknown> = {})
   }
 }
 
+/**
+ * Egypt Eye's reviews arrive over WhatsApp in the follow-up after a trip and
+ * are about the company rather than any one tour, so there is a single
+ * site-wide figure computed from the testimonials actually collected.
+ *
+ * Every product below is stamped with it at read time. That is deliberately
+ * the only place a rating is set: nothing in a content file or in Studio can
+ * hold a hand-written number that drifts away from the real reviews, and no
+ * page can be missed. When Sanity is unreachable the testimonial list comes
+ * back empty and this returns null, so items show "New experience" rather
+ * than a number we can't stand behind.
+ */
+export async function getCompanyRating(): Promise<Rating> {
+  return companyRatingFrom(await getTestimonials());
+}
+
+async function withCompanyRating<T extends { rating?: Rating }>(items: T[]): Promise<T[]> {
+  const rating = await getCompanyRating();
+  return items.map((item) => ({ ...item, rating }));
+}
+
+async function withCompanyRatingOne<T extends { rating?: Rating }>(
+  item: T | undefined
+): Promise<T | undefined> {
+  if (!item) return undefined;
+  return { ...item, rating: await getCompanyRating() };
+}
+
 export async function getTours(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours;
+  return withCompanyRating(
+    result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours
+  );
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -136,7 +168,9 @@ function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined
 }
 
 export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  return mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug);
+  return withCompanyRatingOne(
+    mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug)
+  );
 }
 
 // One request for the whole set instead of one per slug (see
@@ -147,9 +181,11 @@ export async function getToursBySlugs(slugs: string[]): Promise<Tour[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Tour[]>(toursBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((t) => [t.slug, t]));
-  return slugs
-    .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
-    .filter((t): t is Tour => Boolean(t));
+  return withCompanyRating(
+    slugs
+      .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
+      .filter((t): t is Tour => Boolean(t))
+  );
 }
 
 export async function getAllTourSlugs(): Promise<string[]> {
@@ -172,9 +208,11 @@ function withLocalExperienceRelations(exps: Experience[]): Experience[] {
 
 export async function getExperiences(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
-  return result && result.length > 0
-    ? withLocalImageFallback(result, localExperiences)
-    : withLocalExperienceRelations(localExperiences);
+  return withCompanyRating(
+    result && result.length > 0
+      ? withLocalImageFallback(result, localExperiences)
+      : withLocalExperienceRelations(localExperiences)
+  );
 }
 
 function mergeExperienceWithLocal(result: Experience | null, slug: string): Experience | undefined {
@@ -184,21 +222,27 @@ function mergeExperienceWithLocal(result: Experience | null, slug: string): Expe
 }
 
 export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
-  return mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug);
+  return withCompanyRatingOne(
+    mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug)
+  );
 }
 
 export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Experience[]>(experiencesBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((e) => [e.slug, e]));
-  return slugs
-    .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
-    .filter((e): e is Experience => Boolean(e));
+  return withCompanyRating(
+    slugs
+      .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
+      .filter((e): e is Experience => Boolean(e))
+  );
 }
 
 export async function getPhotoshoots(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots;
+  return withCompanyRating(
+    result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots
+  );
 }
 
 function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Photoshoot | undefined {
@@ -208,16 +252,20 @@ function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Phot
 }
 
 export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
-  return mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
+  return withCompanyRatingOne(
+    mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug)
+  );
 }
 
 export async function getPhotoshootsBySlugs(slugs: string[]): Promise<Photoshoot[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Photoshoot[]>(photoshootsBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((p) => [p.slug, p]));
-  return slugs
-    .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
-    .filter((p): p is Photoshoot => Boolean(p));
+  return withCompanyRating(
+    slugs
+      .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
+      .filter((p): p is Photoshoot => Boolean(p))
+  );
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {

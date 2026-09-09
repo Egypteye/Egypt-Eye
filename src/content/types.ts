@@ -8,8 +8,14 @@ export type ImageTone = "giza" | "nile" | "desert" | "luxor" | "jordan" | "redse
 // replaces it. urlForImage() in sanity/image.ts understands both.
 export type SanityImage = SanityImageRef | string;
 
+// Egypt Eye collects reviews over WhatsApp in the follow-up after a trip or
+// a shoot, so a review is feedback about the company, not about one product
+// — there is no per-tour review data to average. Every item therefore shows
+// the same company-wide figure, stamped on at fetch time by
+// sanity/fetchers.ts (never hand-written in a content file), and `score` is
+// optional because a written review with no star value still counts.
 export type Rating = {
-  score: number;
+  score?: number;
   count: number;
 } | null;
 
@@ -48,7 +54,8 @@ export type Tour = {
   destinations: string[];
   travelStyle?: string[];
   featured?: boolean;
-  rating: Rating;
+  /** Set at read time from the collected reviews — never authored here. */
+  rating?: Rating;
   badge?: string;
   imageLabel?: string;
   image?: SanityImage;
@@ -109,7 +116,8 @@ export type Experience = {
   slug: string;
   title: string;
   duration: string;
-  rating: Rating;
+  /** Set at read time from the collected reviews — never authored here. */
+  rating?: Rating;
   price: Price;
   imageLabel?: string;
   image?: SanityImage;
@@ -136,7 +144,8 @@ export type Photoshoot = {
   slug: string;
   title: string;
   duration: string;
-  rating: Rating;
+  /** Set at read time from the collected reviews — never authored here. */
+  rating?: Rating;
   price: Price;
   locations: string[];
   imageLabel?: string;
@@ -156,6 +165,8 @@ export type Testimonial = {
   name: string;
   quote: string;
   context?: string;
+  /** The star value this traveler gave, where the follow-up captured one. */
+  score?: number;
 };
 
 export type Author = {
