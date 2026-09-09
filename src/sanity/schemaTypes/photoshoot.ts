@@ -17,11 +17,10 @@ export const photoshoot = defineType({
     defineField({ name: "duration", title: "Duration", type: "string" }),
     defineField({
       name: "rating",
-      title: "Rating (managed automatically)",
+      title: "Rating (optional override)",
       description:
-        "Set automatically from the Testimonials list — Egypt Eye's reviews are collected company-wide over WhatsApp, not per product, so the site shows one real figure on every item. Editing a number here has no effect. To change what visitors see, add or edit Testimonials.",
+        "Overrides what this item shows. Leave empty and it falls back to the Site Settings review figure, or to the live count of Testimonials. Enter only numbers you can stand behind — this is shown to customers as a review count.",
       type: "rating",
-      readOnly: true,
     }),
     defineField({ name: "price", title: "Price", type: "price" }),
     defineField({ name: "locations", title: "Locations", type: "array", of: [{ type: "string" }] }),

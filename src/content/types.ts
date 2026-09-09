@@ -18,12 +18,21 @@ export type Rating = {
   score?: number;
   count: number;
   /**
-   * "product" — reviews that name this specific tour/experience/photoshoot.
-   * "company" — the site-wide total, shown on products no review names yet.
-   * The two must read differently on screen: "24 reviews" is a claim about
-   * this product, "1,481 Egypt Eye reviews" is a claim about the company.
+   * What the number is a claim about, which decides how it's worded:
+   * "product" renders "24 reviews", "company" renders "1,481 Egypt Eye
+   * reviews". The two must never read as each other.
    */
   scope: "product" | "company";
+  /**
+   * "computed" — counted from the testimonial records themselves.
+   * "manual" — typed into Studio by an editor.
+   *
+   * Only computed figures are published as AggregateRating structured data,
+   * because that markup asserts to search engines that a specific number of
+   * reviews exists and is countable. A manual figure still drives everything
+   * on the page.
+   */
+  source: "computed" | "manual";
 } | null;
 
 export type ItineraryDay = {
@@ -373,6 +382,8 @@ export type SiteSettings = {
   // Optional, real-numbers-only stats for the homepage trust bar. A field
   // left unset hides that tile rather than showing a placeholder — never
   // fabricate a value here.
+  /** Manual override for the review figure shown on every product. */
+  reviewsOverride?: { count?: number; score?: number };
   trustStats?: {
     yearsInEgypt?: number;
     happyGuestsLabel?: string;
@@ -509,6 +520,8 @@ export type ResolvedSiteSettings = {
     cancellation: string;
   };
   pillars: readonly { title: string; description: string }[];
+  /** Manual override for the review figure shown on every product. */
+  reviewsOverride?: { count?: number; score?: number };
   trustStats?: {
     yearsInEgypt?: number;
     happyGuestsLabel?: string;

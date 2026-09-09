@@ -66,6 +66,7 @@ export function getProductRating(product: ProductLike, reviews: Testimonial[]): 
 
   return {
     scope: "product",
+    source: "computed",
     count: matched.length,
     score:
       scored.length > 0

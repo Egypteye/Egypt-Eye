@@ -67,7 +67,7 @@ export function touristTripJsonLd({
   description: string;
   image?: SanityImage;
   path: string;
-  rating?: { score?: number; count: number; scope?: "product" | "company" } | null;
+  rating?: { score?: number; count: number; scope?: "product" | "company"; source?: "computed" | "manual" } | null;
 }) {
   const imageUrl = urlForImage(image)?.width(1200).height(630).url();
   return {
@@ -82,12 +82,18 @@ export function touristTripJsonLd({
       name: "Egypt Eye Travel and Tours",
       url: siteUrl,
     },
-    // Only for reviews that actually name this product AND carry star values.
-    // The company-wide fallback figure is true of the business, not of this
-    // tour, so publishing it here as this tour's AggregateRating would be a
-    // claim the data doesn't support — and an AggregateRating without a real
-    // ratingValue isn't valid markup anyway.
-    ...(rating && rating.scope === "product" && rating.count > 0 && typeof rating.score === "number"
+    // Published only for a figure counted from real testimonial records that
+    // name this product. AggregateRating is a machine-readable assertion to
+    // search engines that this many reviews of this item exist and can be
+    // produced, so a company-wide total (true of the business, not of this
+    // tour) and a manually entered number both stay out of it — they still
+    // drive everything on the page. An AggregateRating without a real
+    // ratingValue isn't valid markup either.
+    ...(rating &&
+    rating.scope === "product" &&
+    rating.source === "computed" &&
+    rating.count > 0 &&
+    typeof rating.score === "number"
       ? {
           aggregateRating: {
             "@type": "AggregateRating",

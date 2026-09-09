@@ -40,14 +40,12 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // field edited directly in the Studio (e.g. SEO overrides) still follows
 // normal full-replace semantics and gets discarded on re-run.
 //
-// `rating` on tours/experiences/photoshoots is no longer migrated content at
-// all. Egypt Eye collects reviews company-wide over WhatsApp rather than per
-// product, so the site computes one real figure from the Testimonials and
-// stamps it onto every item at read time (content/aggregate.ts + the
-// withCompanyRating helpers in sanity/fetchers.ts). Whatever sits in a
-// product's `rating` field in Sanity is ignored by the site; it is preserved
-// here only so a resync isn't gratuitously destructive, and `only=ratings`
-// now clears those leftovers out rather than seeding new ones.
+// `rating` on tours/experiences/photoshoots is Studio-owned, not content:
+// it's an optional manual override an editor sets, falling back to the
+// site-wide figure in Site Settings and then to the live Testimonials count
+// (sanity/fetchers.ts). It has no local-content equivalent, so this route
+// only ever reads it back and preserves it — there is no `only=ratings`
+// pass, because writing ratings from here could only erase them.
 //
 // All mutations are queued onto ONE Sanity transaction and committed together
 // at the end, rather than sent as separate requests. This matters for
@@ -60,7 +58,7 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
-// experiences, photoshoots, ratings, nav, destinationHubs, testimonials,
+// experiences, photoshoots, nav, destinationHubs, testimonials,
 // stories, faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
 // signatureExperiences, authors, events, homepage, listingPages. IMPORTANT:
 // stories reference tours (relatedTours) and signatureExperiences reference
@@ -75,15 +73,12 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,tours,stories
 //
-// `only=ratings` and `only=nav` are the safe ones to re-run any time — they
-// only patch the `rating` field (per tour/experience/photoshoot) or the
-// `nav` field (on siteSettings) respectively, unlike `tours`/`experiences`/
-// `photoshoots`/`siteSettings`, which do a full createOrReplace and would
-// wipe any other field edited directly in the Studio since the last full
-// migration. Note that `only=ratings` now UNSETS every product rating, which
-// is the intended cleanup — see the note above:
+// `only=nav` is the safe one to re-run any time — it patches just the `nav`
+// field on siteSettings, unlike `tours`/`experiences`/`photoshoots`/
+// `siteSettings`, which do a full createOrReplace and would wipe any other
+// field edited directly in the Studio since the last full migration:
 //
-//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=ratings
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=nav
 
 // Vercel kills serverless functions after a plan-dependent default (10s on
 // Hobby) — extend it well past what even a large single-transaction commit
@@ -124,11 +119,9 @@ export async function GET(request: NextRequest) {
   // whatever's currently set and folding it back into each payload below
   // makes re-running this endpoint safe even after Studio photo uploads.
   //
-  // `rating` is still read back and folded in, but only so that a resync
-  // doesn't gratuitously wipe a field. The site no longer reads a product's
-  // stored rating: it derives one company-wide figure from the Testimonials
-  // and stamps it on at read time (see sanity/fetchers.ts). The local content
-  // files carry no ratings any more, so there is nothing to seed from.
+  // `rating` is read back and folded in because it's Studio-owned: an
+  // optional manual override with no counterpart in the content files.
+  // Without this, any resync would wipe whatever an editor set by hand.
   let existingMedia = new Map<string, { image?: unknown; gallery?: unknown; rating?: unknown }>();
   if (shouldRun("tours") || shouldRun("experiences") || shouldRun("photoshoots")) {
     const rows = await client.fetch<{ _id: string; image?: unknown; gallery?: unknown; rating?: unknown }[]>(
@@ -319,31 +312,12 @@ export async function GET(request: NextRequest) {
   // ratings in content/tours.ts) without wiping images, descriptions, or any
   // other field a real edit in the Studio may have changed since the last
   // full migration.
-  // Product ratings are no longer authored in content — the site computes one
-  // company-wide figure from the collected Testimonials and stamps it onto
-  // every item at read time (see content/aggregate.ts). So this pass now
-  // clears the stale per-product numbers out of the dataset rather than
-  // seeding new ones, which is exactly what `only=ratings` is for.
-  if (shouldRun("ratings")) {
-    for (const t of tours) {
-      tx.patch(`tour-${t.slug}`, (p) =>
-        t.rating ? p.set({ rating: { _type: "rating", ...t.rating } }) : p.unset(["rating"])
-      );
-      results.push(`rating: tour-${t.slug}`);
-    }
-    for (const e of experiences) {
-      tx.patch(`experience-${e.slug}`, (p) =>
-        e.rating ? p.set({ rating: { _type: "rating", ...e.rating } }) : p.unset(["rating"])
-      );
-      results.push(`rating: experience-${e.slug}`);
-    }
-    for (const ph of photoshoots) {
-      tx.patch(`photoshoot-${ph.slug}`, (p) =>
-        ph.rating ? p.set({ rating: { _type: "rating", ...ph.rating } }) : p.unset(["rating"])
-      );
-      results.push(`rating: photoshoot-${ph.slug}`);
-    }
-  }
+  // There is deliberately no `ratings` pass any more. A product's rating is
+  // now a manual override an editor types in Studio, with no equivalent in
+  // the content files — so a migration that wrote ratings could only ever
+  // erase the numbers someone set by hand. The full createOrReplace passes
+  // above read the current value back and fold it in, so a resync leaves
+  // Studio's ratings alone.
 
   // Same reasoning as `ratings` above: a scoped patch on just the `nav`
   // field, so it's safe to re-run after adding/removing a nav item without

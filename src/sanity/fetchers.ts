@@ -136,33 +136,45 @@ async function safeFetch<T>(query: string, params: Record<string, unknown> = {})
  * back empty and this returns null, so items show "New experience" rather
  * than a number we can't stand behind.
  */
-export async function getCompanyRating(): Promise<Rating> {
-  return companyRatingFrom(await getTestimonials());
-}
-
 type RatedProduct = { slug: string; title: string; rating?: Rating };
 
 /**
- * Every product shows the same figure: Egypt Eye's real company-wide review
- * count, from the testimonials actually collected.
+ * The review figure a product shows, in precedence order:
  *
- * One consistent number is the point. Per-product counts are computed too
- * (lib/reviewAttribution.ts, surfaced in /admin/reviews), but mixing them
- * into this slot puts two different claims side by side in one grid — "12
- * reviews" about a tour next to "1,481 Egypt Eye reviews" about the company
- * — and that reads as a bug. They can replace this everywhere at once, when
- * attribution covers enough of the catalogue to do so.
+ *   1. That product's own Rating in Studio, if an editor set one.
+ *   2. Site Settings → "Traveler review figure", the manual site-wide value.
+ *   3. The live count of Testimonials, which rises on its own as reviews
+ *      are added and needs no maintenance.
+ *
+ * Both manual tiers are marked source: "manual", which keeps them off the
+ * AggregateRating structured data (see content/seo.ts) while still driving
+ * everything a visitor sees. Only a figure counted from real testimonial
+ * records is published as a machine-readable review claim.
  */
+export async function getCompanyRating(): Promise<Rating> {
+  const site = await getSiteSettings();
+  const override = site.reviewsOverride;
+  if (override?.count && override.count > 0) {
+    return { scope: "company", source: "manual", count: override.count, score: override.score };
+  }
+  return companyRatingFrom(await getTestimonials());
+}
+
+function manualProductRating(rating: Rating): Rating {
+  if (!rating || !rating.count || rating.count <= 0) return null;
+  return { scope: "product", source: "manual", count: rating.count, score: rating.score };
+}
+
 async function withCompanyRating<T extends RatedProduct>(items: T[]): Promise<T[]> {
-  const rating = await getCompanyRating();
-  return items.map((item) => ({ ...item, rating }));
+  const fallback = await getCompanyRating();
+  return items.map((item) => ({ ...item, rating: manualProductRating(item.rating ?? null) ?? fallback }));
 }
 
 async function withCompanyRatingOne<T extends RatedProduct>(
   item: T | undefined
 ): Promise<T | undefined> {
   if (!item) return undefined;
-  return { ...item, rating: await getCompanyRating() };
+  return { ...item, rating: manualProductRating(item.rating ?? null) ?? (await getCompanyRating()) };
 }
 
 export async function getTours(): Promise<Tour[]> {

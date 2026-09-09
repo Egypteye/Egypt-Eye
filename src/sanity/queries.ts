@@ -4,21 +4,22 @@ import groq from "groq";
 // than `...`, so adding a Studio-only field never accidentally changes the
 // site's data shape.
 
-// No `rating` is selected anywhere: a product's stored rating is ignored by
-// the site, which derives every review figure from the Testimonials instead
-// (lib/reviewAttribution.ts + content/aggregate.ts). Not selecting it means
-// a stale stored number can't reach the UI down some nested path.
+// A product's own `rating` is an optional manual override, set in Studio; a
+// product without one falls back to the site-wide figure (see
+// sanity/fetchers.ts). Every list that renders a product card selects it, so
+// an override applies everywhere that product appears, not just on its page.
+const ratingFields = groq`rating{score, count}`;
 const priceFields = groq`price{amount, originalAmount, note}`;
 
 // Lightweight tour card used wherever an Experience or Story links to a Tour.
 const relatedTourFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, badge, image, imageTone, ${priceFields}, physicalLevel
+  destinations, ${ratingFields}, badge, image, imageTone, ${priceFields}, physicalLevel
 `;
 
 // Lightweight Extra Experience card used wherever a Tour links to one.
 const relatedExtraExperienceFields = groq`
-  "slug": slug.current, title, duration, ${priceFields},
+  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, description, included, physicalLevel
 `;
 
@@ -26,7 +27,7 @@ const relatedExtraExperienceFields = groq`
 // field existed, where `hidden` is unset, still count as visible.
 export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(order asc) {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, travelStyle, featured, badge, image, imageTone, description,
+  destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, ${priceFields}, physicalLevel
 }`;
 
@@ -34,7 +35,7 @@ export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(orde
 // two can never drift into returning different shapes for the same document.
 const tourDetailFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, travelStyle, featured, badge, image, imageTone, description,
+  destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, physicalLevel, mapStops,
   relatedExperiences[]->{${relatedExtraExperienceFields}},
   ${priceFields}, seo
@@ -52,12 +53,12 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 }`;
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
-  "slug": slug.current, title, duration, ${priceFields},
+  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, description, location, included, destinations, physicalLevel
 }`;
 
 const experienceDetailFields = groq`
-  "slug": slug.current, title, duration, ${priceFields},
+  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
   physicalLevel, mapStops,
@@ -74,12 +75,12 @@ export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.curr
 }`;
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
-  "slug": slug.current, title, duration, ${priceFields},
+  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations
 }`;
 
 const photoshootDetailFields = groq`
-  "slug": slug.current, title, duration, ${priceFields},
+  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, seo
 `;
 
@@ -150,7 +151,7 @@ export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {
 
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   name, shortName, tagline, heroHeadline, heroSubheadline, description, positioning,
-  contact, socials, pillars, policies, trustStats,
+  contact, socials, pillars, policies, trustStats, reviewsOverride,
   heroImages[]{image, tone, headline, subtext, linkLabel, linkHref},
   flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage,
   destinationPhotos[]{name, image},

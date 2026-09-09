@@ -27,6 +27,7 @@ export function getCompanyRating(testimonials: Testimonial[]): Rating {
 
   return {
     scope: "company",
+    source: "computed",
     count: testimonials.length,
     score:
       scored.length > 0
