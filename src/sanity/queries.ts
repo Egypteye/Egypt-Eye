@@ -4,19 +4,21 @@ import groq from "groq";
 // than `...`, so adding a Studio-only field never accidentally changes the
 // site's data shape.
 
-const ratingFields = groq`rating{score, count}`;
+// No `rating` is selected anywhere: a product's stored rating is ignored by
+// the site, which derives every review figure from the Testimonials instead
+// (lib/reviewAttribution.ts + content/aggregate.ts). Not selecting it means
+// a stale stored number can't reach the UI down some nested path.
 const priceFields = groq`price{amount, originalAmount, note}`;
 
 // Lightweight tour card used wherever an Experience or Story links to a Tour.
 const relatedTourFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, ${ratingFields}, badge, image, imageTone, ${priceFields},
-  physicalLevel
+  destinations, badge, image, imageTone, ${priceFields}, physicalLevel
 `;
 
 // Lightweight Extra Experience card used wherever a Tour links to one.
 const relatedExtraExperienceFields = groq`
-  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
+  "slug": slug.current, title, duration, ${priceFields},
   image, imageTone, description, included, physicalLevel
 `;
 
@@ -24,7 +26,7 @@ const relatedExtraExperienceFields = groq`
 // field existed, where `hidden` is unset, still count as visible.
 export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(order asc) {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
+  destinations, travelStyle, featured, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, ${priceFields}, physicalLevel
 }`;
 
@@ -32,7 +34,7 @@ export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(orde
 // two can never drift into returning different shapes for the same document.
 const tourDetailFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
+  destinations, travelStyle, featured, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, physicalLevel, mapStops,
   relatedExperiences[]->{${relatedExtraExperienceFields}},
   ${priceFields}, seo
@@ -50,12 +52,12 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 }`;
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
-  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
+  "slug": slug.current, title, duration, ${priceFields},
   image, imageTone, description, location, included, destinations, physicalLevel
 }`;
 
 const experienceDetailFields = groq`
-  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
+  "slug": slug.current, title, duration, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
   physicalLevel, mapStops,
@@ -72,12 +74,12 @@ export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.curr
 }`;
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
-  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
+  "slug": slug.current, title, duration, ${priceFields},
   locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations
 }`;
 
 const photoshootDetailFields = groq`
-  "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
+  "slug": slug.current, title, duration, ${priceFields},
   locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, seo
 `;
 
@@ -106,7 +108,7 @@ export const destinationHubsBySlugsQuery = groq`*[_type == "destinationHub" && s
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
-  name, quote, context, score
+  name, quote, context, score, "subjectSlug": subject->slug.current
 }`;
 
 // Lightweight experience summary used wherever a Story links to a

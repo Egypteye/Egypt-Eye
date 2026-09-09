@@ -18,12 +18,20 @@ export function Rating({ rating }: { rating?: RatingType }) {
     return <span className="text-sm text-ink-soft/60">New experience</span>;
   }
 
-  const reviews = `${rating.count.toLocaleString()} Egypt Eye review${rating.count === 1 ? "" : "s"}`;
+  const isCompany = rating.scope === "company";
+  const plural = rating.count === 1 ? "" : "s";
+  const reviews = isCompany
+    ? `${rating.count.toLocaleString()} Egypt Eye review${plural}`
+    : `${rating.count.toLocaleString()} review${plural}`;
 
   return (
     <span
       className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft"
-      title="Egypt Eye's traveler reviews, collected after every trip and shoot — company-wide, not specific to this item."
+      title={
+        isCompany
+          ? "Egypt Eye's traveler reviews, collected after every trip and shoot — company-wide, not specific to this item."
+          : "Reviews from travelers who went on this exact tour, collected in the follow-up afterwards."
+      }
     >
       <svg
         viewBox="0 0 20 20"

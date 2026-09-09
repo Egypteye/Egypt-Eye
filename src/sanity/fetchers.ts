@@ -27,6 +27,7 @@ import {
   toursQuery,
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
+import { getProductRating } from "@/lib/reviewAttribution";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
@@ -140,16 +141,27 @@ export async function getCompanyRating(): Promise<Rating> {
   return companyRatingFrom(await getTestimonials());
 }
 
-async function withCompanyRating<T extends { rating?: Rating }>(items: T[]): Promise<T[]> {
-  const rating = await getCompanyRating();
-  return items.map((item) => ({ ...item, rating }));
+type RatedProduct = { slug: string; title: string; rating?: Rating };
+
+/**
+ * A product shows its OWN review count when reviews name it — the follow-up
+ * records the trip in each testimonial's `context`, and
+ * lib/reviewAttribution.ts turns that back into a per-product figure. A
+ * product no review names falls back to the company-wide total, which is
+ * still true of it, rather than showing nothing or a zero.
+ */
+async function withCompanyRating<T extends RatedProduct>(items: T[]): Promise<T[]> {
+  const reviews = await getTestimonials();
+  const company = companyRatingFrom(reviews);
+  return items.map((item) => ({ ...item, rating: getProductRating(item, reviews) ?? company }));
 }
 
-async function withCompanyRatingOne<T extends { rating?: Rating }>(
+async function withCompanyRatingOne<T extends RatedProduct>(
   item: T | undefined
 ): Promise<T | undefined> {
   if (!item) return undefined;
-  return { ...item, rating: await getCompanyRating() };
+  const reviews = await getTestimonials();
+  return { ...item, rating: getProductRating(item, reviews) ?? companyRatingFrom(reviews) };
 }
 
 export async function getTours(): Promise<Tour[]> {
@@ -281,12 +293,20 @@ export async function getStories(): Promise<Story[]> {
 export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   const result = await safeFetch<Story | null>(storyBySlugQuery, { slug });
   const local = localStories.find((s) => s.slug === slug);
-  if (!result) return local;
-  return {
-    ...result,
-    image: result.image || local?.image,
-    body: result.body && result.body.length > 0 ? result.body : local?.body,
-  };
+  const story = result
+    ? {
+        ...result,
+        image: result.image || local?.image,
+        body: result.body && result.body.length > 0 ? result.body : local?.body,
+      }
+    : local;
+  if (!story) return undefined;
+
+  // A story's related tours render as full TourCards, so they need the same
+  // review figure the tour would show anywhere else.
+  return story.relatedTours && story.relatedTours.length > 0
+    ? { ...story, relatedTours: await withCompanyRating(story.relatedTours) }
+    : story;
 }
 
 export async function getDestinationHubs(): Promise<DestinationHub[]> {

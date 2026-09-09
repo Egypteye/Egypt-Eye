@@ -26,6 +26,7 @@ export function getCompanyRating(testimonials: Testimonial[]): Rating {
     .filter((s): s is number => typeof s === "number" && s > 0);
 
   return {
+    scope: "company",
     count: testimonials.length,
     score:
       scored.length > 0

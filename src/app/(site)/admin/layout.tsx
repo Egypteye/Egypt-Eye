@@ -13,6 +13,7 @@ const FULL_NAV = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/discounts", label: "Discounts" },
   { href: "/admin/newsletter", label: "Newsletter" },
+  { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/reservations", label: "Reservations" },
   { href: "/admin/concierge", label: "Concierge" },
   { href: "/admin/collaborations", label: "Collaborations" },

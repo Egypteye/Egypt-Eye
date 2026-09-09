@@ -9,6 +9,14 @@ export const testimonial = defineType({
     defineField({ name: "quote", title: "Quote", type: "text", validation: (r) => r.required() }),
     defineField({ name: "context", title: "Context (e.g. tour name)", type: "string" }),
     defineField({
+      name: "subject",
+      title: "Which tour / experience / photoshoot (optional)",
+      description:
+        "Only needed when the Context text above doesn't exactly name a product. Context is matched automatically against product titles, so \"6 Days: Cairo, Giza & Luxor\" already counts toward that tour. Set this for anything vaguer — \"Egypt itinerary\", \"Cairo city tour\" — and it wins over the text.",
+      type: "reference",
+      to: [{ type: "tour" }, { type: "experience" }, { type: "photoshoot" }],
+    }),
+    defineField({
       name: "score",
       title: "Star rating (optional)",
       description:

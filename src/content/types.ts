@@ -17,6 +17,13 @@ export type SanityImage = SanityImageRef | string;
 export type Rating = {
   score?: number;
   count: number;
+  /**
+   * "product" — reviews that name this specific tour/experience/photoshoot.
+   * "company" — the site-wide total, shown on products no review names yet.
+   * The two must read differently on screen: "24 reviews" is a claim about
+   * this product, "1,481 Egypt Eye reviews" is a claim about the company.
+   */
+  scope: "product" | "company";
 } | null;
 
 export type ItineraryDay = {
@@ -167,6 +174,11 @@ export type Testimonial = {
   context?: string;
   /** The star value this traveler gave, where the follow-up captured one. */
   score?: number;
+  /**
+   * Slug of the tour/experience/photoshoot this review is about, set by hand
+   * in Studio. Overrides whatever `context` says — see lib/reviewAttribution.
+   */
+  subjectSlug?: string;
 };
 
 export type Author = {
