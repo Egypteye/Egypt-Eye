@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "next-sanity";
 import { apiVersion, dataset, projectId } from "@/sanity/env";
@@ -731,12 +732,34 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 
+  // Committing to Sanity is only half the job. Every fetch in
+  // sanity/fetchers.ts is cached for an hour and the product pages are
+  // statically generated, so without this a migration appears to do nothing:
+  // the write lands, and the site keeps serving the previous version until
+  // the window happens to expire. Flushing the whole route tree here is what
+  // makes a migration visible immediately, which is the only way anyone can
+  // tell whether it did what they wanted.
+  let revalidated = true;
+  try {
+    revalidatePath("/", "layout");
+  } catch (err) {
+    // A failed flush isn't a failed migration — the data is committed either
+    // way, it just won't surface until the cache expires on its own.
+    console.error("Migration committed, but revalidation failed:", err);
+    revalidated = false;
+  }
+
   // `resetMedia` is echoed back because it's the one destructive mode here —
   // seeing it in the response is how you confirm you ran what you meant to.
+  // `revalidated` says whether the change is live now or waits out the cache.
   return NextResponse.json({
     ok: true,
     migrated: results.length,
     resetMedia,
+    revalidated,
+    cacheNote: revalidated
+      ? "Site cache flushed — reload to see the change."
+      : "Cache flush failed; changes appear within the hour, or after a redeploy.",
     details: results,
   });
 }
