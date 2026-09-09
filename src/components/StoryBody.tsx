@@ -50,6 +50,15 @@ const components: PortableTextComponents = {
         <p className="mt-2 text-[15px] leading-relaxed text-ink-soft/80">{value.body}</p>
       </div>
     ),
+    photoBlock: ({ value }) => (
+      <figure className="my-8">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={value.url} alt={value.alt || value.caption || "Photo from this story"} loading="lazy" className="w-full rounded-2xl" />
+        {value.caption && (
+          <figcaption className="mt-2 text-center text-sm text-ink-soft/55">{value.caption}</figcaption>
+        )}
+      </figure>
+    ),
     galleryBlock: ({ value }) =>
       value.images && value.images.length > 0 ? (
         <div className="my-10">

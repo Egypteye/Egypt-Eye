@@ -3,7 +3,7 @@ import { authors } from "./authors";
 import { events } from "./events";
 import { signatureExperiences } from "./signatureExperiences";
 import { tours } from "./tours";
-import { nextBlockKey, p, h2, bullets, callout, faq } from "./storyBlocks";
+import { nextBlockKey, p, h2, bullets, callout, faq, photo, cta } from "./storyBlocks";
 import { trendStories } from "./storyBatches";
 
 const editorialTeam = authors[0];
@@ -10942,6 +10942,192 @@ export const stories: Story[] = [
       ),
       p("Egypt and Jordan reward being seen together more than most people expect going in — the flight between them is short, the sights don't overlap, and the pacing of each country ends up complementing the other rather than competing with it. Plan the sequence around your flights, give each country the days it actually needs, and the two-country trip stops feeling ambitious and starts feeling like the obvious way to do it."),
       { _type: "ctaBlock", _key: nextBlockKey("cta"), title: "Plan Your Egypt & Jordan Trip", body: "From a 9-day combined route to the full 14-day classic journey, we'll build the itinerary around your dates and pace.", buttonLabel: "See Egypt & Jordan Tours", buttonHref: "/tours/9-day-egypt-jordan-combo" },
+    ],
+  },
+  {
+    status: "published",
+    featured: true,
+    slug: "giza-pyramids-tethered-balloon-2026",
+    title: "New Giza Pyramids Balloon: What We Know About Egypt's First Tethered Balloon Experience",
+    category: "News",
+    tags: ["Giza Pyramids", "Cairo Attractions", "Egypt Travel News", "Things to Do in Giza"],
+    author: editorialTeam,
+    excerpt:
+      "Egypt's new tethered balloon near the Giza Pyramids has begun trial flights, rising roughly 150 meters on a fixed steel cable. Here's what's officially confirmed about its height, location, and public opening — and what still isn't.",
+    imageTone: "giza",
+    image: "/photos/giza-tethered-balloon-ground-station.jpg",
+    publishedAt: "2026-09-09T09:00:00+02:00",
+    contentReviewDate: "2026-12-01",
+    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza", "egyptian-museum-coptic-cairo-tour"),
+    primaryKeyword: "Giza Pyramids balloon",
+    secondaryKeywords: [
+      "Giza Pyramids tethered balloon",
+      "balloon ride near the Pyramids",
+      "fixed balloon Giza",
+      "new balloon at the Pyramids",
+      "things to do in Giza",
+      "things to do in Cairo",
+      "Pyramids of Giza activities",
+      "Cairo attractions 2026",
+      "tethered balloon Egypt",
+      "Giza balloon trial flight",
+    ],
+    seoTitle: "New Giza Pyramids Balloon: What We Know (2026)",
+    seoDescription:
+      "Egypt's new tethered balloon at Giza is in trial flights, rising ~150m near the Pyramids. Here's what's confirmed — and what isn't.",
+    body: [
+      p(
+        "For the first time, a Giza Pyramids balloon has been spotted rising over the desert on the edge of the plateau — but it isn't the kind of balloon most travelers picture when they think of Egypt. This isn't a free-flying hot-air balloon like the ones drifting over Luxor at sunrise. It's a fixed, cable-tethered balloon, permanently anchored to a ground station, that rises straight up and straight back down. As of early September 2026, it's still in its trial and testing phase, following an official site inspection by Egypt's Minister of Tourism and Antiquities on August 30, 2026 — but the sight of a silver balloon hovering over the desert near one of the world's most famous archaeological sites has already generated real excitement among travelers and locals watching it climb."
+      ),
+      p(
+        "Here's a clear, fact-checked look at what this new Giza Pyramids tethered balloon actually is, what's confirmed so far, and what's still unknown."
+      ),
+      h2("What Is the New Giza Pyramids Balloon?"),
+      p(
+        "The attraction under construction and testing near Giza is what's known in the tourism industry as a tethered balloon ride — a large helium-filled balloon, permanently attached to the ground by a heavy-duty steel cable, that ascends and descends vertically using a ground-based winch system. Think of it less like a hot-air balloon flight and more like a very slow, very scenic elevator into the sky, with the \"shaft\" being open air over the desert instead of a building."
+      ),
+      p(
+        "According to Egypt's Ministry of Tourism and Antiquities, the project is being carried out by Tashreef for Tourism Marketing, an Egyptian company, in partnership with Aerophile, a French firm that specializes in tethered balloon attractions and has built similar installations in other major cities. Aerophile is also the company behind the tethered balloon at Atlantis, The Palm in Dubai — a taller installation reaching roughly 300 meters, for context, though Egyptian officials have not directly compared the two projects in public statements."
+      ),
+      photo("/photos/giza-tethered-balloon-gondola-closeup.jpg", {
+        caption:
+          "A close view of the balloon and its passenger gondola, tethered by steel cable to the ground station below — the defining feature that separates this attraction from a traditional hot-air balloon.",
+        alt: "Close-up of fixed balloon gondola and steel tether cable near Giza Pyramids",
+      }),
+      p(
+        "Because the balloon never detaches from its cable, it doesn't drift with the wind or travel any real distance — its entire flight path is a straight vertical line up and back down. That's precisely what makes it different, and in some ways more predictable, than a traditional hot-air balloon, which relies on wind currents to travel a route."
+      ),
+      p(
+        "The Ministry has described this as the first attraction of its kind at Giza, and framed it around giving visitors \"a new perspective\" on the Pyramids, its surrounding landmarks, and the desert landscape — a genuinely new category of activity in an area otherwise built around walking tours, camel rides, and ground-level photography."
+      ),
+      h2("Has the Balloon Started Flying?"),
+      p(
+        "Yes — in a limited, trial capacity. On Sunday, August 30, 2026, Egypt's Minister of Tourism and Antiquities, Sharif Fathi, visited the Giza site to inspect the project's progress and review its work stages. Egyptian press coverage of that visit is what confirmed the balloon has begun trial and testing flights, which is consistent with the photos now circulating of the balloon aloft over the desert."
+      ),
+      photo("/photos/giza-tethered-balloon-trial-flight.jpg", {
+        caption:
+          "The tethered balloon during a testing flight, seen climbing over the dunes bordering the Giza Plateau — trial operations began following an August 2026 ministerial inspection.",
+        alt: "Giza Pyramids tethered balloon during trial testing flight over desert dunes",
+      }),
+      p(
+        "It's worth being precise about what \"started flying\" means here: this is trial and testing operation, used to check the mechanics, safety systems, and overall experience before any public launch — not a soft opening or a preview available to tourists. There's a meaningful difference between a project being tested and a project being ready to sell tickets, and as of this writing, this one is still in the former stage."
+      ),
+      h2("How High Does It Go?"),
+      p(
+        "The project's stated specification, as reported following the Ministry's inspection, is a rise of approximately 150 meters — around the height of a 45-to-50-story building. Each ride is reported to last around 15 minutes in total, covering the ascent, a period at or near maximum height, and the descent."
+      ),
+      p(
+        "Those are the officially reported figures for the project's design, though it's worth noting they come from the project's own specifications relayed through the Ministry, rather than an independently timed or measured account from a journalist who has personally ridden it — which makes sense, given the attraction hasn't opened to outside riders yet. For general context, Aerophile's tethered balloon systems elsewhere typically use an electric winch that reels the tether cable in and out, climbing at a modest, steady pace built around the view rather than the thrill."
+      ),
+      h2("Where Is the Balloon Located?"),
+      p(
+        "This is one of the more interesting confirmed details: the balloon is not inside the archaeological boundary of the Giza Plateau itself. It's sited in the open desert outside that protected zone — reported at roughly 2 kilometers from the Pyramids and 2.2 kilometers from the Great Sphinx."
+      ),
+      p(
+        "That distance appears to be a deliberate choice, positioning the balloon far enough from the monuments themselves to avoid any visual or physical impact on the protected site and its sightlines, while staying close enough to make the Pyramids the obvious centerpiece of the view once airborne. Exactly which road or landmark marks the ground station hasn't been specified in available reporting, so we won't guess at that here — but the general location, just outside the plateau's boundary in the surrounding desert, is well established."
+      ),
+      h2("What Can You See From the Balloon?"),
+      p(
+        "Officially, the stated purpose of the project is to give visitors a genuinely new vantage point over Giza's landmarks and the surrounding landscape — something no existing activity at the site currently offers. At a reported 150 meters, a rider would be well above ground-level sightlines, high enough to take in the Pyramids as a full complex rather than one monument at a time, along with the desert stretching out around them and, most likely, the edge of Cairo's skyline in the distance."
+      ),
+      photo("/photos/giza-tethered-balloon-desert-view.jpg", {
+        caption:
+          "The balloon suspended at altitude over the open desert bordering Giza — the attraction is sited roughly 2 kilometers from the Pyramids themselves, outside the protected archaeological zone.",
+        alt: "Tethered balloon high above Giza desert landscape near the Pyramids plateau",
+      }),
+      p(
+        "The experience is also reported to include an audio guide available in 12 languages, delivered through dedicated glasses or headsets, with content developed under the supervision of Egypt's Supreme Council of Antiquities and covering the plateau and its principal monuments — suggesting the ride is being designed as an informative, narrated experience rather than a purely visual one."
+      ),
+      callout(
+        "Because the attraction hasn't opened to the public and no rider account or in-gondola photography has been published yet, the precise, unobstructed view hasn't been independently documented. What's confirmed is the intent and the altitude; what a first-person view actually looks like will become clearer once real riders start sharing it.",
+        { title: "An Honest Caveat", tone: "Info" }
+      ),
+      h2("Giza Balloon vs. Luxor Hot-Air Balloon"),
+      p(
+        "It's worth being clear about this distinction, since the two experiences are easy to confuse by name alone but are fundamentally different activities."
+      ),
+      ...bullets([
+        "Luxor's hot-air balloons are free-flying. They launch before sunrise, rise using heated air rather than helium, and drift with the wind over the Valley of the Kings, the Nile, and Luxor's temple complexes for around 45 minutes to an hour, landing wherever the wind and pilot bring them down.",
+        "The new Giza balloon is a fixed, tethered installation. It's helium-filled, anchored to the ground by cable, rises and descends in a straight vertical line, and — per its reported specifications — offers a shorter, roughly 15-minute experience that reaches around 150 meters before returning to the same ground station it launched from.",
+      ]),
+      p(
+        "In short: Luxor's balloon is about the journey — a genuine flight over a changing landscape. Giza's balloon, based on everything confirmed so far, is about the view from a single fixed point above one of the most photographed places on Earth. Both are worth experiencing for very different reasons, and if the Giza balloon does open to the public, it would give visitors on a single Cairo trip a taste of aerial perspective without needing to build in a separate pre-dawn balloon morning in Luxor."
+      ),
+      h2("Is the Balloon Open to Tourists Yet?"),
+      p("No — not as of this writing. Every reliable source available confirms the project is still in trial and testing operation following the Ministry's August 30, 2026 inspection. There is currently:"),
+      ...bullets([
+        "No officially announced public opening date.",
+        "No published ticket pricing.",
+        "No confirmed booking availability through any official channel, tour operator, or ticketing platform.",
+      ]),
+      callout(
+        "Any article, listing, or social media post claiming a specific opening date, a specific price, or a \"book now\" link should be treated with caution until it's confirmed through an official Ministry of Tourism and Antiquities announcement or a verified operator. We'll update this article once solid, sourced information on public availability becomes available.",
+        { title: "A Word of Caution", tone: "Safety" }
+      ),
+      h2("How to Combine It With a Giza Tour"),
+      p(
+        "Even before this new balloon opens to visitors, Giza remains one of the most rewarding places in the world to spend a full day — and the smartest way to experience it is still with a private, well-planned visit rather than a rushed group itinerary. Once the tethered balloon does open to the public, it's a natural addition to a Giza day: a short, striking way to bookend time spent at ground level among the Pyramids and the Sphinx."
+      ),
+      photo("/photos/giza-tethered-balloon-side-view.jpg", {
+        caption:
+          "The tethered balloon in flight against a clear desert sky — expected to become a new addition to a full day of exploring Giza, once officially open to visitors.",
+        alt: "Fixed tethered balloon flying over Giza desert near the Pyramids of Egypt",
+      }),
+      p(
+        "Egypt Eye Travel & Tours already builds private days around Giza designed to make the most of the plateau itself, and this is exactly the kind of new attraction we'll fold into itineraries as soon as it's genuinely bookable. In the meantime, a well-planned visit already includes a private guide and vehicle timed around the crowds and the heat, a professional Pyramids photoshoot for travelers who want real, edited images rather than just phone photos from a distance, luxury and flying dress photoshoots for something more dramatic against the desert backdrop, a smooth private Cairo airport transfer, and private Cairo tours covering the rest of the city for anyone extending their stay."
+      ),
+      p(
+        "If and when the new balloon opens to the public with confirmed pricing and availability, it's the kind of addition that fits naturally into any of the above — a few striking minutes above the desert, built around a day that's otherwise already planned for you."
+      ),
+      faq(
+        [
+          {
+            question: "Is the new Giza balloon a hot-air balloon?",
+            answer:
+              "No. It's a helium-filled, cable-tethered balloon that rises and descends vertically from a fixed ground station. It doesn't drift with the wind or travel any distance, unlike a traditional hot-air balloon such as the ones flown in Luxor.",
+          },
+          {
+            question: "Has the Giza tethered balloon actually flown yet?",
+            answer:
+              "Yes, in trial and testing operation. Egypt's Minister of Tourism and Antiquities inspected the project on-site on August 30, 2026, and the balloon has been photographed during test flights around that time. It is not yet open for public rides.",
+          },
+          {
+            question: "How high does the Giza balloon go?",
+            answer:
+              "Its reported design specification is approximately 150 meters, with each experience lasting around 15 minutes total, according to project details shared following the Ministry's inspection.",
+          },
+          {
+            question: "Where exactly is the balloon located?",
+            answer:
+              "It's sited in the open desert outside the Giza Plateau's protected archaeological boundary, reported at roughly 2 kilometers from the Pyramids and 2.2 kilometers from the Sphinx.",
+          },
+          {
+            question: "Who is building and operating the Giza balloon?",
+            answer:
+              "The project is being carried out by Tashreef for Tourism Marketing, an Egyptian company, in partnership with Aerophile, a French tethered-balloon specialist, in coordination with Egypt's Ministry of Tourism and Antiquities.",
+          },
+          {
+            question: "Can tourists ride the Giza balloon yet?",
+            answer:
+              "No. As of now, it remains in trial operation only. No public opening date, ticket price, or booking option has been officially announced.",
+          },
+          {
+            question: "Can I combine the balloon with a private Giza tour once it's open?",
+            answer:
+              "Yes — it's expected to work well as an addition to a full Giza day. Egypt Eye Travel & Tours already builds private Giza itineraries, transfers, and photoshoots, and will incorporate the balloon into planned days as soon as it's officially open and bookable.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "This is a fast-developing story, and we'll update this article as soon as reliable, sourced information on opening dates, pricing, or public booking becomes available. Until then, the confirmed facts stand: a real tethered balloon is being tested in the desert outside Giza, reaching roughly 150 meters, and it isn't open to the public yet."
+      ),
+      cta({
+        title: "Plan Your Giza Day",
+        body: "A private guide, a professional photoshoot, and everything timed around you — build your Giza day with Egypt Eye Travel & Tours.",
+        buttonLabel: "See the Giza Pyramids Tour",
+        buttonHref: "/tours/1-day-giza-tour",
+      }),
     ],
   },
   ...trendStories,

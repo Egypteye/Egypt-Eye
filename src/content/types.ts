@@ -184,6 +184,17 @@ export type StoryGalleryBlock = {
   _key: string;
   images?: SanityImage[];
 };
+// A single captioned photo sourced from a plain URL (a real, provided photo,
+// or an external hotlink) rather than a Sanity-uploaded asset — for cases
+// where the built-in `image` Portable Text type (which resolves via a
+// Sanity asset reference) doesn't apply.
+export type StoryPhotoBlock = {
+  _type: "photoBlock";
+  _key: string;
+  url: string;
+  caption?: string;
+  alt?: string;
+};
 export type StoryVideoEmbedBlock = {
   _type: "videoEmbedBlock";
   _key: string;
@@ -225,6 +236,7 @@ export type StoryBodyBlock =
   | StoryQuoteBlock
   | StoryCalloutBlock
   | StoryGalleryBlock
+  | StoryPhotoBlock
   | StoryVideoEmbedBlock
   | StoryCountdownBlock
   | StoryExperienceCardBlock

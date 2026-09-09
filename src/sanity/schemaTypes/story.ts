@@ -73,6 +73,18 @@ const bodyBlockTypes = [
   }),
   defineArrayMember({
     type: "object",
+    name: "photoBlock",
+    title: "Photo (by URL)",
+    description: "A single captioned photo sourced from a direct URL — for real, provided photos not uploaded as a Sanity asset.",
+    fields: [
+      defineField({ name: "url", title: "Photo URL", type: "url", validation: (r) => r.required() }),
+      defineField({ name: "caption", title: "Caption (optional)", type: "string" }),
+      defineField({ name: "alt", title: "Alt text (optional)", type: "string" }),
+    ],
+    preview: { select: { title: "caption" }, prepare: (s: { title?: string }) => ({ title: s.title || "Photo" }) },
+  }),
+  defineArrayMember({
+    type: "object",
     name: "videoEmbedBlock",
     title: "Video Embed",
     fields: [
