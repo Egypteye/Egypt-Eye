@@ -260,8 +260,17 @@ If you ever need hard isolation instead, setting `NEXT_PUBLIC_OS_SUPABASE_URL`
 lose the linking above, so only do it if the OS does not need website data.
 
 1. Add these environment variables in Vercel → Settings → Environment
-   Variables, taking the first three from the NEW project's Project Settings →
-   API:
+   Variables. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   are already there for the website, and the OS reuses them.
+
+   **Tick every environment you intend to open the OS on.** A Vercel preview
+   deployment does not inherit Production's variables, so a key set for
+   Production only means `/os` shows the "not connected to a database yet"
+   page on every preview branch — the database is fine, the deployment simply
+   cannot see it. And variables are read when a deployment is *built*: after
+   adding or changing one, redeploy (Deployments → the deployment → ⋯ →
+   Redeploy, or push any commit to the branch). Editing the value alone
+   changes nothing.
 
    - `SUPABASE_SERVICE_ROLE_KEY` — your existing project's **service_role**
      key, from Project Settings → API. Never expose it to the browser and

@@ -127,6 +127,12 @@ function SetupNotice({ title, detail }: { title?: string; detail?: string } = {}
           <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">SUPABASE_SERVICE_ROLE_KEY</code></li>
         </ul>
         <p className="mt-4 text-[12.5px] leading-relaxed text-os-muted">
+          On Vercel, set them for the environment you are opening. A preview deployment does not
+          inherit Production&rsquo;s variables, so a key ticked for Production only leaves this page
+          showing on every preview. Variables are read when a deployment is built, so redeploy after
+          adding one — editing it alone changes nothing.
+        </p>
+        <p className="mt-4 text-[12.5px] leading-relaxed text-os-muted">
           The migrations are <code>0018_egypt_eye_os_core.sql</code> (schema),{" "}
           <code>0019_egypt_eye_os_config.sql</code> (roles and permissions, required),{" "}
           <code>0020_egypt_eye_os_demo.sql</code> (demo data, optional),{" "}
