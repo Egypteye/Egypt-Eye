@@ -8,7 +8,7 @@ export const contactPage: ResolvedContactPage = {
   heroHeadline: "Let's Plan Your Trip",
   heroImage: {
     tone: "redsea",
-    image: "/photos/pexels-15276400.jpg",
+    image: "https://images.unsplash.com/photo-1776679768423-114637549209?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
   },
   whatsappCardDescription: "Fastest way to reach us",
   emailCardDescription: "For detailed enquiries",

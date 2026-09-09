@@ -10,7 +10,7 @@ export const customizePage: ResolvedCustomizePage = {
     "A private itinerary built entirely around you — every tour, extra experience, and photoshoot in our catalog, combined however you like.",
   bannerImage: {
     tone: "nile",
-    image: "/photos/pexels-15131486.jpg",
+    image: "https://images.unsplash.com/photo-1716639154156-db53b75a22ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
   },
   steps: [
     { title: "Tell us the basics", body: "Dates, guest count, and how packed or relaxed you want the pace." },

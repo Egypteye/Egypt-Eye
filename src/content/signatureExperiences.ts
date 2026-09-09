@@ -17,7 +17,7 @@ export const signatureExperiences: SignatureExperience[] = [
     shortDescription:
       "Five unhurried days of Egypt, arranged entirely around you — a private host, a photographer who knows how to make you look like yourself on a good day, and nothing left for you to organize. You show up. We've handled the rest.",
     heroImageTone: "desert",
-    heroImage: "/photos/pexels-28601583.jpg",
+    heroImage: "https://images.unsplash.com/photo-1771236474274-9ee1af431c79?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     duration: "5 days, 4 nights",
     groupSize: "Private — just you, or with the friends you bring",
     luxuryLevel: "Ultra-Luxury, Fully Private",
@@ -255,7 +255,7 @@ export const signatureExperiences: SignatureExperience[] = [
     shortDescription:
       "On August 2, 2027, Luxor gets roughly six minutes and twenty-two seconds of total solar eclipse — the longest anywhere on Earth until 2114. Two unhurried days built around it: West Bank in the cool of the morning, then an afternoon spent watching the sky do something it won't do again in most of our lifetimes.",
     heroImageTone: "luxor",
-    heroImage: "/photos/pexels-38674439.jpg",
+    heroImage: "https://images.unsplash.com/photo-1659608868791-d9965f7fbf4b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     duration: "2 days, 1 night",
     groupSize: "Private, or small group — ask us either way",
     luxuryLevel: "Ultra-Luxury, Fully Private",
@@ -475,7 +475,7 @@ export const signatureExperiences: SignatureExperience[] = [
     shortDescription:
       "An 8-day group departure from 22–30 November 2026, covering Cairo, Giza, Aswan, and a Nile cruise to Luxor, with a private certified Egyptologist guide throughout. Choose a 3★ or 5★ hotel — both pair with a 5★ Nile Cruise. Contact us for current rates.",
     heroImageTone: "nile",
-    heroImage: "/photos/pexels-37559132.jpg",
+    heroImage: "https://images.unsplash.com/photo-1704643764048-ce3aad419661?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     duration: "8 days",
     groupSize: "Set group departure — book your spot",
     luxuryLevel: "Choice of 3★ or 5★ hotel, both paired with a 5★ Nile Cruise",
@@ -686,7 +686,7 @@ export const signatureExperiences: SignatureExperience[] = [
     shortDescription:
       "A premium, private 2-day Cairo experience inspired by Shakira's own celebrated visit to the Pyramids of Giza — a private Pyramids tour and exclusive photoshoot, the Grand Egyptian Museum, and Khan el-Khalili's historic bazaar, with a private driver and transportation throughout. Enquiry only — our team confirms your dates and price directly.",
     heroImageTone: "giza",
-    heroImage: "/photos/pexels-36505454.jpg",
+    heroImage: "https://images.unsplash.com/photo-1623674587543-9c7564de99d1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     duration: "2 days",
     groupSize: "Private — just you and your party",
     luxuryLevel: "Ultra-Private, Celebrity-Level Service",
@@ -848,7 +848,7 @@ export const signatureExperiences: SignatureExperience[] = [
     shortDescription:
       "A 14-day private group itinerary built for 10 travelers — the Pyramids of Giza, Old Cairo, three days in the Siwa Oasis, a Nile cruise from Aswan to Luxor, and Red Sea days in Hurghada — with a certified Egyptologist guide throughout. The guided touring itinerary is quoted separately from flights, hotels, and visa.",
     heroImageTone: "giza",
-    heroImage: "/photos/pexels-31133003.jpg",
+    heroImage: "https://images.unsplash.com/photo-1570026517541-258404ea3bfc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     duration: "14 days",
     groupSize: "Private group — built for 10 travelers",
     luxuryLevel: "Standard Nile Cruise included, upgradable to a higher tier on request",

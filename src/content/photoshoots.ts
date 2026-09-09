@@ -12,7 +12,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Giza Pyramids", "Nine Pyramids View"],
     imageLabel: "Pyramids Photoshoot",
     imageTone: "giza",
-    image: "/photos/pexels-36505454.jpg",
+    image: "https://images.unsplash.com/photo-1566288623394-377af472d81b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A private, professionally directed photoshoot at the Pyramids of Giza — built for travelers who want cinematic, Instagram-ready memories, not just snapshots.",
     goodFor: ["Solo travelers", "Couples", "Families", "Influencers & content creators"],
@@ -46,7 +46,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Sand Dunes"],
     imageLabel: "Flying Dress in the Sand Dunes",
     imageTone: "desert",
-    image: "/photos/pexels-8037495.jpg",
+    image: "https://images.unsplash.com/photo-1771480432108-f4dc7bee6461?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Egypt's first Flying Dress experience — a dramatic, editorial-style shoot in a flowing dress of your chosen color, out among the desert's sand dunes, directed by our photographers at secret, uncrowded locations away from the crowds.",
     goodFor: [
@@ -77,7 +77,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Fayoum — Wadi El Rayan & the Magic Lake"],
     imageLabel: "Flying Dress in Fayoum",
     imageTone: "desert",
-    image: "/photos/pexels-38498244.jpg",
+    image: "https://images.unsplash.com/photo-1762604407380-87bff2e28eca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "The Flying Dress experience out at Fayoum's Wadi El Rayan and the Magic Lake — a flowing dress of your chosen color against the oasis's water and dunes, directed by our photographers away from the crowds.",
     goodFor: [
@@ -108,7 +108,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Giza Pyramids", "Nine Pyramids View"],
     imageLabel: "Jumping Horse at the Pyramids",
     imageTone: "giza",
-    image: "/photos/pexels-38513972.jpg",
+    image: "https://images.unsplash.com/photo-1782938397690-fca3ac1a3158?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A high-energy, action photoshoot at the Nine Pyramids View — you and a trained horse mid-jump against the Pyramids, directed and timed by our photographers for the shot.",
     goodFor: ["Solo travelers", "Couples", "Equestrians", "Influencers & content creators"],
@@ -132,7 +132,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Giza Pyramids", "Nine Pyramids View"],
     imageLabel: "Running Horse at the Pyramids",
     imageTone: "giza",
-    image: "/photos/pexels-38513972.jpg",
+    image: "https://images.unsplash.com/photo-1778402634289-f434588c4e68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "The Jumping Horse Photoshoot at the Nine Pyramids View, paired with a cinematic running-horse video — the horse in full gallop with the Pyramids in the background, filmed and directed by our team.",
     goodFor: ["Solo travelers", "Couples", "Equestrians", "Influencers & content creators"],
@@ -157,7 +157,7 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Giza Pyramids", "Nine Pyramids View"],
     imageLabel: "Pyramids Proposal Setup",
     imageTone: "giza",
-    image: "/photos/pexels-28682219.jpg",
+    image: "https://images.unsplash.com/photo-1597500993730-613ee0eab73b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A private, beautifully styled proposal setup overlooking the Pyramids of Giza — romantic decorations, flowers, and candlelight, arranged and ready before you arrive, so all that's left is the moment itself. Pricing depends on the setup and style you choose. This is enquiry-only — our team confirms your setup, styling, and pricing directly with you.",
     goodFor: ["Engagements & proposals", "Couples"],
