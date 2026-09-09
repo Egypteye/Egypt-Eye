@@ -13,7 +13,7 @@ export const dynamic = "force-dynamic";
 // `pricing.margins` — the numbers never reach the browser at all, rather than
 // being hidden in the UI.
 export async function POST(request: Request) {
-  if (!osConfigured) return NextResponse.json({ error: "Not configured" }, { status: 503 });
+  if (!osConfigured()) return NextResponse.json({ error: "Not configured" }, { status: 503 });
 
   const actor = await getActor();
   if (!actor) return NextResponse.json({ error: "Not authorized" }, { status: 401 });

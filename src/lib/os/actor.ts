@@ -60,7 +60,7 @@ export class OsNotStaffError extends Error {
 }
 
 export const getActor = cache(async (): Promise<Actor | null> => {
-  if (!osSupabaseConfigured) return null;
+  if (!osSupabaseConfigured()) return null;
 
   const supabase = await osServerClient();
   const {

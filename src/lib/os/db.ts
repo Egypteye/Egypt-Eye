@@ -23,7 +23,7 @@ import { osSupabaseAdminConfigured, osSupabaseEnv, osServiceRoleKey } from "./su
 let cached: SupabaseClient | null = null;
 
 export function osdb(): SupabaseClient {
-  if (!osSupabaseAdminConfigured) {
+  if (!osSupabaseAdminConfigured()) {
     throw new OsNotConfiguredError();
   }
   if (cached) return cached;
@@ -34,7 +34,10 @@ export function osdb(): SupabaseClient {
   return cached;
 }
 
-export const osConfigured = osSupabaseAdminConfigured;
+/** Whether this deployment can reach the OS database. Read per request — see supabase/env.ts. */
+export function osConfigured(): boolean {
+  return osSupabaseAdminConfigured();
+}
 
 /** The OS cannot run without Supabase credentials. Pages catch this and render setup guidance. */
 export class OsNotConfiguredError extends Error {

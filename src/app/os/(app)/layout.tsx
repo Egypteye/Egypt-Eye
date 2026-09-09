@@ -5,6 +5,7 @@ import { CommandPalette, type PaletteAction } from "@/components/os/CommandPalet
 import { LiveRefresh } from "@/components/os/LiveRefresh";
 import { getActor } from "@/lib/os/actor";
 import { osConfigured, friendlyError, getOrg } from "@/lib/os/db";
+import { osEnvReport } from "@/lib/os/supabase/env";
 import { unreadCount } from "@/lib/os/notify";
 import { NAV, visibleNav } from "@/lib/os/navigation";
 import type { PermissionKey } from "@/lib/os/permissions";
@@ -14,7 +15,7 @@ import type { PermissionKey } from "@/lib/os/permissions";
 export const dynamic = "force-dynamic";
 
 export default async function OsLayout({ children }: { children: React.ReactNode }) {
-  if (!osConfigured) {
+  if (!osConfigured()) {
     return <SetupNotice />;
   }
 
@@ -119,12 +120,25 @@ function SetupNotice({ title, detail }: { title?: string; detail?: string } = {}
         </h1>
         <p className="mt-3 text-[13.5px] leading-relaxed text-os-muted">
           {detail ??
-            "The OS shares the website's Supabase project so it can read reservations, profiles and requests directly. Add the variables below, then run migrations 0018 onward."}
+            "The OS shares the website's Supabase project so it can read reservations, profiles and requests directly. This is what this deployment can actually see:"}
         </p>
-        <ul className="mt-4 space-y-1.5 text-[12.5px] text-os-muted">
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_SUPABASE_URL</code></li>
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">NEXT_PUBLIC_SUPABASE_ANON_KEY</code></li>
-          <li><code className="rounded bg-black/[0.05] px-1.5 py-0.5">SUPABASE_SERVICE_ROLE_KEY</code></li>
+        <ul className="mt-4 space-y-1.5 text-[12.5px]">
+          {osEnvReport().map(({ name, present }) => (
+            <li key={name} className="flex items-center gap-2">
+              <span
+                aria-hidden
+                className={`inline-block w-4 shrink-0 text-center font-semibold ${
+                  present ? "text-emerald-600" : "text-red-600"
+                }`}
+              >
+                {present ? "\u2713" : "\u2717"}
+              </span>
+              <code className="rounded bg-black/[0.05] px-1.5 py-0.5 text-os-muted">{name}</code>
+              <span className={present ? "text-emerald-700" : "text-red-700"}>
+                {present ? "set" : "missing"}
+              </span>
+            </li>
+          ))}
         </ul>
         <p className="mt-4 text-[12.5px] leading-relaxed text-os-muted">
           On Vercel, set them for the environment you are opening. A preview deployment does not

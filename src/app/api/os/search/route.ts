@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 // globalSearch, not here, so this route cannot be the place someone forgets
 // them — it resolves the actor and hands over.
 export async function GET(request: Request) {
-  if (!osConfigured) return NextResponse.json({ results: [] });
+  if (!osConfigured()) return NextResponse.json({ results: [] });
 
   const actor = await getActor();
   if (!actor) return NextResponse.json({ results: [] }, { status: 401 });

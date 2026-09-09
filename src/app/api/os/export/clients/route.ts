@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 // permission deliberately kept separate from being able to view clients, and
 // flagged sensitive in the catalog so the Admin Centre warns before granting it.
 export async function GET() {
-  if (!osConfigured) return new Response("Not configured", { status: 503 });
+  if (!osConfigured()) return new Response("Not configured", { status: 503 });
   const actor = await getActor();
   if (!actor) return new Response("Not authorized", { status: 401 });
   if (!can(actor, "clients.export")) {

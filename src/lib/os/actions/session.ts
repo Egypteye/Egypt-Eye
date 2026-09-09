@@ -54,7 +54,7 @@ export async function recordSignOut(scope: "local" | "global"): Promise<void> {
 }
 
 async function writeLoginEvent(kind: LoginKind | null): Promise<void> {
-  if (!osSupabaseConfigured || !osConfigured) return;
+  if (!osSupabaseConfigured() || !osConfigured()) return;
 
   try {
     const supabase = await osServerClient();

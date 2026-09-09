@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 // string: if nothing has moved, the client does nothing at all. Deliberately
 // the cheapest query in the system, because every open tab runs it.
 export async function GET() {
-  if (!osConfigured) return NextResponse.json({ cursor: "unconfigured" });
+  if (!osConfigured()) return NextResponse.json({ cursor: "unconfigured" });
 
   const actor = await getActor();
   if (!actor) return NextResponse.json({ cursor: "signed-out" }, { status: 401 });

@@ -14,7 +14,7 @@ export const metadata = {
 };
 
 export default async function OsSignInPage() {
-  if (osConfigured) {
+  if (osConfigured()) {
     const actor = await getActor();
     if (actor) redirect("/os");
   }
@@ -27,7 +27,7 @@ export default async function OsSignInPage() {
   // into egypteyetravel.com as a customer is simply not signed in here — the
   // two are different Supabase projects and neither knows about the other.
   let signedInEmail: string | null = null;
-  if (osSupabaseConfigured) {
+  if (osSupabaseConfigured()) {
     const supabase = await osServerClient();
     const { data } = await supabase.auth.getUser();
     signedInEmail = data.user?.email ?? null;

@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 // launched from — including the financial columns, which are simply absent
 // from the file for anyone without trips.financials rather than blanked out.
 export async function GET(request: Request) {
-  if (!osConfigured) return new Response("Not configured", { status: 503 });
+  if (!osConfigured()) return new Response("Not configured", { status: 503 });
 
   const actor = await getActor();
   if (!actor) return new Response("Not authorized", { status: 401 });

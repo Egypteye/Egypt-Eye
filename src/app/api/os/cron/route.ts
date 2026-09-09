@@ -34,7 +34,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Not authorized" }, { status: 401 });
   }
 
-  if (!osConfigured) {
+  if (!osConfigured()) {
     return NextResponse.json({ error: "Egypt Eye OS is not connected to a database." }, { status: 503 });
   }
 

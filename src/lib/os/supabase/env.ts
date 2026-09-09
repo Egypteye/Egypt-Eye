@@ -28,31 +28,93 @@
 // website data.
 // ---------------------------------------------------------------------------
 
-const osUrl = process.env.NEXT_PUBLIC_OS_SUPABASE_URL;
-const osAnonKey = process.env.NEXT_PUBLIC_OS_SUPABASE_ANON_KEY;
-const siteUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const siteAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// WHY THESE ARE FUNCTIONS AND NOT CONSTANTS
+//
+// They used to be module-level `const`s, computed once when the module was
+// first imported. That is wrong on Vercel, and it cost real debugging time.
+// A variable marked Sensitive/Secret there is decrypted for the RUNTIME only
+// — it is deliberately absent during the build. Anything that reads it while
+// the module graph is being evaluated for the build sees `undefined`, and the
+// OS then reports "not connected to a database yet" on a deployment whose
+// runtime environment has the key sitting right there.
+//
+// Reading `process.env` inside a function, per request, removes the question
+// entirely. NEXT_PUBLIC_* values are still inlined at build time by Next.js,
+// which is fine — those are public by definition and available to the build.
+
+type OsEnv = {
+  ownProject: boolean;
+  url: string | undefined;
+  anonKey: string | undefined;
+  serviceRoleKey: string | undefined;
+};
+
+function readEnv(): OsEnv {
+  const osUrl = process.env.NEXT_PUBLIC_OS_SUPABASE_URL;
+  const osAnonKey = process.env.NEXT_PUBLIC_OS_SUPABASE_ANON_KEY;
+  const ownProject = Boolean(osUrl && osAnonKey);
+
+  // A key pasted into a dashboard field arrives with a stray tab or newline
+  // often enough to be worth handling. Whitespace is never part of a key, and
+  // an untrimmed one fails as an authentication error far from its cause.
+  const serviceRoleKey = (
+    ownProject ? process.env.OS_SUPABASE_SERVICE_ROLE_KEY : process.env.SUPABASE_SERVICE_ROLE_KEY
+  )?.trim() || undefined;
+
+  return {
+    ownProject,
+    url: (osUrl ?? process.env.NEXT_PUBLIC_SUPABASE_URL)?.trim() || undefined,
+    anonKey: (osAnonKey ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)?.trim() || undefined,
+    serviceRoleKey,
+  };
+}
 
 /** True when the OS has been pointed at a project of its own. */
-export const osUsesOwnProject = Boolean(osUrl && osAnonKey);
-
-const url = osUrl ?? siteUrl;
-const anonKey = osAnonKey ?? siteAnonKey;
+export function osUsesOwnProject(): boolean {
+  return readEnv().ownProject;
+}
 
 /** The service-role key for whichever project the OS is using. */
 export function osServiceRoleKey(): string | undefined {
-  return osUsesOwnProject
-    ? process.env.OS_SUPABASE_SERVICE_ROLE_KEY
-    : process.env.SUPABASE_SERVICE_ROLE_KEY;
+  return readEnv().serviceRoleKey;
 }
 
 /** Whether the OS can reach a database at all. Pages check this and render setup guidance. */
-export const osSupabaseConfigured = Boolean(url && anonKey);
+export function osSupabaseConfigured(): boolean {
+  const { url, anonKey } = readEnv();
+  return Boolean(url && anonKey);
+}
 
-export const osSupabaseAdminConfigured = Boolean(osSupabaseConfigured && osServiceRoleKey());
+export function osSupabaseAdminConfigured(): boolean {
+  const { url, anonKey, serviceRoleKey } = readEnv();
+  return Boolean(url && anonKey && serviceRoleKey);
+}
+
+/**
+ * Which variables this deployment can actually see — names and booleans only,
+ * never a value, because the setup page that renders this is served before
+ * anyone has signed in. It exists so "it is not connected" can say WHICH of
+ * the three is missing instead of listing all of them and leaving you to
+ * guess, which is exactly the loop it was written to end.
+ */
+export function osEnvReport(): { name: string; present: boolean }[] {
+  const { ownProject, url, anonKey, serviceRoleKey } = readEnv();
+  return ownProject
+    ? [
+        { name: "NEXT_PUBLIC_OS_SUPABASE_URL", present: Boolean(url) },
+        { name: "NEXT_PUBLIC_OS_SUPABASE_ANON_KEY", present: Boolean(anonKey) },
+        { name: "OS_SUPABASE_SERVICE_ROLE_KEY", present: Boolean(serviceRoleKey) },
+      ]
+    : [
+        { name: "NEXT_PUBLIC_SUPABASE_URL", present: Boolean(url) },
+        { name: "NEXT_PUBLIC_SUPABASE_ANON_KEY", present: Boolean(anonKey) },
+        { name: "SUPABASE_SERVICE_ROLE_KEY", present: Boolean(serviceRoleKey) },
+      ];
+}
 
 /** The project the OS talks to, or a thrown error naming exactly what is missing. */
 export function osSupabaseEnv(): { url: string; anonKey: string } {
+  const { url, anonKey } = readEnv();
   if (!url || !anonKey) {
     throw new Error(
       "Egypt Eye OS has no database to talk to. It shares the website's Supabase " +
