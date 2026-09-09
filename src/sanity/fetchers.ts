@@ -144,24 +144,26 @@ export async function getCompanyRating(): Promise<Rating> {
 type RatedProduct = { slug: string; title: string; rating?: Rating };
 
 /**
- * A product shows its OWN review count when reviews name it — the follow-up
+ * A product carries its OWN review count and nothing else — the follow-up
  * records the trip in each testimonial's `context`, and
- * lib/reviewAttribution.ts turns that back into a per-product figure. A
- * product no review names falls back to the company-wide total, which is
- * still true of it, rather than showing nothing or a zero.
+ * lib/reviewAttribution.ts turns that back into a per-product figure.
+ *
+ * A product no review names gets null rather than the company total. The
+ * total is true of it, but dropping it into the same slot means two cards
+ * side by side show numbers that mean different things, which reads as a
+ * bug. The company figure is shown deliberately instead, once per page,
+ * through components/CompanyReviews.tsx.
  */
 async function withCompanyRating<T extends RatedProduct>(items: T[]): Promise<T[]> {
   const reviews = await getTestimonials();
-  const company = companyRatingFrom(reviews);
-  return items.map((item) => ({ ...item, rating: getProductRating(item, reviews) ?? company }));
+  return items.map((item) => ({ ...item, rating: getProductRating(item, reviews) }));
 }
 
 async function withCompanyRatingOne<T extends RatedProduct>(
   item: T | undefined
 ): Promise<T | undefined> {
   if (!item) return undefined;
-  const reviews = await getTestimonials();
-  return { ...item, rating: getProductRating(item, reviews) ?? companyRatingFrom(reviews) };
+  return { ...item, rating: getProductRating(item, await getTestimonials()) };
 }
 
 export async function getTours(): Promise<Tour[]> {

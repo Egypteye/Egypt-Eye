@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
+import { CompanyReviews } from "@/components/CompanyReviews";
 import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
 import { RouteMap } from "@/components/RouteMap";
 import { resolveStops } from "@/lib/placeCoords";
@@ -224,6 +225,7 @@ export default async function ExperienceDetailPage({
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
           <PriceTag price={experience.price} />
           <p className="mt-1 text-xs text-ink-soft/60">per person</p>
+          <CompanyReviews className="mt-4" />
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}

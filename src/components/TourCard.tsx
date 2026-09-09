@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Tour } from "@/content/types";
 import { SmartImage } from "./SmartImage";
-import { Rating } from "./Rating";
+import { Rating, hasProductReviews } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { Badge } from "./Badge";
 import { AddToJourneyButton } from "./AddToJourneyButton";
@@ -34,9 +34,11 @@ export function TourCard({ tour }: { tour: Tour }) {
               <PhysicalLevelChip level={tour.physicalLevel} />
             </>
           )}
-          <span className="ml-auto">
-            <Rating rating={tour.rating} />
-          </span>
+          {hasProductReviews(tour.rating) && (
+            <span className="ml-auto">
+              <Rating rating={tour.rating} />
+            </span>
+          )}
         </div>
         <div className="relative z-20">
           <AddToJourneyButton

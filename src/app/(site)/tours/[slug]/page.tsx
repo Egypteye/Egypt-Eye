@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
+import { CompanyReviews } from "@/components/CompanyReviews";
 import { SmartImage } from "@/components/SmartImage";
-import { Rating } from "@/components/Rating";
+import { Rating, hasProductReviews } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
@@ -104,9 +105,11 @@ export default async function TourDetailPage({
             <span className="rounded-full bg-cream/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-cream backdrop-blur-sm">
               {categoryLabels[tour.category] ?? tour.category}
             </span>
-            <span className="rounded-full bg-cream px-3.5 py-1.5">
-              <Rating rating={tour.rating} />
-            </span>
+            {hasProductReviews(tour.rating) && (
+              <span className="rounded-full bg-cream px-3.5 py-1.5">
+                <Rating rating={tour.rating} />
+              </span>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">
@@ -252,6 +255,7 @@ export default async function TourDetailPage({
           <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
             <PriceTag price={tour.price} />
             <p className="mt-1 text-xs text-ink-soft/60">per person, private tour</p>
+            <CompanyReviews className="mt-4" />
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
               context={{ page: "this tour's page", item: tour.title }}
