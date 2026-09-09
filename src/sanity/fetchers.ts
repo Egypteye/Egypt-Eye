@@ -27,7 +27,6 @@ import {
   toursQuery,
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
-import { getProductRating } from "@/lib/reviewAttribution";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
@@ -144,26 +143,26 @@ export async function getCompanyRating(): Promise<Rating> {
 type RatedProduct = { slug: string; title: string; rating?: Rating };
 
 /**
- * A product carries its OWN review count and nothing else — the follow-up
- * records the trip in each testimonial's `context`, and
- * lib/reviewAttribution.ts turns that back into a per-product figure.
+ * Every product shows the same figure: Egypt Eye's real company-wide review
+ * count, from the testimonials actually collected.
  *
- * A product no review names gets null rather than the company total. The
- * total is true of it, but dropping it into the same slot means two cards
- * side by side show numbers that mean different things, which reads as a
- * bug. The company figure is shown deliberately instead, once per page,
- * through components/CompanyReviews.tsx.
+ * One consistent number is the point. Per-product counts are computed too
+ * (lib/reviewAttribution.ts, surfaced in /admin/reviews), but mixing them
+ * into this slot puts two different claims side by side in one grid — "12
+ * reviews" about a tour next to "1,481 Egypt Eye reviews" about the company
+ * — and that reads as a bug. They can replace this everywhere at once, when
+ * attribution covers enough of the catalogue to do so.
  */
 async function withCompanyRating<T extends RatedProduct>(items: T[]): Promise<T[]> {
-  const reviews = await getTestimonials();
-  return items.map((item) => ({ ...item, rating: getProductRating(item, reviews) }));
+  const rating = await getCompanyRating();
+  return items.map((item) => ({ ...item, rating }));
 }
 
 async function withCompanyRatingOne<T extends RatedProduct>(
   item: T | undefined
 ): Promise<T | undefined> {
   if (!item) return undefined;
-  return { ...item, rating: getProductRating(item, await getTestimonials()) };
+  return { ...item, rating: await getCompanyRating() };
 }
 
 export async function getTours(): Promise<Tour[]> {

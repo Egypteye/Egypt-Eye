@@ -1,37 +1,39 @@
 import type { Rating as RatingType } from "@/content/types";
 
-// A product's OWN review count — reviews whose follow-up named this exact
-// tour, experience or photoshoot (see lib/reviewAttribution.ts).
+// Egypt Eye's traveler-review count, shown on every tour, experience and
+// photoshoot.
 //
-// It renders nothing otherwise, and that restraint is the point. A number in
-// this slot always means "this product", so a card can never sit next to
-// another card whose number means something else. Egypt Eye's company-wide
-// total is real and worth showing, but it belongs on its own line once per
-// page (components/CompanyReviews.tsx) — repeated across a grid it reads as
-// a bug, and repeated next to a genuine per-tour count it reads as a
-// contradiction.
+// Reviews are collected in the WhatsApp follow-up after a trip or a shoot,
+// so they're about the company rather than about one product — which is why
+// every item shows the same real number, and why the label names Egypt Eye.
+// That wording is what keeps "1,481 reviews" on a tour card an honest
+// sentence rather than an implied claim that 1,481 people reviewed that one
+// tour.
 //
-// One or two reviews also render nothing: too thin to be evidence, and a
-// lone "1 review" beside a tour with thirty looks like something broken
-// rather than a young product.
-const MIN_REVIEWS = 3;
-
-/** Whether Rating will actually render something — for callers that wrap it
- *  in chrome (a pill, a divider) that shouldn't appear on its own. */
+// Per-product counts are computed from each review's recorded context
+// (lib/reviewAttribution.ts) and reported in /admin/reviews. They stay out of
+// here until attribution covers enough of the catalogue to replace this
+// everywhere at once: a grid where one card counts a tour and the next counts
+// the company is worse than either number alone.
 export function hasProductReviews(rating?: RatingType): boolean {
-  return Boolean(rating && rating.scope === "product" && rating.count >= MIN_REVIEWS);
+  return Boolean(rating && rating.count > 0);
 }
 
 export function Rating({ rating }: { rating?: RatingType }) {
-  if (!hasProductReviews(rating)) return null;
-  const r = rating as NonNullable<RatingType>;
+  if (!rating || !rating.count) {
+    return <span className="text-sm text-ink-soft/60">New experience</span>;
+  }
 
-  const reviews = `${r.count.toLocaleString()} review${r.count === 1 ? "" : "s"}`;
+  const plural = rating.count === 1 ? "" : "s";
+  const reviews =
+    rating.scope === "company"
+      ? `${rating.count.toLocaleString()} Egypt Eye review${plural}`
+      : `${rating.count.toLocaleString()} review${plural}`;
 
   return (
     <span
       className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft"
-      title="Reviews from travelers who went on this exact trip, collected in the follow-up afterwards."
+      title="Egypt Eye's traveler reviews, collected in the follow-up after every trip and shoot."
     >
       <svg
         viewBox="0 0 20 20"
@@ -41,9 +43,9 @@ export function Rating({ rating }: { rating?: RatingType }) {
       >
         <path d="M10 1.5l2.6 5.6 6.15.62-4.63 4.2 1.3 6.08L10 14.9l-5.42 3.1 1.3-6.08-4.63-4.2 6.15-.62L10 1.5z" />
       </svg>
-      {typeof r.score === "number" ? (
+      {typeof rating.score === "number" ? (
         <>
-          <span className="font-semibold text-ink">{r.score!.toFixed(1)}</span>
+          <span className="font-semibold text-ink">{rating.score.toFixed(1)}</span>
           <span className="text-ink-soft/60">({reviews})</span>
         </>
       ) : (

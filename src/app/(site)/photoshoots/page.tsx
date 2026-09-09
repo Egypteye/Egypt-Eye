@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
-import { CompanyReviews } from "@/components/CompanyReviews";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
@@ -39,9 +38,6 @@ export default async function PhotoshootsPage() {
       <section className="py-16">
         <Container>
           <SectionHeading title={page.sectionTitle} description={page.sectionDescription} />
-          <div className="mt-6 flex justify-center">
-            <CompanyReviews />
-          </div>
           <div className="mx-auto mt-10 grid max-w-4xl gap-6">
             {photoshoots.map((p) => (
               <PhotoshootCard key={p.slug} photoshoot={p} />

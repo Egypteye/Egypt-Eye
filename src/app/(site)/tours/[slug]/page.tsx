@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
-import { CompanyReviews } from "@/components/CompanyReviews";
 import { SmartImage } from "@/components/SmartImage";
 import { Rating, hasProductReviews } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
@@ -255,7 +254,6 @@ export default async function TourDetailPage({
           <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
             <PriceTag price={tour.price} />
             <p className="mt-1 text-xs text-ink-soft/60">per person, private tour</p>
-            <CompanyReviews className="mt-4" />
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
               context={{ page: "this tour's page", item: tour.title }}

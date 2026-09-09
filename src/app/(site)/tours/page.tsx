@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Container } from "@/components/Container";
-import { CompanyReviews } from "@/components/CompanyReviews";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
@@ -47,7 +46,6 @@ export default async function ToursPage() {
           <div className="hidden lg:block">
             <SectionHeading title={sectionTitle} description={page.sectionDescription} />
           </div>
-          <CompanyReviews className="mt-6" />
           <div className="mt-6 lg:mt-10">
             <Suspense fallback={null}>
               <ToursGrid tours={tours} />
