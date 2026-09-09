@@ -79,6 +79,15 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // field edited directly in the Studio since the last full migration:
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=nav
+//
+// Add `&reset=media` to DISCARD the Studio-uploaded photo on every
+// tour/experience/photoshoot the run covers, handing each back to the
+// Unsplash/Pexels photo in the local content files. This is destructive and
+// deliberate — it's how you undo hand-swapped photos in bulk. Ratings are
+// still preserved (they're Studio-owned, see above), and the homepage hero
+// slideshow, banner photos and destinationPhotos are never touched by it:
+//
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=tours,experiences,photoshoots&reset=media
 
 // Vercel kills serverless functions after a plan-dependent default (10s on
 // Hobby) — extend it well past what even a large single-transaction commit
@@ -106,6 +115,19 @@ export async function GET(request: NextRequest) {
   const onlyParam = request.nextUrl.searchParams.get("only");
   const only = onlyParam ? onlyParam.split(",").map((s) => s.trim()) : null;
   const shouldRun = (name: string) => !only || only.includes(name);
+
+  // `&reset=media` drops a tour/experience/photoshoot's Studio-uploaded photo
+  // instead of preserving it, which hands the item back to the Unsplash/Pexels
+  // photo in the local content files (fetchers.ts fills that in whenever
+  // Sanity has no image of its own). It is the deliberate opposite of this
+  // route's usual "never wipe a Studio upload" rule, so it only ever happens
+  // when someone asks for it in the URL.
+  //
+  // It is scoped to those three product types on purpose. The homepage hero
+  // slideshow, the banner photos and destinationPhotos are NOT affected by it
+  // under any combination of parameters — they are preserved unconditionally
+  // below, and there is no local content to reset them to anyway.
+  const resetMedia = request.nextUrl.searchParams.get("reset") === "media";
 
   const client = createClient({ projectId, dataset, apiVersion, token, useCdn: false });
   const tx = client.transaction();
@@ -163,7 +185,10 @@ export async function GET(request: NextRequest) {
   // equivalent in content/site.ts at all — heroImages (the homepage hero
   // slideshow), the four banner photos, and destinationPhotos are Studio-only
   // — so unlike the merges above there's nothing local to merge in; this
-  // purely preserves what's already there. Missing this one meant every
+  // purely preserves what's already there. `reset=media` does NOT reach these
+  // — the homepage hero slideshow in particular is hand-picked in Studio and
+  // has no content-file equivalent, so resetting it could only blank it.
+  // Missing this one meant every
   // siteSettings migration (the full endpoint with no `only=`, or explicitly
   // `only=siteSettings`) silently wiped every uploaded hero slide photo (and
   // its headline/subtext/link), all four banner photos, and any destination
@@ -218,8 +243,8 @@ export async function GET(request: NextRequest) {
           existingMedia.get(id)?.rating ?? (t.rating ? { _type: "rating", ...t.rating } : undefined),
         badge: t.badge,
         imageTone: t.imageTone,
-        image: existingMedia.get(id)?.image,
-        gallery: existingMedia.get(id)?.gallery,
+        image: resetMedia ? undefined : existingMedia.get(id)?.image,
+        gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
         description: t.description,
         highlights: t.highlights,
         included: t.included,
@@ -257,8 +282,8 @@ export async function GET(request: NextRequest) {
           _key: key(),
         })),
         imageTone: e.imageTone,
-        image: existingMedia.get(id)?.image,
-        gallery: existingMedia.get(id)?.gallery,
+        image: resetMedia ? undefined : existingMedia.get(id)?.image,
+        gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
         description: e.description,
         location: e.location,
         // Array items need their own _key or Sanity rejects the document.
@@ -293,8 +318,8 @@ export async function GET(request: NextRequest) {
         price: { _type: "price", ...p.price },
         locations: p.locations,
         imageTone: p.imageTone,
-        image: existingMedia.get(id)?.image,
-        gallery: existingMedia.get(id)?.gallery,
+        image: resetMedia ? undefined : existingMedia.get(id)?.image,
+        gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
         description: p.description,
         goodFor: p.goodFor,
         included: p.included,
@@ -706,5 +731,12 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, migrated: results.length, details: results });
+  // `resetMedia` is echoed back because it's the one destructive mode here —
+  // seeing it in the response is how you confirm you ran what you meant to.
+  return NextResponse.json({
+    ok: true,
+    migrated: results.length,
+    resetMedia,
+    details: results,
+  });
 }
