@@ -1,86 +1,68 @@
+import {
+  EGYPT_OUTLINE,
+  JORDAN_OUTLINE,
+  NILE_DELTA_EAST,
+  NILE_DELTA_WEST,
+  NILE_PATH,
+} from "@/lib/egyptMapGeometry";
 import type { PlacePoint } from "@/lib/placeCoords";
 
-// "Where You'll Go" — a deliberately small, deliberately plain route map for
-// a single tour or experience.
+// "Where You'll Go" — a small map of Egypt for a single tour or experience,
+// with this trip's stops pinned on it in visiting order.
 //
-// Positions come from lib/placeCoords.ts, which is the same projected
-// coordinate space the full Explore Egypt map uses, so the relative geography
-// here is real: Aswan really does sit that far south of Cairo, and the route
-// line really does run in visiting order. What it is NOT is a country map —
-// there's no coastline, no Nile, no labels for seas. A tour page needs to
-// answer "which places, in what order, roughly where relative to each other",
-// and every extra stroke past that is clutter at this size.
+// It draws the same country outline and Nile as the full Explore Egypt map
+// (shared geometry in lib/egyptMapGeometry.ts) and plots stops at their real
+// projected coordinates from lib/placeCoords.ts, so a traveler can see at a
+// glance that Aswan really is deep south and Siwa really is out west — the
+// context a bare cluster of dots can't give.
 //
-// The frame scales to whatever the route actually spans: a Cairo-and-Giza day
-// fills the box the same way a Cairo-to-Abu-Simbel week does. Scaling is
-// uniform on both axes, so nothing is stretched to fill space — a north-south
-// Nile route stays tall and narrow rather than being pulled square.
+// It stays deliberately plain compared to the Explore Egypt map: no zooming,
+// no land texture, no sea labels, no secondary cities. Land, water, the Nile,
+// this tour's stops, and nothing else.
 
-const VB_W = 100;
-const VB_H = 58;
-const PAD_X = 13;
-const PAD_Y = 11;
+// The country outline spans roughly x 8-92, y 6-80 in the shared coordinate
+// space; a couple of units of margin keeps the coastline off the card edge.
+const EGYPT_FRAME = { minX: 6, minY: 4, maxX: 94, maxY: 82 };
 
-// Markers are 8.8 units across, so any two closer than this render as a
-// single blob with the lower-numbered one buried underneath — which is
-// exactly what happens to Cairo whenever Giza is on the same itinerary.
-const MIN_SEPARATION = 9.6;
+// A stop this close to the frame edge would have its marker clipped in half,
+// so the frame grows instead. Jordan extensions (Amman, Jerash, Ajloun) sit
+// north-east of Egypt and are what actually push it — and get a wider margin,
+// since otherwise a Jordan-only itinerary crowds the very corner of the card.
+const STOP_MARGIN = 6;
+const FOREIGN_STOP_MARGIN = 13;
 
-const GOLD = "#c9a227";
-const GOLD_DARK = "#8c6d1f";
-const INK_SOFT = "#4a5c4f";
+const MARKER_R = 2.5;
+const HALO_R = 3.3;
+
+// Two markers closer than this render as one blob with the lower-numbered
+// stop buried underneath — which is what happens to Cairo every time Giza is
+// on the same itinerary (they sit under 4 units apart at country scale).
+const MIN_SEPARATION = 6.2;
+
+const GOLD = "#b17f24";
+const GOLD_BRIGHT = "#c9a227";
+const INK = "#1c231d";
 
 type Placed = PlacePoint & { px: number; py: number };
+type Frame = { minX: number; minY: number; w: number; h: number };
 
-function layout(stops: PlacePoint[]): Placed[] {
-  const innerW = VB_W - PAD_X * 2;
-  const innerH = VB_H - PAD_Y * 2;
-
-  const xs = stops.map((s) => s.x);
-  const ys = stops.map((s) => s.y);
-  const minX = Math.min(...xs);
-  const maxX = Math.max(...xs);
-  const minY = Math.min(...ys);
-  const maxY = Math.max(...ys);
-  const spanX = maxX - minX;
-  const spanY = maxY - minY;
-
-  // A single stop — or several stops so close together they'd render as one
-  // blob — gets centred rather than magnified until the rounding noise
-  // between two neighbouring towns looks like a real distance.
-  if (spanX < 0.5 && spanY < 0.5) {
-    return stops.map((s, i) => ({
-      ...s,
-      px: VB_W / 2 + (i - (stops.length - 1) / 2) * 14,
-      py: VB_H / 2,
-    }));
+function frameFor(stops: PlacePoint[]): Frame {
+  let { minX, minY, maxX, maxY } = EGYPT_FRAME;
+  for (const s of stops) {
+    const m = s.country ? FOREIGN_STOP_MARGIN : STOP_MARGIN;
+    minX = Math.min(minX, s.x - m);
+    minY = Math.min(minY, s.y - m);
+    maxX = Math.max(maxX, s.x + m);
+    maxY = Math.max(maxY, s.y + m);
   }
-
-  const scale = Math.min(spanX > 0 ? innerW / spanX : Infinity, spanY > 0 ? innerH / spanY : Infinity);
-  const drawnW = spanX * scale;
-  const drawnH = spanY * scale;
-  const offsetX = (VB_W - drawnW) / 2;
-  const offsetY = (VB_H - drawnH) / 2;
-
-  const placed = stops.map((s) => ({
-    ...s,
-    px: offsetX + (s.x - minX) * scale,
-    py: offsetY + (s.y - minY) * scale,
-  }));
-
-  return separate(placed);
+  return { minX, minY, w: maxX - minX, h: maxY - minY };
 }
 
-// Cairo and Giza are 20km apart. On a route that also reaches Abu Simbel
-// they land about two units apart here, and the second marker drawn covers
-// the first completely — so the trip's starting point silently disappears.
-//
-// This nudges any overlapping pair apart until every marker is legible,
-// which trades a small amount of positional precision for the thing the map
-// exists to do. It's the same compromise the full Explore Egypt map already
-// makes by hand for its own Giza pin. Relative direction is preserved: a
-// stop north-west of another still renders north-west of it, just further.
-function separate<T extends { px: number; py: number }>(points: T[]): T[] {
+// Nudges any overlapping pair apart until every marker is legible. At country
+// scale a unit is roughly 11km, so a stop stays visibly in the right place —
+// it's the same compromise the full Explore Egypt map already makes by hand
+// for its own Giza pin.
+function separate(points: Placed[], frame: Frame): Placed[] {
   if (points.length < 2) return points;
 
   for (let pass = 0; pass < 24; pass++) {
@@ -118,8 +100,8 @@ function separate<T extends { px: number; py: number }>(points: T[]): T[] {
     // Keep everything inside the frame; the clamp can re-introduce an
     // overlap, which the next pass then works out.
     for (const p of points) {
-      p.px = Math.min(VB_W - PAD_X / 2, Math.max(PAD_X / 2, p.px));
-      p.py = Math.min(VB_H - PAD_Y / 2, Math.max(PAD_Y / 2, p.py));
+      p.px = Math.min(frame.minX + frame.w - HALO_R, Math.max(frame.minX + HALO_R, p.px));
+      p.py = Math.min(frame.minY + frame.h - HALO_R, Math.max(frame.minY + HALO_R, p.py));
     }
 
     if (!moved) break;
@@ -133,35 +115,74 @@ export function RouteMap({
   singleLabel,
 }: {
   stops: PlacePoint[];
-  /** Shown under a one-location map — the experience or place name. */
+  /** Shown beside a one-location pin — the experience or place name. */
   singleLabel?: string;
 }) {
   if (stops.length === 0) return null;
 
-  const placed = layout(stops);
+  const showJordan = stops.some((s) => s.country === "Jordan");
+  const frame = frameFor(stops);
+  const placed = separate(
+    stops.map((s) => ({ ...s, px: s.x, py: s.y })),
+    frame,
+  );
   const isSingle = placed.length === 1;
   const polyline = placed.map((p) => `${p.px.toFixed(2)},${p.py.toFixed(2)}`).join(" ");
+
+  // The single-stop label sits under its pin, flipped above when the pin is
+  // near the bottom edge, and pulled inward horizontally so a coastal stop's
+  // name doesn't run off the card.
+  const labelBelow = isSingle && placed[0].py < frame.minY + frame.h - 9;
+  const labelX = isSingle
+    ? Math.min(frame.minX + frame.w - 17, Math.max(frame.minX + 17, placed[0].px))
+    : 0;
+  const labelY = isSingle ? placed[0].py + (labelBelow ? 7.6 : -6.2) : 0;
 
   return (
     <figure className="mt-4 overflow-hidden rounded-2xl border border-black/5 bg-sand-dim/60">
       <svg
-        viewBox={`0 0 ${VB_W} ${VB_H}`}
+        viewBox={`${frame.minX} ${frame.minY} ${frame.w} ${frame.h}`}
         className="block w-full"
         role="img"
         aria-label={
           isSingle
             ? `Map showing ${placed[0].name}`
-            : `Route map: ${placed.map((p) => p.name).join(", then ")}`
+            : `Map showing the route: ${placed.map((p) => p.name).join(", then ")}`
         }
       >
+        {/* Water fills the frame; the land polygon on top covers everything
+            that isn't sea, so only the Mediterranean, the Red Sea and the
+            two gulfs show this tone. */}
+        <rect
+          x={frame.minX}
+          y={frame.minY}
+          width={frame.w}
+          height={frame.h}
+          fill="#cfe0e2"
+          fillOpacity="0.55"
+        />
+
+        <g fill="#f4ecd9" stroke="#8a7239" strokeWidth="0.35" strokeOpacity="0.5">
+          {/* Jordan is drawn only for the Jordan-extension tours — without it
+              their stops would pin onto open water east of Sinai. */}
+          {showJordan && <path d={JORDAN_OUTLINE} />}
+          <path d={EGYPT_OUTLINE} />
+        </g>
+
+        <g fill="none" stroke="#16686c" strokeOpacity="0.45" strokeLinecap="round">
+          <path d={NILE_PATH} strokeWidth="0.5" />
+          <path d={NILE_DELTA_WEST} strokeWidth="0.38" />
+          <path d={NILE_DELTA_EAST} strokeWidth="0.38" />
+        </g>
+
         {!isSingle && (
           <polyline
             points={polyline}
             fill="none"
             stroke={GOLD}
-            strokeWidth="0.9"
-            strokeOpacity="0.55"
-            strokeDasharray="2.4 1.8"
+            strokeWidth="0.7"
+            strokeOpacity="0.8"
+            strokeDasharray="1.8 1.4"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -169,17 +190,17 @@ export function RouteMap({
 
         {placed.map((p, i) => (
           <g key={`${p.name}-${i}`}>
-            <circle cx={p.px} cy={p.py} r="4.4" fill="#fffdf8" fillOpacity="0.95" />
-            <circle cx={p.px} cy={p.py} r="3.4" fill={isSingle ? GOLD_DARK : GOLD} />
+            <circle cx={p.px} cy={p.py} r={HALO_R} fill="#fffdf8" fillOpacity="0.95" />
+            <circle cx={p.px} cy={p.py} r={MARKER_R} fill={isSingle ? GOLD : GOLD_BRIGHT} />
             {!isSingle && (
               <text
                 x={p.px}
                 y={p.py}
                 textAnchor="middle"
                 dominantBaseline="central"
-                fontSize="3.6"
+                fontSize="2.7"
                 fontWeight="700"
-                fill="#1c231d"
+                fill={INK}
               >
                 {i + 1}
               </text>
@@ -188,21 +209,22 @@ export function RouteMap({
         ))}
 
         {isSingle && singleLabel && (
-          <text
-            x={VB_W / 2}
-            y={VB_H / 2 + 11}
-            textAnchor="middle"
-            fontSize="4.6"
-            fontWeight="600"
-            fill={INK_SOFT}
-          >
-            {singleLabel}
-          </text>
+          <g fontSize="3.4" fontWeight="700" textAnchor="middle">
+            {/* The halo is a separate stroked copy underneath rather than a
+                `paint-order` stroke on one element, so the name stays legible
+                over the coastline in every renderer. */}
+            <text x={labelX} y={labelY} stroke="#fffdf8" strokeWidth="1.6" strokeOpacity="0.9" fill="none">
+              {singleLabel}
+            </text>
+            <text x={labelX} y={labelY} fill={INK}>
+              {singleLabel}
+            </text>
+          </g>
         )}
       </svg>
 
       {!isSingle && (
-        <figcaption className="flex flex-wrap gap-x-4 gap-y-1.5 border-t border-black/5 px-4 py-3">
+        <figcaption className="flex flex-wrap gap-x-4 gap-y-1.5 border-t border-black/5 bg-cream/50 px-4 py-3">
           {placed.map((p, i) => (
             <span key={`${p.name}-legend-${i}`} className="flex items-center gap-1.5 text-xs text-ink-soft/75">
               <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-ink">

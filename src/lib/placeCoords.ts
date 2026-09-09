@@ -25,7 +25,9 @@ import { egyptCities } from "@/content/egyptCities";
 // the Red Sea would put a marker where no tour actually stops. Tours whose
 // `destinations` are only region tags carry an explicit `mapStops` instead.
 
-export type PlacePoint = { name: string; x: number; y: number };
+// `country` is only set where a stop sits outside Egypt, so a map knows to
+// draw that neighbour's outline too rather than pinning it onto open sea.
+export type PlacePoint = { name: string; x: number; y: number; country?: "Jordan" };
 
 // Real coordinates, projected once (see scripts note above). Latitude and
 // longitude for each are the site's own real position, not a guess at where
@@ -47,13 +49,13 @@ const EXTRA_PLACES: PlacePoint[] = [
   { name: "Abu Galum", x: 76.1, y: 28.9 },
   { name: "Colored Canyon", x: 76.9, y: 25.0 },
   // Jordan
-  { name: "Petra", x: 82.2, y: 15.7 },
-  { name: "Wadi Rum", x: 82.0, y: 21.5 },
-  { name: "Dead Sea", x: 82.9, y: 6.7 },
-  { name: "Amman", x: 85.4, y: 3.2 },
-  { name: "Jerash", x: 85.3, y: 0.6 },
-  { name: "Ajloun", x: 84.3, y: 0.2 },
-  { name: "Aqaba", x: 79.2, y: 21.9 },
+  { name: "Petra", x: 82.2, y: 15.7, country: "Jordan" },
+  { name: "Wadi Rum", x: 82.0, y: 21.5, country: "Jordan" },
+  { name: "Dead Sea", x: 82.9, y: 6.7, country: "Jordan" },
+  { name: "Amman", x: 85.4, y: 3.2, country: "Jordan" },
+  { name: "Jerash", x: 85.3, y: 0.6, country: "Jordan" },
+  { name: "Ajloun", x: 84.3, y: 0.2, country: "Jordan" },
+  { name: "Aqaba", x: 79.2, y: 21.9, country: "Jordan" },
 ];
 
 function buildIndex(): Map<string, PlacePoint> {

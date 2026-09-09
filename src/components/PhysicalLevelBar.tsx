@@ -1,7 +1,9 @@
 import type { PhysicalLevel, PhysicalLevelTier } from "@/content/types";
 
 // A compact "how hard is this actually?" strip for tour and experience
-// pages. Four filled-or-empty segments give the level at a glance; the note
+// pages, plus the one-line PhysicalLevelChip below it that puts the same
+// reading on a listing card, so a traveler can rule a tour in or out before
+// opening it. Four filled-or-empty segments give the level at a glance; the note
 // beside them says what the effort physically consists of on that particular
 // outing, which is the part a traveler with a bad knee or a nervous parent
 // is really asking about.
@@ -39,5 +41,30 @@ export function PhysicalLevelBar({ level }: { level: PhysicalLevel }) {
       </div>
       <p className="mt-2.5 text-sm leading-relaxed text-ink-soft/75">{level.note}</p>
     </div>
+  );
+}
+
+// The listing-card form: the same four segments at half the size, the tier
+// name, and nothing else — a card has no room for the note, and the detail
+// page it links to carries that.
+export function PhysicalLevelChip({ level }: { level: PhysicalLevel }) {
+  const meta = TIER_META[level.tier];
+  const filled = TIERS.indexOf(level.tier) + 1;
+
+  return (
+    <span className="inline-flex items-center gap-1.5" title={level.note}>
+      <span aria-hidden="true" className="flex gap-[3px]">
+        {TIERS.map((tier, i) => (
+          <span
+            key={tier}
+            className={`h-1 w-2.5 rounded-full ${i < filled ? meta.fill : "bg-ink/10"}`}
+          />
+        ))}
+      </span>
+      <span className={`text-xs font-semibold ${meta.text}`}>
+        <span className="sr-only">Physical level: </span>
+        {meta.label}
+      </span>
+    </span>
   );
 }

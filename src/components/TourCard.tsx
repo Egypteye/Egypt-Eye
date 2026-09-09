@@ -5,6 +5,7 @@ import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { Badge } from "./Badge";
 import { AddToJourneyButton } from "./AddToJourneyButton";
+import { PhysicalLevelChip } from "./PhysicalLevelBar";
 
 export function TourCard({ tour }: { tour: Tour }) {
   return (
@@ -23,9 +24,19 @@ export function TourCard({ tour }: { tour: Tour }) {
           {tour.title}
         </h3>
         <p className="line-clamp-2 text-sm text-ink-soft/70">{tour.tagline}</p>
-        <div className="mt-auto flex items-center justify-between pt-2">
+        {/* Duration, effort, rating — the three things worth knowing before
+            opening the tour. Wraps rather than crushes on a narrow card. */}
+        <div className="mt-auto flex flex-wrap items-center gap-x-2.5 gap-y-1.5 pt-2">
           <span className="text-sm text-ink-soft/70">{tour.duration}</span>
-          <Rating rating={tour.rating} />
+          {tour.physicalLevel && (
+            <>
+              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ink/20" />
+              <PhysicalLevelChip level={tour.physicalLevel} />
+            </>
+          )}
+          <span className="ml-auto">
+            <Rating rating={tour.rating} />
+          </span>
         </div>
         <div className="relative z-20">
           <AddToJourneyButton

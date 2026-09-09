@@ -41,3 +41,16 @@ export const NILE_DELTA_WEST = "M53.12,17.92 L51.4,13.4 L47.5,7.4";
 export const NILE_DELTA_EAST = "M53.12,17.92 L55.6,12.6 L57.1,7.3";
 
 export const SUEZ_CANAL_PATH = "M60.33,8.52 L62.2,18.5";
+
+// Jordan — drawn only by the small per-tour route map, and only for the
+// Jordan-extension tours, so their stops (Petra, Wadi Rum, the Dead Sea,
+// Amman) sit on real land instead of floating in the sea east of Sinai.
+// Same simplified-border-polygon source and same projection as Egypt above,
+// which the shared corner proves: Jordan's south-western vertex lands on
+// 78.59,22.12 — the Gulf of Aqaba tri-point that is also the first point of
+// EGYPT_OUTLINE. The eastern panhandle runs past x=100 and is simply clipped
+// by the map frame, the way any regional map clips its neighbours.
+export const JORDAN_OUTLINE =
+  "M82.89,-0.25 L84.09,-2.69 L91.79,0.38 L105.30,-7.87 L108.09,1.55 L106.78,2.72 " +
+  "L92.95,6.60 L99.83,14.33 L97.54,15.65 L96.41,18.24 L91.14,19.31 L89.49,22.09 " +
+  "L86.51,24.47 L78.82,23.24 L78.59,22.12 L82.03,9.76 L81.87,6.75 L82.89,4.48 Z";

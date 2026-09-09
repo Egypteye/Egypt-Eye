@@ -4,6 +4,7 @@ import { SmartImage } from "./SmartImage";
 import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { AddToJourneyButton } from "./AddToJourneyButton";
+import { PhysicalLevelChip } from "./PhysicalLevelBar";
 
 export function ExperienceCard({ experience }: { experience: Experience }) {
   return (
@@ -27,6 +28,11 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
         <p className="line-clamp-2 text-sm text-ink-soft/70">
           {experience.description}
         </p>
+        {experience.physicalLevel && (
+          <div>
+            <PhysicalLevelChip level={experience.physicalLevel} />
+          </div>
+        )}
         <div className="relative z-20">
           <AddToJourneyButton
             type="experience"

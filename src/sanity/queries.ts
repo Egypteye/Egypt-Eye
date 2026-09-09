@@ -10,13 +10,14 @@ const priceFields = groq`price{amount, originalAmount, note}`;
 // Lightweight tour card used wherever an Experience or Story links to a Tour.
 const relatedTourFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, ${ratingFields}, badge, image, imageTone, ${priceFields}
+  destinations, ${ratingFields}, badge, image, imageTone, ${priceFields},
+  physicalLevel
 `;
 
 // Lightweight Extra Experience card used wherever a Tour links to one.
 const relatedExtraExperienceFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, included
+  image, imageTone, description, included, physicalLevel
 `;
 
 // hidden != true (rather than hidden == false) so tours from before the
@@ -24,7 +25,7 @@ const relatedExtraExperienceFields = groq`
 export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(order asc) {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
-  highlights, included, excluded, itinerary, ${priceFields}
+  highlights, included, excluded, itinerary, ${priceFields}, physicalLevel
 }`;
 
 // Shared by the single-slug and batched (`in $slugs`) variants below, so the
@@ -50,7 +51,7 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, location, included, destinations
+  image, imageTone, description, location, included, destinations, physicalLevel
 }`;
 
 const experienceDetailFields = groq`
