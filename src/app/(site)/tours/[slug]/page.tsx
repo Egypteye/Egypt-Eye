@@ -13,6 +13,7 @@ import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
 import { RouteMap } from "@/components/RouteMap";
 import { resolveStops } from "@/lib/placeCoords";
+import { pickRelated } from "@/lib/relatedPicker";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
@@ -54,7 +55,7 @@ export default async function TourDetailPage({
   if (!tour) notFound();
 
   const allTours = await getTours();
-  const related = allTours.filter((t) => t.slug !== tour.slug && t.category === tour.category).slice(0, 3);
+  const related = pickRelated(allTours, tour, 3, (t) => t.category);
   // `mapStops` is the explicit override; almost every tour falls through to
   // its own destination tags, so a newly added tour maps itself.
   const mapStops = resolveStops(tour.mapStops ?? tour.destinations);

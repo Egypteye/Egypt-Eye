@@ -105,11 +105,18 @@ export function touristTripJsonLd({
   };
 }
 
+/**
+ * Home is prepended automatically. Every detail page renders a visible
+ * breadcrumb that starts at Home, and structured data has to describe what is
+ * actually on the page — a trail that begins at "Tours" while the page shows
+ * "Home › Tours › …" is a mismatch, and callers kept forgetting to pass it.
+ */
 export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+  const trail = [{ name: "Home", path: "/" }, ...items];
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, i) => ({
+    itemListElement: trail.map((item, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: item.name,

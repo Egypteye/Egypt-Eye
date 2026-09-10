@@ -172,6 +172,7 @@ export default async function Home() {
               <SmartImage
                 image={site.customizeImage.image}
                 tone={site.customizeImage.tone}
+                alt="Planning a custom Egypt itinerary with Egypt Eye"
                 label="Customize Your Tour"
                 className="aspect-square w-full rounded-2xl"
               />
