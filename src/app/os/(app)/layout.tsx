@@ -143,8 +143,19 @@ function SetupNotice({ title, detail }: { title?: string; detail?: string } = {}
         <p className="mt-4 text-[12.5px] leading-relaxed text-os-muted">
           On Vercel, set them for the environment you are opening. A preview deployment does not
           inherit Production&rsquo;s variables, so a key ticked for Production only leaves this page
-          showing on every preview. Variables are read when a deployment is built, so redeploy after
-          adding one — editing it alone changes nothing.
+          showing on every preview. And a variable is picked up by a deployment when that deployment
+          is BUILT: adding or editing one changes nothing until you redeploy, so a value the
+          dashboard says was &ldquo;updated just now&rdquo; will still read missing here.
+        </p>
+        <p className="mt-3 text-[12.5px] leading-relaxed text-os-muted">
+          The two <code>NEXT_PUBLIC_</code> ones must be <strong>plain</strong> variables, not
+          Secret. Next.js compiles them into the JavaScript at build time and Vercel withholds a
+          Secret value from the build on purpose, so a <code>NEXT_PUBLIC_</code> one marked Secret
+          reads missing here forever. Nothing is lost by leaving them plain — those two are served
+          to every visitor&rsquo;s browser by design, and Row Level Security, not secrecy, is what
+          protects the data behind the anon key. <code>SUPABASE_SERVICE_ROLE_KEY</code> is the
+          opposite case: it should be Secret, and the OS reads it per request, at runtime, where
+          Secret values are available.
         </p>
         <p className="mt-4 text-[12.5px] leading-relaxed text-os-muted">
           The migrations are <code>0018_egypt_eye_os_core.sql</code> (schema),{" "}
