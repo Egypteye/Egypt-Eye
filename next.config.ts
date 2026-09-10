@@ -95,6 +95,16 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // The old WordPress/Yoast sitemap URLs. Search Console keeps fetching
+      // whatever sitemap URL was submitted years ago, and a submission that
+      // 404s is reported as "Sitemap could not be read" with 0 discovered
+      // pages — which is indistinguishable, from inside GSC, from the
+      // sitemap itself being broken. Pointing the old names at the real one
+      // makes an existing submission start working without anyone having to
+      // re-submit it.
+      { source: "/sitemap_index.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/wp-sitemap.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/sitemap-index.xml", destination: "/sitemap.xml", permanent: true },
       // The 2025 travel-agency guide was consolidated into the 2026 guide
       // (near-duplicate content, same topic) — redirect rather than 404.
       {
