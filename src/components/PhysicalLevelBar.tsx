@@ -44,15 +44,22 @@ export function PhysicalLevelBar({ level }: { level: PhysicalLevel }) {
   );
 }
 
-// The listing-card form: the same four segments at half the size, the tier
-// name, and nothing else — a card has no room for the note, and the detail
-// page it links to carries that.
+// The listing-card form: a label, the same four segments at half size, and
+// the tier name. The note stays on the detail page, which has room for it.
+//
+// The label is not decoration. Four gold dashes and the word "Moderate",
+// sitting on a travel card next to a duration and a star rating, could be
+// read as almost anything — a difficulty, a price band, a popularity score.
+// Saying "Physical level" is what makes it mean one thing.
 export function PhysicalLevelChip({ level }: { level: PhysicalLevel }) {
   const meta = TIER_META[level.tier];
   const filled = TIERS.indexOf(level.tier) + 1;
 
   return (
-    <span className="inline-flex items-center gap-1.5" title={level.note}>
+    <span className="inline-flex items-center gap-2 text-xs" title={level.note}>
+      <span className="font-semibold uppercase tracking-[0.12em] text-ink-soft/50">
+        Physical level
+      </span>
       <span aria-hidden="true" className="flex gap-[3px]">
         {TIERS.map((tier, i) => (
           <span
@@ -61,10 +68,7 @@ export function PhysicalLevelChip({ level }: { level: PhysicalLevel }) {
           />
         ))}
       </span>
-      <span className={`text-xs font-semibold ${meta.text}`}>
-        <span className="sr-only">Physical level: </span>
-        {meta.label}
-      </span>
+      <span className={`font-semibold ${meta.text}`}>{meta.label}</span>
     </span>
   );
 }

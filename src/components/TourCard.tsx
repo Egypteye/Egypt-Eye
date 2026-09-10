@@ -26,20 +26,14 @@ export function TourCard({ tour }: { tour: Tour }) {
         <p className="line-clamp-2 text-sm text-ink-soft/70">{tour.tagline}</p>
         {/* Duration, effort, rating — the three things worth knowing before
             opening the tour. Wraps rather than crushes on a narrow card. */}
-        <div className="mt-auto flex flex-wrap items-center gap-x-2.5 gap-y-1.5 pt-2">
+        {/* Duration and reviews share a line; the physical level gets its own
+            below them. Three of these abreast crowded the card and pushed the
+            rating hard against the edge on a phone. */}
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2">
           <span className="text-sm text-ink-soft/70">{tour.duration}</span>
-          {tour.physicalLevel && (
-            <>
-              <span aria-hidden="true" className="h-1 w-1 rounded-full bg-ink/20" />
-              <PhysicalLevelChip level={tour.physicalLevel} />
-            </>
-          )}
-          {hasProductReviews(tour.rating) && (
-            <span className="ml-auto">
-              <Rating rating={tour.rating} />
-            </span>
-          )}
+          {hasProductReviews(tour.rating) && <Rating rating={tour.rating} />}
         </div>
+        {tour.physicalLevel && <PhysicalLevelChip level={tour.physicalLevel} />}
         <div className="relative z-20">
           <AddToJourneyButton
             type="tour"
