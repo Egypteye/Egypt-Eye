@@ -91,76 +91,94 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "mars-human-spaceflight-2026-hatshepsut-punt-expedition",
-    title: "Starship Is Aiming for Mars by the End of 2026. Egypt Once Sent Its Own Flagship Expedition Into the Unknown.",
-    category: "Science & Space",
-    tags: ["Mars", "SpaceX Starship", "Human Spaceflight", "Hatshepsut", "Land of Punt"],
+    slug: "hatshepsut-expedition-to-punt",
+    title: "Hatshepsut's Expedition to Punt, Told on the Walls at Deir el-Bahari",
+    category: "History & Culture",
+    tags: ["Hatshepsut", "Deir el-Bahari", "Punt", "Luxor West Bank", "New Kingdom"],
     author: editorialTeam,
     excerpt:
-      "SpaceX aims to send an uncrewed Starship toward Mars by the end of 2026, with crewed landings possibly following by 2029. Egypt organized its own flagship expedition into a half-known, half-mythical land 3,500 years earlier — and immortalized it in stone.",
-    imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1705680757279-98fa1fe46853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "A colonnade at Deir el-Bahari carries the illustrated report of a trading voyage sent south around 1470 BC — the ships, the cargo, the houses on stilts, and the ruler of Punt with his wife. Nobody is certain where they went.",
+    imageTone: "nile",
+    image: "https://images.unsplash.com/photo-1591040608370-e51e70b4b7ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2026-12-01",
-    primaryKeyword: "Mars human spaceflight 2026",
-    secondaryKeywords: ["SpaceX Starship Mars 2026", "Artemis III delay", "Hatshepsut Punt expedition", "Deir el-Bahari reliefs"],
-    relatedTours: toursBySlug("hurghada-red-sea-diving-snorkeling"),
-    seoTitle: "Mars and Human Spaceflight in 2026, and Egypt's Own Flagship Expedition",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "Hatshepsut expedition to Punt",
+    secondaryKeywords: [
+      "Land of Punt",
+      "Deir el-Bahari reliefs",
+      "Hatshepsut temple Luxor",
+      "ancient Egyptian trade",
+    ],
+    relatedTours: toursBySlug("valley-of-the-kings-hatshepsut-temple-tour", "luxor-west-bank-day-tour"),
+    seoTitle: "Hatshepsut's Punt Expedition and Its Reliefs at Deir el-Bahari",
     seoDescription:
-      "SpaceX aims to send an uncrewed Starship toward Mars by the end of 2026. Egypt's own flagship expedition into the half-mythical Land of Punt, under Hatshepsut, is a striking ancient parallel.",
+      "Around 1470 BC Hatshepsut sent five ships south to the land of Punt and had the whole voyage carved onto her temple. What the reliefs show, and why the destination is still debated.",
     body: [
       p(
-        "SpaceX pushed further toward operational spaceflight in 2026, flying more than 20 integrated Starship test and operational missions by April, with both booster and upper stage now being caught, refurbished, and reflown. Elon Musk has said an uncrewed Starship will head toward Mars by the end of 2026, carrying a Tesla Optimus robot, with human landings possibly following \"as soon as 2029\" — though most independent analysts consider 2031 more realistic. Meanwhile, NASA's own crewed Artemis III lunar landing, which depends on Starship's human landing system, has slipped to no earlier than 2027, with an uncrewed test landing now targeted for 2027 and the crewed mission for 2028."
+        "Most visitors to Deir el-Bahari photograph the terraces from the approach, walk up, look at the colonnades and leave. The reliefs on the south side of the middle colonnade are worth stopping at, because they are something genuinely unusual in Egyptian art: an illustrated expedition report."
       ),
-      h2("Where Things Actually Stand"),
+      h2("What Was Sent, and When"),
+      p(
+        "In roughly the ninth year of her reign — around 1470 BC — Hatshepsut dispatched a fleet of five ships to the land the Egyptians called Punt. Egypt had traded with Punt on and off for centuries by then; what makes this voyage exceptional is not that it happened but that Hatshepsut had the entire thing carved onto the walls of her mortuary temple in narrative sequence."
+      ),
+      h2("What the Walls Show"),
       ...bullets([
-        "SpaceX flew 20-plus integrated Starship missions by April 2026, with reusable booster and upper-stage recovery becoming increasingly routine",
-        "Musk's stated goal is an uncrewed Starship departure toward Mars by the end of 2026, with human landings targeted for as soon as 2029, though 2031 is considered more realistic by outside analysts",
-        "NASA's crewed Artemis III lunar landing, which depends on Starship, has slipped to no earlier than 2027",
+        "The ships themselves — rigging, oars, steering gear — in enough detail that naval historians still use the reliefs as a source on Egyptian seagoing vessels",
+        "Punt's houses, shown raised on stilts and reached by ladders, among palms",
+        "The ruler of Punt, named as Parahu, and his wife Ati, whose distinctive physique is one of the most discussed depictions in Egyptian art",
+        "The cargo being loaded: ebony, ivory, gold, animal skins, live baboons, and above all myrrh",
+        "Living incense trees, roots balled and carried in baskets slung on poles, being brought back to be planted at the temple",
       ]),
       callout(
-        "Repeated schedule slips are the norm for a mission of this ambition, not an exception — true of Artemis III's lunar landing date, and just as true, historically, of nearly every flagship exploratory mission a civilization has ever attempted.",
-        { title: "Slipping Schedules Are the Pattern, Not the Exception", tone: "Info" }
+        "The trees are the detail that lingers. Hatshepsut did not just import incense — she imported the plants, to grow at Deir el-Bahari. Pits that may have held them have been identified on the temple terrace. It is a very long way to go for a garden.",
+        { title: "They Brought Back the Trees", tone: "Info" }
       ),
-      h2("Egypt's Own Flagship Expedition Into the Unknown"),
+      h2("Where Was Punt?"),
       p(
-        "Around 1479–1458 BC, in roughly the ninth year of her reign, Pharaoh Hatshepsut organized a massive maritime expedition to the Land of Punt — a distant, semi-legendary trading partner most historians place somewhere in the Horn of Africa, known to Egypt mostly through earlier, sporadic contact. It was, by the standards of its era, a genuine journey into the barely known, and Hatshepsut had it documented in extraordinary relief detail on the walls of her mortuary temple at Deir el-Bahari — ships loading and unloading, cargo being weighed and recorded, and the expedition's return."
+        "This is the part nobody can close. Punt lay south and east of Egypt, reached by sea, and the goods that came from it — myrrh, ebony, ivory, gold, exotic animals — point to the southern Red Sea region. The main candidates are the coast of modern Eritrea and eastern Sudan, and the Horn of Africa more broadly. Analysis of mummified baboons from Egyptian contexts has been used to argue for particular regions, and the question remains genuinely open."
       ),
       p(
-        "The reliefs record what came back: myrrh, whole living myrrh and frankincense trees intended for transplanting in Egypt, gold, ebony, leopard skins, exotic animals including baboons and monkeys, and more. Each of the 31 incense trees required four to six men to carry to the cargo ships — the kind of granular, celebrated logistical detail a civilization records only when a mission matters enormously to how it sees itself."
+        "What is not in doubt is the seamanship. This was a round trip down the Red Sea and back, with cargo, in vessels built for it — launched from a Red Sea port after the ships were carried in pieces across the desert from the Nile."
       ),
-      h2("Same Motive Underneath the Mission"),
-      p(
-        "Reaching a distant, barely-known place and bringing back something the home civilization has never had before isn't a new kind of ambition — it's one of the oldest reasons a civilization organizes its resources around a single flagship mission. Hatshepsut's court immortalized live trees carried off a ship as a defining achievement of her reign, a permanent record of prestige and legitimacy. It's not so different from what a first human footprint on Mars would mean for whichever program actually gets there — a distant, difficult destination, reached and documented specifically because reaching it changes how the reaching civilization sees itself."
-      ),
+      h2("Seeing the Reliefs"),
+      ...bullets([
+        "They are on the middle terrace, south colonnade — ask your guide directly, because it is easy to walk past on the way to the upper level",
+        "Go early. Deir el-Bahari sits in a natural amphitheatre of rock that holds heat brutally by late morning",
+        "The temple is normally combined with the Valley of the Kings and the Colossi of Memnon in one West Bank morning",
+      ]),
       faq(
         [
           {
-            question: "When is SpaceX planning to send Starship to Mars?",
+            question: "What was the land of Punt?",
             answer:
-              "Elon Musk has stated an uncrewed Starship will depart for Mars by the end of 2026, carrying a Tesla Optimus robot, with crewed landings potentially following as soon as 2029, though most independent analysts consider 2031 more realistic.",
+              "A trading partner of ancient Egypt lying south and east, reached by sea, and the source of myrrh, ebony, ivory, gold and exotic animals. Its exact location is still debated — most candidates lie around the southern Red Sea, in modern Eritrea, eastern Sudan or the Horn of Africa.",
           },
           {
-            question: "What was the Land of Punt?",
+            question: "When did Hatshepsut send the expedition to Punt?",
             answer:
-              "A semi-legendary trading partner of ancient Egypt, most historians place it somewhere in the Horn of Africa. Pharaoh Hatshepsut organized a major maritime expedition there around 1479–1458 BC, documented in extraordinary relief detail at her mortuary temple, Deir el-Bahari.",
+              "Around 1470 BC, roughly the ninth year of her reign. Five ships made the voyage.",
           },
           {
-            question: "Has NASA's Artemis III Moon landing been delayed?",
+            question: "Where can you see the Punt reliefs?",
             answer:
-              "Yes — the crewed Artemis III lunar landing, which depends on SpaceX's Starship human landing system, has slipped to no earlier than 2027, with an uncrewed test landing now targeted for 2027 and the crewed mission for 2028.",
+              "On the south side of the middle colonnade at Hatshepsut's mortuary temple at Deir el-Bahari, on the Luxor West Bank.",
+          },
+          {
+            question: "What did the expedition bring back?",
+            answer:
+              "Myrrh and other incense, ebony, ivory, gold, animal skins and live baboons — and living incense trees with their roots packed in baskets, intended for planting at the temple.",
           },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A civilization's flagship expedition into the unknown, whether it's a fleet of ships toward a half-mythical land or a rocket toward a genuinely uninhabited planet, has always been about more than the cargo it brings back. Egypt understood that well enough to carve the whole voyage in stone."
+        "A queen sent five ships into waters her scribes could barely describe, and when they came back she had the whole voyage carved on her temple — the boats, the houses, the trees, the people. Three and a half thousand years later we can still read the shipping manifest but cannot agree on the destination."
       ),
       cta({
-        title: "Set Sail on the Same Sea",
-        body: "The Red Sea, Egypt's own gateway to distant expeditions since Hatshepsut's era — a day of diving and snorkeling from Hurghada.",
-        buttonLabel: "See the Hurghada Red Sea Day",
-        buttonHref: "/tours/hurghada-red-sea-diving-snorkeling",
+        title: "Stand in Front of the Reliefs",
+        body: "A private West Bank morning at Deir el-Bahari and the Valley of the Kings, timed to beat the heat and the coaches.",
+        buttonLabel: "See the West Bank tour",
+        buttonHref: "/tours/valley-of-the-kings-hatshepsut-temple-tour",
       }),
     ],
   },
@@ -308,67 +326,97 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "longevity-fitness-2026-beni-hasan-wrestling-egypt",
-    title: "Exercise Is 2026's Single Best-Proven Longevity Intervention. Egypt Documented Organized Training 4,000 Years Ago.",
-    category: "Wellness & Longevity",
-    tags: ["Longevity Fitness", "VO2 Max", "Zone 2 Training", "Beni Hasan", "Ancient Egyptian Wrestling"],
+    slug: "beni-hasan-tombs-wrestling-scenes",
+    title: "Beni Hasan: The Tomb Walls Covered in Wrestling",
+    category: "History & Culture",
+    tags: ["Beni Hasan", "Middle Kingdom", "Minya", "Middle Egypt", "Off the Beaten Path"],
     author: editorialTeam,
     excerpt:
-      "A 750,000-person study found each 1-MET rise in VO2 max cuts all-cause mortality risk by 13–15%. Egypt's tomb of Baqet III at Beni Hasan recorded nearly 400 pairs of wrestlers in specific holds and techniques, one of history's most systematic records of organized physical training.",
-    imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1574788175517-f06058bae147?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "Cut into a cliff in Middle Egypt are Middle Kingdom tombs whose walls carry hundreds of wrestling holds, painted in sequence. Almost no tour goes there, which is most of the appeal.",
+    imageTone: "desert",
+    image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "longevity fitness 2026",
-    secondaryKeywords: ["VO2 max longevity", "zone 2 training", "Beni Hasan wrestling scenes", "ancient Egyptian physical training"],
-    seoTitle: "Longevity Fitness in 2026, and Egypt's 4,000-Year-Old Training Record",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "Beni Hasan tombs",
+    secondaryKeywords: [
+      "Beni Hasan wrestling scenes",
+      "Middle Kingdom tombs Egypt",
+      "Minya Egypt tombs",
+      "off the beaten path Egypt",
+    ],
+    relatedTours: toursBySlug("dendera-abydos-day-tour", "16-day-egypt-hidden-gems"),
+    seoTitle: "Beni Hasan: Middle Egypt's Wrestling Tombs",
     seoDescription:
-      "A 750,000-person study found VO2 max fitness cuts long-term mortality risk by up to 80%. Egypt's tomb of Baqet III at Beni Hasan documented nearly 400 pairs of wrestlers in specific holds roughly 4,000 years earlier.",
+      "Middle Kingdom rock-cut tombs above the Nile in Minya, where the walls carry hundreds of paired wrestling figures — and a caravan of Asiatic traders that historians still argue about.",
     body: [
       p(
-        "Of everything longevity science has studied, the evidence for exercise itself keeps coming back as the single most consistently proven intervention. A large-scale study of roughly 750,000 US veterans found that each 1-MET increase in VO2 max — a measure of cardiorespiratory fitness — was associated with a 13–15% reduction in all-cause mortality risk, and that high cardiorespiratory fitness overall is linked to roughly 80% lower long-term mortality risk compared to low fitness."
+        "There is a stretch of cliff on the east bank of the Nile, about halfway between Cairo and Luxor, that almost no visitor to Egypt sees. Thirty-nine rock-cut tombs were carved into it around four thousand years ago for the governors of the region. Four are open. Two of them are covered, wall to wall, in wrestling."
       ),
-      h2("What 2026's Research Actually Recommends"),
+      h2("Where and When"),
+      p(
+        "Beni Hasan sits in the Minya governorate in Middle Egypt, a part of the country most itineraries fly straight over on the way south. The tombs belong to the Middle Kingdom — broadly the 11th and 12th dynasties, around 2000 to 1800 BC — and were cut for nomarchs, the provincial governors who ran their districts with a good deal of independence from the crown."
+      ),
+      p(
+        "That independence shows in the tombs. These are not royal burials following a fixed programme. They are the tombs of powerful regional families, and what they chose to put on the walls is closer to a record of provincial life than to the funerary theology you see in the Valley of the Kings."
+      ),
+      h2("The Wrestling"),
+      p(
+        "The tombs of Baqet III and his son Kheti carry the scenes everyone comes for. Across the walls, in ordered rows, pairs of wrestlers are painted working through hold after hold — some two hundred pairs in a single tomb. The two figures in each pair are painted in contrasting colours, which is what makes the scenes readable: you can follow whose limb is whose through a throw."
+      ),
       ...bullets([
-        "Zone 2 training — sustained effort at roughly 60–70% of maximum heart rate, where the body primarily burns fat and can still hold a conversation — improves mitochondrial density, cardiac stroke volume, and fat-burning capacity",
-        "A large 2018 JAMA study of over 120,000 patients found combining 180–240 minutes of Zone 2 cardio weekly with 2–3 resistance training sessions produced the strongest longevity outcomes of any protocol studied",
-        "The consistent recommendation: 3–4 weekly sessions of 45–60 minutes of Zone 2 cardio, paired with regular strength training",
+        "The pairs are sequential rather than decorative — they document positions, transitions and outcomes in order",
+        "Contrasting body colours separate the two wrestlers, a solution to a genuine visual problem that anyone who has tried to photograph a grapple will appreciate",
+        "Alongside the wrestling are scenes of military training and siege, suggesting the governors kept and drilled their own forces",
       ]),
       callout(
-        "Compared to nearly every other longevity intervention under active research in 2026 — supplements, reprogramming, senolytics — consistent aerobic and strength training remains the single most rigorously evidenced, and it's also the one requiring no new technology whatsoever.",
-        { title: "The Best-Evidenced Longevity Intervention Needs No New Technology", tone: "Info" }
+        "The scenes are regularly described as the most detailed record of an organised combat sport surviving from the ancient world. Whether they were training manuals, a display of the governor's fighting men, or something between the two is still argued about — the tombs do not say.",
+        { title: "What Were They For?", tone: "Info" }
       ),
-      h2("Egypt Documented Organized Training 4,000 Years Ago"),
+      h2("The Other Famous Wall"),
       p(
-        "The tomb of Baqet III at Beni Hasan, dating to around 2000 BC, contains what is likely the first and most comprehensive illustrated record of organized physical training anywhere in the ancient world: nearly 400 individual pairs of wrestlers, painted in dynamic, systematic sequence, depicting a genuinely wide range of specific holds, throws, and techniques — grips and manoeuvres recognizable in contemporary wrestling today. It isn't a scattered handful of combat scenes; it's a methodical, almost instructional-looking catalogue of technique, painted with a level of detail that suggests real, organized physical training culture behind it."
+        "In the tomb of Khnumhotep II is a scene that has generated more scholarly literature than the wrestling: a group of foreigners, labelled as Aamu, arriving with their families, livestock and goods, wearing distinctive coloured woollen clothing quite unlike Egyptian dress. It is one of the earliest detailed Egyptian depictions of people from the Levant, and it has been pulled into arguments about trade, migration and biblical chronology for over a century. Standing in front of it, what registers first is simply how carefully individual the figures are."
       ),
-      h2("Same Underlying Insight, Four Thousand Years Apart"),
-      p(
-        "What both eras have converged on, separated by roughly four thousand years and radically different scientific frameworks, is the same basic insight: structured, repeated physical exertion — not a supplement, not a passive treatment, but actual sustained physical effort — is one of the most powerful things available for how a body performs and how long it holds up. Egypt didn't have VO2 max testing or a JAMA study, but it clearly organized real training culture around the same underlying premise 2026's most rigorous longevity research keeps confirming."
-      ),
+      h2("Going There"),
+      ...bullets([
+        "Beni Hasan is reached from Minya, roughly a four-hour drive south of Cairo, and there is a short climb from the road up to the tomb terrace",
+        "It is normally visited as part of a longer Middle Egypt route rather than as a day trip from anywhere",
+        "The site is quiet in a way almost nowhere else in Egypt is — it is entirely normal to have a tomb to yourself",
+        "Access arrangements in Middle Egypt change from time to time and are worth confirming when you plan rather than assuming",
+      ]),
       faq(
         [
           {
-            question: "What is the single best-proven longevity intervention according to 2026 research?",
+            question: "What is Beni Hasan known for?",
             answer:
-              "Cardiorespiratory fitness, measured via VO2 max. A study of roughly 750,000 US veterans found each 1-MET increase in VO2 max cut all-cause mortality risk by 13–15%, with high fitness overall linked to about 80% lower long-term mortality risk than low fitness.",
+              "Middle Kingdom rock-cut tombs whose painted walls carry hundreds of paired wrestling figures shown in sequence, along with military scenes and a much-discussed depiction of Asiatic traders arriving in Egypt.",
           },
           {
-            question: "What is Zone 2 training?",
+            question: "How old are the Beni Hasan tombs?",
             answer:
-              "Sustained aerobic exercise at roughly 60–70% of maximum heart rate, intense enough to train the body but light enough to hold a conversation. It's linked to increased mitochondrial density, improved cardiac stroke volume, and better fat-burning capacity.",
+              "They date to the Middle Kingdom, broadly the 11th and 12th dynasties, around 2000 to 1800 BC — considerably older than the New Kingdom tombs at Luxor.",
           },
           {
-            question: "What do the Beni Hasan wrestling scenes depict?",
+            question: "Where is Beni Hasan?",
             answer:
-              "The tomb of Baqet III at Beni Hasan, dating to around 2000 BC, depicts nearly 400 pairs of wrestlers in a systematic range of specific holds and techniques — considered the first and most comprehensive illustrated record of organized wrestling and physical training in world history.",
+              "On the east bank of the Nile in the Minya governorate of Middle Egypt, roughly halfway between Cairo and Luxor.",
+          },
+          {
+            question: "Can you visit Beni Hasan?",
+            answer:
+              "Yes. Four of the thirty-nine tombs are open. It is usually included in a longer Middle Egypt itinerary rather than visited on its own, and access arrangements are worth confirming close to the date.",
           },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "The most rigorously evidenced longevity intervention available in 2026 doesn't require a lab, a supplement, or a new technology — just structured, sustained physical effort. Egypt was already recording exactly that discipline, in remarkable technical detail, four thousand years ago."
+        "Egypt's headline sites are extraordinary and busy. Beni Hasan is extraordinary and empty, and the walls are covered in people throwing each other around — which is not what most visitors expect a four-thousand-year-old tomb to be about."
       ),
+      cta({
+        title: "Build a Middle Egypt Route",
+        body: "Beni Hasan, Amarna, Dendera and Abydos sit on a stretch of the Nile most itineraries skip. We plan these privately, at your pace.",
+        buttonLabel: "Plan a custom itinerary",
+        buttonHref: "/customize",
+      }),
     ],
   },
 ];

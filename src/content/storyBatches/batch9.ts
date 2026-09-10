@@ -265,8 +265,8 @@ export const stories: Story[] = [
     secondaryKeywords: ["New START expired", "NPT Review Conference 2026", "Egypt nuclear diplomacy", "Middle East WMD-free zone"],
     relatedStories: [
       {
-        slug: "ai-safety-abu-simbel-lesson-in-moving-fast",
-        title: "AI Safety Is a New Debate. Egypt Already Lived a Version of It.",
+        slug: "how-abu-simbel-was-moved",
+        title: "How Abu Simbel Was Cut Into Pieces and Moved Up a Cliff",
         excerpt:
           "The EU AI Act is now largely in force. The debate over who governs a powerful new technology, and who pays when it moves faster than the safeguards, isn't new — Egypt built and rescued a monument through exactly that story once already.",
         imageTone: "desert",

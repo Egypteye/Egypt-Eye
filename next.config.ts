@@ -117,6 +117,18 @@ const nextConfig: NextConfig = {
         destination: "/stories/:slug",
         permanent: true,
       },
+      // Six world-trends articles were rewritten as the Egypt subject that was
+      // buried under the trend hook, and their slugs went with them — a URL
+      // reading "apple-ecosystem-2026" on a piece about the Rosetta Stone is
+      // a ranking signal pointing the wrong way. The old slugs were crawled,
+      // so they redirect rather than 404.
+      { source: "/stories/ai-safety-abu-simbel-lesson-in-moving-fast", destination: "/stories/how-abu-simbel-was-moved", permanent: true },
+      { source: "/stories/vr-ar-spatial-computing-2026-giza-sound-light-show", destination: "/stories/giza-sound-and-light-show-guide", permanent: true },
+      { source: "/stories/apple-ecosystem-2026-rosetta-stone-egypt", destination: "/stories/rosetta-stone-what-it-says", permanent: true },
+      { source: "/stories/longevity-fitness-2026-beni-hasan-wrestling-egypt", destination: "/stories/beni-hasan-tombs-wrestling-scenes", permanent: true },
+      { source: "/stories/mars-human-spaceflight-2026-hatshepsut-punt-expedition", destination: "/stories/hatshepsut-expedition-to-punt", permanent: true },
+      { source: "/stories/creator-communities-2026-deir-el-medina-workers-village", destination: "/stories/deir-el-medina-village-that-built-the-tombs", permanent: true },
+
       // Yoast's attachment and feed URLs, which WordPress generated in bulk.
       { source: "/feed", destination: "/stories", permanent: true },
       { source: "/blog", destination: "/stories", permanent: true },

@@ -1,8 +1,13 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
+import { tours } from "../tours";
 import { p, h2, bullets, callout, faq, cta } from "../storyBlocks";
 
 const editorialTeam = authors[0];
+
+function toursBySlug(...slugs: string[]) {
+  return slugs.map((slug) => tours.find((t) => t.slug === slug)).filter((t): t is (typeof tours)[number] => Boolean(t));
+}
 
 // World-trends cohort, batch 10 of 10 — the final batch, completing the
 // 50-article cohort. Covers cinematic/authentic content, TikTok and
@@ -162,70 +167,106 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "creator-communities-2026-deir-el-medina-workers-village",
-    title: "Creators Are Capping Membership Size in 2026 to Build Real Community. Egypt Ran the Original Version — and Its Workers Went on Strike.",
-    category: "Culture & Trends",
-    tags: ["Creator Economy", "Fan Communities", "Deir el-Medina", "Ancient Egyptian Labor History"],
+    slug: "deir-el-medina-village-that-built-the-tombs",
+    title: "Deir el-Medina: The Village That Built the Valley of the Kings",
+    category: "History & Culture",
+    tags: ["Deir el-Medina", "Luxor West Bank", "Valley of the Kings", "Ramesses III", "Daily Life"],
     author: editorialTeam,
     excerpt:
-      "12% of creators are now deliberately capping membership size to preserve intimacy over scale. Egypt's Deir el-Medina, the purpose-built village of royal tomb-builders, ran the original close-knit specialist community — and staged history's first recorded labor strike.",
+      "The men who cut the royal tombs lived together in one walled village a short walk away. They left tens of thousands of notes behind — sick days, loans, quarrels, and the first recorded strike in history.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1650552199681-c8833af05a7e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "creator communities 2026",
-    secondaryKeywords: ["creator membership economy 2026", "Deir el-Medina village", "first labor strike history", "Turin Strike Papyrus"],
-    seoTitle: "Creator Communities in 2026, and Egypt's Original Close-Knit Specialist Village",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "Deir el-Medina",
+    secondaryKeywords: [
+      "workers village Valley of the Kings",
+      "first recorded strike in history",
+      "Deir el-Medina tombs",
+      "Luxor West Bank sites",
+    ],
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "2-day-luxor-tour"),
+    seoTitle: "Deir el-Medina: The Village Behind the Valley of the Kings",
     seoDescription:
-      "12% of creators are capping membership size in 2026 to preserve real community intimacy. Deir el-Medina, Egypt's purpose-built village of royal tomb-builders, ran the original version — and staged history's first labor strike.",
+      "The walled village of the workmen who cut and decorated the royal tombs at Luxor — and the ostraca they left behind, including the record of the first known strike, under Ramesses III.",
     body: [
       p(
-        "The creator economy's growth story in 2026 has quietly shifted from reach to intimacy. Patreon alone now supports over 10 million fans paying for memberships each month across 25 million paid memberships, with creators having collectively earned more than $10 billion on the platform since launch. But the more telling 2026 trend is what a meaningful share of creators are doing with that growth: 12% are deliberately capping membership size, treating a smaller, tighter community as more valuable than an unlimited one."
+        "Everyone goes to the Valley of the Kings. Very few people walk the short distance over the ridge to the place where the men who made it lived. Deir el-Medina is one of the most valuable archaeological sites in Egypt for a reason that has nothing to do with gold: it is the best-documented ordinary community anywhere in the ancient world."
       ),
-      h2("What's Actually Driving 2026's Community Shift"),
+      h2("A Village Built for One Job"),
+      p(
+        "The Egyptians called it Set Maat — the Place of Truth. It was a purpose-built settlement, walled, on the Luxor West Bank, housing the draughtsmen, stonecutters, plasterers and painters who cut and decorated the royal tombs, along with their families. It was occupied for roughly four centuries, across the New Kingdom, and the men who lived there worked in the valleys on a rota, sleeping in huts nearer the tombs during the working week and coming home on their days off."
+      ),
+      p(
+        "You can still walk the main street. The house plans are legible — narrow, terraced, opening off a single lane inside the enclosure wall. It is a small place, and its smallness is the point: everyone knew everyone, and everything got written down."
+      ),
+      h2("What They Left Behind"),
+      p(
+        "Papyrus was expensive. Limestone flakes and broken pottery were not, and the village sat on a hillside made of them. The workmen used those flakes — ostraca — as notepaper, and tens of thousands survive."
+      ),
       ...bullets([
-        "Membership and community-first platforms like Circle now support over 18,000 active creator communities, moving control of access and monetization to the creator directly",
-        "12% of creators are intentionally capping membership size specifically to preserve intimacy and experience quality",
-        "The most successful fan communities in 2026 mix tiered access, personalization, and real offline or hybrid meet-ups, not just a paywalled newsletter",
+        "Attendance registers, with the reason each man was absent — illness, a family funeral, brewing beer, a scorpion sting, an argument with his wife",
+        "Loans, IOUs and property disputes between neighbours",
+        "Wills, marriage arrangements and divorce settlements",
+        "Complaints about the quality of the rations, and about each other",
+        "Practice sketches, drafts of scenes, and drawings that were clearly done for fun",
       ]),
       callout(
-        "The clearest 2026 shift in the creator economy: pricing power increasingly comes from intimacy, not scale — creators intentionally limiting access through capped memberships and small cohorts, rather than chasing the largest possible audience.",
-        { title: "Intimacy, Not Scale, Is the New Pricing Lever", tone: "Info" }
+        "Almost everything we know about ancient Egypt comes from tombs and temples — the version of life the elite wanted preserved. Deir el-Medina is the exception: an unglamorous, unedited record of what ordinary working people were actually doing, arguing about and worrying over, written by themselves.",
+        { title: "Why It Matters So Much", tone: "Info" }
       ),
-      h2("Egypt Ran the Original Close-Knit Specialist Community"),
+      h2("The First Strike on Record"),
       p(
-        "Deir el-Medina was a purpose-built village on the West Bank at Thebes, home to the specialized artisans and craftsmen who built and decorated the royal tombs in the Valley of the Kings for generations. It was a genuinely closed, specialist community — skilled workers living together, their labor, disputes, and daily administration recorded in remarkable detail on thousands of surviving ostraca, giving historians one of the best-documented close-knit communities anywhere in the ancient world."
+        "In the twenty-ninth year of the reign of Ramesses III — around 1157 BC — the rations that paid the workforce stopped arriving on time. Grain was the wage; late grain meant hungry families. The men downed tools, walked out of the work sites and staged sit-ins at the mortuary temples, refusing to move until they were paid."
       ),
       p(
-        "That community also produced something else worth remembering: in the 29th year of Ramesses III's reign, around 1157 BC, delayed grain rations pushed the village's workers to lay down their tools and march on nearby mortuary temples to demand what they were owed — an action repeated over several months until the rations were restored. The scribe Amennakht recorded the episode in the Turin Strike Papyrus, now held in Turin's Museo Egizio — the earliest documented labor strike in recorded history."
+        "A scribe named Amennakht recorded the whole affair, and the account survives on what is now known as the Turin Strike Papyrus. It is the earliest documented labour strike in human history, and it reads exactly like one: grievances stated, officials stalling, partial payment offered, the men going back out again when it did not hold."
       ),
-      h2("The Same Instinct, a Very Different Kind of Access"),
+      h2("Their Own Tombs"),
       p(
-        "A capped-membership creator community and a purpose-built ancient artisan village both run on the same underlying logic: a smaller, defined group with real shared stakes and mutual obligation holds together, and produces things a diffuse, unlimited audience never quite manages. Deir el-Medina's workers took that logic further than any 2026 fan club ever will, organizing themselves into the earliest recorded labor action on Earth when the obligations that held their community together stopped being honored — a reminder that a real community, capped or otherwise, comes with real expectations on both sides."
+        "The workmen decorated royal tombs for a living, and then decorated their own. The village necropolis climbs the slope above the houses, and the small chapels and burial chambers there are among the most vividly painted spaces in Egypt — the tomb of Sennedjem in particular, with its intense colour and its scenes of the owner and his wife working the fields of the afterlife. They are small, they are crowded, and they were made by people who cut royal tombs all week and then did this on their own time."
       ),
+      h2("Visiting"),
+      ...bullets([
+        "Deir el-Medina is on the Luxor West Bank, close to the Valley of the Queens and easily added to a West Bank morning",
+        "Entry to the decorated tombs is usually a separate ticket from the village site — check what your ticket covers before you climb",
+        "The tombs are small, steep and hot; they empty out much faster than the Valley of the Kings",
+        "Allow longer than you think for the village itself. Walking the street is the part that stays with people",
+      ]),
       faq(
         [
           {
-            question: "Why are creators capping membership size in 2026?",
+            question: "What is Deir el-Medina?",
             answer:
-              "12% of creators are deliberately limiting membership numbers to preserve intimacy and community quality, treating pricing power and audience engagement as things that come from closeness rather than raw scale.",
+              "The walled village on the Luxor West Bank that housed the workmen and families who cut and decorated the royal tombs in the Valley of the Kings and Valley of the Queens during the New Kingdom.",
           },
           {
-            question: "What was Deir el-Medina?",
+            question: "What was the first recorded strike in history?",
             answer:
-              "A purpose-built ancient Egyptian village on Thebes' West Bank, home for generations to the specialized artisans who built and decorated the royal tombs in the Valley of the Kings — one of the best-documented close-knit communities of the ancient world.",
+              "A walkout by the Deir el-Medina workforce in the twenty-ninth year of Ramesses III, around 1157 BC, after their grain rations arrived late. It was recorded by the scribe Amennakht and survives on the Turin Strike Papyrus.",
           },
           {
-            question: "What was the first recorded labor strike in history?",
+            question: "What are ostraca?",
             answer:
-              "A strike by Deir el-Medina's workers around 1157 BC, in the 29th year of Ramesses III's reign, triggered by delayed grain rations. Workers repeatedly marched on nearby mortuary temples until rations were restored, documented in the Turin Strike Papyrus.",
+              "Flakes of limestone and broken pottery used as cheap writing material. Tens of thousands survive from Deir el-Medina, covering everything from attendance records to personal disputes and practice sketches.",
+          },
+          {
+            question: "Can you visit Deir el-Medina?",
+            answer:
+              "Yes. The village and several of the workmen's own decorated tombs are open, and it sits close enough to the Valley of the Queens to be added to a standard West Bank itinerary.",
           },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A capped Discord server and a purpose-built village of royal tomb-builders are separated by more than three thousand years, but they're built on the identical bet: a smaller group, genuinely bound together, beats an unlimited crowd that isn't."
+        "The Valley of the Kings tells you what the pharaohs wanted said about themselves. Deir el-Medina, a twenty-minute walk away, tells you who was hungover, who owed whom a sack of grain, and what happened when the wages were late. Both are worth your morning."
       ),
+      cta({
+        title: "Add Deir el-Medina to Your West Bank Day",
+        body: "Most itineraries run the Valley of the Kings and leave. A private day has room for the village the tomb-makers lived in.",
+        buttonLabel: "See the West Bank tour",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      }),
     ],
   },
 

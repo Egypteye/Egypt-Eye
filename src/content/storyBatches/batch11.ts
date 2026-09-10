@@ -98,72 +98,94 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "vr-ar-spatial-computing-2026-giza-sound-light-show",
-    title: "VR and AR Finally Went Mainstream in 2026. Giza Has Been Running Immersive Storytelling Since 1961.",
-    category: "Culture & Trends",
-    tags: ["VR", "AR", "Spatial Computing", "Apple Vision Pro", "Sound and Light Show"],
+    slug: "giza-sound-and-light-show-guide",
+    title: "The Giza Sound & Light Show: What It Actually Is",
+    category: "Travel Guides",
+    tags: ["Giza", "Sound and Light Show", "Sphinx", "Evening", "Planning"],
     author: editorialTeam,
     excerpt:
-      "The AR/VR market hit roughly $97 billion in 2026, with Apple's Vision Pro 2 and Meta's smart glasses leading the charge. Giza's Sound & Light Show, running continuously since 1961, was projecting narrative onto real physical space decades before the phrase \"spatial computing\" existed.",
+      "An evening show that has been projecting light and narration onto the Sphinx and the pyramids since 1961. What it is, what it isn't, who tends to enjoy it, and how to fit it around the rest of a day at Giza.",
     imageTone: "giza",
     image: "https://images.unsplash.com/photo-1667765460178-db9eae077f00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "VR AR spatial computing 2026",
-    secondaryKeywords: ["Apple Vision Pro 2", "Meta Quest 2026", "spatial computing market", "Giza Sound and Light Show"],
-    relatedTours: toursBySlug("giza-pyramids-sound-and-light-show"),
-    seoTitle: "Spatial Computing in 2026, and Giza's 1961 Head Start",
+    contentReviewDate: "2027-03-01",
+    primaryKeyword: "Giza sound and light show",
+    secondaryKeywords: [
+      "pyramids sound and light show",
+      "Giza at night",
+      "Sphinx light show",
+      "things to do in Giza in the evening",
+    ],
+    relatedTours: toursBySlug("giza-pyramids-sound-and-light-show", "1-day-giza-tour"),
+    seoTitle: "The Giza Sound & Light Show: An Honest Guide",
     seoDescription:
-      "The AR/VR market reached roughly $97 billion in 2026 with Apple's Vision Pro 2 and Meta's dominant Quest line. Giza's Sound & Light Show has been overlaying narrative onto real monuments since 1961.",
+      "What the Sound & Light Show at the Giza pyramids is really like — running since 1961, narrated in several languages, and worth an evening for some visitors more than others.",
     body: [
       p(
-        "Spatial computing crossed from novelty into genuine mainstream infrastructure in 2026. The combined augmented and virtual reality market reached an estimated $97.41 billion this year, on track for $268.58 billion by 2032, and more than 75% of Fortune 500 companies now use XR technology in some capacity — well beyond the gaming and entertainment use cases that defined the category a few years ago."
+        "Almost every Giza itinerary is built around the morning. The plateau at dawn is the photograph everyone came for, and by early afternoon most people are back at the hotel with sore feet. The Sound & Light Show is the reason to come back after dark, and it divides opinion more than almost anything else on an Egypt trip — which is a good argument for knowing what it is before you book."
       ),
-      h2("Where Spatial Computing Actually Stands in 2026"),
+      h2("What Happens"),
+      p(
+        "You sit in a tiered outdoor seating area facing the Sphinx, with the three pyramids behind it. Once it is properly dark, coloured light is projected onto the monuments themselves while a recorded narration — the Sphinx does the talking — runs through several thousand years of Egyptian history, with music underneath. The whole thing lasts under an hour."
+      ),
+      p(
+        "The show has been running in some form since 1961, which makes it one of the oldest continuously staged productions of its kind anywhere. It has been reworked and re-equipped over the decades, but the format has not fundamentally changed: real monuments as the screen, a narrated story, and an audience sitting in the open air in front of them."
+      ),
+      h2("Who Tends to Love It, and Who Doesn't"),
       ...bullets([
-        "Apple released the Vision Pro 2 in January 2026 at $2,499 — 30% lighter, running an M4 Pro chip, with improved hand tracking and, notably, optional handheld controllers",
-        "Meta continues to dominate VR headsets with roughly 43% market share through its Quest line, though its smart glasses revenue ($2.15 billion) surpassed Quest hardware revenue ($660 million) for the first time in 2025",
-        "Industries well beyond gaming and retail — healthcare, education, industrial training — are now significant XR adopters",
+        "Families with children, who usually respond to it far better than to a third temple in the heat",
+        "Anyone who wants to see the pyramids lit at night without the daytime crowds and haze",
+        "First-time visitors who like a narrative thread through the history rather than dates from a guide",
+        "Less suited to travellers who want a contemporary, high-production spectacle — the tone is closer to classic theatre than to a modern projection-mapping show",
+        "Less suited to anyone already exhausted, since it is an extra outing at the end of a long day",
       ]),
       callout(
-        "A technology category that spent its first several years defined almost entirely by headset gaming has, in 2026, become something over three-quarters of the world's largest companies actively deploy — a genuinely fast maturation for consumer-facing hardware.",
-        { title: "From Gaming Novelty to Enterprise Infrastructure", tone: "Info" }
+        "Show times, ticket prices and the language schedule change from season to season and are worth confirming close to the date rather than relying on an older write-up. The narration runs in several languages on a rotating timetable, so the language matters as much as the time when you are choosing which night to go.",
+        { title: "Check Before You Commit", tone: "Info" }
       ),
-      h2("Giza Has Been Running Its Own Version Since 1961"),
+      h2("Practical Notes"),
+      ...bullets([
+        "It is outdoors and unheated. Desert nights get genuinely cold from late autumn through early spring — bring a layer even if the day was hot",
+        "Seating is open-air tiered benches; there is no cover if the weather turns",
+        "The view is of the Sphinx with the pyramids behind, so seats nearer the centre give the best perspective on the projection",
+        "It pairs naturally with an early dinner in Giza rather than with a full second day of sightseeing",
+      ]),
+      h2("Is It Worth It?"),
       p(
-        "The Sound & Light Show at the Giza pyramids first launched in 1961, making it one of the earliest large-scale examples of this idea anywhere in the world — decades before anyone used the phrase \"spatial computing.\" Synchronized narration, music, and colored light are projected directly onto the Great Pyramid, the Sphinx, and the surrounding monuments after dark, using the real, physical structures themselves as the display surface to narrate thousands of years of history to a live audience seated right in front of them."
-      ),
-      h2("The Same Idea, Waiting on the Hardware to Catch Up"),
-      p(
-        "Strip away the terminology, and it's hard to find a cleaner definition of augmented reality than a narrative and visual layer projected directly onto real physical space rather than replacing it — which is precisely what Giza's show has done, communally, for a live audience, using theatrical light and sound instead of a headset, since a full sixty-five years before Apple's Vision Pro 2. What's genuinely changed with 2026's spatial computing boom isn't the core concept — it's that the same idea is now personal and portable rather than fixed to one specific plateau after sunset."
+        "If you have one night in Cairo, a rooftop dinner with a pyramid view is probably the better use of it. If you have two or three, and especially if you are travelling with children or with someone who found the daytime heat hard going, the show earns its place. It is also the only sanctioned way to be sitting in front of the Sphinx after dark, which is worth something on its own regardless of what you make of the script."
       ),
       faq(
         [
           {
-            question: "How big is the AR/VR market in 2026?",
+            question: "How long is the Giza Sound & Light Show?",
             answer:
-              "The combined augmented and virtual reality market reached an estimated $97.41 billion in 2026, projected to grow to $268.58 billion by 2032 at an 18.4% compound annual growth rate.",
+              "Under an hour. Allow extra time either side for arrival, seating and getting back to your transport.",
           },
           {
-            question: "What is the Apple Vision Pro 2?",
+            question: "When did the show start?",
             answer:
-              "Released in January 2026 at $2,499, it's a 30% lighter successor to the original Vision Pro, running an M4 Pro chip with improved hand tracking and optional handheld controllers.",
+              "1961. It has been re-equipped and revised many times since, but has run in essentially the same format — narration and light projected onto the monuments themselves — for over sixty years.",
           },
           {
-            question: "When did the Giza Sound & Light Show start?",
+            question: "What language is the narration in?",
             answer:
-              "1961, making it one of the earliest large-scale examples of projecting a synchronized audiovisual narrative directly onto real physical monuments — the Great Pyramid, the Sphinx, and surrounding structures — for a live audience.",
+              "Several languages run on a rotating schedule across the week. Which language plays on a given night is set by that timetable, so confirm it when you book rather than assuming.",
+          },
+          {
+            question: "Is it suitable for children?",
+            answer:
+              "Generally yes, and it is often the part of a Giza day that younger visitors enjoy most. It is outdoors and after dark, so bring warm layers outside the summer months.",
           },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A headset that overlays a story onto your living room is 2026's spatial computing breakthrough. A pyramid that's had a story projected onto it, live, every night for over sixty years, got there first."
+        "It is not a modern immersive experience and does not pretend to be. It is a piece of mid-century theatre staged against the only backdrop that could carry it, and it has been running long enough that a fair number of people in the audience are bringing children to something they were brought to themselves."
       ),
       cta({
-        title: "See the Original Immersive Show",
-        body: "Light and sound projected onto the actual pyramids and Sphinx — running since 1961, no headset required.",
-        buttonLabel: "See the Sound & Light Show",
+        title: "See the Pyramids After Dark",
+        body: "A private evening at the Sound & Light Show, with transfers from your hotel and back.",
+        buttonLabel: "See the evening tour",
         buttonHref: "/tours/giza-pyramids-sound-and-light-show",
       }),
     ],
@@ -239,70 +261,97 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "apple-ecosystem-2026-rosetta-stone-egypt",
-    title: "Apple's Whole Chip Transition Strategy Is Named After a Rock Found in an Egyptian Ditch in 1799",
-    category: "Culture & Trends",
-    tags: ["Apple", "Rosetta Stone", "Apple Silicon", "Egyptology", "Technology History"],
+    slug: "rosetta-stone-what-it-says",
+    title: "The Rosetta Stone: What It Actually Says, and Why It Isn't in Egypt",
+    category: "History & Culture",
+    tags: ["Rosetta Stone", "Hieroglyphs", "Champollion", "Ptolemaic Egypt", "Repatriation"],
     author: editorialTeam,
     excerpt:
-      "Apple's 2026 lineup — its most ambitious product year in over a decade — still runs on core software named after the Rosetta Stone, discovered by accident near the Egyptian town of Rosetta in 1799.",
-    imageTone: "luxor",
-    image: "https://images.unsplash.com/photo-1780838106313-eb04f08a38db?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "It is the most visited object in the British Museum and one of the least read. The Rosetta Stone is a tax decree — and the reason anyone alive today can read a hieroglyph at all.",
+    imageTone: "giza",
+    image: "https://images.unsplash.com/photo-1608817576203-3c27ed168bd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "Apple ecosystem 2026",
-    secondaryKeywords: ["Apple Rosetta software", "Rosetta Stone history", "Apple Silicon transition", "Apple 2026 products"],
-    seoTitle: "Apple's 2026 Ecosystem, and Why Its Chip Software Is Named After Egypt",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "what does the Rosetta Stone say",
+    secondaryKeywords: [
+      "Rosetta Stone translation",
+      "who deciphered hieroglyphs",
+      "Rosetta Stone British Museum",
+      "Rosetta Stone repatriation",
+    ],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "alexandria-day-trip"),
+    seoTitle: "What the Rosetta Stone Says, and Why It's in London",
     seoDescription:
-      "Apple's 2026 roadmap includes a foldable iPhone and AI glasses, but its most consequential infrastructure software is still named Rosetta — after the stone discovered near Rosetta, Egypt in 1799.",
+      "A priestly decree from 196 BC, written three times over, found near Rashid in 1799 and deciphered in 1822. What the Rosetta Stone actually records, and how it left Egypt.",
     body: [
       p(
-        "Apple is heading into what's widely described as its most ambitious product year in over a decade: more than 15 new devices across the iPhone, iPad, Apple Watch, Mac, and smart home lineup, its first foldable iPhone, and a planned preview of AI-powered glasses by late 2026 — all arriving as the company approaches its 50th anniversary and faces mounting pressure to show real results from years of AI promises."
+        "The Rosetta Stone is the object most people can name before they know anything else about ancient Egypt, and the one whose actual contents almost nobody can describe. It is not a key, a code or a dictionary. It is a slab of granodiorite carrying the same administrative announcement three times, in three different writing systems — and that redundancy is the whole point."
       ),
-      h2("What Apple Is Actually Building Toward in 2026"),
+      h2("What It Says"),
+      p(
+        "The text is a decree issued by a council of priests assembled at Memphis in 196 BC, in the ninth year of the reign of Ptolemy V Epiphanes, a Greek-speaking king of Egypt who had come to the throne as a child. It confirms the honours to be paid to him in the temples, records tax concessions and an amnesty, and orders that the decree itself be carved and set up in temples across the country."
+      ),
+      p(
+        "Read plainly, it is a piece of state administration: a young king shoring up support with the priesthood, and the priesthood publicising the arrangement. Copies were made and distributed, which is why other, more fragmentary versions of the same decree have since been found elsewhere in Egypt."
+      ),
+      h2("Why Three Scripts"),
       ...bullets([
-        "A foldable iPhone and notable Pro-series upgrades headline the 2026 lineup, alongside AI-powered glasses without a display, relying on built-in speakers and cameras",
-        "Apple's AI strategy leans on-device: Neural Engines and NPUs across its A-series and M-series chips are optimized for low-latency, energy-efficient inference, emphasizing privacy over chasing the largest possible model",
-        "Rather than competing directly with OpenAI and Google on raw model capability, Apple is reportedly integrating Google's Gemini models into Siri, leaning on its own strength in operating systems and platform integration instead",
+        "Hieroglyphic — the formal script of monuments and religious texts, at the top of the stone and the most damaged section",
+        "Demotic — the everyday cursive script used for administration and daily life in this period, occupying the middle and best-preserved band",
+        "Ancient Greek — the language of the Ptolemaic court and government, at the bottom",
       ]),
+      p(
+        "The decree was published in all three because Egypt in 196 BC ran in all three. That bureaucratic thoroughness is what made the stone useful two thousand years later: scholars could already read Ancient Greek fluently, and the Greek text told them what the other two must say."
+      ),
+      h2("How It Was Found, and How It Left"),
+      p(
+        "French soldiers came across it in July 1799 while rebuilding fortifications at Fort Julien, near the town of el-Rashid — Rosetta to Europeans — in the western Delta, during Napoleon's campaign in Egypt. It was almost certainly not in its original position; blocks from older monuments were routinely reused as building material."
+      ),
+      p(
+        "When the French forces capitulated to the British in 1801, the antiquities collected by the expedition passed to Britain under the terms of the surrender. The stone reached London and has been on display in the British Museum since 1802, where it remains the museum's most visited object. Egypt has repeatedly requested its return, most prominently through campaigns led by former antiquities minister Zahi Hawass; the museum has not agreed to it."
+      ),
       callout(
-        "Apple's 2026 AI bet isn't \"build the single smartest model\" — it's \"make AI run privately and instantly on hardware you already own,\" leaning on two decades of chip and OS integration rather than chasing a leaderboard it's chosen not to compete on directly.",
-        { title: "A Deliberately Different AI Bet", tone: "Info" }
+        "Deciphering it took another two decades. Thomas Young made real progress on the Demotic and identified the royal names in cartouches. Jean-François Champollion announced the breakthrough in 1822, recognising that the script recorded sounds as well as ideas — a realisation helped by his knowledge of Coptic, the last stage of the Egyptian language.",
+        { title: "Twenty-Three Years to Read", tone: "Info" }
       ),
-      h2("The Rosetta Stone, and Why Apple Named Software After It"),
+      h2("What It Means for What You See in Egypt"),
       p(
-        "In July 1799, French soldiers during Napoleon's Egyptian campaign discovered a large granite stele near the town of Rosetta (Rashid) in the Nile Delta. The stone carried a single decree inscribed in three scripts — hieroglyphic, Demotic, and Ancient Greek — and because scholars could already read the Greek, it became the key that finally let them decode hieroglyphic writing, which had been unreadable for well over a thousand years. Jean-François Champollion completed the decipherment in 1822, using the Rosetta Stone as his primary reference."
-      ),
-      p(
-        "Apple's Rosetta (2005) and Rosetta 2 (2020) are named directly after it, and the naming genuinely fits the function: both pieces of software silently translate code written for one processor architecture into instructions a completely different, incompatible one can run — Rosetta for the PowerPC-to-Intel transition, Rosetta 2 for the Intel-to-Apple Silicon transition — the identical translation function the actual Rosetta Stone performed for two incompatible writing systems separated by disuse rather than by processor design."
-      ),
-      h2("A Small Detail That Says Something Bigger"),
-      p(
-        "It's a minor detail, but a real one: two of the most consequential infrastructure decisions in Apple's last twenty years — full processor-architecture transitions that could each have broken the entire existing software ecosystem if handled badly — were deliberately named after antiquity's most famous translation tool, discovered by accident in an Egyptian ditch. Heading into 2026's most ambitious product year in over a decade, Apple's own naming convention is a quiet reminder that even the newest technology stack tends to reach for the oldest available metaphor when it actually needs one that works."
+        "Every hieroglyphic caption you read on a temple wall in Luxor or Aswan, every royal name a guide picks out of a cartouche, every dated inscription in a museum case, descends from that 1822 breakthrough. Before it, Egypt's own written record was mute; travellers stood in front of the same walls you will and could only guess. It is worth carrying that thought around Karnak — that the ability to read the building you are standing in is barely two hundred years old."
       ),
       faq(
         [
           {
-            question: "Why is Apple's Rosetta software named after the Rosetta Stone?",
+            question: "What does the Rosetta Stone actually say?",
             answer:
-              "Because it performs the same core function — translation between two otherwise incompatible systems. The real Rosetta Stone let scholars translate hieroglyphic writing via its parallel Greek text; Apple's Rosetta and Rosetta 2 translate software code written for one processor architecture (PowerPC, then Intel) to run on a different one (Intel, then Apple Silicon).",
+              "It records a decree issued by priests at Memphis in 196 BC confirming honours for the young king Ptolemy V, along with tax concessions and an amnesty, and ordering that the decree be set up in temples throughout Egypt.",
           },
           {
-            question: "Where was the Rosetta Stone discovered?",
+            question: "Why is the Rosetta Stone written three times?",
             answer:
-              "Near the town of Rosetta (Rashid) in Egypt's Nile Delta, found by French soldiers during Napoleon's Egyptian campaign in July 1799. It is now held in the British Museum in London.",
+              "In hieroglyphic, Demotic and Ancient Greek — the three scripts in official use in Egypt at the time. Because scholars could already read the Greek, it gave them a way into the other two.",
           },
           {
-            question: "What is Apple planning for 2026?",
+            question: "Who deciphered the hieroglyphs?",
             answer:
-              "Apple's 2026 lineup is expected to include over 15 new devices, its first foldable iPhone, notable Pro-series upgrades, and a planned preview of AI-powered glasses by late 2026, alongside a shift toward on-device AI processing and reported integration of Google's Gemini models into Siri.",
+              "Jean-François Champollion announced the decipherment in 1822, building on earlier progress by Thomas Young. Champollion's knowledge of Coptic was central to recognising that the script recorded sounds.",
+          },
+          {
+            question: "Where is the Rosetta Stone now?",
+            answer:
+              "In the British Museum in London, where it has been displayed since 1802. Egypt has made repeated requests for its return.",
           },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "The Rosetta Stone itself sits in the British Museum, not Egypt — but the ditch it was found in, and the delta town that gave it its name, are still there. It's a strange kind of legacy for a piece of granite: quietly naming some of the most important software decisions a trillion-dollar company has ever made, two centuries after a soldier tripped over it."
+        "A committee of priests wanted a tax arrangement recorded where everyone could read it, so they had it written out three times. It is the most consequential act of bureaucratic over-communication in history."
       ),
+      cta({
+        title: "See the Objects That Stayed",
+        body: "The Egyptian Museum holds decrees, stelae and papyri from the same world — read today only because of what that one slab unlocked.",
+        buttonLabel: "See the museum tour",
+        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
+      }),
     ],
   },
 

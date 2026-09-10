@@ -272,89 +272,98 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "ai-safety-abu-simbel-lesson-in-moving-fast",
-    title: "AI Safety Is a New Debate. Egypt Already Lived a Version of It.",
-    category: "Tech & AI",
-    tags: ["AI Safety", "AI Regulation", "History", "Aswan High Dam", "Abu Simbel"],
+    slug: "how-abu-simbel-was-moved",
+    title: "How Abu Simbel Was Cut Into Pieces and Moved Up a Cliff",
+    category: "History & Culture",
+    tags: ["Abu Simbel", "Ramesses II", "Aswan High Dam", "UNESCO", "Nubia"],
     author: editorialTeam,
     excerpt:
-      "The EU AI Act is now largely in force. The debate over who governs a powerful new technology, and who pays when it moves faster than the safeguards, isn't new — Egypt built and rescued a monument through exactly that story once already.",
-    imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1633163893862-4cdc62de7d82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-    publishedAt: "2026-09-03T09:00:00+02:00",
-    contentReviewDate: "2027-02-01",
-    primaryKeyword: "AI safety 2026",
-    secondaryKeywords: ["EU AI Act", "AI regulation explained", "Abu Simbel relocation history", "Aswan High Dam history"],
-    relatedTours: toursBySlug("aswan-abu-simbel-tour", "lake-nasser-cruise-aswan-abu-simbel", "aswan-nubian-village-philae-tour"),
-    relatedStories: [],
-    seoTitle: "AI Safety, and Egypt's Own Lesson in Moving Fast",
+      "The temples you stand in front of at Abu Simbel are not where Ramesses II put them. Between 1964 and 1968 the entire site was sawn into blocks, lifted 65 metres up the cliff, and rebuilt inside a hollow artificial mountain — to save it from the lake now behind you.",
+    imageTone: "giza",
+    image: "https://images.unsplash.com/photo-1539768942893-daf53e448371?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    publishedAt: "2026-09-08T09:00:00+02:00",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "how Abu Simbel was moved",
+    secondaryKeywords: [
+      "Abu Simbel relocation",
+      "Abu Simbel UNESCO campaign",
+      "Aswan High Dam temples",
+      "Abu Simbel sun alignment",
+    ],
+    relatedTours: toursBySlug("aswan-abu-simbel-tour", "lake-nasser-cruise-aswan-abu-simbel"),
+    seoTitle: "How Abu Simbel Was Moved to Save It From the Nile",
     seoDescription:
-      "The EU AI Act took effect through 2026 as the world argues over who governs powerful new technology. Egypt already lived a version of that argument — at Abu Simbel.",
+      "Between 1964 and 1968 both Abu Simbel temples were cut into numbered blocks and rebuilt 65 metres higher, inside a hollow concrete mountain, ahead of the rising Lake Nasser. How it was done, and what changed.",
     body: [
       p(
-        "Most of what's discussed under \"AI safety\" is really one underlying argument: a technology is developing capabilities faster than the rules meant to govern it, and everyone involved — the companies building it, the governments trying to regulate it, and the public living with the results — is negotiating who gets to decide what \"responsible\" actually means, and who pays the cost if it turns out they were wrong."
+        "Almost everyone who visits Abu Simbel is told, at some point during the walk up from the coach park, that the temples were moved. It tends to land as a piece of trivia. It is worth slowing down on, because the thing you are about to walk into is a full-size reconstruction — every block cut, lifted, carried and set back down by hand within living memory, and put together so precisely that you cannot see the joins without being shown where to look."
       ),
-      h2("Where the Regulation Actually Stands in 2026"),
+      h2("Why the Temples Had to Move"),
       p(
-        "The European Union has, for now, gone furthest. The EU AI Act, first passed in 2024, has rolled out in stages, and most of its remaining major provisions took effect on August 2, 2026. It works on a tiered-risk model: certain uses are banned outright (social scoring systems, for instance), \"limited-risk\" applications like chatbots and deepfakes carry transparency requirements, and \"high-risk\" systems — anything touching biometrics, employment decisions, critical infrastructure, or law enforcement — face real obligations: mandatory risk assessments, human oversight, formal conformity checks, and incident reporting when something goes wrong."
-      ),
-      p(
-        "The United States has taken a visibly different path. In March 2026, the White House put forward a national framework recommending that Congress preempt the growing patchwork of individual state AI laws with a single, lighter-touch federal standard — but that preemption effort has repeatedly stalled in Congress, and courts, not the executive branch alone, will ultimately decide how far it can reach. The practical result, for now: a single AI system operating globally can be simultaneously bound by the EU's strict tiered rules, a patchwork of individual U.S. state laws, and an evolving federal framework that hasn't settled yet — genuinely difficult terrain for anyone trying to build responsibly, and genuinely difficult to audit for anyone trying to hold them to it."
-      ),
-      h2("A Different Kind of Powerful Technology, Moved Fast, Once Before"),
-      p(
-        "Here's where Egypt's own history offers something more useful than the usual \"ancient wisdom meets modern technology\" framing this topic tends to get. In the 1950s and 60s, Egypt undertook one of the most consequential engineering projects of the twentieth century: the Aswan High Dam, a piece of infrastructure that would control the Nile's annual flood for the first time in human history, generate enormous amounts of electricity, and reshape the country's agricultural capacity for generations. It was, by any measure, transformative technology, built with real urgency, and there was no meaningful global framework in place to weigh its full costs before construction moved forward."
+        "Egypt began building the Aswan High Dam in 1960. The dam did what it was designed to do — control the Nile flood, generate power, and store water through low years — and in doing so created Lake Nasser, one of the largest reservoirs on earth. The Nubian valley behind the dam would fill. Abu Simbel, cut into a sandstone cliff on the west bank by Ramesses II in the 13th century BC, sat squarely inside the future lake bed."
       ),
       p(
-        "One of those costs was concrete and human: the dam's reservoir, Lake Nasser, would submerge a stretch of ancient Nubia, including two colossal rock-cut temples at Abu Simbel that Ramesses II had built roughly 3,300 years earlier — and would displace tens of thousands of Nubian people from land their communities had lived on for generations, a resettlement whose full social cost took decades to even begin to reckon with honestly."
+        "UNESCO launched an international appeal in 1960 to rescue the monuments of Nubia. Around fifty countries contributed. Abu Simbel was the largest and most difficult piece of that campaign, and the one everybody remembers."
       ),
+      h2("How the Move Was Actually Done"),
+      ...bullets([
+        "Between 1964 and 1968, both the Great Temple of Ramesses II and the smaller temple of his queen Nefertari were sawn apart into large blocks, each numbered and recorded before it was lifted",
+        "The blocks weighed on the order of twenty to thirty tonnes each, and there were over a thousand of them across the two temples",
+        "A coffer dam held the rising water back from the working face while the cutting went on",
+        "Everything was carried to new ground 65 metres higher and around 200 metres back from the original cliff face",
+        "The cliff itself does not exist at the new site. Both temples now stand inside artificial domed mountains of concrete, built to carry the weight and shaped to look like the hillside that was left behind",
+      ]),
       callout(
-        "Between 1964 and 1968, in one of the largest engineering rescues UNESCO has ever coordinated, Abu Simbel's temples were cut into more than a thousand numbered blocks and reassembled sixty metres higher and two hundred metres back from the original site — inside an artificial mountain built specifically to preserve the alignment that lets sunlight reach the inner sanctuary on two mornings each year, just as it did in antiquity.",
-        { title: "The Rescue, in Brief", tone: "Highlight" }
+        "The saw cuts are still there. Guides will point them out on the facade — faint seams running through the figures of Ramesses. Once you have seen one you start seeing them everywhere, which is the moment the scale of what was done tends to land properly.",
+        { title: "Look for the Seams", tone: "Info" }
+      ),
+      h2("The One Thing That Could Not Be Moved Perfectly"),
+      p(
+        "The Great Temple was aligned so that on two mornings a year the rising sun reaches down the full length of the axis and lights the seated gods in the sanctuary at the back — with Ptah, a god of the underworld, left in shadow. Getting a rebuilt temple to keep an alignment like that, on new ground and a new orientation, was the hardest part of the engineering brief, and it was very nearly achieved: the illumination still happens twice a year, in February and October, but a day later in each case than it did before the move."
       ),
       p(
-        "The relocation of the temples is the part of this story that gets told, because it's an extraordinary, genuinely uplifting feat of engineering and international cooperation — solving, after the fact, a problem the original project hadn't solved in advance. What gets told far less often is the other half: the Nubian resettlement was handled with nowhere near the same care, funding, or urgency as the monuments were, and communities who'd lived along that stretch of the Nile for centuries lost their villages with comparatively little of the same global attention or resourcing."
+        "It is a small discrepancy and, if anything, it makes the achievement more impressive rather than less. The dates still draw crowds; if you want to be there for one of them, plan a long way ahead, because everyone else has the same idea."
       ),
-      h2("Why This Is the Sharper Parallel"),
-      p(
-        "That's the honest shape of the AI safety debate too, stripped of the science-fiction framing it usually gets dressed in. It was never really a question of whether a powerful new technology should exist — the dam got built, and modern AI models are, similarly, not going to be un-invented. The actual question, then and now, is whether the safeguards, the oversight, and the care for who bears the cost get built at the same speed as the capability itself, or whether they show up years later, as expensive, difficult repair work — like a UNESCO rescue mission cutting a temple into a thousand blocks after the water was already rising, rather than before."
-      ),
-      p(
-        "The EU AI Act, for all its bureaucratic weight, is essentially an attempt to build the equivalent of that safeguard in advance rather than after the fact. Whether it — or whatever eventually emerges from the U.S.'s more fragmented approach — actually manages that in time is the real, unresolved question underneath every AI safety headline in 2026."
-      ),
+      h2("What to Know Before You Go"),
+      ...bullets([
+        "Abu Simbel is about 280km south-west of Aswan, near the Sudanese border — most visitors come by road from Aswan, by short flight, or on a Lake Nasser cruise",
+        "The road journey is long and usually starts very early, which is worth knowing if you are travelling with children or anyone who struggles with heat",
+        "There are two temples, not one. The smaller temple of Nefertari is often rushed and rewards the extra twenty minutes",
+        "Photography rules inside the temples change from time to time — check on the day rather than relying on an older account",
+      ]),
       faq(
         [
           {
-            question: "What does the EU AI Act actually require in 2026?",
+            question: "Why was Abu Simbel moved?",
             answer:
-              "Most of its major provisions took effect August 2, 2026. It bans certain \"unacceptable-risk\" uses like social scoring, requires transparency for limited-risk systems such as chatbots and deepfakes, and imposes strict obligations — risk assessments, human oversight, incident reporting — on high-risk systems used in biometrics, employment, critical infrastructure, and law enforcement.",
+              "The Aswan High Dam, begun in 1960, created Lake Nasser, and the reservoir would have submerged the temples where they stood. A UNESCO campaign backed by around fifty countries funded and organised the rescue.",
           },
           {
-            question: "Does the US have a federal AI safety law?",
+            question: "When was Abu Simbel relocated?",
             answer:
-              "Not yet, as of 2026. The White House proposed a framework in March 2026 recommending federal preemption of state AI laws, but Congress has repeatedly stalled on legislating it, and courts will ultimately decide how far executive action alone can reach.",
+              "The work ran from 1964 to 1968. Both temples were cut into numbered blocks, moved 65 metres higher and roughly 200 metres back, and rebuilt inside artificial mountains.",
           },
           {
-            question: "Why were the Abu Simbel temples moved?",
+            question: "Is Abu Simbel still aligned with the sun?",
             answer:
-              "The Aswan High Dam's reservoir, Lake Nasser, would have submerged the site. Between 1964 and 1968, UNESCO coordinated cutting both temples into over a thousand blocks and reassembling them 60 metres higher, on an artificial mountain built to preserve their original solar alignment.",
+              "Yes. Sunlight still reaches the sanctuary twice a year, in February and October, though each event now falls a day later than it did before the temples were moved.",
           },
           {
-            question: "Can you actually visit Abu Simbel today?",
+            question: "Can you see where the temples were cut?",
             answer:
-              "Yes — it's a full-day excursion from Aswan, either by road convoy or increasingly by boat via Lake Nasser, and remains one of the most visually overwhelming sites in Egypt precisely because of the scale of the rescue that kept it intact.",
+              "Yes — fine seams are visible across the facade and interior once you know to look for them. Guides normally point out the clearest ones on the colossi at the entrance.",
           },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "Standing in front of Abu Simbel today, what's actually striking isn't just the scale of Ramesses II's original ambition — it's the visible seams in the stone where the 1960s rescue cut and rebuilt it, a physical record of a civilization moving fast on a powerful technology and, imperfectly, scrambling afterward to account for what it had put at risk. It's a genuinely useful thing to stand in front of, while this generation runs the same argument again."
+        "Ramesses II built Abu Simbel to be permanent, into a cliff, facing the sunrise. Three thousand years later it was taken apart and put back together further up the hill so it could go on being permanent. Standing in front of it, both facts are true at once."
       ),
       cta({
-        title: "See the Rescue for Yourself",
-        body: "The seams are still visible up close — a full-day excursion from Aswan to one of the most extraordinary engineering stories in Egypt.",
-        buttonLabel: "Visit Abu Simbel",
-        buttonHref: "/experiences/abu-simbel-excursion-aswan",
+        title: "See Abu Simbel for Yourself",
+        body: "Private trips from Aswan by road or air, and Lake Nasser cruises that arrive at the temples from the water.",
+        buttonLabel: "See Abu Simbel tours",
+        buttonHref: "/tours/aswan-abu-simbel-tour",
       }),
     ],
   },
