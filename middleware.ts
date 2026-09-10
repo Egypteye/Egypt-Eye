@@ -2,6 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { RETIRED_STORY_SLUGS } from "@/content/retiredStories";
 
+// Hardcoded rather than derived from NEXT_PUBLIC_SITE_URL: this decides
+// whether to issue a redirect, and a misconfigured env var would otherwise
+// turn that into a loop.
+const CANONICAL_HOST = "egypteyetravel.com";
+
 // Refreshes the Supabase auth session cookie on every request so a signed-in
 // visitor's session stays valid across Server Component renders (which can
 // only read cookies, not write them — see src/lib/supabase/server.ts). A
@@ -13,6 +18,19 @@ export async function middleware(request: NextRequest) {
   // removal was deliberate, which clears it from the index in weeks instead
   // of the months of re-crawling a 404 buys. Handled here because a Server
   // Component can call notFound() but cannot set an arbitrary status code.
+  // One canonical host. A site reachable on both www and apex serves every
+  // page twice as far as Google is concerned, and splits whatever authority
+  // it earns between them. Only the www form of the production domain is
+  // redirected — preview and local hosts are left alone so they keep working.
+  const host = request.headers.get("host") ?? "";
+  if (host === `www.${CANONICAL_HOST}`) {
+    const url = request.nextUrl.clone();
+    url.host = CANONICAL_HOST;
+    url.protocol = "https";
+    url.port = "";
+    return NextResponse.redirect(url, 308);
+  }
+
   const retired = retiredStorySlug(request.nextUrl.pathname);
   if (retired) {
     return new NextResponse(GONE_BODY, {
@@ -22,6 +40,14 @@ export async function middleware(request: NextRequest) {
   }
 
   const response = NextResponse.next({ request });
+
+  // Vercel gives every deployment its own *.vercel.app hostname, and those
+  // serve the identical site. Indexed, they become a duplicate of the whole
+  // domain that can outrank it. A header is the right tool: it applies to
+  // every response including XML and JSON, and needs no per-page change.
+  if (host.endsWith(".vercel.app")) {
+    response.headers.set("x-robots-tag", "noindex, nofollow");
+  }
 
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;

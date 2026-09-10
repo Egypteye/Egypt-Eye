@@ -4,11 +4,25 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { RateRequestButton } from "../RateRequestButton";
-import { getHotelBySlug, isRateExpired, type HotelRoom } from "@/lib/hotels";
-import { resolveMetadata } from "@/content/seo";
+import { getEnabledHotelsPublic, getHotelBySlug, isRateExpired, type HotelRoom } from "@/lib/hotels";
+import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 
 function formatPrice(amount: number): string {
   return `$${amount.toLocaleString("en-US")}`;
+}
+
+// Prerendered at build time rather than on first request. These are indexed
+// commercial pages; without this, the first crawl of each one pays the full
+// Supabase round trip, which is exactly when a timeout turns into a soft 404.
+// A hotel added later still renders on demand and is picked up on the next
+// revalidation, so the list does not need to be exhaustive.
+export async function generateStaticParams() {
+  try {
+    const hotels = await getEnabledHotelsPublic();
+    return hotels.map((h) => ({ slug: h.slug }));
+  } catch {
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -73,10 +87,16 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
   const hotel = await getHotelBySlug(slug);
   if (!hotel) notFound();
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Hotel Deals", path: "/hotel-deals" },
+    { name: hotel.name, path: `/hotel-deals/${hotel.slug}` },
+  ]);
+
   const rooms = [...hotel.rooms].sort((a, b) => a.display_order - b.display_order);
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <section className="relative">
         <SmartImage image={hotel.photos[0]} tone="nile" alt={hotel.name} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />

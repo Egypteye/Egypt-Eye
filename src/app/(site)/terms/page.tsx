@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import { Container } from "@/components/Container";
 import { getSiteSettings } from "@/sanity/fetchers";
+import { siteUrl } from "@/content/seo";
 
+// Indexable on purpose. A real operator's terms and privacy policy are a
+// trust signal — for travellers comparing agencies and for Google reading the
+// site as a business — and there is nothing private on either page.
 export const metadata: Metadata = {
   title: "Terms of Service",
-  robots: { index: false, follow: true },
+  description:
+    "The booking, payment, cancellation and liability terms that apply to every Egypt Eye Travel & Tours trip, transfer and photoshoot.",
+  alternates: { canonical: `${siteUrl}/terms` },
 };
 
 const SECTIONS = [

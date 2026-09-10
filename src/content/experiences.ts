@@ -100,6 +100,12 @@ const houseExperiences: Experience[] = [
   },
   {
     slug: "pyramids-proposal-romance-setup",
+    // The same product is also sold as a photoshoot, with the fuller record
+    // (locations, add-ons, what gets delivered). Two URLs carrying one
+    // product is duplicate content, and left alone Google picks a canonical
+    // itself — often the weaker page. Both stay listed so either browsing
+    // path still finds it; this just names which one is the real page.
+    seo: { canonicalUrl: "https://egypteyetravel.com/photoshoots/pyramids-proposal-romance-setup" },
     physicalLevel: {
       tier: "easy",
       note:

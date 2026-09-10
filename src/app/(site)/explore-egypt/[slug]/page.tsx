@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { breadcrumbJsonLd } from "@/content/seo";
 import { loadExploreEgyptData } from "../data";
 import { ExploreEgyptView } from "../ExploreEgyptView";
 import { getDestinationHubs, getListingPages } from "@/sanity/fetchers";
@@ -41,15 +42,23 @@ export default async function ExploreEgyptDestinationPage({
   const selectedHub = hubs.find((h) => h.slug === slug);
   if (!selectedHub) notFound();
 
+  const breadcrumbs = breadcrumbJsonLd([
+    { name: "Explore Egypt", path: "/explore-egypt" },
+    { name: selectedHub.name, path: `/explore-egypt/${selectedHub.slug}` },
+  ]);
+
   return (
-    <ExploreEgyptView
-      hubs={hubs}
-      selectedHub={selectedHub}
-      tours={tours}
-      experiences={experiences}
-      photoshoots={photoshoots}
-      stories={stories}
-      copy={listingPages.exploreEgypt}
-    />
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <ExploreEgyptView
+        hubs={hubs}
+        selectedHub={selectedHub}
+        tours={tours}
+        experiences={experiences}
+        photoshoots={photoshoots}
+        stories={stories}
+        copy={listingPages.exploreEgypt}
+      />
+    </>
   );
 }

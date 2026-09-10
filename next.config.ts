@@ -105,6 +105,22 @@ const nextConfig: NextConfig = {
       { source: "/sitemap_index.xml", destination: "/sitemap.xml", permanent: true },
       { source: "/wp-sitemap.xml", destination: "/sitemap.xml", permanent: true },
       { source: "/sitemap-index.xml", destination: "/sitemap.xml", permanent: true },
+
+      // WordPress date permalinks from the previous site — /2024/04/01/some-post.
+      // Search Console reports 24 of these as 404s, and they are where most of
+      // the domain's remaining search visibility still points. Mapping the
+      // pattern to /stories/:slug recovers every post whose slug survived the
+      // rebuild; anything that didn't still 404, exactly as it does today, so
+      // this costs nothing where it can't help.
+      {
+        source: "/:year(\\d{4})/:month(\\d{2})/:day(\\d{2})/:slug",
+        destination: "/stories/:slug",
+        permanent: true,
+      },
+      // Yoast's attachment and feed URLs, which WordPress generated in bulk.
+      { source: "/feed", destination: "/stories", permanent: true },
+      { source: "/blog", destination: "/stories", permanent: true },
+      { source: "/blog/:slug", destination: "/stories/:slug", permanent: true },
       // The 2025 travel-agency guide was consolidated into the 2026 guide
       // (near-duplicate content, same topic) — redirect rather than 404.
       {
