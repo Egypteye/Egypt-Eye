@@ -129,6 +129,22 @@ const nextConfig: NextConfig = {
       { source: "/stories/mars-human-spaceflight-2026-hatshepsut-punt-expedition", destination: "/stories/hatshepsut-expedition-to-punt", permanent: true },
       { source: "/stories/creator-communities-2026-deir-el-medina-workers-village", destination: "/stories/deir-el-medina-village-that-built-the-tombs", permanent: true },
 
+      { source: "/stories/gene-editing-2026-tutankhamun-dna-family-tree", destination: "/stories/tutankhamun-dna-family-tree", permanent: true },
+      { source: "/stories/brain-computer-interface-2026-egypt-discarded-brain", destination: "/stories/how-mummification-worked", permanent: true },
+      { source: "/stories/longevity-technology-2026-egypt-defeat-death-ambition", destination: "/stories/ancient-egyptian-afterlife-beliefs", permanent: true },
+      { source: "/stories/humanoid-robots-2026-ushabti-ancient-labor-figures", destination: "/stories/ushabti-figures-egypt", permanent: true },
+      { source: "/stories/science-backed-skincare-2026-egyptian-kohl-study", destination: "/stories/ancient-egyptian-kohl-eye-makeup", permanent: true },
+      { source: "/stories/deepfakes-2026-ancient-egypt-usurped-cartouches", destination: "/stories/usurped-cartouches-erased-pharaohs", permanent: true },
+      { source: "/stories/serialized-short-form-content-2026-tale-of-sinuhe", destination: "/stories/tale-of-sinuhe", permanent: true },
+      { source: "/stories/fashion-nostalgia-2026-egyptomania-cycles", destination: "/stories/egyptomania-history", permanent: true },
+      { source: "/stories/space-exploration-2026-egypt-ancient-astronomy", destination: "/stories/ancient-egyptian-astronomy", permanent: true },
+      { source: "/stories/next-gen-gaming-2026-senet-oldest-board-game", destination: "/stories/senet-ancient-egyptian-board-game", permanent: true },
+      { source: "/stories/functional-drinks-2026-egypt-medicinal-beer", destination: "/stories/ancient-egyptian-beer", permanent: true },
+      { source: "/stories/cinematic-authentic-content-2026-egypt-tomb-art-duality", destination: "/stories/how-to-read-egyptian-tomb-art", permanent: true },
+      { source: "/stories/ai-influencers-2026-pharaoh-propaganda", destination: "/stories/why-every-pharaoh-looks-the-same", permanent: true },
+      { source: "/stories/photorealistic-video-games-2026-pyramid-laser-scan", destination: "/stories/scanning-the-great-pyramid", permanent: true },
+      { source: "/stories/y2k-nostalgia-2026-jarre-pyramids-millennium-concert", destination: "/stories/jarre-pyramids-millennium-concert", permanent: true },
+
       // Yoast's attachment and feed URLs, which WordPress generated in bulk.
       { source: "/feed", destination: "/stories", permanent: true },
       { source: "/blog", destination: "/stories", permanent: true },

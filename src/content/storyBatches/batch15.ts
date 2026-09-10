@@ -27,70 +27,76 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "cinematic-authentic-content-2026-egypt-tomb-art-duality",
-    title: "Raw, Unpolished Video Is Beating Cinematic Perfection in 2026. Egyptian Tomb Art Had the Same Split 4,000 Years Ago.",
-    category: "Culture & Trends",
-    tags: ["Authentic Content", "Lo-Fi Video", "Ancient Egyptian Art", "Tomb Painting"],
+    slug: "how-to-read-egyptian-tomb-art",
+    title: "How to Read Egyptian Tomb Art: A Visitor's Guide to the Walls",
+    category: "Travel Guides",
+    tags: ["Tomb Art", "Hieroglyphs", "Luxor", "Valley of the Kings", "Planning"],
     author: editorialTeam,
     excerpt:
-      "Instagram announced in 2026 that its algorithm would favor raw, real human content over polished production. Egyptian tomb art drew the exact same line four thousand years earlier — between rigid, idealized formality and surprisingly lively, unposed genre scenes.",
-    imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1696513553699-e0145ea0d4bc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "Egyptian painting is not bad perspective. It is a different system, and it is consistent. Learn five rules before you go and the walls stop being decoration and start being sentences.",
+    imageTone: "nile",
+    image: "https://images.unsplash.com/photo-1591040608370-e51e70b4b7ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "authentic content trend 2026",
-    secondaryKeywords: ["lo-fi video 2026", "Instagram authenticity algorithm", "ancient Egyptian tomb art genre scenes", "raw content vs polished"],
-    seoTitle: "Authentic, Lo-Fi Content in 2026, and Egyptian Art's Own Formal-vs-Raw Divide",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "how to read Egyptian tomb art",
+    secondaryKeywords: ["Egyptian art conventions", "Egyptian tomb paintings meaning", "why Egyptian figures face sideways", "Valley of the Kings art"],
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "valley-of-the-kings-hatshepsut-temple-tour"),
+    seoTitle: "How to Read Egyptian Tomb Art Before You Visit",
     seoDescription:
-      "Instagram's 2026 algorithm now favors raw, real content over polished production, with 85% of Gen Z engaging more with lo-fi video. Egyptian tomb art split along the exact same line four thousand years ago.",
+      "Registers, hierarchy of scale, composite view, colour conventions and the false door — the five rules that turn Egyptian tomb walls from decoration into something you can actually read.",
     body: [
       p(
-        "Polished production lost real ground in 2026. On New Year's Eve 2025, Instagram CEO Adam Mosseri announced that the platform's algorithm would prioritize raw, real human content over heavily produced work through 2026 — and the data backs the shift: 85% of Gen Z now engage more with authentic, lo-fi video than with polished corporate content, and highly produced videos are measurably losing engagement to handheld, unscripted footage shot on a phone."
+        "The most common reaction inside a decorated tomb is a slight, unspoken disappointment. The paintings are beautiful but they look stiff, and the figures seem to have been drawn by someone who had not worked out perspective. Neither impression survives ten minutes of knowing what the rules were."
       ),
-      h2("Why Raw Content Is Winning"),
-      ...bullets([
-        "AI tools made flawless, polished visuals cheap and abundant, which paradoxically made visible human imperfection the actual differentiator",
-        "Lo-fi content deliberately embraces camera shake, natural lighting, and unscripted dialogue — signals that read as \"a real person made this\"",
-        "Instagram's own 2026 algorithm change formally rewards this kind of content over studio-level production",
-      ]),
+      h2("1. Read in Registers"),
+      p(
+        "Scenes are organised into horizontal bands, each with its own ground line. A wall is not one picture; it is several strips of related action stacked up, usually read from the bottom. Once you see the bands, the apparent clutter resolves into sequence — sowing in one, harvesting in the next, threshing above that."
+      ),
+      h2("2. Size Means Status, Not Distance"),
+      p(
+        "The tomb owner is the largest figure on the wall. His wife is often slightly smaller, children smaller again, and servants and labourers smallest of all. Nothing recedes into the background because nothing is meant to. A scale difference is a statement about rank, not about how far away someone was standing."
+      ),
+      h2("3. Every Part From Its Clearest Angle"),
+      p(
+        "The famous twisted pose is a deliberate composite: head in profile because a profile is unmistakable, eye shown frontally because that is how an eye reads, shoulders square on to show both arms, hips and legs turned back to profile with both feet visible. It is not a failure to foreshorten. It is a rule that each part of a body should be shown in the aspect that identifies it best — an inventory rather than a snapshot."
+      ),
       callout(
-        "The logic driving 2026's authenticity wave is almost a direct inversion of decades of content strategy: once perfection became cheap and automatable, imperfection became the premium signal.",
-        { title: "When Perfection Gets Cheap, Imperfection Gets Valuable", tone: "Info" }
+        "That is also why the same convention lasted three thousand years with so little change. It was not a style anyone was trying to improve on; it was a system for recording things accurately and permanently, and it worked.",
+        { title: "Why It Never Changed", tone: "Highlight" }
       ),
-      h2("Egyptian Tomb Art Had the Same Split, 4,000 Years Ago"),
+      h2("4. Colour Is Code"),
+      ...bullets([
+        "Men are conventionally painted a dark red-brown, women a paler yellow — a convention about outdoor and indoor life rather than a record of actual complexions",
+        "Green and blue carry connotations of fertility, rebirth and the Nile; Osiris is often green-skinned for exactly that reason",
+        "Black is the colour of the fertile silt and so of regeneration, not of death or evil",
+        "Yellow stands in for gold, and therefore for the flesh of the gods",
+      ]),
+      h2("5. Know What a False Door Is"),
       p(
-        "Ancient Egyptian art operated under two distinct, deliberately different registers at once. The formal register — a pharaoh or tomb owner depicted according to the rigid, unchanging canon of proportions, eternally youthful, posed in strict profile, idealized rather than individual — was the era's equivalent of maximum production polish: composed, formal, meant to project timeless perfection rather than a specific, lived moment."
+        "In many tombs, especially older ones, you will find a carved doorway that leads nowhere — recessed panels, a lintel, sometimes a figure of the owner stepping through. It is not decoration and not an unfinished exit. It is the threshold through which the ka was to pass to receive offerings, with the offering table set in front of it. It is the functional centre of the whole chapel."
       ),
+      h2("Royal Tombs Versus Private Ones"),
       p(
-        "Running alongside it, in the same tombs, was something genuinely different: genre scenes of everyday life — fishing, dancing, harvest, servants at work, animals captured mid-motion — rendered with real observational looseness, asymmetry, and personality that the formal register never allowed. These weren't accidents or lesser craftsmanship; they were a deliberate, parallel visual mode, valued specifically because they captured something true to life that the idealized formal canon structurally couldn't."
-      ),
-      h2("The Same Two Registers, Completely Different Tools"),
-      p(
-        "That's a genuinely direct ancestor of 2026's content split. Egyptian tomb decoration didn't choose between formal perfection and lively, true-to-life observation — it used both, deliberately, for different purposes, in the same space. 2026's content algorithms are re-discovering essentially the same instinct: polish has its place, but the unscripted, imperfect, visibly real register carries a kind of trust and immediacy that no amount of formal composure can substitute for — then, in painted limestone, and now, in a vertical video shot on a phone."
+        "The difference catches people out. Private tombs are full of daily life — farming, fishing, baking, music, hunting in the marshes — because the owner wanted that life to continue. Royal tombs in the Valley of the Kings are almost entirely religious, covered in funerary texts and the sun's night journey. If you want to see how Egyptians actually lived, the nobles' tombs and Deir el-Medina repay a visit far more than the royal valley does."
       ),
       faq(
         [
-          {
-            question: "Why is Instagram favoring raw, unpolished content in 2026?",
-            answer:
-              "CEO Adam Mosseri announced on New Year's Eve 2025 that Instagram's algorithm would prioritize authentic, real human content through 2026, reflecting data showing 85% of Gen Z engage more with lo-fi video than with polished corporate content.",
-          },
-          {
-            question: "What are ancient Egyptian tomb genre scenes?",
-            answer:
-              "Lively, naturalistic depictions of everyday activities — fishing, dancing, harvest, animals — found alongside the formal, idealized depictions of tomb owners and pharaohs. They used a deliberately looser, more observational visual style than the rigid formal canon.",
-          },
-          {
-            question: "Did ancient Egyptian art have both formal and informal styles?",
-            answer:
-              "Yes — formal depictions of pharaohs and tomb owners followed a strict, idealized canon of proportions, while genre scenes of daily life in the same tombs used a much more naturalistic, dynamic style, functioning as two deliberate, parallel visual registers.",
-          },
+          { question: "Why do Egyptian figures face sideways?", answer: "Each part of the body is shown from the angle that identifies it most clearly — head and legs in profile, eye and shoulders frontal. It is a deliberate system for recording, not a failure of perspective." },
+          { question: "Why are some figures bigger than others?", answer: "Scale indicates status. The tomb owner is largest, family smaller, servants smallest. It has nothing to do with distance." },
+          { question: "What is a false door?", answer: "A carved doorway leading nowhere, through which the ka of the deceased was believed to pass to receive offerings left at the table in front of it." },
+          { question: "Why do royal and private tombs look so different?", answer: "Private tombs show daily life the owner hoped to continue; royal tombs are covered in funerary religious texts. For scenes of ordinary Egyptian life, the nobles' tombs are the better visit." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A tomb wall painted four thousand years ago already knew what 2026's algorithm just relearned: polish and truth aren't the same register, and sometimes the second one is the one people actually trust."
+        "Spend twenty minutes on these five rules before your West Bank morning and you will spend that morning reading rather than looking. It is the single highest-return preparation anyone can do for an Egypt trip."
       ),
+      cta({
+        title: "Go With Someone Who Translates",
+        body: "A private West Bank day with time in the nobles' tombs, not just the royal valley.",
+        buttonLabel: "See the West Bank tour",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      }),
     ],
   },
 
@@ -273,67 +279,70 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "serialized-short-form-content-2026-tale-of-sinuhe",
-    title: "TikTok Is Betting Big on One-Minute Cliffhanger Dramas in 2026. Egypt's Favorite Story Ran on the Same Format 4,000 Years Ago.",
-    category: "Culture & Trends",
-    tags: ["Microdramas", "TikTok Short Drama", "Tale of Sinuhe", "Ancient Egyptian Literature"],
+    slug: "tale-of-sinuhe",
+    title: "The Tale of Sinuhe: Egypt's Favourite Story for a Thousand Years",
+    category: "History & Culture",
+    tags: ["Tale of Sinuhe", "Middle Kingdom", "Egyptian Literature", "Senwosret I", "Papyrus"],
     author: editorialTeam,
     excerpt:
-      "The global short-drama market could reach $3 billion in 2026, built on one-to-three-minute serialized episodes and cliffhanger endings. The Tale of Sinuhe was ancient Egypt's own serialized hit — copied and recopied by scribes for 750 years.",
-    imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1608546043931-6c9678ea9feb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "A court official overhears something he should not, panics, and runs. What follows was copied and recopied by Egyptian scribes for a millennium — the closest thing the ancient world had to a bestseller.",
+    imageTone: "nile",
+    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "serialized short-form content 2026",
-    secondaryKeywords: ["TikTok microdrama 2026", "short drama market 2026", "Tale of Sinuhe", "ancient Egyptian literature"],
-    seoTitle: "Serialized Short-Form Content in 2026, and Egypt's 4,000-Year-Old Version",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "Tale of Sinuhe",
+    secondaryKeywords: ["ancient Egyptian literature", "Middle Kingdom stories", "Sinuhe summary", "Egyptian papyrus texts"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "luxor-east-bank-day-tour"),
+    seoTitle: "The Tale of Sinuhe: Ancient Egypt's Best-Known Story",
     seoDescription:
-      "TikTok launched a dedicated microdrama feed in 2026, part of a global short-drama market projected to hit $3 billion. The Tale of Sinuhe was ancient Egypt's own serialized favorite, copied by scribes for 750 years.",
+      "Written around 1875 BC and copied for a thousand years afterwards — what happens in the Tale of Sinuhe, why Egyptian scribes could not leave it alone, and what it reveals about how Egyptians saw the world.",
     body: [
       p(
-        "Serialized, bite-sized drama became a real content category in 2026, not just a novelty. In January, TikTok rolled out PineDrama, a dedicated app for scripted microdramas, in the US and Brazil, and is now testing a separate short-drama feed inside its main app. US short-drama app revenue hit roughly $700 million in 2025 alone, nearly quadruple the year before, and the global short-drama market outside China is projected to reach $3 billion in 2026."
+        "Most of what survives from ancient Egypt was written to be permanent: tomb inscriptions, temple dedications, king lists. The Tale of Sinuhe is different. It is a story, written to be enjoyed, and Egyptian scribes copied it out for something like a thousand years — on papyrus rolls, on limestone flakes, as a school exercise. More copies survive than of anything else in Egyptian literature."
       ),
-      h2("What Actually Defines a 2026 Microdrama"),
-      ...bullets([
-        "Vertical, 9:16 format episodes typically running 60 to 180 seconds, built specifically for mobile viewing",
-        "Structured around cliffhanger endings designed to pull viewers directly into the next episode",
-        "Major studios and production companies are now writing and producing for the format specifically, not repurposing longer content down to size",
-      ]),
+      h2("What Happens"),
+      p(
+        "Sinuhe is an official in the household of a royal wife, on campaign in Libya, when word arrives that the king, Amenemhat I, has died. He overhears something about the succession — the text is deliberately vague about what — and is seized by a terror he cannot afterwards explain. He runs."
+      ),
+      p(
+        "He crosses the eastern frontier, nearly dies of thirst in the desert, and is taken in by a chieftain in Retjenu, in the Levant. There he prospers: he marries, has sons, becomes wealthy, commands troops, and defeats a local champion in single combat. He has, by any measure, done extremely well abroad."
+      ),
+      p(
+        "And he is miserable. The heart of the story is his growing dread of dying outside Egypt and being buried in a sheepskin rather than properly, in his own land. Eventually the new king, Senwosret I, sends word inviting him home. Sinuhe returns, is received at court, is given a house and a tomb, and the story closes with him waiting for death in the right country."
+      ),
       callout(
-        "The format's core mechanic isn't new storytelling technology — it's simply serialization compressed to its smallest reliable unit: enough story to matter, cut off at exactly the point that guarantees the next episode gets watched.",
-        { title: "The Mechanic Behind the Format", tone: "Info" }
+        "The single-combat scene — Sinuhe against a champion of Retjenu, the whole district watching, one arrow to the neck — is the passage most often quoted, and has been compared to David and Goliath more times than it deserves. The comparison is loose; the appeal of a duel narrative is simply universal.",
+        { title: "The Fight Everyone Remembers", tone: "Info" }
       ),
-      h2("Egypt's Favorite Story Ran on the Same Format"),
+      h2("Why Egyptians Kept Copying It"),
+      ...bullets([
+        "It is genuinely well written — the prose shifts register between narrative, poetry and formal letter, and scribes clearly used it as a model of style",
+        "It flatters the monarchy without being propaganda: the king is generous, the exile is forgiven, the natural order reasserts itself",
+        "It works as an argument for Egypt itself. A man succeeds abroad by every material measure and still cannot bear to be buried there",
+        "It has a psychologically real protagonist. Sinuhe's panic is never justified or explained away, and he spends the whole story being quietly ashamed of it",
+      ]),
+      h2("Where It Survives"),
       p(
-        "The Tale of Sinuhe, composed in the Middle Kingdom, recounts a royal courtier who flees Egypt under mysterious circumstances, lives for years in foreign lands, and eventually returns home in old age — a gripping first-person adventure that was, by a wide margin, ancient Egypt's most popular literary work. It survives today in far more copies than any other Egyptian literary narrative — at least five papyri and roughly 30 ostraca — because scribal schools used it as a standard training text for centuries, especially during Ramesside times. Some surviving copies date up to 750 years after the original composition, an almost unheard-of publishing lifespan for any single story."
-      ),
-      h2("The Same Instinct, a Radically Different Delivery Window"),
-      p(
-        "Sinuhe wasn't consumed in a single sitting the way a modern reader might binge a short novel — it was studied, copied, and re-copied piece by piece by generations of trainee scribes, its episodes and turns absorbed gradually across a career of practice rather than devoured in one pass. That's not identical to a 90-second TikTok cliffhanger, but it shares the underlying instinct 2026's microdrama boom is chasing: a story doesn't need to be told all at once to hold an audience for centuries. It needs to be worth returning to, one piece at a time."
+        "The best-preserved copies are on papyri now in Berlin, with substantial further portions on other papyri and on dozens of ostraca — the limestone flakes scribes and students wrote on. The wide spread of those fragments across sites and centuries is what tells us it was read, not merely archived: this was a text people learned, quoted and set as homework."
       ),
       faq(
         [
-          {
-            question: "How big is the short-drama market in 2026?",
-            answer:
-              "The global short-drama market, excluding China, is projected to reach $3 billion in 2026, following US short-drama app revenue of roughly $700 million in 2025 — nearly four times the prior year.",
-          },
-          {
-            question: "What is the Tale of Sinuhe?",
-            answer:
-              "Ancient Egypt's most popular literary work, composed in the Middle Kingdom, following a royal courtier who flees Egypt and eventually returns home in old age. It survives in more copies — at least five papyri and 30 ostraca — than any other ancient Egyptian literary narrative.",
-          },
-          {
-            question: "How long was the Tale of Sinuhe copied and studied?",
-            answer:
-              "Scribal schools used it as a standard training text for centuries, especially during Ramesside times, with some surviving copies dating up to 750 years after the story's original Middle Kingdom composition.",
-          },
+          { question: "What is the Tale of Sinuhe about?", answer: "An Egyptian court official who flees the country in panic after the death of Amenemhat I, prospers in exile in the Levant, and spends years longing to return to Egypt so he can be buried properly. The king eventually recalls him." },
+          { question: "When was the Tale of Sinuhe written?", answer: "In the Middle Kingdom, around 1875 BC, during or shortly after the reign of Senwosret I. It continued to be copied for roughly a thousand years." },
+          { question: "Why is the Tale of Sinuhe important?", answer: "It survives in more copies than any other work of Egyptian literature, was used as a model of style by scribes, and gives a rare view of how Egyptians thought about exile, home and a proper burial." },
+          { question: "Where can you see the Tale of Sinuhe?", answer: "The principal papyrus copies are in Berlin, with fragments in other collections. Egyptian museums display comparable literary papyri and the ostraca that scribes practised on." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "TikTok is betting that a story cut into small enough pieces can hold an audience indefinitely. Egypt's own favorite story already proved that, one scribe's copy at a time, for the better part of a millennium."
+        "Four thousand years on, the thing that makes it work is unchanged: a man who ran for reasons he cannot articulate, did well, and wanted to go home anyway."
       ),
+      cta({
+        title: "See What Egyptians Actually Wrote",
+        body: "Literary papyri, scribal palettes and the ostraca of everyday writing, in the Cairo collections.",
+        buttonLabel: "See the museum tour",
+        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
+      }),
     ],
   },
 

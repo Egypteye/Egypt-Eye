@@ -22,142 +22,146 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "science-backed-skincare-2026-egyptian-kohl-study",
-    title: "Skincare Went 'Science-Backed' in 2026. A 2010 Study Already Proved Ancient Egyptian Eye Makeup Actually Worked.",
-    category: "Wellness & Longevity",
-    tags: ["Skincare", "Dermatology", "Ancient Egyptian Kohl", "Science-Backed Beauty"],
+    slug: "ancient-egyptian-kohl-eye-makeup",
+    title: "Egyptian Kohl: The Eye Makeup That Turned Out to Be Doing Something",
+    category: "History & Culture",
+    tags: ["Kohl", "Cosmetics", "Ancient Egypt", "Archaeology", "Louvre"],
     author: editorialTeam,
     excerpt:
-      "2026's skincare industry is defined by ingredients backed by real clinical research, not marketing buzz. A 2010 peer-reviewed chemistry study already proved that ancient Egyptian eye makeup did something scientifically real.",
+      "The black line around every painted Egyptian eye was made from compounds that do not occur in nature and had to be manufactured. A 2010 analysis suggested why.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1738226699315-d7323358d42b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-02-01",
-    primaryKeyword: "science-backed skincare 2026",
-    secondaryKeywords: ["skincare ingredients 2026", "ancient Egyptian kohl study", "kohl nitric oxide", "Cleopatra eye makeup science"],
-    seoTitle: "Science-Backed Skincare in 2026, and a 2010 Study on Ancient Egyptian Makeup",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "ancient Egyptian kohl",
+    secondaryKeywords: ["Egyptian eye makeup", "kohl ingredients", "Eye of Horus makeup", "ancient Egyptian cosmetics"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "islamic-coptic-cairo-walking-tour"),
+    seoTitle: "Egyptian Kohl: What It Was Made Of, and What It Did",
     seoDescription:
-      "2026's skincare trends favor peptides, ceramides, and clinically backed actives over buzzwords. A 2010 chemistry study already proved ancient Egyptian eye makeup boosted a real immune response.",
+      "Egyptian eye paint contained lead compounds that had to be synthesised deliberately. What a 2010 analysis found, and why the result is interesting rather than a recommendation.",
     body: [
       p(
-        "Skincare's biggest shift in 2026 isn't a single new ingredient — it's a change in what the industry is willing to claim without proof. Dermatologists are consistently steering consumers toward ceramides, niacinamide, peptides, bakuchiol, polyglutamic acid, and ectoin: actives with real clinical research behind them, not marketing language. As one industry summary put it, effective skincare in 2026 is \"never rooted in buzz, but in long-studied, clinically backed science.\""
+        "The heavy black eye line is the single most recognisable thing about ancient Egyptian appearance — on coffins, on temple walls, on every reconstruction ever filmed. It has usually been explained as either pure decoration or as glare reduction, on the reasoning that it works for a modern athlete under floodlights. The chemistry turns out to be stranger than either."
       ),
-      h2("What 'Science-Backed' Actually Means in 2026"),
-      ...bullets([
-        "Peptides — short amino acid chains that signal skin to produce collagen and elastin — have clinical studies confirming improved firmness and reduced fine lines with consistent use",
-        "Ceramides, niacinamide, and polyglutamic acid are favored specifically for measurable skin-barrier support, not vague wellness claims",
-        "New delivery systems are making gold-standard actives like retinol and vitamin C gentler while remaining clinically effective",
-      ]),
+      h2("What Kohl Was Made Of"),
+      p(
+        "Analysis of cosmetic samples in the Louvre's Egyptian collection identified four lead-based compounds. Two of them, galena and cerussite, occur naturally. The other two, laurionite and phosgenite, essentially do not — not in any quantity that would let you simply collect them."
+      ),
+      p(
+        "They had to be made. The process involved wet chemistry over a period of weeks, and Egyptian texts describe preparations consistent with it. That is a deliberate, laborious manufacturing step for a cosmetic, which raises the obvious question of why anyone would bother."
+      ),
+      h2("The 2010 Finding"),
+      p(
+        "A study published in 2010 by researchers working with the Louvre collection proposed an answer. At very low concentrations, lead ions were found to stimulate nitric oxide production in the skin cells they tested. Nitric oxide is part of the immune response, and the researchers suggested this could have helped the eye resist infection — a real concern in a marshy, fly-heavy river valley where eye disease was endemic."
+      ),
       callout(
-        "The industry's own self-description of 2026's shift is blunt: ingredients need to be backed by research, designed to solve a specific skin concern, and easy for a customer to actually understand — a real departure from a category that spent years selling on vibes.",
-        { title: "The 2026 Standard, In One Line", tone: "Info" }
+        "This is a finding about ancient practice, not a suggestion. Lead is a cumulative neurotoxin, lead-based kohl remains a documented cause of poisoning where it is still sold, and nothing in the research implies these preparations were safe. The interest is that the Egyptians appear to have been manufacturing a compound for an effect, not that the compound was a good idea.",
+        { title: "Not a Recommendation", tone: "Safety" }
       ),
-      h2("A 2010 Study Already Proved an Ancient Egyptian Formula Worked"),
+      h2("The Rest of What Kohl Did"),
+      ...bullets([
+        "Reduced glare from a sun that is genuinely punishing on the desert edge — the same principle as the smear under a modern outfielder's eyes",
+        "Marked status and occasion; kohl pots, applicators and mirrors are common grave goods across social levels",
+        "Carried religious weight through association with the Eye of Horus, the restored eye that stands for healing and wholeness",
+        "Was worn by men and women alike, which surprises visitors more than it should",
+      ]),
+      h2("Where to See It"),
       p(
-        "In January 2010, French researchers published a study in the journal Analytical Chemistry analyzing 52 samples of ancient Egyptian eye cosmetics preserved in makeup containers held by the Louvre. They identified four specific lead-based compounds, including two — phosgenite and laurionite — that don't occur naturally in Egypt, meaning ancient Egyptians were deliberately synthesizing them through an actual manufacturing process, not simply grinding up a locally available mineral."
-      ),
-      p(
-        "What the researchers found next is the part that actually matters here: these lead-based compounds increased nitric oxide production in human skin cells by 240%. Nitric oxide is a genuine immune-signaling agent, and the boost would plausibly have helped fight the bacterial eye infections endemic to the Nile's marshy floodplain — meaning ancient Egyptian eye makeup likely wasn't purely cosmetic. It was, in effect, a deliberately manufactured, physiologically active formulation, verified by peer-reviewed modern chemistry roughly 3,500 years after it was first applied."
-      ),
-      h2("What Makes This a Genuine Precedent, Not Just a Curiosity"),
-      p(
-        "To be clear: lead has no place in a modern skincare routine, and no dermatologist in 2026 would recommend it — the compound itself is exactly the kind of thing today's research-first standards exist to rule out. What makes the finding genuinely remarkable is the pattern it demonstrates: a beauty formulation, deliberately manufactured for a specific physiological reason rather than purely decorative appeal, verified by rigorous modern science to have actually done something real. That's about as literal an example of \"science-backed\" ancient beauty as exists anywhere in the archaeological record — proof, if odd proof, that the impulse behind 2026's skincare shift isn't new at all."
+        "Cosmetic kits survive in quantity — kohl pots in stone, faience and glass, thin applicator sticks, palettes for grinding, and mirrors of polished bronze. The Cairo collections hold sets that came out of ordinary burials as well as royal ones, and the ordinary ones are often the more affecting: someone's actual makeup bag, packed for eternity."
       ),
       faq(
         [
-          {
-            question: "What skincare ingredients are trending in 2026?",
-            answer:
-              "Dermatologists are favoring peptides, ceramides, niacinamide, bakuchiol, polyglutamic acid, and ectoin — actives backed by clinical research and targeted at specific skin concerns like barrier support and collagen production, rather than general wellness marketing.",
-          },
-          {
-            question: "Did ancient Egyptian eye makeup actually work?",
-            answer:
-              "A 2010 study in Analytical Chemistry found that lead-based compounds in ancient Egyptian kohl, analyzed from samples in the Louvre, boosted nitric oxide production in skin cells by 240% — a real immune-boosting effect that plausibly helped fight bacterial eye infections common along the Nile.",
-          },
-          {
-            question: "Were ancient Egyptian cosmetics naturally occurring or manufactured?",
-            answer:
-              "Both — but two of the four lead compounds identified in the 2010 study, phosgenite and laurionite, don't occur naturally in Egypt, meaning ancient Egyptians were deliberately synthesizing them through a genuine manufacturing process rather than simply using a local mineral.",
-          },
+          { question: "What was ancient Egyptian kohl made from?", answer: "Lead-based compounds — galena and cerussite, which occur naturally, along with laurionite and phosgenite, which essentially do not and had to be synthesised deliberately." },
+          { question: "Did Egyptian eye makeup have a medical purpose?", answer: "A 2010 analysis suggested the lead compounds could stimulate an immune response in skin cells, potentially helping resist eye infection. It is a hypothesis about ancient practice, not a health claim — lead remains toxic." },
+          { question: "Did Egyptian men wear kohl?", answer: "Yes. Eye paint was worn across genders and social levels, and cosmetic equipment appears in male and female burials alike." },
+          { question: "Is kohl connected to the Eye of Horus?", answer: "Yes. The restored eye of Horus was a symbol of healing and wholeness, and eye paint carried that protective association alongside its practical and decorative roles." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "Peer review is a modern invention. The instinct to formulate a beauty product for a real, physiological reason, and to actually get it right, clearly isn't."
+        "A civilisation that spent weeks synthesising a compound to put around its eyes was doing something more considered than fashion — even if, by any modern measure, it was doing it with the wrong element."
       ),
+      cta({
+        title: "See the Cosmetic Kits",
+        body: "Kohl pots, applicators and bronze mirrors from real burials, in the Cairo collections.",
+        buttonLabel: "See the museum tour",
+        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
+      }),
     ],
   },
 
   {
     status: "published",
     featured: false,
-    slug: "fashion-nostalgia-2026-egyptomania-cycles",
-    title: "Fashion Runs on 20-Year Nostalgia Cycles in 2026. Egypt Has Been the World's Favorite Throwback for Two Centuries.",
-    category: "Culture & Trends",
-    tags: ["Fashion Nostalgia", "20-Year Cycle", "Egyptomania", "Tutmania"],
+    slug: "egyptomania-history",
+    title: "Egyptomania: Two Centuries of the World Copying Egypt",
+    category: "History & Culture",
+    tags: ["Egyptomania", "Art Deco", "Tutankhamun", "Suez Canal", "Napoleon"],
     author: editorialTeam,
     excerpt:
-      "The fashion industry's \"20-year rule\" says nostalgia peaks roughly two decades after a trend's original heyday. Ancient Egypt has triggered genuine, sustained fashion revivals at least twice in the last 200 years — a nostalgia cycle all its own.",
-    imageTone: "luxor",
-    image: "https://images.unsplash.com/photo-1663192365280-3b02f48b36a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "Obelisks in Rome, sphinxes on Georgian furniture, Art Deco cinemas, a Vegas pyramid. Egypt has been the world's most reliably recycled aesthetic for two thousand years, and each revival says more about the borrower.",
+    imageTone: "giza",
+    image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "fashion nostalgia 2026",
-    secondaryKeywords: ["20-year fashion cycle", "Egyptomania history", "Tutmania 1920s", "Egyptian revival fashion"],
-    seoTitle: "Fashion Nostalgia in 2026, and Egypt's 200-Year Head Start",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "Egyptomania",
+    secondaryKeywords: ["Egyptian revival style", "Art Deco Egypt influence", "Tutankhamun 1922 influence", "Egyptian Revival architecture"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "5-day-giza-cairo-alexandria"),
+    seoTitle: "Egyptomania: Every Wave of Egyptian Revival, Explained",
     seoDescription:
-      "Fashion's \"20-year rule\" says nostalgia peaks roughly two decades after a trend's heyday. Egypt has triggered genuine, sustained fashion and design revivals — Egyptomania — at least twice across two centuries.",
+      "From Roman obelisks to Napoleon's expedition, the 1869 Suez Canal, Tutankhamun in 1922 and Art Deco — the recurring waves of Egyptian revival and what set each one off.",
     body: [
       p(
-        "The fashion industry has a working theory for why old trends resurface: the \"20-year rule.\" Nostalgia for a given era peaks roughly two decades after its original popularity — ten years is too soon to feel nostalgic, thirty years is too distant, but twenty years is exactly the time it takes for a child to grow up absorbing an era's aesthetic and reach adulthood with the creative and purchasing power to bring it back."
+        "There is a specific look that means \"ancient and mysterious\" in Western visual shorthand — lotus columns, winged discs, sphinxes flanking a doorway, a stepped silhouette. It has been in continuous circulation for two thousand years, and it comes back roughly whenever Egypt is in the news. The revivals are worth knowing about because they shape what visitors expect before they arrive."
       ),
-      h2("Why Nostalgia Cycles Actually Work"),
-      ...bullets([
-        "Optimal distinctiveness theory: a revived trend satisfies two competing human needs at once — feeling familiar and socially safe, while still reading as novel enough to signal individuality",
-        "Movies, TV, and celebrities frequently revive older aesthetics, making them culturally relevant again to a new audience",
-        "Social media and fast fashion have compressed what used to be a strict 20-year cycle down to months or even weeks in some categories",
-      ]),
+      h2("Rome Got There First"),
+      p(
+        "The Romans did not imitate Egypt so much as take it. After the annexation, obelisks were shipped to Rome and re-erected; the cult of Isis spread through the empire; Egyptian motifs entered Roman decoration. Rome still holds more standing ancient obelisks than Egypt does, which is a fact worth sitting with."
+      ),
+      h2("Napoleon Turns It Into a Discipline"),
+      p(
+        "The 1798 French expedition brought scholars as well as soldiers, and the multi-volume Description de l'Égypte that followed put accurate images of Egyptian monuments in front of European readers for the first time. Furniture, architecture and interiors absorbed it almost immediately. Champollion's decipherment in 1822 turned fascination into a field."
+      ),
+      h2("1869: The Canal"),
+      p(
+        "The opening of the Suez Canal made Egypt a fixture of European attention and travel. Verdi's Aida was commissioned in connection with the new Cairo opera house and premiered there in 1871 — an Italian opera about ancient Egypt, staged in modern Egypt, for an audience arriving on the new steamship routes. Organised tourism to Egypt dates from roughly this moment."
+      ),
       callout(
-        "The 20-year rule explains most fashion nostalgia. It doesn't explain a trend that keeps recurring across two centuries, tied to no single generation's specific childhood — which is exactly what makes ancient Egypt's own fashion influence so unusual.",
-        { title: "The Exception the 20-Year Rule Can't Explain", tone: "Info" }
+        "Every wave has been set off by an event rather than by a change in taste: a conquest, a canal, a tomb, an exhibition. Egyptian style does not gradually come back into fashion — something happens, and it returns all at once.",
+        { title: "The Pattern", tone: "Highlight" }
       ),
-      h2("Egypt Has Been Running Its Own Nostalgia Cycle Since Napoleon"),
+      h2("1922: The Tomb"),
       p(
-        "The first major wave of \"Egyptomania\" followed Napoleon's 1798–1801 Egyptian campaign and the subsequent publication of the vast Description de l'Égypte (1809–1829), which flooded Europe with detailed engravings of Egyptian monuments — directly shaping Empire-style furniture, architecture, and fashion motifs across the early 1800s. A second, even larger wave followed Howard Carter's 1922 discovery of Tutankhamun's tomb: \"Tutmania\" swept the Western world through the 1920s and 30s, with Egyptian motifs woven directly into Art Deco jewelry, cinema architecture, and fashion on a genuinely massive scale."
+        "Howard Carter opened Tutankhamun's tomb into a world with mass-circulation newspapers and photography, and the result was the largest of all the revivals. Within a few years the motifs were in fashion, jewellery, packaging, and above all architecture — the Egyptian strand of Art Deco runs through cinemas, department stores and apartment buildings across Europe and America, and many of them are still standing."
       ),
-      h2("A Recurring Cycle All Its Own"),
+      h2("And Since"),
+      ...bullets([
+        "The Treasures of Tutankhamun touring exhibitions of the 1960s and 70s drew enormous crowds and set off a second, smaller wave",
+        "The 1990s brought Egypt back through film and television, with a distinctly supernatural slant that has proved hard to dislodge",
+        "Las Vegas built a black glass pyramid with a beam from its apex, which is either the low point or the logical conclusion",
+        "Museum openings and major exhibitions continue to produce reliable spikes of interest",
+      ]),
+      h2("Why It Matters When You Visit"),
       p(
-        "Unlike a typical 20-year fashion cycle, Egyptomania has recurred repeatedly across more than two centuries — Napoleon's era, the 1920s Tut craze, and, as later pieces in this series cover, distinct pop-culture waves tied to the millennium and the early 1990s. What makes ancient Egypt uniquely durable as a nostalgia object is that it isn't tied to anyone's personal, lived childhood the way a typical 20-year-cycle trend is. It's cultural nostalgia rather than autobiographical nostalgia — which is likely exactly why it never really needs a fixed 20-year gap to come back around."
+        "Most visitors arrive carrying two centuries of accumulated imagery — curses, secret chambers, a general atmosphere of the occult. Almost none of it comes from Egypt. It comes from Rome, from Paris, from Hollywood. The actual sites are stranger and more concrete than the borrowed version: administrative, bureaucratic, obsessed with agriculture and record-keeping. Letting go of the revival is what lets the real thing land."
       ),
       faq(
         [
-          {
-            question: "What is the 20-year fashion cycle?",
-            answer:
-              "A widely observed pattern where nostalgia for a given era's fashion peaks roughly two decades after its original popularity — long enough for the generation that grew up with it to reach adulthood with the cultural and purchasing influence to revive it.",
-          },
-          {
-            question: "What was Egyptomania?",
-            answer:
-              "A recurring wave of Western fashion, architecture, and design directly influenced by ancient Egyptian imagery, most notably following Napoleon's 1798–1801 Egyptian campaign and again after Howard Carter's 1922 discovery of Tutankhamun's tomb, which sparked the 1920s \"Tutmania\" craze.",
-          },
-          {
-            question: "Why has Egypt triggered fashion revivals more than once?",
-            answer:
-              "Unlike a typical trend tied to one generation's specific childhood, ancient Egypt functions as cultural rather than autobiographical nostalgia — which appears to let it resurface repeatedly across more than 200 years rather than needing a fixed 20-year gap.",
-          },
+          { question: "What is Egyptomania?", answer: "The recurring Western fascination with ancient Egyptian imagery and design, running from Roman times to the present, and expressed in architecture, fashion, film and decorative arts." },
+          { question: "What caused the 1920s Egyptian revival?", answer: "The opening of Tutankhamun's tomb in 1922, reported worldwide through mass newspapers and photography. Its motifs fed directly into Art Deco architecture and design." },
+          { question: "Why are there Egyptian obelisks in Rome?", answer: "The Romans transported obelisks from Egypt after annexing it and re-erected them in the city. Rome holds more standing ancient obelisks than Egypt itself." },
+          { question: "Is the mummy's curse a real Egyptian belief?", answer: "No. It is a modern invention, popularised by press coverage after 1922 and by fiction and film since. Egyptian tomb inscriptions include warnings, but nothing resembling the curse of popular culture." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "Most trends need twenty years and a specific generation's permission to come back. Egypt has never really needed either."
+        "Egypt is the only ancient culture the modern world keeps redecorating with. That is a compliment of a sort, and it is also why so many first-time visitors are quietly surprised by what is actually there."
       ),
       cta({
-        title: "See What Keeps Coming Back Into Fashion",
-        body: "The real monuments behind two centuries of Egyptomania — still standing, still doing it.",
-        buttonLabel: "Explore Egypt Tours",
-        buttonHref: "/tours",
+        title: "See the Original",
+        body: "The objects that set off two centuries of imitation, in the collections they were excavated into.",
+        buttonLabel: "See the museum tour",
+        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
       }),
     ],
   },
@@ -238,75 +242,68 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "y2k-nostalgia-2026-jarre-pyramids-millennium-concert",
-    title: "Y2K Fashion Is Everywhere in 2026. The Actual Millennium Was Rung In at the Foot of the Pyramids.",
-    category: "Culture & Trends",
-    tags: ["Y2K Nostalgia", "Millennium Concert", "Giza Pyramids", "Jean-Michel Jarre"],
+    slug: "jarre-pyramids-millennium-concert",
+    title: "The Night the Millennium Was Rung In at the Foot of the Pyramids",
+    category: "History & Culture",
+    tags: ["Jean-Michel Jarre", "Giza", "Concerts", "Millennium", "Modern Egypt"],
     author: editorialTeam,
     excerpt:
-      "Y2K fashion is one of 2026's dominant nostalgia trends, driven by Gen Z and TikTok. The actual turn of the millennium was marked by a 120,000-person concert staged directly at the foot of the Giza pyramids.",
+      "On 31 December 1999, Jean-Michel Jarre staged a concert on the Giza plateau to carry the world into the new millennium. It was not the first spectacle at the pyramids and it will not be the last.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1541769740-098e80269166?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: "https://images.unsplash.com/photo-1667765460178-db9eae077f00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "Y2K nostalgia 2026",
-    secondaryKeywords: ["Y2K fashion trend 2026", "Jean-Michel Jarre pyramids concert", "Giza millennium concert 1999", "Twelve Dreams of the Sun"],
-    relatedTours: toursBySlug("giza-pyramids-sound-and-light-show"),
-    seoTitle: "Y2K Nostalgia in 2026, and the Real Millennium Concert at Giza",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "Jean-Michel Jarre pyramids concert",
+    secondaryKeywords: ["millennium concert Giza", "concerts at the pyramids", "Twelve Dreams of the Sun", "events at Giza plateau"],
+    relatedTours: toursBySlug("giza-pyramids-sound-and-light-show", "1-day-giza-tour"),
+    seoTitle: "Jean-Michel Jarre's Millennium Concert at the Pyramids",
     seoDescription:
-      "Y2K fashion is one of 2026's dominant nostalgia trends. The actual millennium turnover in 1999–2000 was marked by a 120,000-person Jean-Michel Jarre concert staged at the foot of the Giza pyramids.",
+      "The Twelve Dreams of the Sun, staged on the Giza plateau on 31 December 1999 — and the longer history of using the pyramids as the world's most demanding stage.",
     body: [
       p(
-        "Y2K fashion is one of 2026's most visible nostalgia trends, and it's arrived with real staying power rather than a passing moment. After years of sleek minimalism, Y2K's maximalist, rule-breaking energy reads as a genuine departure — low-rise cuts, bold color, deliberate excess — and Gen Z has embraced it heavily, amplified by TikTok, vintage resale culture, and celebrities wearing the era's silhouettes back into relevance."
+        "There were a great many millennium events, and almost none of them are remembered. The exception is the one staged in front of the pyramids, partly because of what was performed and mostly because of where."
       ),
-      h2("Why Y2K Specifically Is Dominating 2026"),
+      h2("The Twelve Dreams of the Sun"),
+      p(
+        "Jean-Michel Jarre had spent two decades making a speciality of enormous outdoor spectacles at landmarks — vast crowds, projection onto buildings, lasers, fireworks synchronised to electronic music. Giza on the last night of 1999 was the logical destination for that career. The piece was built around the passage of a night into a new day, timed so that the music ran through midnight and towards the sunrise behind the plateau."
+      ),
+      p(
+        "Reported attendance figures for that night vary enormously depending on the source, which is normal for open-desert events, so treat any precise number you read with caution. What is not in dispute is the setting: monuments four and a half thousand years old lit from the ground, and an audience out on the sand in front of them."
+      ),
+      h2("Giza Has Always Been a Stage"),
       ...bullets([
-        "It arrives as a direct break from years of flat, neutral minimalism dominating everyday fashion",
-        "It fits the classic 20-year cycle almost exactly, landing right as the generation that grew up with it reaches adulthood",
-        "It communicates freedom, optimism, and a playful disregard for rules — a specific emotional register other nostalgia trends don't quite offer",
+        "The Sound & Light Show has projected narration and light onto the same monuments every night since 1961",
+        "Verdi's Aida, written in connection with the opening of the Suez Canal era and premiered in Cairo in 1871, established the template of grand performance built around Egyptian setting",
+        "The pyramids have hosted concerts, festivals and broadcast events repeatedly since, and continue to",
+        "The plateau's appeal to producers is obvious and unusual: a backdrop that needs no set, no lighting rig behind it, and no explanation",
       ]),
       callout(
-        "Fashion is chasing Y2K's aesthetic in 2026 — the colors, the silhouettes, the optimism. The actual turn of the millennium had its own, far stranger real-world set piece, staged at one of the most recognizable locations on Earth.",
-        { title: "The Real Millennium Eve, Not the Aesthetic", tone: "Info" }
+        "Staging anything at Giza involves the Ministry of Tourism and Antiquities and strict conditions on what may be attached to, aimed at or built near the monuments. The constraints are why these events are rare, and why each one becomes a marker in Egypt's modern cultural history.",
+        { title: "Why It Doesn't Happen Often", tone: "Info" }
       ),
-      h2("The Real Y2K Moment Happened at Giza"),
+      h2("What It Says About the Place"),
       p(
-        "On December 31, 1999, carrying overnight into January 1, 2000, musician Jean-Michel Jarre staged \"The Twelve Dreams of the Sun\" — a concert performed directly at the Giza Plateau, at UNESCO's invitation. Jarre had been asked to serve as a UNESCO Ambassador specifically to draw global media attention to Egyptian tourism, and the concert that resulted was staged as a Millennium Eve spectacle at the foot of the pyramids, attended by roughly 120,000 people and costing an estimated $9.5 million to produce."
+        "There is something worth noticing in the choice. Asked to mark the turn of a millennium — a Western calendrical event with no Egyptian significance whatsoever — the instinct was to do it at Giza. The pyramids have become the world's default shorthand for deep time, so much so that a civilisation that had nothing to do with the Gregorian calendar ends up hosting its most-watched turning point."
       ),
       p(
-        "It didn't go entirely to plan: heavy fog rolled in that night and made the pyramids nearly invisible, forcing organizers to abandon the planned laser light projections onto the monuments' faces. Even so, it remains one of the more genuinely memorable, globally broadcast set pieces of the actual millennium turnover — a real event, not an aesthetic, staged at a location three and a half thousand years older than the calendar flip it was marking."
-      ),
-      h2("A Fitting Backdrop for the Turn of the Millennium"),
-      p(
-        "Of all the places on Earth broadcasting millennium celebrations that night, few made as much intuitive sense as monuments already ancient by the time most of recorded history had even started — a genuinely apt symbolic choice, and one organizers leaned into deliberately when they picked Giza over any of the world's more conventional millennium venues."
+        "Ramesses II would have understood the logic perfectly. Put the important thing where the monuments are, and let the monuments do the arguing."
       ),
       faq(
         [
-          {
-            question: "Why is Y2K fashion trending in 2026?",
-            answer:
-              "It's arriving right on schedule for fashion's classic 20-year nostalgia cycle, amplified heavily by Gen Z and TikTok, and it offers a maximalist, rule-breaking contrast to years of minimalist fashion that has dominated recently.",
-          },
-          {
-            question: "What was the millennium concert at the pyramids?",
-            answer:
-              "Jean-Michel Jarre's \"The Twelve Dreams of the Sun,\" staged at UNESCO's invitation directly at the Giza Plateau on December 31, 1999 into January 1, 2000, attended by roughly 120,000 people at an estimated cost of $9.5 million.",
-          },
-          {
-            question: "Why did UNESCO invite Jean-Michel Jarre to perform at Giza?",
-            answer:
-              "Jarre was serving as a UNESCO Ambassador specifically tasked with drawing global media attention to the Egyptian tourism industry, and was invited to conceive and perform a Millennium Eve concert at the pyramids as part of that role.",
-          },
+          { question: "Who performed at the pyramids for the millennium?", answer: "Jean-Michel Jarre staged The Twelve Dreams of the Sun on the Giza plateau on 31 December 1999, running through midnight and towards sunrise." },
+          { question: "Are concerts held at the pyramids?", answer: "Yes, though rarely. Events at Giza require approval from Egypt's antiquities authorities and operate under strict conditions on what can be built or aimed at the monuments." },
+          { question: "Can you see the pyramids lit up at night?", answer: "Yes — the Sound & Light Show has run at Giza since 1961 and projects light and narration onto the Sphinx and the pyramids every evening." },
+          { question: "How many people attended the millennium concert?", answer: "Reported figures vary widely between sources, as they usually do for open-desert events. No single number is reliably established." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "Fashion in 2026 is chasing Y2K's colors and silhouettes. The actual moment the millennium turned over already picked its own backdrop — and it's still standing at Giza, fog or no fog."
+        "Whatever you make of the music, the choice of venue was correct. Nowhere else on earth makes a thousand years feel like a short interval."
       ),
       cta({
         title: "See Giza After Dark",
-        body: "Light and sound at the actual pyramids, the same monuments that hosted the real millennium's biggest stage.",
-        buttonLabel: "See the Sound & Light Show",
+        body: "The nightly Sound & Light Show — the permanent version of what draws producers to the plateau.",
+        buttonLabel: "See the evening tour",
         buttonHref: "/tours/giza-pyramids-sound-and-light-show",
       }),
     ],

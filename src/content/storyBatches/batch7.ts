@@ -186,85 +186,73 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "deepfakes-2026-ancient-egypt-usurped-cartouches",
-    title: "Deepfakes Are a New Crime. Rewriting Someone Else's Image Is an Old One.",
-    category: "Tech & AI",
-    tags: ["Deepfakes", "AI Fraud", "Ancient Egypt", "Ramesses II", "Hatshepsut"],
+    slug: "usurped-cartouches-erased-pharaohs",
+    title: "Erased Pharaohs: How to Spot a Stolen Cartouche on a Temple Wall",
+    category: "History & Culture",
+    tags: ["Cartouches", "Ramesses II", "Hatshepsut", "Akhenaten", "Temples"],
     author: editorialTeam,
     excerpt:
-      "An estimated 8 million deepfakes now circulate online, and humans catch high-quality fakes barely a quarter of the time. Ancient Egypt ran a slower version of the same fraud in solid stone — and one queen's erased face is still visible today.",
-    imageTone: "luxor",
-    image: "https://images.unsplash.com/photo-1761560358030-8f73346f0a1b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-    publishedAt: "2026-09-06T09:00:00+02:00",
-    contentReviewDate: "2027-02-01",
-    primaryKeyword: "deepfakes 2026",
-    secondaryKeywords: ["deepfake statistics 2026", "deepfake fraud", "Hatshepsut erased", "Ramesses II usurped monuments"],
-    relatedTours: toursBySlug("valley-of-the-kings-hatshepsut-temple-tour", "luxor-east-bank-day-tour"),
-    seoTitle: "Deepfake Statistics 2026, and Ancient Egypt's Own Identity Fraud",
+      "Egyptian kings routinely chiselled out their predecessors' names and carved their own into the gap. Once a guide shows you the first recut cartouche, you will see them on every wall in Egypt.",
+    imageTone: "nile",
+    image: "https://images.unsplash.com/photo-1591040608370-e51e70b4b7ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    publishedAt: "2026-09-08T09:00:00+02:00",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "usurped cartouches",
+    secondaryKeywords: ["erased pharaohs", "what is a cartouche", "Hatshepsut erased", "Ramesses II usurped monuments"],
+    relatedTours: toursBySlug("luxor-east-bank-day-tour", "luxor-west-bank-day-tour"),
+    seoTitle: "Usurped Cartouches: Reading Erased Names in Egypt",
     seoDescription:
-      "8 million deepfakes circulate online in 2026, up 16x since 2023. Long before AI, Egyptian rulers erased and rewrote each other's carved identities — and the evidence is still on the temple walls.",
+      "Why Egyptian kings recut each other's names, how Hatshepsut and Akhenaten were erased, and the visual clues that let you spot a stolen cartouche while you are standing in front of it.",
     body: [
       p(
-        "An estimated 8 million deepfakes are now circulating online, up from roughly 500,000 in 2023 — a sixteenfold increase in under three years, growing at close to 900% annually. Deepfake fraud now accounts for about 6.5% of all fraud attempts globally, up from a mere 0.1% in 2022, and CEO-impersonation deepfake scams alone are now reportedly attempted against approximately 400 companies every single day."
+        "A cartouche is the oval loop that encircles a royal name in Egyptian writing — a rope, tied at one end, marking out everything the king's rule encloses. It is the single most useful thing a visitor can learn to recognise, and not only because it lets you find Ramesses on a wall. It lets you see where somebody has been removed."
       ),
-      h2("How Bad the Detection Problem Actually Is"),
+      h2("Why Names Were Attacked"),
       p(
-        "The uncomfortable part isn't just how many fakes exist — it's how bad humans are at catching them. A 2025 study by the identity-verification firm iProov tested 2,000 consumers against a mix of real and deepfaked images and video, and found that only 0.1% correctly identified every single fake and every genuine item — meaning 999 out of every 1,000 people failed the test. For high-quality video deepfakes specifically, human detection accuracy sits at around 24.5%: worse than a coin flip. US deepfake-related fraud losses reached an estimated $1.1 billion in 2025."
-      ),
-      callout(
-        "The detection market is scaling fast — from $5.5 billion in 2023 toward a projected $15.7 billion by 2026, a 42% annual growth rate — but 63% of organizations still haven't invested any budget in deepfake defense, and 80% have no formal response protocol at all.",
-        { title: "Defense Is Growing, But Not Fast Enough", tone: "Info" }
-      ),
-      h2("Ancient Egypt Had Its Own Version of Identity Fraud"),
-      p(
-        "Long before a laptop could fabricate a face, Egypt had already worked out how to fabricate — and erase — a ruler's identity, carved directly into stone. Ramesses II, arguably ancient Egypt's most prolific self-promoter, routinely usurped monuments and statues originally built for earlier pharaohs: his workers would re-chisel the cartouches — the oval hieroglyphic seals carrying a ruler's name — on existing statues and reliefs, replacing a predecessor's identity with his own, effectively claiming someone else's completed work and someone else's legacy as his."
+        "In Egyptian thought a name was not a label but a component of a person, on a par with the body and the ba. To keep existing, a name had to keep being written and spoken. Destroy every instance of it and you were not insulting someone's memory — you were attempting to end them retroactively."
       ),
       p(
-        "The reverse happened too, and it's better documented: after Hatshepsut's death, one of ancient Egypt's few female pharaohs, her successor Thutmose III — for reasons historians still debate, whether personal, political, or dynastic — ordered much of her image and her cartouches chiseled off temple walls, her statues smashed or buried, and her name largely omitted from later official king lists. Visitors to her mortuary temple at Deir el-Bahari today can still see the exact spots where her figure and name were deliberately cut away, the damage as legible as the reliefs that survived intact beside it."
+        "That belief made inscriptions a battleground, and three episodes account for most of what you will see."
       ),
-      h2("Same Motive, Radically Different Tool"),
+      h2("The Three You Will Meet"),
       ...bullets([
-        "Then: rewriting or erasing someone's identity to claim their achievements, or deny their legitimacy, required a mason, a chisel, and years of labor on a single monument",
-        "Now: a deepfake can fabricate a convincing false identity, or discredit a real one, in minutes, and distribute it to millions within hours",
-        "The underlying vulnerability being exploited hasn't changed at all — people trust what appears to be attributed to a specific face or a specific name",
-        "What changed by many orders of magnitude is speed, reach, and how little skill or resource it now takes to attempt it",
+        "Hatshepsut — her images and names were systematically removed from monuments roughly two decades after her death, during the reign of her successor Thutmose III. The motive is still argued; a dynastic tidying-up of the succession is the current favourite over personal spite",
+        "Akhenaten and the Amarna kings — after the return to orthodoxy their names were struck out, their city abandoned and their monuments dismantled for reuse. Tutankhamun's own erasure from king lists is part of the same clean-up, and is why his tomb went unrobbed and unnoticed",
+        "Ramesses II — less erasure than appropriation. He recut earlier kings' cartouches with his own name on a scale nobody else matched, across monuments the length of Egypt",
       ]),
+      callout(
+        "Ramesses II carved his own inscriptions in deep sunk relief rather than shallow raised relief. The usual explanation is that it made them far harder for a successor to grind out and replace — a man who had appropriated that many monuments knew exactly how it was done.",
+        { title: "Cutting Deep on Purpose", tone: "Info" }
+      ),
+      h2("What to Look For"),
+      ...bullets([
+        "A cartouche noticeably deeper than the ones beside it, or with a rougher, less finished surface inside the loop",
+        "Signs that are cramped or spaced oddly, because a new name has been fitted into a space cut for a different one",
+        "Ghosting — the faint outline of earlier signs still visible around or beneath the current ones, especially in raking morning light",
+        "A blank, hacked-out oval with nothing carved in it at all, which is erasure without replacement",
+        "Figures with the face and name chiselled away while the rest of the scene survives intact",
+      ]),
+      h2("Where to Practise"),
       p(
-        "That's the genuinely useful way to think about the deepfake problem: it isn't a new kind of deception, it's an ancient one — recarving whose name sits on the work, whose face sits on the achievement — running at a speed and scale no chisel could ever match. A usurped cartouche altered a single monument, discoverable by anyone who compared it closely enough to the surrounding stone. A modern deepfake can alter what millions believe before anyone gets the chance to look closely at all."
+        "Karnak is the best training ground, simply because so many reigns built there and so many recut each other. Deir el-Bahari has the clearest Hatshepsut erasures. Luxor Temple and the Ramesseum will give you Ramesses II's deep-cut cartouches to compare against everything around them. Ask your guide to show you one confirmed example early in the day — after that you will find them yourself, which is much more satisfying."
       ),
       faq(
         [
-          {
-            question: "How many deepfakes exist online in 2026?",
-            answer:
-              "An estimated 8 million deepfakes circulate online as of 2026, up from roughly 500,000 in 2023 — a sixteenfold increase in under three years, with deepfake content growing at close to 900% annually.",
-          },
-          {
-            question: "How good are humans at spotting deepfakes?",
-            answer:
-              "Poorly. A 2025 iProov study found only 0.1% of 2,000 participants correctly identified every real and fake item shown to them, and human accuracy at detecting high-quality video deepfakes specifically sits at around 24.5%.",
-          },
-          {
-            question: "Why was Hatshepsut's image erased from Egyptian monuments?",
-            answer:
-              "After her death, her successor Thutmose III ordered much of Hatshepsut's image and cartouches removed from temple walls and her name largely left off later official king lists — a deliberate erasure whose damage is still visible today at her mortuary temple, Deir el-Bahari.",
-          },
-          {
-            question: "Did ancient Egyptian pharaohs usurp each other's monuments?",
-            answer:
-              "Yes — Ramesses II in particular is well documented re-carving the cartouches on existing statues and monuments originally built for earlier pharaohs, replacing their names with his own to claim the completed work as his.",
-          },
+          { question: "What is a cartouche?", answer: "An oval loop enclosing a royal name in Egyptian inscriptions, representing a knotted rope and symbolising everything the king's rule encircles." },
+          { question: "Why were pharaohs' names erased?", answer: "Egyptians believed a name was part of a person and had to keep being written to keep them in existence. Erasing it was an attempt to end them retroactively, not merely to insult them." },
+          { question: "Who erased Hatshepsut?", answer: "Her names and images were removed roughly twenty years after her death, during the reign of Thutmose III. The reasoning is debated, with dynastic succession now favoured over personal hostility." },
+          { question: "Did Ramesses II steal other kings' monuments?", answer: "He recut earlier rulers' cartouches with his own name on an unmatched scale, and cut his own inscriptions unusually deep — generally read as a defence against the same thing being done to him." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "Stand in front of Hatshepsut's temple today and the erased cartouches are still readable as erasures — a 3,500-year-old identity fraud left visibly unresolved in the stone. It's a strange, useful thing to have in mind the next time a convincing video shows up in your feed."
+        "Egyptian walls are not a fixed record. They are a document that successive owners edited, and the edits are still visible if you stand at the right angle to the light."
       ),
       cta({
-        title: "See the Erasure for Yourself",
-        body: "Hatshepsut's temple at Deir el-Bahari, and the Karnak and Luxor reliefs carrying Ramesses II's own version of events — a full day on Luxor's east and west banks.",
-        buttonLabel: "See the Valley of the Kings & Hatshepsut Tour",
-        buttonHref: "/tours/valley-of-the-kings-hatshepsut-temple-tour",
+        title: "Learn to Read the Walls",
+        body: "Karnak and Luxor Temple with a guide who will show you the recut cartouches rather than walking past them.",
+        buttonLabel: "See the East Bank tour",
+        buttonHref: "/tours/luxor-east-bank-day-tour",
       }),
     ],
   },
@@ -272,77 +260,73 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "ai-influencers-2026-pharaoh-propaganda",
-    title: "AI Influencers Are the Newest Curated Persona. Pharaohs Invented the Genre.",
-    category: "Culture & Trends",
-    tags: ["AI Influencers", "Virtual Influencers", "Marketing", "Ramesses II", "Battle of Kadesh"],
+    slug: "why-every-pharaoh-looks-the-same",
+    title: "Why Every Pharaoh Looks Young, Calm and More or Less Identical",
+    category: "History & Culture",
+    tags: ["Royal Portraiture", "Akhenaten", "Canon of Proportions", "Statues", "Ancient Egypt"],
     author: editorialTeam,
     excerpt:
-      "Virtual influencers are a $15.9 billion market in 2026, out-engaging human creators three to one. Ramesses II ran the same playbook 3,300 years earlier — broadcasting one curated version of himself across every temple wall in Egypt.",
-    imageTone: "luxor",
-    image: "https://images.unsplash.com/photo-1502250493741-939d1c76eaad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-    publishedAt: "2026-09-06T09:00:00+02:00",
-    contentReviewDate: "2027-03-01",
-    primaryKeyword: "AI influencers 2026",
-    secondaryKeywords: ["virtual influencer market 2026", "AI influencer statistics", "Battle of Kadesh", "Ramesses II propaganda"],
-    relatedTours: toursBySlug("luxor-east-bank-day-tour"),
-    seoTitle: "AI Influencers in 2026, and Ramesses II's 3,300-Year-Old Version of the Same Playbook",
+      "Three thousand years of royal statues and almost none of them are portraits. Egyptian kings were shown as an office, not a face — which is why the exceptions are so startling.",
+    imageTone: "giza",
+    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    publishedAt: "2026-09-08T09:00:00+02:00",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "why do pharaohs look the same",
+    secondaryKeywords: ["Egyptian royal portraiture", "Akhenaten art style", "canon of proportions Egypt", "how to identify a pharaoh statue"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "luxor-east-bank-day-tour"),
+    seoTitle: "Why Egyptian Pharaohs All Look the Same in Art",
     seoDescription:
-      "The virtual influencer market is worth $15.9 billion in 2026 and out-performing human creators on engagement. Ramesses II built the same kind of curated persona — carved into temple walls across Egypt.",
+      "Idealised royal images, a strict proportional canon, and regalia doing the work of a face — why Egyptian kings are hard to tell apart, and how to identify them anyway.",
     body: [
       p(
-        "The virtual influencer market — entirely computer-generated personalities, built with AI, 3D design, and animation, complete with invented backstories and consistent \"personalities\" — is projected to be worth $15.9 billion in 2026, growing at a 41.7% compound annual rate. These aren't a novelty act anymore: 73% of surveyed brands globally now use them in some capacity, up from 60% just the prior year, and beauty and personal care brands lead adoption at 89%."
+        "By the third museum room, most visitors have quietly noticed it. The kings all look alike — same age, same composure, same faintly amused expression, whether the man ruled for two years or sixty-seven. It is not a lack of skill. Egyptian sculptors could carve an unflinching likeness when the job called for it, and did, for officials. Kings were a different job."
       ),
-      h2("The Business Case for a Persona That Doesn't Exist"),
+      h2("An Office, Not a Man"),
       p(
-        "The reason isn't just novelty — it's performance. Virtual influencer campaigns post average engagement rates of 5.67%, roughly three times the 1.89% rate human creators typically achieve, and about 58% of US consumers now report following at least one virtual influencer, with 35% of Gen Z saying they've bought a product an AI persona promoted. CMOs are reportedly planning to allocate up to 30% of influencer marketing budgets to virtual personas in 2026, and brands crossing the 25% allocation threshold report 41% higher returns than those who don't."
+        "The king was the guarantor of Maat — order, balance, the correct functioning of the world. What a royal image had to communicate was that the office was intact and functioning, permanently. A tired, ageing, individual face communicates the opposite. So the king is shown in his physical prime, composed, symmetrical, unbothered — regardless of biography."
+      ),
+      p(
+        "Ramesses II ruled into his eighties and is nowhere depicted as an old man. Statues made in his sixth decade on the throne show the same athletic thirty-year-old as those from his first."
+      ),
+      h2("The Grid"),
+      p(
+        "Underneath the consistency is a proportional system. Artists laid out figures on a squared grid, with fixed numbers of squares from the ground to the knee, the shoulder, the hairline. Unfinished tomb walls still show the grid lines and the preliminary sketches, which is one of the most revealing things you can see in Egypt — the working method left exposed."
+      ),
+      p(
+        "The canon shifted over time, most notably later in Egyptian history when the grid was recalculated, but within any period it held. Two sculptors in different workshops produced compatible figures because they were following the same arithmetic."
       ),
       callout(
-        "A synthetic persona now out-engages the median human creator by roughly three to one — a genuinely striking number for a \"person\" who doesn't exist, wasn't ever tired, off-brand, or unavailable for a shoot, and can post in a dozen languages simultaneously.",
-        { title: "The Engagement Gap, In One Number", tone: "Info" }
+        "Look for grid lines in unfinished tombs and quarry pieces. Once you have seen a half-drawn figure sitting on its squares, every finished wall in Egypt reads differently.",
+        { title: "The Working Drawings Survive", tone: "Info" }
       ),
-      h2("Egypt's Original Curated Persona"),
+      h2("So How Do You Tell Them Apart?"),
+      ...bullets([
+        "The cartouche. This is the reliable method, and the reason learning to spot a cartouche is worth the ten minutes",
+        "Regalia — the nemes headcloth, the white crown of Upper Egypt, the red crown of Lower Egypt, the combined double crown, the blue khepresh often worn in battle scenes",
+        "Period style. Middle Kingdom royal faces are noticeably graver and more careworn than Old or New Kingdom ones — a genuine shift, and one of the few times individual character is allowed in",
+        "Context and find spot, which is what museums rely on when a piece has lost its inscription",
+      ]),
+      h2("The Exception That Proves It"),
       p(
-        "The impulse behind a virtual influencer — build a consistent, idealized, unwaveringly on-brand character and broadcast it everywhere your audience looks — is not remotely new. Ramesses II ran a version of the exact same strategy roughly 3,300 years ago, and the Battle of Kadesh is the cleanest example on record."
-      ),
-      p(
-        "In 1274 BC, Ramesses led Egyptian forces against the Hittite Empire at Kadesh, in what modern historians generally agree was, at best, a tactical draw — Ramesses' own forces were caught in an ambush and nearly overrun, saved only by the arrival of reinforcements, and the campaign's broader strategic objective was never achieved. That is not, however, how Egypt ever heard about it."
-      ),
-      h2("The Same Story, Carved on Every Available Channel"),
-      p(
-        "Ramesses had his own account of Kadesh — as a singular, decisive personal triumph, the pharaoh single-handedly rallying his army through sheer divine favor — inscribed in monumental relief and text at Abydos, Karnak, Luxor Temple, the Ramesseum, and Abu Simbel: essentially every major temple complex under his authority, each one functioning as a broadcast channel the way a feed does today. The same curated persona, the same edited version of events, repeated across every surface available to him until it became, for most practical purposes, the official record."
-      ),
-      p(
-        "What's genuinely different about 2026's version isn't the impulse to build and broadcast an idealized persona for public consumption — that's exactly what a pharaoh's propaganda program and a virtual influencer's content calendar are both doing. What's different is that the persona itself can now be entirely synthetic rather than merely exaggerated, and it can be generated and distributed to millions within a day, rather than commissioned from stonemasons and carved over years across an empire's worth of temple walls."
+        "Then there is Akhenaten. Under him royal images change completely: elongated skull, heavy lips, narrow eyes, a soft belly and wide hips, and family scenes of the king with his queen and daughters on his lap. Whether it reflects an actual physical condition, a theological statement about the king as both father and mother of his people, or a deliberate rupture with everything before it, is still argued. What is not in doubt is how violently it breaks the rule — and how completely the rule reasserted itself once his reign ended."
       ),
       faq(
         [
-          {
-            question: "How big is the AI/virtual influencer market in 2026?",
-            answer:
-              "The virtual influencer market is projected at $15.9 billion in 2026, growing at a 41.7% compound annual rate, with 73% of surveyed brands globally using virtual influencers in some capacity.",
-          },
-          {
-            question: "Do AI influencers actually perform better than human creators?",
-            answer:
-              "On engagement, yes on average — virtual influencer campaigns post around 5.67% average engagement versus roughly 1.89% for human creators, though this varies significantly by platform, niche, and audience.",
-          },
-          {
-            question: "What actually happened at the Battle of Kadesh?",
-            answer:
-              "Fought in 1274 BC between Ramesses II's Egyptian forces and the Hittite Empire, most historians consider it a tactical draw at best — Ramesses was nearly overrun by an ambush before reinforcements arrived — despite Ramesses commissioning temple inscriptions across Egypt describing it as a decisive personal victory.",
-          },
+          { question: "Why do all Egyptian pharaohs look the same?", answer: "Royal images represented the office rather than the individual, and had to show the king in permanent, ordered prime. A proportional grid kept figures consistent across workshops and centuries." },
+          { question: "How do you identify a pharaoh in a statue?", answer: "Primarily by the cartouche containing his name. Regalia and period style narrow it down, but the inscription is the reliable identifier." },
+          { question: "Why does Akhenaten look different?", answer: "Art under Akhenaten broke sharply with convention, showing elongated features and intimate family scenes. Explanations range from a medical condition to a theological statement, and the question is unresolved." },
+          { question: "Did Egyptian artists ever make realistic portraits?", answer: "Yes — sculptures of officials and non-royal individuals can be strikingly individual, including signs of age and imperfection. The idealisation was specific to royal images." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A pharaoh needed an empire's worth of stonemasons and decades to build and broadcast a persona. A brand in 2026 needs a render farm and an afternoon. The instinct being served is, remarkably, exactly the same one — and it's carved in plain sight on temple walls across Luxor for anyone who wants to see where the genre actually started."
+        "It is worth remembering in the museum that you are not looking at pictures of people. You are looking at three thousand years of an institution insisting, in stone, that everything was under control."
       ),
       cta({
-        title: "Read the Original Version",
-        body: "Ramesses II's own account of Kadesh, carved across Karnak and Luxor Temple — a full day on Luxor's east bank.",
-        buttonLabel: "See the Luxor East Bank Tour",
-        buttonHref: "/tours/luxor-east-bank-day-tour",
+        title: "See the Faces in Person",
+        body: "Royal and private sculpture side by side in Cairo — the contrast is the whole point.",
+        buttonLabel: "See the museum tour",
+        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
       }),
     ],
   },

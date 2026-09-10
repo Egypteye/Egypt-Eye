@@ -22,75 +22,69 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "humanoid-robots-2026-ushabti-ancient-labor-figures",
-    title: "Humanoid Robots Are Entering Factories in 2026. Egypt Buried an Army of Labor Robots 3,000 Years Ago.",
-    category: "Tech & AI",
-    tags: ["Humanoid Robots", "Tesla Optimus", "Figure AI", "Ushabti", "Ancient Egypt"],
+    slug: "ushabti-figures-egypt",
+    title: "Ushabti: The Little Figures Buried to Do Your Work Forever",
+    category: "History & Culture",
+    tags: ["Ushabti", "Shabti", "Book of the Dead", "Egyptian Museum", "Burial"],
     author: editorialTeam,
     excerpt:
-      "Tesla's Optimus and Figure's humanoid robots are moving from demo to factory floor in 2026. Ancient Egypt mass-produced its own answer to the same idea — manufactured figures built specifically to labor autonomously — by the thousand.",
-    imageTone: "luxor",
-    image: "https://images.unsplash.com/photo-1757927325524-ed1f9cc75e4a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "The small mummiform figures in every museum case are not idols or portraits. They are substitute labourers, inscribed with the spell that makes them answer when the afterlife calls your name.",
+    imageTone: "giza",
+    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "humanoid robots 2026",
-    secondaryKeywords: ["Tesla Optimus 2026", "Figure AI robot", "ushabti figurines", "Tutankhamun tomb objects"],
-    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour"),
-    seoTitle: "Humanoid Robots in 2026, and Egypt's 3,000-Year-Old Labor Figures",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "ushabti",
+    secondaryKeywords: ["what are shabti figures", "ushabti meaning", "Egyptian tomb figures", "Tutankhamun shabti"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "luxor-museum-mummification-museum-tour"),
+    seoTitle: "Ushabti Figures: What They Were Actually For",
     seoDescription:
-      "Tesla Optimus and Figure's humanoid robots are moving into real factory work in 2026. Ancient Egypt mass-produced ushabti — figures built to labor autonomously — by the thousand, three millennia earlier.",
+      "The mummiform servant figures buried in Egyptian tombs, the spell inscribed on them, why sets ran to 401, and what they tell you about the afterlife Egyptians expected.",
     body: [
       p(
-        "Humanoid robots moved from stage demo toward real deployment in 2026. Tesla has over a thousand Optimus units in testing across its Fremont, Austin, and Berlin facilities, though Elon Musk has acknowledged they aren't yet doing materially useful work. Figure AI's Figure 03 has logged more than 30,000 work cycles at BMW's Spartanburg plant, and the company's valuation has reportedly reached $39 billion. Goldman Sachs projects the humanoid robot market could reach $38 billion by 2035."
+        "Every Egyptian collection has a case of them: small standing figures, wrapped like mummies, arms crossed, often blue-green faience, sometimes hundreds together. Most visitors read them as idols or as portraits of the dead. They are neither. They are staff."
       ),
-      h2("Where Humanoid Robots Actually Stand in 2026"),
-      ...bullets([
-        "Tesla is running large-scale real-world testing of Optimus across three major facilities, with the company itself acknowledging the robots aren't yet performing materially useful factory work",
-        "Figure AI's humanoid robot has logged tens of thousands of real work cycles in an actual BMW production environment, a genuinely significant proof point beyond a controlled demo",
-        "Analysts project a market in the tens of billions of dollars within a decade, reflecting real investment even as consumer-ready, broadly capable humanoid robots remain years away",
-      ]),
+      h2("The Problem They Solved"),
+      p(
+        "The Egyptian afterlife was an idealised Egypt — fields, a river, a harvest. That is a pleasant prospect until you remember that fields in Egypt meant conscripted labour: clearing irrigation canals, moving sand, working the land when the state called you up. The Field of Reeds came with the same obligations."
+      ),
+      p(
+        "The solution was to send a workforce. A ushabti was a substitute body, animated on demand, that would step forward and take the summons in your place."
+      ),
+      h2("The Spell"),
+      p(
+        "Most carry a version of chapter six of the Book of the Dead, inscribed down the front. It addresses the figure directly: if the deceased is called on to do any work in the realm of the dead — to cultivate the fields, to fill the canals with water, to carry sand from east to west — the figure is to say \"here I am\" and do it. The name ushabti is usually connected to a verb meaning to answer. They are, quite literally, the answerers."
+      ),
       callout(
-        "The core premise behind every humanoid robot program in 2026 is identical: build a manufactured, humanlike figure that performs physical labor autonomously so a person doesn't have to. That premise is not new.",
-        { title: "The Idea Behind the Hardware", tone: "Info" }
+        "A full set is 401 figures: one worker for each day of the year, plus thirty-six overseers, one for every ten workers. It is a management structure, buried. Tutankhamun was sent with over four hundred.",
+        { title: "Why 401", tone: "Info" }
       ),
-      h2("Egypt Buried an Army of Autonomous Laborers, by the Thousand"),
+      h2("How to Read Them in a Case"),
+      ...bullets([
+        "Look for the tools — many hold hoes, picks and a basket slung over the shoulder, which is the giveaway that this is agricultural labour",
+        "Overseer figures are often dressed differently, in the kilt of a living Egyptian rather than mummy wrappings, and carry a whip",
+        "The material tells you about the owner: royal and elite figures in stone, faience or wood; cheaper burials with crude, hastily moulded ones",
+        "The inscription usually names the owner, which is how museums attribute isolated figures to specific tombs",
+      ]),
+      h2("What They Are Evidence Of"),
       p(
-        "Ancient Egypt organized a massive, centuries-long manufacturing effort around exactly that premise — not with actuators, but with magic. Ushabti were small servant figurines placed in tombs, specifically inscribed with a spell (recorded as Chapter 6 of the Book of the Dead) commanding them to magically come to life and perform manual labor — plowing fields, digging canals, carrying burdens — on behalf of the deceased in the afterlife, so the person buried wouldn't have to do that work themselves. When called upon, the figure was meant to answer \"here I am\" and take up the task."
-      ),
-      p(
-        "Tutankhamun's tomb alone contained 413 individual ushabti figures, plus an additional 71 overseer figures to supervise them — a fully staffed labor force, manufactured specifically to work autonomously on command, buried with a single teenage pharaoh. Across ancient Egypt more broadly, ushabti were produced by the millions over more than a thousand years, an entire dedicated industry built around one purpose: making a manufactured figure do the work a person didn't want to do."
-      ),
-      h2("Same Basic Premise, Completely Different Century"),
-      p(
-        "What's different in 2026 is the mechanism, not the ambition. Tesla and Figure are trying to make the premise literally, physically true — actuators, cameras, and neural networks standing in for a spell — but the underlying goal is the same one ancient Egypt organized a massive religious-industrial supply chain around: manufacture a helper that performs physical labor autonomously, so a human doesn't have to. It took three thousand years to get from a spell to a working prototype, but the ambition never changed."
+        "Ushabti are one of the clearest windows onto ordinary Egyptian expectations. They tell you the afterlife was understood as a real place with a real economy, that the state's demands were expected to follow you into it, and that people prepared for that eventuality with exactly the practicality they applied to everything else. Whole workshops existed to produce them, at every price point."
       ),
       faq(
         [
-          {
-            question: "How many Tesla Optimus robots are currently deployed?",
-            answer:
-              "Tesla has over 1,000 Optimus units in testing across its Fremont, Austin, and Berlin facilities as of 2026, though the company has acknowledged the robots aren't yet performing materially useful factory work at scale.",
-          },
-          {
-            question: "What are ushabti figurines?",
-            answer:
-              "Small ancient Egyptian funerary figurines placed in tombs and inscribed with a spell commanding them to magically labor on behalf of the deceased in the afterlife. Tutankhamun's tomb contained 413 ushabti plus 71 overseer figures.",
-          },
-          {
-            question: "How far along is Figure AI's humanoid robot in real-world use?",
-            answer:
-              "Figure's Figure 03 robot has logged over 30,000 work cycles in an actual production environment at BMW's Spartanburg plant, one of the more significant real-world proof points for humanoid robots as of 2026.",
-          },
+          { question: "What is a ushabti?", answer: "A small mummiform figure buried with the dead to perform agricultural labour on their behalf in the afterlife. The name is generally connected to a verb meaning to answer." },
+          { question: "What is written on ushabti figures?", answer: "Usually a version of chapter six of the Book of the Dead, instructing the figure to answer and carry out any labour demanded of its owner in the realm of the dead." },
+          { question: "How many ushabti were buried with a person?", answer: "It varied enormously. A full set is 401 — one worker per day of the year plus thirty-six overseers — but many burials contained only a handful, and poorer ones none." },
+          { question: "Are ushabti and shabti the same thing?", answer: "Broadly yes. Shabti, shawabti and ushabti are terms used across different periods for figures serving the same purpose, and museums use them somewhat interchangeably." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A carved figure meant to work by magic and a robot meant to work by motors and machine learning are separated by three thousand years and almost nothing else — the same very old idea, still being built."
+        "It is a very Egyptian solution: not to argue that eternity should be free of obligations, but to bring enough labour to cover them."
       ),
       cta({
-        title: "See the Originals",
-        body: "Tutankhamun's own ushabti figures and the treasures buried alongside them — on display in Cairo.",
-        buttonLabel: "See the Egyptian Museum Tour",
+        title: "See Them in Person",
+        body: "The Cairo collections hold ushabti from royal and ordinary burials alike — the contrast between them is the interesting part.",
+        buttonLabel: "See the museum tour",
         buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
       }),
     ],
@@ -169,211 +163,217 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "longevity-technology-2026-egypt-defeat-death-ambition",
-    title: "Longevity Biotech Wants to Rewrite Aging in 2026. Egypt Built an Entire Civilization Around the Same Ambition.",
-    category: "Wellness & Longevity",
-    tags: ["Longevity", "Biotech", "Anti-Aging", "Ancient Egypt Medicine", "Mummification"],
+    slug: "ancient-egyptian-afterlife-beliefs",
+    title: "What the Egyptians Actually Believed Happened After You Died",
+    category: "History & Culture",
+    tags: ["Afterlife", "Book of the Dead", "Field of Reeds", "Maat", "Ancient Egypt"],
     author: editorialTeam,
     excerpt:
-      "Epigenetic reprogramming trials and a longevity market headed toward $420 billion define 2026's anti-aging science. Egypt organized its entire civilization — medicine, religion, and a colossal funerary industry — around a version of the exact same refusal to accept death.",
+      "Not a heaven, and not a reward for faith. The Egyptian afterlife was a place you could fail to reach — through a judgement, a set of passwords, and a monster waiting beside the scales.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1757927325474-17b89634e7ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-02-01",
-    primaryKeyword: "longevity technology 2026",
-    secondaryKeywords: ["epigenetic reprogramming 2026", "longevity biotech market", "Ebers Papyrus", "ancient Egyptian mummification"],
-    seoTitle: "Longevity Science in 2026, and Egypt's Civilizational Answer to Death",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "ancient Egyptian afterlife",
+    secondaryKeywords: ["weighing of the heart", "Field of Reeds", "Book of the Dead", "Egyptian gods of the dead"],
+    relatedTours: toursBySlug("luxor-west-bank-day-tour", "valley-of-the-kings-hatshepsut-temple-tour"),
+    seoTitle: "The Ancient Egyptian Afterlife, Explained",
     seoDescription:
-      "2026's longevity biotech — epigenetic reprogramming, senolytics, a market headed toward $420 billion — treats aging as solvable. Ancient Egypt organized an entire civilization around the identical underlying ambition.",
+      "The ka, the ba and the akh, the weighing of the heart against the feather of Maat, and the Field of Reeds — what Egyptians expected after death, and why it changes how tombs read.",
     body: [
       p(
-        "Longevity science moved further from lab curiosity toward real clinical territory in 2026. Epigenetic reprogramming — resetting cells to a more youthful state without erasing their identity — has entered human trials, with companies like Insilico Medicine and NewLimit reporting early-stage results. The broader longevity biotech market is projected to reach roughly $420 billion by 2030, reflecting serious capital betting that aging itself is a treatable process rather than an inevitability."
+        "Walk into a decorated tomb without knowing what the Egyptians expected to happen after death and the paintings are beautiful nonsense. Know the outline and every wall turns into instructions."
       ),
-      h2("Where Longevity Science Actually Stands in 2026"),
+      h2("A Person Was Several Things"),
       ...bullets([
-        "Epigenetic reprogramming has moved into human clinical trials, including Phase 2a work targeting specific aging-related pathways",
-        "Senolytics (drugs that clear aging, dysfunctional cells) and mitochondrial-focused therapies continue advancing through earlier-stage trials",
-        "The longevity biotech market is projected to reach approximately $420 billion by 2030, a scale of investment that reflects genuine confidence rather than speculative fringe interest",
+        "The body — which had to survive, because the other parts needed somewhere to return to",
+        "The ka, a life force that came into being with you and needed sustaining after death, which is what the food offerings in tombs are for",
+        "The ba, closest to what we would call personality, shown as a bird with a human head, able to leave the tomb by day",
+        "The akh, the transfigured, effective spirit a person became if everything went right",
+        "The name, which had to keep being spoken — erasing someone's name from a monument was an attempt to end them",
       ]),
+      h2("The Judgement"),
+      p(
+        "The dead were brought before Osiris, and the heart — kept in the body precisely for this — was placed on a scale against a feather representing Maat: truth, order, the way things should be. Anubis worked the balance. Thoth recorded the result. Crouching beside the scales was Ammit, part crocodile, part lion, part hippopotamus, waiting to eat the hearts that failed."
+      ),
+      p(
+        "A failed judgement did not mean punishment in an afterlife. It meant no afterlife at all — the second death, annihilation. That is the threat the whole funerary industry existed to avert."
+      ),
       callout(
-        "The underlying premise across nearly all of 2026's longevity biotech is the same: aging is not an inevitable, fixed fact of biology, but a process that can be intervened on directly, at the cellular and genetic level, if enough is understood and enough resources are applied.",
-        { title: "The Premise Behind the Investment", tone: "Info" }
+        "Spell 30B of the Book of the Dead is addressed to the deceased's own heart, asking it not to speak against him in the hall of judgement. It was inscribed on scarab amulets placed over the chest. The Egyptians were not confident the heart would lie for them.",
+        { title: "A Word With Your Own Heart", tone: "Info" }
       ),
-      h2("Egypt Organized an Entire Civilization Around the Identical Ambition"),
+      h2("What the Book of the Dead Actually Is"),
       p(
-        "Egypt's medical tradition was genuinely advanced for its era. The Ebers Papyrus, dating to around 1550 BC, is one of the oldest and most comprehensive surviving medical texts in human history, containing hundreds of remedies, diagnoses, and treatments spanning nearly every part of the body. The Edwin Smith Papyrus, drawing on even earlier material, is considered the world's oldest known surgical trauma text — describing case-by-case clinical assessment centuries before that became standard medical practice anywhere else."
+        "Not a book and not a scripture. It is a loose collection of spells, drawn from a much older tradition, copied onto papyrus and buried with the dead — closer to a phrasebook and route guide than to a holy text. Different people bought different selections. Spells identify the gatekeepers, supply the correct answers, protect against dangers along the way, and ensure the deceased can eat, drink, breathe and move."
       ),
+      h2("Where You End Up"),
       p(
-        "But Egypt's more famous, more totalizing answer to mortality wasn't a medical treatment at all — it was mummification, and the enormous funerary industry built around it: a sustained, technically sophisticated, centuries-spanning national effort specifically aimed at defeating the body's decay and making a version of the person persist indefinitely."
-      ),
-      h2("Different Theory of the Problem, Same Underlying Goal"),
-      p(
-        "2026's longevity biotech treats aging as a biological process to be intervened on directly at the cellular and genetic level. Ancient Egypt treated death as a transition to be technically managed through preservation and ritual, not a biological process to be solved at all — genuinely different theories of the problem, built on entirely different understandings of the body. But the underlying human ambition driving both, across roughly 3,500 years, is identical: refuse to accept that decline and death are simply things that happen to a body, and organize serious, sustained, technically demanding effort against them instead."
+        "The Field of Reeds — Aaru — is the destination, and it is strikingly unmystical: an idealised Egypt, with a river, fields, a good harvest, a house, family. Not transcendence. The same life, without the interruptions. Which is also why ushabti figures were buried in such numbers, since even paradise came with agricultural labour to be done."
       ),
       faq(
         [
-          {
-            question: "What is epigenetic reprogramming?",
-            answer:
-              "A longevity science technique that resets cells to a more youthful epigenetic state — how genes are expressed — without erasing the cell's identity. It moved into human clinical trials in 2026, including Phase 2a studies from companies like Insilico Medicine.",
-          },
-          {
-            question: "How big is the longevity biotech market projected to be?",
-            answer:
-              "Approximately $420 billion by 2030, reflecting substantial investor confidence that aging can be directly intervened on as a biological process rather than treated as an inevitable fact of life.",
-          },
-          {
-            question: "What was the Ebers Papyrus?",
-            answer:
-              "One of the oldest and most comprehensive surviving medical texts in human history, dating to around 1550 BC, containing hundreds of ancient Egyptian remedies, diagnoses, and treatments across nearly every part of the body.",
-          },
+          { question: "What was the weighing of the heart?", answer: "The judgement of the dead, in which the heart was weighed against the feather of Maat before Osiris. Anubis operated the scales, Thoth recorded the verdict, and the monster Ammit devoured hearts that failed." },
+          { question: "What is the Field of Reeds?", answer: "Aaru, the Egyptian afterlife — an idealised version of Egypt itself, with fields, a river and family, rather than a spiritual paradise." },
+          { question: "Is the Book of the Dead a religious book?", answer: "No. It is a collection of spells copied onto papyrus and buried with the dead, functioning as a practical guide to navigating the afterlife. Selections varied from person to person." },
+          { question: "What happened if you failed the judgement?", answer: "Not punishment but annihilation — the second death. The heart was eaten and the person ceased to exist, which is what the entire funerary apparatus was designed to prevent." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "The tools, the theory, and the timescale are completely different. The refusal underneath them — that decline and death don't simply have to be accepted as they come — is the same one driving a 2026 biotech lab and a 3,500-year-old embalmer's workshop alike."
-      ),
-    ],
-  },
-
-  {
-    status: "published",
-    featured: false,
-    slug: "brain-computer-interface-2026-egypt-discarded-brain",
-    title: "Neuralink Is Reading Signals Straight From the Brain in 2026. Ancient Egypt Threw the Brain Away.",
-    category: "Tech & AI",
-    tags: ["Brain-Computer Interface", "Neuralink", "Mummification", "Ancient Egypt Medicine"],
-    author: editorialTeam,
-    excerpt:
-      "Roughly 21 people across four countries are living with Neuralink implants in 2026, controlling cursors and games by thought alone. Ancient Egyptian embalmers, by contrast, considered the brain worthless — and threw it away.",
-    imageTone: "luxor",
-    image: "https://images.unsplash.com/photo-1718647405578-122282c93919?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-    publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "brain-computer interface 2026",
-    secondaryKeywords: ["Neuralink 2026", "PRIME study participants", "ancient Egypt mummification brain", "canopic jars"],
-    seoTitle: "Brain-Computer Interfaces in 2026, and Ancient Egypt's Opposite Verdict",
-    seoDescription:
-      "Roughly 21 people are living with Neuralink implants in 2026, controlling devices by thought. Ancient Egyptian embalmers considered the brain the one organ not worth preserving — and threw it away during mummification.",
-    body: [
-      p(
-        "Brain-computer interfaces reached a genuine, if still early, human-trial milestone in 2026. Roughly 21 participants across the US, UK, Canada, and UAE are living with Neuralink implants through the company's PRIME study, using them to control a cursor, play games, and browse the web by thought alone. High-volume production of the implant itself is underway in 2026, alongside moves toward more automated surgical placement — though no BCI device is yet commercially available to the public."
-      ),
-      h2("Where Brain-Computer Interfaces Actually Stand in 2026"),
-      ...bullets([
-        "Approximately 21 participants are living with Neuralink implants across four countries as part of ongoing clinical trials",
-        "Participants have demonstrated cursor control, gameplay, and web browsing controlled entirely by neural signals",
-        "High-volume implant production and steps toward more automated surgical implantation are underway, though commercial availability remains a future milestone",
-      ]),
-      callout(
-        "Every serious BCI program in 2026 is built on the same starting premise: the brain is the single most information-rich organ in the human body, and reading its signals directly is worth genuinely invasive surgery to achieve.",
-        { title: "The Premise Behind the Surgery", tone: "Info" }
-      ),
-      h2("Ancient Egypt Didn't Think the Brain Was Worth Keeping"),
-      p(
-        "During mummification, Egyptian embalmers carefully preserved the organs believed essential to a person's identity and continued existence in the afterlife — the heart above all, considered the actual seat of intelligence, emotion, and moral judgment, and the organ literally weighed against the feather of Ma'at in the Book of the Dead's judgment scene. The brain, by contrast, was considered functionally unimportant. It was removed and discarded, typically by inserting a hooked instrument through the nostril to break through the ethmoid bone and pull the tissue out in pieces — a genuinely well-documented embalming step, attested across multiple studied mummies."
-      ),
-      h2("The Same Organ, a Completely Reversed Verdict"),
-      p(
-        "It's about as sharp a historical contrast as exists for 2026's BCI technology: a civilization that built one of history's most sophisticated body-preservation industries around the specific, confident belief that the brain was the one organ not worth keeping, set against a modern technology built entirely around treating the brain as the single most valuable organ in the body — worth surgically wiring directly into. Same organ, completely opposite verdict, roughly three and a half thousand years apart."
-      ),
-      faq(
-        [
-          {
-            question: "How many people have Neuralink implants in 2026?",
-            answer:
-              "Roughly 21 participants across the US, UK, Canada, and UAE are living with Neuralink implants as part of the ongoing PRIME study, using them to control cursors, play games, and browse the web by thought.",
-          },
-          {
-            question: "Why did ancient Egyptians remove the brain during mummification?",
-            answer:
-              "They didn't consider it important to a person's identity or afterlife — that role was assigned to the heart, which was carefully preserved and weighed in the Book of the Dead's judgment scene. The brain was typically removed through the nose with a hooked instrument and discarded.",
-          },
-          {
-            question: "Is a brain-computer interface commercially available in 2026?",
-            answer:
-              "No — as of 2026, Neuralink and similar BCI technologies remain in clinical trials with a limited number of participants; no BCI device is yet commercially available to the general public.",
-          },
-        ],
-        "Frequently Asked Questions"
-      ),
-      p(
-        "The organ hasn't changed in three and a half thousand years. What's changed completely is the verdict on whether it's worth keeping — and, in 2026, worth wiring directly into."
-      ),
-    ],
-  },
-
-  {
-    status: "published",
-    featured: false,
-    slug: "gene-editing-2026-tutankhamun-dna-family-tree",
-    title: "Gene Editing Reached New Precision in 2026. We Already Know Exactly How Egypt's Royal Bloodline Was Engineered.",
-    category: "Science & Space",
-    tags: ["Gene Editing", "CRISPR", "Tutankhamun DNA", "Ancient Egypt Genetics"],
-    author: editorialTeam,
-    excerpt:
-      "CRISPR reached new precision in 2026, correcting single disease-causing mutations directly. A 2010 genetic study already mapped, with striking precision, how Egypt's royal family tried to engineer its own bloodline — and what it cost them.",
-    imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1757927325206-ca6f2d8a208b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-    publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-02-01",
-    primaryKeyword: "gene editing 2026",
-    secondaryKeywords: ["CRISPR 2026 approved therapies", "Tutankhamun DNA study", "ancient Egypt royal genetics", "base editing 2026"],
-    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour"),
-    seoTitle: "Gene Editing in 2026, and What We Already Know About Egypt's Royal DNA",
-    seoDescription:
-      "CRISPR reached new precision in 2026, correcting single mutations directly. A 2010 JAMA study already mapped how Egypt's royal family engineered its bloodline through marriage — and the genetic cost it carried.",
-    body: [
-      p(
-        "Gene editing crossed further into real, precise medical practice in 2026. Two CRISPR therapies are FDA-approved: Casgevy, for sickle cell disease and beta-thalassemia, and EDIT-101, for a form of inherited blindness. Late-stage trials are underway for hereditary angioedema, familial hypercholesterolemia, Huntington's disease, and Duchenne muscular dystrophy, and in 2025 clinicians developed a bespoke base-editing therapy for an infant with a rare genetic disease in just six months — directly correcting the specific mutation causing his condition, rather than simply disabling the affected gene."
-      ),
-      h2("Where Gene Editing Actually Stands in 2026"),
-      ...bullets([
-        "Two CRISPR therapies, Casgevy and EDIT-101, are FDA-approved and treating patients",
-        "Late-stage trials are progressing for hereditary angioedema, familial hypercholesterolemia, Huntington's disease, Duchenne muscular dystrophy, and CAR-T cancer treatments",
-        "A 2025 case demonstrated a bespoke, patient-specific base-editing therapy developed and delivered in six months — direct mutation correction rather than gene disruption",
-        "Delivery breakthroughs are shrinking the editing proteins involved, expanding treatment beyond cells modified outside the body",
-      ]),
-      callout(
-        "The defining shift in 2026's gene editing isn't that it exists — CRISPR therapies have been approved since 2023. It's the precision: correcting one specific harmful mutation directly, for one specific patient, rather than broadly disabling a gene and hoping for the best.",
-        { title: "The Real 2026 Milestone: Precision, Not Novelty", tone: "Info" }
-      ),
-      h2("We Already Know, Precisely, How Egypt's Royal Bloodline Was Engineered"),
-      p(
-        "A landmark 2010 study published in JAMA used genetic fingerprinting on eleven New Kingdom royal mummies to construct a five-generation family tree of Tutankhamun's immediate lineage. It confirmed that Tutankhamun's parents were full siblings, both children of Pharaoh Amenhotep III and Queen Tiye — a deliberate outcome of the royal practice of sibling marriage, aimed at preserving what was considered a pure, semi-divine bloodline. The same study found evidence of malaria infection and a painful bone disorder in Tutankhamun's foot, findings researchers connected to his death at a young age, and which plausibly compounded the health risks that come with a heavily inbred lineage."
-      ),
-      h2("A Very Different Kind of Genetic Intervention"),
-      p(
-        "It's a genuinely useful, very literal before-and-after. Ancient Egypt's royal family manipulated heredity through marriage choices, trying to engineer a specific desired outcome — a bloodline kept \"pure\" — with severe, measurable, unintended genetic costs across generations. That's precisely the kind of consequence 2026's precision gene editing exists specifically to avoid: correcting one harmful mutation directly in one patient, rather than gambling an entire family line on a marriage pattern and living with whatever genetic fallout resulted. And modern DNA sequencing of a 3,300-year-old royal mummy is itself, quietly, a genuinely cutting-edge application of the same broader genetic science now making 2026's therapies possible."
-      ),
-      faq(
-        [
-          {
-            question: "What CRISPR gene therapies are FDA-approved in 2026?",
-            answer:
-              "Two: Casgevy, approved for sickle cell disease and beta-thalassemia, and EDIT-101, approved for a form of inherited blindness (Leber congenital amaurosis type 10). Several other therapies are in late-stage trials.",
-          },
-          {
-            question: "What did the 2010 Tutankhamun DNA study find?",
-            answer:
-              "Published in JAMA, it used genetic fingerprinting on eleven royal mummies to build a five-generation family tree, confirming Tutankhamun's parents were full siblings and identifying evidence of malaria and a bone disorder that likely contributed to his early death.",
-          },
-          {
-            question: "Why did Egypt's royal family practice sibling marriage?",
-            answer:
-              "To preserve what was considered a pure, semi-divine royal bloodline — a deliberate genetic strategy that, as confirmed by modern DNA analysis, carried measurable health costs across generations of the royal family.",
-          },
-        ],
-        "Frequently Asked Questions"
-      ),
-      p(
-        "The crudest possible version of controlling heredity — deciding who marries whom — sits right next to the most precise version yet attempted: editing one gene, in one patient, directly. Egypt's royal mummies, sequenced by modern science, quietly show us both."
+        "It is a system built by people who liked their lives and wanted them to continue. Every tomb you walk into was a bet that the arrangements would hold."
       ),
       cta({
-        title: "Meet the Family in the Data",
-        body: "Tutankhamun's treasures, and the royal lineage modern genetics has mapped in remarkable detail — on display in Cairo.",
-        buttonLabel: "See the Egyptian Museum Tour",
-        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
+        title: "Read the Walls Yourself",
+        body: "The Valley of the Kings and the West Bank tombs, with a guide who translates the scenes rather than just naming them.",
+        buttonLabel: "See the West Bank tour",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
+      }),
+    ],
+  },
+
+  {
+    status: "published",
+    featured: false,
+    slug: "how-mummification-worked",
+    title: "Mummification, Step by Step — and Why the Brain Was Thrown Away",
+    category: "History & Culture",
+    tags: ["Mummification", "Canopic Jars", "Natron", "Ancient Egypt", "Burial"],
+    author: editorialTeam,
+    excerpt:
+      "Seventy days, a great deal of natron, and a set of decisions about which parts of a person mattered. The Egyptians kept the liver, lungs, stomach and intestines. They discarded the brain.",
+    imageTone: "desert",
+    image: "https://images.unsplash.com/photo-1608817576203-3c27ed168bd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    publishedAt: "2026-09-08T09:00:00+02:00",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "how mummification worked",
+    secondaryKeywords: ["Egyptian mummification process", "canopic jars", "why did Egyptians remove the brain", "natron mummification"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "luxor-museum-mummification-museum-tour"),
+    seoTitle: "How Egyptian Mummification Actually Worked",
+    seoDescription:
+      "The seventy-day process, what natron did, which organs went into canopic jars, why the heart stayed and the brain did not — and where to see the evidence in Egypt.",
+    body: [
+      p(
+        "Mummification was not a mystical rite performed in secret. It was a trade, with price tiers, a standard timetable and a workshop, and it ran in Egypt for well over three thousand years. What it preserved, and what it threw out, tells you exactly what the Egyptians thought a person was made of."
+      ),
+      h2("Why Preserve the Body at All"),
+      p(
+        "Egyptian belief held that a person was several things at once: the body, the ka or life force, the ba — roughly the personality, shown as a bird with a human head — and the akh, the transfigured being that survives. The ba travelled by day and returned to the body at night. If the body was gone, it had nothing to return to. Preservation was not sentiment; it was the physical requirement for continued existence."
+      ),
+      h2("The Process"),
+      ...bullets([
+        "The brain was removed first, usually through the nose using a hooked instrument, and discarded",
+        "An incision in the left side of the abdomen allowed the lungs, liver, stomach and intestines to be taken out, dried separately and placed in four canopic jars",
+        "The heart was left in the body — it was the seat of intelligence, memory and character, and would be needed at judgement",
+        "The body cavity was cleaned, packed and covered in natron, a naturally occurring salt from Wadi Natrun that draws out moisture; this stage took around forty days",
+        "The dried body was oiled, resinated, padded to restore its shape, and wrapped in linen with amulets set between the layers",
+        "The whole sequence conventionally took seventy days from death to burial",
+      ]),
+      callout(
+        "Canopic jars have four lids because the organs were placed under the protection of the four sons of Horus: Imsety guarded the liver, Hapy the lungs, Duamutef the stomach and Qebehsenuef the intestines. It is the earliest system of labelled organ storage anyone devised.",
+        { title: "Why Four Jars", tone: "Info" }
+      ),
+      h2("The Brain"),
+      p(
+        "The organ modern readers find hardest to explain away is the one the Egyptians simply removed and did not keep. There is no jar for it, no protective deity, no spell for its preservation. The heart, by contrast, is everywhere in the funerary literature — weighed against the feather of Maat, protected by amulets, addressed directly in spells warning it not to testify against its owner."
+      ),
+      p(
+        "The Egyptians located thought, memory, emotion and moral character in the heart. On that model the brain was packing material, and there was no more reason to keep it than the fluid drained from the body cavity. They were wrong about the anatomy and entirely consistent about the theology."
+      ),
+      h2("Not Everyone Got the Same Treatment"),
+      p(
+        "Herodotus, writing in the fifth century BC, describes three grades of service at very different prices — the full procedure for those who could afford it, a cheaper version using injected oils to dissolve the organs in place, and a basic cleansing and drying for the poor. The archaeological record broadly supports the existence of tiers. Most Egyptians were never mummified at all."
+      ),
+      faq(
+        [
+          { question: "How long did mummification take?", answer: "Conventionally seventy days from death to burial, with around forty of those spent drying the body in natron." },
+          { question: "Why did Egyptians remove the brain?", answer: "They believed thought, memory and character resided in the heart. The brain had no role in that model, so it was extracted — usually through the nose — and discarded rather than preserved." },
+          { question: "What went in canopic jars?", answer: "The lungs, liver, stomach and intestines, each under the protection of one of the four sons of Horus. The heart stayed in the body." },
+          { question: "What is natron?", answer: "A naturally occurring mixture of sodium salts, collected from places such as Wadi Natrun, used to draw moisture out of the body. It was the essential preservative in the process." },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Everything about the process points at one conclusion: they were not preserving a corpse, they were maintaining an address. The body had to remain recognisable so that the parts of the person still in motion could find their way back to it."
+      ),
+      cta({
+        title: "See the Real Thing",
+        body: "The Mummification Museum in Luxor and the Cairo collections hold the tools, the jars and the results.",
+        buttonLabel: "See the Luxor museums tour",
+        buttonHref: "/tours/luxor-museum-mummification-museum-tour",
+      }),
+    ],
+  },
+
+  {
+    status: "published",
+    featured: false,
+    slug: "tutankhamun-dna-family-tree",
+    title: "What Tutankhamun's DNA Revealed About His Family — and His Death",
+    category: "History & Culture",
+    tags: ["Tutankhamun", "Akhenaten", "Valley of the Kings", "Egyptian Museum", "Archaeology"],
+    author: editorialTeam,
+    excerpt:
+      "A 2010 genetic study put names to the mummies around Tutankhamun, identified his likely parents, and found malaria in his bloodstream. It also started an argument that has not finished.",
+    imageTone: "giza",
+    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    publishedAt: "2026-09-08T09:00:00+02:00",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "Tutankhamun DNA",
+    secondaryKeywords: ["Tutankhamun family tree", "who were Tutankhamun's parents", "how did Tutankhamun die", "Tutankhamun mummy study"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "luxor-west-bank-day-tour"),
+    seoTitle: "Tutankhamun's DNA: His Parents, His Health, His Death",
+    seoDescription:
+      "The 2010 study that tested Tutankhamun and ten related mummies — what it concluded about his parentage, his club foot and the malaria in his system, and what Egyptologists still dispute.",
+    body: [
+      p(
+        "Tutankhamun was a minor king who died young and would be a footnote if his tomb had been robbed like all the others. Because it was not, he is the most examined human being from the ancient world — and in 2010 a team led by Zahi Hawass published the results of testing his mummy and ten others for DNA and disease. It is still the most consequential thing anyone has done with an Egyptian mummy."
+      ),
+      h2("What the Study Found"),
+      ...bullets([
+        "The mummy from tomb KV55 was identified as Tutankhamun's father — most likely Akhenaten, the king who moved Egypt's religion to a single sun god",
+        "A mummy known as the Younger Lady, from a cache in KV35, was identified as his mother — and as a full sister of his father",
+        "Tutankhamun had a badly deformed left foot, along with bone tissue that had died from lack of blood supply, which explains the walking sticks buried with him",
+        "DNA from Plasmodium falciparum, the parasite that causes the most dangerous form of malaria, was present in his body",
+        "The two mummified foetuses found in his tomb were confirmed as his daughters",
+      ]),
+      p(
+        "The picture that emerges is not the golden boy king of the exhibition posters. It is a teenager who could not walk unaided, from a family that had been marrying within itself for generations, carrying a serious infection when he died at around nineteen."
+      ),
+      callout(
+        "The walking sticks in the tomb had been read for decades as symbols of authority. The scan and the DNA together suggest a far more ordinary explanation: he needed them.",
+        { title: "The Sticks Were Not Ceremonial", tone: "Info" }
+      ),
+      h2("What Is Still Argued About"),
+      p(
+        "Ancient DNA is difficult, and Egyptian mummies are among the hardest material to work with — heat, natron and three thousand years degrade genetic material badly, and modern contamination is a constant risk. Several specialists have questioned whether the sequences were robust enough to support the family identifications, and whether the KV55 mummy is Akhenaten at all rather than another royal male of the period."
+      ),
+      p(
+        "The malaria finding has been challenged on similar grounds, and the cause of death remains open: a leg fracture shortly before death, an inherited disorder, the infection, or some combination. What is not seriously disputed any more is the older theory that he was murdered by a blow to the head — the damage behind the skull is now generally attributed to the embalming process and to Howard Carter's team removing the mummy from its resin-fused coffin."
+      ),
+      h2("Where to See the Evidence"),
+      ...bullets([
+        "Tutankhamun's own mummy remains in his tomb, KV62, in the Valley of the Kings — the only king still lying where he was buried",
+        "The tomb goods, including the walking sticks and the golden mask, are the centrepiece of the Grand Egyptian Museum collection",
+        "The royal mummies from the KV35 cache, including the Younger Lady, are displayed in Cairo",
+      ]),
+      faq(
+        [
+          { question: "Who were Tutankhamun's parents?", answer: "The 2010 study identified the KV55 mummy as his father, most likely Akhenaten, and the Younger Lady from the KV35 cache as his mother — who was also a full sister of his father. Both identifications remain debated among specialists." },
+          { question: "How did Tutankhamun die?", answer: "There is no settled answer. The 2010 study found malaria parasites and severe bone disease in his foot, and a leg fracture shortly before death has been proposed as a contributing factor. The old murder theory is no longer widely held." },
+          { question: "Did Tutankhamun have a club foot?", answer: "Yes. Imaging showed a deformed left foot with bone tissue that had died from lack of blood supply, consistent with the 130 walking sticks buried with him." },
+          { question: "Can you see Tutankhamun's mummy?", answer: "Yes — it remains in tomb KV62 in the Valley of the Kings, the only pharaoh still in his own burial chamber. His grave goods are displayed in Cairo." },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Nothing else in Egyptology gives you a person this precisely: parentage, illnesses, the shape of a foot, the parasite in the blood. It is also a reminder of how little we know about everyone else."
+      ),
+      cta({
+        title: "See the Tomb and the Treasures",
+        body: "The Valley of the Kings and the Cairo collections, on a private itinerary that gives both the time they need.",
+        buttonLabel: "See Luxor West Bank tours",
+        buttonHref: "/tours/luxor-west-bank-day-tour",
       }),
     ],
   },

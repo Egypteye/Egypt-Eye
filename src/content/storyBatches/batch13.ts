@@ -21,70 +21,74 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "space-exploration-2026-egypt-ancient-astronomy",
-    title: "Space Exploration Keeps Pushing Outward in 2026. Egypt Was Mapping the Sky 3,500 Years Before Anyone Left It.",
-    category: "Science & Space",
-    tags: ["Space Exploration", "Artemis II", "Ancient Egyptian Astronomy", "Senenmut", "Star Charts"],
+    slug: "ancient-egyptian-astronomy",
+    title: "How the Egyptians Read the Sky, and Built Temples to Match It",
+    category: "History & Culture",
+    tags: ["Astronomy", "Sirius", "Dendera", "Calendar", "Temples"],
     author: editorialTeam,
     excerpt:
-      "Artemis II carried four astronauts around the Moon in April 2026, part of a genuinely active year for space exploration. Egypt was systematically observing, recording, and building around the stars roughly 3,500 years before anyone left the ground.",
-    imageTone: "luxor",
-    image: "https://images.unsplash.com/photo-1729335511904-9b8690184935?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "A 365-day calendar, a clock made of stars painted inside coffin lids, and a new year announced by one star rising just before dawn. Egyptian astronomy was practical before it was anything else.",
+    imageTone: "nile",
+    image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "space exploration 2026",
-    secondaryKeywords: ["Artemis II 2026", "ancient Egyptian astronomy", "Senenmut star ceiling", "pyramid stellar alignment"],
-    seoTitle: "Space Exploration in 2026, and Egypt's 3,500-Year-Old Sky Maps",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "ancient Egyptian astronomy",
+    secondaryKeywords: ["Egyptian calendar", "Sirius heliacal rising Egypt", "Dendera zodiac", "Egyptian star clocks"],
+    relatedTours: toursBySlug("dendera-abydos-day-tour", "luxor-east-bank-day-tour"),
+    seoTitle: "Ancient Egyptian Astronomy: Calendar, Stars and Temples",
     seoDescription:
-      "Artemis II flew four astronauts around the Moon in April 2026. Egypt's own astronomical tradition — star ceilings, calendar-defining observations, and star-aligned monuments — predates spaceflight by roughly 3,500 years.",
+      "The 365-day civil calendar, the decan star clocks on coffin lids, the heliacal rising of Sirius that announced the flood, and the Dendera zodiac — Egyptian sky-watching, explained.",
     body: [
       p(
-        "Space exploration had a genuinely active year in 2026. Artemis II carried four astronauts around the Moon in April, the first crewed lunar mission in over half a century, a major milestone on the path back toward the lunar surface. Commercial landers, expanding satellite constellations, and new space telescopes have kept 2026 a busy year for humanity's outward reach — even as the more ambitious goals, crewed lunar landings and eventual Mars missions, keep sliding a bit further down the calendar."
+        "Egyptian astronomy was not stargazing. It was scheduling. A civilisation whose entire agricultural economy depended on a river that flooded once a year needed to know when — and the sky was the only reliable notice board available."
       ),
-      h2("A Genuinely Active Year in Orbit and Beyond"),
+      h2("The Star That Started the Year"),
+      p(
+        "Sirius, which the Egyptians called Sopdet, spends part of each year lost in the sun's glare. Its heliacal rising — the first morning it becomes visible again just before dawn — fell close to the beginning of the Nile inundation. That coincidence made it the most important astronomical event in the Egyptian year, and the anchor for the calendar."
+      ),
+      h2("A Calendar That Drifted on Purpose"),
       ...bullets([
-        "Artemis II flew four astronauts on a crewed lunar flyby in April 2026, the first crewed mission beyond low Earth orbit in decades",
-        "Commercial lunar landers and expanding satellite mega-constellations continued reshaping how routinely humanity operates beyond Earth's atmosphere",
-        "New space telescopes and observation platforms kept extending how much of the sky can be systematically surveyed and recorded",
+        "Twelve months of thirty days, divided into three seasons of four months each — inundation, emergence and harvest",
+        "Five additional days at the end, the epagomenal days, on which five gods were held to have been born",
+        "That gives 365 days with no leap day, so the civil calendar slipped against the solar year by roughly a day every four years",
+        "Over about 1,460 years it drifts all the way round and returns — a cycle Egyptologists still use to help date events",
       ]),
+      p(
+        "The Egyptians were fully aware of the slippage. They simply ran a fixed administrative calendar alongside observation of the sky, which is a solution any accountant would recognise."
+      ),
+      h2("Clocks Made of Stars"),
+      p(
+        "The night was divided using decans: thirty-six star groups that rise in succession through the year, each marking an hour of darkness as it appears. Tables of them were painted on the inside of Middle Kingdom coffin lids — diagonal star clocks, so the dead could keep track of the hours. Priests used sighting instruments, the merkhet and a slotted palm rib, to line up on stars for temple observations and orientation."
+      ),
       callout(
-        "Every major space program in 2026 shares one unglamorous foundation: systematic, sustained observation of the sky, recorded carefully enough that a civilization can plan its biggest projects around what it sees. That foundation is a lot older than rocketry.",
-        { title: "The Unglamorous Foundation Under Every Launch", tone: "Info" }
+        "The Dendera zodiac, from the ceiling of a chapel at the temple of Hathor, is the most famous Egyptian sky map — and it is late, from the Ptolemaic or Roman period, mixing Egyptian decans with Babylonian and Greek zodiac signs. What you see at Dendera today is a cast; the original was removed to France in 1821 and is in the Louvre.",
+        { title: "About the Dendera Zodiac", tone: "Info" }
       ),
-      h2("Egypt Was Already Mapping the Sky, 3,500 Years Before Liftoff"),
+      h2("Buildings Pointed at the Sky"),
       p(
-        "The tomb of Senenmut, steward to Hatshepsut, contains one of the oldest known astronomical ceilings in human history, dating to around 1473 BC. It depicts constellations, decan stars, and a lunar calendar system that Egyptian astronomers used to track time — a genuinely systematic star chart, painted onto stone roughly three and a half millennia before anyone could act on what it recorded by actually leaving the ground."
+        "Temple foundation rituals included an act called the stretching of the cord, in which the king and a priestess laid out the ground plan using sightings taken on the stars. The results are visible: the Great Pyramid is aligned to true north with an accuracy that still impresses surveyors, and the axis at Abu Simbel was set so that sunlight reaches the sanctuary twice a year."
       ),
       p(
-        "That observational tradition wasn't decorative — it was load-bearing for the entire civilization. The heliacal rising of Sirius (Sothis), observed and recorded with enough precision to predict, marked the start of the Egyptian year and reliably signaled the coming Nile flood the whole economy depended on. And Egypt's monumental architecture was built around the same observational discipline: the Great Pyramid's precise alignment to true north, and the narrow shafts within it theorized by some Egyptologists to target specific stars including Orion's Belt and Sirius, reflect generations of careful, repeated stellar observation translated directly into stone."
-      ),
-      h2("Same Impulse, Radically Different Reach"),
-      p(
-        "Watching the sky, recording what's observed with real precision, and building a civilization's biggest projects around those observations is not a modern invention. Egypt organized its calendar, its religion, and its most monumental architecture around exactly that impulse, thousands of years before anyone could turn the observation into a trip. The instruments have changed beyond recognition. The underlying discipline — look carefully, record precisely, build around what you find — hasn't."
+        "Karnak's main axis, and the way the sun behaves along it around the winter solstice, has generated a large and occasionally overheated literature. Treat confident claims about precise stellar alignments carefully — some are well evidenced, many are not — but the basic point holds: these buildings were laid out by people watching the sky."
       ),
       faq(
         [
-          {
-            question: "What happened with Artemis II in 2026?",
-            answer:
-              "Artemis II carried four astronauts on a crewed flyby of the Moon in April 2026, the first crewed mission beyond low Earth orbit in over half a century, and a major milestone on NASA's path toward a future crewed lunar landing.",
-          },
-          {
-            question: "What is the Senenmut star ceiling?",
-            answer:
-              "An astronomical ceiling in the tomb of Senenmut, steward to Pharaoh Hatshepsut, dating to around 1473 BC. It's one of the oldest known star charts in human history, depicting constellations, decan stars, and a lunar calendar system.",
-          },
-          {
-            question: "How did ancient Egyptians use astronomy practically?",
-            answer:
-              "They tracked the heliacal rising of the star Sirius (Sothis) to predict the annual Nile flood and mark the start of their calendar year, and aligned major monuments like the Great Pyramid to true north and, by some theories, to specific stars using sustained stellar observation.",
-          },
+          { question: "How many days were in the ancient Egyptian calendar?", answer: "365 — twelve months of thirty days across three seasons, plus five epagomenal days at the year's end. With no leap day, it drifted against the solar year by about a day every four years." },
+          { question: "Why was Sirius important to the Egyptians?", answer: "Its heliacal rising, the first dawn appearance after weeks of invisibility, fell close to the start of the Nile flood, making it the key marker of the new year." },
+          { question: "What are decans?", answer: "Thirty-six star groups that rise in sequence through the year. The Egyptians used them to divide the night into hours, and painted tables of them inside coffin lids as star clocks." },
+          { question: "Is the Dendera zodiac ancient Egyptian?", answer: "It is from the Ptolemaic or Roman period and blends Egyptian decans with Babylonian and Greek zodiac signs. The original is in the Louvre; a cast is displayed at Dendera." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "Every rocket launched in 2026 depends, ultimately, on the same discipline a Theban tomb ceiling was already demonstrating three and a half thousand years ago: look up, record what's there, and build accordingly."
+        "They were not looking for meaning in the stars so much as a date. That they got a working calendar, a night clock and buildings aligned to true north out of it is what makes the achievement worth the detour to Dendera."
       ),
+      cta({
+        title: "See the Ceiling at Dendera",
+        body: "One of the best-preserved painted ceilings in Egypt, on a day trip most Nile itineraries leave out.",
+        buttonLabel: "See the Dendera tour",
+        buttonHref: "/tours/dendera-abydos-day-tour",
+      }),
     ],
   },
 
@@ -256,70 +260,73 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "functional-drinks-2026-egypt-medicinal-beer",
-    title: "Functional Beverages Are a Booming 2026 Wellness Category. Egypt Was Prescribing Medicinal Drinks 3,500 Years Ago.",
-    category: "Wellness & Longevity",
-    tags: ["Functional Beverages", "Wellness Drinks", "Ancient Egyptian Beer", "Ebers Papyrus"],
+    slug: "ancient-egyptian-beer",
+    title: "Ancient Egyptian Beer: Daily Wage, Daily Bread, and Medicine",
+    category: "History & Culture",
+    tags: ["Beer", "Food and Drink", "Daily Life", "Hierakonpolis", "Ancient Egypt"],
     author: editorialTeam,
     excerpt:
-      "The US functional beverage market is projected to reach $67–70 billion in 2026, led by prebiotic sodas and adaptogenic drinks. Ancient Egyptian medicine was formulating its own version of a functional drink — beer mixed with specific herbs, prescribed for specific ailments — 3,500 years earlier.",
+      "Beer was not a treat in ancient Egypt. It was payment, nutrition, offering and the base for a large part of the medical pharmacopoeia — and it was being brewed at industrial scale before the pyramids.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1722684526676-aee4b65b0af7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-01-01",
-    primaryKeyword: "functional beverages 2026",
-    secondaryKeywords: ["prebiotic soda 2026", "functional beverage market", "ancient Egyptian beer medicine", "Ebers Papyrus remedies"],
-    seoTitle: "Functional Beverages in 2026, and Egypt's 3,500-Year-Old Medicinal Beer",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "ancient Egyptian beer",
+    secondaryKeywords: ["Egyptian brewing history", "beer as wages Egypt", "Ebers Papyrus remedies", "ancient Egyptian food"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "islamic-coptic-cairo-walking-tour"),
+    seoTitle: "Ancient Egyptian Beer: Wages, Nutrition and Medicine",
     seoDescription:
-      "The US functional beverage market is projected to reach $67–70 billion in 2026. Ancient Egyptian medicine was prescribing beer mixed with specific herbs for specific ailments roughly 3,500 years before the category had a name.",
+      "How Egyptians brewed, why beer was paid as wages, what the medical papyri prescribed it for, and what excavated breweries reveal about the scale of production.",
     body: [
       p(
-        "\"Functional beverages\" — drinks formulated to do more than quench thirst — became one of 2026's clearer wellness growth categories. The US functional beverage market is projected to reach $67–70 billion this year, growing at a 7–9% compound annual rate, as the category shifts from general wellness marketing toward drinks formulated for specific, targeted outcomes."
+        "Every account of ancient Egyptian daily life mentions that workers were paid in bread and beer, and most leave it there as a curiosity. It is worth taking literally. Beer was a staple food, a unit of payment, a temple offering and the standard vehicle for medicine — and the state organised its production accordingly."
       ),
-      h2("What's Actually Driving 2026's Functional Drink Boom"),
+      h2("Brewing at Scale, Very Early"),
+      p(
+        "Excavations at Hierakonpolis in Upper Egypt uncovered installations for brewing on a scale well beyond a household, dating to the Predynastic period — several centuries before the first pyramid. Vats capable of producing hundreds of litres at a time indicate organised production for a workforce or an institution, right at the point Egypt was becoming a unified state."
+      ),
+      h2("What It Was Actually Like"),
       ...bullets([
-        "\"Brain fuel\" nootropic drinks, built around ingredients like ashwagandha, rhodiola, and ginseng, are increasingly replacing plain caffeine for mental clarity and stress relief",
-        "Prebiotic and probiotic sodas — led by brands like Olipop and Poppi — are the fastest-growing category, positioned as a healthier alternative to traditional soft drinks; PepsiCo launched its first prebiotic cola in July 2026",
-        "The \"sober curious\" movement is driving demand for adaptogenic, alcohol-free relaxation beverages",
+        "Thick, cloudy and low in alcohol by modern standards — closer to a soupy grain drink than to anything on a modern bar",
+        "Nutritious enough to be a genuine part of the diet rather than an indulgence, which is the key to understanding it as a wage",
+        "Made from emmer wheat and barley; the long-standing textbook account has lightly baked bread crumbled into water to ferment, though excavated evidence increasingly points to direct malting and mashing",
+        "Strained before drinking, or drunk through a filter, because of the suspended grain",
+        "Brewed largely by women in domestic contexts and by organised labour in institutional ones",
       ]),
+      h2("Beer as Payment"),
+      p(
+        "Ration lists from work sites record daily allocations of bread and beer by rank. This is not a metaphor for wages: grain and its products were the currency in which labour was compensated, and the Deir el-Medina strike under Ramesses III happened because those rations arrived late. When the beer stopped, work stopped."
+      ),
       callout(
-        "The defining shift in 2026's functional beverage market isn't that people are drinking something \"healthy\" — it's that drinks are increasingly formulated for a specific, targeted physiological outcome (gut health, cognitive clarity, stress relief) rather than marketed around vague wellness language.",
-        { title: "From General Wellness to Targeted Formulation", tone: "Info" }
+        "The Ebers Papyrus and other medical texts prescribe beer constantly — as the liquid in which remedies were mixed and taken. Its role there is closest to a syrup base: the delivery mechanism for whatever the physician was actually administering.",
+        { title: "Beer in the Medical Papyri", tone: "Info" }
       ),
-      h2("Egypt Was Formulating Its Own Version 3,500 Years Ago"),
+      h2("A Genuinely Odd Finding"),
       p(
-        "Beer was a genuine dietary staple in ancient Egypt — nutrient-dense, calorically significant, and, importantly, safer to drink than untreated river water. But Egyptian medicine went well beyond treating beer as simple nourishment. The Ebers Papyrus, dating to around 1550 BC, records specific medicinal formulations built on a beer base — beer mixed with particular herbs and other ingredients, prescribed for specific ailments, in specific combinations, by practitioners working from an established body of documented remedies."
+        "One frequently cited study identified tetracycline — an antibiotic — in human bone from a population in Nubia dating to roughly the fourth to sixth centuries AD, and argued it entered the diet through grain contaminated with a soil bacterium, most plausibly via beer. It is a striking result, and worth stating precisely: it concerns Nubia in the Roman and post-Roman period, not pharaonic Egypt, and the argument is contested. It is not evidence that Egyptians brewed antibiotics on purpose."
       ),
+      h2("Where to See the Evidence"),
       p(
-        "That's a genuinely direct precedent for what a 2026 functional beverage actually is: not a drink consumed purely for pleasure or basic nourishment, but one formulated with a specific ingredient combination aimed at a specific physiological outcome, prescribed with intention rather than habit."
-      ),
-      h2("Same Formula, Completely Different Century"),
-      p(
-        "The specific ingredients have changed beyond recognition — ashwagandha and prebiotic fiber in place of whatever herbs an Egyptian physician had on hand — but the underlying idea that a drink can be deliberately formulated to do a specific job for the body, beyond simply tasting good, is not a 2026 invention. Egyptian medicine was already treating beverages as a delivery mechanism for targeted remedies three and a half thousand years before \"functional beverage\" became a marketing category with its own multi-billion-dollar market size."
+        "Museum collections hold brewing models — small wooden figures shown mashing, straining and pouring, placed in tombs so the work would continue in the afterlife. Tomb paintings show the whole sequence. Both are more informative than any object, because they record the process step by step for people who already knew how it went."
       ),
       faq(
         [
-          {
-            question: "How big is the functional beverage market in 2026?",
-            answer:
-              "The US functional beverage market is projected to reach $67–70 billion in 2026, growing at a 7–9% compound annual rate, driven by prebiotic sodas, nootropic \"brain fuel\" drinks, and adaptogenic relaxation beverages.",
-          },
-          {
-            question: "Did ancient Egyptians use beer medicinally?",
-            answer:
-              "Yes — the Ebers Papyrus, dating to around 1550 BC, records specific medicinal formulations combining beer with particular herbs, prescribed for specific ailments, representing a genuine precedent for the modern idea of a beverage formulated for a targeted physiological purpose.",
-          },
-          {
-            question: "What are the biggest functional beverage trends in 2026?",
-            answer:
-              "Prebiotic and probiotic sodas (led by brands like Olipop and Poppi, with PepsiCo entering the category in July 2026), nootropic \"brain fuel\" drinks built around adaptogens like ashwagandha and rhodiola, and alcohol-free adaptogenic relaxation beverages tied to the \"sober curious\" movement.",
-          },
+          { question: "Did ancient Egyptians drink beer every day?", answer: "Yes. It was a dietary staple across social levels, issued as part of daily rations at work sites and consumed by adults and children alike." },
+          { question: "Were Egyptian workers paid in beer?", answer: "Grain and its products, bread and beer, were the standard form of compensation. Ration lists record daily allocations by rank, and late rations caused the recorded strike at Deir el-Medina." },
+          { question: "What did ancient Egyptian beer taste like?", answer: "Thick and cloudy, low in alcohol, and closer to a grain-based food than a modern beer. It was strained or drunk through a filter because of suspended solids." },
+          { question: "Was Egyptian beer used as medicine?", answer: "It was the usual liquid base in which remedies were mixed and administered in texts such as the Ebers Papyrus — a vehicle for the active ingredients rather than the treatment itself." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A $70 billion market for drinks formulated to do a specific job for the body sounds like a distinctly 2026 idea. Egyptian medicine was already writing the formulas down 3,500 years before anyone thought to put them in a can."
+        "A society that paid its tomb-builders in beer, offered it to its gods and dissolved its medicines in it was not being indulgent. It had simply built its economy on the one thing the Nile reliably produced."
       ),
+      cta({
+        title: "See How Egypt Ate and Drank",
+        body: "Brewing models, granary scenes and the everyday objects of Egyptian life, in the Cairo collections.",
+        buttonLabel: "See the museum tour",
+        buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
+      }),
     ],
   },
 

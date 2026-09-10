@@ -315,76 +315,72 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "next-gen-gaming-2026-senet-oldest-board-game",
-    title: "Gaming in 2026 Runs on Cloud Servers and AI NPCs. The Original Game Console Was a Wooden Box in a Pharaoh's Tomb.",
-    category: "Culture & Trends",
-    tags: ["Gaming", "Cloud Gaming", "AI NPCs", "Senet", "Tutankhamun"],
+    slug: "senet-ancient-egyptian-board-game",
+    title: "Senet: The 5,000-Year-Old Board Game Found in Tutankhamun's Tomb",
+    category: "History & Culture",
+    tags: ["Senet", "Board Games", "Tutankhamun", "Daily Life", "Ancient Egypt"],
     author: editorialTeam,
     excerpt:
-      "Cloud gaming matured into an $8 billion market in 2026, and AI-driven NPCs are starting to improvise instead of reciting scripted lines. Senet, found among Tutankhamun's treasures, is one of the oldest known board games in human history — and it wasn't just entertainment.",
-    imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1767938072548-112727a13266?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+      "Thirty squares in three rows, played with casting sticks rather than dice, and buried with pharaohs — because by the New Kingdom, winning at senet had come to mean something about the afterlife.",
+    imageTone: "giza",
+    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-02-01",
-    primaryKeyword: "next-gen gaming 2026",
-    secondaryKeywords: ["cloud gaming 2026", "AI NPCs", "Senet ancient Egyptian game", "Tutankhamun tomb treasures"],
-    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour"),
-    seoTitle: "Gaming in 2026, and the 5,000-Year-Old Game From Tutankhamun's Tomb",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "senet game",
+    secondaryKeywords: ["oldest board game", "ancient Egyptian games", "senet rules", "Tutankhamun senet board"],
+    relatedTours: toursBySlug("egyptian-museum-coptic-cairo-tour", "luxor-west-bank-day-tour"),
+    seoTitle: "Senet: Ancient Egypt's Board Game, and How It Was Played",
     seoDescription:
-      "Cloud gaming and AI-driven NPCs defined gaming in 2026. Senet, found among Tutankhamun's treasures and played across ancient Egypt for millennia, is one of humanity's oldest continuous threads of structured play.",
+      "A thirty-square board played for around three thousand years, buried with Tutankhamun, and eventually understood as a journey through the afterlife. What survives, and what does not.",
     body: [
       p(
-        "Gaming in 2026 looks structurally different from even a few years earlier, though less because any single technology replaced everything else and more because several matured and started working together. Cloud gaming has grown from an estimated $2.4 billion market in 2022 to over $8 billion in 2025, letting players stream demanding games to almost any device without console-grade hardware — with Xbox and PlayStation folding cloud capability into their existing ecosystems rather than launching separate standalone platforms to replace them."
+        "Among the objects packed into Tutankhamun's tomb — the chariots, the shrines, the mask — were four game boards. Not symbols of games. Actual boards, with drawers for the pieces. The Egyptians thought a king would want something to play."
       ),
-      h2("Where Gaming Actually Stands in 2026"),
+      h2("The Board"),
       ...bullets([
-        "Cloud gaming has grown more than threefold since 2022, integrated into existing console ecosystems rather than replacing them",
-        "52% of game developers now work at companies that have implemented generative AI tools, with 36% of developers personally using them",
-        "AI-driven NPCs are being tested that respond dynamically to player input via large language models, instead of reciting pre-scripted dialogue",
-        "Adaptive difficulty — games that adjust their challenge in real time to an individual player's skill — is increasingly standard rather than experimental",
+        "Thirty squares, arranged in three rows of ten, played in a boustrophedon path that snakes back and forth",
+        "Two players, each with a set of pieces — commonly five a side, though sets vary",
+        "No dice. Movement was decided by throwing sticks flat on one side and rounded on the other, or by knucklebones, and counting how they landed",
+        "The last few squares are usually marked with signs, and are clearly special — the endgame turned on them",
       ]),
+      p(
+        "Boards survive in every material and at every quality, from inlaid ebony and ivory to squares scratched into a temple roof by bored workmen. It was played by everyone."
+      ),
+      h2("How Old"),
+      p(
+        "Depictions and boards go back to the Predynastic and Early Dynastic periods, which puts the game somewhere around five thousand years old and makes it one of the earliest board games known anywhere. It stayed in play for roughly three thousand years afterwards — a run no modern game has come close to."
+      ),
       callout(
-        "The clearest theme across 2026's gaming trends isn't any one breakthrough technology — it's combination. AI changes how games are built, cloud changes where they're played, and neither is replacing what came before so much as layering onto it.",
-        { title: "Combination, Not Replacement", tone: "Info" }
+        "Nobody knows the rules. No Egyptian text sets them out, because everybody already knew them. What we have are reconstructions built from board layouts, from the marked squares, and from scenes showing play in progress — plausible, playable, and unverifiable.",
+        { title: "The Rules Are Lost", tone: "Info" }
       ),
-      h2("Egypt Already Had a 5,000-Year-Old Version of Structured Play"),
+      h2("How a Game Became a Religious Idea"),
       p(
-        "Senet is among the oldest known board games in human history, with boards and playing pieces found across Egyptian archaeological sites dating back roughly five thousand years. Its most famous surviving example was found among the treasures in Tutankhamun's tomb, sealed around 1323 BC — a beautifully preserved set that traveled with a pharaoh into the afterlife, alongside gold, jewelry, and everything else judged essential for what came next."
+        "Early on, senet appears to be simply a game — tomb scenes show couples playing, and the pleasure is the point. By the New Kingdom something has shifted. The board's path is being read as the journey of the dead through the underworld, the marked squares as hazards and gateways, and the opponent, in some depictions, as unseen."
       ),
       p(
-        "Senet was genuinely popular entertainment, played by ordinary Egyptians and pharaohs alike across millennia — but by the New Kingdom, it had also taken on real symbolic and religious weight, understood as representing a person's journey through the afterlife. Tomb art repeatedly depicts the deceased playing Senet against an unseen opponent, the game itself functioning as a kind of narrative device for a story far bigger than winning a round."
+        "Chapter seventeen of the Book of the Dead has the deceased playing senet, and tomb paintings show the dead at the board with no visible partner. Winning is no longer just winning. It is a demonstration that the player can navigate what comes next."
       ),
-      h2("Same Impulse, Completely Different Hardware"),
+      h2("Where to See a Board"),
       p(
-        "That's the genuinely striking parallel: the impulse to build a portable, rules-based system for structured competition, and to layer real narrative or symbolic meaning onto it, isn't a modern invention dressed up in new technology. It's one of the oldest continuous threads in human culture, older than most written language. What's changed across five thousand years is entirely the hardware — a carved wooden box, painted squares, and knucklebone dice, versus a data center streaming a fully rendered world to a phone in someone's pocket, with an AI opponent capable of responding to whatever you actually say to it."
+        "Complete sets are displayed in the Cairo collections, including Tutankhamun's. Look for the drawer in the base — the pieces stored inside, which is why any survived at all. In Luxor, keep an eye on flat stone surfaces at temple sites: informal boards scratched by workmen turn up in places that were never meant to have them, which is the most human thing at most of those sites."
       ),
       faq(
         [
-          {
-            question: "What is Senet?",
-            answer:
-              "Senet is among the oldest known board games in human history, with boards and pieces found at Egyptian sites dating back roughly 5,000 years. Its most famous surviving example was found among the treasures in Tutankhamun's tomb, and by the New Kingdom it had taken on symbolic meaning tied to the journey through the afterlife.",
-          },
-          {
-            question: "How big is the cloud gaming market in 2026?",
-            answer:
-              "Cloud gaming grew from an estimated $2.4 billion in 2022 to over $8 billion by 2025, with major platforms like Xbox and PlayStation integrating cloud capability into their existing console ecosystems rather than replacing them.",
-          },
-          {
-            question: "Are AI NPCs common in games in 2026?",
-            answer:
-              "They're an active area of experimentation — some developers are testing NPCs that use large language models to respond dynamically to player input instead of relying on pre-scripted dialogue, part of a broader trend of 52% of game development companies having implemented generative AI tools.",
-          },
+          { question: "What is senet?", answer: "An ancient Egyptian board game played on thirty squares in three rows of ten, with movement determined by throwing sticks or knucklebones. It was played for roughly three thousand years." },
+          { question: "How old is senet?", answer: "Boards and depictions go back around five thousand years, to the Predynastic and Early Dynastic periods, making it one of the oldest known board games." },
+          { question: "Do we know the rules of senet?", answer: "No. No Egyptian text records them. Modern reconstructions are based on board layouts, marked squares and scenes of play, and are plausible rather than proven." },
+          { question: "Why was senet buried with the dead?", answer: "By the New Kingdom the board's path had come to represent the journey through the underworld, and playing — and winning — was understood as a sign the deceased could navigate it." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A carved wooden box in a sealed tomb and a data center streaming rendered worlds to a phone are separated by five thousand years and almost nothing else — the same basic human impulse, running on whatever hardware happened to be available at the time."
+        "A game so ordinary that workmen scratched it into stone at lunchtime, and so important that a king was buried with four sets, in case."
       ),
       cta({
-        title: "See the Original Game Board",
-        body: "Tutankhamun's treasures, including one of the best-preserved Senet sets ever found — on display in Cairo.",
-        buttonLabel: "See the Egyptian Museum Tour",
+        title: "See Tutankhamun's Boards",
+        body: "The game sets from the tomb, alongside everything else that was packed for the journey.",
+        buttonLabel: "See the museum tour",
         buttonHref: "/tours/egyptian-museum-coptic-cairo-tour",
       }),
     ],

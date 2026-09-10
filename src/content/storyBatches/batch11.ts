@@ -21,75 +21,71 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
-    slug: "photorealistic-video-games-2026-pyramid-laser-scan",
-    title: "Video Games Got Photorealistic in 2026. Egypt's Monuments Were Laser-Scanned to the Centimetre Two Decades Earlier.",
-    category: "Culture & Trends",
-    tags: ["Video Games", "Photorealistic Graphics", "Unreal Engine 5", "Digital Preservation", "Great Pyramid"],
+    slug: "scanning-the-great-pyramid",
+    title: "Scanning the Great Pyramid: What the Surveys Have Actually Found",
+    category: "History & Culture",
+    tags: ["Great Pyramid", "ScanPyramids", "Archaeology", "Giza", "Muon Imaging"],
     author: editorialTeam,
     excerpt:
-      "Unreal Engine 5's Nanite, Lumen, and path tracing make 2026's best games nearly indistinguishable from reality. Giza's monuments were already digitized to within a centimetre of accuracy, back in 2004, for an entirely different reason.",
+      "Cosmic-ray detectors have been looking through the Great Pyramid since 2015, and they have found two spaces nobody knew about. What that does and does not mean.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1541769740-098e80269166?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     publishedAt: "2026-09-08T09:00:00+02:00",
-    contentReviewDate: "2027-02-01",
-    primaryKeyword: "photorealistic video games 2026",
-    secondaryKeywords: ["Unreal Engine 5 Nanite Lumen", "photogrammetry games", "Great Pyramid laser scan", "digital preservation Giza"],
-    seoTitle: "Photorealistic Games in 2026, and Egypt's Own Centimetre-Accurate Digital Twin",
+    contentReviewDate: "2027-06-01",
+    primaryKeyword: "ScanPyramids",
+    secondaryKeywords: ["Great Pyramid hidden chamber", "muon scan pyramid", "big void Great Pyramid", "Great Pyramid corridor discovery"],
+    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza"),
+    seoTitle: "ScanPyramids: What Muon Imaging Found Inside Giza",
     seoDescription:
-      "Unreal Engine 5's Nanite and Lumen make 2026 games look almost real. Giza's monuments were laser-scanned to within a centimetre back in 2004 — the same core technique, aimed at a completely different goal.",
+      "The void above the Grand Gallery, the corridor behind the north-face chevrons, and how cosmic-ray muon imaging sees through solid limestone without touching it.",
     body: [
       p(
-        "Video game graphics crossed a genuinely strange threshold in 2026. Unreal Engine 5's Nanite (virtualized geometry) and Lumen (real-time global illumination) have eliminated the old workarounds — light-baking, level-of-detail management — that used to separate a game's environments from something photographed. Path tracing is now standard in major releases, handling reflections, natural light bounce, and shadow accuracy the way a real camera lens would, and titles like Ninja Theory's Hellblade II combine photogrammetry-scanned real landscapes with MetaHuman-grade facial capture to close the gap even further."
+        "The Great Pyramid has been measured, surveyed and speculated about for two centuries, and the honest position for most of that time was that we knew its inside as well as we ever would without taking it apart. Since 2015 that has changed, using a technique that involves neither drilling nor digging."
       ),
-      h2("How Real 'Real' Actually Looks Now"),
+      h2("How You Look Through a Pyramid"),
+      p(
+        "Cosmic rays striking the upper atmosphere produce muons, particles that rain down constantly and pass through solid rock. They are absorbed slightly more by stone than by air. Put detectors inside and around a structure, count muons arriving from every direction over months, and denser regions cast a shadow while empty ones let more through."
+      ),
+      p(
+        "It is medical imaging logic applied to architecture, with the sky as the source. Nothing is touched, and the pyramid is not disturbed."
+      ),
+      h2("What They Found"),
       ...bullets([
-        "Characters show visible skin pores, individually simulated hair movement, and clothing that wrinkles and hangs the way real fabric does",
-        "Path tracing renders reflections on metal, water, and glass, natural global illumination, and accurate shadows without artist-placed light sources",
-        "Photogrammetry — scanning real-world locations to build game environments — is now a standard production technique, not a novelty",
-        "DLSS 5 and PSSR make 4K resolution at 60 frames per second feel routine on current-generation consoles",
+        "The ScanPyramids mission began in 2015, bringing together Egyptian authorities, Cairo University and several international research institutions",
+        "In 2017 the team reported a large void above the Grand Gallery — on the order of thirty metres long, comparable in scale to the gallery itself. It was published in Nature and independently corroborated by more than one detector technology",
+        "In 2023 a corridor of around nine metres was confirmed behind the chevron blocks on the north face, close to the original entrance, and an endoscope was passed through a joint to see inside it",
       ]),
       callout(
-        "Ninja Theory built Hellblade II by combining photogrammetry-scanned Icelandic landscapes with MetaHuman-grade facial capture — explicitly aiming to make it the most photorealistic game ever produced. The techniques behind that ambition already had a twenty-year head start in an unrelated field.",
-        { title: "The Same Toolkit, an Older Application", tone: "Info" }
+        "Both are spaces, not rooms. No burial, no objects, no inscriptions have been found in either. Headlines routinely upgrade them to hidden chambers, which is not what the researchers reported.",
+        { title: "A Void Is Not a Chamber", tone: "Info" }
       ),
-      h2("Egypt's Monuments Were Already Digitized to the Centimetre"),
+      h2("What They Might Be"),
       p(
-        "In 2004, the Scanning of the Pyramids Project applied high-resolution terrestrial laser scanning, combined with calibrated digital photography, to the Great Pyramid (Cheops) and the Sphinx at Giza. Using a RIEGL LMS Z420i laser scanner and a Nikon D100 camera, the project collected approximately 100 million individual measurements, achieving an accuracy of roughly one centimetre — and produced a full digital elevation model of the entire Giza plateau within a 1.3-kilometre radius of the Great Pyramid. It's essentially the identical core technique — high-resolution laser scanning combined with photogrammetry — that now underlies the photorealistic environments in games like Hellblade II, applied two decades earlier for a completely different purpose."
-      ),
-      h2("Two Different Reasons for the Same Technique"),
-      p(
-        "Games use laser scanning and photogrammetry to make a fictional world feel convincingly real. The 2004 Giza project used the identical toolkit to make sure the real world doesn't quietly disappear — creating a permanent, centimetre-accurate digital record specifically so structural anomalies could be monitored and the monuments' condition tracked over time, insurance against damage, decay, or disaster that no amount of photorealistic rendering could actually prevent. Same instruments, same underlying data-capture method, opposite motive: entertainment on one side, and preservation of something irreplaceable on the other."
+        "The leading explanations are structural. Relieving spaces above the King's Chamber already demonstrate that the builders used voids to redistribute load, and the big void may be more of the same on a larger scale. Another line of argument is that it is a construction feature — an internal ramp or a working space left in place. The north-face corridor is most often read as a device to relieve pressure over the entrance, or as connected to how the entrance was originally arranged."
       ),
       p(
-        "As game engines get good enough to recreate the Giza plateau pixel for pixel, it's worth remembering the real plateau was already mapped to within a centimetre of precision, for a far more serious reason, well before most of today's photorealistic engines existed."
+        "Nothing rules out something more interesting, and nothing supports it either. The pyramid is a tomb whose burial chamber we already have; the base rate for undiscovered treasure inside it is low."
+      ),
+      h2("Why It Matters for Visitors"),
+      p(
+        "Practically, nothing has changed about what you can walk into — the void and the corridor are not accessible and are unlikely to be. What has changed is the frame. The Great Pyramid is not a solved object in a display case. It is an active research site, with work ongoing, and there is a reasonable chance that something in the guidebook you carry will be out of date within a decade."
       ),
       faq(
         [
-          {
-            question: "What makes 2026's video games look photorealistic?",
-            answer:
-              "Unreal Engine 5's Nanite (virtualized geometry) and Lumen (real-time global illumination) systems, combined with path tracing for accurate reflections and shadows, and photogrammetry techniques that scan real-world locations and objects to build game environments and character models.",
-          },
-          {
-            question: "When were the Giza pyramids laser-scanned?",
-            answer:
-              "The Scanning of the Pyramids Project in 2004 used high-resolution terrestrial laser scanning and photogrammetry to document the Great Pyramid and Sphinx, collecting approximately 100 million measurements at roughly 1-centimetre accuracy and producing a digital elevation model of the surrounding Giza plateau.",
-          },
-          {
-            question: "Why was the Great Pyramid laser-scanned?",
-            answer:
-              "To create a permanent, highly accurate digital record for monitoring the monuments' structural condition over time and supporting their preservation — the same core scanning and photogrammetry techniques now used to build photorealistic video game environments, applied roughly two decades earlier for a documentation and conservation purpose.",
-          },
+          { question: "What is ScanPyramids?", answer: "A research mission begun in 2015 using muon imaging and other non-invasive techniques to survey the interior of Egyptian pyramids without excavation, run by Egyptian authorities with international partners." },
+          { question: "What did they find in the Great Pyramid?", answer: "A large void above the Grand Gallery, reported in 2017 and roughly thirty metres long, and a corridor of about nine metres behind the chevrons on the north face, confirmed in 2023." },
+          { question: "Is the void a hidden chamber?", answer: "No burial, objects or inscriptions have been found. Researchers describe it as a void; structural or construction-related explanations are currently favoured." },
+          { question: "How does muon imaging work?", answer: "Cosmic rays produce muons that pass through rock and are absorbed more by dense material than by air. Detectors count them over months, and empty spaces show up as regions where more muons arrive." },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "A game engine chasing photorealism and a 2004 conservation project chasing precision ended up reaching for the exact same instruments — one to build a convincing illusion, the other to protect something that can't be rebuilt if it's lost."
+        "Four and a half thousand years of visitors, and it turns out we were standing next to two spaces nobody had noticed. It is a good argument for humility about what else is still in there."
       ),
       cta({
-        title: "See the Real Thing",
-        body: "No engine required — a full day at the actual Giza plateau, centimetre-accurate and still standing.",
-        buttonLabel: "See the Giza Pyramids Tour",
+        title: "Stand at the North Face",
+        body: "A private Giza day with time at the entrance, the chevrons and the interior — not a forty-minute stop.",
+        buttonLabel: "See the Giza tour",
         buttonHref: "/tours/1-day-giza-tour",
       }),
     ],
