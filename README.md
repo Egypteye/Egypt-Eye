@@ -5,6 +5,12 @@ A Next.js site for egypteyetravel.com with a built-in content backend
 testimonials, FAQ, and site-wide settings are all editable from a login page
 at `/studio`, no code required.
 
+This repository also contains **Egypt Eye OS**, the company's internal
+operating system, at `/os`. It is a separate product sharing one identity
+provider: the public site sells the trip, and the OS runs it. See
+**[EGYPT-EYE-OS.md](EGYPT-EYE-OS.md)** for what it does, how to switch it on,
+and how it is built.
+
 ## Editing content (the day-to-day way)
 
 Once Sanity is set up (see below) and the site is deployed, go to
@@ -228,6 +234,153 @@ Customize Your Tour flow. The `reservations` table is deliberately shaped so
 a real checkout (Stripe, using its Coupons/Promotion Codes API rather than a
 second parallel discount system) can be added later without a rework — see
 `supabase/migrations/0001_init.sql`'s comments.
+
+## Setting up Egypt Eye OS (the internal operating system)
+
+Egypt Eye OS lives at **`yoursite.com/os`**. It is where the company operates
+*after* the reservation desk closes a deal — trips, crew, vehicles, dresses,
+suppliers, costs, approvals, incidents, the content pipeline, and the knowledge
+that would otherwise live in one person's head.
+
+It runs on the **same Supabase project as the website**, on purpose. That is
+what lets a trip point at the reservation that created it, an OS client be the
+same person as a website profile, and a concierge request become a lead — with
+real foreign keys and real joins. Postgres cannot join across two Supabase
+projects, so the alternative would be syncing copies between databases: stale
+data, another thing to break, and two versions of the same customer.
+
+The separation that matters is still there. Every OS table is prefixed `os_`
+with Row Level Security on and no client policy, the OS migrations touch no
+website table, and nothing in `src/lib/os/*` writes to one. What protects the
+website is operational rather than architectural — see **Protecting the
+website** below.
+
+If you ever need hard isolation instead, setting `NEXT_PUBLIC_OS_SUPABASE_URL`
+(plus its anon and service-role keys) points the OS at a separate project. You
+lose the linking above, so only do it if the OS does not need website data.
+
+1. Add these environment variables in Vercel → Settings → Environment
+   Variables. `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   already exist for the website and the OS reuses them — but check them
+   rather than assuming, because setting this up went wrong on both of the
+   two counts below.
+
+   **Tick every environment you intend to open the OS on.** A Vercel preview
+   deployment does not inherit Production's variables, so a value set for
+   Production only means `/os` shows the "not connected to a database yet"
+   page on every preview branch — the database is fine, the deployment simply
+   cannot see it. That page lists the three variables with a tick or a cross
+   against each, so it tells you which one is actually missing.
+
+   **The two `NEXT_PUBLIC_` ones must be plain variables, not Secret.** Next.js
+   compiles them into the JavaScript at build time, and Vercel withholds a
+   Secret variable from the build on purpose, so a `NEXT_PUBLIC_` one marked
+   Secret compiles to `undefined` every time. Nothing is lost by leaving them
+   plain: those values are served to every visitor's browser by design, and
+   Row Level Security — not secrecy — is what protects the data behind the
+   anon key. `SUPABASE_SERVICE_ROLE_KEY` is the opposite case and should be
+   Secret; the OS reads it per request, at runtime, where Secret values are
+   available.
+
+   Redeploy after adding or changing any of them (Deployments → the
+   deployment → ⋯ → Redeploy, or push any commit to the branch). Editing a
+   value alone changes nothing.
+
+   - `SUPABASE_SERVICE_ROLE_KEY` — your existing project's **service_role**
+     key, from Project Settings → API. Never expose it to the browser and
+     never prefix it `NEXT_PUBLIC_`. The OS needs it because every internal
+     table has Row Level Security enabled with no client policy at all — the
+     browser's key can read and write nothing there, and all access goes
+     through server code that checks a permission first.
+   - `CRON_SECRET` — any random string you make up. It protects the
+     automation sweep, which `vercel.json` schedules hourly. That cadence
+     needs a Vercel plan above Hobby, which only triggers crons once a day;
+     on Hobby, change the schedule to something like `0 5 * * *` and
+     everything still works, just on a daily rhythm.
+
+     Hourly matters for exactly one thing: the enquiry response-time alert,
+     where a day's delay costs something real. The rest of the sweep —
+     readiness re-checks, chasing missing media, escalating stalled
+     approvals — does not care. The endpoint returns 503 rather than running
+     open if `CRON_SECRET` is missing.
+
+2. In Supabase → SQL Editor, run these files from `supabase/migrations/`, in
+   order. All are safe to re-run, and none of them touches a website table.
+   **Take a backup first** — see below.
+
+   - `0018_egypt_eye_os_core.sql` — the schema
+   - `0019_egypt_eye_os_config.sql` — permissions, roles, services, statuses
+   - `0020_egypt_eye_os_demo.sql` — realistic demo data (optional, but the
+     fastest way to see what the product does; every trip is dated relative to
+     the day you run it)
+   - `0021_egypt_eye_os_functions.sql` — reference sequences and search
+   - `0022_egypt_eye_commercial.sql` — the commercial layer: partner
+     companies, leads, deals, agreements and the links back to trips. It also
+     promotes any existing `kind = 'agency'` client into a company, keeping
+     the person as its contact — nothing is deleted and no history moves.
+   - `0023_egypt_eye_commercial_config.sql` — commercial permissions, the two
+     pipelines and their stages, lost reasons and the published lead-scoring
+     rules
+   - `0024_egypt_eye_commercial_demo.sql` — commercial demo data (optional),
+     which connects to the trips 0020 already created
+
+3. Link your own login to a staff record. Sign up at `/account/signup` if you
+   have not, then in the SQL Editor:
+
+   ```sql
+   update public.os_employees
+   set user_id = (select id from auth.users where email = 'you@egypteyetravel.com')
+   where code = 'EE-001';   -- the Owner in the demo data
+   ```
+
+4. Open `yoursite.com/os`.
+
+### Undoing it
+
+`supabase/tools/reset-egypt-eye-os.sql` removes the OS again: every `os_`
+table, view, function, sequence and trigger, and nothing else. It is the
+answer to two situations — the migrations went somewhere you did not want, or
+you have finished looking at the demo data and want to start entering real
+records against an empty schema. For the second, run the reset and then
+migrations 0018, 0019, 0021, 0022 and 0023, skipping 0020 and 0024, which are
+the demo records.
+
+It is deliberately not in `supabase/migrations/`, so nothing that runs that
+folder in order can ever pick it up. It runs inside one transaction and it
+refuses to start at all if it finds a table whose name begins with `os` but
+not `os_` — that would be a table it cannot prove is the OS's, and it will not
+guess. Either every `os_` object goes or none of them do.
+
+Verified by installing all 24 migrations into an empty Postgres 16, running
+the reset, and diffing: all 132 OS objects gone, all 255 website objects and
+all 26 website row counts byte-identical, and the migrations reinstall clean
+afterwards. It still deletes data and it is still not undoable, so take a
+backup first.
+
+### Protecting the website
+
+The website is the business, and it shares a database with the OS. Three
+things keep that safe, in order of how much they matter:
+
+1. **Turn on daily backups and point-in-time recovery** in Supabase. This is
+   the one that counts. If somebody wrecks OS data on a Tuesday, PITR restores
+   to Tuesday morning without you rebuilding anything by hand. On the free
+   tier there is no backup worth relying on, which is the main reason to be on
+   a paid plan once the OS is live.
+
+2. **Run migrations deliberately.** Take a backup, paste one file, read what
+   it says, then the next. They are additive and safe to re-run, but the SQL
+   editor is the one place a person can do real damage in a second.
+
+3. **Deploy the OS on its own, not alongside a website change.** They share a
+   deployment, so a broken build takes both down. Ship OS changes separately
+   and check the preview URL first; a Vercel rollback is one click, but it is
+   easier not to need one.
+
+To see how the permission system behaves, link your account to a different code
+and reload — `EE-003` (Operations) plans and staffs every trip but cannot see a
+selling price anywhere, while `EE-017` (Driver) sees only their own runs. The
+full list is in [EGYPT-EYE-OS.md](EGYPT-EYE-OS.md).
 
 ## Images
 
