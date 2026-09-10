@@ -97,7 +97,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "robots-everyday-life-2026-shaduf-oldest-labor-saving-device",
     title: "Home Robots Are Learning to Do Your Laundry in 2026. Egypt's Oldest Labor-Saving Machine Is Still Working Today.",

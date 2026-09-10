@@ -23,7 +23,7 @@ function toursBySlug(...slugs: string[]) {
 
 export const stories: Story[] = [
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "chinas-tech-revolution-2026-hyksos-parallel",
     title: "China's Tech Revolution Isn't Import-and-Improve Anymore. Egypt Ran This Exact Playbook 3,500 Years Ago.",
@@ -100,7 +100,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "us-alliance-recalibration-2026-sadat-camp-david-parallel",
     title: "The US Is Recalibrating Its Global Commitments in 2026. Egypt Wrote the Playbook for Surviving an Ally's Pivot.",
@@ -115,16 +115,7 @@ export const stories: Story[] = [
     contentReviewDate: "2026-12-01",
     primaryKeyword: "US foreign policy 2026",
     secondaryKeywords: ["NATO force reductions 2026", "US South Korea military 2026", "Camp David Accords history", "Sadat Soviet advisors 1972"],
-    relatedStories: [
-      {
-        slug: "us-china-ai-race-suez-canal-parallel",
-        title: "The US-China AI Race, and What the Suez Canal Teaches About Chokepoints",
-        excerpt:
-          "Compute and chips are becoming the strategic chokepoint of the 21st century the way a canal was for the 20th. Egypt's own history with the most fought-over waterway on Earth is a sharper lens on the AI race than it first sounds.",
-        imageTone: "nile",
-        category: "Tech & AI",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "US Alliance Recalibration in 2026, and Egypt's 1970s Precedent",
     seoDescription:
       "The US reduced its NATO force posture and joint exercises with South Korea in 2026. Egypt's 1972 pivot away from Soviet alignment toward Washington, and the Camp David Accords it led to, is the closest historical precedent.",
@@ -180,7 +171,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "us-china-tensions-2026-nasser-nonalignment-playbook",
     title: "US-China Tensions Are Forcing Smaller Nations to Pick a Side in 2026. Egypt Wrote the Manual for Refusing To.",
@@ -257,7 +248,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "nuclear-tensions-2026-egypt-wmd-free-zone-diplomacy",
     title: "The World Just Lost Its Last Nuclear Arms Treaty. Egypt Has Spent 50 Years Trying to Build a Different Kind.",
@@ -335,7 +326,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "north-korea-nuclear-2026-egypt-el-dabaa-contrast",
     title: "North Korea Is Racing to Build Nuclear Weapons. Egypt Is Racing to Build Nuclear Power — On Purpose, Under Inspection.",

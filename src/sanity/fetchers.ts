@@ -298,14 +298,23 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   return result && result.length > 0 ? result : localTestimonials;
 }
 
+// The GROQ queries filter to status == "published"; the local fallback has
+// to apply the same rule itself, or a story archived in the content files
+// would still surface (and be sitemapped) whenever Sanity is unreachable.
+const localPublishedStories = localStories.filter((s) => s.status === "published");
+
 export async function getStories(): Promise<Story[]> {
   const result = await safeFetch<Story[]>(storiesQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localStories) : localStories;
+  return result && result.length > 0
+    ? withLocalImageFallback(result, localStories)
+    : localPublishedStories;
 }
 
 export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   const result = await safeFetch<Story | null>(storyBySlugQuery, { slug });
-  const local = localStories.find((s) => s.slug === slug);
+  // Only a published local story is a valid fallback — an archived one must
+  // 404 (and then 410, via middleware) rather than render from local content.
+  const local = localPublishedStories.find((s) => s.slug === slug);
   const story = result
     ? {
         ...result,

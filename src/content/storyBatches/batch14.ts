@@ -163,7 +163,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "2016-nostalgia-2026-egypt-oldest-bucket-list-destination",
     title: "Feeling Nostalgic for 2016 Is a Real 2026 Trend. Egypt Has Been the World's Bucket-List Nostalgia Since 1869.",
@@ -313,7 +313,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "80s-90s-nostalgia-2026-michael-jackson-remember-the-time",
     title: "80s and 90s Nostalgia Is Peaking in 2026. One of the Era's Most Iconic Videos Was Basically a Love Letter to Ancient Egypt.",

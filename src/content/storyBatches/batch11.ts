@@ -170,7 +170,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "future-of-smartphones-2026-papyrus-portable-information",
     title: "Smartphones in 2026 Are Foldable and AI-Native. Egypt Invented the First Portable Information Device 5,000 Years Ago.",
@@ -307,7 +307,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "tesla-autonomous-driving-2026-way-of-horus-ancient-road",
     title: "Tesla's Robotaxis Are Learning America's Roads in 2026. Egypt Engineered the World's First Reliably Mapped Road 3,500 Years Ago.",

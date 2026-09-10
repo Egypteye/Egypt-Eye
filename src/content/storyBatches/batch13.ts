@@ -166,7 +166,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "climate-change-2026-egypt-old-kingdom-megadrought",
     title: "2026 Is on Track to Be One of the Hottest Years on Record. Egypt Already Lived Through a Climate Collapse, 4,200 Years Ago.",

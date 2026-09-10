@@ -18,7 +18,7 @@ function toursBySlug(...slugs: string[]) {
 
 export const stories: Story[] = [
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "ai-company-valuations-2026-explained",
     title: "Anthropic, OpenAI, and the Trillion-Dollar Question: Are AI Valuations for Real?",
@@ -33,16 +33,7 @@ export const stories: Story[] = [
     contentReviewDate: "2027-01-01",
     primaryKeyword: "AI company valuations 2026",
     secondaryKeywords: ["Anthropic valuation", "OpenAI valuation", "AI bubble 2026", "Egyptian cotton boom history"],
-    relatedStories: [
-      {
-        slug: "us-china-ai-race-suez-canal-parallel",
-        title: "The US-China AI Race, and What the Suez Canal Teaches About Chokepoints",
-        excerpt:
-          "Compute and chips are becoming the strategic chokepoint of the 21st century the way a canal was for the 20th. Egypt's own history with the most fought-over waterway on Earth is a sharper lens on the AI race than it first sounds.",
-        imageTone: "nile",
-        category: "Tech & AI",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "AI Valuations in 2026: Anthropic, OpenAI, and a 160-Year-Old Warning",
     seoDescription:
       "Anthropic and OpenAI are worth close to a trillion dollars each on 2026's numbers. Egypt's 1860s cotton boom ran the identical bet once already — and showed exactly how it ends.",
@@ -109,7 +100,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "vibe-coding-2026-great-pyramid-precision",
     title: "Vibe Coding Is Everywhere in 2026. The Great Pyramid Was Never Vibe-Built.",
@@ -372,16 +363,7 @@ export const stories: Story[] = [
     contentReviewDate: "2027-02-01",
     primaryKeyword: "AI photography 2026",
     secondaryKeywords: ["stock photography collapse", "AI vs photographers", "will AI replace photographers", "flying dress photoshoot Egypt"],
-    relatedStories: [
-      {
-        slug: "ai-generated-video-2026-guide",
-        title: "AI Video Got Frighteningly Good in 2026 — Here's What Changed",
-        excerpt:
-          "Sora, Veo, Kling and Runway can now generate footage that passes for stock video at a glance. Here's what actually changed in 2026 — and why Egypt is one of the easiest places on Earth to fake.",
-        imageTone: "luxor",
-        category: "Tech & AI",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "AI and Photography in 2026: What Actually Collapsed, and What Got More Valuable",
     seoDescription:
       "Stock photography revenue fell 98% in seven years as AI ate the commodity end of the market. Premium, personal, occasion-based photography is doing the opposite — and it's exactly what a real photoshoot delivers.",

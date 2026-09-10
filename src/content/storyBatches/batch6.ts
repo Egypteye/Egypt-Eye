@@ -19,7 +19,7 @@ function toursBySlug(...slugs: string[]) {
 
 export const stories: Story[] = [
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "what-are-ai-agents-2026",
     title: "What Are AI Agents, Really? A Plain-English Guide",
@@ -113,7 +113,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "ai-generated-video-2026-guide",
     title: "AI Video Got Frighteningly Good in 2026 — Here's What Changed",
@@ -128,24 +128,7 @@ export const stories: Story[] = [
     contentReviewDate: "2027-02-01",
     primaryKeyword: "AI generated video 2026",
     secondaryKeywords: ["Sora vs Veo vs Kling", "AI video generator comparison", "AI travel video", "is this video AI generated"],
-    relatedStories: [
-      {
-        slug: "what-are-ai-agents-2026",
-        title: "What Are AI Agents, Really? A Plain-English Guide",
-        excerpt:
-          "Every company now claims to run \"AI agents.\" Here's what that actually means, what these systems are genuinely good at in 2026, and a useful stress test: could one plan a trip to Egypt?",
-        imageTone: "desert",
-        category: "Tech & AI",
-      },
-      {
-        slug: "human-authenticity-vs-ai-content",
-        title: "Why \"This Looks Real\" Became the Highest Compliment on the Internet",
-        excerpt:
-          "As AI-generated content gets harder to spot, unmistakably human, unmistakably real footage has become its own kind of currency. Here's why authenticity became a selling point rather than a given.",
-        imageTone: "nile",
-        category: "Culture & Trends",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "AI Video in 2026: What Actually Changed",
     seoDescription:
       "Sora, Veo 3, Kling and Runway compared for 2026 — and why iconic, overphotographed places like Egypt are the easiest subjects for AI video to fake convincingly.",
@@ -211,7 +194,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "ai-jobs-what-ai-can-and-cant-replace",
     title: "The Jobs AI Is Actually Replacing (And the Ones It Isn't Close To)",
@@ -226,16 +209,7 @@ export const stories: Story[] = [
     contentReviewDate: "2027-03-01",
     primaryKeyword: "AI replacing jobs 2026",
     secondaryKeywords: ["which jobs will AI replace", "AI and employment", "AI job displacement data", "jobs safe from AI"],
-    relatedStories: [
-      {
-        slug: "what-are-ai-agents-2026",
-        title: "What Are AI Agents, Really? A Plain-English Guide",
-        excerpt:
-          "Every company now claims to run \"AI agents.\" Here's what that actually means, what these systems are genuinely good at in 2026, and a useful stress test: could one plan a trip to Egypt?",
-        imageTone: "desert",
-        category: "Tech & AI",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "Which Jobs Is AI Actually Replacing in 2026?",
     seoDescription:
       "2026's real employment data on AI: which roles are genuinely at risk, which are proving stubbornly hard to automate, and what travel — a very human industry — reveals about the line between them.",
@@ -312,16 +286,7 @@ export const stories: Story[] = [
     primaryKeyword: "AI safety 2026",
     secondaryKeywords: ["EU AI Act", "AI regulation explained", "Abu Simbel relocation history", "Aswan High Dam history"],
     relatedTours: toursBySlug("aswan-abu-simbel-tour", "lake-nasser-cruise-aswan-abu-simbel", "aswan-nubian-village-philae-tour"),
-    relatedStories: [
-      {
-        slug: "us-china-ai-race-suez-canal-parallel",
-        title: "The US-China AI Race, and What the Suez Canal Teaches About Chokepoints",
-        excerpt:
-          "Compute and chips are becoming the strategic chokepoint of the 21st century the way a canal was for the 20th. Egypt's own history with the most fought-over waterway on Earth is a sharper lens on the AI race than it first sounds.",
-        imageTone: "nile",
-        category: "Tech & AI",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "AI Safety, and Egypt's Own Lesson in Moving Fast",
     seoDescription:
       "The EU AI Act took effect through 2026 as the world argues over who governs powerful new technology. Egypt already lived a version of that argument — at Abu Simbel.",
@@ -395,7 +360,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "us-china-ai-race-suez-canal-parallel",
     title: "The US-China AI Race, and What the Suez Canal Teaches About Chokepoints",

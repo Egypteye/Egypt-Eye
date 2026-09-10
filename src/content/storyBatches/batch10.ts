@@ -21,7 +21,7 @@ function toursBySlug(...slugs: string[]) {
 
 export const stories: Story[] = [
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "russia-ukraine-war-2026-egypt-wheat-bread",
     title: "The Russia-Ukraine War Is Still Reshaping Egypt's Bread, Four Years Later",
@@ -91,7 +91,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "gaza-peace-process-2026-egypt-mediation-role",
     title: "Why Nearly Every Gaza Peace Plan Runs Through a Room in Egypt",
@@ -106,16 +106,7 @@ export const stories: Story[] = [
     contentReviewDate: "2026-11-01",
     primaryKeyword: "Egypt Gaza mediation 2026",
     secondaryKeywords: ["Rafah crossing", "Sharm El-Sheikh talks", "Gaza ceasefire 2026", "Egypt Qatar Turkey mediators"],
-    relatedStories: [
-      {
-        slug: "us-alliance-recalibration-2026-sadat-camp-david-parallel",
-        title: "The US Is Recalibrating Its Global Commitments in 2026. Egypt Wrote the Playbook for Surviving an Ally's Pivot.",
-        excerpt:
-          "The US moved in 2026 to reduce its NATO force posture and scale back military exercises with South Korea. Egypt's own 1970s pivot away from Moscow toward Washington is the sharpest historical case study of how a country navigates exactly this kind of moment.",
-        imageTone: "nile",
-        category: "Geopolitics & Economy",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "Egypt's Role in the 2026 Gaza Peace Process, Explained",
     seoDescription:
       "The Gaza ceasefire's second phase remains unresolved as of 2026. Egypt's specific, practical role — as Gaza's only non-Israeli land border, as host of the Sharm El-Sheikh framework, and as lead mediator alongside Qatar and Turkey — has stayed constant.",
@@ -168,7 +159,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "future-of-geopolitics-2026-egypt-longest-running-power",
     title: "The World Is Sliding Into a 'Multipolar' Order in 2026. Egypt Has Survived a Dozen of Them Already.",
@@ -246,7 +237,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "egypt-2026-world-cup-historic-run",
     title: "Egypt's Historic 2026 World Cup Run, and What It Means for Egyptian Football Going Forward",

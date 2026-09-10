@@ -90,7 +90,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "tiktok-instagram-search-engine-2026-egypt-visual-information",
     title: "Gen Z Searches TikTok and Instagram as Much as Google in 2026. Egypt's Information System Was Already Overwhelmingly Visual.",
@@ -297,7 +297,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "human-authenticity-vs-ai-content",
     title: "Why \"This Looks Real\" Became the Highest Compliment on the Internet",
@@ -312,16 +312,7 @@ export const stories: Story[] = [
     contentReviewDate: "2027-01-01",
     primaryKeyword: "human authenticity vs AI content 2026",
     secondaryKeywords: ["AI content trust 2026", "proof of authenticity", "ancient Egyptian scarab seals", "digital authenticity verification"],
-    relatedStories: [
-      {
-        slug: "ai-generated-video-2026-guide",
-        title: "AI Video Got Frighteningly Good in 2026 — Here's What Changed",
-        excerpt:
-          "Sora, Veo, Kling and Runway can now generate footage that passes for stock video at a glance. Here's what actually changed in 2026 — and why Egypt is one of the easiest places on Earth to fake.",
-        imageTone: "luxor",
-        category: "Tech & AI",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "Human Authenticity vs AI Content in 2026, and Egypt's Ancient Answer",
     seoDescription:
       "As AI-generated content becomes harder to detect, unmistakably real, human-made content has become its own form of currency. Ancient Egypt built real technology — scarab and cylinder seals — to solve the exact same authenticity problem.",

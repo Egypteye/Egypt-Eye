@@ -20,7 +20,7 @@ function toursBySlug(...slugs: string[]) {
 
 export const stories: Story[] = [
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "oil-prices-2026-suez-two-crises",
     title: "Oil Prices in 2026 Are Being Set by Two Crises at Once — and Egypt Sits Between Them",
@@ -93,7 +93,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "middle-east-energy-security-2026-sumed-pipeline",
     title: "Middle East Energy Security in 2026, and the 200-Mile Pipeline Egypt Built as an Insurance Policy",
@@ -165,7 +165,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "red-sea-shipping-crisis-2026-suez-canal-recovery",
     title: "The Red Sea Shipping Crisis Is Finally Easing in 2026 — What Nearly Three Years of Disruption Actually Cost",
@@ -180,16 +180,7 @@ export const stories: Story[] = [
     contentReviewDate: "2026-11-01",
     primaryKeyword: "Red Sea shipping crisis 2026",
     secondaryKeywords: ["Suez Canal traffic 2026", "Houthi attacks shipping", "supply chain disruption 2026", "Suez Canal recovery"],
-    relatedStories: [
-      {
-        slug: "us-china-ai-race-suez-canal-parallel",
-        title: "The US-China AI Race, and What the Suez Canal Teaches About Chokepoints",
-        excerpt:
-          "Compute and chips are becoming the strategic chokepoint of the 21st century the way a canal was for the 20th. Egypt's own history with the most fought-over waterway on Earth is a sharper lens on the AI race than it first sounds.",
-        imageTone: "nile",
-        category: "Tech & AI",
-      },
-    ],
+    relatedStories: [],
     seoTitle: "Red Sea Shipping Crisis 2026: Is the Suez Canal Recovering?",
     seoDescription:
       "Nearly three years after Houthi attacks pushed shipping away from the Suez Canal, September 2026 shows the clearest recovery signs yet — though carriers still treat it as fragile, not settled.",
@@ -244,7 +235,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "inflation-2026-ancient-egypt-grain-reserves",
     title: "Inflation Cooled to 3.4% in 2026. Ancient Egypt Invented the Original Shock Absorber for This.",
@@ -327,7 +318,7 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "future-of-us-dollar-2026-nubian-gold-history",
     title: "Central Banks Are Buying Record Gold as the Dollar's Grip Loosens. Egypt Was Selling It First.",
