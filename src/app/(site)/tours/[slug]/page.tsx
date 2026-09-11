@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
-import { Rating, hasProductReviews } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
@@ -69,7 +68,8 @@ export default async function TourDetailPage({
     description: tour.tagline,
     image: tour.image,
     path: `/tours/${tour.slug}`,
-    rating: tour.rating,
+    // No rating passed: with the badge gone from the page, emitting
+    // aggregateRating would be markup Google can't see on the page.
   });
 
   return (
@@ -105,11 +105,6 @@ export default async function TourDetailPage({
             <span className="rounded-full bg-cream/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-cream backdrop-blur-sm">
               {categoryLabels[tour.category] ?? tour.category}
             </span>
-            {hasProductReviews(tour.rating) && (
-              <span className="rounded-full bg-cream px-3.5 py-1.5">
-                <Rating rating={tour.rating} />
-              </span>
-            )}
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">

@@ -7,7 +7,6 @@ import { RouteMap } from "@/components/RouteMap";
 import { resolveStops } from "@/lib/placeCoords";
 import { pickRelated } from "@/lib/relatedPicker";
 import { SmartImage } from "@/components/SmartImage";
-import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
 import { ExperienceCard } from "@/components/ExperienceCard";
@@ -67,7 +66,7 @@ export default async function ExperienceDetailPage({
     description: experience.description,
     image: experience.image,
     path: `/experiences/${experience.slug}`,
-    rating: experience.rating,
+    // See the tour page: no visible rating, so no aggregateRating markup.
   });
 
   return (
@@ -109,7 +108,6 @@ export default async function ExperienceDetailPage({
             {experience.title}
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Rating rating={experience.rating} />
             {experience.location && (
               <span className="inline-flex items-center gap-1.5 text-sm text-ink-soft/70">
                 <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-gold-dark" fill="currentColor" aria-hidden="true">

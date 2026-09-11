@@ -1,7 +1,16 @@
 import type { Rating as RatingType } from "@/content/types";
 
-// Egypt Eye's traveler-review count, shown on every tour, experience and
-// photoshoot.
+// Egypt Eye's traveler-review count.
+//
+// PULLED FROM TOURS AND EXPERIENCES (11 Sep 2026), at the owner's request,
+// until the review programme is rebuilt on their own terms. The component,
+// the Rating type, the Studio override field and the attribution pipeline
+// all stay wired up and working — only the four render sites were removed
+// (TourCard, ExperienceCard, and the tour/experience detail heroes), so
+// putting it back is a one-line change at each. `aggregateRating` was taken
+// out of those pages' TouristTrip JSON-LD at the same time: rating markup
+// Google can't see on the page is a structured-data violation, so the two
+// have to move together. Photoshoot cards and pages still show it.
 //
 // Reviews are collected in the WhatsApp follow-up after a trip or a shoot,
 // so they're about the company rather than about one product — which is why

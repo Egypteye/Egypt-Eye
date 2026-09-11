@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Tour } from "@/content/types";
 import { SmartImage } from "./SmartImage";
-import { Rating, hasProductReviews } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { Badge } from "./Badge";
 import { AddToJourneyButton } from "./AddToJourneyButton";
@@ -24,14 +23,10 @@ export function TourCard({ tour }: { tour: Tour }) {
           {tour.title}
         </h3>
         <p className="line-clamp-2 text-sm text-ink-soft/70">{tour.tagline}</p>
-        {/* Duration, effort, rating — the three things worth knowing before
-            opening the tour. Wraps rather than crushes on a narrow card. */}
-        {/* Duration and reviews share a line; the physical level gets its own
-            below them. Three of these abreast crowded the card and pushed the
-            rating hard against the edge on a phone. */}
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2">
+        {/* Ratings are pulled from this card until the review programme is
+            rebuilt on the owner's terms — see components/Rating.tsx. */}
+        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-2">
           <span className="text-sm text-ink-soft/70">{tour.duration}</span>
-          {hasProductReviews(tour.rating) && <Rating rating={tour.rating} />}
         </div>
         {tour.physicalLevel && <PhysicalLevelChip level={tour.physicalLevel} />}
         <div className="relative z-20">

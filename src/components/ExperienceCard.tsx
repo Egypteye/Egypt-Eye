@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Experience } from "@/content/types";
 import { SmartImage } from "./SmartImage";
-import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { AddToJourneyButton } from "./AddToJourneyButton";
 import { PhysicalLevelChip } from "./PhysicalLevelBar";
@@ -47,9 +46,8 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
             }))}
           />
         </div>
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-t border-black/5 pt-3">
+        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-black/5 pt-3">
           <PriceTag price={experience.price} />
-          <Rating rating={experience.rating} />
         </div>
       </div>
     </div>
