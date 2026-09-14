@@ -162,7 +162,8 @@ function SetupNotice({ title, detail }: { title?: string; detail?: string } = {}
           <code>0019_egypt_eye_os_config.sql</code> (roles and permissions, required),{" "}
           <code>0020_egypt_eye_os_demo.sql</code> (demo data, optional),{" "}
           <code>0021_egypt_eye_os_functions.sql</code>, then{" "}
-          <code>0022</code>–<code>0024</code> for the commercial layer. Migrations{" "}
+          <code>0022</code>–<code>0024</code> for the commercial layer and{" "}
+          <code>0025</code> for calendar publishing. Migrations{" "}
           <code>0001</code>–<code>0017</code> belong to the website and must not be run here.
         </p>
         <Link href="/" className="mt-6 inline-block text-[13px] font-semibold text-os-gold hover:underline">

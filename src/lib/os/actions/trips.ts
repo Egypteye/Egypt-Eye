@@ -7,6 +7,7 @@ import { guarded } from "./guard";
 import { ok, fail, type ActionResult } from "../action-types";
 import { applyStatus } from "../status";
 import { onTripCreated, onTripCompleted, notifyTripChanged } from "../automation";
+import { queueTripPublish, queueTripRemoval } from "../calendar-sync";
 import { computeReadiness } from "../readiness";
 import { getTripRecord } from "../trips";
 import { canReachTrip } from "../scope";
@@ -99,6 +100,7 @@ export async function createTrip(input: {
     );
 
     await onTripCreated(trip.id as string, actor.employeeId);
+    await queueTripPublish(trip.id as string);
 
     revalidatePath("/os/trips");
     revalidatePath("/os");
@@ -157,6 +159,20 @@ export async function updateTrip(
     }
 
     await computeReadiness(before.id as string);
+
+    // Only re-publish when something a calendar actually displays has moved.
+    // Changing notes_internal should not cost a Google API call, and should
+    // not push a "this event was updated" alert to a driver's phone at
+    // midnight for a change they cannot see.
+    const CALENDAR_FIELDS = [
+      "title", "trip_date", "start_time", "end_time", "location_id",
+      "pickup_location", "pickup_time", "dropoff_location",
+      "guests_adults", "guests_children", "special_requests", "client_id", "trip_type_id",
+    ];
+    if (changed.some((field) => CALENDAR_FIELDS.includes(field))) {
+      await queueTripPublish(before.id as string);
+    }
+
     revalidatePath(`/os/trips/${ref}`);
     revalidatePath("/os/trips");
     return ok(undefined, "Saved.");
@@ -194,6 +210,15 @@ export async function changeTripStatus(
         await onTripCompleted(trip.id as string, actor.employeeId);
       }
       await notifyTripChanged(trip.id as string, `${ref} is now ${to.replace("_", " ")}`, options.note ?? "", actor.employeeId);
+
+      // A cancelled trip's calendar event is deleted rather than left sitting
+      // there looking like work. Every other move re-publishes, because the
+      // status is part of what the event shows.
+      if (["cancelled", "closed"].includes(to)) {
+        await queueTripRemoval(trip.id as string);
+      } else {
+        await queueTripPublish(trip.id as string);
+      }
 
       revalidatePath(`/os/trips/${ref}`);
       revalidatePath("/os/trips");

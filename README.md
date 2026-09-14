@@ -323,6 +323,9 @@ lose the linking above, so only do it if the OS does not need website data.
      rules
    - `0024_egypt_eye_commercial_demo.sql` — commercial demo data (optional),
      which connects to the trips 0020 already created
+   - `0025_egypt_eye_calendar_sync.sql` — the queue that publishes trips to
+     Google Calendar. Safe to run whether or not you ever connect Google; with
+     no credentials it simply never has anything to do.
 
 3. Link your own login to a staff record. Sign up at `/account/signup` if you
    have not, then in the SQL Editor:
@@ -335,6 +338,71 @@ lose the linking above, so only do it if the OS does not need website data.
 
 4. Open `yoursite.com/os`.
 
+### Publishing trips to Google Calendar
+
+Optional, and off until you configure it. Confirmed trips get published to a
+shared Google Calendar, so a driver or photographer sees tomorrow's work in the
+calendar app already on their phone — without being given a login to the OS.
+
+**It is one-way.** The OS is the schedule; the Google event is a copy. Someone
+dragging an event in their own calendar app moves the copy, and the next
+publish puts it back. Two systems that both believe they own the schedule is
+how a crew ends up at the wrong pyramid at the wrong hour.
+
+Setup takes about five minutes and needs no Google Workspace, no OAuth consent
+screen and no domain-wide delegation.
+
+1. **Google Cloud Console → new project** (or an existing one) → **APIs &
+   Services → Library** → enable **Google Calendar API**.
+
+2. **IAM & Admin → Service Accounts → Create**. Give it a name like
+   `egypt-eye-os`. No roles are needed — it gets its access from the calendar
+   being shared with it, not from IAM. Create a **JSON key** and download it.
+
+3. **Google Calendar → create a calendar** — "Egypt Eye Operations", say. In
+   its settings, under **Share with specific people**, add the service
+   account's email address (the `client_email` from the JSON) with **Make
+   changes to events**. Copy the **Calendar ID** from the same page.
+
+4. **Vercel → Environment Variables**, all environments:
+
+   | Variable | Value |
+   |---|---|
+   | `GOOGLE_SERVICE_ACCOUNT_EMAIL` | `client_email` from the JSON |
+   | `GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY` | `private_key` from the JSON, whole thing. Mark it **Secret** — it is read at runtime |
+   | `GOOGLE_CALENDAR_ID` | the Calendar ID from step 3 |
+
+   Redeploy afterwards. The service-account key is read per request so Secret
+   is safe for it; see the note above about `NEXT_PUBLIC_` variables, which is
+   the opposite case.
+
+5. **Admin → Integrations → Test connection.** It either names your calendar
+   back, or tells you exactly which of the two usual mistakes you made —
+   calendar not shared with the service account, or shared read-only.
+
+6. **Publish now**, and check the calendar.
+
+Then subscribe: anyone can add that calendar in their own Google Calendar, and
+from there it syncs to their phone the normal way.
+
+**How it behaves.** A trip you change is queued immediately and published on
+the next hourly sweep; the sweep also reconciles, so a trip that somehow missed
+the queue is picked up within the hour. Cancelling or closing a trip deletes
+its event rather than leaving it sitting there looking like work. Drafts are
+never published. A trip with a date but no agreed time becomes an all-day
+entry rather than being invented into a 9am slot.
+
+**What is deliberately not on the event:** client phone numbers and email
+addresses. A shared calendar is the loosest container in the company — whoever
+it gets shared with next reads everything already on it. The client's name,
+guest count, pickup and crew are there, because that is the job.
+
+**When it breaks** — and it will, the day Google has an outage — publishing
+failures do not touch the OS. Saving a trip never waits on Google and never
+fails because of it. Failures are retried, then listed by trip in Admin →
+Integrations with Google's own words for why, and a button to try again.
+
+
 ### Undoing it
 
 `supabase/tools/reset-egypt-eye-os.sql` removes the OS again: every `os_`
@@ -342,8 +410,8 @@ table, view, function, sequence and trigger, and nothing else. It is the
 answer to two situations — the migrations went somewhere you did not want, or
 you have finished looking at the demo data and want to start entering real
 records against an empty schema. For the second, run the reset and then
-migrations 0018, 0019, 0021, 0022 and 0023, skipping 0020 and 0024, which are
-the demo records.
+migrations 0018, 0019, 0021, 0022, 0023 and 0025, skipping 0020 and 0024,
+which are the demo records.
 
 It is deliberately not in `supabase/migrations/`, so nothing that runs that
 folder in order can ever pick it up. It runs inside one transaction and it
@@ -351,10 +419,9 @@ refuses to start at all if it finds a table whose name begins with `os` but
 not `os_` — that would be a table it cannot prove is the OS's, and it will not
 guess. Either every `os_` object goes or none of them do.
 
-Verified by installing all 24 migrations into an empty Postgres 16, running
-the reset, and diffing: all 132 OS objects gone, all 255 website objects and
-all 26 website row counts byte-identical, and the migrations reinstall clean
-afterwards. It still deletes data and it is still not undoable, so take a
+Verified by installing every migration into an empty Postgres 16, running the
+reset, and diffing: all OS objects gone, all website objects and row counts
+byte-identical, and the migrations reinstall clean afterwards. It still deletes data and it is still not undoable, so take a
 backup first.
 
 ### Protecting the website

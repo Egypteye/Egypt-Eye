@@ -1,6 +1,8 @@
 import { getActor, can } from "@/lib/os/actor";
 import { osdb, getOrg } from "@/lib/os/db";
 import { PageHeader, NoAccess, Card, CardHeader, Badge, Notice } from "@/components/os/ui";
+import { calendarSyncStatus, calendarPublishingConfigured } from "@/lib/os/calendar-sync";
+import { CalendarPanel } from "./CalendarPanel";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "Integrations" };
@@ -41,6 +43,8 @@ export default async function IntegrationsPage() {
   const supabaseLive = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
   const emailLive = Boolean(process.env.RESEND_API_KEY);
   const cronLive = Boolean(process.env.CRON_SECRET);
+  const calendarLive = calendarPublishingConfigured();
+  const calendar = await calendarSyncStatus();
 
   const integrations: Integration[] = [
     {
@@ -88,10 +92,12 @@ export default async function IntegrationsPage() {
     },
     {
       name: "Google Calendar",
-      purpose: "Mirroring confirmed trips into crew members' own calendars.",
-      status: "designed",
-      detail: "Registered as an automation. One-way publish only — the OS stays the source of truth for the schedule.",
-      requires: "Google service account with calendar scope",
+      purpose: "Publishing confirmed trips to a shared calendar the crew can subscribe to.",
+      status: calendarLive ? "live" : "ready",
+      detail: calendarLive
+        ? "Publishing. Trips are queued the moment they change and go out on the hourly sweep; cancelling a trip deletes its event. One-way — the OS stays the source of truth. See the panel below for what is in step and what is not."
+        : "Built and waiting on credentials. One-way publish only, so nothing Google says can ever move a trip in here.",
+      requires: calendarLive ? undefined : "GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY and GOOGLE_CALENDAR_ID",
     },
     {
       name: "Accounting",
@@ -149,6 +155,10 @@ export default async function IntegrationsPage() {
             </div>
           </Card>
         ))}
+      </div>
+
+      <div className="mt-5">
+        <CalendarPanel status={calendar} />
       </div>
 
       {automations?.length ? (

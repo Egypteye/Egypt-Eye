@@ -28,8 +28,8 @@
 --   * The migrations went wrong and you want a clean slate. Run this, then
 --     0018 onward again.
 --   * You have finished evaluating the demo data and want to start for real.
---     Run this, then run 0018, 0019, 0021, 0022 and 0023 — but NOT 0020 or
---     0024, which are the demo records.
+--     Run this, then run 0018, 0019, 0021, 0022, 0023 and 0025 — but NOT 0020
+--     or 0024, which are the demo records.
 --
 -- HOW TO RUN IT
 --

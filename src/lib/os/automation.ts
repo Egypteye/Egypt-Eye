@@ -1,6 +1,7 @@
 import "server-only";
 import { osdb, getOrg } from "./db";
 import { notify, employeesWithRole, employeesOnTrip } from "./notify";
+import { calendarPublishingConfigured, publishPending, reconcileCalendar } from "./calendar-sync";
 import { generateTripTasks } from "./tasks";
 import { computeReadinessFor } from "./readiness";
 import { todayInCairo, addDays, formatTime } from "./dates";
@@ -209,6 +210,7 @@ export type SweepResult = {
   criticalRaised: number;
   mediaChased: number;
   approvalsEscalated: number;
+  calendar: { configured: boolean; created: number; updated: number; deleted: number; unchanged: number; failed: number; errors: string[] };
   ranAt: string;
 };
 
@@ -323,11 +325,41 @@ export async function runSweep(): Promise<SweepResult> {
   }
   await markRun("approval_escalation", "ok", `${approvalsEscalated} escalated.`);
 
+  // 4. Publish the schedule to Google Calendar.
+  //
+  // Reconcile first, then work the queue. Reconciling is what makes a missed
+  // queue write self-heal within the hour, and what fills the queue the first
+  // time somebody connects Google to an OS that already has trips in it —
+  // without which "I connected it and nothing appeared" would be the
+  // integration's first impression.
+  //
+  // Wrapped, because Google being down is not a reason for the readiness
+  // sweep to stop running. The three jobs above have already happened and
+  // their results are returned either way.
+  let calendar = { configured: false, created: 0, updated: 0, deleted: 0, unchanged: 0, failed: 0, errors: [] as string[] };
+  if (calendarPublishingConfigured()) {
+    try {
+      await reconcileCalendar();
+      calendar = await publishPending(25);
+      await markRun(
+        "calendar_sync",
+        calendar.failed ? "error" : "ok",
+        `${calendar.created} created, ${calendar.updated} updated, ${calendar.deleted} removed, ${calendar.unchanged} unchanged, ${calendar.failed} failed.`,
+      );
+    } catch (error) {
+      calendar.errors.push(error instanceof Error ? error.message : String(error));
+      await markRun("calendar_sync", "error", calendar.errors[0]);
+    }
+  } else {
+    await markRun("calendar_sync", "skipped", "Google Calendar is not configured.");
+  }
+
   return {
     readinessChecked: tripIds.length,
     criticalRaised,
     mediaChased,
     approvalsEscalated,
+    calendar,
     ranAt: new Date().toISOString(),
   };
 }
