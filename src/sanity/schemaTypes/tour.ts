@@ -65,7 +65,13 @@ export const tour = defineType({
         ],
       },
     }),
-    defineField({ name: "rating", title: "Rating", type: "rating" }),
+    defineField({
+      name: "rating",
+      title: "Rating (optional override)",
+      description:
+        "Overrides what this item shows. Leave empty and it falls back to the Site Settings review figure, or to the live count of Testimonials. Enter only numbers you can stand behind — this is shown to customers as a review count.",
+      type: "rating",
+    }),
     defineField({ name: "badge", title: "Badge (e.g. 'Free Private Photoshoot')", type: "string" }),
     defineField({
       name: "image",
@@ -91,6 +97,20 @@ export const tour = defineType({
       title: "Itinerary (multi-day tours only)",
       type: "array",
       of: [{ type: "itineraryDay" }],
+    }),
+    defineField({
+      name: "physicalLevel",
+      title: "Physical activity level",
+      description: "Shown as a small bar near the top of the tour page.",
+      type: "physicalLevel",
+    }),
+    defineField({
+      name: "mapStops",
+      title: "Map stops (optional override)",
+      description:
+        "Leave empty for almost every tour: the \"Where You'll Go\" map builds itself from Destinations above. Only fill this in when Destinations can't carry the route — a region tag like 'Jordan' that isn't a single point, or a visiting order that differs from the order destinations are listed in.",
+      type: "array",
+      of: [{ type: "string" }],
     }),
     defineField({
       name: "relatedExperiences",

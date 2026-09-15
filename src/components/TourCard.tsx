@@ -1,10 +1,10 @@
 import Link from "next/link";
 import type { Tour } from "@/content/types";
 import { SmartImage } from "./SmartImage";
-import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { Badge } from "./Badge";
 import { AddToJourneyButton } from "./AddToJourneyButton";
+import { PhysicalLevelChip } from "./PhysicalLevelBar";
 
 export function TourCard({ tour }: { tour: Tour }) {
   return (
@@ -23,10 +23,12 @@ export function TourCard({ tour }: { tour: Tour }) {
           {tour.title}
         </h3>
         <p className="line-clamp-2 text-sm text-ink-soft/70">{tour.tagline}</p>
-        <div className="mt-auto flex items-center justify-between pt-2">
+        {/* Ratings are pulled from this card until the review programme is
+            rebuilt on the owner's terms — see components/Rating.tsx. */}
+        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1.5 pt-2">
           <span className="text-sm text-ink-soft/70">{tour.duration}</span>
-          <Rating rating={tour.rating} />
         </div>
+        {tour.physicalLevel && <PhysicalLevelChip level={tour.physicalLevel} />}
         <div className="relative z-20">
           <AddToJourneyButton
             type="tour"

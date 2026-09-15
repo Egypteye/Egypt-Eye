@@ -3,8 +3,8 @@ import Link from "next/link";
 import { Container } from "@/components/Container";
 import { Reveal } from "@/components/Reveal";
 import { TestimonialCard } from "@/components/TestimonialCard";
-import { getOverallRating } from "@/content/aggregate";
-import { getExperiences, getPhotoshoots, getTestimonials, getTours } from "@/sanity/fetchers";
+import { getCompanyRating } from "@/content/aggregate";
+import { getTestimonials } from "@/sanity/fetchers";
 import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
@@ -15,13 +15,10 @@ export const metadata: Metadata = {
 };
 
 export default async function TestimonialsPage() {
-  const [testimonials, tours, experiences, photoshoots] = await Promise.all([
-    getTestimonials(),
-    getTours(),
-    getExperiences(),
-    getPhotoshoots(),
-  ]);
-  const { average, reviewCount } = getOverallRating(tours, experiences, photoshoots);
+  const testimonials = await getTestimonials();
+  // The real count of collected reviews, with an average only once
+  // reviews carry star values (see content/aggregate.ts).
+  const rating = getCompanyRating(testimonials);
 
   return (
     <>
@@ -35,17 +32,19 @@ export default async function TestimonialsPage() {
             Every review here comes from a real Egypt Eye trip — no invented or illustrative quotes.
           </p>
 
-          {reviewCount > 0 && (
+          {rating && rating.count > 0 && (
             <div className="mt-8 inline-flex items-center gap-3 rounded-full bg-sand-dim px-5 py-3">
               <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 shrink-0 text-gold" aria-hidden="true">
                 <path d="M10 1.5l2.6 5.6 6.15.62-4.63 4.2 1.3 6.08L10 14.9l-5.42 3.1 1.3-6.08-4.63-4.2 6.15-.62L10 1.5z" />
               </svg>
-              <span className="text-sm font-semibold text-ink">
-                {average.toFixed(2)} average
-              </span>
-              <span className="h-1 w-1 rounded-full bg-ink-soft/40" aria-hidden="true" />
+              {typeof rating.score === "number" && (
+                <>
+                  <span className="text-sm font-semibold text-ink">{rating.score.toFixed(2)} average</span>
+                  <span className="h-1 w-1 rounded-full bg-ink-soft/40" aria-hidden="true" />
+                </>
+              )}
               <span className="text-sm text-ink-soft/70">
-                {reviewCount.toLocaleString()} review{reviewCount === 1 ? "" : "s"} across every tour, experience &amp; photoshoot
+                {rating.count.toLocaleString()} review{rating.count === 1 ? "" : "s"} collected after Egypt Eye trips &amp; shoots
               </span>
             </div>
           )}

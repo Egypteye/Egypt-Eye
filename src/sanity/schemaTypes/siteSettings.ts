@@ -275,6 +275,30 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: "reviewsOverride",
+      title: "Traveler review figure (optional override)",
+      description:
+        "The review count shown on every tour, experience and photoshoot. Leave both empty and the site counts the Testimonials list live, so the number rises on its own as reviews are added. Fill these in to state the figure yourself — a single item can still override it on its own page. Enter only numbers you can stand behind: this is shown to customers, and inflated review counts are an enforcement matter for the FTC and the UK CMA.",
+      type: "object",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "count",
+          title: "Number of reviews",
+          type: "number",
+          validation: (r) => r.min(0).integer(),
+        }),
+        defineField({
+          name: "score",
+          title: "Average star rating (optional, 1-5)",
+          description: "Leave empty to show the count on its own, with no star average.",
+          type: "number",
+          validation: (r) => r.min(1).max(5),
+        }),
+      ],
+    }),
+
+    defineField({
       name: "trustStats",
       title: "Trust stats bar (homepage, before Reviews)",
       description:

@@ -4,19 +4,23 @@ import groq from "groq";
 // than `...`, so adding a Studio-only field never accidentally changes the
 // site's data shape.
 
+// A product's own `rating` is an optional manual override, set in Studio; a
+// product without one falls back to the site-wide figure (see
+// sanity/fetchers.ts). Every list that renders a product card selects it, so
+// an override applies everywhere that product appears, not just on its page.
 const ratingFields = groq`rating{score, count}`;
 const priceFields = groq`price{amount, originalAmount, note}`;
 
 // Lightweight tour card used wherever an Experience or Story links to a Tour.
 const relatedTourFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
-  destinations, ${ratingFields}, badge, image, imageTone, ${priceFields}
+  destinations, ${ratingFields}, badge, image, imageTone, ${priceFields}, physicalLevel
 `;
 
 // Lightweight Extra Experience card used wherever a Tour links to one.
 const relatedExtraExperienceFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, included
+  image, imageTone, description, included, physicalLevel
 `;
 
 // hidden != true (rather than hidden == false) so tours from before the
@@ -24,7 +28,7 @@ const relatedExtraExperienceFields = groq`
 export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(order asc) {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
-  highlights, included, excluded, itinerary, ${priceFields}
+  highlights, included, excluded, itinerary, ${priceFields}, physicalLevel
 }`;
 
 // Shared by the single-slug and batched (`in $slugs`) variants below, so the
@@ -32,7 +36,7 @@ export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(orde
 const tourDetailFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
-  highlights, included, excluded, itinerary,
+  highlights, included, excluded, itinerary, physicalLevel, mapStops,
   relatedExperiences[]->{${relatedExtraExperienceFields}},
   ${priceFields}, seo
 `;
@@ -50,13 +54,14 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, location, included, destinations
+  image, imageTone, description, location, included, destinations, physicalLevel
 }`;
 
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
+  physicalLevel, mapStops,
   relatedTours[]->{${relatedTourFields}},
   seo
 `;
@@ -104,7 +109,7 @@ export const destinationHubsBySlugsQuery = groq`*[_type == "destinationHub" && s
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
-  name, quote, context
+  name, quote, context, score, "subjectSlug": subject->slug.current
 }`;
 
 // Lightweight experience summary used wherever a Story links to a
@@ -146,7 +151,7 @@ export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {
 
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   name, shortName, tagline, heroHeadline, heroSubheadline, description, positioning,
-  contact, socials, pillars, policies, trustStats,
+  contact, socials, pillars, policies, trustStats, reviewsOverride,
   heroImages[]{image, tone, headline, subtext, linkLabel, linkHref},
   flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage,
   destinationPhotos[]{name, image},

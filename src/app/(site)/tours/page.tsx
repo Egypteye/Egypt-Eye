@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -47,9 +46,7 @@ export default async function ToursPage() {
             <SectionHeading title={sectionTitle} description={page.sectionDescription} />
           </div>
           <div className="mt-6 lg:mt-10">
-            <Suspense fallback={null}>
-              <ToursGrid tours={tours} />
-            </Suspense>
+            <ToursGrid tours={tours} />
           </div>
         </Container>
       </section>

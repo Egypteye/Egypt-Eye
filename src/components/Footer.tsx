@@ -41,6 +41,14 @@ export function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                 </Link>
               </li>
             ))}
+            {/* Reviews were reachable only from a block on /about that renders
+                when testimonials exist, so an empty list orphaned the page
+                entirely. A trust page belongs in the footer regardless. */}
+            <li>
+              <Link href="/testimonials" className="hover:text-gold-light">
+                Traveler Reviews
+              </Link>
+            </li>
           </ul>
         </div>
 

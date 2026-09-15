@@ -1,3 +1,4 @@
+import { revalidatePath } from "next/cache";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "next-sanity";
 import { apiVersion, dataset, projectId } from "@/sanity/env";
@@ -31,14 +32,21 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // replace — any field not included in the payload below gets wiped, not
 // preserved. For tours/experiences/photoshoots (`image`/`gallery`),
 // destinationHubs (`image`), events (`backgroundImage`),
-// signatureExperiences (`heroImage`/`gallery`), and siteSettings
-// (`heroImages`, the four banner photos, `destinationPhotos`) — fields that
-// are typically set by uploading a real photo directly in the Studio rather
-// than edited in the local content files — this route fetches whatever's
-// currently set first and folds it back into the payload, so re-running it
-// never wipes a Studio-uploaded photo. Any OTHER field edited directly in
-// the Studio (e.g. SEO overrides) still follows normal full-replace
-// semantics and gets discarded on re-run.
+// signatureExperiences (`heroImage`/`gallery`), stories (`image`), and
+// siteSettings (`heroImages`, the four banner photos, `destinationPhotos`)
+// — fields that are typically set by uploading a real photo directly in the
+// Studio rather than edited in the local content files — this route
+// fetches whatever's currently set first and folds it back into the
+// payload, so re-running it never wipes a Studio-uploaded photo. Any OTHER
+// field edited directly in the Studio (e.g. SEO overrides) still follows
+// normal full-replace semantics and gets discarded on re-run.
+//
+// `rating` on tours/experiences/photoshoots is Studio-owned, not content:
+// it's an optional manual override an editor sets, falling back to the
+// site-wide figure in Site Settings and then to the live Testimonials count
+// (sanity/fetchers.ts). It has no local-content equivalent, so this route
+// only ever reads it back and preserves it — there is no `only=ratings`
+// pass, because writing ratings from here could only erase them.
 //
 // All mutations are queued onto ONE Sanity transaction and committed together
 // at the end, rather than sent as separate requests. This matters for
@@ -51,7 +59,7 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
-// experiences, photoshoots, ratings, nav, destinationHubs, testimonials,
+// experiences, photoshoots, nav, destinationHubs, testimonials,
 // stories, faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
 // signatureExperiences, authors, events, homepage, listingPages. IMPORTANT:
 // stories reference tours (relatedTours) and signatureExperiences reference
@@ -66,14 +74,21 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=hosts,signatureExperiences,authors,events,tours,stories
 //
-// `only=ratings` and `only=nav` are the safe ones to re-run any time — they
-// only patch the `rating` field (per tour/experience/photoshoot) or the
-// `nav` field (on siteSettings) respectively, unlike `tours`/`experiences`/
-// `photoshoots`/`siteSettings`, which do a full createOrReplace and would
-// wipe any other field edited directly in the Studio since the last full
-// migration:
+// `only=nav` is the safe one to re-run any time — it patches just the `nav`
+// field on siteSettings, unlike `tours`/`experiences`/`photoshoots`/
+// `siteSettings`, which do a full createOrReplace and would wipe any other
+// field edited directly in the Studio since the last full migration:
 //
-//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=ratings
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=nav
+//
+// Add `&reset=media` to DISCARD the Studio-uploaded photo on every
+// tour/experience/photoshoot the run covers, handing each back to the
+// Unsplash/Pexels photo in the local content files. This is destructive and
+// deliberate — it's how you undo hand-swapped photos in bulk. Ratings are
+// still preserved (they're Studio-owned, see above), and the homepage hero
+// slideshow, banner photos and destinationPhotos are never touched by it:
+//
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=tours,experiences,photoshoots&reset=media
 
 // Vercel kills serverless functions after a plan-dependent default (10s on
 // Hobby) — extend it well past what even a large single-transaction commit
@@ -102,6 +117,19 @@ export async function GET(request: NextRequest) {
   const only = onlyParam ? onlyParam.split(",").map((s) => s.trim()) : null;
   const shouldRun = (name: string) => !only || only.includes(name);
 
+  // `&reset=media` drops a tour/experience/photoshoot's Studio-uploaded photo
+  // instead of preserving it, which hands the item back to the Unsplash/Pexels
+  // photo in the local content files (fetchers.ts fills that in whenever
+  // Sanity has no image of its own). It is the deliberate opposite of this
+  // route's usual "never wipe a Studio upload" rule, so it only ever happens
+  // when someone asks for it in the URL.
+  //
+  // It is scoped to those three product types on purpose. The homepage hero
+  // slideshow, the banner photos and destinationPhotos are NOT affected by it
+  // under any combination of parameters — they are preserved unconditionally
+  // below, and there is no local content to reset them to anyway.
+  const resetMedia = request.nextUrl.searchParams.get("reset") === "media";
+
   const client = createClient({ projectId, dataset, apiVersion, token, useCdn: false });
   const tx = client.transaction();
   const results: string[] = [];
@@ -114,20 +142,9 @@ export async function GET(request: NextRequest) {
   // whatever's currently set and folding it back into each payload below
   // makes re-running this endpoint safe even after Studio photo uploads.
   //
-  // `rating` gets the same treatment, for the same reason: it DOES have a
-  // local-content equivalent (tours.ts/experiences.ts/photoshoots.ts), but
-  // that local value is a one-time snapshot from whenever it was last
-  // written into the content file — it's the real review count/score, kept
-  // current by editing it in Studio as new reviews come in, not by editing
-  // the repo. A full resync unconditionally overwriting `rating` from the
-  // local snapshot would silently roll back every rating to that stale
-  // number the moment ANY tour/experience/photoshoot field changed and
-  // needed re-migrating — which is exactly what happened running
-  // `only=tours,experiences,...` to seed unrelated new content. `existing`
-  // wins whenever the document already has a rating; the local value is
-  // used only to seed a brand-new document that doesn't have one yet. The
-  // dedicated `only=ratings` pass below remains the deliberate, explicit way
-  // to push an updated local rating into Sanity.
+  // `rating` is read back and folded in because it's Studio-owned: an
+  // optional manual override with no counterpart in the content files.
+  // Without this, any resync would wipe whatever an editor set by hand.
   let existingMedia = new Map<string, { image?: unknown; gallery?: unknown; rating?: unknown }>();
   if (shouldRun("tours") || shouldRun("experiences") || shouldRun("photoshoots")) {
     const rows = await client.fetch<{ _id: string; image?: unknown; gallery?: unknown; rating?: unknown }[]>(
@@ -169,7 +186,10 @@ export async function GET(request: NextRequest) {
   // equivalent in content/site.ts at all — heroImages (the homepage hero
   // slideshow), the four banner photos, and destinationPhotos are Studio-only
   // — so unlike the merges above there's nothing local to merge in; this
-  // purely preserves what's already there. Missing this one meant every
+  // purely preserves what's already there. `reset=media` does NOT reach these
+  // — the homepage hero slideshow in particular is hand-picked in Studio and
+  // has no content-file equivalent, so resetting it could only blank it.
+  // Missing this one meant every
   // siteSettings migration (the full endpoint with no `only=`, or explicitly
   // `only=siteSettings`) silently wiped every uploaded hero slide photo (and
   // its headline/subtext/link), all four banner photos, and any destination
@@ -188,6 +208,20 @@ export async function GET(request: NextRequest) {
       (await client.fetch<typeof existingSiteSettingsMedia>(
         `*[_type == "siteSettings"][0]{heroImages, flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage, destinationPhotos}`
       )) ?? {};
+  }
+
+  // Same reasoning again, for the story cover photo. Unlike `body`, `title`,
+  // etc. — which really are code-authored and are supposed to be fully
+  // replaced by re-running this migration — `image` is the one story field
+  // that's actually set by uploading a photo in the Studio after the fact,
+  // exactly like tours/experiences/photoshoots above. It was never included
+  // in the stories createOrReplace payload at all, which means every past
+  // run of `only=stories` (or a full resync) has been silently wiping every
+  // published story's cover photo back to blank.
+  let existingStoryMedia = new Map<string, { image?: unknown }>();
+  if (shouldRun("stories")) {
+    const rows = await client.fetch<{ _id: string; image?: unknown }[]>(`*[_type == "story"]{_id, image}`);
+    existingStoryMedia = new Map(rows.map((r) => [r._id, { image: r.image }]));
   }
 
   if (shouldRun("tours")) {
@@ -210,13 +244,15 @@ export async function GET(request: NextRequest) {
           existingMedia.get(id)?.rating ?? (t.rating ? { _type: "rating", ...t.rating } : undefined),
         badge: t.badge,
         imageTone: t.imageTone,
-        image: existingMedia.get(id)?.image,
-        gallery: existingMedia.get(id)?.gallery,
+        image: resetMedia ? undefined : existingMedia.get(id)?.image,
+        gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
         description: t.description,
         highlights: t.highlights,
         included: t.included,
         excluded: t.excluded,
         itinerary: t.itinerary?.map((d) => ({ ...d, _type: "itineraryDay", _key: key() })),
+        physicalLevel: t.physicalLevel ? { _type: "physicalLevel", ...t.physicalLevel } : undefined,
+        mapStops: t.mapStops,
         relatedExperiences: t.relatedExperiences?.map((e) => ({
           _type: "reference",
           _ref: `experience-${e.slug}`,
@@ -247,8 +283,8 @@ export async function GET(request: NextRequest) {
           _key: key(),
         })),
         imageTone: e.imageTone,
-        image: existingMedia.get(id)?.image,
-        gallery: existingMedia.get(id)?.gallery,
+        image: resetMedia ? undefined : existingMedia.get(id)?.image,
+        gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
         description: e.description,
         location: e.location,
         // Array items need their own _key or Sanity rejects the document.
@@ -261,6 +297,8 @@ export async function GET(request: NextRequest) {
         included: e.included,
         goodToKnow: e.goodToKnow,
         destinations: e.destinations,
+        physicalLevel: e.physicalLevel ? { _type: "physicalLevel", ...e.physicalLevel } : undefined,
+        mapStops: e.mapStops,
         order: i,
       });
       results.push(`experience: ${e.slug}`);
@@ -281,8 +319,8 @@ export async function GET(request: NextRequest) {
         price: { _type: "price", ...p.price },
         locations: p.locations,
         imageTone: p.imageTone,
-        image: existingMedia.get(id)?.image,
-        gallery: existingMedia.get(id)?.gallery,
+        image: resetMedia ? undefined : existingMedia.get(id)?.image,
+        gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
         description: p.description,
         goodFor: p.goodFor,
         included: p.included,
@@ -300,26 +338,12 @@ export async function GET(request: NextRequest) {
   // ratings in content/tours.ts) without wiping images, descriptions, or any
   // other field a real edit in the Studio may have changed since the last
   // full migration.
-  if (shouldRun("ratings")) {
-    for (const t of tours) {
-      tx.patch(`tour-${t.slug}`, (p) =>
-        t.rating ? p.set({ rating: { _type: "rating", ...t.rating } }) : p.unset(["rating"])
-      );
-      results.push(`rating: tour-${t.slug}`);
-    }
-    for (const e of experiences) {
-      tx.patch(`experience-${e.slug}`, (p) =>
-        e.rating ? p.set({ rating: { _type: "rating", ...e.rating } }) : p.unset(["rating"])
-      );
-      results.push(`rating: experience-${e.slug}`);
-    }
-    for (const ph of photoshoots) {
-      tx.patch(`photoshoot-${ph.slug}`, (p) =>
-        ph.rating ? p.set({ rating: { _type: "rating", ...ph.rating } }) : p.unset(["rating"])
-      );
-      results.push(`rating: photoshoot-${ph.slug}`);
-    }
-  }
+  // There is deliberately no `ratings` pass any more. A product's rating is
+  // now a manual override an editor types in Studio, with no equivalent in
+  // the content files — so a migration that wrote ratings could only ever
+  // erase the numbers someone set by hand. The full createOrReplace passes
+  // above read the current value back and fold it in, so a resync leaves
+  // Studio's ratings alone.
 
   // Same reasoning as `ratings` above: a scoped patch on just the `nav`
   // field, so it's safe to re-run after adding/removing a nav item without
@@ -669,6 +693,7 @@ export async function GET(request: NextRequest) {
         tags: s.tags,
         author: s.author ? { _type: "reference", _ref: `author-${s.author.slug}` } : undefined,
         excerpt: s.excerpt,
+        image: existingStoryMedia.get(`story-${s.slug}`)?.image,
         imageTone: s.imageTone,
         body: s.body?.map((b) => ({ ...migrateBodyBlock(b), _key: b._key ?? key() })),
         relatedExperience: s.relatedExperience
@@ -707,5 +732,34 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: message }, { status: 500 });
   }
 
-  return NextResponse.json({ ok: true, migrated: results.length, details: results });
+  // Committing to Sanity is only half the job. Every fetch in
+  // sanity/fetchers.ts is cached for an hour and the product pages are
+  // statically generated, so without this a migration appears to do nothing:
+  // the write lands, and the site keeps serving the previous version until
+  // the window happens to expire. Flushing the whole route tree here is what
+  // makes a migration visible immediately, which is the only way anyone can
+  // tell whether it did what they wanted.
+  let revalidated = true;
+  try {
+    revalidatePath("/", "layout");
+  } catch (err) {
+    // A failed flush isn't a failed migration — the data is committed either
+    // way, it just won't surface until the cache expires on its own.
+    console.error("Migration committed, but revalidation failed:", err);
+    revalidated = false;
+  }
+
+  // `resetMedia` is echoed back because it's the one destructive mode here —
+  // seeing it in the response is how you confirm you ran what you meant to.
+  // `revalidated` says whether the change is live now or waits out the cache.
+  return NextResponse.json({
+    ok: true,
+    migrated: results.length,
+    resetMedia,
+    revalidated,
+    cacheNote: revalidated
+      ? "Site cache flushed — reload to see the change."
+      : "Cache flush failed; changes appear within the hour, or after a redeploy.",
+    details: results,
+  });
 }

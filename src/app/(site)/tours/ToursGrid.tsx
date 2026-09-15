@@ -1,7 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { TourCard } from "@/components/TourCard";
 import type { Tour } from "@/content/types";
 
@@ -58,15 +57,35 @@ function FilterGroup({ title, children }: { title: string; children: React.React
   );
 }
 
-export function ToursGrid({ tours }: { tours: Tour[] }) {
-  const searchParams = useSearchParams();
-  const initialType = (searchParams.get("type") as Tour["category"] | null) ?? "all";
-  const initialDuration = searchParams.get("duration") ?? "all";
-  const initialCity = searchParams.get("city");
+// The URL never changes under this component (filtering is local state, not
+// navigation), so there is nothing to subscribe to; these exist only to give
+// useSyncExternalStore the stable function identities it requires.
+const subscribeToNothing = () => () => {};
+const readSearch = () => window.location.search;
+const readNoSearch = () => "";
 
-  const [filter, setFilter] = useState<Tour["category"] | "all">(initialType);
-  const [duration, setDuration] = useState(initialDuration);
-  const [destination, setDestination] = useState<string | null>(initialCity);
+export function ToursGrid({ tours }: { tours: Tour[] }) {
+  // Deliberately NOT useSearchParams(). That hook opts a component out of
+  // prerendering, and with this grid inside a <Suspense fallback={null}>, the
+  // bail-out meant /tours shipped its fallback — zero tour links — in the
+  // server HTML. The whole catalogue was invisible to anything that doesn't
+  // execute JavaScript, on the site's most important commercial page.
+  //
+  // useSyncExternalStore reads the query string with an explicit server
+  // snapshot of "", so the server renders every tour and React applies any
+  // deep-linked filter right after hydration without a mismatch. A filter the
+  // visitor picks overrides the URL from then on; until they pick one, the
+  // URL decides. Crawlers get the full list, people get the filtered view.
+  const search = useSyncExternalStore(subscribeToNothing, readSearch, readNoSearch);
+  const params = useMemo(() => new URLSearchParams(search), [search]);
+
+  const [typeOverride, setFilter] = useState<Tour["category"] | "all" | null>(null);
+  const [durationOverride, setDuration] = useState<string | null>(null);
+  const [destinationOverride, setDestination] = useState<string | null | undefined>(undefined);
+
+  const filter = typeOverride ?? ((params.get("type") as Tour["category"] | null) ?? "all");
+  const duration = durationOverride ?? params.get("duration") ?? "all";
+  const destination = destinationOverride !== undefined ? destinationOverride : params.get("city");
   const [style, setStyle] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 

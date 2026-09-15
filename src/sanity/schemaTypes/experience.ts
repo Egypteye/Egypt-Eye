@@ -15,7 +15,13 @@ export const experience = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: "duration", title: "Duration", type: "string" }),
-    defineField({ name: "rating", title: "Rating", type: "rating" }),
+    defineField({
+      name: "rating",
+      title: "Rating (optional override)",
+      description:
+        "Overrides what this item shows. Leave empty and it falls back to the Site Settings review figure, or to the live count of Testimonials. Enter only numbers you can stand behind — this is shown to customers as a review count.",
+      type: "rating",
+    }),
     defineField({ name: "price", title: "Price", type: "price" }),
     defineField({
       name: "image",
@@ -74,6 +80,20 @@ export const experience = defineType({
       name: "destinations",
       title: "Destinations",
       description: "E.g. 'Cairo', 'Giza' — connects this experience to the Explore Egypt map.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
+      name: "physicalLevel",
+      title: "Physical activity level",
+      description: "Shown as a small bar near the top of the experience page.",
+      type: "physicalLevel",
+    }),
+    defineField({
+      name: "mapStops",
+      title: "Map stops (optional override)",
+      description:
+        "Leave empty unless Destinations above can't place this on the map — the \"Where You'll Go\" map builds itself from them.",
       type: "array",
       of: [{ type: "string" }],
     }),

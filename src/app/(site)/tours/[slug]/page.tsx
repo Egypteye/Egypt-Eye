@@ -3,13 +3,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
-import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
+import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
+import { RouteMap } from "@/components/RouteMap";
+import { resolveStops } from "@/lib/placeCoords";
+import { pickRelated } from "@/lib/relatedPicker";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
@@ -51,7 +54,10 @@ export default async function TourDetailPage({
   if (!tour) notFound();
 
   const allTours = await getTours();
-  const related = allTours.filter((t) => t.slug !== tour.slug && t.category === tour.category).slice(0, 3);
+  const related = pickRelated(allTours, tour, 3, (t) => t.category);
+  // `mapStops` is the explicit override; almost every tour falls through to
+  // its own destination tags, so a newly added tour maps itself.
+  const mapStops = resolveStops(tour.mapStops ?? tour.destinations);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Tours", path: "/tours" },
@@ -62,7 +68,8 @@ export default async function TourDetailPage({
     description: tour.tagline,
     image: tour.image,
     path: `/tours/${tour.slug}`,
-    rating: tour.rating,
+    // No rating passed: with the badge gone from the page, emitting
+    // aggregateRating would be markup Google can't see on the page.
   });
 
   return (
@@ -98,9 +105,6 @@ export default async function TourDetailPage({
             <span className="rounded-full bg-cream/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-cream backdrop-blur-sm">
               {categoryLabels[tour.category] ?? tour.category}
             </span>
-            <span className="rounded-full bg-cream px-3.5 py-1.5">
-              <Rating rating={tour.rating} />
-            </span>
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">
@@ -127,6 +131,12 @@ export default async function TourDetailPage({
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-black/5 pb-6 text-sm text-ink-soft/70">
               <span>📍 {tour.destinations.join(", ")}</span>
             </div>
+
+            {tour.physicalLevel && (
+              <div className="mt-6">
+                <PhysicalLevelBar level={tour.physicalLevel} />
+              </div>
+            )}
 
             <div id="details" className="mt-8 scroll-mt-24">
               <h2 className="font-display text-2xl font-semibold text-ink">
@@ -169,6 +179,20 @@ export default async function TourDetailPage({
                     </li>
                   ))}
                 </ol>
+              </div>
+            )}
+
+            {mapStops.length > 0 && (
+              <div className="mt-10">
+                <h2 className="font-display text-2xl font-semibold text-ink">
+                  Where You&rsquo;ll Go
+                </h2>
+                <p className="mt-2 text-sm text-ink-soft/70">
+                  {mapStops.length === 1
+                    ? "The single base for this tour."
+                    : "The main stops, in the order you'll visit them."}
+                </p>
+                <RouteMap stops={mapStops} singleLabel={mapStops[0]?.name} />
               </div>
             )}
 

@@ -52,6 +52,10 @@ export function callout(body: string, opts?: { title?: string; tone?: "Info" | "
   return { _type: "calloutBlock", _key: nextBlockKey("callout"), title: opts?.title, body, tone: opts?.tone ?? "Highlight" };
 }
 
+export function photo(url: string, opts?: { caption?: string; alt?: string }): StoryBodyBlock {
+  return { _type: "photoBlock", _key: nextBlockKey("photo"), url, caption: opts?.caption, alt: opts?.alt };
+}
+
 export function faq(faqs: StoryFaqItem[], title?: string): StoryBodyBlock {
   return { _type: "faqBlock", _key: nextBlockKey("faq"), title, faqs };
 }

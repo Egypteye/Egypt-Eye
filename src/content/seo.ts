@@ -67,7 +67,7 @@ export function touristTripJsonLd({
   description: string;
   image?: SanityImage;
   path: string;
-  rating?: { score: number; count: number } | null;
+  rating?: { score?: number; count: number; scope?: "product" | "company"; source?: "computed" | "manual" } | null;
 }) {
   const imageUrl = urlForImage(image)?.width(1200).height(630).url();
   return {
@@ -82,7 +82,18 @@ export function touristTripJsonLd({
       name: "Egypt Eye Travel and Tours",
       url: siteUrl,
     },
-    ...(rating && rating.count > 0
+    // Published only for a figure counted from real testimonial records that
+    // name this product. AggregateRating is a machine-readable assertion to
+    // search engines that this many reviews of this item exist and can be
+    // produced, so a company-wide total (true of the business, not of this
+    // tour) and a manually entered number both stay out of it — they still
+    // drive everything on the page. An AggregateRating without a real
+    // ratingValue isn't valid markup either.
+    ...(rating &&
+    rating.scope === "product" &&
+    rating.source === "computed" &&
+    rating.count > 0 &&
+    typeof rating.score === "number"
       ? {
           aggregateRating: {
             "@type": "AggregateRating",
@@ -94,11 +105,18 @@ export function touristTripJsonLd({
   };
 }
 
+/**
+ * Home is prepended automatically. Every detail page renders a visible
+ * breadcrumb that starts at Home, and structured data has to describe what is
+ * actually on the page — a trail that begins at "Tours" while the page shows
+ * "Home › Tours › …" is a mismatch, and callers kept forgetting to pass it.
+ */
 export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
+  const trail = [{ name: "Home", path: "/" }, ...items];
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
-    itemListElement: items.map((item, i) => ({
+    itemListElement: trail.map((item, i) => ({
       "@type": "ListItem",
       position: i + 1,
       name: item.name,

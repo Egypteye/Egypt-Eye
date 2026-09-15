@@ -62,6 +62,10 @@ export function HeroSlideshow({
           key={i}
           image={slide.image}
           tone={slide.tone}
+          // The most prominent images on the site were shipping with an empty
+          // alt. Each slide already carries the headline it illustrates, which
+          // is the honest description of what the photo shows.
+          alt={slide.headline ?? "Egypt Eye Travel & Tours"}
           className={`absolute inset-0 animate-[kenburns-drift_26000ms_ease-in-out_infinite_alternate] transition-opacity duration-1000 ease-in-out ${
             i === index ? "opacity-100" : "opacity-0"
           }`}

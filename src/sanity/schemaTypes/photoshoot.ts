@@ -15,7 +15,13 @@ export const photoshoot = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: "duration", title: "Duration", type: "string" }),
-    defineField({ name: "rating", title: "Rating", type: "rating" }),
+    defineField({
+      name: "rating",
+      title: "Rating (optional override)",
+      description:
+        "Overrides what this item shows. Leave empty and it falls back to the Site Settings review figure, or to the live count of Testimonials. Enter only numbers you can stand behind — this is shown to customers as a review count.",
+      type: "rating",
+    }),
     defineField({ name: "price", title: "Price", type: "price" }),
     defineField({ name: "locations", title: "Locations", type: "array", of: [{ type: "string" }] }),
     defineField({

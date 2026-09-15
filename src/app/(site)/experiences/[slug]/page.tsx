@@ -2,10 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
+import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
+import { RouteMap } from "@/components/RouteMap";
+import { resolveStops } from "@/lib/placeCoords";
+import { pickRelated } from "@/lib/relatedPicker";
 import { SmartImage } from "@/components/SmartImage";
-import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
+import { ExperienceCard } from "@/components/ExperienceCard";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
@@ -43,6 +47,16 @@ export default async function ExperienceDetailPage({
   const [experience, site] = await Promise.all([getExperienceBySlug(slug), getSiteSettings()]);
   if (!experience) notFound();
 
+  // Without this, an experience is only ever reachable from /experiences —
+  // one inbound link each. Grouping on the first destination keeps the row
+  // relevant (the listing page groups the same way).
+  const allExperiences = await getExperiences();
+  const related = pickRelated(allExperiences, experience, 3, (e) => e.destinations?.[0]);
+
+  // Most experiences run at a single place, so this usually resolves to one
+  // pin straight from the destination tags already on the record.
+  const mapStops = resolveStops(experience.mapStops ?? experience.destinations);
+
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Extra Experiences", path: "/experiences" },
     { name: experience.title, path: `/experiences/${experience.slug}` },
@@ -52,7 +66,7 @@ export default async function ExperienceDetailPage({
     description: experience.description,
     image: experience.image,
     path: `/experiences/${experience.slug}`,
-    rating: experience.rating,
+    // See the tour page: no visible rating, so no aggregateRating markup.
   });
 
   return (
@@ -94,7 +108,6 @@ export default async function ExperienceDetailPage({
             {experience.title}
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Rating rating={experience.rating} />
             {experience.location && (
               <span className="inline-flex items-center gap-1.5 text-sm text-ink-soft/70">
                 <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-gold-dark" fill="currentColor" aria-hidden="true">
@@ -107,6 +120,22 @@ export default async function ExperienceDetailPage({
           <p className="mt-5 leading-relaxed text-ink-soft/80">
             {experience.description}
           </p>
+
+          {experience.physicalLevel && (
+            <div className="mt-6">
+              <PhysicalLevelBar level={experience.physicalLevel} />
+            </div>
+          )}
+
+          {mapStops.length > 0 && (
+            <div className="mt-10">
+              <h2 className="font-display text-xl font-semibold text-ink">Where You&rsquo;ll Go</h2>
+              <RouteMap
+                stops={mapStops}
+                singleLabel={experience.location ?? mapStops[0]?.name}
+              />
+            </div>
+          )}
 
           {experience.steps && experience.steps.length > 0 && (
             <div className="mt-10">
@@ -190,12 +219,6 @@ export default async function ExperienceDetailPage({
             </div>
           )}
 
-          <Link
-            href="/experiences"
-            className="mt-10 inline-block text-sm font-semibold text-gold-dark hover:underline"
-          >
-            ← Back to all experiences
-          </Link>
         </div>
 
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
@@ -228,6 +251,27 @@ export default async function ExperienceDetailPage({
         </aside>
       </Container>
       </section>
+
+      {related.length > 0 && (
+        <section className="bg-sand-dim py-20">
+          <Container>
+            <h2 className="font-display text-2xl font-semibold text-ink">
+              More experiences to add
+            </h2>
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((e) => (
+                <ExperienceCard key={e.slug} experience={e} />
+              ))}
+            </div>
+            <Link
+              href="/experiences"
+              className="mt-8 inline-block text-sm font-semibold text-gold-dark hover:underline"
+            >
+              ← Back to all experiences
+            </Link>
+          </Container>
+        </section>
+      )}
     </>
   );
 }

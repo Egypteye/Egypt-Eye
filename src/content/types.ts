@@ -8,9 +8,31 @@ export type ImageTone = "giza" | "nile" | "desert" | "luxor" | "jordan" | "redse
 // replaces it. urlForImage() in sanity/image.ts understands both.
 export type SanityImage = SanityImageRef | string;
 
+// Egypt Eye collects reviews over WhatsApp in the follow-up after a trip or
+// a shoot, so a review is feedback about the company, not about one product
+// — there is no per-tour review data to average. Every item therefore shows
+// the same company-wide figure, stamped on at fetch time by
+// sanity/fetchers.ts (never hand-written in a content file), and `score` is
+// optional because a written review with no star value still counts.
 export type Rating = {
-  score: number;
+  score?: number;
   count: number;
+  /**
+   * What the number is a claim about, which decides how it's worded:
+   * "product" renders "24 reviews", "company" renders "1,481 Egypt Eye
+   * reviews". The two must never read as each other.
+   */
+  scope: "product" | "company";
+  /**
+   * "computed" — counted from the testimonial records themselves.
+   * "manual" — typed into Studio by an editor.
+   *
+   * Only computed figures are published as AggregateRating structured data,
+   * because that markup asserts to search engines that a specific number of
+   * reviews exists and is countable. A manual figure still drives everything
+   * on the page.
+   */
+  source: "computed" | "manual";
 } | null;
 
 export type ItineraryDay = {
@@ -48,7 +70,8 @@ export type Tour = {
   destinations: string[];
   travelStyle?: string[];
   featured?: boolean;
-  rating: Rating;
+  /** Set at read time from the collected reviews — never authored here. */
+  rating?: Rating;
   badge?: string;
   imageLabel?: string;
   image?: SanityImage;
@@ -60,6 +83,16 @@ export type Tour = {
   itinerary?: ItineraryDay[];
   relatedExperiences?: Experience[];
   price: Price;
+  physicalLevel?: PhysicalLevel;
+  /**
+   * Explicit stops for the "Where You'll Go" map, in visiting order. Left
+   * unset on most tours: the map resolves `destinations` against the same
+   * projected coordinates the Explore Egypt map uses, so a new tour maps
+   * itself. Set this only where `destinations` can't carry the route —
+   * region tags like "Jordan" that aren't a single point, or an order that
+   * differs from how the destinations happen to be listed.
+   */
+  mapStops?: string[];
   seo?: PageSeo;
 };
 
@@ -83,11 +116,24 @@ export type ActivityStep = {
   description: string;
 };
 
+// How physically demanding a tour or experience actually is. Four tiers so
+// the on-page bar reads at a glance, plus a `note` that says what the effort
+// concretely consists of for THAT outing (stairs, deep sand, a boat ladder,
+// time in the saddle) — the tier alone can't tell someone whether the hard
+// part is their knees or the heat.
+export type PhysicalLevelTier = "easy" | "moderate" | "active" | "challenging";
+
+export type PhysicalLevel = {
+  tier: PhysicalLevelTier;
+  note: string;
+};
+
 export type Experience = {
   slug: string;
   title: string;
   duration: string;
-  rating: Rating;
+  /** Set at read time from the collected reviews — never authored here. */
+  rating?: Rating;
   price: Price;
   imageLabel?: string;
   image?: SanityImage;
@@ -104,6 +150,9 @@ export type Experience = {
   goodToKnow?: string[];
   destinations?: string[];
   relatedTours?: Tour[];
+  physicalLevel?: PhysicalLevel;
+  /** See Tour.mapStops. Usually one place for an experience. */
+  mapStops?: string[];
   seo?: PageSeo;
 };
 
@@ -111,7 +160,8 @@ export type Photoshoot = {
   slug: string;
   title: string;
   duration: string;
-  rating: Rating;
+  /** Set at read time from the collected reviews — never authored here. */
+  rating?: Rating;
   price: Price;
   locations: string[];
   imageLabel?: string;
@@ -131,6 +181,13 @@ export type Testimonial = {
   name: string;
   quote: string;
   context?: string;
+  /** The star value this traveler gave, where the follow-up captured one. */
+  score?: number;
+  /**
+   * Slug of the tour/experience/photoshoot this review is about, set by hand
+   * in Studio. Overrides whatever `context` says — see lib/reviewAttribution.
+   */
+  subjectSlug?: string;
 };
 
 export type Author = {
@@ -184,6 +241,17 @@ export type StoryGalleryBlock = {
   _key: string;
   images?: SanityImage[];
 };
+// A single captioned photo sourced from a plain URL (a real, provided photo,
+// or an external hotlink) rather than a Sanity-uploaded asset — for cases
+// where the built-in `image` Portable Text type (which resolves via a
+// Sanity asset reference) doesn't apply.
+export type StoryPhotoBlock = {
+  _type: "photoBlock";
+  _key: string;
+  url: string;
+  caption?: string;
+  alt?: string;
+};
 export type StoryVideoEmbedBlock = {
   _type: "videoEmbedBlock";
   _key: string;
@@ -225,6 +293,7 @@ export type StoryBodyBlock =
   | StoryQuoteBlock
   | StoryCalloutBlock
   | StoryGalleryBlock
+  | StoryPhotoBlock
   | StoryVideoEmbedBlock
   | StoryCountdownBlock
   | StoryExperienceCardBlock
@@ -313,6 +382,8 @@ export type SiteSettings = {
   // Optional, real-numbers-only stats for the homepage trust bar. A field
   // left unset hides that tile rather than showing a placeholder — never
   // fabricate a value here.
+  /** Manual override for the review figure shown on every product. */
+  reviewsOverride?: { count?: number; score?: number };
   trustStats?: {
     yearsInEgypt?: number;
     happyGuestsLabel?: string;
@@ -449,6 +520,8 @@ export type ResolvedSiteSettings = {
     cancellation: string;
   };
   pillars: readonly { title: string; description: string }[];
+  /** Manual override for the review figure shown on every product. */
+  reviewsOverride?: { count?: number; score?: number };
   trustStats?: {
     yearsInEgypt?: number;
     happyGuestsLabel?: string;

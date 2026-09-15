@@ -7,6 +7,15 @@ const STORY_CATEGORIES = [
   "Travel Guides",
   "Behind the Scenes",
   "News",
+  // Added for the world-trends cohort: global stories that find a real,
+  // specific Egypt angle rather than travel-guide content. Kept as five
+  // broad clusters rather than one per micro-topic, matching how varied
+  // the existing five categories already are.
+  "Tech & AI",
+  "Geopolitics & Economy",
+  "Science & Space",
+  "Wellness & Longevity",
+  "Culture & Trends",
 ];
 
 // Story body: standard rich text + images, plus a small set of reusable
@@ -61,6 +70,18 @@ const bodyBlockTypes = [
       }),
     ],
     preview: { select: {}, prepare: () => ({ title: "Gallery" }) },
+  }),
+  defineArrayMember({
+    type: "object",
+    name: "photoBlock",
+    title: "Photo (by URL)",
+    description: "A single captioned photo sourced from a direct URL — for real, provided photos not uploaded as a Sanity asset.",
+    fields: [
+      defineField({ name: "url", title: "Photo URL", type: "url", validation: (r) => r.required() }),
+      defineField({ name: "caption", title: "Caption (optional)", type: "string" }),
+      defineField({ name: "alt", title: "Alt text (optional)", type: "string" }),
+    ],
+    preview: { select: { title: "caption" }, prepare: (s: { title?: string }) => ({ title: s.title || "Photo" }) },
   }),
   defineArrayMember({
     type: "object",

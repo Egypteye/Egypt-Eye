@@ -82,6 +82,7 @@ export default async function ExperiencesPage() {
         <Container>
           <SectionHeading title={page.sectionTitle} description={page.sectionDescription} />
 
+
           {/* Jump bar — the catalogue is long enough that a visitor who
               already knows where they're going shouldn't have to scroll it. */}
           {groups.length > 1 && (

@@ -7,23 +7,45 @@ import {
   getPhotoshoots,
   getStories,
 } from "@/sanity/fetchers";
-import { getEnabledHotels } from "@/lib/hotels";
+import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
 
 // Slugs that 301-redirect elsewhere (see next.config.ts) — keep them out of
 // the sitemap even if the underlying Sanity document hasn't been removed yet.
 const REDIRECTED_STORY_SLUGS = new Set(["best-travel-agencies-in-egypt-2025-guide"]);
 
+// Cached rather than rebuilt per request. Every source below is a network
+// call, and a sitemap that re-queries Sanity and Supabase on each Googlebot
+// fetch is both slow and fragile. Matches the fetchers' own window.
+export const revalidate = 3600;
+
+/**
+ * A sitemap that cannot fail.
+ *
+ * Search Console reports "Sitemap could not be read" for any non-200, and a
+ * bare Promise.all means one unavailable backend takes the entire file down
+ * with it — losing every URL, including the static ones that need no backend
+ * at all. Each source is isolated so a failure costs only its own section.
+ */
+async function safeList<T>(label: string, load: () => Promise<T[]>): Promise<T[]> {
+  try {
+    return await load();
+  } catch (err) {
+    console.error(`sitemap: ${label} unavailable, omitting that section:`, err);
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories, destinationHubs, hotels] =
     await Promise.all([
-      getAllTourSlugs(),
-      getExperiences(),
-      getPhotoshoots(),
-      getAllSignatureExperienceSlugs(),
-      getStories(),
-      getDestinationHubs(),
-      getEnabledHotels(),
+      safeList("tours", getAllTourSlugs),
+      safeList("experiences", getExperiences),
+      safeList("photoshoots", getPhotoshoots),
+      safeList("signatureExperiences", getAllSignatureExperienceSlugs),
+      safeList("stories", getStories),
+      safeList("destinationHubs", getDestinationHubs),
+      safeList("hotels", getEnabledHotelsPublic),
     ]);
 
   const staticRoutes: MetadataRoute.Sitemap = [
@@ -40,6 +62,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteUrl}/customize`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${siteUrl}/testimonials`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.2 },
+    { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/partners`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/travel-agents`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/affiliate`, changeFrequency: "monthly", priority: 0.5 },
@@ -58,11 +82,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const experienceRoutes: MetadataRoute.Sitemap = experiences.map((e) => ({
-    url: `${siteUrl}/experiences/${e.slug}`,
-    changeFrequency: "monthly",
-    priority: 0.6,
-  }));
+  // Anything whose canonical points at another URL is deliberately left out:
+  // a sitemap should list the pages we want indexed, and listing a
+  // canonicalised-away duplicate contradicts the canonical tag on the page.
+  const experienceRoutes: MetadataRoute.Sitemap = experiences
+    .filter((e) => !e.seo?.canonicalUrl || e.seo.canonicalUrl === `${siteUrl}/experiences/${e.slug}`)
+    .map((e) => ({
+      url: `${siteUrl}/experiences/${e.slug}`,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    }));
 
   const photoshootRoutes: MetadataRoute.Sitemap = photoshoots.map((p) => ({
     url: `${siteUrl}/photoshoots/${p.slug}`,

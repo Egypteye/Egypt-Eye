@@ -35,6 +35,49 @@ export const priceObject = defineType({
   ],
 });
 
+// How demanding a tour or experience actually is, shown as a four-segment
+// bar on its page. The note is the part travelers act on — say what the
+// effort consists of here specifically (stairs, deep sand, a boat ladder,
+// hours in the saddle) rather than repeating the tier name back at them.
+export const physicalLevelObject = defineType({
+  name: "physicalLevel",
+  title: "Physical activity level",
+  type: "object",
+  fields: [
+    defineField({
+      name: "tier",
+      title: "Level",
+      type: "string",
+      options: {
+        list: [
+          { title: "Easy — little walking, no rough ground", value: "easy" },
+          { title: "Moderate — a few hours on your feet, some uneven ground", value: "moderate" },
+          { title: "Active — sustained walking, sand, stairs or water activity", value: "active" },
+          { title: "Challenging — long climbs, early starts, or demanding terrain", value: "challenging" },
+        ],
+        layout: "radio",
+      },
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "note",
+      title: "What to expect",
+      description:
+        "One or two sentences on the physical side of this specific outing — walking time, stairs, sand, climbing, horseback, water entry.",
+      type: "text",
+      rows: 2,
+      validation: (r) => r.required().max(240),
+    }),
+  ],
+  preview: {
+    select: { tier: "tier", note: "note" },
+    prepare: (s: { tier?: string; note?: string }) => ({
+      title: s.tier ? s.tier[0].toUpperCase() + s.tier.slice(1) : "(no level set)",
+      subtitle: s.note,
+    }),
+  },
+});
+
 export const itineraryDayObject = defineType({
   name: "itineraryDay",
   title: "Itinerary Day",

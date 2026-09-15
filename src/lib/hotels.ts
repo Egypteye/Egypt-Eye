@@ -1,4 +1,5 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createServerClient } from "@supabase/ssr";
 import { supabaseConfigured } from "@/lib/supabase/env";
 
 export type HotelRate = {
@@ -59,6 +60,31 @@ export function isRateExpired(rate: Pick<HotelRate, "valid_until">): boolean {
 // Gracefully return empty/undefined if Supabase isn't configured yet,
 // matching the rest of the site's fallback philosophy (never a hard crash
 // on a public page for a missing env var).
+
+/**
+ * The enabled hotels, read WITHOUT touching request cookies.
+ *
+ * getEnabledHotels() below authenticates as the request's user, which means
+ * it calls next/headers' cookies() — and that turns any route using it into a
+ * dynamically-rendered one. That is wrong for the sitemap: it made
+ * /sitemap.xml a per-request render that hit Supabase on every Googlebot
+ * fetch, and a throw there took the whole sitemap down with a 500. The hotel
+ * list is public data behind RLS, so no session is needed to read it.
+ */
+export async function getEnabledHotelsPublic(): Promise<Hotel[]> {
+  if (!supabaseConfigured) return [];
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { getAll: () => [], setAll: () => {} } }
+  );
+  const { data } = await supabase
+    .from("hotels")
+    .select("*")
+    .eq("enabled", true)
+    .order("display_order", { ascending: true });
+  return (data ?? []) as Hotel[];
+}
 
 export async function getEnabledHotels(): Promise<Hotel[]> {
   if (!supabaseConfigured) return [];

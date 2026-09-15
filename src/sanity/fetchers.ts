@@ -26,6 +26,7 @@ import {
   toursBySlugsQuery,
   toursQuery,
 } from "./queries";
+import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
@@ -51,6 +52,7 @@ import type {
   Homepage,
   ListingPages,
   Photoshoot,
+  Rating,
   ResolvedAboutPage,
   ResolvedContactPage,
   ResolvedCustomizePage,
@@ -83,6 +85,20 @@ const REVALIDATE_SECONDS = 3600;
 // photo, fill in the local one wherever the Sanity item doesn't have its
 // own — matched by slug. A real photo uploaded in Sanity always wins; this
 // only ever fills a gap, never overrides one.
+/**
+ * Drops any document whose slug is missing or blank.
+ *
+ * `"slug": slug.current` returns null for a document an editor saved before
+ * filling the slug in, and nothing downstream checks: it becomes
+ * /tours/undefined in the sitemap and a generateStaticParams entry that
+ * builds a broken page. One unfinished draft in Studio is enough to put a
+ * dead URL in front of Google, so the guard belongs here, at the boundary,
+ * rather than in each of the dozen places that consume these lists.
+ */
+function withValidSlugs<T extends { slug?: string }>(items: T[]): T[] {
+  return items.filter((item) => typeof item.slug === "string" && item.slug.trim().length > 0);
+}
+
 function withLocalImageFallback<T extends { slug: string; image?: unknown }>(items: T[], local: readonly T[]): T[] {
   const localBySlug = new Map(local.map((item) => [item.slug, item]));
   return items.map((item) =>
@@ -122,9 +138,64 @@ async function safeFetch<T>(query: string, params: Record<string, unknown> = {})
   }
 }
 
+/**
+ * Egypt Eye's reviews arrive over WhatsApp in the follow-up after a trip and
+ * are about the company rather than any one tour, so there is a single
+ * site-wide figure computed from the testimonials actually collected.
+ *
+ * Every product below is stamped with it at read time. That is deliberately
+ * the only place a rating is set: nothing in a content file or in Studio can
+ * hold a hand-written number that drifts away from the real reviews, and no
+ * page can be missed. When Sanity is unreachable the testimonial list comes
+ * back empty and this returns null, so items show "New experience" rather
+ * than a number we can't stand behind.
+ */
+type RatedProduct = { slug: string; title: string; rating?: Rating };
+
+/**
+ * The review figure a product shows, in precedence order:
+ *
+ *   1. That product's own Rating in Studio, if an editor set one.
+ *   2. Site Settings → "Traveler review figure", the manual site-wide value.
+ *   3. The live count of Testimonials, which rises on its own as reviews
+ *      are added and needs no maintenance.
+ *
+ * Both manual tiers are marked source: "manual", which keeps them off the
+ * AggregateRating structured data (see content/seo.ts) while still driving
+ * everything a visitor sees. Only a figure counted from real testimonial
+ * records is published as a machine-readable review claim.
+ */
+export async function getCompanyRating(): Promise<Rating> {
+  const site = await getSiteSettings();
+  const override = site.reviewsOverride;
+  if (override?.count && override.count > 0) {
+    return { scope: "company", source: "manual", count: override.count, score: override.score };
+  }
+  return companyRatingFrom(await getTestimonials());
+}
+
+function manualProductRating(rating: Rating): Rating {
+  if (!rating || !rating.count || rating.count <= 0) return null;
+  return { scope: "product", source: "manual", count: rating.count, score: rating.score };
+}
+
+async function withCompanyRating<T extends RatedProduct>(items: T[]): Promise<T[]> {
+  const fallback = await getCompanyRating();
+  return items.map((item) => ({ ...item, rating: manualProductRating(item.rating ?? null) ?? fallback }));
+}
+
+async function withCompanyRatingOne<T extends RatedProduct>(
+  item: T | undefined
+): Promise<T | undefined> {
+  if (!item) return undefined;
+  return { ...item, rating: manualProductRating(item.rating ?? null) ?? (await getCompanyRating()) };
+}
+
 export async function getTours(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours;
+  return withCompanyRating(
+    withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours)
+  );
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -136,7 +207,9 @@ function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined
 }
 
 export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  return mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug);
+  return withCompanyRatingOne(
+    mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug)
+  );
 }
 
 // One request for the whole set instead of one per slug (see
@@ -147,9 +220,11 @@ export async function getToursBySlugs(slugs: string[]): Promise<Tour[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Tour[]>(toursBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((t) => [t.slug, t]));
-  return slugs
-    .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
-    .filter((t): t is Tour => Boolean(t));
+  return withCompanyRating(
+    slugs
+      .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
+      .filter((t): t is Tour => Boolean(t))
+  );
 }
 
 export async function getAllTourSlugs(): Promise<string[]> {
@@ -172,9 +247,13 @@ function withLocalExperienceRelations(exps: Experience[]): Experience[] {
 
 export async function getExperiences(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
-  return result && result.length > 0
-    ? withLocalImageFallback(result, localExperiences)
-    : withLocalExperienceRelations(localExperiences);
+  return withCompanyRating(
+    withValidSlugs(
+      result && result.length > 0
+        ? withLocalImageFallback(result, localExperiences)
+        : withLocalExperienceRelations(localExperiences)
+    )
+  );
 }
 
 function mergeExperienceWithLocal(result: Experience | null, slug: string): Experience | undefined {
@@ -184,21 +263,27 @@ function mergeExperienceWithLocal(result: Experience | null, slug: string): Expe
 }
 
 export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
-  return mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug);
+  return withCompanyRatingOne(
+    mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug)
+  );
 }
 
 export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Experience[]>(experiencesBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((e) => [e.slug, e]));
-  return slugs
-    .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
-    .filter((e): e is Experience => Boolean(e));
+  return withCompanyRating(
+    slugs
+      .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
+      .filter((e): e is Experience => Boolean(e))
+  );
 }
 
 export async function getPhotoshoots(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots;
+  return withCompanyRating(
+    withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots)
+  );
 }
 
 function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Photoshoot | undefined {
@@ -208,16 +293,20 @@ function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Phot
 }
 
 export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
-  return mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
+  return withCompanyRatingOne(
+    mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug)
+  );
 }
 
 export async function getPhotoshootsBySlugs(slugs: string[]): Promise<Photoshoot[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Photoshoot[]>(photoshootsBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((p) => [p.slug, p]));
-  return slugs
-    .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
-    .filter((p): p is Photoshoot => Boolean(p));
+  return withCompanyRating(
+    slugs
+      .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
+      .filter((p): p is Photoshoot => Boolean(p))
+  );
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
@@ -225,25 +314,44 @@ export async function getTestimonials(): Promise<Testimonial[]> {
   return result && result.length > 0 ? result : localTestimonials;
 }
 
+// The GROQ queries filter to status == "published"; the local fallback has
+// to apply the same rule itself, or a story archived in the content files
+// would still surface (and be sitemapped) whenever Sanity is unreachable.
+const localPublishedStories = localStories.filter((s) => s.status === "published");
+
 export async function getStories(): Promise<Story[]> {
   const result = await safeFetch<Story[]>(storiesQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localStories) : localStories;
+  return withValidSlugs(
+    result && result.length > 0 ? withLocalImageFallback(result, localStories) : localPublishedStories
+  );
 }
 
 export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   const result = await safeFetch<Story | null>(storyBySlugQuery, { slug });
-  const local = localStories.find((s) => s.slug === slug);
-  if (!result) return local;
-  return {
-    ...result,
-    image: result.image || local?.image,
-    body: result.body && result.body.length > 0 ? result.body : local?.body,
-  };
+  // Only a published local story is a valid fallback — an archived one must
+  // 404 (and then 410, via middleware) rather than render from local content.
+  const local = localPublishedStories.find((s) => s.slug === slug);
+  const story = result
+    ? {
+        ...result,
+        image: result.image || local?.image,
+        body: result.body && result.body.length > 0 ? result.body : local?.body,
+      }
+    : local;
+  if (!story) return undefined;
+
+  // A story's related tours render as full TourCards, so they need the same
+  // review figure the tour would show anywhere else.
+  return story.relatedTours && story.relatedTours.length > 0
+    ? { ...story, relatedTours: await withCompanyRating(story.relatedTours) }
+    : story;
 }
 
 export async function getDestinationHubs(): Promise<DestinationHub[]> {
   const result = await safeFetch<DestinationHub[]>(destinationHubsQuery);
-  return result && result.length > 0 ? withLocalImageFallback(result, localDestinationHubs) : localDestinationHubs;
+  return withValidSlugs(
+    result && result.length > 0 ? withLocalImageFallback(result, localDestinationHubs) : localDestinationHubs
+  );
 }
 
 function mergeDestinationHubWithLocal(result: DestinationHub | null, slug: string): DestinationHub | undefined {
@@ -503,9 +611,11 @@ export async function getContactPage(): Promise<ResolvedContactPage> {
 
 export async function getSignatureExperiences(): Promise<SignatureExperience[]> {
   const result = await safeFetch<SignatureExperience[]>(signatureExperiencesQuery);
-  return result && result.length > 0
-    ? withLocalHeroImageFallback(result, localSignatureExperiences)
-    : localSignatureExperiences;
+  return withValidSlugs(
+    result && result.length > 0
+      ? withLocalHeroImageFallback(result, localSignatureExperiences)
+      : localSignatureExperiences
+  );
 }
 
 export async function getSignatureExperienceBySlug(slug: string): Promise<SignatureExperience | undefined> {
@@ -517,7 +627,10 @@ export async function getSignatureExperienceBySlug(slug: string): Promise<Signat
 
 export async function getAllSignatureExperienceSlugs(): Promise<string[]> {
   const result = await safeFetch<string[]>(allSignatureExperienceSlugsQuery);
-  return result && result.length > 0 ? result : localSignatureExperiences.map((e) => e.slug);
+  // This query projects bare strings rather than documents, so the shared
+  // withValidSlugs guard doesn't apply — a slugless document arrives as null.
+  const slugs = result && result.length > 0 ? result : localSignatureExperiences.map((e) => e.slug);
+  return slugs.filter((slug) => typeof slug === "string" && slug.trim().length > 0);
 }
 
 // Same field-by-field merge as Site Settings — a Studio editor filling in

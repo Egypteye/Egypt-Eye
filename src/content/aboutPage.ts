@@ -8,7 +8,7 @@ export const aboutPage: ResolvedAboutPage = {
   heroHeadline: "More Than a Travel Agency",
   heroImage: {
     tone: "giza",
-    image: "/photos/pexels-35549794.jpg",
+    image: "https://images.unsplash.com/photo-1678038592492-d73c063bb9e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
   },
   storyEyebrow: "Our Story",
   storyTitle: "We turn a trip to Egypt into a personalized, memorable experience",

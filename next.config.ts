@@ -141,6 +141,60 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // The old WordPress/Yoast sitemap URLs. Search Console keeps fetching
+      // whatever sitemap URL was submitted years ago, and a submission that
+      // 404s is reported as "Sitemap could not be read" with 0 discovered
+      // pages — which is indistinguishable, from inside GSC, from the
+      // sitemap itself being broken. Pointing the old names at the real one
+      // makes an existing submission start working without anyone having to
+      // re-submit it.
+      { source: "/sitemap_index.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/wp-sitemap.xml", destination: "/sitemap.xml", permanent: true },
+      { source: "/sitemap-index.xml", destination: "/sitemap.xml", permanent: true },
+
+      // WordPress date permalinks from the previous site — /2024/04/01/some-post.
+      // Search Console reports 24 of these as 404s, and they are where most of
+      // the domain's remaining search visibility still points. Mapping the
+      // pattern to /stories/:slug recovers every post whose slug survived the
+      // rebuild; anything that didn't still 404, exactly as it does today, so
+      // this costs nothing where it can't help.
+      {
+        source: "/:year(\\d{4})/:month(\\d{2})/:day(\\d{2})/:slug",
+        destination: "/stories/:slug",
+        permanent: true,
+      },
+      // Six world-trends articles were rewritten as the Egypt subject that was
+      // buried under the trend hook, and their slugs went with them — a URL
+      // reading "apple-ecosystem-2026" on a piece about the Rosetta Stone is
+      // a ranking signal pointing the wrong way. The old slugs were crawled,
+      // so they redirect rather than 404.
+      { source: "/stories/ai-safety-abu-simbel-lesson-in-moving-fast", destination: "/stories/how-abu-simbel-was-moved", permanent: true },
+      { source: "/stories/vr-ar-spatial-computing-2026-giza-sound-light-show", destination: "/stories/giza-sound-and-light-show-guide", permanent: true },
+      { source: "/stories/apple-ecosystem-2026-rosetta-stone-egypt", destination: "/stories/rosetta-stone-what-it-says", permanent: true },
+      { source: "/stories/longevity-fitness-2026-beni-hasan-wrestling-egypt", destination: "/stories/beni-hasan-tombs-wrestling-scenes", permanent: true },
+      { source: "/stories/mars-human-spaceflight-2026-hatshepsut-punt-expedition", destination: "/stories/hatshepsut-expedition-to-punt", permanent: true },
+      { source: "/stories/creator-communities-2026-deir-el-medina-workers-village", destination: "/stories/deir-el-medina-village-that-built-the-tombs", permanent: true },
+
+      { source: "/stories/gene-editing-2026-tutankhamun-dna-family-tree", destination: "/stories/tutankhamun-dna-family-tree", permanent: true },
+      { source: "/stories/brain-computer-interface-2026-egypt-discarded-brain", destination: "/stories/how-mummification-worked", permanent: true },
+      { source: "/stories/longevity-technology-2026-egypt-defeat-death-ambition", destination: "/stories/ancient-egyptian-afterlife-beliefs", permanent: true },
+      { source: "/stories/humanoid-robots-2026-ushabti-ancient-labor-figures", destination: "/stories/ushabti-figures-egypt", permanent: true },
+      { source: "/stories/science-backed-skincare-2026-egyptian-kohl-study", destination: "/stories/ancient-egyptian-kohl-eye-makeup", permanent: true },
+      { source: "/stories/deepfakes-2026-ancient-egypt-usurped-cartouches", destination: "/stories/usurped-cartouches-erased-pharaohs", permanent: true },
+      { source: "/stories/serialized-short-form-content-2026-tale-of-sinuhe", destination: "/stories/tale-of-sinuhe", permanent: true },
+      { source: "/stories/fashion-nostalgia-2026-egyptomania-cycles", destination: "/stories/egyptomania-history", permanent: true },
+      { source: "/stories/space-exploration-2026-egypt-ancient-astronomy", destination: "/stories/ancient-egyptian-astronomy", permanent: true },
+      { source: "/stories/next-gen-gaming-2026-senet-oldest-board-game", destination: "/stories/senet-ancient-egyptian-board-game", permanent: true },
+      { source: "/stories/functional-drinks-2026-egypt-medicinal-beer", destination: "/stories/ancient-egyptian-beer", permanent: true },
+      { source: "/stories/cinematic-authentic-content-2026-egypt-tomb-art-duality", destination: "/stories/how-to-read-egyptian-tomb-art", permanent: true },
+      { source: "/stories/ai-influencers-2026-pharaoh-propaganda", destination: "/stories/why-every-pharaoh-looks-the-same", permanent: true },
+      { source: "/stories/photorealistic-video-games-2026-pyramid-laser-scan", destination: "/stories/scanning-the-great-pyramid", permanent: true },
+      { source: "/stories/y2k-nostalgia-2026-jarre-pyramids-millennium-concert", destination: "/stories/jarre-pyramids-millennium-concert", permanent: true },
+
+      // Yoast's attachment and feed URLs, which WordPress generated in bulk.
+      { source: "/feed", destination: "/stories", permanent: true },
+      { source: "/blog", destination: "/stories", permanent: true },
+      { source: "/blog/:slug", destination: "/stories/:slug", permanent: true },
       // The 2025 travel-agency guide was consolidated into the 2026 guide
       // (near-duplicate content, same topic) — redirect rather than 404.
       {

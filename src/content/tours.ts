@@ -17,6 +17,11 @@ function experiencesBySlug(...slugs: string[]) {
 export const tours: Tour[] = [
   {
     slug: "cairo-giza-nile-cruise-signature-trip",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Several hours on your feet on each sightseeing day — soft sand at Giza, uneven temple stone in Luxor and Aswan. The cruise days in between are genuinely restful, and a private vehicle waits at every site.",
+    },
     title: "Cairo, Giza & Nile Cruise Signature Trip",
     tagline: "Cairo and Giza, then a private Nile cruise from Aswan to Luxor.",
     category: "multi-day",
@@ -26,11 +31,10 @@ export const tours: Tour[] = [
     lengthDays: 8,
     cities: 4,
     destinations: ["Cairo", "Giza", "Aswan", "Luxor"],
-    rating: { score: 4.9, count: 12 },
     badge: "Signature Trip",
     imageLabel: "Nile Cruise",
     imageTone: "nile",
-    image: "/photos/pexels-37559132.jpg",
+    image: "https://images.unsplash.com/photo-1710886324980-997f7742f16c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Our signature Cairo, Giza & Nile Cruise trip — three days exploring Cairo and the Giza Plateau, then a flight to Aswan to begin a private Nile cruise, sailing with the river's current through Kom Ombo and Edfu to Luxor, before flying back to Cairo.",
     highlights: [
@@ -111,6 +115,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "1-day-giza-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Two to three hours walking on sand and uneven ground across the plateau. Going inside a pyramid means a stooped, low-ceilinged descent and is entirely optional; the camel ride is too.",
+    },
     title: "1 Day Giza Tour: Exploring Ancient Wonders",
     tagline: "Pyramids, Sphinx, and a free private photoshoot — all in one day.",
     category: "one-day",
@@ -120,11 +129,10 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Giza"],
-    rating: { score: 4.98, count: 8 },
     badge: "Free Private Photoshoot",
     imageLabel: "Giza Pyramids",
     imageTone: "giza",
-    image: "/photos/pexels-31133003.jpg",
+    image: "https://images.unsplash.com/photo-1713116818886-f43d23f1ef73?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Our signature day trip combines the Giza Pyramids, the Great Sphinx, and the Valley Temple with a camel ride, the iconic Nine Pyramids View, and a complimentary professional photoshoot — finished off with an Egyptian lunch and a perfume and essential oils experience.",
     highlights: [
@@ -154,6 +162,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "fayoum-nature-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Short walks on soft sand and loose rock at the waterfalls and dunes, either side of a long drive. Sandboarding needs no experience and can be done sitting down.",
+    },
     title: "Fayoum: The Beautiful Nature of Egypt",
     tagline: "Waterfalls, desert lakes, and Egypt's quieter, greener side.",
     category: "one-day",
@@ -162,10 +175,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Fayoum"],
-    rating: { score: 4.45, count: 4 },
     imageLabel: "Fayoum Oasis",
     imageTone: "desert",
-    image: "/photos/pexels-38498244.jpg",
+    image: "https://images.unsplash.com/photo-1591055801290-a3a48a4a0ec5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Escape the city for Fayoum's dramatic landscapes — Wadi El Rayan's waterfalls, golden dunes, and the Magic Lake — a favorite for travelers who want Egypt's natural beauty alongside its ancient history.",
     highlights: [
@@ -187,6 +199,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "red-sea-relaxation",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "A beach day with no sightseeing walking built in. Snorkeling is optional and entered from the shore, at whatever depth you're comfortable in.",
+    },
     title: "Egypt's Relaxation Mood: Red Sea",
     tagline: "Turquoise water, white sand, and nothing on the agenda.",
     category: "one-day",
@@ -196,10 +213,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Red Sea"],
-    rating: { score: 4.93, count: 25 },
     imageLabel: "Red Sea Coast",
     imageTone: "redsea",
-    image: "/photos/pexels-31166900.jpg",
+    image: "https://images.unsplash.com/photo-1777715821806-0af9fbd5f3e6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A slower-paced day built around the Red Sea's calm, clear water — swimming, snorkeling, and lounging on a private beach, with the option to add our Luxe Yacht experience.",
     highlights: [
@@ -219,6 +235,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "3-day-cairo-giza",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Museum halls, bazaar lanes and the sand of the Giza plateau — a few hours upright each day, with a private vehicle between every stop and no long distances on foot.",
+    },
     title: "Three-Day Excursion: Cairo & Giza",
     tagline: "A complete first taste of Egypt's ancient and modern capital.",
     category: "multi-day",
@@ -227,10 +248,9 @@ export const tours: Tour[] = [
     lengthDays: 3,
     cities: 1,
     destinations: ["Cairo", "Giza"],
-    rating: { score: 4.58, count: 9 },
     imageLabel: "Cairo & Giza",
     imageTone: "giza",
-    image: "/photos/pexels-29390088.jpg",
+    image: "https://images.unsplash.com/photo-1597500993730-613ee0eab73b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Three unhurried days across Cairo and Giza — pyramids, museums, Islamic and Coptic Cairo, and the bazaars of Khan el-Khalili — with a private Egyptologist throughout.",
     highlights: [
@@ -273,6 +293,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "siwa-oasis",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Long desert driving with repeated climbs in and out of a 4x4, soft-sand dune descents in the Great Sand Sea, and salt lakes whose crusted edges are sharp underfoot.",
+    },
     title: "Desert Dreams: Siwa Oasis",
     tagline: "Egypt's most remote oasis — salt lakes, dunes, and starlit skies.",
     category: "multi-day",
@@ -282,10 +307,9 @@ export const tours: Tour[] = [
     lengthDays: 3,
     cities: 1,
     destinations: ["Siwa Oasis"],
-    rating: { score: 4.96, count: 41 },
     imageLabel: "Siwa Oasis",
     imageTone: "desert",
-    image: "/photos/pexels-16580393.jpg",
+    image: "https://images.unsplash.com/photo-1727359714097-7c8f5e96023f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A journey deep into the Great Sand Sea to Siwa — natural springs, salt lakes, the Oracle Temple, and some of the darkest, clearest night skies in Egypt.",
     highlights: [
@@ -326,6 +350,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "3-days-jordan",
+    mapStops: ["Petra", "Wadi Rum", "Dead Sea"],
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Petra alone is several kilometres on stone and gravel through the Siq, plus 4x4 travel over sand in Wadi Rum. The Dead Sea day is restful by comparison.",
+    },
     title: "3 Days Exploring the Wonders of Jordan",
     tagline: "Wadi Rum, Petra, and the Dead Sea in a single private itinerary.",
     category: "jordan",
@@ -335,10 +365,9 @@ export const tours: Tour[] = [
     lengthDays: 3,
     cities: 3,
     destinations: ["Wadi Rum", "Petra", "Dead Sea"],
-    rating: { score: 4.9, count: 38 },
     imageLabel: "Petra, Jordan",
     imageTone: "jordan",
-    image: "/photos/pexels-38208630.jpg",
+    image: "https://images.unsplash.com/photo-1580834341580-8c17a3a630ca?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "From the rose-red city of Petra to a 4x4 Jeep safari through Wadi Rum's Martian landscape, finishing with a float in the Dead Sea — Jordan's essential highlights, privately guided.",
     highlights: [
@@ -387,6 +416,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "5-day-giza-cairo-alexandria",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Steady city and site walking across five days, with stairs at Qaitbay Citadel and a stepped descent into the Alexandria catacombs.",
+    },
     title: "5-Day Egypt: Giza, Cairo & Alexandria",
     tagline: "Pyramids, the capital, and the Mediterranean coast.",
     category: "multi-day",
@@ -395,10 +429,9 @@ export const tours: Tour[] = [
     lengthDays: 5,
     cities: 2,
     destinations: ["Cairo", "Giza", "Alexandria"],
-    rating: { score: 5, count: 1 },
     imageLabel: "Alexandria Coast",
     imageTone: "nile",
-    image: "/photos/pexels-29821198.jpg",
+    image: "https://images.unsplash.com/photo-1760973566831-4d029dc31c3e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Combine Cairo and Giza's ancient highlights with a day trip to Alexandria's Mediterranean charm — the Citadel of Qaitbay, Bibliotheca Alexandrina, and the Catacombs of Kom el Shoqafa.",
     highlights: [
@@ -451,6 +484,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "6-day-cairo-giza-luxor",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Sand at Giza and uneven temple ground in Luxor, including sloping, stepped descents into the tombs in the Valley of the Kings. All transfers are by private air-conditioned vehicle.",
+    },
     title: "6 Days: Cairo, Giza & Luxor",
     tagline: "Pyramids, temples, and the Valley of the Kings.",
     category: "multi-day",
@@ -460,10 +498,9 @@ export const tours: Tour[] = [
     lengthDays: 6,
     cities: 3,
     destinations: ["Cairo", "Giza", "Luxor"],
-    rating: { score: 4.95, count: 8 },
     imageLabel: "Luxor Temple",
     imageTone: "luxor",
-    image: "/photos/pexels-36518565.jpg",
+    image: "https://images.unsplash.com/photo-1584719763904-2799b453ba8d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Six days across Cairo, Giza, and Luxor — the Nine Pyramids photoshoot, Coptic Cairo, Khan el-Khalili, and the temples and tombs of ancient Thebes on both banks of the Nile.",
     highlights: [
@@ -522,6 +559,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "8-day-essential-egypt-nile-cruise",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Full sightseeing days on sand and temple stone, alternating with cruise days where the boat does the moving. Tomb descents on the West Bank are stepped and warm.",
+    },
     title: "8 Days Essential Egypt + 5-Day Nile Cruise",
     tagline: "Cairo and Giza, then five days cruising the Nile in 5-star comfort.",
     category: "multi-day",
@@ -531,10 +573,9 @@ export const tours: Tour[] = [
     lengthDays: 8,
     cities: 4,
     destinations: ["Cairo", "Giza", "Luxor", "Aswan"],
-    rating: { score: 5, count: 18 },
     imageLabel: "Nile Cruise",
     imageTone: "nile",
-    image: "/photos/pexels-20954992.jpg",
+    image: "https://images.unsplash.com/photo-1680356217112-dad9300ce49d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Our most complete Egypt itinerary — Cairo and Giza's ancient wonders followed by a 5-day Nile Cruise from Luxor to Aswan, visiting Karnak, the Valley of the Kings, Philae Temple, and the Aswan High Dam along the way.",
     highlights: [
@@ -613,6 +654,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "10-day-private-luxurious-trip",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "The pacing is yours to set. The sightseeing itself involves sand, temple stone and tomb stairs, but any day can be shortened, swapped, or traded for time on the cruise deck.",
+    },
     title: "10-Day Private & Luxurious Trip",
     tagline: "The full country, at a private, unhurried, five-star pace.",
     category: "multi-day",
@@ -622,11 +668,10 @@ export const tours: Tour[] = [
     lengthDays: 10,
     cities: 4,
     destinations: ["Cairo", "Giza", "Luxor", "Aswan"],
-    rating: { score: 3.67, count: 3 },
     badge: "Customizable",
     imageLabel: "Aswan Sunset",
     imageTone: "nile",
-    image: "/photos/pexels-32286115.jpg",
+    image: "https://images.unsplash.com/photo-1738580785954-a6912f0400b2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Ten fully private days combining Cairo and Giza, a Nile Cruise, and time built in for photoshoots, relaxation, and any experience you'd like to add — designed around your pace, not a fixed group schedule.",
     highlights: [
@@ -703,6 +748,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "epic-8-day-egypt-escapade",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Temple and pyramid days on uneven ground, followed by Red Sea days with nothing scheduled. The heaviest walking is Luxor's West Bank.",
+    },
     title: "Epic 8-Day Egypt Escapade",
     tagline: "Pyramids, temples, desert, and Red Sea — Egypt's greatest hits.",
     category: "multi-day",
@@ -711,10 +761,9 @@ export const tours: Tour[] = [
     lengthDays: 8,
     cities: 4,
     destinations: ["Cairo", "Giza", "Luxor", "Red Sea"],
-    rating: { score: 4.83, count: 9 },
     imageLabel: "Egypt Escapade",
     imageTone: "desert",
-    image: "/photos/pexels-15127142.jpg",
+    image: "https://images.unsplash.com/photo-1777553203575-ebd3be8f89a0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A fast-paced, highlight-packed week across Egypt's icons — the Pyramids, Luxor's temples and tombs, and a few days of Red Sea relaxation to close out the trip.",
     highlights: [
@@ -778,6 +827,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "2-day-luxor-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Karnak and the Valley of the Kings mean long stretches on uneven stone and stepped tomb descents, usually in strong heat with very little shade.",
+    },
     title: "2 Days in Luxor: Karnak, Valley of the Kings & Hatshepsut",
     tagline: "The East Bank and West Bank of ancient Thebes, at an unhurried pace.",
     category: "multi-day",
@@ -787,10 +841,9 @@ export const tours: Tour[] = [
     lengthDays: 2,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.72, count: 5 },
     imageLabel: "Luxor Temple",
     imageTone: "luxor",
-    image: "/photos/pexels-18934607.jpg",
+    image: "https://images.unsplash.com/photo-1662655558673-4e628102f545?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Luxor deserves more than a rushed day trip. Two full days split cleanly across the Nile — Karnak and Luxor Temple on the East Bank, the Valley of the Kings and Hatshepsut's temple on the West Bank — with a private Egyptologist throughout and an optional sunrise hot-air balloon to open the second day.",
     highlights: [
@@ -826,6 +879,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "aswan-abu-simbel-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Temple walking on uneven ground, a step down into a felucca, and an early start for the Abu Simbel road convoy.",
+    },
     title: "Aswan & Abu Simbel: Nubia's Ancient Temples",
     tagline: "Philae Temple, the High Dam, and the colossal statues of Abu Simbel.",
     category: "multi-day",
@@ -835,10 +893,9 @@ export const tours: Tour[] = [
     lengthDays: 2,
     cities: 1,
     destinations: ["Aswan", "Abu Simbel"],
-    rating: { score: 4.74, count: 5 },
     imageLabel: "Abu Simbel",
     imageTone: "nile",
-    image: "/photos/pexels-6322875.jpg",
+    image: "https://images.unsplash.com/photo-1633163893862-4cdc62de7d82?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Aswan is Egypt at its most Nubian — a slower, greener city built around the Nile's First Cataract. Two days cover Philae Temple, the High Dam, and a felucca ride around Elephantine Island, followed by an early-morning drive south to Abu Simbel, where Ramesses II's colossal facade still faces the sunrise.",
     highlights: [
@@ -872,6 +929,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "alexandria-day-trip",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Mostly flat coastal city walking, with stairs up through Qaitbay Citadel and a spiral stepped descent into the catacombs.",
+    },
     title: "Alexandria Day Trip: Egypt's Mediterranean Capital",
     tagline: "Qaitbay Citadel, the Bibliotheca Alexandrina, and Egypt's Mediterranean coast.",
     category: "one-day",
@@ -881,10 +943,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Alexandria"],
-    rating: null,
     imageLabel: "Alexandria Coast",
     imageTone: "redsea",
-    image: "/photos/pexels-36429621.jpg",
+    image: "https://images.unsplash.com/photo-1594808815295-52034d585f56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A full day on Egypt's Mediterranean coast, roughly a two-and-a-half-hour drive from Cairo — the Citadel of Qaitbay, built on the site of the ancient Lighthouse, the modern Bibliotheca Alexandrina, Pompey's Pillar, and the Catacombs of Kom el Shoqafa, Alexandria's largest Roman-era cemetery.",
     highlights: [
@@ -906,6 +967,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "hurghada-red-sea-diving-snorkeling",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Boarding a boat, entering open water down a ladder, and swimming over reef away from shore. Comfortable swimming is the real requirement; diving is optional.",
+    },
     title: "Hurghada Red Sea Snorkeling & Diving Day",
     tagline: "A full day on the water, over some of the clearest reefs in the Red Sea.",
     category: "one-day",
@@ -915,10 +981,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Hurghada", "Red Sea"],
-    rating: { score: 4.55, count: 10 },
     imageLabel: "Red Sea Reef",
     imageTone: "redsea",
-    image: "/photos/pexels-31166900.jpg",
+    image: "https://images.unsplash.com/photo-1777551881568-50b1beab7d91?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A boat day out of Hurghada, anchoring at two or three reef sites around the Giftun Islands and Orange Bay — snorkeling over coral gardens with a real chance of turtles and rays, plus an introductory dive for certified or first-time divers, with lunch served on board.",
     highlights: [
@@ -938,6 +1003,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "white-desert-safari-bahariya",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "4x4 driving over sand, short walks between chalk formations on soft ground, and a night camping with basic facilities. Nights from November to February get close to freezing.",
+    },
     title: "White Desert Safari: Bahariya Oasis & the Black Desert",
     tagline: "Wind-carved white rock formations, and a night camping under the stars.",
     category: "multi-day",
@@ -947,10 +1017,9 @@ export const tours: Tour[] = [
     lengthDays: 2,
     cities: 1,
     destinations: ["Bahariya Oasis", "White Desert"],
-    rating: { score: 4.74, count: 16 },
     imageLabel: "White Desert",
     imageTone: "desert",
-    image: "/photos/pexels-32739448.jpg",
+    image: "https://images.unsplash.com/photo-1708008434267-dbd151d62a54?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A 4x4 safari deep into Egypt's Western Desert — the volcanic hills of the Black Desert, Crystal Mountain's quartz-covered slopes, the sculpted formations of Agabat Valley, and a night camping in the White Desert itself, where wind-carved chalk formations turn gold and then silver as the sun sets and the stars come out.",
     highlights: [
@@ -985,6 +1054,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "mount-sinai-sunrise-hike",
+    physicalLevel: {
+      tier: "challenging",
+      note:
+        "A two-and-a-half to three-and-a-half hour ascent starting in the dark, and a descent of roughly 3,750 uneven stone steps. A camel can carry you most of the way up the path, but not the final stretch.",
+    },
     title: "Mount Sinai Sunrise Hike & St. Catherine's Monastery",
     tagline: "An overnight climb to watch the sun rise from the summit of Mount Sinai.",
     category: "one-day",
@@ -994,10 +1068,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Sinai", "St. Catherine"],
-    rating: { score: 4.72, count: 11 },
     imageLabel: "Mount Sinai",
     imageTone: "desert",
-    image: "/photos/pexels-37220258.jpg",
+    image: "https://images.unsplash.com/photo-1660430279942-a26bb4c7d4be?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "An overnight excursion built around one moment: sunrise from the 2,285-meter summit of Mount Sinai. The guided ascent begins around 2am and takes roughly two and a half hours on foot (a camel is available for most of the route, for an additional cost); after sunrise and the descent, the trip continues to the 6th-century St. Catherine's Monastery, a UNESCO World Heritage Site built around the traditional site of the Burning Bush.",
     highlights: [
@@ -1018,6 +1091,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "memphis-saqqara-dahshur-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Open sand and desert ground at three sites. The descents inside the Red and Bent Pyramids are steep, low-ceilinged and warm, and entirely optional.",
+    },
     title: "Memphis, Saqqara & Dahshur: Egypt's Forgotten Pyramids",
     tagline: "The Step Pyramid, the Bent Pyramid, and Egypt's first capital — without the Giza crowds.",
     category: "one-day",
@@ -1027,10 +1105,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Saqqara", "Dahshur", "Memphis"],
-    rating: { score: 4.65, count: 17 },
     imageLabel: "Step Pyramid of Djoser",
     imageTone: "giza",
-    image: "/photos/pexels-28013729.jpg",
+    image: "https://images.unsplash.com/photo-1636020895075-5e598638375e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Before Giza, there was Saqqara — the Step Pyramid of Djoser, built around 2630 BCE, is the world's oldest major stone structure. This day pairs it with Dahshur's Bent and Red Pyramids, built a generation earlier as the architects worked out how to build a true pyramid, and Memphis, ancient Egypt's first capital, now an open-air museum.",
     highlights: [
@@ -1051,6 +1128,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "islamic-coptic-cairo-walking-tour",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Done entirely on foot — several hours on uneven paving and through crowded bazaar lanes, with few places to sit along the way.",
+    },
     title: "Islamic Cairo & Coptic Cairo Walking Tour",
     tagline: "Al-Azhar Mosque, the Hanging Church, and the old city on foot.",
     category: "one-day",
@@ -1060,10 +1142,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Cairo"],
-    rating: { score: 4.75, count: 2 },
     imageLabel: "Khan el-Khalili",
     imageTone: "giza",
-    image: "/photos/pexels-15126865.jpg",
+    image: "https://images.unsplash.com/photo-1680319287237-6a36b44ceba3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Cairo's oldest layers, on foot rather than from a car window — Al-Azhar Mosque and the medieval alleys of Islamic Cairo in the morning, then the walled Coptic Cairo quarter in the afternoon, including the Hanging Church and the Ben Ezra Synagogue, before finishing at Khan el-Khalili as the bazaar comes alive in the evening.",
     highlights: [
@@ -1084,6 +1165,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "cairo-nile-dinner-cruise-night-tour",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Seated for the evening after a short step aboard. No walking beyond the dock.",
+    },
     title: "Cairo by Night: Nile Dinner Cruise & City Lights",
     tagline: "Cairo's skyline from the water, with dinner and live entertainment on board.",
     category: "one-day",
@@ -1093,10 +1179,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Cairo"],
-    rating: { score: 4.96, count: 6 },
     imageLabel: "Nile at Night",
     imageTone: "nile",
-    image: "/photos/pexels-20506675.jpg",
+    image: "https://images.unsplash.com/photo-1778402153163-fc9a5fd0131a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A slower way to see Cairo's other side — a dinner cruise along the Nile with the city's bridges and skyline lit up around you, a set Egyptian menu, and live music or a Tanoura folk dance show on board, depending on the evening.",
     highlights: [
@@ -1117,6 +1202,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "luxor-east-bank-day-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Karnak is walked end to end on uneven ancient paving, and both temples are open to the sun with limited shade.",
+    },
     title: "Luxor East Bank Day Tour: Karnak & Luxor Temple",
     tagline: "The living side of ancient Thebes, in a single unhurried day.",
     category: "one-day",
@@ -1126,10 +1216,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.73, count: 9 },
     imageLabel: "Karnak Temple",
     imageTone: "luxor",
-    image: "/photos/pexels-17034971.jpg",
+    image: "https://images.unsplash.com/photo-1662552445716-bb5cb3331239?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "For travelers who only have one day in Luxor and want the East Bank done properly rather than rushed — Karnak's Great Hypostyle Hall in the cooler morning hours, then Luxor Temple later in the day, once the light and the temperature have both softened.",
     highlights: [
@@ -1149,6 +1238,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "luxor-west-bank-day-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Sloping, stepped descents into three tombs and a long ramped approach at Hatshepsut's temple, usually in strong midday heat.",
+    },
     title: "Luxor West Bank Day Tour: Valley of the Kings & Hatshepsut",
     tagline: "The Valley of the Kings, Hatshepsut's temple, and the Colossi of Memnon in one day.",
     category: "one-day",
@@ -1158,10 +1252,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.89, count: 14 },
     imageLabel: "Valley of the Kings",
     imageTone: "luxor",
-    image: "/photos/pexels-18934678.jpg",
+    image: "https://images.unsplash.com/photo-1623417765161-c71d6c83cfee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "The West Bank on its own, at the pace it deserves — an early start into the Valley of the Kings before the heat builds, the Temple of Hatshepsut carved into the cliffs at Deir el-Bahari, and the Colossi of Memnon on the way back.",
     highlights: [
@@ -1181,6 +1274,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "dendera-abydos-day-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Flat temple floors at both sites, plus a stair climb to Dendera's roof chapels — and a long drive each way from Luxor.",
+    },
     title: "Dendera & Abydos: The Temples Beyond Luxor",
     tagline: "Two of Egypt's best-preserved temples, both usually skipped by shorter trips.",
     category: "one-day",
@@ -1190,10 +1288,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Dendera", "Abydos"],
-    rating: null,
     imageLabel: "Dendera Temple",
     imageTone: "luxor",
-    image: "/photos/pexels-36518565.jpg",
+    image: "https://images.unsplash.com/photo-1584719866406-c76ddee48493?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A long day by car north of Luxor, and one most travelers who take it call worth every hour — the Temple of Hathor at Dendera, with its famous zodiac ceiling and colors still vivid after two thousand years, and the Temple of Seti I at Abydos, where the wall reliefs are among the best-preserved in Egypt.",
     highlights: [
@@ -1214,6 +1311,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "edfu-kom-ombo-day-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Open, largely level temple courts at both sites, with uneven stone underfoot and very little shade.",
+    },
     title: "Edfu & Kom Ombo Temples Day Tour",
     tagline: "The best-preserved temple in Egypt, and one built for two gods at once.",
     category: "one-day",
@@ -1223,10 +1325,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Edfu", "Kom Ombo"],
-    rating: { score: 4.81, count: 16 },
     imageLabel: "Temple of Horus, Edfu",
     imageTone: "nile",
-    image: "/photos/pexels-23314471.jpg",
+    image: "https://images.unsplash.com/photo-1681403507733-943ebe8a1819?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Between Luxor and Aswan sit two temples most travelers only glimpse from a passing Nile cruise ship — the Temple of Horus at Edfu, the most completely preserved temple in Egypt, and the unusual double temple at Kom Ombo, dedicated equally to the crocodile god Sobek and the falcon god Horus.",
     highlights: [
@@ -1246,6 +1347,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "4-day-nile-cruise-luxor-aswan",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Shore excursions bring temple stone and tomb stairs; the sailing hours between them ask nothing of you at all, with the boat as your base throughout.",
+    },
     title: "4-Day Nile Cruise: Luxor to Aswan",
     tagline: "A dedicated Nile cruise, without a Cairo itinerary built around it.",
     category: "multi-day",
@@ -1255,10 +1361,9 @@ export const tours: Tour[] = [
     lengthDays: 4,
     cities: 2,
     destinations: ["Luxor", "Aswan"],
-    rating: { score: 4.55, count: 2 },
     imageLabel: "Nile Cruise Ship",
     imageTone: "nile",
-    image: "/photos/pexels-27407537.jpg",
+    image: "https://images.unsplash.com/photo-1704643764116-3dc727840b2f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "For travelers who already have Cairo covered, or who are flying directly into Luxor — a 5-star Nile cruise ship sailing from Luxor to Aswan, with shore excursions to Karnak, Luxor Temple, the Valley of the Kings, Edfu, Kom Ombo, and Philae Temple built into the itinerary.",
     highlights: [
@@ -1300,6 +1405,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "7-night-nile-cruise-luxor-aswan",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "The same temple walking as any Nile route, spread thin across a full week — most days pair one excursion with long unscheduled stretches on deck.",
+    },
     title: "7-Night Nile Cruise: Luxor to Aswan",
     tagline: "The unhurried version — a full week on the water between Luxor and Aswan.",
     category: "multi-day",
@@ -1309,10 +1419,9 @@ export const tours: Tour[] = [
     lengthDays: 8,
     cities: 2,
     destinations: ["Luxor", "Aswan"],
-    rating: { score: 4.72, count: 14 },
     imageLabel: "Nile Cruise Deck",
     imageTone: "nile",
-    image: "/photos/pexels-37559132.jpg",
+    image: "https://images.unsplash.com/photo-1704643764148-12c716fba9b1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "The same Luxor-to-Aswan route as our standard cruise, stretched over a full week rather than a few days — time to actually sit on deck and watch the Nile Valley pass by between stops, with the same temples covered at a genuinely slow pace instead of a packed schedule.",
     highlights: [
@@ -1373,6 +1482,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "aswan-nubian-village-philae-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A step down into a boat at both Philae and the village, then flat walking on sand and village paths.",
+    },
     title: "Aswan Nubian Village & Philae Temple Day Tour",
     tagline: "A felucca to a Nubian village, and Philae Temple on its island in the Nile.",
     category: "one-day",
@@ -1382,10 +1496,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Aswan"],
-    rating: { score: 4.73, count: 8 },
     imageLabel: "Nubian Village, Aswan",
     imageTone: "nile",
-    image: "/photos/pexels-18991599.jpg",
+    image: "https://images.unsplash.com/photo-1633033254409-bd538e785f51?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A shorter, gentler introduction to Aswan for travelers not doing the full Abu Simbel trip — a felucca sail to a colorful Nubian village on the Nile, and Philae Temple, relocated stone by stone to Agilkia Island when the High Dam was built.",
     highlights: [
@@ -1405,6 +1518,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "kalabsha-temple-nubian-museum-tour",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "A short boat transfer and level walking at the temple and museum — the gentlest day on our Aswan list.",
+    },
     title: "Kalabsha Temple & Nubian Museum Tour",
     tagline: "A relocated temple, and the museum that tells Nubia's story.",
     category: "one-day",
@@ -1414,10 +1532,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Aswan"],
-    rating: { score: 4.74, count: 5 },
     imageLabel: "Nubian Museum",
     imageTone: "nile",
-    image: "/photos/pexels-18991596.jpg",
+    image: "https://images.unsplash.com/photo-1655755001673-0d6ef8b25496?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Kalabsha Temple, moved to an island near the High Dam to save it from Lake Nasser's rising water, paired with the Nubian Museum — the single best place in Egypt to understand Nubian history and culture, and what was lost and preserved when the High Dam was built.",
     highlights: [
@@ -1436,6 +1553,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "ras-mohammed-snorkeling-tour",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Ladder entry into open water over deep reef walls, with swimming away from the boat. Strong swimming confidence matters more here than fitness.",
+    },
     title: "Sharm El Sheikh: Ras Mohammed National Park Snorkeling",
     tagline: "One of the Red Sea's most protected reefs, by boat from Sharm El Sheikh.",
     category: "one-day",
@@ -1445,10 +1567,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Sharm El Sheikh", "Red Sea"],
-    rating: { score: 4.54, count: 9 },
     imageLabel: "Ras Mohammed Reef",
     imageTone: "redsea",
-    image: "/photos/pexels-17681765.jpg",
+    image: "https://images.unsplash.com/photo-1681158077449-77f23f629f0d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A full day out of Sharm El Sheikh at Ras Mohammed National Park, one of the Red Sea's most protected marine reserves — multiple snorkeling stops over coral gardens, a chance to see the park's Magic Lake, and lunch served on board between stops.",
     highlights: [
@@ -1468,6 +1589,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "dahab-blue-hole-three-pools-tour",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Water entry is over rock rather than sand, and the Blue Hole drops away immediately from the edge. This one suits confident swimmers.",
+    },
     title: "Dahab: Blue Hole & Three Pools Diving Day",
     tagline: "A legendary sinkhole dive site, and a calmer snorkel among coral towers.",
     category: "one-day",
@@ -1477,10 +1603,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Dahab", "Sinai"],
-    rating: { score: 4.74, count: 8 },
     imageLabel: "Blue Hole, Dahab",
     imageTone: "redsea",
-    image: "/photos/pexels-17814812.jpg",
+    image: "https://images.unsplash.com/photo-1664056653856-aba186af5b85?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Dahab's Blue Hole — a submarine sinkhole dropping well over 100 meters, ringed with coral and famous among divers worldwide — paired with the calmer Three Pools nearby, three sandy-floored pools among coral towers that make for some of the easiest, most rewarding snorkeling in Sinai.",
     highlights: [
@@ -1499,6 +1624,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "colored-canyon-nuweiba-tour",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "A canyon walk over loose rock with narrow passages and a few short scrambles, reached by 4x4 across open desert.",
+    },
     title: "Colored Canyon & Nuweiba Desert Adventure",
     tagline: "A narrow, rainbow-striped canyon, and a Bedouin stretch of Sinai coast.",
     category: "one-day",
@@ -1508,10 +1638,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Nuweiba", "Sinai"],
-    rating: { score: 4.98, count: 10 },
     imageLabel: "Colored Canyon, Sinai",
     imageTone: "desert",
-    image: "/photos/pexels-34939812.jpg",
+    image: "https://images.unsplash.com/photo-1676387119663-8474b2d7ea49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A jeep safari into the Colored Canyon, a narrow sandstone gorge striped in reds, purples, and yellows from mineral deposits in the rock, followed by time on Nuweiba's quieter Bedouin-run coastline — a genuinely different side of Sinai from its resort towns.",
     highlights: [
@@ -1530,6 +1659,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "el-gouna-lagoon-day",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Beach, lagoon and boat time with no sightseeing on foot. Watersports are there if you want them and easy to skip.",
+    },
     title: "El Gouna: Lagoon & Red Sea Beach Day",
     tagline: "A designed lagoon town on the Red Sea, built around the water.",
     category: "one-day",
@@ -1539,10 +1673,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["El Gouna", "Red Sea"],
-    rating: null,
     imageLabel: "El Gouna Lagoon",
     imageTone: "redsea",
-    image: "/photos/pexels-14137303.jpg",
+    image: "https://images.unsplash.com/photo-1601816500593-8f1276479ea6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "El Gouna is unlike anywhere else on the Red Sea coast — a purpose-built town of lagoons and small islands connected by bridges, known internationally as a kitesurfing destination and, closer to home, simply for having some of the calmest turquoise water on the coast. A day here is built around the lagoon itself: a boat out to the reef, and time to just be on the water.",
     highlights: [
@@ -1560,6 +1693,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "marsa-alam-dolphin-house-tour",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "An early start, a crossing of over two hours each way, and snorkeling from a boat ladder in open water rather than from a beach.",
+    },
     title: "Marsa Alam: Dolphin House Snorkeling at Sataya Reef",
     tagline: "Snorkeling alongside wild spinner dolphins in their own sheltered lagoon.",
     category: "one-day",
@@ -1569,10 +1707,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Marsa Alam", "Red Sea"],
-    rating: { score: 4.55, count: 9 },
     imageLabel: "Sataya Reef",
     imageTone: "redsea",
-    image: "/photos/pexels-17598833.jpg",
+    image: "https://images.unsplash.com/photo-1738935457539-936fdb320c51?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Sataya Reef, better known as Dolphin House, is a shallow, sheltered lagoon south of Marsa Alam where pods of wild spinner dolphins regularly rest and feed — genuinely wild animals in their own habitat, not a marine park. It's roughly a two-hour boat journey each way, and there's no guarantee of dolphins on any given day, but the reef itself and the chance are what make the trip.",
     highlights: [
@@ -1590,6 +1727,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "soma-bay-watersports-relaxation",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Sheltered, calm water and beach time, with watersports entirely optional. Nothing here has to be strenuous.",
+    },
     title: "Soma Bay: Red Sea Watersports & Relaxation",
     tagline: "A quieter Red Sea peninsula, built for a slower kind of beach day.",
     category: "one-day",
@@ -1599,10 +1741,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Soma Bay", "Red Sea"],
-    rating: { score: 4.68, count: 12 },
     imageLabel: "Soma Bay",
     imageTone: "redsea",
-    image: "/photos/pexels-14316956.jpg",
+    image: "https://images.unsplash.com/photo-1777551747256-0bb44c8086fc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Soma Bay sits on its own peninsula south of Hurghada, with fewer crowds and calmer water than the busier resort strips nearby — a day built around the beach itself, with windsurfing, kitesurfing, or diving available for travelers who want to add activity to the relaxation.",
     highlights: [
@@ -1620,6 +1761,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "wadi-el-hitan-whale-valley-safari",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A marked desert trail on sand and gravel between the fossil sites, with no shade on the walk and long drives either side.",
+    },
     title: "Whale Valley Fossil Safari: Wadi El Hitan",
     tagline: "40-million-year-old whale skeletons, in the middle of the Egyptian desert.",
     category: "one-day",
@@ -1629,10 +1775,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Fayoum", "Wadi El Hitan"],
-    rating: { score: 4.49, count: 14 },
     imageLabel: "Wadi El Hitan Fossils",
     imageTone: "desert",
-    image: "/photos/pexels-35972428.jpg",
+    image: "https://images.unsplash.com/photo-1639163121342-3d710d6a93ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Wadi El Hitan — the Valley of the Whales — is Egypt's first UNESCO natural World Heritage site, and it earned that status for something genuinely strange: the fossilized skeletons of some of the earliest whales, animals still carrying the vestigial legs of their land-dwelling ancestors, scattered across open desert 40 million years after they died. A small fossil museum on site explains what you're looking at before you walk out among the skeletons themselves.",
     highlights: [
@@ -1652,6 +1797,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "dakhla-kharga-oasis-circuit",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Long drives between oases, with walking over uneven mudbrick lanes in Al-Qasr and open desert ground at the tombs and temples.",
+    },
     title: "Western Desert Oases Circuit: Dakhla & Kharga",
     tagline: "A multi-day desert loop through two of Egypt's least-visited oases.",
     category: "multi-day",
@@ -1661,10 +1811,9 @@ export const tours: Tour[] = [
     lengthDays: 4,
     cities: 2,
     destinations: ["Dakhla Oasis", "Kharga Oasis"],
-    rating: { score: 4.78, count: 12 },
     imageLabel: "Dakhla Oasis",
     imageTone: "desert",
-    image: "/photos/pexels-5540933.jpg",
+    image: "https://images.unsplash.com/photo-1643236166660-60907b89662b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A genuine expedition rather than a day trip — Dakhla Oasis, roughly 740km southwest of Cairo, holds the medieval mudbrick town of Al-Qasr, the Deir al-Hagar temple, and hot springs among its palm groves; Kharga, on the return route, adds the Necropolis of al-Bagawat, one of the earliest and best-preserved Christian cemeteries anywhere. Best traveled October through March, when desert daytime temperatures stay comfortable.",
     highlights: [
@@ -1690,6 +1839,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "lake-nasser-cruise-aswan-abu-simbel",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Most of the trip is spent aboard. The temple landings are short walks up from the water onto uneven ground.",
+    },
     title: "Lake Nasser Cruise: Aswan to Abu Simbel by Water",
     tagline: "A small-ship cruise across Lake Nasser, ending at Abu Simbel's temples.",
     category: "multi-day",
@@ -1699,10 +1853,9 @@ export const tours: Tour[] = [
     lengthDays: 4,
     cities: 2,
     destinations: ["Aswan", "Lake Nasser", "Abu Simbel"],
-    rating: { score: 4.97, count: 17 },
     imageLabel: "Lake Nasser",
     imageTone: "nile",
-    image: "/photos/pexels-4102994.jpg",
+    image: "https://images.unsplash.com/photo-1742262379112-eacb2813ca6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Instead of a road trip to Abu Simbel, a small-ship cruise across Lake Nasser itself — the vast reservoir created by the Aswan High Dam — stopping at temples that were also relocated to its shores, including Wadi es-Sebua and Amada, before arriving at Abu Simbel by water and seeing Ramesses II's colossal facade the way most visitors never do.",
     highlights: [
@@ -1747,6 +1900,12 @@ export const tours: Tour[] = [
   // Jordan
   {
     slug: "petra-day-tour-from-amman",
+    mapStops: ["Amman", "Petra"],
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Roughly eight kilometres on stone and gravel if you walk the Siq and the main trail. The Monastery adds around 800 rock-cut steps and is optional.",
+    },
     title: "Petra Day Tour from Amman",
     tagline: "The Treasury, the Monastery climb, and the Siq — in a single long day from the capital.",
     category: "jordan",
@@ -1756,10 +1915,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Petra", "Jordan"],
-    rating: { score: 4.82, count: 6 },
     imageLabel: "Petra Treasury",
     imageTone: "jordan",
-    image: "/photos/pexels-23124659.jpg",
+    image: "https://images.unsplash.com/photo-1615811648503-479d06197ff3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Amman to Petra and back in a single day — a roughly three-hour drive south down the Desert Highway, then a full day inside the ancient Nabataean capital: the Siq's narrow canyon walk, the Treasury's rose-red facade, and (for those with the legs for it) the 800-step climb to the Monastery.",
     highlights: [
@@ -1780,6 +1938,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "wadi-rum-overnight-bedouin-camp",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "4x4 travel over sand with short walks and optional dune scrambles, then a night at a desert camp with deliberately basic facilities.",
+    },
     title: "Wadi Rum Overnight: Bedouin Camp Under the Stars",
     tagline: "A 4x4 desert safari by day, a Bedouin camp and the Milky Way by night.",
     category: "jordan",
@@ -1789,10 +1952,9 @@ export const tours: Tour[] = [
     lengthDays: 2,
     cities: 1,
     destinations: ["Wadi Rum", "Jordan"],
-    rating: { score: 4.62, count: 6 },
     imageLabel: "Wadi Rum Desert",
     imageTone: "jordan",
-    image: "/photos/pexels-3286807.jpg",
+    image: "https://images.unsplash.com/photo-1523920210210-faa6021cb026?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Wadi Rum's red sandstone valleys, framed by cinema (this is where several Mars films and Lawrence of Arabia were shot), by 4x4 in the afternoon and on foot at sunset, followed by a Bedouin-style dinner and a night in a desert camp under one of the darkest skies in the Middle East.",
     highlights: [
@@ -1816,6 +1978,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "amman-city-tour",
+    mapStops: ["Amman"],
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "City walking with a stepped climb up to the Citadel and steep streets through the downtown souq.",
+    },
     title: "Amman City Tour: Jordan's Capital, Old and New",
     tagline: "The Citadel, the Roman Theatre, and downtown Amman in a day.",
     category: "jordan",
@@ -1825,10 +1993,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Jordan"],
-    rating: { score: 4.95, count: 5 },
     imageLabel: "Amman Citadel",
     imageTone: "jordan",
-    image: "/photos/pexels-32549230.jpg",
+    image: "https://images.unsplash.com/photo-1699940164730-0b60f5c88d5b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A half-day through Amman itself — the Citadel hill overlooking the whole city, the 2nd-century Roman Theatre still used for events today, and a walk through downtown's souqs and coffee houses. A natural add-on for anyone arriving in Amman before or after a Petra or Wadi Rum trip.",
     highlights: [
@@ -1848,6 +2015,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "jerash-ajloun-castle-tour",
+    mapStops: ["Jerash", "Ajloun"],
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Jerash is a large site walked end to end on Roman paving, and Ajloun Castle adds stairs and uneven internal ramps.",
+    },
     title: "Jerash & Ajloun Castle Day Trip",
     tagline: "One of the best-preserved Roman provincial cities anywhere, plus a 12th-century Islamic fortress.",
     category: "jordan",
@@ -1857,10 +2030,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Jordan"],
-    rating: null,
     imageLabel: "Jerash Ruins",
     imageTone: "jordan",
-    image: "/photos/pexels-18717601.jpg",
+    image: "https://images.unsplash.com/photo-1597424868084-872f06020714?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "North of Amman, Jerash's colonnaded streets, oval forum, and twin theatres are among the best-preserved Roman ruins outside Italy. The same day continues to Ajloun Castle, a Muslim fortress built in 1184 to watch the hills for Crusader movement — still standing, and still with the view.",
     highlights: [
@@ -1880,6 +2052,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "dead-sea-day-trip-jordan",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Floating rather than swimming, a short walk from the resort down to the shore. The shoreline is stony underfoot and the salt stings any cut or shave.",
+    },
     title: "Dead Sea Day Trip: Float at the Lowest Point on Earth",
     tagline: "A relaxed day at the shore, 430 meters below sea level.",
     category: "jordan",
@@ -1889,10 +2066,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Dead Sea", "Jordan"],
-    rating: { score: 4.87, count: 8 },
     imageLabel: "Dead Sea Shore",
     imageTone: "jordan",
-    image: "/photos/pexels-6127899.jpg",
+    image: "https://images.unsplash.com/photo-1743943932415-947f79353387?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A short drive down from Amman to the lowest point on Earth's surface — a day to float (there's no other word for it) in mineral-dense water ten times saltier than the ocean, and to try the Dead Sea mud most resorts along the shore offer.",
     highlights: [
@@ -1912,6 +2088,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "petra-by-night",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "About two kilometres each way through the Siq by candlelight, on uneven ground. Shorter and slower than the daytime route, but the footing needs care in low light.",
+    },
     title: "Petra by Night: Candlelight Through the Siq",
     tagline: "The Siq and the Treasury, lit only by more than a thousand candles.",
     category: "jordan",
@@ -1921,10 +2102,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Petra", "Jordan"],
-    rating: { score: 4.96, count: 11 },
     imageLabel: "Petra by Candlelight",
     imageTone: "jordan",
-    image: "/photos/pexels-16118911.jpg",
+    image: "https://images.unsplash.com/photo-1548786811-dd6e453ccca7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A different Petra after dark: the mile-long walk through the Siq lit by candles alone, ending at the Treasury for Bedouin music under the stars. Runs three evenings a week (Monday, Wednesday, Thursday) — best paired with a daytime Petra visit rather than as a standalone trip.",
     highlights: [
@@ -1939,6 +2119,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "aqaba-red-sea-diving-jordan",
+    mapStops: ["Aqaba"],
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Shore and boat entries into open water, with swimming over a wreck and reef. Suited to confident swimmers; the diving is optional.",
+    },
     title: "Aqaba Red Sea Diving & Snorkeling Day",
     tagline: "Jordan's only coastline — coral reefs, wrecks, and a much quieter Red Sea than Egypt's resorts.",
     category: "jordan",
@@ -1948,10 +2134,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Jordan"],
-    rating: { score: 4.93, count: 14 },
     imageLabel: "Aqaba Coast",
     imageTone: "redsea",
-    image: "/photos/pexels-17619968.jpg",
+    image: "https://images.unsplash.com/photo-1643884713348-f8cf6f435cd5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Aqaba is Jordan's one stretch of Red Sea coast, and a genuinely under-visited one — healthy reef within easy swimming distance of shore, plus the Cedar Pride, a deliberately sunk cargo ship now covered in coral. A relaxed day of diving or snorkeling with far fewer boats than Sharm or Hurghada.",
     highlights: [
@@ -1971,6 +2156,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "jordan-5-day-highlights",
+    mapStops: ["Amman", "Petra", "Wadi Rum", "Dead Sea"],
+    physicalLevel: {
+      tier: "active",
+      note:
+        "A full day on foot at Petra, 4x4 desert travel and a camp night in Wadi Rum, then the Dead Sea to recover. Petra is the demanding day.",
+    },
     title: "5 Days in Jordan: Amman, Petra, Wadi Rum & the Dead Sea",
     tagline: "Jordan's four headline stops, properly paced instead of rushed.",
     category: "jordan",
@@ -1980,10 +2171,9 @@ export const tours: Tour[] = [
     lengthDays: 5,
     cities: 4,
     destinations: ["Jordan", "Petra", "Wadi Rum", "Dead Sea"],
-    rating: { score: 4.91, count: 24 },
     imageLabel: "Petra Treasury",
     imageTone: "jordan",
-    image: "/photos/pexels-11195787.jpg",
+    image: "https://images.unsplash.com/photo-1589825274556-94746a018766?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Jordan in five unhurried days: Amman's Citadel and Roman Theatre, a full day at Petra with time for the Monastery climb, a night under the stars in a Wadi Rum Bedouin camp, and a final afternoon floating in the Dead Sea before flying out. A private vehicle and guide throughout, so the pace is yours.",
     highlights: [
@@ -2013,6 +2203,11 @@ export const tours: Tour[] = [
   // Cairo & Giza — additional day trips
   {
     slug: "giza-pyramids-sound-and-light-show",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Seated in an open-air amphitheatre for the show, after a short level walk from the vehicle.",
+    },
     title: "Giza Pyramids Sound & Light Show",
     tagline: "The Pyramids and the Sphinx, lit up after dark with a narrated history show.",
     category: "one-day",
@@ -2022,10 +2217,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Giza", "Cairo"],
-    rating: { score: 4.78, count: 16 },
     imageLabel: "Giza at Night",
     imageTone: "giza",
-    image: "/photos/pexels-30899056.jpg",
+    image: "https://images.unsplash.com/photo-1643667996984-fcc69743449d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A 45-minute narrated show, told from the Sphinx's point of view, projected across the Pyramids' facades after dark — a lighter, easier evening than a full day in the desert sun, and a good add-on the same day as a morning Giza visit.",
     highlights: [
@@ -2045,6 +2239,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "sunrise-camel-ride-giza-pyramids",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Time in the saddle on soft sand, including mounting and dismounting a kneeling camel. Long trousers and closed shoes make it far more comfortable than shorts and sandals.",
+    },
     title: "Sunrise Camel Ride at the Pyramids",
     tagline: "The Pyramid plateau before the crowds, heat, and tour buses arrive.",
     category: "one-day",
@@ -2054,10 +2253,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Giza"],
-    rating: { score: 4.91, count: 16 },
     imageLabel: "Giza Sunrise",
     imageTone: "giza",
-    image: "/photos/pexels-15272456.jpg",
+    image: "https://images.unsplash.com/photo-1771325676184-44d8035e3cd1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "An early hotel pickup for a sunrise camel ride across the Giza plateau, well before the site opens to general visitors — the clearest, quietest light the Pyramids get all day, and the best chance at photos without a crowd in frame.",
     highlights: [
@@ -2078,6 +2276,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "khan-el-khalili-food-walking-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A few hours on foot through crowded, uneven bazaar lanes — broken up by frequent stops to sit down and eat.",
+    },
     title: "Khan el-Khalili Food & Market Walking Tour",
     tagline: "Cairo's oldest bazaar, on foot, with stops for the food actual Cairenes eat.",
     category: "one-day",
@@ -2087,10 +2290,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Cairo"],
-    rating: { score: 4.87, count: 12 },
     imageLabel: "Khan el-Khalili",
     imageTone: "giza",
-    image: "/photos/pexels-36772036.jpg",
+    image: "https://images.unsplash.com/photo-1710211288826-b7df3ab71588?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A walking tour through Khan el-Khalili's narrow lanes — copperware, spices, lanterns, and the 14th-century bazaar itself — with stops along the way for koshary, ful medames, and fresh-pressed sugarcane juice from stalls locals actually queue at, not just tourist-facing cafés.",
     highlights: [
@@ -2111,6 +2313,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "cairo-felucca-sunset-sail",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "A step down into the boat, then seated sailing. About as little effort as an hour on the Nile can ask.",
+    },
     title: "Cairo Felucca Sunset Sail on the Nile",
     tagline: "An hour on the water as the city's skyline turns gold.",
     category: "one-day",
@@ -2120,10 +2327,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Cairo"],
-    rating: { score: 4.81, count: 3 },
     imageLabel: "Nile Felucca",
     imageTone: "nile",
-    image: "/photos/pexels-19820463.jpg",
+    image: "https://images.unsplash.com/photo-1684100096410-fd39cdff91a3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A traditional wooden felucca, no engine, just sail and current, drifting past Cairo's Nile-side skyline as the light turns gold. A quiet, low-key way to close out a busy sightseeing day — easy to combine with a Giza or Islamic Cairo tour on the same afternoon.",
     highlights: [
@@ -2138,6 +2344,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "egyptian-museum-coptic-cairo-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Several hours standing and walking through galleries and church courtyards. Seating inside the Egyptian Museum is limited.",
+    },
     title: "Egyptian Museum & Coptic Cairo Tour",
     tagline: "Tutankhamun's treasures in the morning, Cairo's oldest churches in the afternoon.",
     category: "one-day",
@@ -2147,10 +2358,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Cairo"],
-    rating: null,
     imageLabel: "Egyptian Museum",
     imageTone: "giza",
-    image: "/photos/pexels-13754840.jpg",
+    image: "https://images.unsplash.com/photo-1678729988693-9037ba6996bf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A morning through the Egyptian Museum's Tahrir Square collection — still home to most of Tutankhamun's treasures not moved to the Grand Egyptian Museum — followed by an afternoon in Coptic Cairo's walled old city: the Hanging Church, Ben Ezra Synagogue, and the Church of St. Sergius, built over a cave where tradition holds the Holy Family sheltered.",
     highlights: [
@@ -2172,6 +2382,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "cairo-by-night-tour",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "A lift to the Cairo Tower deck and level walking along Al-Muizz Street, at an unhurried evening pace.",
+    },
     title: "Cairo by Night: Skyline, Tower & Old Cairo Lights",
     tagline: "A different city after dark — the Cairo Tower, a Nile-side dinner, and lantern-lit streets.",
     category: "one-day",
@@ -2181,10 +2396,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Cairo"],
-    rating: { score: 4.86, count: 6 },
     imageLabel: "Cairo Skyline",
     imageTone: "nile",
-    image: "/photos/pexels-10586819.jpg",
+    image: "https://images.unsplash.com/photo-1602689257708-673b88c84de7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Cairo Tower's observation deck for a 360° view of the city lighting up, then down into Old Cairo's lantern-strung streets around Al-Muizz — a slower, cooler evening version of the city most day-trip itineraries don't have time for.",
     highlights: [
@@ -2206,6 +2420,11 @@ export const tours: Tour[] = [
   // Luxor — additional day trips
   {
     slug: "karnak-temple-sound-and-light-show",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A guided walk through the complex in the dark over uneven ancient paving, finishing seated at the Sacred Lake.",
+    },
     title: "Karnak Temple Sound & Light Show",
     tagline: "Egypt's largest temple complex, narrated and lit after dark.",
     category: "one-day",
@@ -2215,10 +2434,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.62, count: 2 },
     imageLabel: "Karnak at Night",
     imageTone: "luxor",
-    image: "/photos/pexels-34533510.jpg",
+    image: "https://images.unsplash.com/photo-1761143487063-c74ad86b5eee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Karnak's Hypostyle Hall — 134 columns, some over 20 meters tall — lit and narrated after dark, ending at the Sacred Lake for a seated show covering the temple's 2,000-year construction history. A good pairing with a same-day East Bank morning visit.",
     highlights: [
@@ -2236,6 +2454,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "hot-air-balloon-luxor-east-bank-combo",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A pre-dawn start, climbing in and out over the side of the balloon basket, and standing for the flight itself. Temple walking follows later in the day.",
+    },
     title: "Hot Air Balloon Sunrise & Luxor East Bank Combo",
     tagline: "The Nile Valley from above at dawn, then the East Bank's temples once you're back on the ground.",
     category: "one-day",
@@ -2245,10 +2468,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.84, count: 25 },
     imageLabel: "Hot Air Balloons Luxor",
     imageTone: "luxor",
-    image: "/photos/pexels-15131573.jpg",
+    image: "https://images.unsplash.com/photo-1738829235767-83963c09647c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A pre-dawn pickup for a hot air balloon flight over Luxor's West Bank as the sun comes up over the Nile Valley — sugarcane fields, the Colossi of Memnon, and the desert cliffs all visible from altitude — followed, once back on solid ground, by an East Bank afternoon at Karnak and Luxor Temple.",
     highlights: [
@@ -2269,6 +2491,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "valley-of-the-kings-hatshepsut-temple-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Stepped, sloping descents into three tombs and a long ramped approach at Hatshepsut's temple, with almost no shade anywhere on the West Bank.",
+    },
     title: "Valley of the Kings & Hatshepsut Temple Tour",
     tagline: "The tombs where the pharaohs were actually buried, and Egypt's only female pharaoh's temple.",
     category: "one-day",
@@ -2278,10 +2505,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.78, count: 4 },
     imageLabel: "Valley of the Kings",
     imageTone: "luxor",
-    image: "/photos/pexels-18934665.jpg",
+    image: "https://images.unsplash.com/photo-1695178234643-9656316a0e66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A focused West Bank morning: three tombs inside the Valley of the Kings (Tutankhamun's included, as an optional add-on), then Hatshepsut's Mortuary Temple at Deir el-Bahari, cut directly into the cliffs behind it — one of the more striking pieces of architecture anywhere on the West Bank.",
     highlights: [
@@ -2300,6 +2526,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "luxor-museum-mummification-museum-tour",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Two air-conditioned museums with level floors and seating throughout — the gentlest way to spend a Luxor afternoon.",
+    },
     title: "Luxor Museum & Mummification Museum Tour",
     tagline: "A smaller, better-curated alternative to the big Cairo museum crowds.",
     category: "one-day",
@@ -2309,10 +2540,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.93, count: 1 },
     imageLabel: "Luxor Museum",
     imageTone: "luxor",
-    image: "/photos/pexels-2402923.jpg",
+    image: "https://images.unsplash.com/photo-1779366243622-2d754e4b5bc1?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Two smaller, well-lit museums on the Nile Corniche — the Luxor Museum's focused collection (Amenhotep III and Tutankhamun pieces, without the Cairo crowds) and the Mummification Museum's step-by-step explanation of the embalming process itself. An easy, air-conditioned half-day.",
     highlights: [
@@ -2333,6 +2563,11 @@ export const tours: Tour[] = [
   // Aswan & Nile
   {
     slug: "philae-temple-sound-and-light-show",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A boat crossing with a step up onto the island, then a walking show over uneven temple ground in the dark.",
+    },
     title: "Philae Temple Sound & Light Show",
     tagline: "The Temple of Isis, reached by boat after dark, lit against the Nile.",
     category: "one-day",
@@ -2342,10 +2577,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Aswan"],
-    rating: { score: 4.87, count: 15 },
     imageLabel: "Philae at Night",
     imageTone: "nile",
-    image: "/photos/pexels-18934581.jpg",
+    image: "https://images.unsplash.com/photo-1738580426867-03fa8c8b5288?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Philae Temple sits on its own island, so getting there after dark means a short boat crossing before the show even starts — the Temple of Isis lit against the night sky, with a narrated history of the temple's 1970s relocation to save it from the rising waters of Lake Nasser.",
     highlights: [
@@ -2363,6 +2597,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "aswan-kom-ombo-felucca-sail-2-day",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Life aboard a small sailing boat with basic facilities and a night camped on the riverbank. Boarding is over a plank, and there's no cabin to retreat to.",
+    },
     title: "Aswan to Kom Ombo: 2-Day Felucca Sail",
     tagline: "A slower way north — sailing, not motoring, with the current down the Nile.",
     category: "multi-day",
@@ -2372,10 +2611,9 @@ export const tours: Tour[] = [
     lengthDays: 2,
     cities: 2,
     destinations: ["Aswan", "Kom Ombo"],
-    rating: { score: 4.53, count: 3 },
     imageLabel: "Nile Felucca Sail",
     imageTone: "nile",
-    image: "/photos/pexels-5572492.jpg",
+    image: "https://images.unsplash.com/photo-1761351108766-8ddf19b835ac?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A traditional felucca, sailed rather than motored, drifting north from Aswan with an overnight camp on the riverbank and arrival at Kom Ombo the next day — the slowest, quietest way to see this stretch of the Nile, with nothing on the schedule but the wind and the current.",
     highlights: [
@@ -2398,6 +2636,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "esna-lock-nile-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A stair descent into the hypostyle hall, which sits well below present street level, plus a long drive from Luxor.",
+    },
     title: "Esna Temple & the Nile Lock",
     tagline: "A little-visited temple, still being excavated from beneath the town around it.",
     category: "one-day",
@@ -2407,10 +2650,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Luxor"],
-    rating: { score: 4.79, count: 13 },
     imageLabel: "Esna Temple",
     imageTone: "nile",
-    image: "/photos/pexels-24429519.jpg",
+    image: "https://images.unsplash.com/photo-1711098288782-f97d609288a8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Esna's Temple of Khnum sits nine meters below the modern town, only fully excavated in recent years — one of the best-preserved ceiling reliefs in Egypt, and one of the least crowded major temples on the Nile. A short trip from Luxor, often combined with watching river traffic pass through the Esna lock.",
     highlights: [
@@ -2431,6 +2673,11 @@ export const tours: Tour[] = [
   // Red Sea & Sinai
   {
     slug: "sharm-el-sheikh-day-trip-from-cairo",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "A long day bookended by flights, with boat boarding and open-water snorkeling in the middle.",
+    },
     title: "Sharm El Sheikh Day Trip from Cairo",
     tagline: "A flight-inclusive beach day for anyone based in Cairo without time for an overnight stay.",
     category: "one-day",
@@ -2440,10 +2687,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Sharm El Sheikh"],
-    rating: null,
     imageLabel: "Sharm El Sheikh Coast",
     imageTone: "redsea",
-    image: "/photos/pexels-7974685.jpg",
+    image: "https://images.unsplash.com/photo-1636885345010-a48cf65452aa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "For travelers based in Cairo with only one free day but a strong pull toward the Red Sea — a round-trip flight to Sharm El Sheikh and a day of reef, sand, and clear water before flying back the same evening. Logistically tight, but genuinely doable.",
     highlights: [
@@ -2462,6 +2708,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "ras-mohammed-national-park-tour",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Steep coral walls entered from a boat, with swimming in open water. The mangrove channel is calmer if you'd rather stay shallow.",
+    },
     title: "Ras Mohammed National Park Snorkeling & Diving",
     tagline: "Where the Gulf of Suez meets the Gulf of Aqaba — some of the Red Sea's best reef.",
     category: "one-day",
@@ -2471,10 +2722,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Sharm El Sheikh", "Sinai"],
-    rating: { score: 4.78, count: 2 },
     imageLabel: "Ras Mohammed Reef",
     imageTone: "redsea",
-    image: "/photos/pexels-17668226.jpg",
+    image: "https://images.unsplash.com/photo-1668110648710-ccc9b6d58c41?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Egypt's oldest national marine park, at the southern tip of the Sinai Peninsula where two gulfs meet — sheer coral walls, mangroves, and reef fish density that's noticeably higher than most nearby dive sites. A full boat day from Sharm El Sheikh, snorkeling or diving.",
     highlights: [
@@ -2494,6 +2744,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "st-catherine-monastery-sinai-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Level walking inside the monastery grounds with a long mountain drive each way. This is the version without the summit climb.",
+    },
     title: "St. Catherine's Monastery & Mount Sinai Tour",
     tagline: "One of the oldest working monasteries in the world, at the foot of the mountain Moses is said to have climbed.",
     category: "one-day",
@@ -2503,10 +2758,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Sinai", "St. Catherine"],
-    rating: { score: 4.82, count: 4 },
     imageLabel: "St. Catherine Monastery",
     imageTone: "desert",
-    image: "/photos/pexels-37305715.jpg",
+    image: "https://images.unsplash.com/photo-1547234935-80c7145ec969?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "St. Catherine's Monastery has been continuously inhabited since the 6th century, built around what's identified as the Burning Bush site, at the base of Mount Sinai. A daytime visit to the monastery itself — its library, icon collection, and chapel — without the overnight sunrise climb (see our separate Mount Sinai Sunrise Hike for that).",
     highlights: [
@@ -2525,6 +2779,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "blue-lagoon-dahab-day-trip",
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Shallow, sheltered water with an easy walk-in entry — the calmest snorkeling day on the Sinai coast, and the one that suits beginners and children.",
+    },
     title: "Blue Lagoon Dahab Day Trip",
     tagline: "A calmer, shallower alternative to Dahab's famous Blue Hole, good for beginners and families.",
     category: "one-day",
@@ -2534,10 +2793,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Dahab"],
-    rating: { score: 4.49, count: 14 },
     imageLabel: "Blue Lagoon Dahab",
     imageTone: "redsea",
-    image: "/photos/pexels-24286496.jpg",
+    image: "https://images.unsplash.com/photo-1661075925925-f7e32ffa70ee?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "North of Dahab, the Blue Lagoon is a naturally sheltered, shallow bay — far gentler than the nearby Blue Hole, and a good pick for families, beginner snorkelers, or anyone who just wants calm, clear water and a laid-back beach day.",
     highlights: [
@@ -2556,6 +2814,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "abu-galum-snorkeling-trek",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "A camel trek along the coastline followed by snorkeling from a rocky shore. Time in the saddle, and an uneven entry into the water.",
+    },
     title: "Abu Galum Snorkeling & Camel Trek",
     tagline: "A protected reserve reachable only by camel or boat — no roads in.",
     category: "one-day",
@@ -2565,10 +2828,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Dahab", "Sinai"],
-    rating: { score: 4.88, count: 14 },
     imageLabel: "Abu Galum Reserve",
     imageTone: "redsea",
-    image: "/photos/pexels-31895961.jpg",
+    image: "https://images.unsplash.com/photo-1661075936707-96c1e470caae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Abu Galum Protected Area has no road access — getting there is either by camel along the coast or by boat, which keeps it far quieter than anywhere else on this stretch of Sinai coastline. A camel trek up, snorkeling over largely undisturbed reef, and a Bedouin lunch before heading back.",
     highlights: [
@@ -2587,6 +2849,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "giftun-island-hurghada-boat-trip",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Boat boarding, a tender ashore at the island, and reef snorkeling from the boat between stops.",
+    },
     title: "Giftun Island Boat Trip from Hurghada",
     tagline: "A full day sailing to a protected island reef, with time on white sand between snorkeling stops.",
     category: "one-day",
@@ -2596,10 +2863,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Hurghada"],
-    rating: { score: 4.78, count: 6 },
     imageLabel: "Giftun Island",
     imageTone: "redsea",
-    image: "/photos/pexels-22643843.jpg",
+    image: "https://images.unsplash.com/photo-1755545760275-abd2f1b8ed2c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Giftun Island's protected reef is one of Hurghada's most reliable snorkeling spots — a boat day with two or three reef stops, plus beach time on the island's white sand between swims. A straightforward, well-run day for anyone based on the Hurghada coast.",
     highlights: [
@@ -2619,6 +2885,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "taba-day-trip",
+    mapStops: ["Taba"],
+    physicalLevel: {
+      tier: "easy",
+      note:
+        "Beach and viewpoint time with almost no walking. The long coastal drive is the demanding part, not the day itself.",
+    },
     title: "Taba Day Trip: Egypt's Northern Red Sea Border Town",
     tagline: "Mountains meeting the sea at the very tip of the Gulf of Aqaba.",
     category: "one-day",
@@ -2628,10 +2900,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Sinai"],
-    rating: { score: 4.49, count: 5 },
     imageLabel: "Taba Coast",
     imageTone: "redsea",
-    image: "/photos/pexels-28322806.jpg",
+    image: "https://images.unsplash.com/photo-1568575621216-ca74d9a8c687?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Taba sits where Egypt's Sinai mountains drop straight into the Gulf of Aqaba, with Jordan, Israel, and Saudi Arabia all visible from the coastline on a clear day. A quieter alternative to the busier southern Sinai resorts, best suited to travelers already staying in the area.",
     highlights: [
@@ -2651,6 +2922,11 @@ export const tours: Tour[] = [
   // Desert & oases
   {
     slug: "bahariya-oasis-2-day-safari",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "4x4 driving over sand and volcanic scree, short walks between formations, and a night camping in the open desert.",
+    },
     title: "Bahariya Oasis 2-Day Desert Safari",
     tagline: "Black Desert, hot springs, and a night camping in the White Desert — as one connected trip.",
     category: "multi-day",
@@ -2660,10 +2936,9 @@ export const tours: Tour[] = [
     lengthDays: 2,
     cities: 1,
     destinations: ["Bahariya Oasis", "White Desert"],
-    rating: { score: 4.62, count: 14 },
     imageLabel: "Black Desert",
     imageTone: "desert",
-    image: "/photos/pexels-18926721.jpg",
+    image: "https://images.unsplash.com/photo-1708008434243-68967110a76e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Bahariya Oasis as a base for two desert landscapes most day-trip itineraries only touch on: the Black Desert's volcanic hills, and a night camping among the White Desert's wind-carved chalk formations, with a hot spring soak worked into the schedule.",
     highlights: [
@@ -2687,6 +2962,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "fayoum-wadi-el-rayan-waterfalls-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Short walks on soft sand and rock at the falls and around the lake shore, with a long drive from Cairo either side.",
+    },
     title: "Fayoum & Wadi El Rayan Waterfalls Tour",
     tagline: "Egypt's only waterfalls, plus a lake known for windsurfing and desert dunes.",
     category: "one-day",
@@ -2696,10 +2976,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Fayoum"],
-    rating: { score: 4.83, count: 16 },
     imageLabel: "Wadi El Rayan",
     imageTone: "desert",
-    image: "/photos/pexels-34328970.jpg",
+    image: "https://images.unsplash.com/photo-1661889453063-70c729243d47?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Wadi El Rayan's two connected lakes feed Egypt's only real waterfalls — modest by global standards, but a genuine surprise this close to Cairo. The same day covers Fayoum's Magic Lake and Wadi Al-Hitan's whale fossils are close enough to combine if time allows.",
     highlights: [
@@ -2718,6 +2997,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "black-desert-white-desert-combo",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "A full day of 4x4 driving with short walks over volcanic scree and soft sand between the formations of both deserts.",
+    },
     title: "Black Desert & White Desert Combo Safari",
     tagline: "Two of Egypt's most distinct desert landscapes, back to back, on one 4x4 route.",
     category: "one-day",
@@ -2727,10 +3011,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Bahariya Oasis", "White Desert"],
-    rating: null,
     imageLabel: "White Desert Formations",
     imageTone: "desert",
-    image: "/photos/pexels-7403671.jpg",
+    image: "https://images.unsplash.com/photo-1767118345470-e6a84dcfde89?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A single long day covering both the volcanic hills of the Black Desert and the wind-eroded chalk sculptures of the White Desert National Park — for travelers with limited time who still want the full desert contrast without an overnight camp.",
     highlights: [
@@ -2751,6 +3034,11 @@ export const tours: Tour[] = [
   // Multi-day combinations
   {
     slug: "12-day-egypt-grand-tour",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Twelve days that alternate deliberately — sand and temple stone on sightseeing days, then a Nile cruise and three unstructured Red Sea days to recover.",
+    },
     title: "12-Day Egypt Grand Tour",
     tagline: "Cairo, a full Nile cruise, and the Red Sea — the complete country, at an unhurried pace.",
     category: "multi-day",
@@ -2760,10 +3048,9 @@ export const tours: Tour[] = [
     lengthDays: 12,
     cities: 5,
     destinations: ["Cairo", "Giza", "Luxor", "Aswan", "Hurghada"],
-    rating: { score: 4.88, count: 20 },
     imageLabel: "Nile Valley",
     imageTone: "nile",
-    image: "/photos/pexels-36047721.jpg",
+    image: "https://images.unsplash.com/photo-1566288623394-377af472d81b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "The full country in twelve days: Cairo and Giza, a four-night Nile cruise between Luxor and Aswan, and a closing stretch on the Red Sea coast to actually rest before flying home. Built for travelers who want everything without compressing it into a week.",
     highlights: [
@@ -2799,6 +3086,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "9-day-egypt-jordan-combo",
+    mapStops: ["Cairo", "Giza", "Luxor", "Petra", "Wadi Rum"],
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Egypt's temple days are moderate; Petra is the day that isn't, with kilometres of stone underfoot, plus a camp night in Wadi Rum.",
+    },
     title: "9-Day Egypt & Jordan Combo",
     tagline: "The Pyramids, the Nile, and Petra — both countries, one connected trip.",
     category: "multi-day",
@@ -2808,10 +3101,9 @@ export const tours: Tour[] = [
     lengthDays: 9,
     cities: 4,
     destinations: ["Cairo", "Giza", "Luxor", "Petra", "Jordan"],
-    rating: { score: 4.87, count: 24 },
     imageLabel: "Pyramids and Petra",
     imageTone: "desert",
-    image: "/photos/pexels-18765298.jpg",
+    image: "https://images.unsplash.com/photo-1589825312980-7600c59db1f9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Two of the region's headline destinations on one itinerary — Cairo and Luxor's temples and tombs, then a flight across to Amman for Petra and a night in Wadi Rum, closing with the Dead Sea. Built for travelers who'd rather not choose between the two.",
     highlights: [
@@ -2844,6 +3136,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "cairo-luxor-hurghada-beach-combo",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Pyramid and temple walking in the first half, then three unscheduled beach days with nothing required of you at all.",
+    },
     title: "Cairo, Luxor & Hurghada Beach Combo",
     tagline: "History for the first half of the trip, beach for the second.",
     category: "multi-day",
@@ -2853,10 +3150,9 @@ export const tours: Tour[] = [
     lengthDays: 7,
     cities: 3,
     destinations: ["Cairo", "Giza", "Luxor", "Hurghada"],
-    rating: { score: 4.69, count: 3 },
     imageLabel: "Red Sea Coast",
     imageTone: "redsea",
-    image: "/photos/pexels-31166931.jpg",
+    image: "https://images.unsplash.com/photo-1767938072646-964324e90bf0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A straightforward split trip: Cairo and Giza's sights, a couple of days in Luxor for Karnak and the West Bank, then three days on the Red Sea coast with nothing scheduled — built for travelers (families especially) who want real sightseeing without a nonstop pace the whole way through.",
     highlights: [
@@ -2885,6 +3181,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "4-day-cairo-alexandria-fayoum",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Three distinct day trips in four days — city walking, citadel stairs, and soft sand at Wadi El Rayan, with long drives between them.",
+    },
     title: "4 Days: Cairo, Alexandria & Fayoum",
     tagline: "The capital, the Mediterranean coast, and Egypt's desert lake country.",
     category: "multi-day",
@@ -2894,10 +3195,9 @@ export const tours: Tour[] = [
     lengthDays: 4,
     cities: 3,
     destinations: ["Cairo", "Giza", "Alexandria", "Fayoum"],
-    rating: { score: 4.53, count: 3 },
     imageLabel: "Alexandria Coast",
     imageTone: "redsea",
-    image: "/photos/pexels-15951190.jpg",
+    image: "https://images.unsplash.com/photo-1538826190883-cae85065dfda?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A short trip covering three very different sides of Egypt: Cairo and Giza's ancient sites, a day on Alexandria's Mediterranean coast, and a closing day in Fayoum's lake country with its waterfalls and desert dunes.",
     highlights: [
@@ -2922,6 +3222,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "private-yacht-nile-cruise-luxor-aswan",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "Temple stops on uneven ground, with the yacht as a private base between them and no fixed group pace to keep up with.",
+    },
     title: "Private Yacht Nile Cruise: Luxor to Aswan",
     tagline: "The same route as a standard Nile cruise, but the boat is yours alone.",
     category: "multi-day",
@@ -2931,10 +3236,9 @@ export const tours: Tour[] = [
     lengthDays: 4,
     cities: 2,
     destinations: ["Luxor", "Aswan", "Edfu", "Kom Ombo"],
-    rating: { score: 4.89, count: 6 },
     imageLabel: "Private Nile Yacht",
     imageTone: "nile",
-    image: "/photos/pexels-31814296.jpg",
+    image: "https://images.unsplash.com/photo-1761351108292-941d534a6faf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "The classic Luxor-to-Aswan Nile route, sailed on a privately chartered yacht instead of a shared multi-cabin cruise ship — your own schedule at each stop, no waiting for other passengers, and meals prepared to your own timing rather than a set dining hour.",
     highlights: [
@@ -2960,6 +3264,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "overnight-dahabiya-sail-esna-edfu",
+    physicalLevel: {
+      tier: "moderate",
+      note:
+        "A small sailing boat with a step aboard from the bank, riverside village stops on uneven ground, and flat temple walking at Edfu.",
+    },
     title: "Overnight Dahabiya Sail: Esna to Edfu",
     tagline: "A traditional two-masted sailboat, a fraction of the size of a standard cruise ship.",
     category: "multi-day",
@@ -2969,10 +3278,9 @@ export const tours: Tour[] = [
     lengthDays: 2,
     cities: 2,
     destinations: ["Luxor", "Edfu"],
-    rating: { score: 4.91, count: 10 },
     imageLabel: "Dahabiya Sailboat",
     imageTone: "nile",
-    image: "/photos/pexels-15131486.jpg",
+    image: "https://images.unsplash.com/photo-1648139210543-da574312cda9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "A dahabiya carries a handful of cabins, not hundreds of passengers, and sails largely under wind power — a genuinely different pace from a standard Nile cruise ship, with village stops a larger vessel simply can't make. A short two-day introduction to dahabiya sailing, Esna to Edfu.",
     highlights: [
@@ -2995,6 +3303,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "quad-bike-stargazing-desert-night",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Riding a quad bike over dunes at speed — no experience needed, but it's a bumpy, physical hour, followed by a seated evening under the stars.",
+    },
     title: "Quad Biking & Stargazing Desert Night",
     tagline: "An adrenaline ride into the dunes at sunset, then a telescope session under a genuinely dark sky.",
     category: "one-day",
@@ -3004,10 +3317,9 @@ export const tours: Tour[] = [
     lengthDays: 1,
     cities: 1,
     destinations: ["Giza"],
-    rating: { score: 4.64, count: 8 },
     imageLabel: "Desert Stargazing",
     imageTone: "desert",
-    image: "/photos/pexels-31021507.jpg",
+    image: "https://images.unsplash.com/photo-1484950763426-56b5bf172dbb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Quad bikes into the desert outside Cairo timed for sunset, followed by tea around a fire and a telescope session once full dark sets in — far enough from the city's light pollution to actually see the Milky Way, a rare thing this close to a capital of 20 million people.",
     highlights: [
@@ -3027,6 +3339,12 @@ export const tours: Tour[] = [
   },
   {
     slug: "14-day-egypt-jordan-classic-journey",
+    mapStops: ["Cairo", "Giza", "Luxor", "Aswan", "Abu Simbel", "Petra", "Wadi Rum"],
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Two weeks covering Egypt's full temple route and Petra's stone trails, with a Nile cruise and a Wadi Rum camp night. Petra and Abu Simbel are the long days.",
+    },
     title: "14-Day Egypt & Jordan: The Complete Classic Journey",
     tagline: "The Pyramids, a full Nile cruise, Abu Simbel, and Petra — the classic route through both countries.",
     category: "multi-day",
@@ -3036,11 +3354,10 @@ export const tours: Tour[] = [
     lengthDays: 14,
     cities: 6,
     destinations: ["Cairo", "Giza", "Luxor", "Aswan", "Abu Simbel", "Petra", "Jordan"],
-    rating: { score: 4.86, count: 15 },
     badge: "Most Complete",
     imageLabel: "Pyramids and Petra",
     imageTone: "desert",
-    image: "/photos/pexels-18765298.jpg",
+    image: "https://images.unsplash.com/photo-1702909171830-2c4dca2ac090?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Our most complete classic itinerary — Cairo and Giza, a full Nile cruise from Luxor to Aswan, a dedicated day at Abu Simbel, then onward to Jordan for Petra, Wadi Rum, and the Dead Sea. Two countries' essential sights, properly paced instead of rushed into one week.",
     highlights: [
@@ -3083,6 +3400,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "16-day-egypt-hidden-gems",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Sixteen days mixing desert camping, 4x4 travel and oasis walking with Nile Valley temple days. The long drives and cold desert nights are the demanding part, not the terrain.",
+    },
     title: "Egypt Hidden Gems: 16 Days Off the Beaten Path",
     tagline: "The Great Sand Sea, the Western Desert's oases, and the Nile — the Egypt most visitors never see.",
     category: "multi-day",
@@ -3092,11 +3414,10 @@ export const tours: Tour[] = [
     lengthDays: 16,
     cities: 7,
     destinations: ["Cairo", "Giza", "Bahariya Oasis", "White Desert", "Farafra Oasis", "Dakhla Oasis", "Kharga Oasis", "Luxor", "Aswan"],
-    rating: { score: 4.92, count: 7 },
     badge: "Hidden Gems",
     imageLabel: "Western Desert Oases",
     imageTone: "desert",
-    image: "/photos/pexels-5540933.jpg",
+    image: "https://images.unsplash.com/photo-1778402533573-6cc927e69cc9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "For travelers who've already done Cairo and the Nile, or who'd rather start somewhere quieter — the full Western Desert circuit through Bahariya, the White and Black Deserts, Farafra, Dakhla, and Kharga, before finishing on the Nile at Luxor and Aswan. Long desert drives, real solitude, and almost no other tourists.",
     highlights: [
@@ -3137,6 +3458,11 @@ export const tours: Tour[] = [
   },
   {
     slug: "21-day-egypt-grand-explorer",
+    physicalLevel: {
+      tier: "active",
+      note:
+        "Three weeks across nearly every region we run — temple days, desert nights, Red Sea water and a Sinai leg. Individually moderate; cumulatively it asks for stamina.",
+    },
     title: "Egypt Grand Explorer: The Ultimate 21-Day Journey",
     tagline: "Cairo, Alexandria, Fayoum, a full Nile cruise, Abu Simbel, and the Sinai's reefs and mountains — everything, unhurried.",
     category: "multi-day",
@@ -3146,11 +3472,10 @@ export const tours: Tour[] = [
     lengthDays: 21,
     cities: 10,
     destinations: ["Cairo", "Giza", "Alexandria", "Fayoum", "Luxor", "Aswan", "Abu Simbel", "Sharm El Sheikh", "Dahab", "St. Catherine"],
-    rating: { score: 4.9, count: 6 },
     badge: "The Full Country",
     imageLabel: "Red Sea & Sinai",
     imageTone: "redsea",
-    image: "/photos/pexels-17814812.jpg",
+    image: "https://images.unsplash.com/photo-1777552771426-9ac9f515dc40?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
       "Three unhurried weeks covering everything Egypt Eye offers — Cairo and Giza, a Mediterranean day in Alexandria, Fayoum's desert lakes, a full Nile cruise from Luxor to Aswan, a dedicated day at Abu Simbel, and a closing week across the Sinai's dive sites, desert canyons, and Mount Sinai. Built for travelers who want the complete country, not the highlights reel.",
     highlights: [
