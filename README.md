@@ -364,6 +364,16 @@ screen and no domain-wide delegation.
    account's email address (the `client_email` from the JSON) with **Make
    changes to events**. Copy the **Calendar ID** from the same page.
 
+   *A calendar the team already uses works too*, and nothing the OS does can
+   touch what is already on it: every update and delete addresses an event ID
+   the OS itself got back when it created that event, and nothing in the code
+   lists or searches the calendar. What it cannot control is the other
+   direction — every published event carries the client's name, pickup and
+   crew, so everyone that calendar is already shared with now reads all of it,
+   including whoever it gets shared with next. A separate calendar people
+   **subscribe** to lands in the same phone app while keeping that list
+   deliberate. Either is a real choice; make it knowing which one you made.
+
 4. **Vercel → Environment Variables**, all environments:
 
    | Variable | Value |
