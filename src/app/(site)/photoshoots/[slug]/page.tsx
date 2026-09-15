@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
-import { Rating } from "@/components/Rating";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
@@ -52,7 +51,7 @@ export default async function PhotoshootDetailPage({
     description: photoshoot.description,
     image: photoshoot.image,
     path: `/photoshoots/${photoshoot.slug}`,
-    rating: photoshoot.rating,
+    // See the tour page: no visible rating, so no aggregateRating markup.
   });
 
   return (
@@ -75,7 +74,6 @@ export default async function PhotoshootDetailPage({
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-soft/70">
             <span>⏱ {photoshoot.duration}</span>
-            <Rating rating={photoshoot.rating} />
           </div>
           <p className="mt-5 leading-relaxed text-ink-soft/80">
             {photoshoot.description}

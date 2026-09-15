@@ -1,7 +1,6 @@
 import Link from "next/link";
 import type { Photoshoot } from "@/content/types";
 import { SmartImage } from "./SmartImage";
-import { Rating } from "./Rating";
 import { PriceTag } from "./PriceTag";
 import { AddToJourneyButton } from "./AddToJourneyButton";
 
@@ -43,9 +42,8 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
             subtitle={photoshoot.duration}
           />
         </div>
-        <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-t border-black/5 pt-3">
+        <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-black/5 pt-3">
           <PriceTag price={photoshoot.price} />
-          <Rating rating={photoshoot.rating} />
         </div>
       </div>
     </div>
