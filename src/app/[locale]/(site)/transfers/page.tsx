@@ -8,6 +8,7 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { TransferBookingForm } from "./TransferBookingForm";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { transfersPage } from "@/content/transfers";
+import { localizedTransferCategories } from "@/content/productTranslations";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -20,8 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function TransfersPage() {
+export default async function TransfersPage() {
   const page = transfersPage;
+  const locale = await getLocale();
+  const categories = localizedTransferCategories(locale);
 
   return (
     <>
@@ -55,7 +58,7 @@ export default function TransfersPage() {
               form controls, and a link nested in a button would both be
               invalid markup and steal the click that selects the category. */}
           <div className="mx-auto mt-8 flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2">
-            {transfersPage.categories.map((c) => (
+            {categories.map((c) => (
               <span key={c.id} className="inline-flex items-center gap-2 text-sm text-ink-soft/70">
                 {c.label}
                 <ExperienceRatingLink type="service" slug={c.id} />

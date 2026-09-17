@@ -28,6 +28,7 @@ import {
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
 import { localized } from "@/i18n/localizeContent";
+import { photoshootTranslations, tourTranslations, type ProductTranslation } from "@/content/productTranslations";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
@@ -195,12 +196,45 @@ async function withTranslations<T extends {
 }>(items: T[]): Promise<T[]> {
   const locale = await currentLocale();
   if (locale === DEFAULT_LOCALE) return items;
-  return items.map((item) => ({
-    ...item,
-    title: localized(item.title, item.titleTranslations, locale),
-    tagline: localized(item.tagline, item.taglineTranslations, locale),
-    description: localized(item.description, item.descriptionTranslations, locale),
-  }));
+  // Only the fields the record actually has are rewritten — a photoshoot has
+  // no tagline, and inventing an empty one here would put a blank string where
+  // the component expects the key to be absent.
+  return items.map((item) => {
+    const next = { ...item };
+    if (item.title !== undefined) next.title = localized(item.title, item.titleTranslations, locale);
+    if (item.tagline !== undefined) next.tagline = localized(item.tagline, item.taglineTranslations, locale);
+    if (item.description !== undefined) {
+      next.description = localized(item.description, item.descriptionTranslations, locale);
+    }
+    return next;
+  });
+}
+
+/**
+ * Fills in the translations kept in the repo, without ever overriding Studio.
+ *
+ * `content/productTranslations.ts` holds a translated title/tagline/description
+ * for the products most likely to be opened in another language. A translation
+ * an editor has typed into Studio is the newer, more deliberate one, so it wins
+ * field by field — this only ever fills a gap.
+ */
+function withLocalTranslations<T extends {
+  slug: string;
+  titleTranslations?: Record<string, string>;
+  taglineTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
+}>(items: T[], table: Record<string, ProductTranslation>): T[] {
+  return items.map((item) => {
+    const extra = table[item.slug];
+    if (!extra) return item;
+    const merged = { ...item };
+    if (extra.title) merged.titleTranslations = { ...extra.title, ...item.titleTranslations };
+    if (extra.tagline) merged.taglineTranslations = { ...extra.tagline, ...item.taglineTranslations };
+    if (extra.description) {
+      merged.descriptionTranslations = { ...extra.description, ...item.descriptionTranslations };
+    }
+    return merged;
+  });
 }
 
 async function withTranslationsOne<T extends Parameters<typeof withTranslations>[0][number]>(
@@ -229,7 +263,12 @@ async function currentLocale(): Promise<Locale> {
 
 export async function getTours(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return withTranslations(withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours));
+  return withTranslations(
+    withLocalTranslations(
+      withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours),
+      tourTranslations
+    )
+  );
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -241,7 +280,8 @@ function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined
 }
 
 export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  return withTranslationsOne(mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug));
+  const tour = mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug);
+  return withTranslationsOne(tour && withLocalTranslations([tour], tourTranslations)[0]);
 }
 
 // One request for the whole set instead of one per slug (see
@@ -252,9 +292,10 @@ export async function getToursBySlugs(slugs: string[]): Promise<Tour[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Tour[]>(toursBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((t) => [t.slug, t]));
-  return slugs
+  const found = slugs
     .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
     .filter((t): t is Tour => Boolean(t));
+  return withTranslations(withLocalTranslations(found, tourTranslations));
 }
 
 export async function getAllTourSlugs(): Promise<string[]> {
@@ -305,7 +346,12 @@ export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience
 
 export async function getPhotoshoots(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
-  return withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots);
+  return withTranslations(
+    withLocalTranslations(
+      withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots),
+      photoshootTranslations
+    )
+  );
 }
 
 function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Photoshoot | undefined {
@@ -315,16 +361,18 @@ function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Phot
 }
 
 export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
-  return mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
+  const shoot = mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
+  return withTranslationsOne(shoot && withLocalTranslations([shoot], photoshootTranslations)[0]);
 }
 
 export async function getPhotoshootsBySlugs(slugs: string[]): Promise<Photoshoot[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Photoshoot[]>(photoshootsBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((p) => [p.slug, p]));
-  return slugs
+  const found = slugs
     .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
     .filter((p): p is Photoshoot => Boolean(p));
+  return withTranslations(withLocalTranslations(found, photoshootTranslations));
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {

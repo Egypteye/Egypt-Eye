@@ -245,6 +245,8 @@ export const it: Dictionary = {
 
   seo: {
     homeTitle: "Tour privati, servizi fotografici ed esperienze in Egitto",
+    // Appended to every tour page title, after an em dash.
+    privateTourSuffix: "Tour privato",
     localeSuffix: "",
   },
 };

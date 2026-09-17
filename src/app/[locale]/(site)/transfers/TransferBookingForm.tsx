@@ -2,10 +2,12 @@
 
 import { useMemo, useState, type FormEvent } from "react";
 import { transfersPage } from "@/content/transfers";
+import { localizedTransferCategories } from "@/content/productTranslations";
+import { useLocale } from "@/i18n/LocaleProvider";
 import { getTransferQuote } from "@/lib/transferPricing";
 import type { TransferCategory, TransferVehicleId, TransferZone } from "@/content/types";
 
-const { categories, vehicles, zones } = transfersPage;
+const { vehicles, zones } = transfersPage;
 
 const DURATION_OPTIONS = [3, 4, 5, 6, 8, 10];
 
@@ -45,6 +47,8 @@ function Stepper({ value, onChange, min = 1, max = 60, label }: { value: number;
 }
 
 export function TransferBookingForm() {
+  const { locale } = useLocale();
+  const categories = useMemo(() => localizedTransferCategories(locale), [locale]);
   const [category, setCategory] = useState<TransferCategory>("airport");
   const [fromZoneId, setFromZoneId] = useState("");
   const [toZoneId, setToZoneId] = useState("");

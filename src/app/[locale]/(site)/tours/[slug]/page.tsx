@@ -15,7 +15,7 @@ import { RouteMap } from "@/components/RouteMap";
 import { resolveStops } from "@/lib/placeCoords";
 import { pickRelated } from "@/lib/relatedPicker";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 
 const categoryLabels: Record<string, string> = {
@@ -37,9 +37,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const tour = await getTourBySlug(slug);
   if (!tour) return {};
+  const dict = await getDictionary();
   return resolveMetadata({
     locale: await getLocale(),
-    title: `${tour.title} — Private Tour`,
+    title: `${tour.title} — ${dict.seo.privateTourSuffix}`,
     description: tour.tagline,
     seo: tour.seo,
     image: tour.image,

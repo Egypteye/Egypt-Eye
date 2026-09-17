@@ -246,6 +246,8 @@ export const de: Dictionary = {
 
   seo: {
     homeTitle: "Private Ägypten-Reisen, Fotoshootings & Erlebnisse",
+    // Appended to every tour page title, after an em dash.
+    privateTourSuffix: "Privatreise",
     localeSuffix: "",
   },
 };

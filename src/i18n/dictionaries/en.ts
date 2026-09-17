@@ -261,6 +261,8 @@ export const en = {
   seo: {
     // {title} is the page's own title; the site name is appended by layout.
     homeTitle: "Private Egypt Tours, Photoshoots & Experiences",
+    // Appended to every tour page title, after an em dash.
+    privateTourSuffix: "Private Tour",
     localeSuffix: "",
   },
 };
