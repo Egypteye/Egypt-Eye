@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { translationsField } from "./objects";
 import { imageCreditField, imageTones, seoFields } from "./objects";
 
 export const tour = defineType({
@@ -22,6 +23,7 @@ export const tour = defineType({
       initialValue: false,
     }),
     defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
+    translationsField("titleTranslations", "Title translations"),
     defineField({
       name: "slug",
       title: "Slug (web address)",
@@ -30,6 +32,7 @@ export const tour = defineType({
       validation: (r) => r.required(),
     }),
     defineField({ name: "tagline", title: "Tagline (one line)", type: "string" }),
+    translationsField("taglineTranslations", "Tagline translations"),
     defineField({
       name: "category",
       title: "Category",
@@ -89,6 +92,7 @@ export const tour = defineType({
       initialValue: "giza",
     }),
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
+    translationsField("descriptionTranslations", "Description translations"),
     defineField({ name: "highlights", title: "Highlights", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "excluded", title: "Not Included", type: "array", of: [{ type: "string" }] }),

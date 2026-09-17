@@ -1,0 +1,73 @@
+import { Container } from "@/components/Container";
+import { SmartImage } from "@/components/SmartImage";
+import { SectionHeading } from "@/components/SectionHeading";
+import { Reveal } from "@/components/Reveal";
+import { CustomizeForm } from "./CustomizeForm";
+import { getCustomizePage, getSiteSettings } from "@/sanity/fetchers";
+import { alternatesFor } from "@/i18n/alternates";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
+
+export async function generateMetadata() {
+  const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/customize"];
+  return {
+    title: meta.title,
+    description: meta.description,
+    alternates: alternatesFor("/customize", locale),
+  };
+}
+
+export default async function CustomizePage() {
+  const [site, page] = await Promise.all([getSiteSettings(), getCustomizePage()]);
+
+  return (
+    <>
+      <section className="relative">
+        <SmartImage
+          image={page.bannerImage.image}
+          tone={page.bannerImage.tone}
+          alt={page.headline}
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/10" />
+        <Container className="relative flex min-h-[42vh] flex-col justify-end gap-3 pb-14 pt-32">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{page.eyebrow}</p>
+          <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl">{page.headline}</h1>
+          <p className="max-w-xl text-cream/80">{page.subtext}</p>
+        </Container>
+      </section>
+
+      <section className="pb-24 pt-16">
+        <Container className="grid gap-12 lg:grid-cols-[1fr_1.5fr]">
+          <div>
+            <SectionHeading
+              eyebrow={page.formIntroEyebrow}
+              title={page.formIntroTitle}
+              description={page.formIntroDescription}
+            />
+            <ol className="mt-8 space-y-6">
+              {page.steps.map((step, i) => (
+                <li key={step.title} className="flex gap-4">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/20 text-sm font-bold text-gold-dark">
+                    {i + 1}
+                  </span>
+                  <div>
+                    <p className="font-semibold text-ink">{step.title}</p>
+                    <p className="text-sm text-ink-soft/70">{step.body}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          <Reveal>
+            <CustomizeForm sections={page.formSections} siteSettings={site} />
+          </Reveal>
+        </Container>
+      </section>
+    </>
+  );
+}

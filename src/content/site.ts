@@ -43,6 +43,7 @@ export const site = {
     { label: "Customize Your Tour", href: "/customize" },
     { label: "Stories", href: "/stories" },
     { label: "Partner With Us", href: "/partners" },
+    { label: "Traveler Reviews", href: "/testimonials" },
     { label: "About", href: "/about" },
   ],
   trustBadges: [

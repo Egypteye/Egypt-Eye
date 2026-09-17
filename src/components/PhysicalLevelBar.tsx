@@ -1,3 +1,6 @@
+"use client";
+
+import { useLocale } from "@/i18n/LocaleProvider";
 import type { PhysicalLevel, PhysicalLevelTier } from "@/content/types";
 
 // A compact "how hard is this actually?" strip for tour and experience
@@ -10,22 +13,25 @@ import type { PhysicalLevel, PhysicalLevelTier } from "@/content/types";
 
 const TIERS: PhysicalLevelTier[] = ["easy", "moderate", "active", "challenging"];
 
-const TIER_META: Record<PhysicalLevelTier, { label: string; fill: string; text: string }> = {
-  easy: { label: "Easy", fill: "bg-nile", text: "text-nile" },
-  moderate: { label: "Moderate", fill: "bg-gold", text: "text-gold-dark" },
-  active: { label: "Active", fill: "bg-gold-dark", text: "text-gold-dark" },
-  challenging: { label: "Challenging", fill: "bg-terracotta", text: "text-terracotta" },
+// Colours only — the tier's wording lives in the dictionary so it can be
+// translated without touching the palette.
+const TIER_META: Record<PhysicalLevelTier, { fill: string; text: string }> = {
+  easy: { fill: "bg-nile", text: "text-nile" },
+  moderate: { fill: "bg-gold", text: "text-gold-dark" },
+  active: { fill: "bg-gold-dark", text: "text-gold-dark" },
+  challenging: { fill: "bg-terracotta", text: "text-terracotta" },
 };
 
 export function PhysicalLevelBar({ level }: { level: PhysicalLevel }) {
   const meta = TIER_META[level.tier];
+  const { dict } = useLocale();
   const filled = TIERS.indexOf(level.tier) + 1;
 
   return (
     <div className="rounded-2xl border border-black/5 bg-sand-dim/60 px-5 py-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft/55">
-          Physical level
+          {dict.physical.label}
         </span>
         <div className="flex items-center gap-2">
           <span aria-hidden="true" className="flex gap-1">
@@ -36,7 +42,7 @@ export function PhysicalLevelBar({ level }: { level: PhysicalLevel }) {
               />
             ))}
           </span>
-          <span className={`text-sm font-semibold ${meta.text}`}>{meta.label}</span>
+          <span className={`text-sm font-semibold ${meta.text}`}>{dict.physical[level.tier]}</span>
         </div>
       </div>
       <p className="mt-2.5 text-sm leading-relaxed text-ink-soft/75">{level.note}</p>
@@ -53,12 +59,13 @@ export function PhysicalLevelBar({ level }: { level: PhysicalLevel }) {
 // Saying "Physical level" is what makes it mean one thing.
 export function PhysicalLevelChip({ level }: { level: PhysicalLevel }) {
   const meta = TIER_META[level.tier];
+  const { dict } = useLocale();
   const filled = TIERS.indexOf(level.tier) + 1;
 
   return (
     <span className="inline-flex items-center gap-2 text-xs" title={level.note}>
       <span className="font-semibold uppercase tracking-[0.12em] text-ink-soft/50">
-        Physical level
+        {dict.physical.label}
       </span>
       <span aria-hidden="true" className="flex gap-[3px]">
         {TIERS.map((tier, i) => (
@@ -68,7 +75,7 @@ export function PhysicalLevelChip({ level }: { level: PhysicalLevel }) {
           />
         ))}
       </span>
-      <span className={`font-semibold ${meta.text}`}>{meta.label}</span>
+      <span className={`font-semibold ${meta.text}`}>{dict.physical[level.tier]}</span>
     </span>
   );
 }

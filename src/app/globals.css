@@ -321,3 +321,39 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   .os-root { background: #fff; }
   .os-print-sheet { box-shadow: none !important; border: none !important; }
 }
+
+/* ---- Right-to-left ---------------------------------------------------- */
+/* Tailwind's logical utilities (ms-/me-/ps-/pe-/start-/end-) already flip
+   with `dir`, so most of the layout needs nothing. These are the places that
+   don't flip on their own: text alignment baked into the type scale, and the
+   handful of decorative transforms that would otherwise point the wrong way. */
+
+[dir="rtl"] body {
+  /* Noto Kufi for Arabic; the Latin faces have no Arabic glyphs and would
+     silently fall back to whatever the device happens to ship. */
+  font-family: var(--font-arabic), var(--font-body), serif;
+}
+
+[dir="rtl"] .font-display,
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3 {
+  font-family: var(--font-arabic), var(--font-display), serif;
+  /* Kufi's uppercase-style tracking reads as broken in Arabic. */
+  letter-spacing: normal;
+}
+
+/* Arrow glyphs written into copy ("→", "←") point the wrong way once the
+   text direction flips. Mirroring the element keeps them pointing "forward"
+   in reading order. */
+[dir="rtl"] [data-flip-rtl] {
+  transform: scaleX(-1);
+}
+
+/* Anything explicitly laid out left-to-right (numbers, prices, dates,
+   phone numbers) stays LTR inside an RTL page. */
+[dir="rtl"] .tabular-nums,
+[dir="rtl"] [data-ltr] {
+  direction: ltr;
+  unicode-bidi: isolate;
+}

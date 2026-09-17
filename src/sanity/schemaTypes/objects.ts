@@ -183,3 +183,29 @@ export function seoFields() {
     ],
   });
 }
+
+// Translations for one text field, keyed by locale.
+//
+// Sits beside the English field rather than replacing it — English stays where
+// it has always been, so nothing an editor does in here can break the English
+// site, and a field left empty simply falls back (see i18n/localizeContent.ts).
+// Collapsed by default because most editing sessions are about the English
+// copy and a seven-field block on every heading would bury it.
+export function translationsField(name = "translations", title = "Translations") {
+  return defineField({
+    name,
+    title,
+    type: "object",
+    options: { collapsible: true, collapsed: true },
+    description:
+      "Optional. Leave a language empty and the English text is shown instead — a partly translated catalogue still reads correctly in every language.",
+    fields: [
+      defineField({ name: "ar", title: "العربية (Arabic)", type: "text", rows: 2 }),
+      defineField({ name: "de", title: "Deutsch (German)", type: "text", rows: 2 }),
+      defineField({ name: "fr", title: "Français (French)", type: "text", rows: 2 }),
+      defineField({ name: "es", title: "Español (Spanish)", type: "text", rows: 2 }),
+      defineField({ name: "it", title: "Italiano (Italian)", type: "text", rows: 2 }),
+      defineField({ name: "ru", title: "Русский (Russian)", type: "text", rows: 2 }),
+    ],
+  });
+}

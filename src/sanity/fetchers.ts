@@ -27,6 +27,8 @@ import {
   toursQuery,
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
+import { localized } from "@/i18n/localizeContent";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
@@ -150,7 +152,6 @@ async function safeFetch<T>(query: string, params: Record<string, unknown> = {})
  * back empty and this returns null, so items show "New experience" rather
  * than a number we can't stand behind.
  */
-type RatedProduct = { slug: string; title: string; rating?: Rating };
 
 /**
  * The review figure a product shows, in precedence order:
@@ -174,28 +175,61 @@ export async function getCompanyRating(): Promise<Rating> {
   return companyRatingFrom(await getTestimonials());
 }
 
-function manualProductRating(rating: Rating): Rating {
-  if (!rating || !rating.count || rating.count <= 0) return null;
-  return { scope: "product", source: "manual", count: rating.count, score: rating.score };
+
+/**
+ * Swaps a product's text for its translation in the active locale.
+ *
+ * Applied at the fetcher boundary — the same place `withValidSlugs` sits — so
+ * every page, card and related-row gets translated content without a single
+ * component knowing that translations exist. English short-circuits to the
+ * original object, so the English site does no extra work and cannot be
+ * affected by a translation edit.
+ */
+async function withTranslations<T extends {
+  title?: string;
+  tagline?: string;
+  description?: string;
+  titleTranslations?: Record<string, string>;
+  taglineTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
+}>(items: T[]): Promise<T[]> {
+  const locale = await currentLocale();
+  if (locale === DEFAULT_LOCALE) return items;
+  return items.map((item) => ({
+    ...item,
+    title: localized(item.title, item.titleTranslations, locale),
+    tagline: localized(item.tagline, item.taglineTranslations, locale),
+    description: localized(item.description, item.descriptionTranslations, locale),
+  }));
 }
 
-async function withCompanyRating<T extends RatedProduct>(items: T[]): Promise<T[]> {
-  const fallback = await getCompanyRating();
-  return items.map((item) => ({ ...item, rating: manualProductRating(item.rating ?? null) ?? fallback }));
-}
-
-async function withCompanyRatingOne<T extends RatedProduct>(
+async function withTranslationsOne<T extends Parameters<typeof withTranslations>[0][number]>(
   item: T | undefined
 ): Promise<T | undefined> {
   if (!item) return undefined;
-  return { ...item, rating: manualProductRating(item.rating ?? null) ?? (await getCompanyRating()) };
+  return (await withTranslations([item]))[0];
+}
+
+/**
+ * The locale, or English when there isn't one.
+ *
+ * Route Handlers and the sitemap call these fetchers too, and root params
+ * aren't available there — falling back keeps those callers working rather
+ * than throwing.
+ */
+async function currentLocale(): Promise<Locale> {
+  try {
+    const { locale } = await import("next/root-params");
+    const value = await locale();
+    return value && isLocale(value) ? value : DEFAULT_LOCALE;
+  } catch {
+    return DEFAULT_LOCALE;
+  }
 }
 
 export async function getTours(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return withCompanyRating(
-    withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours)
-  );
+  return withTranslations(withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours));
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -207,9 +241,7 @@ function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined
 }
 
 export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  return withCompanyRatingOne(
-    mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug)
-  );
+  return withTranslationsOne(mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug));
 }
 
 // One request for the whole set instead of one per slug (see
@@ -220,11 +252,9 @@ export async function getToursBySlugs(slugs: string[]): Promise<Tour[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Tour[]>(toursBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((t) => [t.slug, t]));
-  return withCompanyRating(
-    slugs
-      .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
-      .filter((t): t is Tour => Boolean(t))
-  );
+  return slugs
+    .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
+    .filter((t): t is Tour => Boolean(t));
 }
 
 export async function getAllTourSlugs(): Promise<string[]> {
@@ -247,12 +277,10 @@ function withLocalExperienceRelations(exps: Experience[]): Experience[] {
 
 export async function getExperiences(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
-  return withCompanyRating(
-    withValidSlugs(
-      result && result.length > 0
-        ? withLocalImageFallback(result, localExperiences)
-        : withLocalExperienceRelations(localExperiences)
-    )
+  return withValidSlugs(
+    result && result.length > 0
+      ? withLocalImageFallback(result, localExperiences)
+      : withLocalExperienceRelations(localExperiences)
   );
 }
 
@@ -263,27 +291,21 @@ function mergeExperienceWithLocal(result: Experience | null, slug: string): Expe
 }
 
 export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
-  return withCompanyRatingOne(
-    mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug)
-  );
+  return mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug);
 }
 
 export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Experience[]>(experiencesBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((e) => [e.slug, e]));
-  return withCompanyRating(
-    slugs
-      .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
-      .filter((e): e is Experience => Boolean(e))
-  );
+  return slugs
+    .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
+    .filter((e): e is Experience => Boolean(e));
 }
 
 export async function getPhotoshoots(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
-  return withCompanyRating(
-    withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots)
-  );
+  return withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots);
 }
 
 function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Photoshoot | undefined {
@@ -293,20 +315,16 @@ function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Phot
 }
 
 export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
-  return withCompanyRatingOne(
-    mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug)
-  );
+  return mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
 }
 
 export async function getPhotoshootsBySlugs(slugs: string[]): Promise<Photoshoot[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Photoshoot[]>(photoshootsBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((p) => [p.slug, p]));
-  return withCompanyRating(
-    slugs
-      .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
-      .filter((p): p is Photoshoot => Boolean(p))
-  );
+  return slugs
+    .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
+    .filter((p): p is Photoshoot => Boolean(p));
 }
 
 export async function getTestimonials(): Promise<Testimonial[]> {
@@ -343,7 +361,7 @@ export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   // A story's related tours render as full TourCards, so they need the same
   // review figure the tour would show anywhere else.
   return story.relatedTours && story.relatedTours.length > 0
-    ? { ...story, relatedTours: await withCompanyRating(story.relatedTours) }
+    ? { ...story, relatedTours: story.relatedTours }
     : story;
 }
 

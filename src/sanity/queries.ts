@@ -28,7 +28,8 @@ const relatedExtraExperienceFields = groq`
 export const toursQuery = groq`*[_type == "tour" && hidden != true] | order(order asc) {
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
-  highlights, included, excluded, itinerary, ${priceFields}, physicalLevel
+  highlights, included, excluded, itinerary, ${priceFields}, physicalLevel,
+  titleTranslations, taglineTranslations, descriptionTranslations
 }`;
 
 // Shared by the single-slug and batched (`in $slugs`) variants below, so the

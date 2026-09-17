@@ -99,6 +99,13 @@ export default async function ClientsPage({
         actions={
           <>
             {can(actor, "clients.export") ? (
+              // An <a> on purpose: this is a CSV download from a route handler,
+              // and next/link would client-navigate instead of downloading it.
+              // The rule only started flagging it once app/[locale] existed —
+              // its dynamic segment matches this href, so it believes there is
+              // a page here. The trips export does the same thing and escapes
+              // the rule only because its href is computed rather than literal.
+              // eslint-disable-next-line @next/next/no-html-link-for-pages
               <a href="/api/os/export/clients" className={buttonClass.secondary}><Icon.Download size={15} />Export</a>
             ) : null}
             {can(actor, "clients.create") ? (

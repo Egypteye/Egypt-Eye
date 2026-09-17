@@ -1,0 +1,249 @@
+"use client";
+
+import { useMemo, useState, useSyncExternalStore } from "react";
+import { TourCard } from "@/components/TourCard";
+import type { Tour } from "@/content/types";
+import { useLocale } from "@/i18n/LocaleProvider";
+import { t } from "@/i18n/format";
+
+// Values only — the wording comes from the dictionary so these translate
+// without the filter logic depending on an English string.
+const TRIP_TYPES: { key: "all" | "oneDay" | "multiDay" | "jordan"; value: Tour["category"] | "all" }[] = [
+  { key: "all", value: "all" },
+  { key: "oneDay", value: "one-day" },
+  { key: "multiDay", value: "multi-day" },
+  { key: "jordan", value: "jordan" },
+];
+
+const DURATIONS: { label: string; value: string }[] = [
+  { label: "Any Length", value: "all" },
+  { label: "1 Day", value: "1" },
+  { label: "2–5 Days", value: "2-5" },
+  { label: "6–7 Days", value: "6-7" },
+  { label: "8–11 Days", value: "8-11" },
+  { label: "12+ Days", value: "12+" },
+];
+
+const TRAVEL_STYLES = [
+  "Luxury",
+  "Private",
+  "Cultural",
+  "Family",
+  "Honeymoon",
+  "Women's",
+  "Slow Travel",
+  "Adventure",
+];
+
+function inDurationBucket(days: number, bucket: string) {
+  switch (bucket) {
+    case "1":
+      return days <= 1;
+    case "2-5":
+      return days >= 2 && days <= 5;
+    case "6-7":
+      return days >= 6 && days <= 7;
+    case "8-11":
+      return days >= 8 && days <= 11;
+    case "12+":
+      return days >= 12;
+    default:
+      return true;
+  }
+}
+
+function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="border-b border-black/5 py-6 first:pt-0 last:border-0 last:pb-0">
+      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-soft/60">{title}</p>
+      <div className="mt-3">{children}</div>
+    </div>
+  );
+}
+
+// The URL never changes under this component (filtering is local state, not
+// navigation), so there is nothing to subscribe to; these exist only to give
+// useSyncExternalStore the stable function identities it requires.
+const subscribeToNothing = () => () => {};
+const readSearch = () => window.location.search;
+const readNoSearch = () => "";
+
+export function ToursGrid({ tours }: { tours: Tour[] }) {
+  // Deliberately NOT useSearchParams(). That hook opts a component out of
+  // prerendering, and with this grid inside a <Suspense fallback={null}>, the
+  // bail-out meant /tours shipped its fallback — zero tour links — in the
+  // server HTML. The whole catalogue was invisible to anything that doesn't
+  // execute JavaScript, on the site's most important commercial page.
+  //
+  // useSyncExternalStore reads the query string with an explicit server
+  // snapshot of "", so the server renders every tour and React applies any
+  // deep-linked filter right after hydration without a mismatch. A filter the
+  // visitor picks overrides the URL from then on; until they pick one, the
+  // URL decides. Crawlers get the full list, people get the filtered view.
+  const search = useSyncExternalStore(subscribeToNothing, readSearch, readNoSearch);
+  const params = useMemo(() => new URLSearchParams(search), [search]);
+
+  const { dict } = useLocale();
+  const [typeOverride, setFilter] = useState<Tour["category"] | "all" | null>(null);
+  const [durationOverride, setDuration] = useState<string | null>(null);
+  const [destinationOverride, setDestination] = useState<string | null | undefined>(undefined);
+
+  const filter = typeOverride ?? ((params.get("type") as Tour["category"] | null) ?? "all");
+  const duration = durationOverride ?? params.get("duration") ?? "all";
+  const destination = destinationOverride !== undefined ? destinationOverride : params.get("city");
+  const [style, setStyle] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+
+  const allDestinations = useMemo(
+    () => Array.from(new Set(tours.flatMap((t) => t.destinations))).sort(),
+    [tours]
+  );
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    return tours
+      .filter((t) => filter === "all" || t.category === filter)
+      .filter((t) => duration === "all" || inDurationBucket(t.lengthDays, duration))
+      .filter((t) => !destination || t.destinations.includes(destination))
+      .filter((t) => !style || t.travelStyle?.includes(style))
+      .filter(
+        (t) =>
+          !q ||
+          t.title.toLowerCase().includes(q) ||
+          t.tagline.toLowerCase().includes(q) ||
+          t.destinations.some((d) => d.toLowerCase().includes(q))
+      );
+  }, [tours, filter, duration, destination, style, query]);
+
+  const activeFilterCount =
+    (filter !== "all" ? 1 : 0) + (duration !== "all" ? 1 : 0) + (destination ? 1 : 0) + (style ? 1 : 0) + (query ? 1 : 0);
+
+  function clearAll() {
+    setFilter("all");
+    setDuration("all");
+    setDestination(null);
+    setStyle(null);
+    setQuery("");
+  }
+
+  return (
+    <div className="grid gap-10 lg:grid-cols-[260px_1fr] lg:items-start lg:gap-10">
+      {/* Filters sidebar */}
+      <aside className="hidden rounded-2xl border border-black/5 bg-cream p-6 lg:sticky lg:top-24 lg:block">
+        <div className="flex items-center justify-between">
+          <p className="font-display text-base font-semibold text-ink">{dict.tours.filterHeading}</p>
+          {activeFilterCount > 0 && (
+            <button onClick={clearAll} className="text-xs font-semibold text-gold-dark hover:underline">
+              {dict.tours.clearFilters}
+            </button>
+          )}
+        </div>
+
+        <div className="relative mt-5">
+          <svg
+            viewBox="0 0 20 20"
+            fill="none"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft/40"
+            aria-hidden="true"
+          >
+            <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M18 18L14 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={dict.tours.searchPlaceholder}
+            className="w-full rounded-full border border-black/10 bg-white py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-ink-soft/40 focus:border-gold focus:outline-none"
+          />
+        </div>
+
+        <FilterGroup title="Trip Type">
+          <div className="flex flex-col gap-1">
+            {TRIP_TYPES.map((type) => (
+              <button
+                key={type.value}
+                onClick={() => setFilter(type.value)}
+                className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
+                  filter === type.value ? "bg-ink text-cream" : "text-ink-soft hover:bg-sand-dim"
+                }`}
+              >
+                {dict.tours[type.key]}
+              </button>
+            ))}
+          </div>
+        </FilterGroup>
+
+        <FilterGroup title="Duration">
+          <div className="flex flex-col gap-1">
+            {DURATIONS.map((d) => (
+              <button
+                key={d.value}
+                onClick={() => setDuration(d.value)}
+                className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
+                  duration === d.value ? "bg-ink text-cream" : "text-ink-soft hover:bg-sand-dim"
+                }`}
+              >
+                {d.label}
+              </button>
+            ))}
+          </div>
+        </FilterGroup>
+
+        <FilterGroup title="Destination">
+          <div className="max-h-52 overflow-y-auto pr-1">
+            <div className="flex flex-col gap-1">
+              {allDestinations.map((d) => (
+                <button
+                  key={d}
+                  onClick={() => setDestination(destination === d ? null : d)}
+                  className={`rounded-lg px-3 py-1.5 text-left text-sm transition ${
+                    destination === d ? "bg-gold/15 font-semibold text-gold-dark" : "text-ink-soft hover:bg-sand-dim"
+                  }`}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </div>
+        </FilterGroup>
+
+        <FilterGroup title="Suitable For">
+          <div className="flex flex-wrap gap-2">
+            {TRAVEL_STYLES.map((s) => (
+              <button
+                key={s}
+                onClick={() => setStyle(style === s ? null : s)}
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                  style === s
+                    ? "border-gold-dark bg-gold/15 text-gold-dark"
+                    : "border-black/10 text-ink-soft/70 hover:border-gold/40"
+                }`}
+              >
+                {s}
+              </button>
+            ))}
+          </div>
+        </FilterGroup>
+      </aside>
+
+      {/* Results */}
+      <div>
+        <p className="text-sm text-ink-soft/60">
+          {t(dict.tours.matchCount, { count: filtered.length })}
+        </p>
+        {filtered.length === 0 ? (
+          <p className="mt-10 text-sm text-ink-soft/60">
+            {dict.tours.noMatches}
+          </p>
+        ) : (
+          <div className="mt-4 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
+            {filtered.map((tour) => (
+              <TourCard key={tour.slug} tour={tour} />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

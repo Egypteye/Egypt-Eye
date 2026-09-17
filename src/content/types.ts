@@ -72,6 +72,14 @@ export type Tour = {
   featured?: boolean;
   /** Set at read time from the collected reviews — never authored here. */
   rating?: Rating;
+  /**
+   * Per-locale text, set in Studio beside the English field. Absent or empty
+   * for a language means "not translated yet", and the English value is shown
+   * instead — see i18n/localizeContent.ts.
+   */
+  titleTranslations?: Record<string, string>;
+  taglineTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
   badge?: string;
   imageLabel?: string;
   image?: SanityImage;
@@ -134,6 +142,8 @@ export type Experience = {
   duration: string;
   /** Set at read time from the collected reviews — never authored here. */
   rating?: Rating;
+  titleTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
   price: Price;
   imageLabel?: string;
   image?: SanityImage;
@@ -162,6 +172,8 @@ export type Photoshoot = {
   duration: string;
   /** Set at read time from the collected reviews — never authored here. */
   rating?: Rating;
+  titleTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
   price: Price;
   locations: string[];
   imageLabel?: string;
