@@ -73,10 +73,24 @@ const targets: Locale[] = args.includes("--all")
   ? LOCALES.map((l) => l.code).filter((c) => c !== DEFAULT_LOCALE)
   : [(flag("locale") ?? "") as Locale];
 
+// Two ways to authenticate, because the key belongs to the site owner and not
+// to whoever runs this:
+//
+//   GEMINI_API_KEY in the environment — the key is in this process.
+//   --proxy-auth                       — the key is held outside the sandbox as
+//                                        a cloud-environment API credential and
+//                                        attached to the request after it
+//                                        leaves. Nothing here ever sees it.
+//
+// Either way the key travels as the x-goog-api-key header rather than a `?key=`
+// query parameter, so it stays out of URLs, logs and the proxy's access records.
 const apiKey = process.env.GEMINI_API_KEY;
-if (!apiKey) {
-  console.error("GEMINI_API_KEY is not set. It is the same free key the AI concierge uses —");
-  console.error("put it in .env.local, or export it for this run.");
+const proxyAuth = args.includes("--proxy-auth");
+if (!apiKey && !proxyAuth) {
+  console.error("No Gemini credential. Either:");
+  console.error("  export GEMINI_API_KEY=...   (the same free key the AI concierge uses)");
+  console.error("  or pass --proxy-auth if the key is stored as a cloud-environment");
+  console.error("  API credential for generativelanguage.googleapis.com");
   process.exit(1);
 }
 if (targets.length === 0 || targets.some((t) => !LOCALES.some((l) => l.code === t) || t === DEFAULT_LOCALE)) {
@@ -107,10 +121,13 @@ ${JSON.stringify(texts, null, 0)}`;
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
     try {
       const res = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
+        `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            ...(apiKey ? { "x-goog-api-key": apiKey } : {}),
+          },
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: { temperature: 0.3, responseMimeType: "application/json" },
@@ -118,6 +135,20 @@ ${JSON.stringify(texts, null, 0)}`;
         }
       );
       if (res.status === 429 || res.status >= 500) throw new Error(`HTTP ${res.status}`);
+      // A rejected key is permanent: retrying it four times per batch, for
+      // hundreds of batches, just takes longer to tell you the key is wrong.
+      if (res.status === 400 || res.status === 401 || res.status === 403) {
+        const body = await res.text();
+        console.error(`\n\nGemini rejected the credential (HTTP ${res.status}).`);
+        console.error(
+          proxyAuth
+            ? "  Check the cloud-environment API credential: host generativelanguage.googleapis.com,\n" +
+              "  custom header x-goog-api-key with no prefix."
+            : "  Check GEMINI_API_KEY. Get one free at aistudio.google.com/apikey."
+        );
+        console.error(`  ${body.slice(0, 300)}\n`);
+        process.exit(1);
+      }
       if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
 
       const json = await res.json();

@@ -246,9 +246,14 @@ npm run i18n:translate -- --all           # fill every language
 npm run i18n:status                       # see how far along each one is
 ```
 
-`i18n:translate` needs `GEMINI_API_KEY` — the same free key the AI concierge
-uses (see "Setting up the AI concierge" above). Nothing else. It is
-incremental and resumable: it translates only what is missing, writes after
+`i18n:translate` needs a Gemini credential — the same free key the AI
+concierge uses (see "Setting up the AI concierge" above). Either
+`GEMINI_API_KEY` in the environment, or `--proxy-auth` when the key is held
+outside the sandbox as a cloud-environment API credential for
+`generativelanguage.googleapis.com` (custom header `x-goog-api-key`, no
+prefix), so nothing running here ever sees it. Either way the key travels as
+a header rather than a `?key=` query parameter, so it stays out of URLs and
+logs. It is incremental and resumable: it translates only what is missing, writes after
 every batch, and can be stopped and restarted. A run over the whole site takes
 a while and is safe to leave going.
 
