@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { SignatureExperience } from "@/content/types";
 import { SmartImage } from "./SmartImage";
+import { ExperienceRatingLink } from "./ExperienceRatingLink";
 
 // Deliberately editorial, not a standard tour-package card: a tall
 // full-bleed photo, a "who it's for" eyebrow instead of a price-first
@@ -50,9 +51,10 @@ export function SignatureExperienceCard({
           {experience.shortDescription}
         </p>
 
-        <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-ink-soft/60">
+        <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-soft/60">
           {experience.duration && <span>{experience.duration}</span>}
           {experience.groupSize && <span>{experience.groupSize}</span>}
+          <ExperienceRatingLink type="experience" slug={experience.slug} />
         </div>
 
         <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink transition group-hover:gap-3">

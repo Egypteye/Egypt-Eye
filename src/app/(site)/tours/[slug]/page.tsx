@@ -109,7 +109,6 @@ export default async function TourDetailPage({
             <ExperienceRatingLink
               type="tour"
               slug={tour.slug}
-              hasReviews={tour.hasReviews}
               tone="dark"
               className="px-3.5 py-1.5"
             />

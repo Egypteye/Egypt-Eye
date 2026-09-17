@@ -27,7 +27,7 @@ export function TourCard({ tour }: { tour: Tour }) {
         {/* Duration and, where reviews exist, the star that opens them. */}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2">
           <span className="text-sm text-ink-soft/70">{tour.duration}</span>
-          <ExperienceRatingLink type="tour" slug={tour.slug} hasReviews={tour.hasReviews} />
+          <ExperienceRatingLink type="tour" slug={tour.slug} />
         </div>
         {tour.physicalLevel && <PhysicalLevelChip level={tour.physicalLevel} />}
         <div className="relative z-20">

@@ -78,7 +78,6 @@ export default async function PhotoshootDetailPage({
             <ExperienceRatingLink
               type="photoshoot"
               slug={photoshoot.slug}
-              hasReviews={photoshoot.hasReviews}
             />
           </div>
           <p className="mt-5 leading-relaxed text-ink-soft/80">

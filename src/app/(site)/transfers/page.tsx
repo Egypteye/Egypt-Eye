@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TransferBookingForm } from "./TransferBookingForm";
+import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { transfersPage } from "@/content/transfers";
 import { siteUrl } from "@/content/seo";
 
@@ -43,6 +44,20 @@ export default function TransfersPage() {
             title="Request a transfer in a few clicks"
             description="Most Cairo & Giza routes, plus Alexandria, Ain Sokhna, and Fayoum, are covered. Anything else, we'll quote by email."
           />
+          {/* One rating link per service, so each transfer type carries the
+              same star chip a tour or a photoshoot does. It sits above the
+              form rather than on the category buttons inside it: those are
+              form controls, and a link nested in a button would both be
+              invalid markup and steal the click that selects the category. */}
+          <div className="mx-auto mt-8 flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2">
+            {transfersPage.categories.map((c) => (
+              <span key={c.id} className="inline-flex items-center gap-2 text-sm text-ink-soft/70">
+                {c.label}
+                <ExperienceRatingLink type="service" slug={c.id} />
+              </span>
+            ))}
+          </div>
+
           <div className="mx-auto mt-10 max-w-4xl">
             <TransferBookingForm />
           </div>

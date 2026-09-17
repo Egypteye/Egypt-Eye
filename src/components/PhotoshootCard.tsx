@@ -48,7 +48,6 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
           <ExperienceRatingLink
             type="photoshoot"
             slug={photoshoot.slug}
-            hasReviews={photoshoot.hasReviews}
           />
         </div>
       </div>

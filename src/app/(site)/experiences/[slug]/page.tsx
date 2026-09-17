@@ -112,7 +112,6 @@ export default async function ExperienceDetailPage({
             <ExperienceRatingLink
               type="experience"
               slug={experience.slug}
-              hasReviews={experience.hasReviews}
             />
             {experience.location && (
               <span className="inline-flex items-center gap-1.5 text-sm text-ink-soft/70">

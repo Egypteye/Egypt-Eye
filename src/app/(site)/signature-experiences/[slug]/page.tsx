@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
+import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { SmartImage } from "@/components/SmartImage";
 import { SectionHeading } from "@/components/SectionHeading";
 import { PriceTag } from "@/components/PriceTag";
@@ -118,10 +119,11 @@ export default async function SignatureExperienceDetailPage({
             >
               {ctaLabel}
             </a>
-            <div className="flex flex-wrap gap-x-6 gap-y-1 text-sm text-cream/70">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-1 text-sm text-cream/70">
               {experience.duration && <span>{experience.duration}</span>}
               {experience.groupSize && <span>{experience.groupSize}</span>}
               {experience.location && <span>{experience.location}</span>}
+              <ExperienceRatingLink type="experience" slug={experience.slug} tone="dark" className="px-3 py-1.5" />
             </div>
           </div>
         </Container>

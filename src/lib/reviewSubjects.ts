@@ -8,43 +8,48 @@ import type {
 } from "@/content/types";
 import { reviewMatchesProduct } from "./reviewAttribution";
 
-// The one place that answers "what can a review be about?".
+// The one place that answers "what can a review be about, and where do its
+// reviews live?".
 //
-// Reviews arrive over WhatsApp naming a trip or a shoot, and every surface
-// that wants to link a product to its reviews — the star chip on a card, the
-// grouped /testimonials page — needs the same answer about which products
-// exist and where each one's reviews live on that page. Deriving that here,
-// from the catalogues themselves, is what keeps the feature scalable: a tour
-// added in Studio tomorrow gets its own group and its own chip with no code
-// change and nothing to register by hand.
+// Every surface that connects a product to its reviews — the star chip on a
+// card, the grouped /testimonials page — reads from here. Deriving it from the
+// catalogues themselves is what keeps the feature hands-off: a tour added in
+// Studio tomorrow gets a chip and a landing spot with no code change and
+// nothing to register by hand.
 
+/** The product's own catalogue, which decides its URL and its anchor. */
 export type ReviewSubjectType = "tour" | "photoshoot" | "experience" | "service";
+
+/** The three headings reviews are filed under on /testimonials. */
+export type MegaCategory = "photoshoots" | "tours" | "services";
 
 export type ReviewSubject = {
   type: ReviewSubjectType;
+  mega: MegaCategory;
   slug: string;
   title: string;
-  /** The product's own page, or null for services that have no detail page. */
-  href: string | null;
+  href: string;
 };
 
-// Order here is the order the sections appear on /testimonials.
-export const SUBJECT_SECTIONS: { type: ReviewSubjectType; label: string }[] = [
-  { type: "tour", label: "Tours" },
-  { type: "photoshoot", label: "Photoshoots" },
-  { type: "experience", label: "Experiences" },
-  { type: "service", label: "Services" },
+export const MEGA_CATEGORIES: { mega: MegaCategory; label: string; otherLabel: string }[] = [
+  { mega: "photoshoots", label: "Photoshoots", otherLabel: "Other Photoshoots" },
+  { mega: "tours", label: "Tours", otherLabel: "Other Tours" },
+  { mega: "services", label: "Services", otherLabel: "Other Services" },
 ];
 
 /**
  * Where this subject's reviews sit on /testimonials.
  *
- * Type-prefixed because slugs are only unique within a catalogue — the
- * pyramids proposal setup, for one, exists as both an experience and a
+ * Type-prefixed rather than mega-prefixed because slugs are only unique within
+ * a catalogue: the pyramids proposal setup exists as both an experience and a
  * photoshoot, and an unprefixed anchor would send both chips to one group.
  */
 export function subjectAnchor(subject: Pick<ReviewSubject, "type" | "slug">): string {
   return `reviews-${subject.type}-${subject.slug}`;
+}
+
+export function megaAnchor(mega: MegaCategory): string {
+  return `reviews-${mega}`;
 }
 
 /** The link a product's star chip points at. */
@@ -62,41 +67,50 @@ type Catalogues = {
 /**
  * Every product a review could name, in one flat list.
  *
- * Transfer categories join as services: they're sold and reviewed like the
- * rest, they just live on one page instead of having a page each, so their
- * `href` points at that page and their chip is the section rather than a
- * detail route.
+ * The mega category each falls under is assigned here and nowhere else.
+ * Experiences and signature experiences file under Tours: they're outings a
+ * traveler goes and does, which is what a reader scanning for "Tours" is
+ * looking for — Services is for the operational side, the transfers and the
+ * private driver. Moving a catalogue between megas is a one-line change here.
+ *
+ * Transfer categories join as services. They're sold and reviewed like
+ * anything else, they just share one page instead of having a page each.
  */
 export function collectReviewSubjects(catalogues: Catalogues): ReviewSubject[] {
   const { tours = [], photoshoots = [], experiences = [], signatureExperiences = [] } = catalogues;
 
   return [
-    ...tours.map((t) => ({
-      type: "tour" as const,
-      slug: t.slug,
-      title: t.title,
-      href: `/tours/${t.slug}`,
-    })),
     ...photoshoots.map((p) => ({
       type: "photoshoot" as const,
+      mega: "photoshoots" as const,
       slug: p.slug,
       title: p.title,
       href: `/photoshoots/${p.slug}`,
     })),
+    ...tours.map((t) => ({
+      type: "tour" as const,
+      mega: "tours" as const,
+      slug: t.slug,
+      title: t.title,
+      href: `/tours/${t.slug}`,
+    })),
     ...experiences.map((e) => ({
       type: "experience" as const,
+      mega: "tours" as const,
       slug: e.slug,
       title: e.title,
       href: `/experiences/${e.slug}`,
     })),
     ...signatureExperiences.map((s) => ({
       type: "experience" as const,
+      mega: "tours" as const,
       slug: s.slug,
       title: s.name,
       href: `/signature-experiences/${s.slug}`,
     })),
     ...transfersPage.categories.map((c) => ({
       type: "service" as const,
+      mega: "services" as const,
       slug: c.id,
       title: c.label,
       href: "/transfers",
@@ -105,51 +119,56 @@ export function collectReviewSubjects(catalogues: Catalogues): ReviewSubject[] {
 }
 
 export type SubjectGroup = { subject: ReviewSubject; testimonials: Testimonial[] };
-export type SubjectSection = { type: ReviewSubjectType; label: string; groups: SubjectGroup[] };
+
+export type MegaSection = {
+  mega: MegaCategory;
+  label: string;
+  otherLabel: string;
+  /** Products with reviews, fullest first — each its own named group. */
+  groups: SubjectGroup[];
+  /** Products with no review yet. Still anchored, so their chip lands here. */
+  others: ReviewSubject[];
+};
 
 /**
- * Buckets reviews under the product each one names, using the same strict
- * matching the per-product counts already use (lib/reviewAttribution.ts) so a
- * review never lands in two places or under a product it merely resembles.
+ * Files every review under the product that names it, and every product under
+ * one of the three headings.
  *
- * Returns only the products that actually have a review: a section with an
- * empty list is worse than no section, and the star chip is hidden on those
- * products anyway, so an empty group could only ever be reached by hand.
+ * Matching is the strict rule already used for per-product counts
+ * (lib/reviewAttribution.ts), so a review never lands under a product it
+ * merely resembles, and never in two places at once.
+ *
+ * A product with no reviews is not dropped — it goes in its mega's "Other"
+ * list, anchored the same way. That is what lets the star chip appear on
+ * every product and still land somewhere real: a reviewed product opens its
+ * own group, an unreviewed one highlights its entry among its siblings.
  */
 export function groupTestimonials(
   testimonials: Testimonial[],
   subjects: ReviewSubject[]
-): { sections: SubjectSection[]; unattributed: Testimonial[] } {
+): { sections: MegaSection[]; unattributed: Testimonial[] } {
   const claimed = new Set<Testimonial>();
 
-  const sections = SUBJECT_SECTIONS.map(({ type, label }) => {
-    const groups = subjects
-      .filter((subject) => subject.type === type)
-      .map((subject) => {
-        const matched = testimonials.filter((review) => reviewMatchesProduct(review, subject));
-        for (const review of matched) claimed.add(review);
-        return { subject, testimonials: matched };
-      })
-      .filter((group) => group.testimonials.length > 0)
-      // Most-reviewed first, so the fullest groups lead each section.
-      .sort((a, b) => b.testimonials.length - a.testimonials.length);
+  const sections = MEGA_CATEGORIES.map(({ mega, label, otherLabel }) => {
+    const mine = subjects.filter((subject) => subject.mega === mega);
+    const groups: SubjectGroup[] = [];
+    const others: ReviewSubject[] = [];
 
-    return { type, label, groups };
-  }).filter((section) => section.groups.length > 0);
+    for (const subject of mine) {
+      const matched = testimonials.filter((review) => reviewMatchesProduct(review, subject));
+      if (matched.length === 0) {
+        others.push(subject);
+        continue;
+      }
+      for (const review of matched) claimed.add(review);
+      groups.push({ subject, testimonials: matched });
+    }
+
+    groups.sort((a, b) => b.testimonials.length - a.testimonials.length);
+    others.sort((a, b) => a.title.localeCompare(b.title));
+
+    return { mega, label, otherLabel, groups, others };
+  }).filter((section) => section.groups.length > 0 || section.others.length > 0);
 
   return { sections, unattributed: testimonials.filter((review) => !claimed.has(review)) };
-}
-
-/** The slugs, per type, that have at least one review — what the chip keys on. */
-export function reviewedSubjectKeys(
-  testimonials: Testimonial[],
-  subjects: ReviewSubject[]
-): Set<string> {
-  const keys = new Set<string>();
-  for (const subject of subjects) {
-    if (testimonials.some((review) => reviewMatchesProduct(review, subject))) {
-      keys.add(subjectAnchor(subject));
-    }
-  }
-  return keys;
 }

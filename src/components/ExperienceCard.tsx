@@ -52,7 +52,6 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
           <ExperienceRatingLink
             type="experience"
             slug={experience.slug}
-            hasReviews={experience.hasReviews}
           />
         </div>
       </div>

@@ -72,12 +72,6 @@ export type Tour = {
   featured?: boolean;
   /** Set at read time from the collected reviews — never authored here. */
   rating?: Rating;
-  /**
-   * Whether any collected review names this product — set at read time from
-   * the testimonials, never authored. Drives the star chip that links to this
-   * product's group on /testimonials (see lib/reviewSubjects.ts).
-   */
-  hasReviews?: boolean;
   badge?: string;
   imageLabel?: string;
   image?: SanityImage;
@@ -140,12 +134,6 @@ export type Experience = {
   duration: string;
   /** Set at read time from the collected reviews — never authored here. */
   rating?: Rating;
-  /**
-   * Whether any collected review names this product — set at read time from
-   * the testimonials, never authored. Drives the star chip that links to this
-   * product's group on /testimonials (see lib/reviewSubjects.ts).
-   */
-  hasReviews?: boolean;
   price: Price;
   imageLabel?: string;
   image?: SanityImage;
@@ -174,12 +162,6 @@ export type Photoshoot = {
   duration: string;
   /** Set at read time from the collected reviews — never authored here. */
   rating?: Rating;
-  /**
-   * Whether any collected review names this product — set at read time from
-   * the testimonials, never authored. Drives the star chip that links to this
-   * product's group on /testimonials (see lib/reviewSubjects.ts).
-   */
-  hasReviews?: boolean;
   price: Price;
   locations: string[];
   imageLabel?: string;

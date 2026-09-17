@@ -10,27 +10,24 @@ import { subjectReviewsHref, type ReviewSubjectType } from "@/lib/reviewSubjects
 // a chip that asserts no number can't overstate one — and it's why no
 // AggregateRating markup goes with it.
 //
-// Renders nothing when the product has no reviews yet (`hasReviews` is set at
-// fetch time in sanity/fetchers.ts), so the link can never open an empty
-// group, and a brand-new tour simply stays quiet until its first review
-// lands.
+// Shown on every product, with no exceptions. It always has somewhere real to
+// land: /testimonials gives every product an anchor, either its own group of
+// reviews or its entry among its siblings in "Other Tours" / "Other
+// Photoshoots" / "Other Services" — so a product nobody has reviewed yet
+// still takes the visitor to reviews of its neighbours rather than nowhere.
 
 export function ExperienceRatingLink({
   type,
   slug,
-  hasReviews,
   tone = "light",
   className = "",
 }: {
   type: ReviewSubjectType;
   slug: string;
-  hasReviews?: boolean;
   /** "dark" for the cream-on-photo treatment used in detail-page heroes. */
   tone?: "light" | "dark";
   className?: string;
 }) {
-  if (!hasReviews) return null;
-
   const palette =
     tone === "dark"
       ? "bg-cream/15 text-cream backdrop-blur-sm hover:bg-cream/25"
