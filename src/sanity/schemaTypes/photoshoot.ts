@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { translationsField } from "./objects";
 import { imageCreditField, imageTones, seoFields } from "./objects";
 
 export const photoshoot = defineType({
@@ -7,6 +8,7 @@ export const photoshoot = defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
+    translationsField("titleTranslations", "Title translations"),
     defineField({
       name: "slug",
       title: "Slug (web address)",
@@ -46,6 +48,7 @@ export const photoshoot = defineType({
       of: [{ type: "image", options: { hotspot: true }, fields: [imageCreditField()] }],
     }),
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
+    translationsField("descriptionTranslations", "Description translations"),
     defineField({ name: "goodFor", title: "Good For", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "included", title: "Included", type: "array", of: [{ type: "string" }] }),
     defineField({ name: "addOns", title: "Optional Add-Ons", type: "array", of: [{ type: "string" }] }),

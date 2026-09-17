@@ -3,12 +3,16 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { TourCard } from "@/components/TourCard";
 import type { Tour } from "@/content/types";
+import { useLocale } from "@/i18n/LocaleProvider";
+import { t } from "@/i18n/format";
 
-const TRIP_TYPES: { label: string; value: Tour["category"] | "all" }[] = [
-  { label: "All Tours", value: "all" },
-  { label: "One-Day Tours", value: "one-day" },
-  { label: "Multi-Day Tours", value: "multi-day" },
-  { label: "Jordan", value: "jordan" },
+// Values only — the wording comes from the dictionary so these translate
+// without the filter logic depending on an English string.
+const TRIP_TYPES: { key: "all" | "oneDay" | "multiDay" | "jordan"; value: Tour["category"] | "all" }[] = [
+  { key: "all", value: "all" },
+  { key: "oneDay", value: "one-day" },
+  { key: "multiDay", value: "multi-day" },
+  { key: "jordan", value: "jordan" },
 ];
 
 const DURATIONS: { label: string; value: string }[] = [
@@ -79,6 +83,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
   const search = useSyncExternalStore(subscribeToNothing, readSearch, readNoSearch);
   const params = useMemo(() => new URLSearchParams(search), [search]);
 
+  const { dict } = useLocale();
   const [typeOverride, setFilter] = useState<Tour["category"] | "all" | null>(null);
   const [durationOverride, setDuration] = useState<string | null>(null);
   const [destinationOverride, setDestination] = useState<string | null | undefined>(undefined);
@@ -126,10 +131,10 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
       {/* Filters sidebar */}
       <aside className="hidden rounded-2xl border border-black/5 bg-cream p-6 lg:sticky lg:top-24 lg:block">
         <div className="flex items-center justify-between">
-          <p className="font-display text-base font-semibold text-ink">Filter Tours</p>
+          <p className="font-display text-base font-semibold text-ink">{dict.tours.filterHeading}</p>
           {activeFilterCount > 0 && (
             <button onClick={clearAll} className="text-xs font-semibold text-gold-dark hover:underline">
-              Clear all
+              {dict.tours.clearFilters}
             </button>
           )}
         </div>
@@ -148,22 +153,22 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Trip name or destination…"
+            placeholder={dict.tours.searchPlaceholder}
             className="w-full rounded-full border border-black/10 bg-white py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-ink-soft/40 focus:border-gold focus:outline-none"
           />
         </div>
 
         <FilterGroup title="Trip Type">
           <div className="flex flex-col gap-1">
-            {TRIP_TYPES.map((t) => (
+            {TRIP_TYPES.map((type) => (
               <button
-                key={t.value}
-                onClick={() => setFilter(t.value)}
+                key={type.value}
+                onClick={() => setFilter(type.value)}
                 className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
-                  filter === t.value ? "bg-ink text-cream" : "text-ink-soft hover:bg-sand-dim"
+                  filter === type.value ? "bg-ink text-cream" : "text-ink-soft hover:bg-sand-dim"
                 }`}
               >
-                {t.label}
+                {dict.tours[type.key]}
               </button>
             ))}
           </div>
@@ -225,11 +230,11 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
       {/* Results */}
       <div>
         <p className="text-sm text-ink-soft/60">
-          {filtered.length} tour{filtered.length === 1 ? "" : "s"} match{filtered.length === 1 ? "es" : ""}
+          {t(dict.tours.matchCount, { count: filtered.length })}
         </p>
         {filtered.length === 0 ? (
           <p className="mt-10 text-sm text-ink-soft/60">
-            No tours match those filters yet — message us and we&rsquo;ll build one that does.
+            {dict.tours.noMatches}
           </p>
         ) : (
           <div className="mt-4 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">

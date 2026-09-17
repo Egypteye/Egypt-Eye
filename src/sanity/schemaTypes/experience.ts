@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { translationsField } from "./objects";
 import { imageCreditField, imageTones, seoFields } from "./objects";
 
 export const experience = defineType({
@@ -7,6 +8,7 @@ export const experience = defineType({
   type: "document",
   fields: [
     defineField({ name: "title", title: "Title", type: "string", validation: (r) => r.required() }),
+    translationsField("titleTranslations", "Title translations"),
     defineField({
       name: "slug",
       title: "Slug (web address)",
@@ -45,6 +47,7 @@ export const experience = defineType({
       of: [{ type: "image", options: { hotspot: true }, fields: [imageCreditField()] }],
     }),
     defineField({ name: "description", title: "Description", type: "text", validation: (r) => r.required() }),
+    translationsField("descriptionTranslations", "Description translations"),
     defineField({
       name: "location",
       title: "Where it runs",

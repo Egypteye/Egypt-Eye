@@ -27,6 +27,8 @@ import {
   toursQuery,
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
+import { localized } from "@/i18n/localizeContent";
+import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
@@ -173,9 +175,61 @@ export async function getCompanyRating(): Promise<Rating> {
   return companyRatingFrom(await getTestimonials());
 }
 
+
+/**
+ * Swaps a product's text for its translation in the active locale.
+ *
+ * Applied at the fetcher boundary — the same place `withValidSlugs` sits — so
+ * every page, card and related-row gets translated content without a single
+ * component knowing that translations exist. English short-circuits to the
+ * original object, so the English site does no extra work and cannot be
+ * affected by a translation edit.
+ */
+async function withTranslations<T extends {
+  title?: string;
+  tagline?: string;
+  description?: string;
+  titleTranslations?: Record<string, string>;
+  taglineTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
+}>(items: T[]): Promise<T[]> {
+  const locale = await currentLocale();
+  if (locale === DEFAULT_LOCALE) return items;
+  return items.map((item) => ({
+    ...item,
+    title: localized(item.title, item.titleTranslations, locale),
+    tagline: localized(item.tagline, item.taglineTranslations, locale),
+    description: localized(item.description, item.descriptionTranslations, locale),
+  }));
+}
+
+async function withTranslationsOne<T extends Parameters<typeof withTranslations>[0][number]>(
+  item: T | undefined
+): Promise<T | undefined> {
+  if (!item) return undefined;
+  return (await withTranslations([item]))[0];
+}
+
+/**
+ * The locale, or English when there isn't one.
+ *
+ * Route Handlers and the sitemap call these fetchers too, and root params
+ * aren't available there — falling back keeps those callers working rather
+ * than throwing.
+ */
+async function currentLocale(): Promise<Locale> {
+  try {
+    const { locale } = await import("next/root-params");
+    const value = await locale();
+    return value && isLocale(value) ? value : DEFAULT_LOCALE;
+  } catch {
+    return DEFAULT_LOCALE;
+  }
+}
+
 export async function getTours(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours);
+  return withTranslations(withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours));
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -187,7 +241,7 @@ function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined
 }
 
 export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  return mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug);
+  return withTranslationsOne(mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug));
 }
 
 // One request for the whole set instead of one per slug (see
