@@ -1,0 +1,157 @@
+import type { Dictionary } from "./en";
+
+// French — "vous" throughout. Idiomatic rather than word-for-word:
+// "circuits" is the term French travel buyers use for multi-day tours,
+// "séance photo" for a shoot, and "Prêt à écrire votre propre histoire"
+// keeps the warmth of the English without the calque that "histoire d'Égypte"
+// would produce.
+export const fr: Dictionary = {
+  language: {
+    label: "Langue",
+    choose: "Choisissez votre langue",
+    current: "Langue actuelle",
+  },
+
+  nav: {
+    more: "Plus",
+    toggleMenu: "Ouvrir le menu",
+    myJourney: "Mon voyage",
+    planMyTrip: "Planifier mon voyage",
+    account: "Compte",
+    skipToContent: "Aller au contenu",
+    byHref: {
+      "/": "Accueil",
+      "/explore-egypt": "Découvrir l'Égypte",
+      "/signature-experiences": "Expériences signature",
+      "/tours": "Circuits les plus demandés",
+      "/experiences": "Expériences complémentaires",
+      "/photoshoots": "Séances photo",
+      "/transfers": "Transferts",
+      "/hotel-deals": "Offres hôtels",
+      "/customize": "Composer mon circuit",
+      "/stories": "Magazine",
+      "/partners": "Devenir partenaire",
+      "/testimonials": "Avis voyageurs",
+      "/about": "À propos",
+    },
+  },
+
+  footer: {
+    explore: "Explorer",
+    contact: "Contact",
+    follow: "Nous suivre",
+    partnerWithUs: "Devenir partenaire",
+    travelAgents: "Agences de voyage",
+    affiliateProgram: "Programme d'affiliation",
+    creators: "Créateurs & influenceurs",
+    travelerReviews: "Avis voyageurs",
+    privacy: "Politique de confidentialité",
+    terms: "Conditions générales",
+    rightsReserved: "Tous droits réservés.",
+  },
+
+  common: {
+    bookOnWhatsApp: "Réserver sur WhatsApp",
+    emailEnquiry: "Envoyer une demande",
+    addToJourney: "Ajouter à mon voyage",
+    inMyJourney: "Dans mon voyage",
+    viewTour: "Voir le circuit",
+    viewDetails: "Voir les détails",
+    seeDetails: "Détails",
+    seeFullExperience: "Voir l'expérience complète",
+    enquireForPricing: "Demander le tarif",
+    perPerson: "par personne",
+    from: "à partir de",
+    designYourTour: "Composer le voyage de vos rêves",
+    readyHeading: "Prêt à écrire votre propre histoire en Égypte ?",
+    readyBody: "Dites-nous ce que vous avez en tête et nous construirons un circuit privé autour.",
+    backToAllTours: "Retour à tous les circuits",
+    backToAllExperiences: "Retour à toutes les expériences",
+    youMightAlsoLike: "Vous aimerez peut-être aussi",
+    moreExperiences: "D'autres expériences à ajouter",
+    gallery: "Galerie",
+    aboutThisTour: "À propos de ce circuit",
+    whatsIncluded: "Inclus",
+    notIncluded: "Non inclus",
+    itinerary: "Itinéraire",
+    highlights: "Points forts",
+    goodToKnow: "Bon à savoir",
+    availableOn: "Disponible sur",
+    whereYoullGo: "Votre itinéraire",
+    day: "Jour",
+  },
+
+  physical: {
+    label: "Niveau d'effort",
+    easy: "Facile",
+    moderate: "Modéré",
+    active: "Actif",
+    challenging: "Exigeant",
+  },
+
+  reviews: {
+    chip: "Avis sur l'expérience",
+    eyebrow: "Récits de voyageurs",
+    heading: "Ce que disent nos voyageurs",
+    intro:
+      "Chaque avis provient d'un vrai voyage avec Egypt Eye — aucune citation inventée ou illustrative. Ils sont tous sur cette page ; utilisez les filtres pour les restreindre à une catégorie ou à un circuit, une séance photo ou un service précis.",
+    all: "Tous les avis",
+    photoshoots: "Séances photo",
+    tours: "Circuits",
+    services: "Services",
+    filterByCategory: "Filtrer les avis par catégorie",
+    jumpTo: "Aller à",
+    anyProduct: "Tout circuit, séance ou service",
+    anyInCategory: "Tout dans cette catégorie",
+    clear: "Réinitialiser",
+    showingAll: "Tous les avis, y compris les plus récents",
+    showingProduct: "Avis sur {product}",
+    showingCategory: "Tous les avis : {category}",
+    none: "Aucun avis ici pour le moment.",
+    seeAll: "Voir tous les avis",
+    onTheWay: "Les avis arrivent — revenez bientôt, ou",
+    startPlanning: "commencez à planifier votre voyage en Égypte",
+  },
+
+  tours: {
+    filterHeading: "Filtrer les circuits",
+    searchPlaceholder: "Nom du circuit ou destination...",
+    tripType: "Type de voyage",
+    all: "Tous les circuits",
+    oneDay: "Excursions à la journée",
+    multiDay: "Circuits de plusieurs jours",
+    jordan: "Égypte & Jordanie",
+    matchCount: "{count} circuits trouvés",
+    noMatches: "Aucun circuit ne correspond à cette recherche.",
+    clearFilters: "Effacer les filtres",
+  },
+
+  forms: {
+    name: "Nom",
+    email: "E-mail",
+    phone: "Téléphone",
+    message: "Message",
+    send: "Envoyer",
+    sending: "Envoi…",
+    sent: "Merci — nous vous recontactons très vite.",
+    error: "Une erreur est survenue. Réessayez ou écrivez-nous sur WhatsApp.",
+    required: "Obligatoire",
+    optional: "facultatif",
+  },
+
+  errors: {
+    notFoundTitle: "Nous n'avons pas trouvé cette page",
+    notFoundBody:
+      "La page que vous cherchez a été déplacée ou n'a jamais existé. Parcourez les circuits ou revenez à l'accueil.",
+    backHome: "Retour à l'accueil",
+    browseTours: "Parcourir les circuits",
+    somethingWrong: "Une erreur est survenue",
+    somethingWrongBody: "Désolé — le chargement a échoué. Veuillez réessayer.",
+    tryAgain: "Réessayer",
+  },
+
+  seo: {
+    homeTitle: "Circuits privés, séances photo et expériences en Égypte",
+    localeSuffix: "",
+  },
+};

@@ -9,6 +9,7 @@ import {
 } from "@/sanity/fetchers";
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
+import { LOCALES, localePath } from "@/i18n/locales";
 
 // Slugs that 301-redirect elsewhere (see next.config.ts) — keep them out of
 // the sitemap even if the underlying Sanity document hasn't been removed yet.
@@ -120,7 +121,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  return [
+  return withLocales([
     ...staticRoutes,
     ...tourRoutes,
     ...experienceRoutes,
@@ -129,5 +130,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...signatureExperienceRoutes,
     ...storyRoutes,
     ...destinationRoutes,
-  ];
+  ]);
 }
+
+/**
+ * Expands the English sitemap into every language.
+ *
+ * Each page appears once per locale, and every row declares the full set of
+ * translations via `alternates.languages`. That is what tells Google these
+ * are the same page in different languages rather than seven competing
+ * pages — the single most common way a multilingual sitemap backfires.
+ * Derived from the locale registry, so a new language joins automatically.
+ */
+function withLocales(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
+  return entries.flatMap((entry) => {
+    const path = entry.url.startsWith(siteUrl) ? entry.url.slice(siteUrl.length) || "/" : entry.url;
+    const languages: Record<string, string> = {};
+    for (const l of LOCALES) languages[l.htmlLang] = `${siteUrl}${localePath(path, l.code)}`;
+
+    return LOCALES.map((l) => ({
+      ...entry,
+      url: `${siteUrl}${localePath(path, l.code)}`,
+      alternates: { languages },
+    }));
+  });
+}
+
+

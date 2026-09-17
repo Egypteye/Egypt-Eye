@@ -1,3 +1,5 @@
+import { alternatesFor } from "@/i18n/alternates";
+import { DEFAULT_LOCALE, localePath, type Locale } from "@/i18n/locales";
 import type { Metadata } from "next";
 import type { SanityImage } from "./types";
 import { urlForImage } from "@/sanity/image";
@@ -19,22 +21,32 @@ export function resolveMetadata({
   seo,
   image,
   path,
+  locale = DEFAULT_LOCALE,
 }: {
   title: string;
   description: string;
   seo?: Pick<PageSeo, "seoTitle" | "seoDescription" | "canonicalUrl" | "ogImage" | "noindex">;
   image?: SanityImage;
   path: string;
+  /** Defaults to English so existing callers keep their exact behaviour. */
+  locale?: Locale;
 }): Metadata {
   const resolvedTitle = seo?.seoTitle || title;
   const resolvedDescription = seo?.seoDescription || description;
-  const canonical = seo?.canonicalUrl || `${siteUrl}${path}`;
+  // A Studio-set canonical always wins (it's how a duplicate is pointed at
+  // its real home). Otherwise the canonical is this page in this language,
+  // and every translation is declared alongside it so the languages support
+  // each other in search instead of competing.
+  const canonical = seo?.canonicalUrl || `${siteUrl}${localePath(path, locale)}`;
+  const alternates = seo?.canonicalUrl
+    ? { canonical: seo.canonicalUrl }
+    : alternatesFor(path, locale);
   const ogImageUrl = urlForImage(seo?.ogImage || image)?.width(1200).height(630).url();
 
   return {
     title: resolvedTitle,
     description: resolvedDescription,
-    alternates: { canonical },
+    alternates,
     robots: seo?.noindex ? { index: false, follow: false } : undefined,
     openGraph: {
       type: "website",

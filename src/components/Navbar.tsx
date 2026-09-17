@@ -6,6 +6,9 @@ import { useEffect, useRef, useState } from "react";
 import type { ResolvedSiteSettings } from "@/content/types";
 import { useJourneyItems } from "@/lib/journey";
 import { useSessionUser } from "@/lib/auth/useSessionUser";
+import { useLocale } from "@/i18n/LocaleProvider";
+import { localePath } from "@/i18n/locales";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 // Only these stay visible in the desktop nav bar; every other site.nav item
 // (Home is already reachable via the logo) is tucked into the "More"
@@ -18,6 +21,12 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
   const [navHidden, setNavHidden] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   const journeyCount = useJourneyItems().length;
+  const { locale, dict } = useLocale();
+  // Nav labels are translated by href, not by their English text, and every
+  // nav link is rewritten into the active language so browsing never drops
+  // the visitor back into English.
+  const label = (item: { href: string; label: string }) => dict.nav.byHref[item.href] ?? item.label;
+  const to = (href: string) => localePath(href, locale);
   // Presentation only — which account link/avatar to show. Every protected
   // page still authorizes server-side; see useSessionUser's own comment.
   const currentUser = useSessionUser();
@@ -90,14 +99,14 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           {primaryNav.map((item) => (
             <Link
               key={item.href}
-              href={item.href}
+              href={to(item.href)}
               className={`whitespace-nowrap text-[13px] font-medium transition ${
                 item.label === "Signature Experiences"
                   ? "text-gold-dark hover:text-gold"
                   : "text-ink-soft hover:text-gold-dark"
               }`}
             >
-              {item.label}
+              {label(item)}
             </Link>
           ))}
 
@@ -109,7 +118,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                 aria-expanded={moreOpen}
                 className="flex items-center gap-1 whitespace-nowrap text-[13px] font-medium text-ink-soft transition hover:text-gold-dark"
               >
-                More
+                {dict.nav.more}
                 <svg
                   viewBox="0 0 20 20"
                   className={`h-3.5 w-3.5 transition-transform duration-300 ${moreOpen ? "rotate-180" : ""}`}
@@ -129,11 +138,11 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                 {moreNav.map((item) => (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={to(item.href)}
                     onClick={() => setMoreOpen(false)}
                     className="block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium text-ink-soft transition hover:bg-sand-dim hover:text-gold-dark"
                   >
-                    {item.label}
+                    {label(item)}
                   </Link>
                 ))}
               </div>
@@ -142,11 +151,12 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
         </nav>
 
         <div className="hidden items-center gap-2.5 lg:flex">
+          <LanguageSwitcher />
           <Link
-            href="/my-journey"
+            href={to("/my-journey")}
             className="flex items-center gap-1.5 whitespace-nowrap rounded-full border border-gold/30 bg-gold/10 px-3.5 py-2.5 text-[13px] font-semibold text-gold-dark transition hover:bg-gold/20"
           >
-            My Journey
+            {dict.nav.myJourney}
             {journeyCount > 0 && (
               <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold-dark text-[11px] text-cream">
                 {journeyCount}
@@ -154,13 +164,13 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
             )}
           </Link>
           <Link
-            href="/customize"
+            href={to("/customize")}
             className="whitespace-nowrap rounded-full bg-ink px-4 py-2.5 text-[13px] font-semibold text-cream transition hover:bg-gold-dark"
           >
-            Plan My Trip
+            {dict.nav.planMyTrip}
           </Link>
           <Link
-            href={currentUser ? "/account" : "/account/login"}
+            href={to(currentUser ? "/account" : "/account/login")}
             className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 text-ink-soft transition hover:border-gold/40 hover:text-ink"
             aria-label={currentUser ? "My Account" : "Log in"}
             title={currentUser ? `My Account${currentUser.firstName ? ` — ${currentUser.firstName}` : ""}` : "Log in"}
@@ -179,7 +189,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
         <button
           className="flex h-11 w-11 items-center justify-center rounded-full border border-black/10 lg:hidden"
           onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
+          aria-label={dict.nav.toggleMenu}
           aria-expanded={open}
         >
           <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={1.8}>
@@ -195,22 +205,27 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
       {open && (
         <nav className="border-t border-black/5 bg-cream lg:hidden">
           <div className="flex flex-col gap-1 px-5 py-4">
+            {/* Language first in the mobile sheet: a visitor who can't read
+                the menu needs to reach this before anything else. */}
+            <div className="mb-2 border-b border-black/5 pb-3">
+              <LanguageSwitcher />
+            </div>
             {site.nav.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
+                href={to(item.href)}
                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-soft hover:bg-sand-dim"
                 onClick={() => setOpen(false)}
               >
-                {item.label}
+                {label(item)}
               </Link>
             ))}
             <Link
-              href="/my-journey"
+              href={to("/my-journey")}
               className="mt-2 flex items-center justify-center gap-1.5 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2.5 text-sm font-semibold text-gold-dark"
               onClick={() => setOpen(false)}
             >
-              My Journey
+              {dict.nav.myJourney}
               {journeyCount > 0 && (
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold-dark text-[11px] text-cream">
                   {journeyCount}
@@ -218,14 +233,14 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               )}
             </Link>
             <Link
-              href="/customize"
+              href={to("/customize")}
               className="mt-2 rounded-full bg-ink px-5 py-2.5 text-center text-sm font-semibold text-cream"
               onClick={() => setOpen(false)}
             >
-              Plan My Trip
+              {dict.nav.planMyTrip}
             </Link>
             <Link
-              href={currentUser ? "/account" : "/account/login"}
+              href={to(currentUser ? "/account" : "/account/login")}
               className="mt-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium text-ink-soft hover:bg-sand-dim"
               onClick={() => setOpen(false)}
             >

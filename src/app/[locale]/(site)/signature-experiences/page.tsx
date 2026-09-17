@@ -1,0 +1,64 @@
+import type { Metadata } from "next";
+import { alternatesFor } from "@/i18n/alternates";
+import { getLocale } from "@/i18n/dictionary";
+import { Container } from "@/components/Container";
+import { SmartImage } from "@/components/SmartImage";
+import { SectionHeading } from "@/components/SectionHeading";
+import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
+import { Reveal } from "@/components/Reveal";
+import { getListingPages, getSignatureExperiences } from "@/sanity/fetchers";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await getLocale();
+  return {
+    title: "Signature Experiences",
+    description:
+      "Curated Egypt travel experiences designed around a specific person and need — the destination is part of the answer, not the whole plan.",
+    alternates: alternatesFor("/signature-experiences", locale),
+  };
+}
+
+export default async function SignatureExperiencesPage() {
+  const [experiences, listingPages] = await Promise.all([getSignatureExperiences(), getListingPages()]);
+  const page = listingPages.signatureExperiences;
+
+  return (
+    <>
+      <section className="relative">
+        <SmartImage
+          image="/photos/pexels-6322875.jpg"
+          tone="desert"
+          alt="The colossal statues at Abu Simbel temple"
+          className="absolute inset-0"
+          priority
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />
+        <Container className="relative flex min-h-[46vh] flex-col justify-end gap-4 pb-16 pt-32">
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{page.heroEyebrow}</p>
+          <h1 className="max-w-2xl text-balance font-display text-4xl font-semibold text-cream sm:text-5xl">
+            {page.heroTitle}
+          </h1>
+          <p className="max-w-xl text-cream/80">{page.heroDescription}</p>
+        </Container>
+      </section>
+
+      <section className="py-20">
+        <Container>
+          <SectionHeading
+            eyebrow={page.collectionEyebrow}
+            title={experiences.length === 1 ? page.collectionTitleSingular : page.collectionTitlePlural}
+            description={page.collectionDescription}
+          />
+          <div className="mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+            {experiences.map((experience, i) => (
+              <Reveal key={experience.slug} delay={i * 80}>
+                <SignatureExperienceCard experience={experience} />
+              </Reveal>
+            ))}
+          </div>
+        </Container>
+      </section>
+    </>
+  );
+}

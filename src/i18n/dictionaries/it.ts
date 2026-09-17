@@ -1,0 +1,156 @@
+import type { Dictionary } from "./en";
+
+// Italian — courteous second person singular, which is how Italian travel
+// sites address a prospective guest without sounding either cold or overly
+// familiar. "Tour" is left as the borrowing Italians actually use, while
+// "servizio fotografico" is preferred over the English "photoshoot".
+export const it: Dictionary = {
+  language: {
+    label: "Lingua",
+    choose: "Scegli la lingua",
+    current: "Lingua attuale",
+  },
+
+  nav: {
+    more: "Altro",
+    toggleMenu: "Apri il menu",
+    myJourney: "Il mio viaggio",
+    planMyTrip: "Pianifica il viaggio",
+    account: "Account",
+    skipToContent: "Vai al contenuto",
+    byHref: {
+      "/": "Home",
+      "/explore-egypt": "Scopri l'Egitto",
+      "/signature-experiences": "Esperienze esclusive",
+      "/tours": "Tour più richiesti",
+      "/experiences": "Esperienze extra",
+      "/photoshoots": "Servizi fotografici",
+      "/transfers": "Transfer",
+      "/hotel-deals": "Offerte hotel",
+      "/customize": "Crea il tuo tour",
+      "/stories": "Racconti",
+      "/partners": "Diventa partner",
+      "/testimonials": "Recensioni",
+      "/about": "Chi siamo",
+    },
+  },
+
+  footer: {
+    explore: "Esplora",
+    contact: "Contatti",
+    follow: "Seguici",
+    partnerWithUs: "Diventa partner",
+    travelAgents: "Agenzie di viaggio",
+    affiliateProgram: "Programma affiliati",
+    creators: "Creator e influencer",
+    travelerReviews: "Recensioni",
+    privacy: "Informativa sulla privacy",
+    terms: "Termini di servizio",
+    rightsReserved: "Tutti i diritti riservati.",
+  },
+
+  common: {
+    bookOnWhatsApp: "Prenota su WhatsApp",
+    emailEnquiry: "Invia una richiesta",
+    addToJourney: "Aggiungi al mio viaggio",
+    inMyJourney: "Nel mio viaggio",
+    viewTour: "Vedi il tour",
+    viewDetails: "Vedi i dettagli",
+    seeDetails: "Dettagli",
+    seeFullExperience: "Scopri l'esperienza completa",
+    enquireForPricing: "Richiedi il prezzo",
+    perPerson: "a persona",
+    from: "da",
+    designYourTour: "Crea il viaggio dei tuoi sogni",
+    readyHeading: "Pronto a scrivere la tua storia in Egitto?",
+    readyBody: "Raccontaci cosa hai in mente e costruiremo un itinerario privato su misura.",
+    backToAllTours: "Torna a tutti i tour",
+    backToAllExperiences: "Torna a tutte le esperienze",
+    youMightAlsoLike: "Potrebbe interessarti anche",
+    moreExperiences: "Altre esperienze da aggiungere",
+    gallery: "Galleria",
+    aboutThisTour: "Questo tour",
+    whatsIncluded: "Incluso",
+    notIncluded: "Non incluso",
+    itinerary: "Itinerario",
+    highlights: "Da non perdere",
+    goodToKnow: "Buono a sapersi",
+    availableOn: "Disponibile con",
+    whereYoullGo: "Il percorso",
+    day: "Giorno",
+  },
+
+  physical: {
+    label: "Livello di impegno",
+    easy: "Facile",
+    moderate: "Medio",
+    active: "Attivo",
+    challenging: "Impegnativo",
+  },
+
+  reviews: {
+    chip: "Valutazione dell'esperienza",
+    eyebrow: "Racconti di viaggio",
+    heading: "Cosa dicono i nostri viaggiatori",
+    intro:
+      "Ogni recensione viene da un viaggio reale con Egypt Eye: nessuna citazione inventata o di esempio. Sono tutte in questa pagina; usa i filtri per restringerle a una categoria o a un singolo tour, servizio fotografico o servizio.",
+    all: "Tutte le recensioni",
+    photoshoots: "Servizi fotografici",
+    tours: "Tour",
+    services: "Servizi",
+    filterByCategory: "Filtra le recensioni per categoria",
+    jumpTo: "Vai a",
+    anyProduct: "Qualsiasi tour, servizio fotografico o servizio",
+    anyInCategory: "Tutto in questa categoria",
+    clear: "Azzera",
+    showingAll: "Tutte le recensioni, comprese le più recenti",
+    showingProduct: "Recensioni di {product}",
+    showingCategory: "Tutte le recensioni: {category}",
+    none: "Qui non ci sono ancora recensioni.",
+    seeAll: "Vedi tutte le recensioni",
+    onTheWay: "Le recensioni stanno arrivando — torna presto, oppure",
+    startPlanning: "inizia a progettare il tuo viaggio in Egitto",
+  },
+
+  tours: {
+    filterHeading: "Filtra i tour",
+    searchPlaceholder: "Nome del tour o destinazione...",
+    tripType: "Tipo di viaggio",
+    all: "Tutti i tour",
+    oneDay: "Escursioni in giornata",
+    multiDay: "Tour di più giorni",
+    jordan: "Egitto e Giordania",
+    matchCount: "{count} tour trovati",
+    noMatches: "Nessun tour corrisponde a questa ricerca.",
+    clearFilters: "Rimuovi i filtri",
+  },
+
+  forms: {
+    name: "Nome",
+    email: "Email",
+    phone: "Telefono",
+    message: "Messaggio",
+    send: "Invia",
+    sending: "Invio in corso…",
+    sent: "Grazie — ti risponderemo a breve.",
+    error: "Qualcosa è andato storto. Riprova o scrivici su WhatsApp.",
+    required: "Obbligatorio",
+    optional: "facoltativo",
+  },
+
+  errors: {
+    notFoundTitle: "Non siamo riusciti a trovare questa pagina",
+    notFoundBody:
+      "La pagina che cerchi è stata spostata o non è mai esistita. Dai un'occhiata ai tour o torna alla home.",
+    backHome: "Torna alla home",
+    browseTours: "Sfoglia i tour",
+    somethingWrong: "Qualcosa è andato storto",
+    somethingWrongBody: "Ci dispiace, il caricamento non è riuscito. Riprova.",
+    tryAgain: "Riprova",
+  },
+
+  seo: {
+    homeTitle: "Tour privati, servizi fotografici ed esperienze in Egitto",
+    localeSuffix: "",
+  },
+};
