@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -10,10 +10,11 @@ import { getListingPages, getTours } from "@/sanity/fetchers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/tours"];
   return {
-    title: "Private Tours Across Egypt & Jordan",
-    description:
-      "Private, guided tours across Egypt and Jordan — one-day trips, multi-day itineraries, and Nile cruises. Every tour includes a private vehicle and guide.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/tours", locale),
   };
 }

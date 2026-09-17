@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
@@ -33,10 +33,11 @@ import {
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/"];
   return {
-    title: "Private Egypt Tours & Travel Experiences",
-    description:
-      "Private, guided tours across Egypt — Cairo, Luxor, Aswan, and the Red Sea — with professional photography built in. Custom itineraries, concierge support.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/", locale),
   };
 }

@@ -150,6 +150,100 @@ export const fr: Dictionary = {
     tryAgain: "Réessayer",
   },
 
+
+  pages: {
+    "/": {
+      title: "Circuits privés et expériences de voyage en Égypte",
+      description:
+        "Circuits privés guidés à travers l'Égypte — Le Caire, Louxor, Assouan et la mer Rouge — avec photographie professionnelle incluse. Itinéraires sur mesure, accompagnement personnalisé.",
+    },
+    "/tours": {
+      title: "Circuits privés en Égypte et en Jordanie",
+      description:
+        "Circuits privés guidés en Égypte et en Jordanie — excursions à la journée, itinéraires de plusieurs jours et croisières sur le Nil. Véhicule privé et guide inclus.",
+    },
+    "/photoshoots": {
+      title: "Séances photo aux pyramides et Flying Dress en Égypte",
+      description:
+        "Forfaits photo professionnels en Égypte, dont la séance exclusive aux pyramides de Gizeh et la première expérience Flying Dress du pays.",
+    },
+    "/experiences": {
+      title: "Que faire en Égypte — activités et expériences complémentaires",
+      description:
+        "Balades à dos de chameau à Gizeh, kayak sur le Nil, safaris 4x4 au Fayoum, montgolfière au-dessus de Louxor et journées en mer Rouge — les activités Egypt Eye, par destination.",
+    },
+    "/signature-experiences": {
+      title: "Expériences signature",
+      description:
+        "Des expériences égyptiennes conçues autour d'une personne et d'un besoin précis — la destination fait partie de la réponse, pas de tout le plan.",
+    },
+    "/explore-egypt": {
+      title: "Découvrir l'Égypte — carte interactive des destinations",
+      description:
+        "Une carte interactive des destinations incontournables d'Égypte — Le Caire, Louxor, Assouan et la côte de la mer Rouge — avec les circuits et expériences réellement proposés sur place.",
+    },
+    "/transfers": {
+      title: "Transferts privés au Caire et à Gizeh",
+      description:
+        "Réservez un transfert privé depuis l'aéroport, l'hôtel ou entre villes au Caire et à Gizeh — choisissez votre véhicule et demandez un devis en quelques clics.",
+    },
+    "/hotel-deals": {
+      title: "Offres hôtelières en Égypte",
+      description:
+        "Des hôtels aux tarifs partenaires Egypt Eye en vigueur au Caire, à Gizeh et sur la côte de la mer Rouge.",
+    },
+    "/customize": {
+      title: "Composer votre circuit",
+      description:
+        "Dites-nous vos dates, vos envies et votre rythme — nous concevons un itinéraire privé en Égypte ou en Jordanie autour de vous.",
+    },
+    "/stories": {
+      title: "Récits de voyage en Égypte",
+      description:
+        "Les écrits de voyage d'Egypt Eye — l'histoire, les lieux et les moments rares autour desquels construire un séjour.",
+    },
+    "/about": {
+      title: "À propos d'Egypt Eye — qui voyage avec nous, et qui nous fait confiance",
+      description:
+        "Agences de voyage, acteurs de Bollywood, athlètes olympiques et créateurs ont confié leur séjour en Égypte à Egypt Eye. Les agences, les invités, les voyages et les dates — sur une page.",
+    },
+    "/partners": {
+      title: "Devenir partenaire",
+      description:
+        "Trois façons de travailler avec Egypt Eye : le programme partenaires agences, le programme d'affiliation et les collaborations avec créateurs et influenceurs.",
+    },
+    "/travel-agents": {
+      title: "Programme partenaires agences de voyage",
+      description:
+        "Rejoignez le programme agences d'Egypt Eye : tarifs partenaires dédiés, un interlocuteur attitré et un accompagnement complet en Égypte et en Jordanie.",
+    },
+    "/affiliate": {
+      title: "Programme d'affiliation",
+      description:
+        "Gagnez une commission en recommandant les circuits privés d'Egypt Eye en Égypte et en Jordanie. Votre code de parrainage, un suivi en temps réel et des versements mensuels.",
+    },
+    "/collaborate": {
+      title: "Collaborer avec Egypt Eye",
+      description:
+        "Créateurs et influenceurs — candidatez pour des voyages sponsorisés, des partenariats de contenu et des reportages en Égypte et en Jordanie.",
+    },
+    "/privacy": {
+      title: "Politique de confidentialité",
+      description:
+        "Comment Egypt Eye Travel & Tours collecte, utilise et protège les données personnelles que vous communiquez en réservant un voyage ou une séance photo.",
+    },
+    "/terms": {
+      title: "Conditions générales",
+      description:
+        "Les conditions de réservation, de paiement, d'annulation et de responsabilité applicables à chaque voyage, transfert et séance photo Egypt Eye Travel & Tours.",
+    },
+    "/pharaoh-challenge": {
+      title: "Pharaoh's Challenge — jouez et gagnez",
+      description:
+        "Cinq salles inspirées de l'Égypte ancienne, une seule tentative et une remise qui grandit à mesure que vous avancez. Jouez au Pharaoh's Challenge.",
+    },
+  },
+
   seo: {
     homeTitle: "Circuits privés, séances photo et expériences en Égypte",
     localeSuffix: "",

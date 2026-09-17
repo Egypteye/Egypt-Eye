@@ -27,14 +27,15 @@ import {
   getTours,
 } from "@/sanity/fetchers";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 
 export async function generateMetadata() {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/about"];
   return {
-    title: "About Egypt Eye — Who Travels With Us, and Who Trusts Us",
-    description:
-      "Travel agencies, Bollywood actors, Olympians and creators have all handed Egypt Eye their trip to Egypt. The agencies, the guests, the trips and the dates — on one page.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/about", locale),
   };
 }

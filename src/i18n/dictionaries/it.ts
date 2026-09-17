@@ -149,6 +149,100 @@ export const it: Dictionary = {
     tryAgain: "Riprova",
   },
 
+
+  pages: {
+    "/": {
+      title: "Tour privati ed esperienze di viaggio in Egitto",
+      description:
+        "Tour privati con guida in tutto l'Egitto — Il Cairo, Luxor, Assuan e il Mar Rosso — con servizio fotografico professionale incluso. Itinerari su misura e assistenza dedicata.",
+    },
+    "/tours": {
+      title: "Tour privati in Egitto e Giordania",
+      description:
+        "Tour privati con guida in Egitto e Giordania — escursioni in giornata, itinerari di più giorni e crociere sul Nilo. Ogni tour include veicolo privato e guida.",
+    },
+    "/photoshoots": {
+      title: "Servizi fotografici alle piramidi e Flying Dress in Egitto",
+      description:
+        "Pacchetti fotografici professionali in Egitto, tra cui il servizio esclusivo alle piramidi di Giza e la prima esperienza Flying Dress del paese.",
+    },
+    "/experiences": {
+      title: "Cosa fare in Egitto — attività ed esperienze extra",
+      description:
+        "Giri in cammello a Giza, kayak sul Nilo, safari 4x4 nel Fayyum, mongolfiera su Luxor e giornate tra le isole del Mar Rosso — le attività di Egypt Eye, per destinazione.",
+    },
+    "/signature-experiences": {
+      title: "Esperienze esclusive",
+      description:
+        "Esperienze di viaggio costruite attorno a una persona e a un'esigenza precisa: la destinazione è parte della risposta, non tutto il progetto.",
+    },
+    "/explore-egypt": {
+      title: "Scopri l'Egitto — mappa interattiva delle destinazioni",
+      description:
+        "Una mappa interattiva delle destinazioni imperdibili dell'Egitto — Il Cairo, Luxor, Assuan e la costa del Mar Rosso — con i tour e le esperienze davvero disponibili in ciascuna.",
+    },
+    "/transfers": {
+      title: "Transfer privati al Cairo e a Giza",
+      description:
+        "Prenota un transfer privato dall'aeroporto, dall'hotel o tra città al Cairo e a Giza: scegli il veicolo e richiedi un preventivo in pochi clic.",
+    },
+    "/hotel-deals": {
+      title: "Offerte hotel in Egitto",
+      description:
+        "Hotel con tariffe partner Egypt Eye in corso al Cairo, a Giza e sulla costa del Mar Rosso.",
+    },
+    "/customize": {
+      title: "Crea il tuo tour",
+      description:
+        "Raccontaci date, interessi e ritmo del viaggio: costruiremo un itinerario privato in Egitto o Giordania su misura per te.",
+    },
+    "/stories": {
+      title: "Racconti di viaggio dall'Egitto",
+      description:
+        "Scritti di viaggio di Egypt Eye: la storia, i luoghi e i momenti rari attorno ai quali vale la pena costruire un viaggio.",
+    },
+    "/about": {
+      title: "Chi è Egypt Eye — chi viaggia con noi e chi ci affida il viaggio",
+      description:
+        "Agenzie di viaggio, attori di Bollywood, olimpionici e creator hanno affidato a Egypt Eye il loro viaggio in Egitto. Le agenzie, gli ospiti, i viaggi e le date, in una pagina.",
+    },
+    "/partners": {
+      title: "Diventa partner",
+      description:
+        "Tre modi per lavorare con Egypt Eye: il programma per agenzie di viaggio, il programma affiliati e le collaborazioni con creator e influencer.",
+    },
+    "/travel-agents": {
+      title: "Programma partner per agenzie di viaggio",
+      description:
+        "Entra nel programma per agenzie di Egypt Eye: tariffe partner dedicate, un referente personale e supporto completo alle prenotazioni in Egitto e Giordania.",
+    },
+    "/affiliate": {
+      title: "Programma affiliati",
+      description:
+        "Guadagna una commissione consigliando i tour privati di Egypt Eye in Egitto e Giordania. Un codice tutto tuo, prenotazioni tracciate in tempo reale e pagamenti mensili.",
+    },
+    "/collaborate": {
+      title: "Collabora con Egypt Eye",
+      description:
+        "Creator e influencer: candidatevi per viaggi sponsorizzati, collaborazioni di contenuto e servizi stampa in Egitto e Giordania.",
+    },
+    "/privacy": {
+      title: "Informativa sulla privacy",
+      description:
+        "Come Egypt Eye Travel & Tours raccoglie, utilizza e protegge i dati personali che condividi prenotando un viaggio o un servizio fotografico.",
+    },
+    "/terms": {
+      title: "Termini di servizio",
+      description:
+        "Le condizioni di prenotazione, pagamento, cancellazione e responsabilità valide per ogni viaggio, transfer e servizio fotografico di Egypt Eye Travel & Tours.",
+    },
+    "/pharaoh-challenge": {
+      title: "Pharaoh's Challenge — gioca e vinci",
+      description:
+        "Cinque camere ispirate all'Antico Egitto, un solo tentativo e uno sconto che cresce man mano che avanzi. Gioca alla Pharaoh's Challenge.",
+    },
+  },
+
   seo: {
     homeTitle: "Tour privati, servizi fotografici ed esperienze in Egitto",
     localeSuffix: "",

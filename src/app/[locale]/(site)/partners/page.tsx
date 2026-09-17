@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -8,10 +8,11 @@ import { SmartImage } from "@/components/SmartImage";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/partners"];
   return {
-    title: "Partner With Us",
-    description:
-      "Three ways to work with Egypt Eye: the Travel Agent Partner Program, the Affiliate Program, and Creators & Influencers collaborations.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/partners", locale),
   };
 }

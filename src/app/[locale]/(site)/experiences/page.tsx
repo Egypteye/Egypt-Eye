@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
@@ -13,10 +13,11 @@ import { getExperiences, getListingPages } from "@/sanity/fetchers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/experiences"];
   return {
-    title: "Things to Do in Egypt — Activities & Extra Experiences",
-    description:
-      "Camel rides at Giza, kayaking on the Nile, 4x4 safaris and camping in Fayoum, ballooning over Luxor, Red Sea island days and Siwa's salt lakes — Egypt Eye's activities, by destination.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/experiences", locale),
   };
 }

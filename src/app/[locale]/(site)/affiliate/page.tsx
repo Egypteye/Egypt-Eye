@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -9,10 +9,11 @@ import { AffiliateForm } from "./AffiliateForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/affiliate"];
   return {
-    title: "Affiliate Program",
-    description:
-      "Earn a commission recommending Egypt Eye's private Egypt & Jordan tours. Your own referral code, real-time-tracked bookings, and monthly payouts.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/affiliate", locale),
   };
 }

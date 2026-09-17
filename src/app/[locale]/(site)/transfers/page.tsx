@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -11,10 +11,11 @@ import { transfersPage } from "@/content/transfers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/transfers"];
   return {
-    title: "Private Transfers in Cairo & Giza",
-    description:
-      "Book a private airport, hotel, or intercity transfer in Cairo and Giza — choose your vehicle and request a quote in a few clicks.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/transfers", locale),
   };
 }

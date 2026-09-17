@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -10,10 +10,11 @@ import { getSiteSettings } from "@/sanity/fetchers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/collaborate"];
   return {
-    title: "Collaborate With Egypt Eye",
-    description:
-      "Content creators and influencers — apply to collaborate with Egypt Eye for sponsored trips, content partnerships, and press coverage across Egypt & Jordan.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/collaborate", locale),
   };
 }

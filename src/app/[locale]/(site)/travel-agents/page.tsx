@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -8,10 +8,11 @@ import { TravelAgentForm } from "./TravelAgentForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/travel-agents"];
   return {
-    title: "Travel Agent Partner Program",
-    description:
-      "Join the Egypt Eye Travel Agent Program for special partner rates, a dedicated specialist, and full booking support across Egypt & Jordan.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/travel-agents", locale),
   };
 }

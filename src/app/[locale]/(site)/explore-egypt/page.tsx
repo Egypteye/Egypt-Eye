@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { notFound } from "next/navigation";
 import { loadExploreEgyptData } from "./data";
 import { ExploreEgyptView } from "./ExploreEgyptView";
@@ -8,10 +8,11 @@ import { getListingPages } from "@/sanity/fetchers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/explore-egypt"];
   return {
-    title: "Explore Egypt — Interactive Destination Map",
-    description:
-      "An interactive map of Egypt's must-see destinations — Cairo, Luxor, Aswan, and the Red Sea coast — with real tours and experiences available at each.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/explore-egypt", locale),
   };
 }

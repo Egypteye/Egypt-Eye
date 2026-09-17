@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { getSiteSettings } from "@/sanity/fetchers";
 
@@ -9,10 +9,11 @@ import { getSiteSettings } from "@/sanity/fetchers";
 // site as a business — and there is nothing private on either page.
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/privacy"];
   return {
-    title: "Privacy Policy",
-    description:
-      "How Egypt Eye Travel & Tours collects, uses and protects the personal information you share when booking a trip or a photoshoot.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/privacy", locale),
   };
 }

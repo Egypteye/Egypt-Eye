@@ -156,6 +156,108 @@ export const en = {
     tryAgain: "Try again",
   },
 
+
+  /**
+   * Per-page SEO title and description, keyed by path.
+   *
+   * These were literals in each page file, which meant a German or Arabic
+   * page carried an English <title> — the single most visible thing a search
+   * engine shows, and the one a translated site most obviously gets wrong.
+   * Keyed by path so a page can be renamed without breaking its translation.
+   */
+  pages: {
+    "/": {
+      title: "Private Egypt Tours & Travel Experiences",
+      description:
+        "Private, guided tours across Egypt — Cairo, Luxor, Aswan, and the Red Sea — with professional photography built in. Custom itineraries, concierge support.",
+    },
+    "/tours": {
+      title: "Private Tours Across Egypt & Jordan",
+      description:
+        "Private, guided tours across Egypt and Jordan — one-day trips, multi-day itineraries, and Nile cruises. Every tour includes a private vehicle and guide.",
+    },
+    "/photoshoots": {
+      title: "Pyramids & Flying Dress Photoshoots in Egypt",
+      description:
+        "Professional photoshoot packages in Egypt, including the Exclusive Pyramids Photoshoot and Egypt's first Flying Dress experience.",
+    },
+    "/experiences": {
+      title: "Things to Do in Egypt — Activities & Extra Experiences",
+      description:
+        "Camel rides at Giza, kayaking on the Nile, 4x4 safaris in Fayoum, ballooning over Luxor and Red Sea island days — Egypt Eye's activities, by destination.",
+    },
+    "/signature-experiences": {
+      title: "Signature Experiences",
+      description:
+        "Curated Egypt travel experiences designed around a specific person and need — the destination is part of the answer, not the whole plan.",
+    },
+    "/explore-egypt": {
+      title: "Explore Egypt — Interactive Destination Map",
+      description:
+        "An interactive map of Egypt's must-see destinations — Cairo, Luxor, Aswan, and the Red Sea coast — with real tours and experiences available at each.",
+    },
+    "/transfers": {
+      title: "Private Transfers in Cairo & Giza",
+      description:
+        "Book a private airport, hotel, or intercity transfer in Cairo and Giza — choose your vehicle and request a quote in a few clicks.",
+    },
+    "/hotel-deals": {
+      title: "Hotel Deals in Egypt",
+      description:
+        "Hotels with current Egypt Eye partner rates across Cairo, Giza, and the Red Sea coast.",
+    },
+    "/customize": {
+      title: "Customize Your Tour",
+      description:
+        "Tell us your dates, interests, and pace — we'll design a private Egypt or Jordan itinerary around you.",
+    },
+    "/stories": {
+      title: "Egypt Travel Stories & Journal",
+      description:
+        "Editorial travel writing from Egypt Eye — the history, the places, and the rare moments worth building a trip around.",
+    },
+    "/about": {
+      title: "About Egypt Eye — Who Travels With Us, and Who Trusts Us",
+      description:
+        "Travel agencies, Bollywood actors, Olympians and creators have all handed Egypt Eye their trip to Egypt. The agencies, the guests, the trips and the dates — on one page.",
+    },
+    "/partners": {
+      title: "Partner With Us",
+      description:
+        "Three ways to work with Egypt Eye: the Travel Agent Partner Program, the Affiliate Program, and Creators & Influencers collaborations.",
+    },
+    "/travel-agents": {
+      title: "Travel Agent Partner Program",
+      description:
+        "Join the Egypt Eye Travel Agent Program for special partner rates, a dedicated specialist, and full booking support across Egypt & Jordan.",
+    },
+    "/affiliate": {
+      title: "Affiliate Program",
+      description:
+        "Earn a commission recommending Egypt Eye's private Egypt & Jordan tours. Your own referral code, real-time-tracked bookings, and monthly payouts.",
+    },
+    "/collaborate": {
+      title: "Collaborate With Egypt Eye",
+      description:
+        "Content creators and influencers — apply to collaborate with Egypt Eye for sponsored trips, content partnerships, and press coverage across Egypt & Jordan.",
+    },
+    "/privacy": {
+      title: "Privacy Policy",
+      description:
+        "How Egypt Eye Travel & Tours collects, uses and protects the personal information you share when booking a trip or a photoshoot.",
+    },
+    "/terms": {
+      title: "Terms of Service",
+      description:
+        "The booking, payment, cancellation and liability terms that apply to every Egypt Eye Travel & Tours trip, transfer and photoshoot.",
+    },
+    "/pharaoh-challenge": {
+      title: "Pharaoh's Challenge — Play & Win",
+      description:
+        "Five Ancient-Egypt-inspired chambers, one attempt, and a discount reward that grows the deeper you go. Play the Pharaoh's Challenge.",
+    },
+  } as Record<string, { title: string; description: string }>,
+
   seo: {
     // {title} is the page's own title; the site name is appended by layout.
     homeTitle: "Private Egypt Tours, Photoshoots & Experiences",

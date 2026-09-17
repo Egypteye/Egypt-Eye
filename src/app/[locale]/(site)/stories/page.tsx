@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
@@ -12,10 +12,11 @@ import { StoriesGrid } from "./StoriesGrid";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/stories"];
   return {
-    title: "Egypt Travel Stories & Journal",
-    description:
-      "Editorial travel writing from Egypt Eye — the history, the places, and the rare moments worth building a trip around.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/stories", locale),
   };
 }

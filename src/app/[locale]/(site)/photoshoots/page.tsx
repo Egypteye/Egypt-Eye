@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -9,10 +9,11 @@ import { getListingPages, getPhotoshoots } from "@/sanity/fetchers";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/photoshoots"];
   return {
-    title: "Pyramids & Flying Dress Photoshoots in Egypt",
-    description:
-      "Professional photoshoot packages in Egypt, including the Exclusive Pyramids Photoshoot and Egypt's first Flying Dress experience.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/photoshoots", locale),
   };
 }

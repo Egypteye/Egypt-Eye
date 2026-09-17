@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
@@ -9,9 +9,11 @@ import { getEnabledHotels } from "@/lib/hotels";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/hotel-deals"];
   return {
-    title: "Hotel Deals in Egypt",
-    description: "Hotels with current Egypt Eye partner rates across Cairo, Giza, and the Red Sea coast.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/hotel-deals", locale),
   };
 }

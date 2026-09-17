@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getActiveCampaign, getCampaignTiers, getAttempt } from "@/lib/games/queries";
@@ -10,9 +10,9 @@ import { logVisit } from "./actions";
 
 const CAMPAIGN_SLUG = "pharaohs-challenge";
 
-const PAGE_TITLE = "Pharaoh's Challenge — Play & Win | Egypt Eye";
-const PAGE_DESCRIPTION =
-  "Five Ancient-Egypt-inspired chambers, one attempt, and a discount reward that grows the deeper you go. Play the Pharaoh's Challenge.";
+// Title and description come from the dictionary now, and without the
+// "| Egypt Eye" suffix that used to be baked in here — the root layout's
+// title template appends it, so the page was rendering it twice.
 const PAGE_URL = `${siteUrl}/pharaoh-challenge`;
 // Explicit page-level openGraph/twitter blocks (rather than relying on
 // inheriting the root layout's generic ones) — this is what lets Facebook's
@@ -27,21 +27,23 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/pharaoh-challenge"];
   return {
-    title: PAGE_TITLE,
-    description: PAGE_DESCRIPTION,
+    title: meta.title,
+    description: meta.description,
   
     openGraph: {
       type: "website",
-      title: PAGE_TITLE,
-      description: PAGE_DESCRIPTION,
+      title: meta.title,
+      description: meta.description,
       url: PAGE_URL,
       images: [{ url: `${siteUrl}/brand/egypt-eye-badge-gold.png`, width: 1200, height: 1200, alt: "Egypt Eye" }],
     },
     twitter: {
       card: "summary_large_image",
-      title: PAGE_TITLE,
-      description: PAGE_DESCRIPTION,
+      title: meta.title,
+      description: meta.description,
       images: [`${siteUrl}/brand/egypt-eye-badge-gold.png`],
     },
     alternates: alternatesFor("/pharaoh-challenge", locale),

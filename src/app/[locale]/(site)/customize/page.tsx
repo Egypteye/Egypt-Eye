@@ -5,14 +5,15 @@ import { Reveal } from "@/components/Reveal";
 import { CustomizeForm } from "./CustomizeForm";
 import { getCustomizePage, getSiteSettings } from "@/sanity/fetchers";
 import { alternatesFor } from "@/i18n/alternates";
-import { getLocale } from "@/i18n/dictionary";
+import { getDictionary, getLocale } from "@/i18n/dictionary";
 
 export async function generateMetadata() {
   const locale = await getLocale();
+  const dict = await getDictionary();
+  const meta = dict.pages["/customize"];
   return {
-    title: "Customize Your Tour",
-    description:
-      "Tell us your dates, interests, and pace — we'll design a private Egypt or Jordan itinerary around you.",
+    title: meta.title,
+    description: meta.description,
     alternates: alternatesFor("/customize", locale),
   };
 }
