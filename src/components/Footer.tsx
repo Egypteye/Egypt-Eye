@@ -4,6 +4,7 @@ import type { ResolvedSiteSettings } from "@/content/types";
 import { Container } from "./Container";
 import { SocialLinks } from "./SocialLinks";
 import { WhatsAppBookButton } from "./WhatsAppBookButton";
+import { LanguageLinks } from "./LanguageLinks";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
 
@@ -46,14 +47,9 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
                 </Link>
               </li>
             ))}
-            {/* Reviews were reachable only from a block on /about that renders
-                when testimonials exist, so an empty list orphaned the page
-                entirely. A trust page belongs in the footer regardless. */}
-            <li>
-              <Link href={to("/testimonials")} className="hover:text-gold-light">
-                {dict.footer.travelerReviews}
-              </Link>
-            </li>
+            {/* No hardcoded reviews link here any more: /testimonials is now a
+                real entry in site.nav, so the loop above renders it — keeping
+                both listed it twice. */}
           </ul>
         </div>
 
@@ -107,6 +103,15 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
           </ul>
         </div>
       </Container>
+
+      {/* Language sits in its own band just above the legal line: the last
+          thing on the page, where someone who has scrolled the whole way in
+          the wrong language will look for it. */}
+      <div className="border-t border-white/10 py-6">
+        <Container>
+          <LanguageLinks />
+        </Container>
+      </div>
 
       <div className="border-t border-white/10 py-6">
         <Container className="flex flex-col items-center justify-between gap-3 text-xs text-cream/40 sm:flex-row">
