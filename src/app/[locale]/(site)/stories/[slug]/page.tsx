@@ -15,6 +15,7 @@ import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, siteUrl } from "@/content/seo";
 import { site } from "@/content/site";
 import type { StoryCountdownBlock, StoryFaqBlock } from "@/content/types";
+import { T } from "@/i18n/T";
 
 export async function generateStaticParams() {
   const stories = await getStories();
@@ -176,16 +177,14 @@ export default async function StoryDetailPage({
           <Reveal>{story.body && story.body.length > 0 && <StoryBody body={story.body} />}</Reveal>
 
           {(!story.body || story.body.length === 0) && (
-            <p className="text-sm text-ink-soft/50">Full article coming soon.</p>
+            <p className="text-sm text-ink-soft/50"><T>Full article coming soon.</T></p>
           )}
 
           {/* Related experience — dedicated section, in addition to anything
               placed inline in the body via an Experience Card block. */}
           {story.relatedExperience && (
             <Reveal className="not-prose mt-16 rounded-3xl border border-gold/20 bg-sand-dim p-6 sm:p-10">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                Want to Experience It?
-              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Want to Experience It?</T></p>
               <div className="mt-6 max-w-sm">
                 <SignatureExperienceCard experience={story.relatedExperience} />
               </div>
@@ -196,9 +195,7 @@ export default async function StoryDetailPage({
               booked, in addition to any single relatedExperience above. */}
           {story.relatedTours && story.relatedTours.length > 0 && (
             <Reveal className="not-prose mt-16">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                Where This Takes You
-              </p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Where This Takes You</T></p>
               <div className="mt-6 grid gap-6 sm:grid-cols-2">
                 {story.relatedTours.map((t) => (
                   <TourCard key={t.slug} tour={t} />
@@ -217,9 +214,7 @@ export default async function StoryDetailPage({
       {story.relatedStories && story.relatedStories.length > 0 && (
         <section className="bg-sand-dim py-20">
           <Container>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-              Continue Exploring
-            </p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Continue Exploring</T></p>
             <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {story.relatedStories.map((s) => (
                 <StoryCard key={s.slug} story={s} />

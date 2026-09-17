@@ -10,6 +10,7 @@ import { Reveal } from "@/components/Reveal";
 import { activityDestinationGroups } from "@/content/activities";
 import type { Experience } from "@/content/types";
 import { getExperiences, getListingPages } from "@/sanity/fetchers";
+import { T, trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -61,6 +62,11 @@ function groupByDestination(experiences: Experience[]) {
 }
 
 export default async function ExperiencesPage() {
+  const ui = await trAll([
+    "A desert oasis lake in Egypt's Western Desert",
+    "Jump to a destination",
+  ]);
+
   const [experiences, listingPages] = await Promise.all([getExperiences(), getListingPages()]);
   const page = listingPages.experiences;
   const groups = groupByDestination(experiences);
@@ -71,7 +77,7 @@ export default async function ExperiencesPage() {
         <SmartImage
           image="/photos/pexels-38498244.jpg"
           tone="desert"
-          alt="A desert oasis lake in Egypt's Western Desert"
+          alt={ui["A desert oasis lake in Egypt's Western Desert"]}
           className="absolute inset-0"
           priority
           sizes="100vw"
@@ -91,7 +97,7 @@ export default async function ExperiencesPage() {
           {/* Jump bar — the catalogue is long enough that a visitor who
               already knows where they're going shouldn't have to scroll it. */}
           {groups.length > 1 && (
-            <nav aria-label="Jump to a destination" className="mt-8 flex flex-wrap gap-2">
+            <nav aria-label={ui["Jump to a destination"]} className="mt-8 flex flex-wrap gap-2">
               {groups.map((g) => (
                 <a
                   key={g.key}
@@ -131,9 +137,7 @@ export default async function ExperiencesPage() {
 
       <section className="bg-ink py-16">
         <Container className="flex flex-col items-center gap-5 text-center">
-          <h2 className="max-w-2xl text-balance font-display text-2xl font-semibold text-cream sm:text-3xl">
-            Any of these can be built into a longer trip
-          </h2>
+          <h2 className="max-w-2xl text-balance font-display text-2xl font-semibold text-cream sm:text-3xl"><T>Any of these can be built into a longer trip</T></h2>
           <p className="max-w-xl text-[15px] leading-relaxed text-cream/70">
             Tell us which ones caught your eye and roughly when you&rsquo;re travelling, and we&rsquo;ll come back with
             an itinerary that fits them together properly — transport, timings and all.

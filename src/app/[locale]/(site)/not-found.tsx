@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
+import { T } from "@/i18n/T";
 
 export const metadata: Metadata = {
   title: "Page Not Found",
@@ -14,9 +15,7 @@ export default function NotFound() {
       <h1 className="max-w-lg text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">
         We couldn&rsquo;t find that page
       </h1>
-      <p className="max-w-md text-ink-soft/75">
-        The page you were looking for may have moved or no longer exists. Here are a few places to start instead.
-      </p>
+      <p className="max-w-md text-ink-soft/75"><T>The page you were looking for may have moved or no longer exists. Here are a few places to start instead.</T></p>
       <div className="mt-2 flex flex-wrap justify-center gap-4">
         <Link
           href="/"

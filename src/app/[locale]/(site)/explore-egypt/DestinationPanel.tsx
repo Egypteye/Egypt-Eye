@@ -6,6 +6,7 @@ import { ExperienceCard } from "@/components/ExperienceCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
+import { T, trAll } from "@/i18n/T";
 
 function PanelSection({
   title,
@@ -27,7 +28,7 @@ function PanelSection({
   );
 }
 
-export function DestinationPanel({
+export async function DestinationPanel({
   hub,
   tours,
   experiences,
@@ -40,6 +41,13 @@ export function DestinationPanel({
   photoshoots: Photoshoot[];
   stories: Story[];
 }) {
+  const ui = await trAll([
+    "Experiences",
+    "Photoshoots",
+    "Stories",
+    "Tours",
+  ]);
+
   const MAX = 4;
   const isEmpty = tours.length === 0 && experiences.length === 0 && photoshoots.length === 0 && stories.length === 0;
 
@@ -63,29 +71,27 @@ export function DestinationPanel({
         {isEmpty ? (
           <p className="mt-8 border-t border-black/5 pt-6 text-sm text-ink-soft/60">
             More tours and experiences for {hub.name} are on the way — in the meantime,{" "}
-            <Link href="/customize" className="font-semibold text-gold-dark underline">
-              tell us what you have in mind
-            </Link>{" "}
+            <Link href="/customize" className="font-semibold text-gold-dark underline"><T>tell us what you have in mind</T></Link>{" "}
             and we&rsquo;ll build it for you.
           </p>
         ) : (
           <div className="mt-6 flex flex-col gap-6">
-            <PanelSection title="Tours" count={tours.length}>
+            <PanelSection title={ui["Tours"]} count={tours.length}>
               {tours.slice(0, MAX).map((tour) => (
                 <TourCard key={tour.slug} tour={tour} />
               ))}
             </PanelSection>
-            <PanelSection title="Experiences" count={experiences.length}>
+            <PanelSection title={ui["Experiences"]} count={experiences.length}>
               {experiences.slice(0, MAX).map((experience) => (
                 <ExperienceCard key={experience.slug} experience={experience} />
               ))}
             </PanelSection>
-            <PanelSection title="Photoshoots" count={photoshoots.length}>
+            <PanelSection title={ui["Photoshoots"]} count={photoshoots.length}>
               {photoshoots.slice(0, MAX).map((photoshoot) => (
                 <PhotoshootCard key={photoshoot.slug} photoshoot={photoshoot} />
               ))}
             </PanelSection>
-            <PanelSection title="Stories" count={stories.length}>
+            <PanelSection title={ui["Stories"]} count={stories.length}>
               {stories.slice(0, MAX).map((story) => (
                 <StoryCard key={story.slug} story={story} />
               ))}

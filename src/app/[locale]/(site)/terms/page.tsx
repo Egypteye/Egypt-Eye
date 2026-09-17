@@ -3,6 +3,7 @@ import { alternatesFor } from "@/i18n/alternates";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { getSiteSettings } from "@/sanity/fetchers";
+import { T } from "@/i18n/T";
 
 // Indexable on purpose. A real operator's terms and privacy policy are a
 // trust signal — for travellers comparing agencies and for Google reading the
@@ -59,10 +60,10 @@ export default async function TermsPage() {
   return (
     <section className="py-24">
       <Container className="mx-auto max-w-3xl">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">Legal</p>
-        <h1 className="mt-3 font-display text-4xl font-semibold text-ink sm:text-5xl">Terms of Service</h1>
+        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Legal</T></p>
+        <h1 className="mt-3 font-display text-4xl font-semibold text-ink sm:text-5xl"><T>Terms of Service</T></h1>
         <div className="mt-6 rounded-2xl border border-terracotta/30 bg-terracotta/5 p-5 text-sm text-ink-soft/80">
-          <p className="font-semibold text-terracotta">Draft structure — not yet published.</p>
+          <p className="font-semibold text-terracotta"><T>Draft structure — not yet published.</T></p>
           <p className="mt-1">
             This page lists the sections a Terms of Service page needs. Each one below is a placeholder, not
             legal language — replace it with reviewed, accurate text (ideally checked by a legal professional)

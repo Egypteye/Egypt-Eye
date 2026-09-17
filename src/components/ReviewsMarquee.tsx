@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Testimonial } from "@/content/types";
 import { TestimonialCard } from "./TestimonialCard";
+import { trAll } from "@/i18n/T";
 
 // Speed scales with the number of cards (~7.5s per card, matching the pace
 // a small hand-picked set had at the old fixed 40s duration) so adding more
@@ -8,7 +9,11 @@ import { TestimonialCard } from "./TestimonialCard";
 const SECONDS_PER_CARD = 7.5;
 const MIN_DURATION_S = 32;
 
-export function ReviewsMarquee({ testimonials, href }: { testimonials: Testimonial[]; href?: string }) {
+export async function ReviewsMarquee({ testimonials, href }: { testimonials: Testimonial[]; href?: string }) {
+  const ui = await trAll([
+    "Read more traveler stories",
+  ]);
+
   // Duplicate the list once so the CSS marquee (-50%) loops seamlessly.
   const loop = [...testimonials, ...testimonials];
   const duration = Math.max(MIN_DURATION_S, Math.round(testimonials.length * SECONDS_PER_CARD));
@@ -31,7 +36,7 @@ export function ReviewsMarquee({ testimonials, href }: { testimonials: Testimoni
   if (!href) return track;
 
   return (
-    <Link href={href} aria-label="Read more traveler stories" className="block cursor-pointer">
+    <Link href={href} aria-label={ui["Read more traveler stories"]} className="block cursor-pointer">
       {track}
     </Link>
   );

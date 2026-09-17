@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
+import { T, trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -44,24 +45,28 @@ const PROGRAMS = [
   },
 ];
 
-export default function PartnersPage() {
+export default async function PartnersPage() {
+  const ui = await trAll([
+    "Choose Your Program",
+    "Find the Fit",
+    "Sunrise light over the Pyramids of Giza",
+  ]);
+
   return (
     <>
       <section className="relative">
         <SmartImage
           image="/photos/pexels-15272456.jpg"
           tone="giza"
-          alt="Sunrise light over the Pyramids of Giza"
+          alt={ui["Sunrise light over the Pyramids of Giza"]}
           className="absolute inset-0"
           priority
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">Partner With Us</p>
-          <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl">
-            Three Ways to Work With Egypt Eye
-          </h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light"><T>Partner With Us</T></p>
+          <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl"><T>Three Ways to Work With Egypt Eye</T></h1>
           <p className="max-w-xl text-[15px] text-cream/80">
             Whether you book for clients, refer your audience, or create content on the ground — there&rsquo;s a
             program built for how you actually work.
@@ -71,7 +76,7 @@ export default function PartnersPage() {
 
       <section className="py-16">
         <Container>
-          <SectionHeading eyebrow="Choose Your Program" title="Find the Fit" />
+          <SectionHeading eyebrow={ui["Choose Your Program"]} title={ui["Find the Fit"]} />
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
             {PROGRAMS.map((p) => (
               <Link

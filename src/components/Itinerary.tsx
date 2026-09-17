@@ -3,11 +3,13 @@
 import { useState } from "react";
 import type { SignatureItineraryDay } from "@/content/types";
 import { SmartImage } from "./SmartImage";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // A time-based, expandable day journey rather than a flat "Day 1 / Day 2"
 // list — day selector tabs + an expandable vertical timeline per day, so
 // the itinerary reads as a journey through a day, not a spreadsheet.
 export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
+  const tr = useTr();
   const [activeDay, setActiveDay] = useState(0);
   const [openItem, setOpenItem] = useState<number | null>(0);
   const day = days[activeDay];
@@ -98,7 +100,7 @@ export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
                           {item.duration && <span>⏱ {item.duration}</span>}
                           {item.location && <span>📍 {item.location}</span>}
                           {item.includedOrOptional === "optional" && (
-                            <span className="font-semibold text-terracotta">Optional add-on</span>
+                            <span className="font-semibold text-terracotta">{tr("Optional add-on")}</span>
                           )}
                         </div>
                         {item.notes && <p className="italic text-ink-soft/60">{item.notes}</p>}

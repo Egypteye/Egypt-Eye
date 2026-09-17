@@ -5,6 +5,7 @@ import { useState } from "react";
 import { EgyptMap } from "./EgyptMap";
 import { MOOD_COLORS, MOOD_ORDER } from "@/lib/moodColors";
 import type { DestinationHub, EgyptCity, Mood } from "@/content/types";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Each mood gets its own color so the row reads at a glance (blue for
 // water/beaches, orange for history, etc.) rather than one uniform brand
@@ -28,14 +29,13 @@ export function ExploreMapPanel({
   cities: EgyptCity[];
   selectedSlug: string;
 }) {
+  const tr = useTr();
   const [mood, setMood] = useState<Mood | null>(null);
 
   return (
     <div className="lg:sticky lg:top-24 lg:self-start">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/50">
-          Not sure where to start? Pick a mood
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/50">{tr("Not sure where to start? Pick a mood")}</p>
         <div className="mt-2.5 flex flex-wrap gap-2">
           {MOODS.map((m) => (
             <button

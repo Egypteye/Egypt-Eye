@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { NewsletterSignup } from "./NewsletterSignup";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const DISMISSED_KEY = "egypt-eye-newsletter-popup-dismissed-at";
 const SUBSCRIBED_KEY = "egypt-eye-newsletter-popup-subscribed";
@@ -14,6 +15,7 @@ const RESHOW_AFTER_DAYS = 14;
 // modal shell so it shares its exact, already-working submit logic
 // (POSTs to /api/newsletter/subscribe) rather than duplicating it.
 export function NewsletterPopup() {
+  const tr = useTr();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export function NewsletterPopup() {
         <button
           type="button"
           onClick={dismiss}
-          aria-label="Close"
+          aria-label={tr("Close")}
           className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full text-cream/50 transition hover:bg-cream/10 hover:text-cream"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
@@ -65,14 +67,9 @@ export function NewsletterPopup() {
         </button>
 
         <div className="relative">
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light">Egypt Eye Newsletter</p>
-          <h2 id="newsletter-popup-title" className="mt-3 text-balance font-display text-2xl font-semibold text-cream sm:text-3xl">
-            Get 4% Off Your Egypt Journey
-          </h2>
-          <p className="mt-3 text-sm text-cream/70">
-            Join our newsletter for travel inspiration and new experiences — and get your exclusive 4% discount code
-            by email.
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light">{tr("Egypt Eye Newsletter")}</p>
+          <h2 id="newsletter-popup-title" className="mt-3 text-balance font-display text-2xl font-semibold text-cream sm:text-3xl">{tr("Get 4% Off Your Egypt Journey")}</h2>
+          <p className="mt-3 text-sm text-cream/70">{tr("Join our newsletter for travel inspiration and new experiences — and get your exclusive 4% discount code by email.")}</p>
           <div
             className="mt-7"
             onSubmitCapture={() => {

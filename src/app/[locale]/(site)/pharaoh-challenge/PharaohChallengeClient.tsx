@@ -7,6 +7,7 @@ import { PUZZLE_REGISTRY } from "./puzzles";
 import { ShareAchievement } from "./ShareAchievement";
 import { startAttempt, completeTier, claimReward } from "./actions";
 import type { GameAttempt, GameCampaign, GameTier } from "@/lib/games/types";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type Phase = "intro" | "playing" | "cleared" | "achievement";
 
@@ -23,6 +24,7 @@ export function PharaohChallengeClient({
   initialAttempt: GameAttempt | null;
   siteUrl: string;
 }) {
+  const tr = useTr();
   const [attempt, setAttempt] = useState(initialAttempt);
   const [phase, setPhase] = useState<Phase>(() => {
     if (initialAttempt?.status === "completed") return "achievement";
@@ -105,9 +107,7 @@ export function PharaohChallengeClient({
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">{campaign.theme}</p>
           <h1 className="font-display text-4xl font-semibold text-cream sm:text-5xl">{campaign.name}</h1>
           <p className="max-w-md text-lg text-cream/70">{campaign.story_intro}</p>
-          <p className="text-sm text-cream/40">
-            One attempt per account. Sign in to begin — your progress is saved as you go.
-          </p>
+          <p className="text-sm text-cream/40">{tr("One attempt per account. Sign in to begin — your progress is saved as you go.")}</p>
           <button
             type="button"
             onClick={handleBegin}
@@ -130,7 +130,7 @@ export function PharaohChallengeClient({
 
       {phase === "cleared" && clearedTier && attempt && (
         <div className="flex flex-col items-center gap-6 text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">Chamber Cleared</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">{tr("Chamber Cleared")}</p>
           <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{clearedTier.name}</h2>
           <p className="max-w-sm text-lg text-cream/70">
             You&rsquo;ve secured a {REWARD_VALUES[clearedTier.tier_number]}% reward. Continue deeper for a better one,
@@ -166,15 +166,15 @@ export function PharaohChallengeClient({
             alt=""
             className="h-16 w-16 drop-shadow-[0_0_25px_rgba(228,200,120,0.7)]"
           />
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">The Threshold Opens</p>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">{tr("The Threshold Opens")}</p>
           <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{campaign.story_outro}</h2>
           {rewardCode ? (
             <div className="rounded-2xl border border-gold/30 bg-cream/5 px-6 py-5">
-              <p className="text-base text-cream/60">Your reward code</p>
+              <p className="text-base text-cream/60">{tr("Your reward code")}</p>
               <p className="mt-1 font-mono text-2xl font-bold tracking-wide text-gold-light">{rewardCode}</p>
             </div>
           ) : (
-            <p className="text-lg text-cream/70">Your reward is saved to your account.</p>
+            <p className="text-lg text-cream/70">{tr("Your reward is saved to your account.")}</p>
           )}
           <ShareAchievement
             campaignId={campaign.id}
@@ -184,9 +184,7 @@ export function PharaohChallengeClient({
             shareUrl={shareUrl}
             shareText="I just made it through the Pharaoh's Challenge at Egypt Eye 𓁿 — try it yourself:"
           />
-          <Link href="/account" className="text-base font-semibold text-gold-light underline underline-offset-4">
-            View my reward in My Account
-          </Link>
+          <Link href="/account" className="text-base font-semibold text-gold-light underline underline-offset-4">{tr("View my reward in My Account")}</Link>
         </div>
       )}
     </div>

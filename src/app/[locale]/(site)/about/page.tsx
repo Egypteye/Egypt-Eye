@@ -28,6 +28,7 @@ import {
 } from "@/sanity/fetchers";
 import { alternatesFor } from "@/i18n/alternates";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
+import { T, trAll } from "@/i18n/T";
 
 export async function generateMetadata() {
   const locale = await getLocale();
@@ -46,6 +47,15 @@ export async function generateMetadata() {
 const tripPhotos = agencyTrips.filter((t) => t.photo);
 
 export default async function AboutPage() {
+  const ui = await trAll([
+    "A traveler with The LA Adams Travel standing between the colossi at Luxor Temple",
+    "Egypt Eye seal",
+    "Get in Touch",
+    "Real words from real trips — a small sample of what's waiting for you on the full page.",
+    "Traveler Stories",
+    "What Our Travelers Say",
+  ]);
+
   const [site, page, contact, testimonials, tours] = await Promise.all([
     getSiteSettings(),
     getAboutPage(),
@@ -186,7 +196,7 @@ export default async function AboutPage() {
           <div className="lg:pt-16">
             <Photo
               src="/photos/about/la-adams-travel-luxor-temple.jpg"
-              alt="A traveler with The LA Adams Travel standing between the colossi at Luxor Temple"
+              alt={ui["A traveler with The LA Adams Travel standing between the colossi at Luxor Temple"]}
               ratio="480 / 320"
               caption="The LA Adams Travel · Luxor"
               sizes="(max-width: 1024px) 100vw, 42vw"
@@ -213,17 +223,9 @@ export default async function AboutPage() {
           <Reveal>
             <div className="max-w-2xl">
               <Rule tone="dark" />
-              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-                By the Numbers
-              </p>
-              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-cream sm:text-4xl">
-                Six numbers, and the list behind each one
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-cream/65">
-                Anyone can print a big number on a travel website. These count something specific —
-                and every list they count is printed further down this page, name by name, so you
-                can check the arithmetic yourself.
-              </p>
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-light"><T>By the Numbers</T></p>
+              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-cream sm:text-4xl"><T>Six numbers, and the list behind each one</T></h2>
+              <p className="mt-5 text-lg leading-relaxed text-cream/65"><T>Anyone can print a big number on a travel website. These count something specific — and every list they count is printed further down this page, name by name, so you can check the arithmetic yourself.</T></p>
             </div>
           </Reveal>
 
@@ -277,14 +279,8 @@ export default async function AboutPage() {
               <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">
                 Celebrity &amp; VIP Experiences
               </p>
-              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">
-                People who could book anywhere in the world booked here
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80">
-                Bollywood actors, Olympic athletes, journalists and some of the most-followed travel
-                creators working today have all put their Egypt trip in our hands — usually with a
-                schedule, a camera crew, and no room for a day going wrong.
-              </p>
+              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>People who could book anywhere in the world booked here</T></h2>
+              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80"><T>Bollywood actors, Olympic athletes, journalists and some of the most-followed travel creators working today have all put their Egypt trip in our hands — usually with a schedule, a camera crew, and no room for a day going wrong.</T></p>
             </div>
           </Reveal>
 
@@ -296,9 +292,7 @@ export default async function AboutPage() {
                   image of someone else. */}
               <article className="flex h-full flex-col rounded-[2rem] bg-ink p-1.5 ring-1 ring-black/5">
                 <div className="flex h-full flex-col rounded-[1.625rem] px-7 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:px-9 sm:py-10">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-light">
-                    Handled by Egypt Eye
-                  </p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-light"><T>Handled by Egypt Eye</T></p>
                   <h3 className="mt-5 font-display text-4xl font-semibold leading-none text-cream sm:text-5xl">
                     {headlineVipGuest.name}
                   </h3>
@@ -309,9 +303,7 @@ export default async function AboutPage() {
                   <p className="text-[15px] leading-relaxed text-cream/75">{headlineVipGuest.fact}</p>
                   <p className="mt-auto pt-8 text-xs leading-relaxed text-cream/50">
                     Planning something with a schedule this tight?{" "}
-                    <Link href="/customize" className="text-gold-light underline-offset-4 hover:underline">
-                      Tell us the dates.
-                    </Link>
+                    <Link href="/customize" className="text-gold-light underline-offset-4 hover:underline"><T>Tell us the dates.</T></Link>
                   </p>
                 </div>
               </article>
@@ -334,9 +326,7 @@ export default async function AboutPage() {
 
           <Reveal>
             <div className="mt-16">
-              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                The guest list
-              </h3>
+              <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>The guest list</T></h3>
               <ul className="mt-6 grid gap-x-12 sm:grid-cols-2 lg:grid-cols-3">
                 {vipClients.map((v) => (
                   <IndexRow key={v.name} primary={v.name} secondary={v.role} />
@@ -353,12 +343,8 @@ export default async function AboutPage() {
           <Reveal>
             <div className="max-w-2xl">
               <Rule />
-              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">
-                Trusted by Travel Agencies
-              </p>
-              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">
-                Other travel professionals hand us their own clients
-              </h2>
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Trusted by Travel Agencies</T></p>
+              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>Other travel professionals hand us their own clients</T></h2>
               <p className="mt-5 text-lg leading-relaxed text-ink-soft/80">
                 It&rsquo;s one thing for a traveler to take a chance on you. It&rsquo;s another for a
                 travel agency to put their own name on your work and send you the people who pay
@@ -372,9 +358,7 @@ export default async function AboutPage() {
               {/* Sourced from Egypt Eye directly rather than the partner deck. */}
               <article className="rounded-[2rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06] lg:sticky lg:top-28">
                 <div className="rounded-[1.625rem] bg-cream px-7 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-9 sm:py-10">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark">
-                    Longest-running agency partner
-                  </p>
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>Longest-running agency partner</T></p>
                   <h3 className="mt-5 font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl">
                     {headlineAgencyPartner.name}
                   </h3>
@@ -385,7 +369,7 @@ export default async function AboutPage() {
                   <p className="font-display text-[2.75rem] font-semibold leading-none tabular-nums text-gold-dark">
                     100+
                   </p>
-                  <p className="mt-2 text-sm font-semibold text-ink">travelers a year, through us</p>
+                  <p className="mt-2 text-sm font-semibold text-ink"><T>travelers a year, through us</T></p>
                   <p className="mt-5 text-[15px] leading-relaxed text-ink-soft/80">
                     {headlineAgencyPartner.fact}
                   </p>
@@ -419,11 +403,7 @@ export default async function AboutPage() {
                     />
                   ))}
                 </ul>
-                <p className="mt-4 border-t border-black/[0.07] pt-4 text-xs leading-relaxed text-ink-soft/55">
-                  Where a group travelled with us more than once, the extra dates are listed
-                  alongside. A few of the earliest trips are recorded without a month — those are
-                  shown without one rather than given a guessed date.
-                </p>
+                <p className="mt-4 border-t border-black/[0.07] pt-4 text-xs leading-relaxed text-ink-soft/55"><T>Where a group travelled with us more than once, the extra dates are listed alongside. A few of the earliest trips are recorded without a month — those are shown without one rather than given a guessed date.</T></p>
 
                 <h3 className="mt-12 text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
                   Collaborators &amp; business partners
@@ -448,17 +428,9 @@ export default async function AboutPage() {
           <Reveal>
             <div className="max-w-2xl">
               <Rule tone="dark" />
-              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-                Real People, Real Experiences
-              </p>
-              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-cream sm:text-4xl">
-                Every photograph here is a trip we actually ran
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-cream/65">
-                No stock library, no models, no borrowed shots. Each caption names the group who
-                travelled and the month they were here — the same photos we send agencies when they
-                ask what a trip with us looks like.
-              </p>
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-light"><T>Real People, Real Experiences</T></p>
+              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-cream sm:text-4xl"><T>Every photograph here is a trip we actually ran</T></h2>
+              <p className="mt-5 text-lg leading-relaxed text-cream/65"><T>No stock library, no models, no borrowed shots. Each caption names the group who travelled and the month they were here — the same photos we send agencies when they ask what a trip with us looks like.</T></p>
             </div>
           </Reveal>
 
@@ -484,17 +456,9 @@ export default async function AboutPage() {
           <Reveal>
             <div className="max-w-2xl">
               <Rule />
-              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">
-                Behind the Experience
-              </p>
-              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">
-                What we actually own, and what that changes
-              </h2>
-              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80">
-                Most of what goes wrong on a trip to Egypt goes wrong in the gaps between
-                companies — the operator, the driver, the photographer, the person you message when
-                something changes. There are no gaps here, because all of it is us.
-              </p>
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Behind the Experience</T></p>
+              <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>What we actually own, and what that changes</T></h2>
+              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80"><T>Most of what goes wrong on a trip to Egypt goes wrong in the gaps between companies — the operator, the driver, the photographer, the person you message when something changes. There are no gaps here, because all of it is us.</T></p>
             </div>
           </Reveal>
 
@@ -515,16 +479,14 @@ export default async function AboutPage() {
           <Reveal>
             <div className="mt-14 grid gap-10 border-t border-black/[0.07] pt-10 lg:grid-cols-2 lg:gap-16">
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                  Where we run our own trips
-                </h3>
-                <p className="mt-4 text-sm font-semibold text-ink">Egypt</p>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Where we run our own trips</T></h3>
+                <p className="mt-4 text-sm font-semibold text-ink"><T>Egypt</T></p>
                 <div className="mt-2.5 flex flex-wrap gap-2">
                   {coveredDestinations.egypt.map((d) => (
                     <Wordmark key={d}>{d}</Wordmark>
                   ))}
                 </div>
-                <p className="mt-6 text-sm font-semibold text-ink">Jordan</p>
+                <p className="mt-6 text-sm font-semibold text-ink"><T>Jordan</T></p>
                 <div className="mt-2.5 flex flex-wrap gap-2">
                   {coveredDestinations.jordan.map((d) => (
                     <Wordmark key={d}>{d}</Wordmark>
@@ -532,9 +494,7 @@ export default async function AboutPage() {
                 </div>
               </div>
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                  Hotels we book guests into
-                </h3>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Hotels we book guests into</T></h3>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {hotelPartners.map((h) => (
                     <Wordmark key={h}>{h}</Wordmark>
@@ -544,9 +504,7 @@ export default async function AboutPage() {
                   From international properties on the Nile to the small pyramid-view guesthouses in
                   Giza — we book what suits the trip, and we&rsquo;re the ones who fix it if the room
                   is wrong.{" "}
-                  <Link href="/hotel-deals" className="font-semibold text-gold-dark underline-offset-4 hover:underline">
-                    See current hotel deals
-                  </Link>
+                  <Link href="/hotel-deals" className="font-semibold text-gold-dark underline-offset-4 hover:underline"><T>See current hotel deals</T></Link>
                   .
                 </p>
               </div>
@@ -562,7 +520,7 @@ export default async function AboutPage() {
             <div className="mx-auto max-w-2xl text-center">
               <Image
                 src="/brand/egypt-eye-badge-gold.png"
-                alt="Egypt Eye seal"
+                alt={ui["Egypt Eye seal"]}
                 width={96}
                 height={96}
                 className="mx-auto mb-7"
@@ -615,9 +573,9 @@ export default async function AboutPage() {
         <section className="py-20 lg:py-28">
           <Container>
             <SectionHeading
-              eyebrow="Traveler Stories"
-              title="What Our Travelers Say"
-              description="Real words from real trips — a small sample of what's waiting for you on the full page."
+              eyebrow={ui["Traveler Stories"]}
+              title={ui["What Our Travelers Say"]}
+              description={ui["Real words from real trips — a small sample of what's waiting for you on the full page."]}
               align="center"
             />
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -645,7 +603,7 @@ export default async function AboutPage() {
           stays put. */}
       <section id="contact" className="scroll-mt-24 border-t border-black/5 py-20 lg:py-28">
         <Container>
-          <SectionHeading eyebrow={contact.heroEyebrow} title="Get in Touch" align="center" />
+          <SectionHeading eyebrow={contact.heroEyebrow} title={ui["Get in Touch"]} align="center" />
           <div className="mx-auto mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
@@ -653,9 +611,7 @@ export default async function AboutPage() {
               className="group min-w-0 rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-gold/40"
             >
               <div className="h-full rounded-[1.375rem] bg-cream px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-7">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark">
-                  WhatsApp
-                </p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>WhatsApp</T></p>
                 <p className="mt-3 font-display text-xl font-semibold text-ink">
                   {site.contact.whatsapp}
                 </p>
@@ -668,9 +624,7 @@ export default async function AboutPage() {
               className="group min-w-0 rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-gold/40"
             >
               <div className="h-full rounded-[1.375rem] bg-cream px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-7">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark">
-                  Email
-                </p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>Email</T></p>
                 <p className="mt-3 break-words font-display text-lg font-semibold text-ink sm:text-xl">
                   {site.contact.email}
                 </p>
@@ -680,7 +634,7 @@ export default async function AboutPage() {
           </div>
 
           <div className="mt-10 flex flex-col items-center gap-3">
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">Follow Along</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Follow Along</T></p>
             <SocialLinks site={site} tone="light" />
           </div>
 
@@ -709,13 +663,13 @@ export default async function AboutPage() {
               </div>
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-                  <p className="font-display text-lg font-semibold text-ink">Your Voucher</p>
+                  <p className="font-display text-lg font-semibold text-ink"><T>Your Voucher</T></p>
                   <p className="mt-2 text-sm text-ink-soft/75">{site.policies.voucher}</p>
                 </div>
               </div>
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-                  <p className="font-display text-lg font-semibold text-ink">Cancellation Policy</p>
+                  <p className="font-display text-lg font-semibold text-ink"><T>Cancellation Policy</T></p>
                   <p className="mt-2 text-sm text-ink-soft/75">{site.policies.cancellation}</p>
                 </div>
               </div>
@@ -732,9 +686,7 @@ export default async function AboutPage() {
         />
         <Container className="relative flex flex-col items-center gap-7 py-24 text-center lg:py-32">
           <Rule tone="dark" />
-          <h2 className="max-w-3xl text-balance font-display text-3xl font-semibold leading-tight text-cream sm:text-5xl">
-            The next name on that list could be yours
-          </h2>
+          <h2 className="max-w-3xl text-balance font-display text-3xl font-semibold leading-tight text-cream sm:text-5xl"><T>The next name on that list could be yours</T></h2>
           <p className="max-w-xl text-lg leading-relaxed text-cream/65">
             Tell us who&rsquo;s travelling, roughly when, and what you actually want to see. We&rsquo;ll
             come back with a real itinerary and a real price — written by the people who&rsquo;ll be

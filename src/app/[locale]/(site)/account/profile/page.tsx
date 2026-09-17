@@ -7,6 +7,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { ProfileForm } from "./ProfileForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { AvatarUpload } from "./AvatarUpload";
+import { T } from "@/i18n/T";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
 // never be statically prerendered. Declared explicitly rather than inferred
@@ -36,15 +37,15 @@ export default async function ProfilePage() {
         <Link href="/account" className="text-sm font-semibold text-ink-soft/60 hover:text-ink">
           ← Back to My Account
         </Link>
-        <h1 className="mt-3 font-display text-3xl font-semibold text-ink">Edit Profile</h1>
+        <h1 className="mt-3 font-display text-3xl font-semibold text-ink"><T>Edit Profile</T></h1>
 
         <div className="mt-8 rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-9">
-          <h2 className="mb-5 font-display text-lg font-semibold text-ink">Profile Photo</h2>
+          <h2 className="mb-5 font-display text-lg font-semibold text-ink"><T>Profile Photo</T></h2>
           <AvatarUpload userId={user.id} avatarUrl={profile?.avatar_url ?? null} firstName={profile?.first_name ?? null} />
         </div>
 
         <div className="mt-6 rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-9">
-          <h2 className="mb-5 font-display text-lg font-semibold text-ink">Your Details</h2>
+          <h2 className="mb-5 font-display text-lg font-semibold text-ink"><T>Your Details</T></h2>
           <ProfileForm
             userId={user.id}
             profile={
@@ -54,7 +55,7 @@ export default async function ProfilePage() {
         </div>
 
         <div className="mt-6 rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-9">
-          <h2 className="mb-5 font-display text-lg font-semibold text-ink">Change Password</h2>
+          <h2 className="mb-5 font-display text-lg font-semibold text-ink"><T>Change Password</T></h2>
           <ChangePasswordForm />
         </div>
       </Container>

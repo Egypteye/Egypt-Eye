@@ -6,6 +6,7 @@ import { Gallery } from "./Gallery";
 import { EventCountdown } from "./EventCountdown";
 import { SignatureExperienceCard } from "./SignatureExperienceCard";
 import { FaqAccordion } from "./FaqAccordion";
+import { trAll } from "@/i18n/T";
 
 const CALLOUT_STYLES: Record<string, string> = {
   Info: "border-gold/30 bg-sand-dim",
@@ -21,7 +22,8 @@ function videoEmbedSrc(url: string): string | null {
   return null;
 }
 
-const components: PortableTextComponents = {
+function portableTextComponents(ui: Record<string, string>): PortableTextComponents {
+  return {
   types: {
     image: ({ value }) => {
       const src = urlForImage(value)?.width(1400).url();
@@ -62,7 +64,7 @@ const components: PortableTextComponents = {
     galleryBlock: ({ value }) =>
       value.images && value.images.length > 0 ? (
         <div className="my-10">
-          <Gallery images={value.images} alt="Gallery" />
+          <Gallery images={value.images} alt={ui["Gallery"]} />
         </div>
       ) : null,
     videoEmbedBlock: ({ value }) => {
@@ -125,12 +127,17 @@ const components: PortableTextComponents = {
       </div>
     ),
   },
-};
+  };
+}
 
-export function StoryBody({ body }: { body: StoryBodyBlock[] }) {
+export async function StoryBody({ body }: { body: StoryBodyBlock[] }) {
+  const ui = await trAll([
+    "Gallery",
+  ]);
+
   return (
     <div className="prose prose-lg max-w-none text-ink-soft/85 prose-headings:font-display prose-headings:text-ink prose-a:text-gold-dark prose-strong:text-ink">
-      <PortableText value={body} components={components} />
+      <PortableText value={body} components={portableTextComponents(ui)} />
     </div>
   );
 }

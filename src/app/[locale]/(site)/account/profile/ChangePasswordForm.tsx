@@ -3,8 +3,10 @@
 import { useState, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AuthInput } from "@/components/AuthCard";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export function ChangePasswordForm() {
+  const tr = useTr();
   const [status, setStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -40,11 +42,11 @@ export function ChangePasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
-        <AuthInput label="New password" name="newPassword" type="password" required minLength={8} autoComplete="new-password" />
-        <AuthInput label="Confirm new password" name="confirmPassword" type="password" required minLength={8} autoComplete="new-password" />
+        <AuthInput label={tr("New password")} name="newPassword" type="password" required minLength={8} autoComplete="new-password" />
+        <AuthInput label={tr("Confirm new password")} name="confirmPassword" type="password" required minLength={8} autoComplete="new-password" />
       </div>
       {status === "error" && <p className="text-sm text-terracotta">{errorMessage}</p>}
-      {status === "saved" && <p className="text-sm text-nile">Password updated.</p>}
+      {status === "saved" && <p className="text-sm text-nile">{tr("Password updated.")}</p>}
       <button
         type="submit"
         disabled={status === "saving"}

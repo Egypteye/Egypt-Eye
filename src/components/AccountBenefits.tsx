@@ -1,3 +1,4 @@
+import { T } from "@/i18n/T";
 const BENEFITS = [
   "Save your favorite journeys",
   "Keep your trip plans",
@@ -11,7 +12,7 @@ export function AccountBenefits({ compact = false }: { compact?: boolean }) {
   return (
     <div className={compact ? "" : "rounded-2xl border border-gold/15 bg-sand-dim p-6"}>
       {!compact && (
-        <h3 className="font-display text-lg font-semibold text-ink">Create your Egypt Eye account</h3>
+        <h3 className="font-display text-lg font-semibold text-ink"><T>Create your Egypt Eye account</T></h3>
       )}
       <ul className="mt-3 flex flex-col gap-2">
         {BENEFITS.map((b) => (

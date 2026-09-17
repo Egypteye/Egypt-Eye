@@ -3,7 +3,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { transfersPage } from "@/content/transfers";
 import { localizedTransferCategories } from "@/content/productTranslations";
-import { useLocale } from "@/i18n/LocaleProvider";
+import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { getTransferQuote } from "@/lib/transferPricing";
 import type { TransferCategory, TransferVehicleId, TransferZone } from "@/content/types";
 
@@ -47,6 +47,7 @@ function Stepper({ value, onChange, min = 1, max = 60, label }: { value: number;
 }
 
 export function TransferBookingForm() {
+  const tr = useTr();
   const { locale } = useLocale();
   const categories = useMemo(() => localizedTransferCategories(locale), [locale]);
   const [category, setCategory] = useState<TransferCategory>("airport");
@@ -161,7 +162,7 @@ export function TransferBookingForm() {
   if (status === "sent") {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
-        <p className="font-display text-2xl font-semibold text-ink">Request sent</p>
+        <p className="font-display text-2xl font-semibold text-ink">{tr("Request sent")}</p>
         <p className="mt-3 text-sm text-ink-soft/70">
           We&rsquo;ve received your transfer request for <strong>{routeSummary()}</strong>. We&rsquo;ll confirm by email
           shortly{quote.kind === "quote" ? " with your quote" : ""}.
@@ -173,9 +174,7 @@ export function TransferBookingForm() {
   return (
     <form onSubmit={handleSubmit} className="relative rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-10">
       <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-        <label>
-          Company
-          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
@@ -183,7 +182,7 @@ export function TransferBookingForm() {
       <div className="mb-8 border-b border-black/5 pb-8">
         <div className="mb-5 flex items-center gap-3">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold/20 text-xs font-bold text-gold-dark">1</span>
-          <h3 className="font-display text-lg font-semibold text-ink">How would you like to travel?</h3>
+          <h3 className="font-display text-lg font-semibold text-ink">{tr("How would you like to travel?")}</h3>
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
           {categories.map((c) => (
@@ -220,10 +219,8 @@ export function TransferBookingForm() {
 
         {isPrivateDriver ? (
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-              Pickup area
-              <select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
-                <option value="">Select an area</option>
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Pickup area")}<select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
+                <option value="">{tr("Select an area")}</option>
                 {zoneOptions
                   .filter((z) => !z.isCustom)
                   .map((z) => (
@@ -233,9 +230,7 @@ export function TransferBookingForm() {
                   ))}
               </select>
             </label>
-            <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-              Hire length
-              <div className="flex flex-wrap gap-2">
+            <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Hire length")}<div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => setIsDailyRate(false)}
@@ -272,31 +267,25 @@ export function TransferBookingForm() {
           </div>
         ) : isCustomCategory ? (
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-              Pickup location
-              <input
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Pickup location")}<input
                 value={customFrom}
                 onChange={(e) => setCustomFrom(e.target.value)}
-                placeholder="e.g. Marsa Alam Airport"
+                placeholder={tr("e.g. Marsa Alam Airport")}
                 className={inputClass()}
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-              Destination
-              <input
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Destination")}<input
                 value={customTo}
                 onChange={(e) => setCustomTo(e.target.value)}
-                placeholder="e.g. Cairo, Downtown Hotel"
+                placeholder={tr("e.g. Cairo, Downtown Hotel")}
                 className={inputClass()}
               />
             </label>
           </div>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-              Pickup location
-              <select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
-                <option value="">Select pickup</option>
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Pickup location")}<select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
+                <option value="">{tr("Select pickup")}</option>
                 {zoneOptions.map((z) => (
                   <option key={z.id} value={z.id}>
                     {z.label}
@@ -307,15 +296,13 @@ export function TransferBookingForm() {
                 <input
                   value={customFrom}
                   onChange={(e) => setCustomFrom(e.target.value)}
-                  placeholder="Tell us the pickup location"
+                  placeholder={tr("Tell us the pickup location")}
                   className={inputClass("mt-1")}
                 />
               )}
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-              Destination
-              <select value={toZoneId} onChange={(e) => setToZoneId(e.target.value)} className={inputClass()}>
-                <option value="">Select destination</option>
+            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Destination")}<select value={toZoneId} onChange={(e) => setToZoneId(e.target.value)} className={inputClass()}>
+                <option value="">{tr("Select destination")}</option>
                 {zoneOptions.map((z) => (
                   <option key={z.id} value={z.id}>
                     {z.label}
@@ -326,7 +313,7 @@ export function TransferBookingForm() {
                 <input
                   value={customTo}
                   onChange={(e) => setCustomTo(e.target.value)}
-                  placeholder="Tell us the destination"
+                  placeholder={tr("Tell us the destination")}
                   className={inputClass("mt-1")}
                 />
               )}
@@ -335,9 +322,7 @@ export function TransferBookingForm() {
         )}
 
         <div className="mt-5 grid gap-5 sm:grid-cols-4">
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-            Date
-            <input
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Date")}<input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -346,17 +331,11 @@ export function TransferBookingForm() {
               className={inputClass()}
             />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-            Time
-            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass()} />
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Time")}<input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass()} />
           </label>
-          <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-            Passengers
-            <Stepper value={passengers} onChange={setPassengers} max={40} label="passengers" />
+          <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Passengers")}<Stepper value={passengers} onChange={setPassengers} max={40} label={tr("passengers")} />
           </div>
-          <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-            Luggage
-            <Stepper value={luggage} onChange={setLuggage} min={0} max={30} label="luggage" />
+          <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Luggage")}<Stepper value={luggage} onChange={setLuggage} min={0} max={30} label={tr("luggage")} />
           </div>
         </div>
       </div>
@@ -365,7 +344,7 @@ export function TransferBookingForm() {
       <div className="mb-8 border-b border-black/5 pb-8">
         <div className="mb-5 flex items-center gap-3">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold/20 text-xs font-bold text-gold-dark">3</span>
-          <h3 className="font-display text-lg font-semibold text-ink">Choose your vehicle</h3>
+          <h3 className="font-display text-lg font-semibold text-ink">{tr("Choose your vehicle")}</h3>
         </div>
         <div className="grid gap-3 sm:grid-cols-3 lg:grid-cols-5">
           {vehicles.map((v) => (
@@ -404,7 +383,7 @@ export function TransferBookingForm() {
       <div className="mb-8">
         <div className="mb-5 flex items-center gap-3">
           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-gold/20 text-xs font-bold text-gold-dark">4</span>
-          <h3 className="font-display text-lg font-semibold text-ink">Your details</h3>
+          <h3 className="font-display text-lg font-semibold text-ink">{tr("Your details")}</h3>
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
@@ -419,13 +398,11 @@ export function TransferBookingForm() {
             WhatsApp / Phone *
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required className={inputClass()} />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
-            Flight number or other notes
-            <textarea
+          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">{tr("Flight number or other notes")}<textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
-              placeholder="Flight number, hotel name, extra stops — anything that helps us plan your pickup."
+              placeholder={tr("Flight number, hotel name, extra stops — anything that helps us plan your pickup.")}
               className={inputClass()}
             />
           </label>
@@ -443,9 +420,7 @@ export function TransferBookingForm() {
       </button>
 
       {status === "error" && (
-        <p className="mt-3 text-center text-xs text-terracotta">
-          Something went wrong sending your request. Please message us directly on WhatsApp instead.
-        </p>
+        <p className="mt-3 text-center text-xs text-terracotta">{tr("Something went wrong sending your request. Please message us directly on WhatsApp instead.")}</p>
       )}
     </form>
   );

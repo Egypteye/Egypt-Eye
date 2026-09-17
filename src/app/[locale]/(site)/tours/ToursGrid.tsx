@@ -3,7 +3,7 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { TourCard } from "@/components/TourCard";
 import type { Tour } from "@/content/types";
-import { useLocale } from "@/i18n/LocaleProvider";
+import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { t } from "@/i18n/format";
 
 // Values only — the wording comes from the dictionary so these translate
@@ -69,6 +69,7 @@ const readSearch = () => window.location.search;
 const readNoSearch = () => "";
 
 export function ToursGrid({ tours }: { tours: Tour[] }) {
+  const tr = useTr();
   // Deliberately NOT useSearchParams(). That hook opts a component out of
   // prerendering, and with this grid inside a <Suspense fallback={null}>, the
   // bail-out meant /tours shipped its fallback — zero tour links — in the
@@ -158,7 +159,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
           />
         </div>
 
-        <FilterGroup title="Trip Type">
+        <FilterGroup title={tr("Trip Type")}>
           <div className="flex flex-col gap-1">
             {TRIP_TYPES.map((type) => (
               <button
@@ -174,7 +175,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
           </div>
         </FilterGroup>
 
-        <FilterGroup title="Duration">
+        <FilterGroup title={tr("Duration")}>
           <div className="flex flex-col gap-1">
             {DURATIONS.map((d) => (
               <button
@@ -190,7 +191,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
           </div>
         </FilterGroup>
 
-        <FilterGroup title="Destination">
+        <FilterGroup title={tr("Destination")}>
           <div className="max-h-52 overflow-y-auto pr-1">
             <div className="flex flex-col gap-1">
               {allDestinations.map((d) => (
@@ -208,7 +209,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
           </div>
         </FilterGroup>
 
-        <FilterGroup title="Suitable For">
+        <FilterGroup title={tr("Suitable For")}>
           <div className="flex flex-wrap gap-2">
             {TRAVEL_STYLES.map((s) => (
               <button

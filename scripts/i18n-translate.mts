@@ -17,7 +17,14 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { LOCALES, DEFAULT_LOCALE, type Locale } from "../src/i18n/locales.js";
 
 const MODEL = "gemini-3.6-flash";
-const MANIFEST = "src/i18n/generated/manifest.json";
+// Two corpora, one pipeline. The catalogue is server-only and large; the UI
+// strings are small and also shipped to the browser, so they live apart — but
+// they translate identically, which is what keeps "add a language" to one
+// command rather than one command plus a few hundred hand-written keys.
+const CORPORA = [
+  { name: "catalogue", manifest: "src/i18n/generated/manifest.json", out: (l: string) => `src/i18n/generated/${l}.json` },
+  { name: "interface", manifest: "src/i18n/generated/ui-manifest.json", out: (l: string) => `src/i18n/generated/ui/${l}.json` },
+];
 const BATCH_SIZE = 25;
 const MAX_RETRIES = 4;
 
@@ -77,12 +84,6 @@ if (targets.length === 0 || targets.some((t) => !LOCALES.some((l) => l.code === 
   process.exit(1);
 }
 
-const manifest = readJson(MANIFEST);
-if (Object.keys(manifest).length === 0) {
-  console.error(`${MANIFEST} is empty — run "npm run i18n:extract" first.`);
-  process.exit(1);
-}
-
 async function translateBatch(texts: string[], locale: Locale): Promise<string[]> {
   const info = LOCALES.find((l) => l.code === locale)!;
   const prompt = `You are translating the website of Egypt Eye, a private Egyptian tour operator, from English into ${info.englishName}.
@@ -139,37 +140,45 @@ ${JSON.stringify(texts, null, 0)}`;
   return texts;
 }
 
-for (const locale of targets) {
-  const file = `src/i18n/generated/${locale}.json`;
-  const existing = readJson(file);
-  const missing = Object.entries(manifest).filter(([key]) => !existing[key]);
-  const todo = missing.slice(0, Number.isFinite(limit) ? limit : undefined);
-
-  const info = LOCALES.find((l) => l.code === locale)!;
-  console.log(
-    `\n${info.englishName}: ${Object.keys(existing).length}/${Object.keys(manifest).length} done, ` +
-      `${missing.length} missing, translating ${todo.length}`
-  );
-  if (todo.length === 0) continue;
-
-  for (let i = 0; i < todo.length; i += BATCH_SIZE) {
-    const batch = todo.slice(i, i + BATCH_SIZE);
-    const out = await translateBatch(batch.map(([, text]) => text), locale);
-    batch.forEach(([key], n) => {
-      // An unchanged string means the model declined or the batch failed;
-      // storing it would mark it "done" and it would never be retried.
-      if (out[n] !== batch[n][1]) existing[key] = out[n];
-    });
-
-    // Written every batch, sorted, so an interrupted run loses nothing and
-    // the diff stays reviewable.
-    const sorted = Object.fromEntries(Object.entries(existing).sort(([a], [b]) => (a < b ? -1 : 1)));
-    writeFileSync(file, JSON.stringify(sorted, null, 0) + "\n");
-
-    const done = Math.min(i + BATCH_SIZE, todo.length);
-    process.stdout.write(`\r  ${done}/${todo.length} (${Math.round((done / todo.length) * 100)}%)`);
+for (const corpus of CORPORA) {
+  const manifest = readJson(corpus.manifest);
+  if (Object.keys(manifest).length === 0) {
+    console.warn(`${corpus.manifest} is empty — run "npm run i18n:extract" first. Skipping.`);
+    continue;
   }
-  const total = Object.keys(manifest).length;
-  const have = Object.keys(readJson(file)).length;
-  console.log(`\n  → ${file}: ${have}/${total} (${Math.round((have / total) * 100)}% of the site)`);
+
+  for (const locale of targets) {
+    const file = corpus.out(locale);
+    const existing = readJson(file);
+    const missing = Object.entries(manifest).filter(([key]) => !existing[key]);
+    const todo = missing.slice(0, Number.isFinite(limit) ? limit : undefined);
+
+    const info = LOCALES.find((l) => l.code === locale)!;
+    console.log(
+      `\n${info.englishName} / ${corpus.name}: ${Object.keys(existing).length}/${Object.keys(manifest).length} done, ` +
+        `${missing.length} missing, translating ${todo.length}`
+    );
+    if (todo.length === 0) continue;
+
+    for (let i = 0; i < todo.length; i += BATCH_SIZE) {
+      const batch = todo.slice(i, i + BATCH_SIZE);
+      const out = await translateBatch(batch.map(([, text]) => text), locale);
+      batch.forEach(([key], n) => {
+        // An unchanged string means the model declined or the batch failed;
+        // storing it would mark it "done" and it would never be retried.
+        if (out[n] !== batch[n][1]) existing[key] = out[n];
+      });
+
+      // Written every batch, sorted, so an interrupted run loses nothing and
+      // the diff stays reviewable.
+      const sorted = Object.fromEntries(Object.entries(existing).sort(([a], [b]) => (a < b ? -1 : 1)));
+      writeFileSync(file, JSON.stringify(sorted, null, 0) + "\n");
+
+      const done = Math.min(i + BATCH_SIZE, todo.length);
+      process.stdout.write(`\r  ${done}/${todo.length} (${Math.round((done / todo.length) * 100)}%)`);
+    }
+    const total = Object.keys(manifest).length;
+    const have = Object.keys(readJson(file)).length;
+    console.log(`\n  \u2192 ${file}: ${have}/${total} (${Math.round((have / total) * 100)}%)`);
+  }
 }

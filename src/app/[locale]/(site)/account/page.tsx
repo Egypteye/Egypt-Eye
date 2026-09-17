@@ -7,6 +7,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { DiscountOfferCard } from "./DiscountOfferCard";
 import { JourneyList } from "./JourneyList";
+import { T } from "@/i18n/T";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
 // never be statically prerendered. Declared explicitly rather than inferred
@@ -89,15 +90,13 @@ export default async function AccountPage() {
       <Container className="mx-auto max-w-4xl">
         <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">My Account</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>My Account</T></p>
             <h1 className="mt-2 font-display text-3xl font-semibold text-ink">
               Welcome back{user.firstName ? `, ${user.firstName}` : ""}
             </h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/account/profile" className="text-sm font-semibold text-ink-soft/70 hover:text-ink">
-              Edit Profile
-            </Link>
+            <Link href="/account/profile" className="text-sm font-semibold text-ink-soft/70 hover:text-ink"><T>Edit Profile</T></Link>
             <LogoutButton className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
           </div>
         </div>
@@ -105,7 +104,7 @@ export default async function AccountPage() {
         <div className="flex flex-col gap-8">
           {typedAgent?.status === "active" && (
             <div className="rounded-3xl border border-gold/20 bg-ink p-6 sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light">Travel Agent Partner</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light"><T>Travel Agent Partner</T></p>
               <h3 className="mt-2 font-display text-xl font-semibold text-cream">
                 Your {typedAgent.partner_discount_percent}% partner rate is ready
               </h3>
@@ -120,7 +119,7 @@ export default async function AccountPage() {
 
           {typedCodes.length > 0 && (
             <div>
-              <h2 className="mb-4 font-display text-lg font-semibold text-ink">Your Egypt Eye Offer</h2>
+              <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Your Egypt Eye Offer</T></h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {typedCodes.map((code) => (
                   <DiscountOfferCard key={code.id} code={code} />
@@ -131,7 +130,7 @@ export default async function AccountPage() {
 
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold text-ink">Saved Journeys</h2>
+              <h2 className="font-display text-lg font-semibold text-ink"><T>Saved Journeys</T></h2>
               <Link href="/explore-egypt" className="text-sm font-semibold text-gold-dark hover:underline">
                 + Add more
               </Link>
@@ -139,9 +138,7 @@ export default async function AccountPage() {
             {typedJourneys.length === 0 ? (
               <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
                 No saved journeys yet.{" "}
-                <Link href="/explore-egypt" className="font-semibold text-gold-dark underline">
-                  Start exploring Egypt
-                </Link>{" "}
+                <Link href="/explore-egypt" className="font-semibold text-gold-dark underline"><T>Start exploring Egypt</T></Link>{" "}
                 to build one.
               </p>
             ) : (
@@ -150,13 +147,11 @@ export default async function AccountPage() {
           </div>
 
           <div>
-            <h2 className="mb-4 font-display text-lg font-semibold text-ink">Your Reservations</h2>
+            <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Your Reservations</T></h2>
             {typedReservations.length === 0 ? (
               <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
                 No reservations yet.{" "}
-                <Link href="/my-journey" className="font-semibold text-gold-dark underline">
-                  Request your journey
-                </Link>{" "}
+                <Link href="/my-journey" className="font-semibold text-gold-dark underline"><T>Request your journey</T></Link>{" "}
                 when you&rsquo;re ready.
               </p>
             ) : (
@@ -182,8 +177,8 @@ export default async function AccountPage() {
 
           {typedReservations.some((r) => r.status === "confirmed" || r.status === "in_trip" || r.status === "completed") && (
             <div className="rounded-3xl border border-gold/20 bg-ink p-6 text-center sm:p-8">
-              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light">Your Trip</p>
-              <h3 className="mt-2 font-display text-xl font-semibold text-cream">Access your personalized Egypt</h3>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light"><T>Your Trip</T></p>
+              <h3 className="mt-2 font-display text-xl font-semibold text-cream"><T>Access your personalized Egypt</T></h3>
               <Link
                 href="/my-egypt"
                 className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"

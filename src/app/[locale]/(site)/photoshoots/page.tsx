@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { getListingPages, getPhotoshoots } from "@/sanity/fetchers";
+import { trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -19,6 +20,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function PhotoshootsPage() {
+  const ui = await trAll([
+    "Ornately carved columns at Karnak Temple in Luxor",
+  ]);
+
   const [photoshoots, listingPages] = await Promise.all([getPhotoshoots(), getListingPages()]);
   const page = listingPages.photoshoots;
 
@@ -28,7 +33,7 @@ export default async function PhotoshootsPage() {
         <SmartImage
           image="/photos/pexels-17034971.jpg"
           tone="luxor"
-          alt="Ornately carved columns at Karnak Temple in Luxor"
+          alt={ui["Ornately carved columns at Karnak Temple in Luxor"]}
           className="absolute inset-0"
           priority
           sizes="100vw"

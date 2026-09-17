@@ -7,6 +7,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { SignatureExperienceCard } from "@/components/SignatureExperienceCard";
 import { Reveal } from "@/components/Reveal";
 import { getListingPages, getSignatureExperiences } from "@/sanity/fetchers";
+import { trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -20,6 +21,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function SignatureExperiencesPage() {
+  const ui = await trAll([
+    "The colossal statues at Abu Simbel temple",
+  ]);
+
   const [experiences, listingPages] = await Promise.all([getSignatureExperiences(), getListingPages()]);
   const page = listingPages.signatureExperiences;
 
@@ -29,7 +34,7 @@ export default async function SignatureExperiencesPage() {
         <SmartImage
           image="/photos/pexels-6322875.jpg"
           tone="desert"
-          alt="The colossal statues at Abu Simbel temple"
+          alt={ui["The colossal statues at Abu Simbel temple"]}
           className="absolute inset-0"
           priority
           sizes="100vw"

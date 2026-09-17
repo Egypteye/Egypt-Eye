@@ -21,6 +21,7 @@ import {
 } from "@/sanity/fetchers";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { T, trAll } from "@/i18n/T";
 
 export async function generateStaticParams() {
   const slugs = await getAllSignatureExperienceSlugs();
@@ -56,6 +57,20 @@ export default async function SignatureExperienceDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const ui = await trAll([
+    "A Journey Through Your Days",
+    "From Past Guests",
+    "Good to Know",
+    "In Their Words",
+    "Meet Your Hosts",
+    "Questions You Might Have",
+    "The Experience",
+    "The Itinerary",
+    "The people responsible for how this experience actually feels, day to day.",
+    "What a Day Actually Feels Like",
+    "Your People",
+  ]);
+
   const { slug } = await params;
   const [experience, site] = await Promise.all([
     getSignatureExperienceBySlug(slug),
@@ -101,9 +116,7 @@ export default async function SignatureExperienceDetailPage({
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
         <Container className="relative flex min-h-[74vh] flex-col justify-end gap-5 pb-20 pt-32">
           {isComingSoon && (
-            <span className="w-fit rounded-full bg-cream/95 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink">
-              Coming Soon
-            </span>
+            <span className="w-fit rounded-full bg-cream/95 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink"><T>Coming Soon</T></span>
           )}
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
             {experience.forWhom}
@@ -161,8 +174,8 @@ export default async function SignatureExperienceDetailPage({
           <Container>
             <Reveal>
               <SectionHeading
-                eyebrow="The Experience"
-                title="What a Day Actually Feels Like"
+                eyebrow={ui["The Experience"]}
+                title={ui["What a Day Actually Feels Like"]}
                 description={experience.experienceIntro}
               />
             </Reveal>
@@ -195,7 +208,7 @@ export default async function SignatureExperienceDetailPage({
         <section className="bg-sand-dim py-20">
           <Container>
             <Reveal>
-              <SectionHeading eyebrow="The Itinerary" title="A Journey Through Your Days" />
+              <SectionHeading eyebrow={ui["The Itinerary"]} title={ui["A Journey Through Your Days"]} />
             </Reveal>
             <Reveal delay={100} className="mt-10">
               <Itinerary days={experience.itineraryDays} />
@@ -225,9 +238,9 @@ export default async function SignatureExperienceDetailPage({
           <Container>
             <Reveal>
               <SectionHeading
-                eyebrow="Your People"
-                title="Meet Your Hosts"
-                description="The people responsible for how this experience actually feels, day to day."
+                eyebrow={ui["Your People"]}
+                title={ui["Meet Your Hosts"]}
+                description={ui["The people responsible for how this experience actually feels, day to day."]}
               />
             </Reveal>
             <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -246,7 +259,7 @@ export default async function SignatureExperienceDetailPage({
         <section className="bg-sand-dim py-20">
           <Container>
             <Reveal>
-              <SectionHeading eyebrow="From Past Guests" title="In Their Words" align="center" />
+              <SectionHeading eyebrow={ui["From Past Guests"]} title={ui["In Their Words"]} align="center" />
             </Reveal>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {experience.testimonials.map((t, i) => (
@@ -264,7 +277,7 @@ export default async function SignatureExperienceDetailPage({
         <section className="py-20">
           <Container className="mx-auto max-w-3xl">
             <Reveal>
-              <SectionHeading eyebrow="Good to Know" title="Questions You Might Have" align="center" />
+              <SectionHeading eyebrow={ui["Good to Know"]} title={ui["Questions You Might Have"]} align="center" />
             </Reveal>
             <Reveal delay={100} className="mt-10">
               <FaqAccordion faqs={experience.faqs} />
@@ -278,12 +291,8 @@ export default async function SignatureExperienceDetailPage({
         <section className="py-20">
           <Container className="mx-auto max-w-3xl">
             <Reveal>
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                The Background
-              </p>
-              <h2 className="mt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
-                Read the Full Story
-              </h2>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>The Background</T></p>
+              <h2 className="mt-2 font-display text-2xl font-semibold text-ink sm:text-3xl"><T>Read the Full Story</T></h2>
               <div className="mt-6 max-w-sm">
                 <StoryCard story={experience.relatedStory} />
               </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const inputClass =
   "w-full rounded-lg border border-black/10 bg-sand px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-gold";
@@ -54,6 +55,7 @@ function RateRequestModal({
   rooms: { id: string; name: string }[];
   onClose: () => void;
 }) {
+  const tr = useTr();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState("");
 
@@ -124,14 +126,14 @@ function RateRequestModal({
       >
         <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-black/5 bg-cream/95 p-6 backdrop-blur-sm">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-dark">Check Latest Rates</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-dark">{tr("Check Latest Rates")}</p>
             <p id="rate-request-modal-title" className="mt-1 font-display text-lg font-semibold leading-snug text-ink">
               {hotelName}
             </p>
           </div>
           <button
             type="button"
-            aria-label="Close"
+            aria-label={tr("Close")}
             onClick={onClose}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-soft/60 transition hover:bg-sand-dim hover:text-ink"
           >
@@ -148,7 +150,7 @@ function RateRequestModal({
                 <path d="M4 10.5l4 4 8-9" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
-            <p className="font-display text-lg font-semibold text-ink">Request sent</p>
+            <p className="font-display text-lg font-semibold text-ink">{tr("Request sent")}</p>
             <p className="text-sm text-ink-soft/70">
               Our reservations team will confirm the latest rate, availability, and any current discount for{" "}
               {hotelName} and get back to you by email.
@@ -164,9 +166,7 @@ function RateRequestModal({
         ) : (
           <form onSubmit={handleSubmit} className="relative flex flex-col gap-4 p-6">
             <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-              <label>
-                Company
-                <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+              <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
               </label>
             </div>
             <p className="text-sm text-ink-soft/70">
@@ -175,9 +175,9 @@ function RateRequestModal({
             </p>
 
             {rooms.length > 0 && (
-              <Field label="Room Type" htmlFor="rate-room">
+              <Field label={tr("Room Type")} htmlFor="rate-room">
                 <select id="rate-room" name="roomId" defaultValue="" className={inputClass}>
-                  <option value="">Not sure / any room type</option>
+                  <option value="">{tr("Not sure / any room type")}</option>
                   {rooms.map((r) => (
                     <option key={r.id} value={r.id}>
                       {r.name}
@@ -188,7 +188,7 @@ function RateRequestModal({
             )}
 
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Check-in" htmlFor="rate-checkin">
+              <Field label={tr("Check-in")} htmlFor="rate-checkin">
                 <input
                   id="rate-checkin"
                   name="checkIn"
@@ -197,7 +197,7 @@ function RateRequestModal({
                   className={inputClass}
                 />
               </Field>
-              <Field label="Check-out" htmlFor="rate-checkout">
+              <Field label={tr("Check-out")} htmlFor="rate-checkout">
                 <input
                   id="rate-checkout"
                   name="checkOut"
@@ -209,15 +209,15 @@ function RateRequestModal({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Rooms" htmlFor="rate-rooms-count">
+              <Field label={tr("Rooms")} htmlFor="rate-rooms-count">
                 <input id="rate-rooms-count" name="roomsCount" type="number" min={1} max={20} defaultValue={1} className={inputClass} />
               </Field>
-              <Field label="Guests" htmlFor="rate-guests">
+              <Field label={tr("Guests")} htmlFor="rate-guests">
                 <input id="rate-guests" name="guests" type="number" min={1} max={40} defaultValue={2} className={inputClass} />
               </Field>
             </div>
 
-            <Field label="Meal Plan" htmlFor="rate-meal-plan">
+            <Field label={tr("Meal Plan")} htmlFor="rate-meal-plan">
               <select id="rate-meal-plan" name="mealPlan" defaultValue="Bed & Breakfast" className={inputClass}>
                 {MEAL_PLANS.map((m) => (
                   <option key={m} value={m}>
@@ -227,19 +227,19 @@ function RateRequestModal({
               </select>
             </Field>
 
-            <Field label="Name" htmlFor="rate-name">
+            <Field label={tr("Name")} htmlFor="rate-name">
               <input id="rate-name" name="name" type="text" maxLength={200} className={inputClass} />
             </Field>
-            <Field label="Email" htmlFor="rate-email">
+            <Field label={tr("Email")} htmlFor="rate-email">
               <input id="rate-email" name="email" type="email" required maxLength={200} className={inputClass} />
             </Field>
-            <Field label="Special requests" htmlFor="rate-message">
+            <Field label={tr("Special requests")} htmlFor="rate-message">
               <textarea
                 id="rate-message"
                 name="message"
                 rows={3}
                 maxLength={2000}
-                placeholder="Anything else we should know?"
+                placeholder={tr("Anything else we should know?")}
                 className={`${inputClass} resize-none`}
               />
             </Field>

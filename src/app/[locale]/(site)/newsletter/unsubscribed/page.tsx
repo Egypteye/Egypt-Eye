@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
+import { T } from "@/i18n/T";
 
 export const metadata: Metadata = {
   title: "Unsubscribed",
@@ -25,9 +26,7 @@ export default async function NewsletterUnsubscribedPage({
             ? "You won't receive any more Egypt Eye marketing emails. You can still log in to your account any time — this only affects marketing emails, not your account or reservation details."
             : "This unsubscribe link is invalid or has already been used."}
         </p>
-        <Link href="/" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">
-          Back to Egypt Eye
-        </Link>
+        <Link href="/" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Back to Egypt Eye</T></Link>
       </Container>
     </section>
   );

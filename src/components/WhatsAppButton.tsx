@@ -2,6 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { whatsappHref } from "@/lib/whatsapp";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // The floating chat bubble lives in the shared site layout, so it has no
 // page-specific data to work with — just the URL. That's enough to tell the
@@ -50,6 +51,7 @@ function labelForPath(pathname: string): string {
 }
 
 export function WhatsAppButton({ whatsappLink }: { whatsappLink: string }) {
+  const tr = useTr();
   const pathname = usePathname();
   const href = whatsappHref(whatsappLink, {
     page: labelForPath(pathname ?? "/"),
@@ -61,7 +63,7 @@ export function WhatsAppButton({ whatsappLink }: { whatsappLink: string }) {
       href={href}
       target="_blank"
       rel="noreferrer"
-      aria-label="Chat on WhatsApp"
+      aria-label={tr("Chat on WhatsApp")}
       className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg shadow-black/20 transition hover:scale-105"
     >
       <svg viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor" aria-hidden="true">

@@ -1,5 +1,6 @@
 import { getCatalogStats } from "@/content/aggregate";
 import type { Experience, Photoshoot, Rating, ResolvedSiteSettings, Tour } from "@/content/types";
+import { trAll } from "@/i18n/T";
 
 const icons: Record<string, React.ReactNode> = {
   shield: (
@@ -13,7 +14,7 @@ const icons: Record<string, React.ReactNode> = {
   ),
 };
 
-export function TrustBar({
+export async function TrustBar({
   tours,
   experiences,
   photoshoots,
@@ -27,6 +28,12 @@ export function TrustBar({
   /** Egypt Eye's company-wide review figure — see content/aggregate.ts. */
   rating: Rating;
 }) {
+  const ui = await trAll([
+    "Add-On Experiences",
+    "Destinations",
+    "Private Tours",
+  ]);
+
   const catalogStats = getCatalogStats(tours, experiences, photoshoots);
 
   return (
@@ -59,9 +66,9 @@ export function TrustBar({
             }
           />
         )}
-        <Stat value={String(catalogStats.tourCount)} label="Private Tours" />
-        <Stat value={String(catalogStats.destinationCount)} label="Destinations" />
-        <Stat value={`${catalogStats.experienceCount + catalogStats.photoshootCount}`} label="Add-On Experiences" />
+        <Stat value={String(catalogStats.tourCount)} label={ui["Private Tours"]} />
+        <Stat value={String(catalogStats.destinationCount)} label={ui["Destinations"]} />
+        <Stat value={`${catalogStats.experienceCount + catalogStats.photoshootCount}`} label={ui["Add-On Experiences"]} />
       </div>
     </div>
   );

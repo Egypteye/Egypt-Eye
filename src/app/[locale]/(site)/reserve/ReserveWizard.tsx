@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Container } from "@/components/Container";
 import { useJourneyItems } from "@/lib/journey";
 import type { JourneyDetailsResponse } from "@/app/api/journey/route";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type FormData = {
   guestName: string;
@@ -25,6 +26,7 @@ const STEPS = ["Your Details", "Dates", "Travelers & Preferences", "Discount Cod
 const emptyDetails: JourneyDetailsResponse = { tours: [], experiences: [], photoshoots: [], destinations: [] };
 
 export function ReserveWizard({ currentUser }: { currentUser: { email: string; firstName: string | null } | null }) {
+  const tr = useTr();
   const items = useJourneyItems();
   const [fetchedDetails, setDetails] = useState<JourneyDetailsResponse | null>(null);
   const [fetchStatus, setFetchStatus] = useState<"idle" | "error">("idle");
@@ -147,11 +149,9 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
     return (
       <section className="bg-sand py-24">
         <Container className="mx-auto max-w-lg text-center">
-          <h1 className="font-display text-3xl font-semibold text-ink">Your journey is empty</h1>
-          <p className="mt-4 text-ink-soft/70">Add a tour, experience, or destination before requesting a reservation.</p>
-          <Link href="/explore-egypt" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">
-            Start Exploring Egypt
-          </Link>
+          <h1 className="font-display text-3xl font-semibold text-ink">{tr("Your journey is empty")}</h1>
+          <p className="mt-4 text-ink-soft/70">{tr("Add a tour, experience, or destination before requesting a reservation.")}</p>
+          <Link href="/explore-egypt" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Start Exploring Egypt")}</Link>
         </Container>
       </section>
     );
@@ -164,7 +164,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
     <section className="bg-sand py-14 sm:py-20">
       <Container className="mx-auto max-w-2xl">
         <div className="mb-8">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">Request Your Journey</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">{tr("Request Your Journey")}</p>
           <h1 className="mt-2 font-display text-3xl font-semibold text-ink">Let&rsquo;s put your trip together</h1>
           <div className="mt-6 flex items-center gap-2">
             {STEPS.map((label, i) => (
@@ -184,23 +184,19 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
               {!currentUser && (
                 <div className="rounded-2xl border border-gold/20 bg-sand-dim p-4 text-sm text-ink-soft/70">
                   Booking as a guest.{" "}
-                  <Link href="/account/login?next=/reserve" className="font-semibold text-gold-dark underline">
-                    Log in
-                  </Link>{" "}
+                  <Link href="/account/login?next=/reserve" className="font-semibold text-gold-dark underline">{tr("Log in")}</Link>{" "}
                   or{" "}
-                  <Link href="/account/signup?next=/reserve" className="font-semibold text-gold-dark underline">
-                    create an account
-                  </Link>{" "}
+                  <Link href="/account/signup?next=/reserve" className="font-semibold text-gold-dark underline">{tr("create an account")}</Link>{" "}
                   to track this reservation in My Account.
                 </div>
               )}
-              <Field label="Full Name *">
+              <Field label={tr("Full Name *")}>
                 <input value={form.guestName} onChange={(e) => update("guestName", e.target.value)} className={inputClass} required />
               </Field>
-              <Field label="Email *">
+              <Field label={tr("Email *")}>
                 <input type="email" value={form.guestEmail} onChange={(e) => update("guestEmail", e.target.value)} className={inputClass} required />
               </Field>
-              <Field label="Phone (optional)">
+              <Field label={tr("Phone (optional)")}>
                 <input type="tel" value={form.guestPhone} onChange={(e) => update("guestPhone", e.target.value)} className={inputClass} />
               </Field>
             </div>
@@ -208,7 +204,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
 
           {step === 1 && (
             <div className="flex flex-col gap-4">
-              <Field label="Trip start date">
+              <Field label={tr("Trip start date")}>
                 <input
                   type="date"
                   value={form.tripStartDate}
@@ -217,7 +213,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                   className={inputClass}
                 />
               </Field>
-              <Field label="Trip end date (optional)">
+              <Field label={tr("Trip end date (optional)")}>
                 <input
                   type="date"
                   value={form.tripEndDate}
@@ -226,14 +222,14 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                   className={inputClass}
                 />
               </Field>
-              <p className="text-xs text-ink-soft/50">Not sure yet? Leave these blank — we can finalize dates together.</p>
+              <p className="text-xs text-ink-soft/50">{tr("Not sure yet? Leave these blank — we can finalize dates together.")}</p>
             </div>
           )}
 
           {step === 2 && (
             <div className="flex flex-col gap-4">
               <div className="grid grid-cols-2 gap-4">
-                <Field label="Adults">
+                <Field label={tr("Adults")}>
                   <input
                     type="number"
                     min={1}
@@ -242,7 +238,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                     className={inputClass}
                   />
                 </Field>
-                <Field label="Children">
+                <Field label={tr("Children")}>
                   <input
                     type="number"
                     min={0}
@@ -252,13 +248,13 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                   />
                 </Field>
               </div>
-              <Field label="Preferences or special requests (optional)">
+              <Field label={tr("Preferences or special requests (optional)")}>
                 <textarea
                   value={form.preferences}
                   onChange={(e) => update("preferences", e.target.value)}
                   rows={4}
                   className={inputClass}
-                  placeholder="Dietary needs, accessibility, pace, interests…"
+                  placeholder={tr("Dietary needs, accessibility, pace, interests…")}
                 />
               </Field>
             </div>
@@ -266,7 +262,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
 
           {step === 3 && (
             <div className="flex flex-col gap-4">
-              <Field label="Discount code (optional)">
+              <Field label={tr("Discount code (optional)")}>
                 <div className="flex gap-2">
                   <input
                     value={form.discountCode}
@@ -274,7 +270,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                       update("discountCode", e.target.value.toUpperCase());
                       setDiscountState({ checked: false });
                     }}
-                    placeholder="EGY4-XXXXXX"
+                    placeholder={tr("EGY4-XXXXXX")}
                     className={`${inputClass} font-mono uppercase`}
                   />
                   <button
@@ -291,7 +287,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                 <p className="text-sm font-semibold text-nile">✓ Code applied — your discount will be included in your quote</p>
               )}
               {discountState.checked && !discountState.valid && <p className="text-sm text-terracotta">{discountState.reason}</p>}
-              <p className="text-xs text-ink-soft/50">Have a 4% off code from our newsletter? Enter it here.</p>
+              <p className="text-xs text-ink-soft/50">{tr("Have a 4% off code from our newsletter? Enter it here.")}</p>
             </div>
           )}
 
@@ -355,12 +351,13 @@ function ReviewStep({
   discountState: DiscountState;
   submitError: string;
 }) {
+  const tr = useTr();
   const hasDiscount = discountState.checked && discountState.valid;
 
   return (
     <div className="flex flex-col gap-5 text-sm">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Traveler</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Traveler")}</p>
         <p className="mt-1 text-ink">{form.guestName} · {form.guestEmail}{form.guestPhone ? ` · ${form.guestPhone}` : ""}</p>
       </div>
       <div>
@@ -382,7 +379,7 @@ function ReviewStep({
       </div>
       {form.preferences && (
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Preferences</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Preferences")}</p>
           <p className="mt-1 text-ink">{form.preferences}</p>
         </div>
       )}
@@ -408,20 +405,16 @@ function Confirmation({
   titles: string[];
   form: FormData;
 }) {
+  const tr = useTr();
   return (
     <section className="bg-sand py-20 sm:py-28">
       <Container className="mx-auto max-w-lg text-center">
-        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">Reservation Requested</p>
-        <h1 className="mt-3 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">
-          Your Egypt journey is on its way.
-        </h1>
-        <p className="mt-4 text-ink-soft/80">
-          Your request has been received. Our Egypt Eye team will review your journey and contact you with the next
-          steps.
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">{tr("Reservation Requested")}</p>
+        <h1 className="mt-3 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">{tr("Your Egypt journey is on its way.")}</h1>
+        <p className="mt-4 text-ink-soft/80">{tr("Your request has been received. Our Egypt Eye team will review your journey and contact you with the next steps.")}</p>
 
         <div className="mt-8 rounded-3xl border border-gold/15 bg-cream p-6 text-left shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Reference</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Reference")}</p>
           <p className="mt-1 font-mono text-lg font-bold text-ink">{confirmation.reference}</p>
 
           <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Journey ({titles.length})</p>
@@ -447,12 +440,8 @@ function Confirmation({
         </div>
 
         <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Link href="/my-journey" className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">
-            Back to My Journey
-          </Link>
-          <Link href="/" className="rounded-full border border-ink/15 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-ink hover:text-cream">
-            Back to Home
-          </Link>
+          <Link href="/my-journey" className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Back to My Journey")}</Link>
+          <Link href="/" className="rounded-full border border-ink/15 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-ink hover:text-cream">{tr("Back to Home")}</Link>
         </div>
       </Container>
     </section>

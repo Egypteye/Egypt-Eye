@@ -2,6 +2,7 @@ import Link from "next/link";
 import { EgyptMap } from "./EgyptMap";
 import { Reveal } from "./Reveal";
 import type { DestinationHub } from "@/content/types";
+import { T } from "@/i18n/T";
 
 // A compact, high-impact homepage promo for /explore-egypt — built around a
 // live, decorative preview of the real interactive map (not stock imagery
@@ -19,16 +20,9 @@ export function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
 
         <div className="relative grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:p-16">
           <div>
-            <span className="inline-flex items-center rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light">
-              Explore Egypt
-            </span>
-            <h2 className="mt-5 text-balance font-display text-3xl font-semibold leading-[1.1] text-cream sm:text-4xl lg:text-[2.75rem]">
-              Your Egypt Adventure Starts Here
-            </h2>
-            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-cream/70">
-              Tap through Cairo, Luxor, the Red Sea coast and beyond on our interactive map — see the real tours,
-              experiences and photoshoots waiting at each stop, then build your own journey in minutes.
-            </p>
+            <span className="inline-flex items-center rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light"><T>Explore Egypt</T></span>
+            <h2 className="mt-5 text-balance font-display text-3xl font-semibold leading-[1.1] text-cream sm:text-4xl lg:text-[2.75rem]"><T>Your Egypt Adventure Starts Here</T></h2>
+            <p className="mt-4 max-w-md text-[15px] leading-relaxed text-cream/70"><T>Tap through Cairo, Luxor, the Red Sea coast and beyond on our interactive map — see the real tours, experiences and photoshoots waiting at each stop, then build your own journey in minutes.</T></p>
 
             <div className="mt-8 flex flex-wrap items-center gap-5">
               <Link

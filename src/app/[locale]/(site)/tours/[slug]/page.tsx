@@ -17,6 +17,7 @@ import { pickRelated } from "@/lib/relatedPicker";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { T, trAll } from "@/i18n/T";
 
 const categoryLabels: Record<string, string> = {
   "one-day": "One-Day Trip",
@@ -53,6 +54,10 @@ export default async function TourDetailPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const ui = await trAll([
+    "Breadcrumb",
+  ]);
+
   const { slug } = await params;
   const [tour, site] = await Promise.all([getTourBySlug(slug), getSiteSettings()]);
   if (!tour) notFound();
@@ -84,14 +89,10 @@ export default async function TourDetailPage({
         <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />
         <Container className="relative flex min-h-[54vh] flex-col justify-end gap-4 pb-14 pt-32">
-          <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-medium text-cream/60">
-            <Link href="/" className="transition hover:text-cream">
-              Home
-            </Link>
+          <nav aria-label={ui["Breadcrumb"]} className="flex items-center gap-1.5 text-xs font-medium text-cream/60">
+            <Link href="/" className="transition hover:text-cream"><T>Home</T></Link>
             <span aria-hidden="true">›</span>
-            <Link href="/tours" className="transition hover:text-cream">
-              Tours
-            </Link>
+            <Link href="/tours" className="transition hover:text-cream"><T>Tours</T></Link>
             <span aria-hidden="true">›</span>
             <span className="text-cream/85">{tour.title}</span>
           </nav>
@@ -149,18 +150,14 @@ export default async function TourDetailPage({
             )}
 
             <div id="details" className="mt-8 scroll-mt-24">
-              <h2 className="font-display text-2xl font-semibold text-ink">
-                About this tour
-              </h2>
+              <h2 className="font-display text-2xl font-semibold text-ink"><T>About this tour</T></h2>
               <p className="mt-4 leading-relaxed text-ink-soft/80">
                 {tour.description}
               </p>
             </div>
 
             <div className="mt-10">
-              <h2 className="font-display text-2xl font-semibold text-ink">
-                Highlights
-              </h2>
+              <h2 className="font-display text-2xl font-semibold text-ink"><T>Highlights</T></h2>
               <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
                 {tour.highlights.map((h) => (
                   <li key={h} className="flex items-start gap-2 text-sm text-ink-soft/80">
@@ -173,9 +170,7 @@ export default async function TourDetailPage({
 
             {tour.itinerary && (
               <div id="itinerary" className="mt-10 scroll-mt-24">
-                <h2 className="font-display text-2xl font-semibold text-ink">
-                  Itinerary
-                </h2>
+                <h2 className="font-display text-2xl font-semibold text-ink"><T>Itinerary</T></h2>
                 <ol className="mt-6 space-y-6 border-l border-gold/30 pl-6">
                   {tour.itinerary.map((day) => (
                     <li key={day.day} className="relative">
@@ -208,9 +203,7 @@ export default async function TourDetailPage({
 
             <div className="mt-10 grid gap-8 sm:grid-cols-2">
               <div>
-                <h3 className="font-display text-lg font-semibold text-ink">
-                  Included
-                </h3>
+                <h3 className="font-display text-lg font-semibold text-ink"><T>Included</T></h3>
                 <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
                   {tour.included.map((i) => (
                     <li key={i} className="flex gap-2">
@@ -221,9 +214,7 @@ export default async function TourDetailPage({
                 </ul>
               </div>
               <div>
-                <h3 className="font-display text-lg font-semibold text-ink">
-                  Not Included
-                </h3>
+                <h3 className="font-display text-lg font-semibold text-ink"><T>Not Included</T></h3>
                 <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
                   {tour.excluded.map((i) => (
                     <li key={i} className="flex gap-2">
@@ -237,10 +228,8 @@ export default async function TourDetailPage({
 
             {tour.relatedExperiences && tour.relatedExperiences.length > 0 && (
               <div className="mt-10">
-                <h2 className="font-display text-2xl font-semibold text-ink">Make It Yours</h2>
-                <p className="mt-2 text-sm text-ink-soft/70">
-                  Experiences travelers often add to this itinerary.
-                </p>
+                <h2 className="font-display text-2xl font-semibold text-ink"><T>Make It Yours</T></h2>
+                <p className="mt-2 text-sm text-ink-soft/70"><T>Experiences travelers often add to this itinerary.</T></p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   {tour.relatedExperiences.map((e) => (
                     <Link
@@ -259,7 +248,7 @@ export default async function TourDetailPage({
           {/* Booking sidebar */}
           <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
             <PriceTag price={tour.price} />
-            <p className="mt-1 text-xs text-ink-soft/60">per person, private tour</p>
+            <p className="mt-1 text-xs text-ink-soft/60"><T>per person, private tour</T></p>
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
               context={{ page: "this tour's page", item: tour.title }}
@@ -296,9 +285,7 @@ export default async function TourDetailPage({
       {related.length > 0 && (
         <section className="bg-sand-dim py-20">
           <Container>
-            <h2 className="font-display text-2xl font-semibold text-ink">
-              You might also like
-            </h2>
+            <h2 className="font-display text-2xl font-semibold text-ink"><T>You might also like</T></h2>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((t) => (
                 <TourCard key={t.slug} tour={t} />

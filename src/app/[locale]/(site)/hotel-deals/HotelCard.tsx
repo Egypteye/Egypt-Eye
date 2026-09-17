@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SmartImage } from "@/components/SmartImage";
 import type { Hotel } from "@/lib/hotels";
+import { T } from "@/i18n/T";
 
 export function HotelCard({ hotel }: { hotel: Hotel }) {
   const isApartment = hotel.property_type === "apartment";
@@ -19,9 +20,7 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
       />
       <div className="flex flex-1 flex-col gap-3 p-5">
         {isApartment ? (
-          <span className="w-fit rounded-full bg-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream">
-            Luxury Long-Stay Apartment
-          </span>
+          <span className="w-fit rounded-full bg-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream"><T>Luxury Long-Stay Apartment</T></span>
         ) : (
           hotel.deal_headline && (
             <span className="w-fit rounded-full bg-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-dark">
