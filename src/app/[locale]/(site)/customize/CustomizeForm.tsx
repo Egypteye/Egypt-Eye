@@ -150,9 +150,7 @@ export function CustomizeForm({
       {journeyItems.length > 0 && (
         <div className="mb-8 rounded-2xl border border-gold/20 bg-sand-dim p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-dark">{tr("From Your Journey")}</p>
-          <p className="mt-1 text-xs text-ink-soft/60">
-            These will be included with your request. Remove anything that doesn&rsquo;t belong.
-          </p>
+          <p className="mt-1 text-xs text-ink-soft/60">{tr("These will be included with your request. Remove anything that doesn’t belong.")}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {journeyItems.map((item) => (
               <span
@@ -212,10 +210,7 @@ export function CustomizeForm({
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
-            className="underline"
-          >
-            WhatsApp
-          </WhatsAppBookButton>
+            className="underline">{tr("WhatsApp")}</WhatsAppBookButton>
           .
         </p>
       )}
@@ -226,10 +221,7 @@ export function CustomizeForm({
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
-            className="underline"
-          >
-            WhatsApp
-          </WhatsAppBookButton>{" "}
+            className="underline">{tr("WhatsApp")}</WhatsAppBookButton>{" "}
           or email{" "}
           <a href={`mailto:${site.contact.email}`} className="underline">
             {site.contact.email}

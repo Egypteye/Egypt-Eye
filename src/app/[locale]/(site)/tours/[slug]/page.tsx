@@ -122,10 +122,7 @@ export default async function TourDetailPage({
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
               context={{ page: "this tour's page", item: tour.title }}
-              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
-            >
-              Plan My Trip
-            </WhatsAppBookButton>
+              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"><T>Plan My Trip</T></WhatsAppBookButton>
             <a
               href={tour.itinerary ? "#itinerary" : "#details"}
               className="inline-flex items-center gap-1.5 rounded-full border border-cream/30 bg-cream/10 px-7 py-3.5 text-sm font-semibold text-cream backdrop-blur-sm transition hover:bg-cream/20"
@@ -189,9 +186,7 @@ export default async function TourDetailPage({
 
             {mapStops.length > 0 && (
               <div className="mt-10">
-                <h2 className="font-display text-2xl font-semibold text-ink">
-                  Where You&rsquo;ll Go
-                </h2>
+                <h2 className="font-display text-2xl font-semibold text-ink"><T>Where You’ll Go</T></h2>
                 <p className="mt-2 text-sm text-ink-soft/70">
                   {mapStops.length === 1
                     ? "The single base for this tour."
@@ -252,10 +247,7 @@ export default async function TourDetailPage({
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
               context={{ page: "this tour's page", item: tour.title }}
-              className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              Book on WhatsApp
-            </WhatsAppBookButton>
+              className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Book on WhatsApp</T></WhatsAppBookButton>
             <EnquiryButton itemType="tour" itemTitle={tour.title} itemSlug={tour.slug} className="mt-3" />
 
             <div className="mt-4 border-t border-black/5 pt-4">

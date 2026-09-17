@@ -58,8 +58,8 @@ export default async function PharaohChallengePage() {
     return (
       <section className="bg-ink py-24">
         <Container className="mx-auto max-w-xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">Pharaoh&rsquo;s Challenge</p>
-          <h1 className="mt-3 font-display text-4xl font-semibold text-cream">This challenge isn&rsquo;t open right now</h1>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80"><T>Pharaoh’s Challenge</T></p>
+          <h1 className="mt-3 font-display text-4xl font-semibold text-cream"><T>This challenge isn’t open right now</T></h1>
           <p className="mt-4 text-lg text-cream/70"><T>Check back soon — a new chamber may open before long.</T></p>
         </Container>
       </section>

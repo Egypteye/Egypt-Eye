@@ -47,10 +47,7 @@ export default async function HotelDealsPage() {
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light"><T>Hotel Deals</T></p>
           <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl"><T>Hotels With Egypt Eye Rates</T></h1>
-          <p className="max-w-xl text-[15px] text-cream/80">
-            A hand-picked list of hotels we have a working relationship with — see the rooms, the rates, and what&rsquo;s
-            included.
-          </p>
+          <p className="max-w-xl text-[15px] text-cream/80"><T>A hand-picked list of hotels we have a working relationship with — see the rooms, the rates, and what’s included.</T></p>
         </Container>
       </section>
 

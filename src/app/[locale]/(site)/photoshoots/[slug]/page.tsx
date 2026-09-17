@@ -160,10 +160,7 @@ export default async function PhotoshootDetailPage({
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this photoshoot's page", item: photoshoot.title }}
-            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
-          >
-            Book on WhatsApp
-          </WhatsAppBookButton>
+            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Book on WhatsApp</T></WhatsAppBookButton>
           <EnquiryButton itemType="photoshoot" itemTitle={photoshoot.title} itemSlug={photoshoot.slug} className="mt-3" />
 
           <div className="mt-4 border-t border-black/5 pt-4">

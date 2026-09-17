@@ -141,9 +141,7 @@ export default async function AffiliatePage() {
           <p className="mx-auto mt-6 max-w-3xl text-center text-xs text-ink-soft/50">
             Note: this program is for ongoing referral partnerships. Looking for a sponsored trip or content
             collaboration instead?{" "}
-            <Link href="/collaborate" className="underline hover:text-ink">
-              See our Creators &amp; Influencers program
-            </Link>
+            <Link href="/collaborate" className="underline hover:text-ink"><T>See our Creators & Influencers program</T></Link>
             .
           </p>
         </Container>

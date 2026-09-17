@@ -29,16 +29,14 @@ export function RateRequestButton({
   rooms?: { id: string; name: string }[];
   className?: string;
 }) {
+  const tr = useTr();
   const [open, setOpen] = useState(false);
   return (
     <>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`inline-flex items-center justify-center rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light ${className}`}
-      >
-        Check Latest Rates
-      </button>
+        className={`inline-flex items-center justify-center rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light ${className}`}>{tr("Check Latest Rates")}</button>
       {open && <RateRequestModal hotelId={hotelId} hotelName={hotelName} rooms={rooms} onClose={() => setOpen(false)} />}
     </>
   );
@@ -158,10 +156,7 @@ function RateRequestModal({
             <button
               type="button"
               onClick={onClose}
-              className="mt-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              Close
-            </button>
+              className="mt-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Close")}</button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="relative flex flex-col gap-4 p-6">
@@ -169,10 +164,7 @@ function RateRequestModal({
               <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
               </label>
             </div>
-            <p className="text-sm text-ink-soft/70">
-              The rates shown are our current Egypt Eye deal rates, not live availability. Tell us your dates and
-              we&rsquo;ll confirm the latest price, availability, and any current discount by email.
-            </p>
+            <p className="text-sm text-ink-soft/70">{tr("The rates shown are our current Egypt Eye deal rates, not live availability. Tell us your dates and we’ll confirm the latest price, availability, and any current discount by email.")}</p>
 
             {rooms.length > 0 && (
               <Field label={tr("Room Type")} htmlFor="rate-room">

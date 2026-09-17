@@ -163,8 +163,7 @@ export function TransferBookingForm() {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
         <p className="font-display text-2xl font-semibold text-ink">{tr("Request sent")}</p>
-        <p className="mt-3 text-sm text-ink-soft/70">
-          We&rsquo;ve received your transfer request for <strong>{routeSummary()}</strong>. We&rsquo;ll confirm by email
+        <p className="mt-3 text-sm text-ink-soft/70">{tr("We’ve received your transfer request for")}<strong>{routeSummary()}</strong>. We&rsquo;ll confirm by email
           shortly{quote.kind === "quote" ? " with your quote" : ""}.
         </p>
       </div>
@@ -236,19 +235,13 @@ export function TransferBookingForm() {
                   onClick={() => setIsDailyRate(false)}
                   className={`rounded-full px-3.5 py-2 text-xs font-medium transition ${
                     !isDailyRate ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
-                  }`}
-                >
-                  By the hour
-                </button>
+                  }`}>{tr("By the hour")}</button>
                 <button
                   type="button"
                   onClick={() => setIsDailyRate(true)}
                   className={`rounded-full px-3.5 py-2 text-xs font-medium transition ${
                     isDailyRate ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
-                  }`}
-                >
-                  Full day
-                </button>
+                  }`}>{tr("Full day")}</button>
               </div>
               {!isDailyRate && (
                 <select
@@ -376,7 +369,7 @@ export function TransferBookingForm() {
       {/* Live quote */}
       <div className="mb-8 flex flex-col items-center gap-1.5 rounded-2xl bg-ink px-6 py-6 text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light">{routeSummary()}</p>
-        <p className="font-display text-xl font-semibold text-cream">We&rsquo;ll send you a quote for this route</p>
+        <p className="font-display text-xl font-semibold text-cream">{tr("We’ll send you a quote for this route")}</p>
       </div>
 
       {/* Step 4 — contact */}

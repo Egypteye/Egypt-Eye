@@ -116,10 +116,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
               type="button"
               onClick={handleRemove}
               disabled={status === "saving"}
-              className="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft/60 transition hover:text-terracotta disabled:opacity-60"
-            >
-              Remove
-            </button>
+              className="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft/60 transition hover:text-terracotta disabled:opacity-60">{tr("Remove")}</button>
           )}
         </div>
         <input

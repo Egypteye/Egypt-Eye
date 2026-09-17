@@ -138,10 +138,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
               <p className="text-sm text-ink-soft/70">{tr("Nothing added yet.")}</p>
               <Link
                 href="/explore-egypt"
-                className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-              >
-                Start Exploring Egypt
-              </Link>
+                className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Start Exploring Egypt")}</Link>
             </div>
           ) : (
             <div className="grid gap-10 lg:grid-cols-[minmax(0,380px)_1fr] lg:items-start">
@@ -181,16 +178,10 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                 <div className="flex flex-col gap-2.5">
                   <Link
                     href="/customize"
-                    className="rounded-full border border-ink/15 px-5 py-3 text-center text-sm font-semibold text-ink transition hover:bg-ink hover:text-cream"
-                  >
-                    Customize My Trip
-                  </Link>
+                    className="rounded-full border border-ink/15 px-5 py-3 text-center text-sm font-semibold text-ink transition hover:bg-ink hover:text-cream">{tr("Customize My Trip")}</Link>
                   <Link
                     href="/reserve"
-                    className="rounded-full bg-ink px-5 py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
-                  >
-                    Request This Journey
-                  </Link>
+                    className="rounded-full bg-ink px-5 py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Request This Journey")}</Link>
                 </div>
 
                 <div className="flex justify-center">
@@ -203,26 +194,17 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                           clearJourneyItems();
                           setConfirmingClear(false);
                         }}
-                        className="font-semibold text-terracotta hover:underline"
-                      >
-                        Yes, clear all
-                      </button>
+                        className="font-semibold text-terracotta hover:underline">{tr("Yes, clear all")}</button>
                       <button
                         type="button"
                         onClick={() => setConfirmingClear(false)}
-                        className="font-semibold text-ink-soft/60 hover:text-ink"
-                      >
-                        Cancel
-                      </button>
+                        className="font-semibold text-ink-soft/60 hover:text-ink">{tr("Cancel")}</button>
                     </div>
                   ) : (
                     <button
                       type="button"
                       onClick={() => setConfirmingClear(true)}
-                      className="text-xs font-semibold text-ink-soft/50 transition hover:text-terracotta"
-                    >
-                      Clear all selections
-                    </button>
+                      className="text-xs font-semibold text-ink-soft/50 transition hover:text-terracotta">{tr("Clear all selections")}</button>
                   )}
                 </div>
               </div>
@@ -232,9 +214,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                   <p className="text-sm text-ink-soft/60">Loading your journey…</p>
                 )}
                 {status === "error" && (
-                  <p className="text-sm text-terracotta">
-                    Couldn&rsquo;t load the latest details for your journey — your selections are still saved.
-                  </p>
+                  <p className="text-sm text-terracotta">{tr("Couldn’t load the latest details for your journey — your selections are still saved.")}</p>
                 )}
 
                 {visitedHubs.length > 0 && (

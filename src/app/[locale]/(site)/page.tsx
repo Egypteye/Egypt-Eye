@@ -141,10 +141,7 @@ export default async function Home() {
           <Reveal delay={150} className="mt-10 flex justify-center">
             <Link
               href="/photoshoots"
-              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              View All Photoshoots
-            </Link>
+              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>View All Photoshoots</T></Link>
           </Reveal>
         </Container>
       </section>
@@ -415,9 +412,7 @@ export default async function Home() {
               <div className="relative">
                 <Glyph index={0} className="animate-glow-pulse mx-auto h-12 w-12 text-gold" />
                 <p className="mt-4 text-sm font-semibold uppercase tracking-[0.35em] text-gold-light"><T>Limited-Time Challenge</T></p>
-                <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-5xl">
-                  Play &amp; Win — The Pharaoh&rsquo;s Challenge
-                </h2>
+                <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-5xl"><T>Play & Win — The Pharaoh’s Challenge</T></h2>
                 <p className="mx-auto mt-4 max-w-xl text-lg text-cream/75"><T>Five Ancient-Egypt-inspired chambers. One attempt. A discount reward that grows the deeper you go.</T></p>
 
                 {/* Five-chamber teaser strip */}

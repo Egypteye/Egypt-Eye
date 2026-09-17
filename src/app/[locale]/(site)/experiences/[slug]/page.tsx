@@ -137,7 +137,7 @@ export default async function ExperienceDetailPage({
 
           {mapStops.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-xl font-semibold text-ink">Where You&rsquo;ll Go</h2>
+              <h2 className="font-display text-xl font-semibold text-ink"><T>Where You’ll Go</T></h2>
               <RouteMap
                 stops={mapStops}
                 singleLabel={experience.location ?? mapStops[0]?.name}
@@ -147,7 +147,7 @@ export default async function ExperienceDetailPage({
 
           {experience.steps && experience.steps.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-xl font-semibold text-ink">What You&rsquo;ll Do</h2>
+              <h2 className="font-display text-xl font-semibold text-ink"><T>What You’ll Do</T></h2>
               <ol className="mt-5 space-y-0">
                 {experience.steps.map((step, i) => (
                   <li key={step.title} className="relative flex gap-4 pb-6 last:pb-0">
@@ -184,9 +184,7 @@ export default async function ExperienceDetailPage({
           {experience.goodToKnow && experience.goodToKnow.length > 0 && (
             <div className="mt-10 rounded-2xl border border-black/5 bg-sand-dim p-6">
               <h2 className="font-display text-xl font-semibold text-ink"><T>Good to Know</T></h2>
-              <p className="mt-1.5 text-sm text-ink-soft/60">
-                The practical truth about this one — timings, conditions, and what we can&rsquo;t promise.
-              </p>
+              <p className="mt-1.5 text-sm text-ink-soft/60"><T>The practical truth about this one — timings, conditions, and what we can’t promise.</T></p>
               <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-ink-soft/80">
                 {experience.goodToKnow.map((item) => (
                   <li key={item} className="flex gap-2.5">
@@ -233,10 +231,7 @@ export default async function ExperienceDetailPage({
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}
-            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
-          >
-            Book on WhatsApp
-          </WhatsAppBookButton>
+            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Book on WhatsApp</T></WhatsAppBookButton>
           <EnquiryButton itemType="experience" itemTitle={experience.title} itemSlug={experience.slug} className="mt-3" />
 
           <div className="mt-4 border-t border-black/5 pt-4">

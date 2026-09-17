@@ -123,10 +123,7 @@ export default async function MyEgyptPage() {
               <WhatsAppBookButton
                 whatsappLink={site.contact.whatsappLink}
                 context={{ page: "the My Egypt page", intro: "Hi, I have a question about my trip." }}
-                className="mt-4 inline-block text-sm font-semibold text-gold-dark underline"
-              >
-                Need help? Talk to Egypt Eye
-              </WhatsAppBookButton>
+                className="mt-4 inline-block text-sm font-semibold text-gold-dark underline"><T>Need help? Talk to Egypt Eye</T></WhatsAppBookButton>
             </div>
           )}
 
@@ -243,7 +240,7 @@ export default async function MyEgyptPage() {
           {(suggestedExperiences.length > 0 || suggestedPhotoshoots.length > 0) && (
             <div>
               <h2 className="mb-1 font-display text-lg font-semibold text-ink"><T>Make Your Journey Even More Yours</T></h2>
-              <p className="mb-4 text-sm text-ink-soft/60">Based on your destinations — request an addition and we&rsquo;ll follow up.</p>
+              <p className="mb-4 text-sm text-ink-soft/60"><T>Based on your destinations — request an addition and we’ll follow up.</T></p>
               <div className="grid gap-4 sm:grid-cols-2">
                 {[...suggestedExperiences, ...suggestedPhotoshoots].map((item) => (
                   <div key={item.slug} className="flex items-center justify-between gap-3 rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">

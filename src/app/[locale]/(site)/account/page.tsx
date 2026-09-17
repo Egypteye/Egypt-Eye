@@ -110,10 +110,7 @@ export default async function AccountPage() {
               </h3>
               <Link
                 href="/agent-portal"
-                className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
-              >
-                Go to Partner Portal
-              </Link>
+                className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"><T>Go to Partner Portal</T></Link>
             </div>
           )}
 
@@ -181,10 +178,7 @@ export default async function AccountPage() {
               <h3 className="mt-2 font-display text-xl font-semibold text-cream"><T>Access your personalized Egypt</T></h3>
               <Link
                 href="/my-egypt"
-                className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
-              >
-                Go to My Egypt
-              </Link>
+                className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"><T>Go to My Egypt</T></Link>
             </div>
           )}
         </div>

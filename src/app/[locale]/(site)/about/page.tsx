@@ -99,10 +99,7 @@ export default async function AboutPage() {
             <div className="mt-9 flex flex-wrap items-center gap-3">
               <Link
                 href="/customize"
-                className="group inline-flex items-center gap-3 rounded-full bg-gold py-2.5 pl-6 pr-2.5 text-sm font-semibold text-ink transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-gold-light active:scale-[0.98]"
-              >
-                Plan Your Trip
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
+                className="group inline-flex items-center gap-3 rounded-full bg-gold py-2.5 pl-6 pr-2.5 text-sm font-semibold text-ink transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-gold-light active:scale-[0.98]"><T>Plan Your Trip</T><span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
                   <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                     <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
@@ -110,10 +107,7 @@ export default async function AboutPage() {
               </Link>
               <Link
                 href="#the-record"
-                className="inline-flex items-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-cream/85 transition-colors duration-300 hover:border-gold/60 hover:text-gold-light"
-              >
-                See Who Travels With Us
-              </Link>
+                className="inline-flex items-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-cream/85 transition-colors duration-300 hover:border-gold/60 hover:text-gold-light"><T>See Who Travels With Us</T></Link>
             </div>
 
             <dl className="mt-12 grid max-w-lg grid-cols-2 gap-x-8 gap-y-6 border-t border-white/10 pt-8 sm:grid-cols-3">
@@ -170,26 +164,9 @@ export default async function AboutPage() {
               {page.storyTitle}
             </h2>
             <div className="mt-7 space-y-5 text-[17px] leading-relaxed text-ink-soft/85">
-              <p>
-                Egypt Eye started with a straightforward idea: that a trip to Egypt shouldn&rsquo;t be
-                a coach, a checklist, and a photo you took yourself in a hurry. We run private tours
-                for travelers who came here for the history, the culture, the desert and the water —
-                and we run them with guides who are from here and are genuinely interested in the
-                questions you ask.
-              </p>
-              <p>
-                What people book us for, in the end, is a mix that&rsquo;s unusual to find in one
-                company. We&rsquo;re the tour operator, the transport, the photographer, and the
-                person answering your message at midnight — all the same team. No handoffs to a
-                local partner you&rsquo;ve never spoken to, and no surprise about who&rsquo;s meeting
-                you at the airport.
-              </p>
-              <p>
-                That&rsquo;s also why agencies keep coming back with their own clients. When a travel
-                agency sends you their travelers, they&rsquo;re lending you their reputation. The
-                index further down this page is what that has looked like, group by group, since
-                February 2022.
-              </p>
+              <p><T>Egypt Eye started with a straightforward idea: that a trip to Egypt shouldn’t be a coach, a checklist, and a photo you took yourself in a hurry. We run private tours for travelers who came here for the history, the culture, the desert and the water — and we run them with guides who are from here and are genuinely interested in the questions you ask.</T></p>
+              <p><T>What people book us for, in the end, is a mix that’s unusual to find in one company. We’re the tour operator, the transport, the photographer, and the person answering your message at midnight — all the same team. No handoffs to a local partner you’ve never spoken to, and no surprise about who’s meeting you at the airport.</T></p>
+              <p><T>That’s also why agencies keep coming back with their own clients. When a travel agency sends you their travelers, they’re lending you their reputation. The index further down this page is what that has looked like, group by group, since February 2022.</T></p>
             </div>
           </div>
 
@@ -276,9 +253,7 @@ export default async function AboutPage() {
           <Reveal>
             <div className="max-w-2xl">
               <Rule />
-              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark">
-                Celebrity &amp; VIP Experiences
-              </p>
+              <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Celebrity & VIP Experiences</T></p>
               <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>People who could book anywhere in the world booked here</T></h2>
               <p className="mt-5 text-lg leading-relaxed text-ink-soft/80"><T>Bollywood actors, Olympic athletes, journalists and some of the most-followed travel creators working today have all put their Egypt trip in our hands — usually with a schedule, a camera crew, and no room for a day going wrong.</T></p>
             </div>
@@ -345,11 +320,7 @@ export default async function AboutPage() {
               <Rule />
               <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Trusted by Travel Agencies</T></p>
               <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>Other travel professionals hand us their own clients</T></h2>
-              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80">
-                It&rsquo;s one thing for a traveler to take a chance on you. It&rsquo;s another for a
-                travel agency to put their own name on your work and send you the people who pay
-                them. Here is every group that has, with the month they came.
-              </p>
+              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80"><T>It’s one thing for a traveler to take a chance on you. It’s another for a travel agency to put their own name on your work and send you the people who pay them. Here is every group that has, with the month they came.</T></p>
             </div>
           </Reveal>
 
@@ -375,10 +346,7 @@ export default async function AboutPage() {
                   </p>
                   <Link
                     href="/travel-agents"
-                    className="group mt-8 inline-flex items-center gap-3 rounded-full bg-ink py-2.5 pl-6 pr-2.5 text-sm font-semibold text-cream transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-gold-dark active:scale-[0.98]"
-                  >
-                    Work With Us as an Agency
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
+                    className="group mt-8 inline-flex items-center gap-3 rounded-full bg-ink py-2.5 pl-6 pr-2.5 text-sm font-semibold text-cream transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-gold-dark active:scale-[0.98]"><T>Work With Us as an Agency</T><span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
                       <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                         <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
@@ -390,9 +358,7 @@ export default async function AboutPage() {
 
             <Reveal delay={80}>
               <div>
-                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                  Groups we&rsquo;ve hosted
-                </h3>
+                <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Groups we’ve hosted</T></h3>
                 <ul className="mt-5">
                   {agencyTrips.map((t) => (
                     <IndexRow
@@ -405,9 +371,7 @@ export default async function AboutPage() {
                 </ul>
                 <p className="mt-4 border-t border-black/[0.07] pt-4 text-xs leading-relaxed text-ink-soft/55"><T>Where a group travelled with us more than once, the extra dates are listed alongside. A few of the earliest trips are recorded without a month — those are shown without one rather than given a guessed date.</T></p>
 
-                <h3 className="mt-12 text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-                  Collaborators &amp; business partners
-                </h3>
+                <h3 className="mt-12 text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Collaborators & business partners</T></h3>
                 <div className="mt-5 flex flex-wrap gap-2.5">
                   {collaborators.map((c) => (
                     <Wordmark key={c}>{c}</Wordmark>
@@ -548,9 +512,7 @@ export default async function AboutPage() {
           </div>
 
           <Reveal>
-            <p className="mx-auto mt-14 max-w-xl border-t border-black/[0.07] pt-10 text-center text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark">
-              And three promises we don&rsquo;t break
-            </p>
+            <p className="mx-auto mt-14 max-w-xl border-t border-black/[0.07] pt-10 text-center text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>And three promises we don’t break</T></p>
           </Reveal>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {site.trustBadges.map((b, i) => (
@@ -586,10 +548,7 @@ export default async function AboutPage() {
             <div className="mt-10 text-center">
               <Link
                 href="/testimonials"
-                className="inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-              >
-                Read All Reviews
-                <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
+                className="inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Read All Reviews</T><svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </Link>
@@ -643,14 +602,14 @@ export default async function AboutPage() {
             <div className="mx-auto mt-10 grid max-w-3xl gap-5 sm:grid-cols-2">
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-                  <p className="font-display text-lg font-semibold text-ink">Deposit &amp; Payment</p>
+                  <p className="font-display text-lg font-semibold text-ink"><T>Deposit & Payment</T></p>
                   <p className="mt-2 text-sm text-ink-soft/75">{site.policies.deposit}</p>
                   <p className="mt-2 text-sm text-ink-soft/75">{site.policies.currency}</p>
                 </div>
               </div>
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-                  <p className="font-display text-lg font-semibold text-ink">Children&rsquo;s Pricing</p>
+                  <p className="font-display text-lg font-semibold text-ink"><T>Children’s Pricing</T></p>
                   <ul className="mt-2 space-y-1 text-sm text-ink-soft/75">
                     {site.policies.children.map((c) => (
                       <li key={c.age}>
@@ -687,18 +646,11 @@ export default async function AboutPage() {
         <Container className="relative flex flex-col items-center gap-7 py-24 text-center lg:py-32">
           <Rule tone="dark" />
           <h2 className="max-w-3xl text-balance font-display text-3xl font-semibold leading-tight text-cream sm:text-5xl"><T>The next name on that list could be yours</T></h2>
-          <p className="max-w-xl text-lg leading-relaxed text-cream/65">
-            Tell us who&rsquo;s travelling, roughly when, and what you actually want to see. We&rsquo;ll
-            come back with a real itinerary and a real price — written by the people who&rsquo;ll be
-            running your trip.
-          </p>
+          <p className="max-w-xl text-lg leading-relaxed text-cream/65"><T>Tell us who’s travelling, roughly when, and what you actually want to see. We’ll come back with a real itinerary and a real price — written by the people who’ll be running your trip.</T></p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
             <Link
               href="/customize"
-              className="group inline-flex items-center gap-3 rounded-full bg-gold py-2.5 pl-6 pr-2.5 text-sm font-semibold text-ink transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-gold-light active:scale-[0.98]"
-            >
-              Customize Your Tour
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
+              className="group inline-flex items-center gap-3 rounded-full bg-gold py-2.5 pl-6 pr-2.5 text-sm font-semibold text-ink transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-gold-light active:scale-[0.98]"><T>Customize Your Tour</T><span className="flex h-9 w-9 items-center justify-center rounded-full bg-ink/10 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-px">
                 <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
@@ -707,10 +659,7 @@ export default async function AboutPage() {
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
               context={{ page: "the About page" }}
-              className="inline-flex items-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-cream/85 transition-colors duration-300 hover:border-gold/60 hover:text-gold-light"
-            >
-              Message Us on WhatsApp
-            </WhatsAppBookButton>
+              className="inline-flex items-center rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-cream/85 transition-colors duration-300 hover:border-gold/60 hover:text-gold-light"><T>Message Us on WhatsApp</T></WhatsAppBookButton>
           </div>
         </Container>
       </section>

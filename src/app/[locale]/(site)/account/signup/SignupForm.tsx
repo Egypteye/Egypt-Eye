@@ -67,9 +67,7 @@ export function SignupForm() {
     return (
       <div className="rounded-2xl border border-gold/20 bg-sand-dim p-5 text-sm text-ink-soft/80">
         <p className="font-semibold text-ink">{tr("Check your inbox")}</p>
-        <p className="mt-1.5">
-          We&rsquo;ve sent a verification link to confirm your email. Click it to finish creating your account.
-        </p>
+        <p className="mt-1.5">{tr("We’ve sent a verification link to confirm your email. Click it to finish creating your account.")}</p>
       </div>
     );
   }
@@ -89,9 +87,7 @@ export function SignupForm() {
       <p className="-mt-2 text-xs text-ink-soft/50">{tr("At least 8 characters.")}</p>
 
       <label className="flex items-start gap-2.5 text-sm text-ink-soft/80">
-        <input type="checkbox" name="marketingConsent" className="mt-0.5 h-4 w-4 shrink-0 accent-gold-dark" />
-        Yes, I&rsquo;d like to receive Egypt Eye travel inspiration, new experiences and special offers by email.
-      </label>
+        <input type="checkbox" name="marketingConsent" className="mt-0.5 h-4 w-4 shrink-0 accent-gold-dark" />{tr("Yes, I’d like to receive Egypt Eye travel inspiration, new experiences and special offers by email.")}</label>
 
       {status === "error" && <p className="text-sm text-terracotta">{errorMessage}</p>}
 

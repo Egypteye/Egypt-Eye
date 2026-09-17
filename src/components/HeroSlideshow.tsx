@@ -100,10 +100,7 @@ export function HeroSlideshow({
           <div key={`b-${index}`} className="animate-fade-up mt-6 flex flex-wrap justify-center gap-4">
             <Link
               href="/customize"
-              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
-            >
-              Design Your Dream Tour
-            </Link>
+              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light">{tr("Design Your Dream Tour")}</Link>
             {active.linkHref && active.linkLabel && (
               <Link
                 href={active.linkHref}

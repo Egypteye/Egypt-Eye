@@ -84,9 +84,7 @@ export function CollaborateForm() {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
         <p className="font-display text-2xl font-semibold text-ink">{tr("Application received")}</p>
-        <p className="mt-3 text-sm text-ink-soft/70">
-          Thanks for reaching out — our team reviews every application and will follow up if it&rsquo;s a fit.
-        </p>
+        <p className="mt-3 text-sm text-ink-soft/70">{tr("Thanks for reaching out — our team reviews every application and will follow up if it’s a fit.")}</p>
       </div>
     );
   }
@@ -158,12 +156,12 @@ export function CollaborateForm() {
           onClick={addSocialRow}
           className="mt-2 text-xs font-semibold text-gold-dark hover:underline"
         >
-          + Add another account
+          {tr("+ Add another account")}
         </button>
       </div>
 
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Average engagement rate")}<input name="engagementRate" placeholder="e.g. 4-6%" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Average engagement rate")}<input name="engagementRate" placeholder={tr("e.g. 4-6%")} className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Audience countries")}<input name="audienceCountries" placeholder={tr("e.g. USA, UK, Germany")} className={inputClass()} />
         </label>

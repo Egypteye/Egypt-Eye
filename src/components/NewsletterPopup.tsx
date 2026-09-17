@@ -82,7 +82,7 @@ export function NewsletterPopup() {
           >
             <NewsletterSignup variant="compact" source="popup" />
           </div>
-          <p className="mt-4 text-xs text-cream/50">We&rsquo;ll send a confirmation email first. Unsubscribe anytime.</p>
+          <p className="mt-4 text-xs text-cream/50">{tr("We’ll send a confirmation email first. Unsubscribe anytime.")}</p>
         </div>
       </div>
     </div>

@@ -111,10 +111,7 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
               href={whatsappHref(whatsappLink, { page: "the My Egypt concierge chat", intro: "Hi, I have a question about my trip." })}
               target="_blank"
               rel="noreferrer"
-              className="underline"
-            >
-              WhatsApp
-            </a>
+              className="underline">{tr("WhatsApp")}</a>
             .
           </div>
         )}

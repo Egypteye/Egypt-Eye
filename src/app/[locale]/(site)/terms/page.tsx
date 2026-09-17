@@ -65,9 +65,7 @@ export default async function TermsPage() {
         <div className="mt-6 rounded-2xl border border-terracotta/30 bg-terracotta/5 p-5 text-sm text-ink-soft/80">
           <p className="font-semibold text-terracotta"><T>Draft structure — not yet published.</T></p>
           <p className="mt-1">
-            This page lists the sections a Terms of Service page needs. Each one below is a placeholder, not
-            legal language — replace it with reviewed, accurate text (ideally checked by a legal professional)
-            before this page is indexed or linked as final.
+            <T>This page lists the sections a Terms of Service page needs. Each one below is a placeholder, not legal language — replace it with reviewed, accurate text (ideally checked by a legal professional) before this page is indexed or linked as final.</T>
           </p>
         </div>
 

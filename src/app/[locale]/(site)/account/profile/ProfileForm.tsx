@@ -57,9 +57,7 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
       <AuthInput label={tr("Phone (optional)")} name="phone" type="tel" defaultValue={profile.phone ?? ""} />
 
       <label className="flex items-start gap-2.5 text-sm text-ink-soft/80">
-        <input type="checkbox" name="marketingConsent" defaultChecked={profile.marketing_consent} className="mt-0.5 h-4 w-4 shrink-0 accent-gold-dark" />
-        Yes, I&rsquo;d like to receive Egypt Eye travel inspiration, new experiences and special offers by email.
-      </label>
+        <input type="checkbox" name="marketingConsent" defaultChecked={profile.marketing_consent} className="mt-0.5 h-4 w-4 shrink-0 accent-gold-dark" />{tr("Yes, I’d like to receive Egypt Eye travel inspiration, new experiences and special offers by email.")}</label>
 
       {status === "error" && <p className="text-sm text-terracotta">{tr("Something went wrong saving your profile. Please try again.")}</p>}
       {status === "saved" && <p className="text-sm text-nile">{tr("Saved.")}</p>}

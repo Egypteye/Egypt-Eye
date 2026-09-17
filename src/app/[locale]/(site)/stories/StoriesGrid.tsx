@@ -25,10 +25,7 @@ export function StoriesGrid({ stories }: { stories: Story[] }) {
             onClick={() => setFilter(null)}
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               filter === null ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
-            }`}
-          >
-            All Stories
-          </button>
+            }`}>{tr("All Stories")}</button>
           {categories.map((c) => (
             <button
               key={c}

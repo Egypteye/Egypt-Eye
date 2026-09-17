@@ -67,10 +67,7 @@ export default async function PartnersPage() {
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light"><T>Partner With Us</T></p>
           <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl"><T>Three Ways to Work With Egypt Eye</T></h1>
-          <p className="max-w-xl text-[15px] text-cream/80">
-            Whether you book for clients, refer your audience, or create content on the ground — there&rsquo;s a
-            program built for how you actually work.
-          </p>
+          <p className="max-w-xl text-[15px] text-cream/80"><T>Whether you book for clients, refer your audience, or create content on the ground — there’s a program built for how you actually work.</T></p>
         </Container>
       </section>
 

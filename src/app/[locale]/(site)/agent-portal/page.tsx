@@ -96,10 +96,7 @@ export default async function AgentPortalPage() {
           {!agent && (
             <Link
               href="/travel-agents"
-              className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              Apply to the Partner Program
-            </Link>
+              className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Apply to the Partner Program</T></Link>
           )}
         </Container>
       </section>

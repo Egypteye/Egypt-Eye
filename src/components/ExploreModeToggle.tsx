@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useJourneyItems } from "@/lib/journey";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Segmented "EXPLORE EGYPT / MY JOURNEY" switch shown at the top of both
 // /explore-egypt and /my-journey — the two modes the map feature is built
 // around. Journey count comes live from localStorage via useJourneyItems().
 export function ExploreModeToggle() {
+  const tr = useTr();
   const pathname = usePathname();
   const journeyCount = useJourneyItems().length;
   const onJourney = pathname?.startsWith("/my-journey");
@@ -18,10 +20,7 @@ export function ExploreModeToggle() {
         href="/explore-egypt"
         className={`rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${
           !onJourney ? "bg-ink text-cream" : "text-ink-soft hover:text-ink"
-        }`}
-      >
-        Explore Egypt
-      </Link>
+        }`}>{tr("Explore Egypt")}</Link>
       <Link
         href="/my-journey"
         className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] transition ${

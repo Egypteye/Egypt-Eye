@@ -519,10 +519,7 @@ export function EgyptMap({
               </svg>
             </button>
           </div>
-          <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">
-            We don&rsquo;t run tours here yet — but we&rsquo;re always adding new destinations. Tell us you&rsquo;re
-            interested and we&rsquo;ll see what we can arrange.
-          </p>
+          <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">{tr("We don’t run tours here yet — but we’re always adding new destinations. Tell us you’re interested and we’ll see what we can arrange.")}</p>
           <Link
             href="/customize"
             className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-gold-dark hover:underline"

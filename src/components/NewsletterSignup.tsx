@@ -42,7 +42,7 @@ export function NewsletterSignup({
     return (
       <div id="newsletter" className={variant === "compact" ? "text-sm text-ink-soft/70" : "text-center text-cream/90"}>
         <p className="font-semibold">{tr("Almost there — check your inbox")}</p>
-        <p className="mt-1 text-sm opacity-80">Confirm your email and we&rsquo;ll send your unique 4% off code right away.</p>
+        <p className="mt-1 text-sm opacity-80">{tr("Confirm your email and we’ll send your unique 4% off code right away.")}</p>
       </div>
     );
   }
@@ -116,9 +116,7 @@ export function NewsletterSignup({
           </button>
         </form>
         {status === "error" && <p className="mt-3 text-sm text-terracotta">{errorMessage}</p>}
-        <p className="mt-4 text-xs text-cream/50">
-          We&rsquo;ll send a confirmation email first. Unsubscribe anytime.
-        </p>
+        <p className="mt-4 text-xs text-cream/50">{tr("We’ll send a confirmation email first. Unsubscribe anytime.")}</p>
       </div>
     </div>
   );

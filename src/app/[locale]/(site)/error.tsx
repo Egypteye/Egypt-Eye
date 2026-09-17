@@ -19,16 +19,10 @@ export default function Error({ error, reset }: { error: Error & { digest?: stri
       <div className="mt-2 flex flex-wrap justify-center gap-4">
         <button
           onClick={reset}
-          className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
-        >
-          Try Again
-        </button>
+          className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light">{tr("Try Again")}</button>
         <Link
           href="/"
-          className="rounded-full border border-black/10 px-6 py-3 text-sm font-semibold text-ink-soft transition hover:bg-sand-dim"
-        >
-          Back to Home
-        </Link>
+          className="rounded-full border border-black/10 px-6 py-3 text-sm font-semibold text-ink-soft transition hover:bg-sand-dim">{tr("Back to Home")}</Link>
       </div>
     </Container>
   );

@@ -165,7 +165,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
       <Container className="mx-auto max-w-2xl">
         <div className="mb-8">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">{tr("Request Your Journey")}</p>
-          <h1 className="mt-2 font-display text-3xl font-semibold text-ink">Let&rsquo;s put your trip together</h1>
+          <h1 className="mt-2 font-display text-3xl font-semibold text-ink">{tr("Let’s put your trip together")}</h1>
           <div className="mt-6 flex items-center gap-2">
             {STEPS.map((label, i) => (
               <div key={label} className="flex flex-1 items-center gap-2">
@@ -361,7 +361,7 @@ function ReviewStep({
         <p className="mt-1 text-ink">{form.guestName} · {form.guestEmail}{form.guestPhone ? ` · ${form.guestPhone}` : ""}</p>
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Dates &amp; Travelers</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Dates & Travelers")}</p>
         <p className="mt-1 text-ink">
           {form.tripStartDate ? new Date(form.tripStartDate).toLocaleDateString() : "Dates to be confirmed"}
           {form.tripEndDate ? ` – ${new Date(form.tripEndDate).toLocaleDateString()}` : ""} · {form.travelersAdults}{" "}

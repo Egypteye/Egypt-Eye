@@ -157,7 +157,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
 
             {hotel.child_family_policy && (
               <div className="mt-8 rounded-2xl bg-sand-dim p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Child &amp; Family Policy</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50"><T>Child & Family Policy</T></p>
                 <p className="mt-2 text-sm text-ink-soft/80">{hotel.child_family_policy}</p>
               </div>
             )}

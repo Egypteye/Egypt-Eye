@@ -144,10 +144,7 @@ export function EnquiryModal({
             <button
               type="button"
               onClick={onClose}
-              className="mt-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              Close
-            </button>
+              className="mt-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Close")}</button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6">

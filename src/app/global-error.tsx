@@ -40,10 +40,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             color: "#1b2a20",
             border: "none",
             cursor: "pointer",
-          }}
-        >
-          Try Again
-        </button>
+          }}>{tr("Try Again")}</button>
       </body>
     </html>
   );
