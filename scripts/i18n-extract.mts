@@ -86,6 +86,52 @@ console.log(`\n${all.size} strings, ${words.toLocaleString()} words → ${MANIFE
 console.log(`(+${added} new, -${removed} no longer used since last extract)`);
 
 
+
+// ---------------------------------------------------------------------------
+// Sanity, when credentials are available.
+//
+// Most Studio content mirrors the repo — /api/migrate pushes these same files
+// up — so it already fingerprints identically and is translated by the strings
+// collected above. Two things are not: text an editor has since rewritten in
+// Studio, and documents that only ever existed there. The testimonials are the
+// big one: 1,481 of them live in Sanity and none in the repo.
+//
+// Skipped silently without credentials, because the pipeline has to run for a
+// contributor who has never configured Sanity.
+// ---------------------------------------------------------------------------
+
+async function fromSanity(): Promise<Map<string, string>> {
+  const found = new Map<string, string>();
+  if (!process.env.NEXT_PUBLIC_SANITY_PROJECT_ID) {
+    console.log("\nSanity: no NEXT_PUBLIC_SANITY_PROJECT_ID — skipping (repo content only).");
+    return found;
+  }
+  try {
+    const { client } = await import("../src/sanity/client.js");
+    // Everything editorial, in one pass. `...` pulls each document whole, so a
+    // field added in Studio is picked up without editing this query.
+    const docs = await client.fetch<unknown[]>(
+      `*[_type in ["tour","experience","photoshoot","story","signatureExperience",
+                   "destinationHub","testimonial","faq","siteSettings","homepage",
+                   "listingPages","aboutPage","contactPage","customizePage"]]{...}`
+    );
+    collectStrings(docs, found);
+    console.log(`\nSanity: ${docs.length} documents, ${found.size} strings`);
+  } catch (err) {
+    console.warn(`\nSanity: could not read (${(err as Error).message.slice(0, 120)}) — repo content only.`);
+  }
+  return found;
+}
+
+const fromCms = await fromSanity();
+if (fromCms.size > 0) {
+  const before = all.size;
+  for (const [k, v] of fromCms) all.set(k, v);
+  const merged = Object.fromEntries([...all.entries()].sort(([a], [b]) => (a < b ? -1 : 1)));
+  writeFileSync(MANIFEST, JSON.stringify(merged, null, 0) + "\n");
+  console.log(`  +${all.size - before} strings only in Sanity → ${all.size} total`);
+}
+
 // ---------------------------------------------------------------------------
 // UI strings: the ones written into components rather than into content.
 //

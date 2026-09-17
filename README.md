@@ -229,6 +229,83 @@ a real checkout (Stripe, using its Coupons/Promotion Codes API rather than a
 second parallel discount system) can be added later without a rework — see
 `supabase/migrations/0001_init.sql`'s comments.
 
+## Languages
+
+The site is published in seven languages: English (the default), Arabic,
+German, French, Spanish, Italian and Russian. English keeps the bare paths it
+has always had — `/tours`, not `/en/tours` — so every existing link, bookmark
+and indexed URL still resolves. The others are prefixed: `/de/tours`,
+`/ar/photoshoots`. Each page carries its own canonical, hreflang for all seven
+plus x-default, and translated `<title>`, description and structured data.
+
+### Translating everything: three commands
+
+```bash
+npm run i18n:extract                      # find every translatable string
+npm run i18n:translate -- --all           # fill every language
+npm run i18n:status                       # see how far along each one is
+```
+
+`i18n:translate` needs `GEMINI_API_KEY` — the same free key the AI concierge
+uses (see "Setting up the AI concierge" above). Nothing else. It is
+incremental and resumable: it translates only what is missing, writes after
+every batch, and can be stopped and restarted. A run over the whole site takes
+a while and is safe to leave going.
+
+Run `i18n:extract` after editing content or adding a string to a component,
+then `i18n:translate` to fill the gap. Committing the generated files is what
+ships the translations.
+
+### Adding an eighth language
+
+1. Add it to `LOCALES` in `src/i18n/locales.ts`.
+2. Add a loader line for it in `src/i18n/contentStore.ts` and `src/i18n/ui.ts`.
+3. Copy `src/i18n/dictionaries/en.ts` to its code and translate it — this is
+   the navigation, footer and buttons, worth doing by hand.
+4. `npm run i18n:translate -- --locale <code>`.
+
+No routes, components or config change.
+
+### How it works, and why nothing shows a wrong translation
+
+Every translatable string is keyed by a fingerprint of its own English text
+rather than by a field name. Two consequences matter day to day:
+
+- **Any field is translatable without a schema change.** A new field on a tour,
+  a new block in an article, a new heading in a component — all picked up by
+  the next `i18n:extract`.
+- **Editing the English automatically retires its translations.** The edited
+  text fingerprints differently, so the page falls back to the new English
+  until the pipeline catches up. A page in English is correct; a page showing
+  a translation of a sentence you deleted is not.
+
+Content from Sanity is translated the same way, because Studio holds the same
+English these files do. Rewrite a tour's description in Studio and that one
+field reverts to English until the next extract-and-translate.
+
+Three layers resolve each string, highest priority first:
+
+1. A translation typed into Sanity Studio (the "Title translations" fields).
+2. The hand-written tables in `src/content/productTranslations.ts` and
+   `listingPageTranslations.ts`, and the typed dictionaries in
+   `src/i18n/dictionaries/`.
+3. The generated store — everything the pipeline filled in.
+
+So machine output never overwrites anything written by hand, and anything you
+correct in Studio wins over both.
+
+### What is deliberately left in English
+
+- **Admin pages** (`/admin/*`) and Sanity Studio. Owner tooling, not a visitor
+  surface.
+- **Place names, slugs and category keys.** The map resolves destinations to
+  coordinates and the tour filter compares categories, so translating them
+  would break those features while English stayed green. Run
+  `npm run i18n:keys` to see all 157 content fields and how each is classified.
+- **Traveler reviews.** A review is a named person's own words. They are in the
+  manifest and will translate if you run the pipeline, but consider whether you
+  want to label translated ones — that is what Booking and TripAdvisor do.
+
 ## Images
 
 Every tour/experience/photoshoot/blog post has an optional **Photo** field
