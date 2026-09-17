@@ -1,6 +1,16 @@
+import Link from "next/link";
 import type { Testimonial } from "@/content/types";
 
-export function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
+export function TestimonialCard({
+  testimonial,
+  productTitle,
+  productHref,
+}: {
+  testimonial: Testimonial;
+  /** The tour, shoot or service this review is about, where it's known. */
+  productTitle?: string | null;
+  productHref?: string | null;
+}) {
   return (
     <figure className="flex h-full flex-col justify-between rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
       <svg
@@ -16,8 +26,26 @@ export function TestimonialCard({ testimonial }: { testimonial: Testimonial }) {
       </blockquote>
       <figcaption className="mt-5 border-t border-black/5 pt-4">
         <p className="text-sm font-semibold text-ink">{testimonial.name}</p>
-        {testimonial.context && (
-          <p className="text-xs text-ink-soft/60">{testimonial.context}</p>
+        {/* What this review is about. The linked product name is the useful
+            version; `context` is the raw follow-up text and only stands in
+            when the review couldn't be resolved to a product. */}
+        {productTitle ? (
+          <p className="mt-1.5">
+            {productHref ? (
+              <Link
+                href={productHref}
+                className="inline-block rounded-full bg-sand-dim px-3 py-1 text-xs font-medium text-ink-soft transition hover:text-ink"
+              >
+                {productTitle}
+              </Link>
+            ) : (
+              <span className="inline-block rounded-full bg-sand-dim px-3 py-1 text-xs font-medium text-ink-soft">
+                {productTitle}
+              </span>
+            )}
+          </p>
+        ) : (
+          testimonial.context && <p className="text-xs text-ink-soft/60">{testimonial.context}</p>
         )}
       </figcaption>
     </figure>

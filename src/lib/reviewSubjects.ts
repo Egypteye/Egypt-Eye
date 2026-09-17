@@ -31,10 +31,10 @@ export type ReviewSubject = {
   href: string;
 };
 
-export const MEGA_CATEGORIES: { mega: MegaCategory; label: string; otherLabel: string }[] = [
-  { mega: "photoshoots", label: "Photoshoots", otherLabel: "Other Photoshoots" },
-  { mega: "tours", label: "Tours", otherLabel: "Other Tours" },
-  { mega: "services", label: "Services", otherLabel: "Other Services" },
+export const MEGA_CATEGORIES: { mega: MegaCategory; label: string }[] = [
+  { mega: "photoshoots", label: "Photoshoots" },
+  { mega: "tours", label: "Tours" },
+  { mega: "services", label: "Services" },
 ];
 
 /**
@@ -118,57 +118,52 @@ export function collectReviewSubjects(catalogues: Catalogues): ReviewSubject[] {
   ];
 }
 
-export type SubjectGroup = { subject: ReviewSubject; testimonials: Testimonial[] };
-
-export type MegaSection = {
-  mega: MegaCategory;
-  label: string;
-  otherLabel: string;
-  /** Products with reviews, fullest first — each its own named group. */
-  groups: SubjectGroup[];
-  /** Products with no review yet. Still anchored, so their chip lands here. */
-  others: ReviewSubject[];
+/** One review, already resolved to the product and category it belongs to. */
+export type ReviewEntry = {
+  testimonial: Testimonial;
+  /** null when the follow-up never recorded which trip this was about. */
+  mega: MegaCategory | null;
+  productKey: string | null;
+  productTitle: string | null;
+  productHref: string | null;
 };
 
+/** A product that has at least one review, for the filter controls. */
+export type ReviewFilterOption = { key: string; mega: MegaCategory; title: string };
+
 /**
- * Files every review under the product that names it, and every product under
- * one of the three headings.
+ * Flattens reviews into one list for the unified testimonials wall.
  *
- * Matching is the strict rule already used for per-product counts
- * (lib/reviewAttribution.ts), so a review never lands under a product it
- * merely resembles, and never in two places at once.
- *
- * A product with no reviews is not dropped — it goes in its mega's "Other"
- * list, anchored the same way. That is what lets the star chip appear on
- * every product and still land somewhere real: a reviewed product opens its
- * own group, an unreviewed one highlights its entry among its siblings.
+ * The page shows every review together and filters in the browser, so this
+ * resolves each one to its product and category up front rather than nesting
+ * them into sections. Reviews that resolve to nothing keep their place in the
+ * list with a null category — they're real reviews, just not evidence about
+ * one product, and hiding them would understate the wall.
  */
-export function groupTestimonials(
+export function buildReviewEntries(
   testimonials: Testimonial[],
   subjects: ReviewSubject[]
-): { sections: MegaSection[]; unattributed: Testimonial[] } {
-  const claimed = new Set<Testimonial>();
+): { entries: ReviewEntry[]; options: ReviewFilterOption[] } {
+  const withReviews = new Map<string, ReviewFilterOption>();
 
-  const sections = MEGA_CATEGORIES.map(({ mega, label, otherLabel }) => {
-    const mine = subjects.filter((subject) => subject.mega === mega);
-    const groups: SubjectGroup[] = [];
-    const others: ReviewSubject[] = [];
-
-    for (const subject of mine) {
-      const matched = testimonials.filter((review) => reviewMatchesProduct(review, subject));
-      if (matched.length === 0) {
-        others.push(subject);
-        continue;
-      }
-      for (const review of matched) claimed.add(review);
-      groups.push({ subject, testimonials: matched });
+  const entries = testimonials.map((testimonial) => {
+    const subject = subjects.find((s) => reviewMatchesProduct(testimonial, s));
+    if (!subject) {
+      return { testimonial, mega: null, productKey: null, productTitle: null, productHref: null };
     }
+    const key = subjectAnchor(subject);
+    if (!withReviews.has(key)) {
+      withReviews.set(key, { key, mega: subject.mega, title: subject.title });
+    }
+    return {
+      testimonial,
+      mega: subject.mega,
+      productKey: key,
+      productTitle: subject.title,
+      productHref: subject.href,
+    };
+  });
 
-    groups.sort((a, b) => b.testimonials.length - a.testimonials.length);
-    others.sort((a, b) => a.title.localeCompare(b.title));
-
-    return { mega, label, otherLabel, groups, others };
-  }).filter((section) => section.groups.length > 0 || section.others.length > 0);
-
-  return { sections, unattributed: testimonials.filter((review) => !claimed.has(review)) };
+  const options = [...withReviews.values()].sort((a, b) => a.title.localeCompare(b.title));
+  return { entries, options };
 }
