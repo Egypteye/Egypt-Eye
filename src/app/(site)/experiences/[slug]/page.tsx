@@ -10,6 +10,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { Gallery } from "@/components/Gallery";
 import { ExperienceCard } from "@/components/ExperienceCard";
+import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
@@ -108,6 +109,11 @@ export default async function ExperienceDetailPage({
             {experience.title}
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2">
+            <ExperienceRatingLink
+              type="experience"
+              slug={experience.slug}
+              hasReviews={experience.hasReviews}
+            />
             {experience.location && (
               <span className="inline-flex items-center gap-1.5 text-sm text-ink-soft/70">
                 <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-gold-dark" fill="currentColor" aria-hidden="true">

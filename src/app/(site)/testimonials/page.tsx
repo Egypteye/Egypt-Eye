@@ -1,24 +1,29 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { Reveal } from "@/components/Reveal";
 import { TestimonialCard } from "@/components/TestimonialCard";
-import { getCompanyRating } from "@/content/aggregate";
-import { getTestimonials } from "@/sanity/fetchers";
+import { getExperiences, getPhotoshoots, getSignatureExperiences, getTestimonials, getTours } from "@/sanity/fetchers";
+import { collectReviewSubjects, groupTestimonials, subjectAnchor } from "@/lib/reviewSubjects";
 import { siteUrl } from "@/content/seo";
 
 export const metadata: Metadata = {
   title: "Traveler Reviews & Testimonials",
   description:
-    "Real words from real Egypt Eye travelers — private tours, photoshoots, and experiences across Egypt and Jordan.",
+    "Real words from real Egypt Eye travelers, grouped by the tour, photoshoot, experience or service each one is about.",
   alternates: { canonical: `${siteUrl}/testimonials` },
 };
 
 export default async function TestimonialsPage() {
-  const testimonials = await getTestimonials();
-  // The real count of collected reviews, with an average only once
-  // reviews carry star values (see content/aggregate.ts).
-  const rating = getCompanyRating(testimonials);
+  const [testimonials, tours, photoshoots, experiences, signatureExperiences] = await Promise.all([
+    getTestimonials(),
+    getTours(),
+    getPhotoshoots(),
+    getExperiences(),
+    getSignatureExperiences(),
+  ]);
+
+  const subjects = collectReviewSubjects({ tours, photoshoots, experiences, signatureExperiences });
+  const { sections, unattributed } = groupTestimonials(testimonials, subjects);
 
   return (
     <>
@@ -30,23 +35,24 @@ export default async function TestimonialsPage() {
           </h1>
           <p className="mt-4 max-w-xl text-ink-soft/75">
             Every review here comes from a real Egypt Eye trip — no invented or illustrative quotes.
+            They&rsquo;re grouped below by the tour, shoot or service each traveler actually booked.
           </p>
 
-          {rating && rating.count > 0 && (
-            <div className="mt-8 inline-flex items-center gap-3 rounded-full bg-sand-dim px-5 py-3">
-              <svg viewBox="0 0 20 20" fill="currentColor" className="h-5 w-5 shrink-0 text-gold" aria-hidden="true">
-                <path d="M10 1.5l2.6 5.6 6.15.62-4.63 4.2 1.3 6.08L10 14.9l-5.42 3.1 1.3-6.08-4.63-4.2 6.15-.62L10 1.5z" />
-              </svg>
-              {typeof rating.score === "number" && (
-                <>
-                  <span className="text-sm font-semibold text-ink">{rating.score.toFixed(2)} average</span>
-                  <span className="h-1 w-1 rounded-full bg-ink-soft/40" aria-hidden="true" />
-                </>
-              )}
-              <span className="text-sm text-ink-soft/70">
-                {rating.count.toLocaleString()} review{rating.count === 1 ? "" : "s"} collected after Egypt Eye trips &amp; shoots
-              </span>
-            </div>
+          {/* Jump list. Section-level only: a link per product would run to
+              dozens of entries, and the star chip on each product page is
+              already the direct route into its group. */}
+          {sections.length > 1 && (
+            <nav aria-label="Jump to a category" className="mt-8 flex flex-wrap gap-2">
+              {sections.map((section) => (
+                <a
+                  key={section.type}
+                  href={`#reviews-${section.type}`}
+                  className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium text-ink-soft transition hover:border-gold/40 hover:text-ink"
+                >
+                  {section.label}
+                </a>
+              ))}
+            </nav>
           )}
         </Container>
       </section>
@@ -62,13 +68,67 @@ export default async function TestimonialsPage() {
               .
             </p>
           ) : (
-            <Reveal className="columns-1 gap-6 sm:columns-2 lg:columns-3">
-              {testimonials.map((t, i) => (
-                <div key={`${t.name}-${i}`} className="mb-6 break-inside-avoid">
-                  <TestimonialCard testimonial={t} />
+            <div className="space-y-20">
+              {sections.map((section) => (
+                // scroll-mt clears the sticky header, so a jump link doesn't
+                // park the heading underneath it.
+                <div key={section.type} id={`reviews-${section.type}`} className="scroll-mt-28">
+                  <h2 className="font-display text-3xl font-semibold text-ink">{section.label}</h2>
+
+                  <div className="mt-10 space-y-14">
+                    {section.groups.map((group) => (
+                      // The anchor a product's star chip links to. `target:`
+                      // gives the arriving visitor a visible "this is the one
+                      // you asked for" without a line of JavaScript — which
+                      // also means it survives with JS off and keeps the page
+                      // fully static.
+                      <div
+                        key={subjectAnchor(group.subject)}
+                        id={subjectAnchor(group.subject)}
+                        className="scroll-mt-28 rounded-3xl px-5 py-5 transition-colors target:bg-sand-dim target:ring-1 target:ring-gold/30"
+                      >
+                        {/* No count here either — the reviews below are the
+                            evidence, and a tally on every group is exactly the
+                            "site full of review numbers" this replaced. */}
+                        <h3 className="font-display text-xl font-semibold text-ink">
+                          {group.subject.href ? (
+                            <Link href={group.subject.href} className="hover:text-gold-dark">
+                              {group.subject.title}
+                            </Link>
+                          ) : (
+                            group.subject.title
+                          )}
+                        </h3>
+
+                        <div className="mt-5 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                          {group.testimonials.map((t, i) => (
+                            <TestimonialCard key={`${t.name}-${i}`} testimonial={t} />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               ))}
-            </Reveal>
+
+              {/* Reviews whose follow-up didn't record which trip they were
+                  about. They're real, so they're shown rather than dropped —
+                  they simply can't be filed under one product yet. Assigning
+                  one in Studio moves it into its group automatically. */}
+              {unattributed.length > 0 && (
+                <div id="reviews-more" className="scroll-mt-28">
+                  <h2 className="font-display text-3xl font-semibold text-ink">More Reviews</h2>
+                  <p className="mt-2 max-w-xl text-sm text-ink-soft/70">
+                    Reviews from travelers whose follow-up didn&rsquo;t record which trip they were on.
+                  </p>
+                  <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {unattributed.map((t, i) => (
+                      <TestimonialCard key={`other-${t.name}-${i}`} testimonial={t} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </Container>
       </section>

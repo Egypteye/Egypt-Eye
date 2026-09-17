@@ -27,6 +27,7 @@ import {
   toursQuery,
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
+import { reviewMatchesProduct } from "@/lib/reviewAttribution";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
@@ -150,7 +151,7 @@ async function safeFetch<T>(query: string, params: Record<string, unknown> = {})
  * back empty and this returns null, so items show "New experience" rather
  * than a number we can't stand behind.
  */
-type RatedProduct = { slug: string; title: string; rating?: Rating };
+type ReviewableProduct = { slug: string; title: string; hasReviews?: boolean };
 
 /**
  * The review figure a product shows, in precedence order:
@@ -174,26 +175,38 @@ export async function getCompanyRating(): Promise<Rating> {
   return companyRatingFrom(await getTestimonials());
 }
 
-function manualProductRating(rating: Rating): Rating {
-  if (!rating || !rating.count || rating.count <= 0) return null;
-  return { scope: "product", source: "manual", count: rating.count, score: rating.score };
+/**
+ * Stamps `hasReviews` onto each product from the reviews themselves.
+ *
+ * This is what lets a card anywhere on the site — a listing, the homepage, a
+ * related row — know whether to show its star chip, without every one of
+ * those call sites having to fetch and match the testimonials itself. It is
+ * deliberately a boolean and not a count: the chip makes no numeric claim,
+ * it only says "people have reviewed this" and opens the group that proves
+ * it.
+ *
+ * A product with no matching review gets `false`, and so shows no chip —
+ * which also means the chip can never link to an empty group.
+ */
+async function withReviewFlag<T extends ReviewableProduct>(items: T[]): Promise<T[]> {
+  const testimonials = await getTestimonials();
+  if (testimonials.length === 0) return items.map((item) => ({ ...item, hasReviews: false }));
+  return items.map((item) => ({
+    ...item,
+    hasReviews: testimonials.some((review) => reviewMatchesProduct(review, item)),
+  }));
 }
 
-async function withCompanyRating<T extends RatedProduct>(items: T[]): Promise<T[]> {
-  const fallback = await getCompanyRating();
-  return items.map((item) => ({ ...item, rating: manualProductRating(item.rating ?? null) ?? fallback }));
-}
-
-async function withCompanyRatingOne<T extends RatedProduct>(
+async function withReviewFlagOne<T extends ReviewableProduct>(
   item: T | undefined
 ): Promise<T | undefined> {
   if (!item) return undefined;
-  return { ...item, rating: manualProductRating(item.rating ?? null) ?? (await getCompanyRating()) };
+  return (await withReviewFlag([item]))[0];
 }
 
 export async function getTours(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return withCompanyRating(
+  return withReviewFlag(
     withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours)
   );
 }
@@ -207,7 +220,7 @@ function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined
 }
 
 export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  return withCompanyRatingOne(
+  return withReviewFlagOne(
     mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug)
   );
 }
@@ -220,7 +233,7 @@ export async function getToursBySlugs(slugs: string[]): Promise<Tour[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Tour[]>(toursBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((t) => [t.slug, t]));
-  return withCompanyRating(
+  return withReviewFlag(
     slugs
       .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
       .filter((t): t is Tour => Boolean(t))
@@ -247,7 +260,7 @@ function withLocalExperienceRelations(exps: Experience[]): Experience[] {
 
 export async function getExperiences(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
-  return withCompanyRating(
+  return withReviewFlag(
     withValidSlugs(
       result && result.length > 0
         ? withLocalImageFallback(result, localExperiences)
@@ -263,7 +276,7 @@ function mergeExperienceWithLocal(result: Experience | null, slug: string): Expe
 }
 
 export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
-  return withCompanyRatingOne(
+  return withReviewFlagOne(
     mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug)
   );
 }
@@ -272,7 +285,7 @@ export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience
   if (slugs.length === 0) return [];
   const results = await safeFetch<Experience[]>(experiencesBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((e) => [e.slug, e]));
-  return withCompanyRating(
+  return withReviewFlag(
     slugs
       .map((slug) => mergeExperienceWithLocal(bySlug.get(slug) ?? null, slug))
       .filter((e): e is Experience => Boolean(e))
@@ -281,7 +294,7 @@ export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience
 
 export async function getPhotoshoots(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
-  return withCompanyRating(
+  return withReviewFlag(
     withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots)
   );
 }
@@ -293,7 +306,7 @@ function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Phot
 }
 
 export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
-  return withCompanyRatingOne(
+  return withReviewFlagOne(
     mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug)
   );
 }
@@ -302,7 +315,7 @@ export async function getPhotoshootsBySlugs(slugs: string[]): Promise<Photoshoot
   if (slugs.length === 0) return [];
   const results = await safeFetch<Photoshoot[]>(photoshootsBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((p) => [p.slug, p]));
-  return withCompanyRating(
+  return withReviewFlag(
     slugs
       .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
       .filter((p): p is Photoshoot => Boolean(p))
@@ -343,7 +356,7 @@ export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
   // A story's related tours render as full TourCards, so they need the same
   // review figure the tour would show anywhere else.
   return story.relatedTours && story.relatedTours.length > 0
-    ? { ...story, relatedTours: await withCompanyRating(story.relatedTours) }
+    ? { ...story, relatedTours: await withReviewFlag(story.relatedTours) }
     : story;
 }
 

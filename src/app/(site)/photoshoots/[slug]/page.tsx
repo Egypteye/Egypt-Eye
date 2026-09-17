@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
+import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { Gallery } from "@/components/Gallery";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
@@ -74,6 +75,11 @@ export default async function PhotoshootDetailPage({
           </h1>
           <div className="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-soft/70">
             <span>⏱ {photoshoot.duration}</span>
+            <ExperienceRatingLink
+              type="photoshoot"
+              slug={photoshoot.slug}
+              hasReviews={photoshoot.hasReviews}
+            />
           </div>
           <p className="mt-5 leading-relaxed text-ink-soft/80">
             {photoshoot.description}

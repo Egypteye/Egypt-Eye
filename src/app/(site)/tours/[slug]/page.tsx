@@ -6,6 +6,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { Badge } from "@/components/Badge";
 import { TourCard } from "@/components/TourCard";
+import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
@@ -105,6 +106,13 @@ export default async function TourDetailPage({
             <span className="rounded-full bg-cream/15 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-cream backdrop-blur-sm">
               {categoryLabels[tour.category] ?? tour.category}
             </span>
+            <ExperienceRatingLink
+              type="tour"
+              slug={tour.slug}
+              hasReviews={tour.hasReviews}
+              tone="dark"
+              className="px-3.5 py-1.5"
+            />
           </div>
 
           <div className="flex flex-wrap gap-4 pt-2">
