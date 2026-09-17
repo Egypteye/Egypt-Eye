@@ -28,6 +28,7 @@ import {
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
 import { localized } from "@/i18n/localizeContent";
+import { localizedListingPages } from "@/content/listingPageTranslations";
 import { photoshootTranslations, tourTranslations, type ProductTranslation } from "@/content/productTranslations";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
@@ -723,9 +724,10 @@ export async function getHomepage(): Promise<ResolvedHomepage> {
 
 export async function getListingPages(): Promise<ResolvedListingPages> {
   const result = await safeFetch<ListingPages>(listingPagesQuery);
-  if (!result) return localListingPages;
+  const locale = await currentLocale();
+  if (!result) return localizedListingPages(localListingPages, locale);
 
-  return {
+  const merged: ResolvedListingPages = {
     tours: {
       ...localListingPages.tours,
       ...result.tours,
@@ -737,4 +739,6 @@ export async function getListingPages(): Promise<ResolvedListingPages> {
     exploreEgypt: { ...localListingPages.exploreEgypt, ...result.exploreEgypt },
     stories: { ...localListingPages.stories, ...result.stories },
   };
+
+  return localizedListingPages(merged, locale);
 }
