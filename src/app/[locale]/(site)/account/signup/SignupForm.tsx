@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { AuthInput } from "@/components/AuthCard";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export function SignupForm() {
+  const tr = useTr();
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/account";
@@ -64,32 +66,28 @@ export function SignupForm() {
   if (status === "sent") {
     return (
       <div className="rounded-2xl border border-gold/20 bg-sand-dim p-5 text-sm text-ink-soft/80">
-        <p className="font-semibold text-ink">Check your inbox</p>
-        <p className="mt-1.5">
-          We&rsquo;ve sent a verification link to confirm your email. Click it to finish creating your account.
-        </p>
+        <p className="font-semibold text-ink">{tr("Check your inbox")}</p>
+        <p className="mt-1.5">{tr("We’ve sent a verification link to confirm your email. Click it to finish creating your account.")}</p>
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <AuthInput label="First name" name="firstName" type="text" autoComplete="given-name" />
-      <AuthInput label="Email" name="email" type="email" required autoComplete="email" />
+      <AuthInput label={tr("First name")} name="firstName" type="text" autoComplete="given-name" />
+      <AuthInput label={tr("Email")} name="email" type="email" required autoComplete="email" />
       <AuthInput
-        label="Password"
+        label={tr("Password")}
         name="password"
         type="password"
         required
         minLength={8}
         autoComplete="new-password"
       />
-      <p className="-mt-2 text-xs text-ink-soft/50">At least 8 characters.</p>
+      <p className="-mt-2 text-xs text-ink-soft/50">{tr("At least 8 characters.")}</p>
 
       <label className="flex items-start gap-2.5 text-sm text-ink-soft/80">
-        <input type="checkbox" name="marketingConsent" className="mt-0.5 h-4 w-4 shrink-0 accent-gold-dark" />
-        Yes, I&rsquo;d like to receive Egypt Eye travel inspiration, new experiences and special offers by email.
-      </label>
+        <input type="checkbox" name="marketingConsent" className="mt-0.5 h-4 w-4 shrink-0 accent-gold-dark" />{tr("Yes, I’d like to receive Egypt Eye travel inspiration, new experiences and special offers by email.")}</label>
 
       {status === "error" && <p className="text-sm text-terracotta">{errorMessage}</p>}
 
@@ -103,9 +101,7 @@ export function SignupForm() {
 
       <p className="text-center text-xs text-ink-soft/60">
         Already have an account?{" "}
-        <Link href={`/account/login?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">
-          Log in
-        </Link>
+        <Link href={`/account/login?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">{tr("Log in")}</Link>
       </p>
     </form>
   );

@@ -246,6 +246,8 @@ export const fr: Dictionary = {
 
   seo: {
     homeTitle: "Circuits privés, séances photo et expériences en Égypte",
+    // Appended to every tour page title, after an em dash.
+    privateTourSuffix: "Circuit privé",
     localeSuffix: "",
   },
 };

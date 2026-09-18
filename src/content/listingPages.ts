@@ -46,7 +46,7 @@ export const listingPages: ResolvedListingPages = {
     heroTitle: "Travel, Professionally Captured",
     sectionTitle: "Our signature products",
     sectionDescription:
-      "Egypt Eye began as a travel company — but our photography is what travelers remember most. Both packages include a private photographer and professional editing.",
+      "Egypt Eye began as a travel company — but our photography is what travelers remember most. Every package includes a private photographer and professional editing.",
   },
   signatureExperiences: {
     heroEyebrow: "Signature Experiences",

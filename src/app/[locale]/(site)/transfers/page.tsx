@@ -8,6 +8,8 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { TransferBookingForm } from "./TransferBookingForm";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { transfersPage } from "@/content/transfers";
+import { localizedTransferCategories } from "@/content/productTranslations";
+import { trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -20,8 +22,21 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function TransfersPage() {
+export default async function TransfersPage() {
+  const ui = await trAll([
+    "Book a Transfer",
+    "Every Transfer Includes",
+    "Good to Know",
+    "Most Cairo & Giza routes, plus Alexandria, Ain Sokhna, and Fayoum, are covered. Anything else, we'll quote by email.",
+    "Request a transfer in a few clicks",
+    "Road near the Pyramids of Giza with Cairo's skyline in the background",
+    "Transfer Questions",
+    "What's Taken Care Of",
+  ]);
+
   const page = transfersPage;
+  const locale = await getLocale();
+  const categories = localizedTransferCategories(locale);
 
   return (
     <>
@@ -29,7 +44,7 @@ export default function TransfersPage() {
         <SmartImage
           image="/photos/pexels-31133003.jpg"
           tone="nile"
-          alt="Road near the Pyramids of Giza with Cairo's skyline in the background"
+          alt={ui["Road near the Pyramids of Giza with Cairo's skyline in the background"]}
           className="absolute inset-0"
           priority
           sizes="100vw"
@@ -45,9 +60,9 @@ export default function TransfersPage() {
       <section className="py-16">
         <Container>
           <SectionHeading
-            eyebrow="Book a Transfer"
-            title="Request a transfer in a few clicks"
-            description="Most Cairo & Giza routes, plus Alexandria, Ain Sokhna, and Fayoum, are covered. Anything else, we'll quote by email."
+            eyebrow={ui["Book a Transfer"]}
+            title={ui["Request a transfer in a few clicks"]}
+            description={ui["Most Cairo & Giza routes, plus Alexandria, Ain Sokhna, and Fayoum, are covered. Anything else, we'll quote by email."]}
           />
           {/* One rating link per service, so each transfer type carries the
               same star chip a tour or a photoshoot does. It sits above the
@@ -55,7 +70,7 @@ export default function TransfersPage() {
               form controls, and a link nested in a button would both be
               invalid markup and steal the click that selects the category. */}
           <div className="mx-auto mt-8 flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2">
-            {transfersPage.categories.map((c) => (
+            {categories.map((c) => (
               <span key={c.id} className="inline-flex items-center gap-2 text-sm text-ink-soft/70">
                 {c.label}
                 <ExperienceRatingLink type="service" slug={c.id} />
@@ -71,7 +86,7 @@ export default function TransfersPage() {
 
       <section className="bg-sand-dim py-20">
         <Container className="mx-auto max-w-3xl">
-          <SectionHeading eyebrow="Every Transfer Includes" title="What's Taken Care Of" align="center" />
+          <SectionHeading eyebrow={ui["Every Transfer Includes"]} title={ui["What's Taken Care Of"]} align="center" />
           <ul className="mx-auto mt-10 grid max-w-xl gap-3 sm:grid-cols-2">
             {page.included.map((item) => (
               <li key={item} className="flex items-start gap-2.5 text-sm text-ink-soft/80">
@@ -87,7 +102,7 @@ export default function TransfersPage() {
 
       <section className="py-20">
         <Container className="mx-auto max-w-3xl">
-          <SectionHeading eyebrow="Good to Know" title="Transfer Questions" align="center" />
+          <SectionHeading eyebrow={ui["Good to Know"]} title={ui["Transfer Questions"]} align="center" />
           <div className="mt-10">
             <FaqAccordion faqs={[...page.faqs]} />
           </div>

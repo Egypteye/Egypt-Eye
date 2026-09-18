@@ -17,6 +17,7 @@ import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { getExperienceBySlug, getExperiences, getSiteSettings } from "@/sanity/fetchers";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { T } from "@/i18n/T";
 
 export async function generateStaticParams() {
   const experiences = await getExperiences();
@@ -136,7 +137,7 @@ export default async function ExperienceDetailPage({
 
           {mapStops.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-xl font-semibold text-ink">Where You&rsquo;ll Go</h2>
+              <h2 className="font-display text-xl font-semibold text-ink"><T>Where You’ll Go</T></h2>
               <RouteMap
                 stops={mapStops}
                 singleLabel={experience.location ?? mapStops[0]?.name}
@@ -146,7 +147,7 @@ export default async function ExperienceDetailPage({
 
           {experience.steps && experience.steps.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-xl font-semibold text-ink">What You&rsquo;ll Do</h2>
+              <h2 className="font-display text-xl font-semibold text-ink"><T>What You’ll Do</T></h2>
               <ol className="mt-5 space-y-0">
                 {experience.steps.map((step, i) => (
                   <li key={step.title} className="relative flex gap-4 pb-6 last:pb-0">
@@ -169,9 +170,7 @@ export default async function ExperienceDetailPage({
           )}
 
           <div className="mt-10">
-            <h2 className="font-display text-xl font-semibold text-ink">
-              Included
-            </h2>
+            <h2 className="font-display text-xl font-semibold text-ink"><T>Included</T></h2>
             <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
               {experience.included.map((i) => (
                 <li key={i} className="flex gap-2">
@@ -184,10 +183,8 @@ export default async function ExperienceDetailPage({
 
           {experience.goodToKnow && experience.goodToKnow.length > 0 && (
             <div className="mt-10 rounded-2xl border border-black/5 bg-sand-dim p-6">
-              <h2 className="font-display text-xl font-semibold text-ink">Good to Know</h2>
-              <p className="mt-1.5 text-sm text-ink-soft/60">
-                The practical truth about this one — timings, conditions, and what we can&rsquo;t promise.
-              </p>
+              <h2 className="font-display text-xl font-semibold text-ink"><T>Good to Know</T></h2>
+              <p className="mt-1.5 text-sm text-ink-soft/60"><T>The practical truth about this one — timings, conditions, and what we can’t promise.</T></p>
               <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-ink-soft/80">
                 {experience.goodToKnow.map((item) => (
                   <li key={item} className="flex gap-2.5">
@@ -201,7 +198,7 @@ export default async function ExperienceDetailPage({
 
           {experience.gallery && experience.gallery.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-xl font-semibold text-ink">Gallery</h2>
+              <h2 className="font-display text-xl font-semibold text-ink"><T>Gallery</T></h2>
               <div className="mt-4">
                 <Gallery images={experience.gallery} alt={experience.title} />
               </div>
@@ -210,8 +207,8 @@ export default async function ExperienceDetailPage({
 
           {experience.relatedTours && experience.relatedTours.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-xl font-semibold text-ink">Available On</h2>
-              <p className="mt-2 text-sm text-ink-soft/70">Tours this experience pairs naturally with.</p>
+              <h2 className="font-display text-xl font-semibold text-ink"><T>Available On</T></h2>
+              <p className="mt-2 text-sm text-ink-soft/70"><T>Tours this experience pairs naturally with.</T></p>
               <div className="mt-4 flex flex-wrap gap-3">
                 {experience.relatedTours.map((t) => (
                   <Link
@@ -230,14 +227,11 @@ export default async function ExperienceDetailPage({
 
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
           <PriceTag price={experience.price} />
-          <p className="mt-1 text-xs text-ink-soft/60">per person</p>
+          <p className="mt-1 text-xs text-ink-soft/60"><T>per person</T></p>
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}
-            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
-          >
-            Book on WhatsApp
-          </WhatsAppBookButton>
+            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Book on WhatsApp</T></WhatsAppBookButton>
           <EnquiryButton itemType="experience" itemTitle={experience.title} itemSlug={experience.slug} className="mt-3" />
 
           <div className="mt-4 border-t border-black/5 pt-4">
@@ -262,9 +256,7 @@ export default async function ExperienceDetailPage({
       {related.length > 0 && (
         <section className="bg-sand-dim py-20">
           <Container>
-            <h2 className="font-display text-2xl font-semibold text-ink">
-              More experiences to add
-            </h2>
+            <h2 className="font-display text-2xl font-semibold text-ink"><T>More experiences to add</T></h2>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((e) => (
                 <ExperienceCard key={e.slug} experience={e} />

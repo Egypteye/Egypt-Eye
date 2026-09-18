@@ -246,6 +246,8 @@ export const ru: Dictionary = {
 
   seo: {
     homeTitle: "Индивидуальные туры, фотосессии и впечатления в Египте",
+    // Appended to every tour page title, after an em dash.
+    privateTourSuffix: "Индивидуальный тур",
     localeSuffix: "",
   },
 };

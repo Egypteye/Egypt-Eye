@@ -5,6 +5,7 @@ import { apiVersion, dataset, projectId } from "@/sanity/env";
 import { tours } from "@/content/tours";
 import { experiences } from "@/content/experiences";
 import { photoshoots } from "@/content/photoshoots";
+import { photoshootTranslations, tourTranslations } from "@/content/productTranslations";
 import { testimonials } from "@/content/testimonials";
 import { stories } from "@/content/stories";
 import { faqs } from "@/content/faq";
@@ -233,6 +234,12 @@ export async function GET(request: NextRequest) {
         title: t.title,
         slug: { _type: "slug", current: t.slug },
         tagline: t.tagline,
+        // The repo's translations are seeded into Studio so an editor can see
+        // (and refine) what each language currently says. The site doesn't
+        // depend on this having run — the fetchers merge the same table in —
+        // but an empty field in Studio would wrongly read as "not translated".
+        titleTranslations: tourTranslations[t.slug]?.title,
+        taglineTranslations: tourTranslations[t.slug]?.tagline,
         category: t.category,
         duration: t.duration,
         lengthDays: t.lengthDays,
@@ -247,6 +254,7 @@ export async function GET(request: NextRequest) {
         image: resetMedia ? undefined : existingMedia.get(id)?.image,
         gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
         description: t.description,
+        descriptionTranslations: tourTranslations[t.slug]?.description,
         highlights: t.highlights,
         included: t.included,
         excluded: t.excluded,
@@ -313,6 +321,8 @@ export async function GET(request: NextRequest) {
         _type: "photoshoot",
         title: p.title,
         slug: { _type: "slug", current: p.slug },
+        titleTranslations: photoshootTranslations[p.slug]?.title,
+        descriptionTranslations: photoshootTranslations[p.slug]?.description,
         duration: p.duration,
         rating:
           existingMedia.get(id)?.rating ?? (p.rating ? { _type: "rating", ...p.rating } : undefined),

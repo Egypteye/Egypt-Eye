@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { logShare } from "./actions";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const BRAND_MARK_SRC = "/brand/egypt-eye-mark-gold.png";
 const CARD_WIDTH = 1080;
@@ -150,6 +151,7 @@ export function ShareAchievement({
   shareUrl: string;
   shareText: string;
 }) {
+  const tr = useTr();
   const [copied, setCopied] = useState(false);
   const [busy, setBusy] = useState<"share" | "download" | null>(null);
   const canNativeShare = typeof navigator !== "undefined" && "share" in navigator;
@@ -237,19 +239,13 @@ export function ShareAchievement({
             openSharePopup(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`);
             track("facebook");
           }}
-          className="rounded-full border border-cream/25 px-6 py-3 text-base font-semibold text-cream/80 transition hover:bg-cream/10"
-        >
-          Facebook
-        </button>
+          className="rounded-full border border-cream/25 px-6 py-3 text-base font-semibold text-cream/80 transition hover:bg-cream/10">{tr("Facebook")}</button>
         <a
           href={`https://wa.me/?text=${encodeURIComponent(`${shareText} ${shareUrl}`)}`}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => track("whatsapp")}
-          className="rounded-full border border-cream/25 px-6 py-3 text-base font-semibold text-cream/80 transition hover:bg-cream/10"
-        >
-          WhatsApp
-        </a>
+          className="rounded-full border border-cream/25 px-6 py-3 text-base font-semibold text-cream/80 transition hover:bg-cream/10">{tr("WhatsApp")}</a>
         <button
           type="button"
           onClick={handleCopy}
@@ -267,7 +263,7 @@ export function ShareAchievement({
         {busy === "download" ? "Preparing image…" : "Download my achievement card"}
       </button>
       <p className="max-w-xs text-center text-sm text-cream/40">
-        For Instagram: tap Share My Achievement (or download the card) and post it to your Story.
+        {tr("For Instagram: tap Share My Achievement (or download the card) and post it to your Story.")}
       </p>
     </div>
   );

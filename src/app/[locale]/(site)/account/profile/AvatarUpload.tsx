@@ -4,11 +4,13 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const MAX_BYTES = 5 * 1024 * 1024;
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string; avatarUrl: string | null; firstName: string | null }) {
+  const tr = useTr();
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState(avatarUrl);
@@ -114,10 +116,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
               type="button"
               onClick={handleRemove}
               disabled={status === "saving"}
-              className="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft/60 transition hover:text-terracotta disabled:opacity-60"
-            >
-              Remove
-            </button>
+              className="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft/60 transition hover:text-terracotta disabled:opacity-60">{tr("Remove")}</button>
           )}
         </div>
         <input
@@ -130,7 +129,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
         {status === "error" ? (
           <p className="text-xs text-terracotta">{error}</p>
         ) : (
-          <p className="text-xs text-ink-soft/50">JPG, PNG, or WebP. Up to 5MB.</p>
+          <p className="text-xs text-ink-soft/50">{tr("JPG, PNG, or WebP. Up to 5MB.")}</p>
         )}
       </div>
     </div>

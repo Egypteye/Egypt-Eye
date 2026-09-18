@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { EventCountdown as EventCountdownData } from "@/content/types";
 import { SmartImage } from "./SmartImage";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Reusable countdown for any dated event — not written for the eclipse
 // specifically. Reads its target from `event.targetDateTime`, an ISO string
@@ -50,6 +51,7 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
 }
 
 export function EventCountdown({ event }: { event: EventCountdownData }) {
+  const tr = useTr();
   const target = new Date(event.targetDateTime).getTime();
   const [msRemaining, setMsRemaining] = useState<number | null>(null);
 
@@ -95,10 +97,10 @@ export function EventCountdown({ event }: { event: EventCountdownData }) {
 
         {phase === "counting" && parts && (
           <div className="flex items-start gap-6 sm:gap-10">
-            <TimeUnit value={parts.days} label="Days" />
-            <TimeUnit value={parts.hours} label="Hours" />
-            <TimeUnit value={parts.minutes} label="Minutes" />
-            <TimeUnit value={parts.seconds} label="Seconds" />
+            <TimeUnit value={parts.days} label={tr("Days")} />
+            <TimeUnit value={parts.hours} label={tr("Hours")} />
+            <TimeUnit value={parts.minutes} label={tr("Minutes")} />
+            <TimeUnit value={parts.seconds} label={tr("Seconds")} />
           </div>
         )}
 

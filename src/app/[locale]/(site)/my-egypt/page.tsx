@@ -13,6 +13,7 @@ import { PackingChecklist } from "./PackingChecklist";
 import { AddExperienceButton } from "./AddExperienceButton";
 import { ConciergeWidget } from "./ConciergeWidget";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
+import { T, trAll } from "@/i18n/T";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
 // never be statically prerendered. Declared explicitly rather than inferred
@@ -33,6 +34,15 @@ type Guide = { name: string; phone?: string; languages?: string };
 type Document = { label: string; url: string };
 
 export default async function MyEgyptPage() {
+  const ui = await trAll([
+    "Documents",
+    "Hotels",
+    "Important Contacts",
+    "Packing Checklist",
+    "Transfers",
+    "Your Guides",
+  ]);
+
   const user = await getCurrentUser();
   if (!user) redirect("/account/login?next=/my-egypt");
 
@@ -41,15 +51,10 @@ export default async function MyEgyptPage() {
     return (
       <section className="bg-sand py-24">
         <Container className="mx-auto max-w-lg text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">My Egypt</p>
-          <h1 className="mt-3 font-display text-3xl font-semibold text-ink">Your private travel dashboard</h1>
-          <p className="mt-4 text-ink-soft/70">
-            My Egypt unlocks once one of your reservations is confirmed by our team — your countdown, itinerary,
-            hotels, and everything else will live here.
-          </p>
-          <Link href="/account" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">
-            View My Account
-          </Link>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>My Egypt</T></p>
+          <h1 className="mt-3 font-display text-3xl font-semibold text-ink"><T>Your private travel dashboard</T></h1>
+          <p className="mt-4 text-ink-soft/70"><T>My Egypt unlocks once one of your reservations is confirmed by our team — your countdown, itinerary, hotels, and everything else will live here.</T></p>
+          <Link href="/account" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>View My Account</T></Link>
         </Container>
       </section>
     );
@@ -103,7 +108,7 @@ export default async function MyEgyptPage() {
         <Container className="mx-auto flex max-w-3xl flex-col gap-10">
           {todayItinerary && (
             <div className="rounded-3xl border border-gold/30 bg-cream p-6 shadow-xl shadow-black/5">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">Today</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Today</T></p>
               <h2 className="mt-1 font-display text-xl font-semibold text-ink">{todayItinerary.title}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {todayItinerary.items.map((item, i) => (
@@ -118,26 +123,21 @@ export default async function MyEgyptPage() {
               <WhatsAppBookButton
                 whatsappLink={site.contact.whatsappLink}
                 context={{ page: "the My Egypt page", intro: "Hi, I have a question about my trip." }}
-                className="mt-4 inline-block text-sm font-semibold text-gold-dark underline"
-              >
-                Need help? Talk to Egypt Eye
-              </WhatsAppBookButton>
+                className="mt-4 inline-block text-sm font-semibold text-gold-dark underline"><T>Need help? Talk to Egypt Eye</T></WhatsAppBookButton>
             </div>
           )}
 
           {visitedHubs.length > 0 && (
             <div>
-              <h2 className="mb-4 font-display text-lg font-semibold text-ink">Your Destinations</h2>
+              <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Your Destinations</T></h2>
               <EgyptMap hubs={allHubs} routeSlugs={visitedHubs.map((h) => h.slug)} linkBase="/explore-egypt" />
             </div>
           )}
 
           <div>
-            <h2 className="mb-4 font-display text-lg font-semibold text-ink">Your Itinerary</h2>
+            <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Your Itinerary</T></h2>
             {itinerary.length === 0 ? (
-              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
-                Your day-by-day itinerary will appear here once our team finalizes it.
-              </p>
+              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60"><T>Your day-by-day itinerary will appear here once our team finalizes it.</T></p>
             ) : (
               <div className="flex flex-col gap-4">
                 {itinerary.map((day) => (
@@ -164,7 +164,7 @@ export default async function MyEgyptPage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2">
-            <InfoCard title="Hotels">
+            <InfoCard title={ui["Hotels"]}>
               {hotels.length === 0 ? (
                 <EmptyNote text="Hotel details will appear here once confirmed." />
               ) : (
@@ -184,7 +184,7 @@ export default async function MyEgyptPage() {
               )}
             </InfoCard>
 
-            <InfoCard title="Transfers">
+            <InfoCard title={ui["Transfers"]}>
               {transfers.length === 0 ? (
                 <EmptyNote text="Transfer details will appear here once confirmed." />
               ) : (
@@ -202,7 +202,7 @@ export default async function MyEgyptPage() {
               )}
             </InfoCard>
 
-            <InfoCard title="Your Guides">
+            <InfoCard title={ui["Your Guides"]}>
               {guides.length === 0 ? (
                 <EmptyNote text="Guide information will appear here once assigned." />
               ) : (
@@ -216,7 +216,7 @@ export default async function MyEgyptPage() {
               )}
             </InfoCard>
 
-            <InfoCard title="Documents">
+            <InfoCard title={ui["Documents"]}>
               {documents.length === 0 ? (
                 <EmptyNote text="Vouchers and documents will appear here as they're ready." />
               ) : (
@@ -233,14 +233,14 @@ export default async function MyEgyptPage() {
             </InfoCard>
           </div>
 
-          <InfoCard title="Packing Checklist">
+          <InfoCard title={ui["Packing Checklist"]}>
             <PackingChecklist reservationId={reservation.id} />
           </InfoCard>
 
           {(suggestedExperiences.length > 0 || suggestedPhotoshoots.length > 0) && (
             <div>
-              <h2 className="mb-1 font-display text-lg font-semibold text-ink">Make Your Journey Even More Yours</h2>
-              <p className="mb-4 text-sm text-ink-soft/60">Based on your destinations — request an addition and we&rsquo;ll follow up.</p>
+              <h2 className="mb-1 font-display text-lg font-semibold text-ink"><T>Make Your Journey Even More Yours</T></h2>
+              <p className="mb-4 text-sm text-ink-soft/60"><T>Based on your destinations — request an addition and we’ll follow up.</T></p>
               <div className="grid gap-4 sm:grid-cols-2">
                 {[...suggestedExperiences, ...suggestedPhotoshoots].map((item) => (
                   <div key={item.slug} className="flex items-center justify-between gap-3 rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
@@ -256,12 +256,12 @@ export default async function MyEgyptPage() {
           )}
 
           <div>
-            <h2 className="mb-1 font-display text-lg font-semibold text-ink">Ask Egypt Eye</h2>
-            <p className="mb-4 text-sm text-ink-soft/60">Your private concierge — grounded in your actual trip details.</p>
+            <h2 className="mb-1 font-display text-lg font-semibold text-ink"><T>Ask Egypt Eye</T></h2>
+            <p className="mb-4 text-sm text-ink-soft/60"><T>Your private concierge — grounded in your actual trip details.</T></p>
             <ConciergeWidget reservationId={reservation.id} whatsappLink={site.contact.whatsappLink} />
           </div>
 
-          <InfoCard title="Important Contacts">
+          <InfoCard title={ui["Important Contacts"]}>
             <div className="flex flex-col gap-2 text-sm">
               <WhatsAppBookButton
                 whatsappLink={site.contact.whatsappLink}

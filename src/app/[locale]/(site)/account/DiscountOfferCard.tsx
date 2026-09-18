@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type DiscountCode = {
   id: string;
@@ -26,6 +27,7 @@ const STATUS_LABEL: Record<DiscountCode["status"], string> = {
 };
 
 export function DiscountOfferCard({ code }: { code: DiscountCode }) {
+  const tr = useTr();
   const [copied, setCopied] = useState(false);
   const label =
     code.discount_campaigns?.discount_type === "fixed"
@@ -67,10 +69,7 @@ export function DiscountOfferCard({ code }: { code: DiscountCode }) {
         {code.status === "available" && (
           <Link
             href="/explore-egypt"
-            className="flex-1 rounded-full bg-ink py-2 text-center text-xs font-semibold text-cream transition hover:bg-gold-dark"
-          >
-            Use My Discount
-          </Link>
+            className="flex-1 rounded-full bg-ink py-2 text-center text-xs font-semibold text-cream transition hover:bg-gold-dark">{tr("Use My Discount")}</Link>
         )}
       </div>
     </div>

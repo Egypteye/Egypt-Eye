@@ -30,6 +30,7 @@ import {
   getTestimonials,
   getTours,
 } from "@/sanity/fetchers";
+import { T, trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -43,6 +44,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
+  const ui = await trAll([
+    "Customize Your Tour",
+    "Flying Dress Photoshoot",
+    "Nine Pyramids View",
+    "Planning a custom Egypt itinerary with Egypt Eye",
+    "Red Sea Luxe Yachts",
+  ]);
+
   const [site, home, tours, experiences, photoshoots, testimonials, faqs, destinationHubs] = await Promise.all([
     getSiteSettings(),
     getHomepage(),
@@ -132,10 +141,7 @@ export default async function Home() {
           <Reveal delay={150} className="mt-10 flex justify-center">
             <Link
               href="/photoshoots"
-              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              View All Photoshoots
-            </Link>
+              className="rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>View All Photoshoots</T></Link>
           </Reveal>
         </Container>
       </section>
@@ -177,8 +183,8 @@ export default async function Home() {
               <SmartImage
                 image={site.customizeImage.image}
                 tone={site.customizeImage.tone}
-                alt="Planning a custom Egypt itinerary with Egypt Eye"
-                label="Customize Your Tour"
+                alt={ui["Planning a custom Egypt itinerary with Egypt Eye"]}
+                label={ui["Customize Your Tour"]}
                 className="aspect-square w-full rounded-2xl"
               />
             </div>
@@ -250,8 +256,8 @@ export default async function Home() {
               <SmartImage
                 image={site.flyingDressImage.image}
                 tone={site.flyingDressImage.tone}
-                label="Flying Dress Photoshoot"
-                alt="Flying Dress Photoshoot"
+                label={ui["Flying Dress Photoshoot"]}
+                alt={ui["Flying Dress Photoshoot"]}
                 className="min-h-[280px]"
               />
             </div>
@@ -267,8 +273,8 @@ export default async function Home() {
               <SmartImage
                 image={site.redSeaImage.image}
                 tone={site.redSeaImage.tone}
-                label="Red Sea Luxe Yachts"
-                alt="Red Sea Luxe Yachts"
+                label={ui["Red Sea Luxe Yachts"]}
+                alt={ui["Red Sea Luxe Yachts"]}
                 className="min-h-[280px] lg:order-1"
               />
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14 lg:order-2">
@@ -294,8 +300,8 @@ export default async function Home() {
             <SmartImage
               image={site.ninePyramidsImage.image}
               tone={site.ninePyramidsImage.tone}
-              label="Nine Pyramids View"
-              alt="Nine Pyramids View"
+              label={ui["Nine Pyramids View"]}
+              alt={ui["Nine Pyramids View"]}
               className="aspect-[4/3] w-full rounded-3xl"
             />
           </Reveal>
@@ -405,15 +411,9 @@ export default async function Home() {
 
               <div className="relative">
                 <Glyph index={0} className="animate-glow-pulse mx-auto h-12 w-12 text-gold" />
-                <p className="mt-4 text-sm font-semibold uppercase tracking-[0.35em] text-gold-light">
-                  Limited-Time Challenge
-                </p>
-                <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-5xl">
-                  Play &amp; Win — The Pharaoh&rsquo;s Challenge
-                </h2>
-                <p className="mx-auto mt-4 max-w-xl text-lg text-cream/75">
-                  Five Ancient-Egypt-inspired chambers. One attempt. A discount reward that grows the deeper you go.
-                </p>
+                <p className="mt-4 text-sm font-semibold uppercase tracking-[0.35em] text-gold-light"><T>Limited-Time Challenge</T></p>
+                <h2 className="mt-3 font-display text-3xl font-semibold text-cream sm:text-5xl"><T>Play & Win — The Pharaoh’s Challenge</T></h2>
+                <p className="mx-auto mt-4 max-w-xl text-lg text-cream/75"><T>Five Ancient-Egypt-inspired chambers. One attempt. A discount reward that grows the deeper you go.</T></p>
 
                 {/* Five-chamber teaser strip */}
                 <div className="mx-auto mt-8 flex max-w-md items-center justify-center">
@@ -427,9 +427,7 @@ export default async function Home() {
                   ))}
                 </div>
 
-                <span className="mt-9 inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3.5 text-base font-semibold text-ink transition group-hover:bg-gold-light">
-                  Enter the Challenge
-                  <svg
+                <span className="mt-9 inline-flex items-center gap-2 rounded-full bg-gold px-8 py-3.5 text-base font-semibold text-ink transition group-hover:bg-gold-light"><T>Enter the Challenge</T><svg
                     viewBox="0 0 20 20"
                     className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
                     fill="none"

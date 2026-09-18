@@ -28,6 +28,9 @@ import {
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
 import { localized } from "@/i18n/localizeContent";
+import { localizeContent } from "@/i18n/localizeDeep";
+import { localizedListingPages } from "@/content/listingPageTranslations";
+import { photoshootTranslations, tourTranslations, type ProductTranslation } from "@/content/productTranslations";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
 import { experiences as localExperiences } from "@/content/experiences";
@@ -167,12 +170,12 @@ async function safeFetch<T>(query: string, params: Record<string, unknown> = {})
  * records is published as a machine-readable review claim.
  */
 export async function getCompanyRating(): Promise<Rating> {
-  const site = await getSiteSettings();
+  const site = await getSiteSettingsInner();
   const override = site.reviewsOverride;
   if (override?.count && override.count > 0) {
     return { scope: "company", source: "manual", count: override.count, score: override.score };
   }
-  return companyRatingFrom(await getTestimonials());
+  return companyRatingFrom(await getTestimonialsInner());
 }
 
 
@@ -195,12 +198,45 @@ async function withTranslations<T extends {
 }>(items: T[]): Promise<T[]> {
   const locale = await currentLocale();
   if (locale === DEFAULT_LOCALE) return items;
-  return items.map((item) => ({
-    ...item,
-    title: localized(item.title, item.titleTranslations, locale),
-    tagline: localized(item.tagline, item.taglineTranslations, locale),
-    description: localized(item.description, item.descriptionTranslations, locale),
-  }));
+  // Only the fields the record actually has are rewritten — a photoshoot has
+  // no tagline, and inventing an empty one here would put a blank string where
+  // the component expects the key to be absent.
+  return items.map((item) => {
+    const next = { ...item };
+    if (item.title !== undefined) next.title = localized(item.title, item.titleTranslations, locale);
+    if (item.tagline !== undefined) next.tagline = localized(item.tagline, item.taglineTranslations, locale);
+    if (item.description !== undefined) {
+      next.description = localized(item.description, item.descriptionTranslations, locale);
+    }
+    return next;
+  });
+}
+
+/**
+ * Fills in the translations kept in the repo, without ever overriding Studio.
+ *
+ * `content/productTranslations.ts` holds a translated title/tagline/description
+ * for the products most likely to be opened in another language. A translation
+ * an editor has typed into Studio is the newer, more deliberate one, so it wins
+ * field by field — this only ever fills a gap.
+ */
+function withLocalTranslations<T extends {
+  slug: string;
+  titleTranslations?: Record<string, string>;
+  taglineTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
+}>(items: T[], table: Record<string, ProductTranslation>): T[] {
+  return items.map((item) => {
+    const extra = table[item.slug];
+    if (!extra) return item;
+    const merged = { ...item };
+    if (extra.title) merged.titleTranslations = { ...extra.title, ...item.titleTranslations };
+    if (extra.tagline) merged.taglineTranslations = { ...extra.tagline, ...item.taglineTranslations };
+    if (extra.description) {
+      merged.descriptionTranslations = { ...extra.description, ...item.descriptionTranslations };
+    }
+    return merged;
+  });
 }
 
 async function withTranslationsOne<T extends Parameters<typeof withTranslations>[0][number]>(
@@ -227,9 +263,14 @@ async function currentLocale(): Promise<Locale> {
   }
 }
 
-export async function getTours(): Promise<Tour[]> {
+async function getToursInner(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
-  return withTranslations(withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours));
+  return withTranslations(
+    withLocalTranslations(
+      withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours),
+      tourTranslations
+    )
+  );
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -240,25 +281,27 @@ function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined
   return result.image ? result : { ...result, image: local?.image };
 }
 
-export async function getTourBySlug(slug: string): Promise<Tour | undefined> {
-  return withTranslationsOne(mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug));
+async function getTourBySlugInner(slug: string): Promise<Tour | undefined> {
+  const tour = mergeTourWithLocal(await safeFetch<Tour | null>(tourBySlugQuery, { slug }), slug);
+  return withTranslationsOne(tour && withLocalTranslations([tour], tourTranslations)[0]);
 }
 
 // One request for the whole set instead of one per slug (see
 // src/lib/journeyHydrate.ts). Returns in the order the slugs were asked for
 // — GROQ doesn't guarantee ordering — and drops slugs that resolve to
 // nothing, matching the single-slug path's behaviour.
-export async function getToursBySlugs(slugs: string[]): Promise<Tour[]> {
+async function getToursBySlugsInner(slugs: string[]): Promise<Tour[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Tour[]>(toursBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((t) => [t.slug, t]));
-  return slugs
+  const found = slugs
     .map((slug) => mergeTourWithLocal(bySlug.get(slug) ?? null, slug))
     .filter((t): t is Tour => Boolean(t));
+  return withTranslations(withLocalTranslations(found, tourTranslations));
 }
 
 export async function getAllTourSlugs(): Promise<string[]> {
-  const tours = await getTours();
+  const tours = await getToursInner();
   return tours.map((t) => t.slug);
 }
 
@@ -275,7 +318,7 @@ function withLocalExperienceRelations(exps: Experience[]): Experience[] {
   );
 }
 
-export async function getExperiences(): Promise<Experience[]> {
+async function getExperiencesInner(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
   return withValidSlugs(
     result && result.length > 0
@@ -290,11 +333,11 @@ function mergeExperienceWithLocal(result: Experience | null, slug: string): Expe
   return result.image ? result : { ...result, image: local?.image };
 }
 
-export async function getExperienceBySlug(slug: string): Promise<Experience | undefined> {
+async function getExperienceBySlugInner(slug: string): Promise<Experience | undefined> {
   return mergeExperienceWithLocal(await safeFetch<Experience | null>(experienceBySlugQuery, { slug }), slug);
 }
 
-export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience[]> {
+async function getExperiencesBySlugsInner(slugs: string[]): Promise<Experience[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Experience[]>(experiencesBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((e) => [e.slug, e]));
@@ -303,9 +346,14 @@ export async function getExperiencesBySlugs(slugs: string[]): Promise<Experience
     .filter((e): e is Experience => Boolean(e));
 }
 
-export async function getPhotoshoots(): Promise<Photoshoot[]> {
+async function getPhotoshootsInner(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
-  return withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots);
+  return withTranslations(
+    withLocalTranslations(
+      withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots),
+      photoshootTranslations
+    )
+  );
 }
 
 function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Photoshoot | undefined {
@@ -314,20 +362,22 @@ function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Phot
   return result.image ? result : { ...result, image: local?.image };
 }
 
-export async function getPhotoshootBySlug(slug: string): Promise<Photoshoot | undefined> {
-  return mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
+async function getPhotoshootBySlugInner(slug: string): Promise<Photoshoot | undefined> {
+  const shoot = mergePhotoshootWithLocal(await safeFetch<Photoshoot | null>(photoshootBySlugQuery, { slug }), slug);
+  return withTranslationsOne(shoot && withLocalTranslations([shoot], photoshootTranslations)[0]);
 }
 
-export async function getPhotoshootsBySlugs(slugs: string[]): Promise<Photoshoot[]> {
+async function getPhotoshootsBySlugsInner(slugs: string[]): Promise<Photoshoot[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<Photoshoot[]>(photoshootsBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((p) => [p.slug, p]));
-  return slugs
+  const found = slugs
     .map((slug) => mergePhotoshootWithLocal(bySlug.get(slug) ?? null, slug))
     .filter((p): p is Photoshoot => Boolean(p));
+  return withTranslations(withLocalTranslations(found, photoshootTranslations));
 }
 
-export async function getTestimonials(): Promise<Testimonial[]> {
+async function getTestimonialsInner(): Promise<Testimonial[]> {
   const result = await safeFetch<Testimonial[]>(testimonialsQuery);
   return result && result.length > 0 ? result : localTestimonials;
 }
@@ -337,14 +387,14 @@ export async function getTestimonials(): Promise<Testimonial[]> {
 // would still surface (and be sitemapped) whenever Sanity is unreachable.
 const localPublishedStories = localStories.filter((s) => s.status === "published");
 
-export async function getStories(): Promise<Story[]> {
+async function getStoriesInner(): Promise<Story[]> {
   const result = await safeFetch<Story[]>(storiesQuery);
   return withValidSlugs(
     result && result.length > 0 ? withLocalImageFallback(result, localStories) : localPublishedStories
   );
 }
 
-export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
+async function getStoryBySlugInner(slug: string): Promise<Story | undefined> {
   const result = await safeFetch<Story | null>(storyBySlugQuery, { slug });
   // Only a published local story is a valid fallback — an archived one must
   // 404 (and then 410, via middleware) rather than render from local content.
@@ -365,7 +415,7 @@ export async function getStoryBySlug(slug: string): Promise<Story | undefined> {
     : story;
 }
 
-export async function getDestinationHubs(): Promise<DestinationHub[]> {
+async function getDestinationHubsInner(): Promise<DestinationHub[]> {
   const result = await safeFetch<DestinationHub[]>(destinationHubsQuery);
   return withValidSlugs(
     result && result.length > 0 ? withLocalImageFallback(result, localDestinationHubs) : localDestinationHubs
@@ -378,14 +428,14 @@ function mergeDestinationHubWithLocal(result: DestinationHub | null, slug: strin
   return result.image ? result : { ...result, image: local?.image };
 }
 
-export async function getDestinationHubBySlug(slug: string): Promise<DestinationHub | undefined> {
+async function getDestinationHubBySlugInner(slug: string): Promise<DestinationHub | undefined> {
   return mergeDestinationHubWithLocal(
     await safeFetch<DestinationHub | null>(destinationHubBySlugQuery, { slug }),
     slug
   );
 }
 
-export async function getDestinationHubsBySlugs(slugs: string[]): Promise<DestinationHub[]> {
+async function getDestinationHubsBySlugsInner(slugs: string[]): Promise<DestinationHub[]> {
   if (slugs.length === 0) return [];
   const results = await safeFetch<DestinationHub[]>(destinationHubsBySlugsQuery, { slugs });
   const bySlug = new Map((results ?? []).map((d) => [d.slug, d]));
@@ -394,7 +444,7 @@ export async function getDestinationHubsBySlugs(slugs: string[]): Promise<Destin
     .filter((d): d is DestinationHub => Boolean(d));
 }
 
-export async function getFaqs(): Promise<Faq[]> {
+async function getFaqsInner(): Promise<Faq[]> {
   const result = await safeFetch<Faq[]>(faqsQuery);
   return result && result.length > 0 ? result : [...localFaqs];
 }
@@ -499,7 +549,7 @@ function mergeDestinationPhotos(
   return merged;
 }
 
-export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
+async function getSiteSettingsInner(): Promise<ResolvedSiteSettings> {
   const result = await safeFetch<SiteSettings>(siteSettingsQuery);
   if (!result) {
     return {
@@ -580,7 +630,7 @@ export async function getSiteSettings(): Promise<ResolvedSiteSettings> {
 // `formSections` are swapped wholesale (rather than deep-merged) when
 // Sanity has a non-empty array, since partial-merging an ordered list of
 // form questions by index would be more surprising than useful.
-export async function getCustomizePage(): Promise<ResolvedCustomizePage> {
+async function getCustomizePageInner(): Promise<ResolvedCustomizePage> {
   const result = await safeFetch<CustomizePage>(customizePageQuery);
   if (!result) return localCustomizePage;
 
@@ -599,7 +649,7 @@ export async function getCustomizePage(): Promise<ResolvedCustomizePage> {
   };
 }
 
-export async function getAboutPage(): Promise<ResolvedAboutPage> {
+async function getAboutPageInner(): Promise<ResolvedAboutPage> {
   const result = await safeFetch<AboutPage>(aboutPageQuery);
   if (!result) return localAboutPage;
 
@@ -613,7 +663,7 @@ export async function getAboutPage(): Promise<ResolvedAboutPage> {
   };
 }
 
-export async function getContactPage(): Promise<ResolvedContactPage> {
+async function getContactPageInner(): Promise<ResolvedContactPage> {
   const result = await safeFetch<ContactPage>(contactPageQuery);
   if (!result) return localContactPage;
 
@@ -627,7 +677,7 @@ export async function getContactPage(): Promise<ResolvedContactPage> {
   };
 }
 
-export async function getSignatureExperiences(): Promise<SignatureExperience[]> {
+async function getSignatureExperiencesInner(): Promise<SignatureExperience[]> {
   const result = await safeFetch<SignatureExperience[]>(signatureExperiencesQuery);
   return withValidSlugs(
     result && result.length > 0
@@ -636,7 +686,7 @@ export async function getSignatureExperiences(): Promise<SignatureExperience[]> 
   );
 }
 
-export async function getSignatureExperienceBySlug(slug: string): Promise<SignatureExperience | undefined> {
+async function getSignatureExperienceBySlugInner(slug: string): Promise<SignatureExperience | undefined> {
   const result = await safeFetch<SignatureExperience | null>(signatureExperienceBySlugQuery, { slug });
   const local = localSignatureExperiences.find((e) => e.slug === slug);
   if (!result) return local;
@@ -654,7 +704,7 @@ export async function getAllSignatureExperienceSlugs(): Promise<string[]> {
 // Same field-by-field merge as Site Settings — a Studio editor filling in
 // just one homepage block (say, the Final CTA) shouldn't blank out every
 // other block that hasn't been touched yet.
-export async function getHomepage(): Promise<ResolvedHomepage> {
+async function getHomepageInner(): Promise<ResolvedHomepage> {
   const result = await safeFetch<Homepage>(homepageQuery);
   if (!result) return localHomepage;
 
@@ -673,11 +723,12 @@ export async function getHomepage(): Promise<ResolvedHomepage> {
   };
 }
 
-export async function getListingPages(): Promise<ResolvedListingPages> {
+async function getListingPagesInner(): Promise<ResolvedListingPages> {
   const result = await safeFetch<ListingPages>(listingPagesQuery);
-  if (!result) return localListingPages;
+  const locale = await currentLocale();
+  if (!result) return localizedListingPages(localListingPages, locale);
 
-  return {
+  const merged: ResolvedListingPages = {
     tours: {
       ...localListingPages.tours,
       ...result.tours,
@@ -689,4 +740,52 @@ export async function getListingPages(): Promise<ResolvedListingPages> {
     exploreEgypt: { ...localListingPages.exploreEgypt, ...result.exploreEgypt },
     stories: { ...localListingPages.stories, ...result.stories },
   };
+
+  return localizedListingPages(merged, locale);
 }
+
+
+/**
+ * Every fetcher above, in the reader's language.
+ *
+ * The catalogue is translated at this single boundary rather than inside each
+ * function, so a page, a card or a related-items row gets translated content
+ * without knowing translations exist — and so adding a fetcher can't
+ * accidentally skip translation: it is wrapped here or it isn't exported.
+ *
+ * Precedence, highest first: a translation an editor typed in Studio, then
+ * the hand-written table in content/productTranslations.ts, then the
+ * generated store. Each of those has already run by the time `localizeContent`
+ * sees the object, and it only replaces strings that still match English — so
+ * an earlier layer's work is never overwritten by a later one.
+ */
+function translated<A extends unknown[], R>(
+  fn: (...args: A) => Promise<R>
+): (...args: A) => Promise<R> {
+  return async (...args: A) => localizeContent(await fn(...args), await currentLocale());
+}
+
+export const getTours = translated(getToursInner);
+export const getTourBySlug = translated(getTourBySlugInner);
+export const getToursBySlugs = translated(getToursBySlugsInner);
+export const getExperiences = translated(getExperiencesInner);
+export const getExperienceBySlug = translated(getExperienceBySlugInner);
+export const getExperiencesBySlugs = translated(getExperiencesBySlugsInner);
+export const getPhotoshoots = translated(getPhotoshootsInner);
+export const getPhotoshootBySlug = translated(getPhotoshootBySlugInner);
+export const getPhotoshootsBySlugs = translated(getPhotoshootsBySlugsInner);
+export const getTestimonials = translated(getTestimonialsInner);
+export const getStories = translated(getStoriesInner);
+export const getStoryBySlug = translated(getStoryBySlugInner);
+export const getDestinationHubs = translated(getDestinationHubsInner);
+export const getDestinationHubBySlug = translated(getDestinationHubBySlugInner);
+export const getDestinationHubsBySlugs = translated(getDestinationHubsBySlugsInner);
+export const getFaqs = translated(getFaqsInner);
+export const getSiteSettings = translated(getSiteSettingsInner);
+export const getCustomizePage = translated(getCustomizePageInner);
+export const getAboutPage = translated(getAboutPageInner);
+export const getContactPage = translated(getContactPageInner);
+export const getSignatureExperiences = translated(getSignatureExperiencesInner);
+export const getSignatureExperienceBySlug = translated(getSignatureExperienceBySlugInner);
+export const getHomepage = translated(getHomepageInner);
+export const getListingPages = translated(getListingPagesInner);

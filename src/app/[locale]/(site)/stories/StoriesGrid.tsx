@@ -3,8 +3,10 @@
 import { useMemo, useState } from "react";
 import type { Story } from "@/content/types";
 import { StoryCard } from "@/components/StoryCard";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export function StoriesGrid({ stories }: { stories: Story[] }) {
+  const tr = useTr();
   const categories = useMemo(
     () => Array.from(new Set(stories.map((s) => s.category).filter((c): c is string => Boolean(c)))),
     [stories]
@@ -23,10 +25,7 @@ export function StoriesGrid({ stories }: { stories: Story[] }) {
             onClick={() => setFilter(null)}
             className={`rounded-full px-4 py-2 text-sm font-medium transition ${
               filter === null ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
-            }`}
-          >
-            All Stories
-          </button>
+            }`}>{tr("All Stories")}</button>
           {categories.map((c) => (
             <button
               key={c}
@@ -42,7 +41,7 @@ export function StoriesGrid({ stories }: { stories: Story[] }) {
       )}
 
       {filtered.length === 0 ? (
-        <p className="mt-10 text-sm text-ink-soft/60">No stories in this category yet.</p>
+        <p className="mt-10 text-sm text-ink-soft/60">{tr("No stories in this category yet.")}</p>
       ) : (
         <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((s) => (

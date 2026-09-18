@@ -7,6 +7,7 @@ import { RateRequestButton } from "../RateRequestButton";
 import { getEnabledHotelsPublic, getHotelBySlug, isRateExpired, type HotelRoom } from "@/lib/hotels";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
+import { T, trAll } from "@/i18n/T";
 
 function formatPrice(amount: number): string {
   return `$${amount.toLocaleString("en-US")}`;
@@ -46,9 +47,9 @@ function RateTable({ room }: { room: HotelRoom }) {
       <table className="w-full text-left text-sm">
         <thead className="bg-sand-dim text-xs uppercase tracking-wide text-ink-soft/50">
           <tr>
-            <th className="px-4 py-3">Occupancy</th>
-            <th className="px-4 py-3">Meal Plan</th>
-            <th className="px-4 py-3 text-right">Rate / Night</th>
+            <th className="px-4 py-3"><T>Occupancy</T></th>
+            <th className="px-4 py-3"><T>Meal Plan</T></th>
+            <th className="px-4 py-3 text-right"><T>Rate / Night</T></th>
           </tr>
         </thead>
         <tbody>
@@ -65,7 +66,7 @@ function RateTable({ room }: { room: HotelRoom }) {
                       <span className="ml-1 text-xs font-normal text-ink-soft/50">/ night</span>
                     </span>
                   ) : (
-                    <span className="text-ink-soft/60">Contact us for latest rate</span>
+                    <span className="text-ink-soft/60"><T>Contact us for latest rate</T></span>
                   )}
                 </td>
               </tr>
@@ -73,9 +74,7 @@ function RateTable({ room }: { room: HotelRoom }) {
           })}
           {rates.length === 0 && (
             <tr>
-              <td colSpan={3} className="px-4 py-4 text-center text-ink-soft/50">
-                Contact us for latest rate
-              </td>
+              <td colSpan={3} className="px-4 py-4 text-center text-ink-soft/50"><T>Contact us for latest rate</T></td>
             </tr>
           )}
         </tbody>
@@ -85,6 +84,13 @@ function RateTable({ room }: { room: HotelRoom }) {
 }
 
 export default async function HotelDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const ui = await trAll([
+    "About This Hotel",
+    "Rates shown are indicative, not guaranteed. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate.",
+    "Room Types & Indicative Rates",
+    "Rooms & Rates",
+  ]);
+
   const { slug } = await params;
   const hotel = await getHotelBySlug(slug);
   if (!hotel) notFound();
@@ -128,14 +134,14 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
       <section className="py-10">
         <Container className="grid gap-10 lg:grid-cols-[1fr_360px]">
           <div>
-            <SectionHeading eyebrow="About This Hotel" title={hotel.name} />
+            <SectionHeading eyebrow={ui["About This Hotel"]} title={hotel.name} />
             <p className="mt-4 whitespace-pre-wrap text-[15px] leading-relaxed text-ink-soft/80">
               {hotel.full_description || hotel.short_description}
             </p>
 
             {hotel.amenities.length > 0 && (
               <div className="mt-8">
-                <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Amenities</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50"><T>Amenities</T></p>
                 <ul className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {hotel.amenities.map((a) => (
                     <li key={a} className="flex items-center gap-2 text-sm text-ink-soft/80">
@@ -151,14 +157,14 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
 
             {hotel.child_family_policy && (
               <div className="mt-8 rounded-2xl bg-sand-dim p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Child &amp; Family Policy</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50"><T>Child & Family Policy</T></p>
                 <p className="mt-2 text-sm text-ink-soft/80">{hotel.child_family_policy}</p>
               </div>
             )}
 
             {hotel.special_notes && (
               <div className="mt-4 rounded-2xl border border-gold/20 bg-gold/5 p-5">
-                <p className="text-xs font-semibold uppercase tracking-wide text-gold-dark">Special Notes</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-gold-dark"><T>Special Notes</T></p>
                 <p className="mt-2 text-sm text-ink-soft/80">{hotel.special_notes}</p>
               </div>
             )}
@@ -166,7 +172,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
 
           <div className="lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm">
-              <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Egypt Eye Deal</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50"><T>Egypt Eye Deal</T></p>
               <p className="mt-2 text-sm text-ink-soft/70">
                 {hotel.deal_description || "Ask us about our current rate for this hotel."}
               </p>
@@ -176,10 +182,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
                 rooms={rooms.map((r) => ({ id: r.id, name: r.name }))}
                 className="mt-5 w-full"
               />
-              <p className="mt-3 text-xs text-ink-soft/50">
-                Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel
-                conditions. Send an enquiry to confirm the latest available rate.
-              </p>
+              <p className="mt-3 text-xs text-ink-soft/50"><T>Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions. Send an enquiry to confirm the latest available rate.</T></p>
             </div>
           </div>
         </Container>
@@ -188,9 +191,9 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
       <section className="bg-sand-dim py-16">
         <Container>
           <SectionHeading
-            eyebrow="Rooms &amp; Rates"
-            title="Room Types &amp; Indicative Rates"
-            description="Rates shown are indicative, not guaranteed. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate."
+            eyebrow={ui["Rooms & Rates"]}
+            title={ui["Room Types & Indicative Rates"]}
+            description={ui["Rates shown are indicative, not guaranteed. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate."]}
           />
           <div className="mt-10 flex flex-col gap-8">
             {rooms.map((room) => (
@@ -199,9 +202,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
                   <h3 className="font-display text-lg font-semibold text-ink">
                     {room.name}
                     {room.room_category === "suite" && (
-                      <span className="ml-2 rounded-full bg-gold/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold-dark">
-                        Suite
-                      </span>
+                      <span className="ml-2 rounded-full bg-gold/15 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold-dark"><T>Suite</T></span>
                     )}
                   </h3>
                   <p className="text-xs uppercase tracking-wide text-ink-soft/50">
@@ -216,7 +217,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
               </div>
             ))}
             {rooms.length === 0 && (
-              <p className="text-center text-sm text-ink-soft/60">Room details coming soon — contact us for current rates.</p>
+              <p className="text-center text-sm text-ink-soft/60"><T>Room details coming soon — contact us for current rates.</T></p>
             )}
           </div>
         </Container>

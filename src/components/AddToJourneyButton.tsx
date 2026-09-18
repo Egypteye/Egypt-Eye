@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toggleJourneyItem, useJourneyItems, type JourneyItemType } from "@/lib/journey";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export type JourneySuggestion = {
   type: JourneyItemType;
@@ -82,6 +83,7 @@ export function SuggestionToast({
   suggestions: JourneySuggestion[];
   onClose: () => void;
 }) {
+  const tr = useTr();
   return (
     <div
       className="animate-fade-up fixed inset-x-4 bottom-24 z-50 mx-auto max-w-sm rounded-2xl border border-gold/20 bg-ink p-4 shadow-2xl shadow-black/20 sm:inset-x-auto sm:right-4"
@@ -91,7 +93,7 @@ export function SuggestionToast({
         <p className="text-xs font-semibold uppercase tracking-wide text-gold-light">{label}</p>
         <button
           type="button"
-          aria-label="Dismiss"
+          aria-label={tr("Dismiss")}
           onClick={onClose}
           className="shrink-0 text-cream/50 transition hover:text-cream"
         >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export function NewsletterSignup({
   variant = "section",
@@ -9,6 +10,7 @@ export function NewsletterSignup({
   variant?: "section" | "compact";
   source?: string;
 }) {
+  const tr = useTr();
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -39,8 +41,8 @@ export function NewsletterSignup({
   if (status === "sent") {
     return (
       <div id="newsletter" className={variant === "compact" ? "text-sm text-ink-soft/70" : "text-center text-cream/90"}>
-        <p className="font-semibold">Almost there — check your inbox</p>
-        <p className="mt-1 text-sm opacity-80">Confirm your email and we&rsquo;ll send your unique 4% off code right away.</p>
+        <p className="font-semibold">{tr("Almost there — check your inbox")}</p>
+        <p className="mt-1 text-sm opacity-80">{tr("Confirm your email and we’ll send your unique 4% off code right away.")}</p>
       </div>
     );
   }
@@ -49,20 +51,16 @@ export function NewsletterSignup({
     return (
       <form id="newsletter" onSubmit={handleSubmit} className="relative flex flex-col gap-2 sm:flex-row">
         <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-          <label>
-            Company
-            <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+          <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
           </label>
         </div>
-        <label className="sr-only" htmlFor="newsletter-email-compact">
-          Email address
-        </label>
+        <label className="sr-only" htmlFor="newsletter-email-compact">{tr("Email address")}</label>
         <input
           id="newsletter-email-compact"
           name="email"
           type="email"
           required
-          placeholder="Email address"
+          placeholder={tr("Email address")}
           className="min-w-0 flex-1 rounded-full border border-black/10 bg-cream px-4 py-2.5 text-sm text-ink outline-none focus:border-gold"
         />
         <button
@@ -81,20 +79,13 @@ export function NewsletterSignup({
     <div id="newsletter" className="relative overflow-hidden rounded-3xl bg-ink px-6 py-14 text-center sm:px-12 sm:py-16">
       <div className="bg-hieroglyph-pattern absolute inset-0 opacity-[0.06]" aria-hidden="true" />
       <div className="relative mx-auto max-w-xl">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light">Egypt Eye Newsletter</p>
-        <h2 className="mt-3 text-balance font-display text-3xl font-semibold text-cream sm:text-4xl">
-          Get 4% Off Your Egypt Journey
-        </h2>
-        <p className="mt-4 text-[15px] text-cream/70">
-          Join the Egypt Eye newsletter and receive travel inspiration, new experiences and your exclusive 4%
-          discount.
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold-light">{tr("Egypt Eye Newsletter")}</p>
+        <h2 className="mt-3 text-balance font-display text-3xl font-semibold text-cream sm:text-4xl">{tr("Get 4% Off Your Egypt Journey")}</h2>
+        <p className="mt-4 text-[15px] text-cream/70">{tr("Join the Egypt Eye newsletter and receive travel inspiration, new experiences and your exclusive 4% discount.")}</p>
 
         <form onSubmit={handleSubmit} className="relative mt-8 flex flex-col gap-3 sm:flex-row">
           <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-            <label>
-              Company
-              <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+            <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
             </label>
           </div>
           <label className="sr-only" htmlFor="newsletter-firstname">
@@ -104,18 +95,16 @@ export function NewsletterSignup({
             id="newsletter-firstname"
             name="firstName"
             type="text"
-            placeholder="First name (optional)"
+            placeholder={tr("First name (optional)")}
             className="min-w-0 flex-1 rounded-full border border-cream/20 bg-cream/10 px-4 py-3 text-sm text-cream placeholder:text-cream/50 outline-none focus:border-gold"
           />
-          <label className="sr-only" htmlFor="newsletter-email">
-            Email address
-          </label>
+          <label className="sr-only" htmlFor="newsletter-email">{tr("Email address")}</label>
           <input
             id="newsletter-email"
             name="email"
             type="email"
             required
-            placeholder="Email address"
+            placeholder={tr("Email address")}
             className="min-w-0 flex-1 rounded-full border border-cream/20 bg-cream/10 px-4 py-3 text-sm text-cream placeholder:text-cream/50 outline-none focus:border-gold"
           />
           <button
@@ -127,9 +116,7 @@ export function NewsletterSignup({
           </button>
         </form>
         {status === "error" && <p className="mt-3 text-sm text-terracotta">{errorMessage}</p>}
-        <p className="mt-4 text-xs text-cream/50">
-          We&rsquo;ll send a confirmation email first. Unsubscribe anytime.
-        </p>
+        <p className="mt-4 text-xs text-cream/50">{tr("We’ll send a confirmation email first. Unsubscribe anytime.")}</p>
       </div>
     </div>
   );

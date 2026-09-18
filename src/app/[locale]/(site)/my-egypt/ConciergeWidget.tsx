@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { whatsappHref } from "@/lib/whatsapp";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type Message = { role: "user" | "assistant"; content: string; suggestedRequest?: string | null; requestStatus?: "idle" | "sending" | "sent" };
 
 const GREETING = "Ask me anything about your trip — what to wear, pickup times, or whether you can add something.";
 
 export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId: string; whatsappLink: string }) {
+  const tr = useTr();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
@@ -80,7 +82,7 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
               </div>
               {m.suggestedRequest && (
                 <div className="rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs text-ink-soft">
-                  <p className="font-medium text-ink">Would you like me to send this request to the Egypt Eye team?</p>
+                  <p className="font-medium text-ink">{tr("Would you like me to send this request to the Egypt Eye team?")}</p>
                   <p className="mt-1 text-ink-soft/70">&ldquo;{m.suggestedRequest}&rdquo;</p>
                   {m.requestStatus === "sent" ? (
                     <p className="mt-2 font-semibold text-nile">Sent to Egypt Eye ✓</p>
@@ -109,10 +111,7 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
               href={whatsappHref(whatsappLink, { page: "the My Egypt concierge chat", intro: "Hi, I have a question about my trip." })}
               target="_blank"
               rel="noreferrer"
-              className="underline"
-            >
-              WhatsApp
-            </a>
+              className="underline">{tr("WhatsApp")}</a>
             .
           </div>
         )}
@@ -122,14 +121,14 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="What should I wear tomorrow?"
+          placeholder={tr("What should I wear tomorrow?")}
           maxLength={1000}
           className="min-w-0 flex-1 rounded-full border border-black/10 bg-white px-4 py-2.5 text-sm text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
         />
         <button
           type="submit"
           disabled={status === "sending" || !input.trim()}
-          aria-label="Send message"
+          aria-label={tr("Send message")}
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gold text-ink transition hover:bg-gold-light disabled:opacity-40"
         >
           <svg viewBox="0 0 20 20" className="h-4 w-4" fill="currentColor" aria-hidden="true">

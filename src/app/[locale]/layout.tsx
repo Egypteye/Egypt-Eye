@@ -6,6 +6,7 @@ import { siteUrl } from "@/content/seo";
 import { LOCALES, isLocale, localeInfo, DEFAULT_LOCALE, type Locale } from "@/i18n/locales";
 import { dictionaryFor } from "@/i18n/dictionary";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
+import { uiDictionary } from "@/i18n/ui";
 import { alternatesFor } from "@/i18n/alternates";
 
 // Cyrillic is in the body face's subsets because Russian is one of the
@@ -107,6 +108,7 @@ export default async function RootLayout({
   const locale: Locale = isLocale(raw) ? raw : DEFAULT_LOCALE;
   const info = localeInfo(locale);
   const dict = dictionaryFor(locale);
+  const ui = await uiDictionary(locale);
 
   return (
     <html
@@ -123,7 +125,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        <LocaleProvider locale={locale} dict={dict}>
+        <LocaleProvider locale={locale} dict={dict} ui={ui}>
           {children}
         </LocaleProvider>
       </body>

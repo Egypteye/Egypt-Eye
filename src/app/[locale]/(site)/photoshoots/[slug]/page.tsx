@@ -12,6 +12,7 @@ import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { T } from "@/i18n/T";
 
 export async function generateStaticParams() {
   const photoshoots = await getPhotoshoots();
@@ -99,9 +100,7 @@ export default async function PhotoshootDetailPage({
 
           <div className="mt-10 grid gap-8 sm:grid-cols-2">
             <div>
-              <h2 className="font-display text-lg font-semibold text-ink">
-                Included
-              </h2>
+              <h2 className="font-display text-lg font-semibold text-ink"><T>Included</T></h2>
               <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
                 {photoshoot.included.map((i) => (
                   <li key={i} className="flex gap-2">
@@ -113,9 +112,7 @@ export default async function PhotoshootDetailPage({
             </div>
             {photoshoot.addOns && (
               <div>
-                <h2 className="font-display text-lg font-semibold text-ink">
-                  Optional Add-Ons
-                </h2>
+                <h2 className="font-display text-lg font-semibold text-ink"><T>Optional Add-Ons</T></h2>
                 <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
                   {photoshoot.addOns.map((i) => (
                     <li key={i} className="flex gap-2">
@@ -129,9 +126,7 @@ export default async function PhotoshootDetailPage({
           </div>
 
           <div className="mt-8">
-            <h2 className="font-display text-lg font-semibold text-ink">
-              What you receive
-            </h2>
+            <h2 className="font-display text-lg font-semibold text-ink"><T>What you receive</T></h2>
             <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
               {photoshoot.delivery.map((i) => (
                 <li key={i} className="flex gap-2">
@@ -144,7 +139,7 @@ export default async function PhotoshootDetailPage({
 
           {photoshoot.gallery && photoshoot.gallery.length > 0 && (
             <div className="mt-10">
-              <h2 className="font-display text-lg font-semibold text-ink">Gallery</h2>
+              <h2 className="font-display text-lg font-semibold text-ink"><T>Gallery</T></h2>
               <div className="mt-4">
                 <Gallery images={photoshoot.gallery} alt={photoshoot.title} />
               </div>
@@ -161,14 +156,11 @@ export default async function PhotoshootDetailPage({
 
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
           <PriceTag price={photoshoot.price} />
-          <p className="mt-1 text-xs text-ink-soft/60">per session</p>
+          <p className="mt-1 text-xs text-ink-soft/60"><T>per session</T></p>
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this photoshoot's page", item: photoshoot.title }}
-            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"
-          >
-            Book on WhatsApp
-          </WhatsAppBookButton>
+            className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Book on WhatsApp</T></WhatsAppBookButton>
           <EnquiryButton itemType="photoshoot" itemTitle={photoshoot.title} itemSlug={photoshoot.slug} className="mt-3" />
 
           <div className="mt-4 border-t border-black/5 pt-4">

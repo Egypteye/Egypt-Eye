@@ -247,6 +247,8 @@ export const ar: Dictionary = {
 
   seo: {
     homeTitle: "رحلات خاصة وجلسات تصوير وتجارب في مصر",
+    // Appended to every tour page title, after an em dash.
+    privateTourSuffix: "رحلة خاصة",
     localeSuffix: "",
   },
 };

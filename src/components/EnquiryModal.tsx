@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type ItemType = "tour" | "experience" | "photoshoot" | "signatureExperience";
 
@@ -34,6 +35,7 @@ export function EnquiryModal({
   itemSlug: string;
   onClose: () => void;
 }) {
+  const tr = useTr();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState("");
   const [flexibleDates, setFlexibleDates] = useState(false);
@@ -120,7 +122,7 @@ export function EnquiryModal({
           </div>
           <button
             type="button"
-            aria-label="Close"
+            aria-label={tr("Close")}
             onClick={onClose}
             className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-soft/60 transition hover:bg-sand-dim hover:text-ink"
           >
@@ -137,45 +139,38 @@ export function EnquiryModal({
                 <path d="M4 10.5l4 4 8-9" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </span>
-            <p className="font-display text-lg font-semibold text-ink">Enquiry sent</p>
-            <p className="text-sm text-ink-soft/70">
-              Thanks — our reservations team has everything they need and will get back to you shortly.
-            </p>
+            <p className="font-display text-lg font-semibold text-ink">{tr("Enquiry sent")}</p>
+            <p className="text-sm text-ink-soft/70">{tr("Thanks — our reservations team has everything they need and will get back to you shortly.")}</p>
             <button
               type="button"
               onClick={onClose}
-              className="mt-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              Close
-            </button>
+              className="mt-2 rounded-full bg-ink px-6 py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Close")}</button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6">
             <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-              <label>
-                Company
-                <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+              <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
               </label>
             </div>
 
-            <Field label="Full Name" htmlFor="enq-name">
+            <Field label={tr("Full Name")} htmlFor="enq-name">
               <input id="enq-name" name="name" type="text" required maxLength={200} className={inputClass} />
             </Field>
 
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Email" htmlFor="enq-email">
+              <Field label={tr("Email")} htmlFor="enq-email">
                 <input id="enq-email" name="email" type="email" required maxLength={200} className={inputClass} />
               </Field>
-              <Field label="WhatsApp / Phone" htmlFor="enq-phone">
+              <Field label={tr("WhatsApp / Phone")} htmlFor="enq-phone">
                 <input id="enq-phone" name="phone" type="tel" required maxLength={60} className={inputClass} />
               </Field>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Nationality" htmlFor="enq-nationality">
+              <Field label={tr("Nationality")} htmlFor="enq-nationality">
                 <input id="enq-nationality" name="nationality" type="text" required maxLength={100} className={inputClass} />
               </Field>
-              <Field label="Travelers" htmlFor="enq-travelers">
+              <Field label={tr("Travelers")} htmlFor="enq-travelers">
                 <input
                   id="enq-travelers"
                   name="travelers"
@@ -199,7 +194,7 @@ export function EnquiryModal({
                   className={inputClass}
                 />
               </Field>
-              <Field label="End Date" htmlFor="enq-end">
+              <Field label={tr("End Date")} htmlFor="enq-end">
                 <input
                   id="enq-end"
                   name="endDate"
@@ -216,36 +211,34 @@ export function EnquiryModal({
                 checked={flexibleDates}
                 onChange={(e) => setFlexibleDates(e.target.checked)}
                 className="h-3.5 w-3.5 rounded border-black/20 accent-gold-dark"
-              />
-              My travel dates are flexible
-            </label>
+              />{tr("My travel dates are flexible")}</label>
 
             <div className="grid grid-cols-2 gap-3">
-              <Field label="Hotel (for pickup)" htmlFor="enq-hotel">
-                <input id="enq-hotel" name="hotel" type="text" maxLength={200} placeholder="Optional" className={inputClass} />
+              <Field label={tr("Hotel (for pickup)")} htmlFor="enq-hotel">
+                <input id="enq-hotel" name="hotel" type="text" maxLength={200} placeholder={tr("Optional")} className={inputClass} />
               </Field>
-              <Field label="Preferred Time" htmlFor="enq-time">
-                <input id="enq-time" name="preferredTime" type="text" maxLength={100} placeholder="e.g. Morning" className={inputClass} />
+              <Field label={tr("Preferred Time")} htmlFor="enq-time">
+                <input id="enq-time" name="preferredTime" type="text" maxLength={100} placeholder={tr("e.g. Morning")} className={inputClass} />
               </Field>
             </div>
-            <Field label="Pickup / Drop-off Location" htmlFor="enq-pickup">
+            <Field label={tr("Pickup / Drop-off Location")} htmlFor="enq-pickup">
               <input
                 id="enq-pickup"
                 name="pickupLocation"
                 type="text"
                 maxLength={300}
-                placeholder="Optional — hotel address or area, if different from above"
+                placeholder={tr("Optional — hotel address or area, if different from above")}
                 className={inputClass}
               />
             </Field>
 
-            <Field label="Additional Questions or Requests" htmlFor="enq-message">
+            <Field label={tr("Additional Questions or Requests")} htmlFor="enq-message">
               <textarea
                 id="enq-message"
                 name="message"
                 rows={3}
                 maxLength={2000}
-                placeholder="Anything else we should know?"
+                placeholder={tr("Anything else we should know?")}
                 className={`${inputClass} resize-none`}
               />
             </Field>

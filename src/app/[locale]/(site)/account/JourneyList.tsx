@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type JourneyItem = { id: string; item_type: string; slug: string; title: string; subtitle: string | null };
 type Journey = { id: string; name: string; notes: string | null; updated_at: string; journey_items: JourneyItem[] };
@@ -18,6 +19,7 @@ export function JourneyList({ journeys }: { journeys: Journey[] }) {
 }
 
 function JourneyRow({ journey }: { journey: Journey }) {
+  const tr = useTr();
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(journey.name);
@@ -73,7 +75,7 @@ function JourneyRow({ journey }: { journey: Journey }) {
       {expanded && (
         <ul className="mt-4 flex flex-col gap-2 border-t border-black/5 pt-4">
           {journey.journey_items.length === 0 ? (
-            <li className="text-sm text-ink-soft/50">No items in this journey yet.</li>
+            <li className="text-sm text-ink-soft/50">{tr("No items in this journey yet.")}</li>
           ) : (
             journey.journey_items.map((item) => (
               <li key={item.id} className="flex items-center justify-between gap-3 text-sm">

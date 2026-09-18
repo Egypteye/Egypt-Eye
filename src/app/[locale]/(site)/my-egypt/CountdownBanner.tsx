@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Calendar-date arithmetic (not raw millisecond subtraction) so the count
 // flips exactly at local midnight regardless of time-of-day or DST, rather
@@ -14,6 +15,7 @@ function daysUntil(dateStr: string): number {
 }
 
 export function CountdownBanner({ tripStartDate, tripEndDate }: { tripStartDate: string | null; tripEndDate: string | null }) {
+  const tr = useTr();
   const [days, setDays] = useState<number | null>(tripStartDate ? daysUntil(tripStartDate) : null);
 
   useEffect(() => {
@@ -25,8 +27,8 @@ export function CountdownBanner({ tripStartDate, tripEndDate }: { tripStartDate:
   if (!tripStartDate || days === null) {
     return (
       <div className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">My Egypt</p>
-        <h1 className="mt-2 font-display text-3xl font-semibold text-cream sm:text-4xl">Your trip dates are being finalized</h1>
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">{tr("My Egypt")}</p>
+        <h1 className="mt-2 font-display text-3xl font-semibold text-cream sm:text-4xl">{tr("Your trip dates are being finalized")}</h1>
       </div>
     );
   }
@@ -36,7 +38,7 @@ export function CountdownBanner({ tripStartDate, tripEndDate }: { tripStartDate:
   if (inTrip) {
     return (
       <div className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">My Egypt</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">{tr("My Egypt")}</p>
         <h1 className="mt-2 font-display text-4xl font-semibold text-cream sm:text-5xl">You&rsquo;re in Egypt 🇪🇬</h1>
       </div>
     );
@@ -45,15 +47,15 @@ export function CountdownBanner({ tripStartDate, tripEndDate }: { tripStartDate:
   if (days < 0) {
     return (
       <div className="text-center">
-        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">My Egypt</p>
-        <h1 className="mt-2 font-display text-3xl font-semibold text-cream sm:text-4xl">Welcome back from Egypt</h1>
+        <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">{tr("My Egypt")}</p>
+        <h1 className="mt-2 font-display text-3xl font-semibold text-cream sm:text-4xl">{tr("Welcome back from Egypt")}</h1>
       </div>
     );
   }
 
   return (
     <div className="text-center">
-      <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">Your Egypt begins in</p>
+      <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">{tr("Your Egypt begins in")}</p>
       <p className="mt-2 font-display text-6xl font-bold text-cream sm:text-7xl">{days}</p>
       <p className="mt-1 text-sm font-semibold uppercase tracking-[0.2em] text-cream/60">{days === 1 ? "Day" : "Days"}</p>
     </div>

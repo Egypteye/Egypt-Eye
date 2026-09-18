@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import type { CustomizeFormField, CustomizeFormSection, Destination, Interest, ResolvedSiteSettings } from "@/content/types";
 import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const CHIPS_TYPES = new Set(["chips", "chips-destinations", "chips-interests"]);
 
@@ -59,6 +60,7 @@ export function CustomizeForm({
   sections: readonly CustomizeFormSection[];
   siteSettings: ResolvedSiteSettings;
 }) {
+  const tr = useTr();
   const [chipSelections, setChipSelections] = useState<Record<string, string[]>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -141,20 +143,14 @@ export function CustomizeForm({
     >
       {/* Honeypot — hidden from real visitors via size/opacity rather than display:none, so basic bots that skip display:none fields still fill it in. Positioned within the form (not off-screen) to avoid any page-level horizontal overflow. */}
       <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-        <label>
-          Company
-          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
       {journeyItems.length > 0 && (
         <div className="mb-8 rounded-2xl border border-gold/20 bg-sand-dim p-5">
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-dark">
-            From Your Journey
-          </p>
-          <p className="mt-1 text-xs text-ink-soft/60">
-            These will be included with your request. Remove anything that doesn&rsquo;t belong.
-          </p>
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-dark">{tr("From Your Journey")}</p>
+          <p className="mt-1 text-xs text-ink-soft/60">{tr("These will be included with your request. Remove anything that doesn’t belong.")}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {journeyItems.map((item) => (
               <span
@@ -214,10 +210,7 @@ export function CustomizeForm({
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
-            className="underline"
-          >
-            WhatsApp
-          </WhatsAppBookButton>
+            className="underline">{tr("WhatsApp")}</WhatsAppBookButton>
           .
         </p>
       )}
@@ -228,10 +221,7 @@ export function CustomizeForm({
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
-            className="underline"
-          >
-            WhatsApp
-          </WhatsAppBookButton>{" "}
+            className="underline">{tr("WhatsApp")}</WhatsAppBookButton>{" "}
           or email{" "}
           <a href={`mailto:${site.contact.email}`} className="underline">
             {site.contact.email}

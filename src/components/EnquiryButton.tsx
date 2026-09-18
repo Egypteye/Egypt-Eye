@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { EnquiryModal } from "./EnquiryModal";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type ItemType = "tour" | "experience" | "photoshoot" | "signatureExperience";
 
@@ -20,6 +21,7 @@ export function EnquiryButton({
   itemSlug: string;
   className?: string;
 }) {
+  const tr = useTr();
   const [open, setOpen] = useState(false);
 
   return (
@@ -27,10 +29,7 @@ export function EnquiryButton({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`block w-full rounded-full border border-black/10 py-3 text-center text-sm font-semibold text-ink-soft transition hover:bg-sand-dim ${className}`}
-      >
-        Email an Enquiry
-      </button>
+        className={`block w-full rounded-full border border-black/10 py-3 text-center text-sm font-semibold text-ink-soft transition hover:bg-sand-dim ${className}`}>{tr("Email an Enquiry")}</button>
       {open && (
         <EnquiryModal itemType={itemType} itemTitle={itemTitle} itemSlug={itemSlug} onClose={() => setOpen(false)} />
       )}

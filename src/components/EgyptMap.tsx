@@ -13,6 +13,7 @@ import {
   VIEWBOX_W,
 } from "@/lib/egyptMapGeometry";
 import type { DestinationHub, EgyptCity, Mood } from "@/content/types";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Geometry (country outline, Nile, Suez Canal, viewBox dimensions) and the
 // projection it's built on now live in lib/egyptMapGeometry.ts, shared with
@@ -71,6 +72,7 @@ export function EgyptMap({
   moodFilter?: Mood | null;
   className?: string;
 }) {
+  const tr = useTr();
   const interactive = Boolean(onSelect || linkBase);
   const containerRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<View>({ scale: 1, tx: 0, ty: 0 });
@@ -458,7 +460,7 @@ export function EgyptMap({
         <div className="absolute bottom-3 right-3 flex flex-col overflow-hidden rounded-xl border border-ink/10 bg-cream/90 shadow-md backdrop-blur-sm">
           <button
             type="button"
-            aria-label="Zoom in"
+            aria-label={tr("Zoom in")}
             disabled={view.scale >= MAX_SCALE}
             onClick={() => zoomButton(ZOOM_STEP)}
             className="flex h-8 w-8 items-center justify-center text-ink-soft transition hover:bg-sand-dim disabled:opacity-30"
@@ -470,7 +472,7 @@ export function EgyptMap({
           <div className="h-px bg-ink/10" />
           <button
             type="button"
-            aria-label="Zoom out"
+            aria-label={tr("Zoom out")}
             disabled={view.scale <= MIN_SCALE}
             onClick={() => zoomButton(1 / ZOOM_STEP)}
             className="flex h-8 w-8 items-center justify-center text-ink-soft transition hover:bg-sand-dim disabled:opacity-30"
@@ -484,7 +486,7 @@ export function EgyptMap({
               <div className="h-px bg-ink/10" />
               <button
                 type="button"
-                aria-label="Reset view"
+                aria-label={tr("Reset view")}
                 onClick={resetView}
                 className="flex h-8 w-8 items-center justify-center text-ink-soft transition hover:bg-sand-dim"
               >
@@ -508,7 +510,7 @@ export function EgyptMap({
             </div>
             <button
               type="button"
-              aria-label="Close"
+              aria-label={tr("Close")}
               onClick={() => setOpenCitySlug(null)}
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-ink-soft/60 transition hover:bg-sand-dim hover:text-ink"
             >
@@ -517,10 +519,7 @@ export function EgyptMap({
               </svg>
             </button>
           </div>
-          <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">
-            We don&rsquo;t run tours here yet — but we&rsquo;re always adding new destinations. Tell us you&rsquo;re
-            interested and we&rsquo;ll see what we can arrange.
-          </p>
+          <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">{tr("We don’t run tours here yet — but we’re always adding new destinations. Tell us you’re interested and we’ll see what we can arrange.")}</p>
           <Link
             href="/customize"
             className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-gold-dark hover:underline"

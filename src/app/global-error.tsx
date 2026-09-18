@@ -1,8 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  const tr = useTr();
   useEffect(() => {
     console.error(error);
   }, [error]);
@@ -24,13 +26,9 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
           color: "#1b2a20",
         }}
       >
-        <p style={{ fontSize: "0.875rem", fontWeight: 600, letterSpacing: "0.3em", textTransform: "uppercase", color: "#8c6d1f" }}>
-          Error
-        </p>
-        <h1 style={{ maxWidth: "32rem", fontSize: "1.875rem", fontWeight: 600 }}>Something went wrong</h1>
-        <p style={{ maxWidth: "28rem", opacity: 0.75 }}>
-          We hit an unexpected error loading the site. Please try again.
-        </p>
+        <p style={{ fontSize: "0.875rem", fontWeight: 600, letterSpacing: "0.3em", textTransform: "uppercase", color: "#8c6d1f" }}>{tr("Error")}</p>
+        <h1 style={{ maxWidth: "32rem", fontSize: "1.875rem", fontWeight: 600 }}>{tr("Something went wrong")}</h1>
+        <p style={{ maxWidth: "28rem", opacity: 0.75 }}>{tr("We hit an unexpected error loading the site. Please try again.")}</p>
         <button
           onClick={reset}
           style={{
@@ -42,10 +40,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             color: "#1b2a20",
             border: "none",
             cursor: "pointer",
-          }}
-        >
-          Try Again
-        </button>
+          }}>{tr("Try Again")}</button>
       </body>
     </html>
   );

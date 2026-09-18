@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const PROMOTION_METHODS = [
   "Blog / Website",
@@ -21,6 +22,7 @@ function inputClass(extra = "") {
 type Status = "idle" | "sending" | "sent" | "error";
 
 export function AffiliateForm() {
+  const tr = useTr();
   const [methods, setMethods] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -70,11 +72,8 @@ export function AffiliateForm() {
   if (status === "sent") {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
-        <p className="font-display text-2xl font-semibold text-ink">Application received</p>
-        <p className="mt-3 text-sm text-ink-soft/70">
-          Thanks for applying to the Egypt Eye Affiliate Program. Our team reviews every application and will follow
-          up by email with your referral code and rate once approved.
-        </p>
+        <p className="font-display text-2xl font-semibold text-ink">{tr("Application received")}</p>
+        <p className="mt-3 text-sm text-ink-soft/70">{tr("Thanks for applying to the Egypt Eye Affiliate Program. Our team reviews every application and will follow up by email with your referral code and rate once approved.")}</p>
       </div>
     );
   }
@@ -82,9 +81,7 @@ export function AffiliateForm() {
   return (
     <form onSubmit={handleSubmit} className="relative rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-10">
       <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-        <label>
-          Company
-          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
@@ -97,18 +94,14 @@ export function AffiliateForm() {
           Email *
           <input type="email" name="email" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          WhatsApp / Phone
-          <input type="tel" name="phone" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
           Website, blog, or main platform *
-          <input name="websiteOrPlatform" placeholder="https:// or @handle" required className={inputClass()} />
+          <input name="websiteOrPlatform" placeholder={tr("https:// or @handle")} required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Audience size
-          <select name="audienceSize" defaultValue="" className={inputClass()}>
-            <option value="">Prefer not to say</option>
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Audience size")}<select name="audienceSize" defaultValue="" className={inputClass()}>
+            <option value="">{tr("Prefer not to say")}</option>
             {AUDIENCE_SIZES.map((size) => (
               <option key={size} value={size}>
                 {size}
@@ -116,13 +109,11 @@ export function AffiliateForm() {
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Preferred payout method
-          <select name="payoutMethod" defaultValue="" className={inputClass()}>
-            <option value="">Not sure yet</option>
-            <option value="PayPal">PayPal</option>
-            <option value="Bank Transfer">Bank Transfer</option>
-            <option value="Other">Other</option>
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Preferred payout method")}<select name="payoutMethod" defaultValue="" className={inputClass()}>
+            <option value="">{tr("Not sure yet")}</option>
+            <option value="PayPal">{tr("PayPal")}</option>
+            <option value="Bank Transfer">{tr("Bank Transfer")}</option>
+            <option value="Other">{tr("Other")}</option>
           </select>
         </label>
       </div>
@@ -145,12 +136,10 @@ export function AffiliateForm() {
         </div>
       </div>
 
-      <label className="mt-6 flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-        Anything else we should know?
-        <textarea
+      <label className="mt-6 flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Anything else we should know?")}<textarea
           name="message"
           rows={3}
-          placeholder="Past affiliate results, your audience, or how you'd plan to feature Egypt Eye."
+          placeholder={tr("Past affiliate results, your audience, or how you'd plan to feature Egypt Eye.")}
           className={inputClass()}
         />
       </label>
@@ -166,9 +155,7 @@ export function AffiliateForm() {
       </button>
 
       {status === "error" && (
-        <p className="mt-3 text-center text-xs text-terracotta">
-          Something went wrong sending your application. Please message us directly on WhatsApp instead.
-        </p>
+        <p className="mt-3 text-center text-xs text-terracotta">{tr("Something went wrong sending your application. Please message us directly on WhatsApp instead.")}</p>
       )}
     </form>
   );

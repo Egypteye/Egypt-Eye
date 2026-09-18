@@ -4,8 +4,10 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { AuthInput } from "@/components/AuthCard";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export function ResetPasswordForm() {
+  const tr = useTr();
   const router = useRouter();
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -43,9 +45,9 @@ export function ResetPasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <AuthInput label="New password" name="password" type="password" required minLength={8} autoComplete="new-password" />
+      <AuthInput label={tr("New password")} name="password" type="password" required minLength={8} autoComplete="new-password" />
       <AuthInput
-        label="Confirm new password"
+        label={tr("Confirm new password")}
         name="confirmPassword"
         type="password"
         required

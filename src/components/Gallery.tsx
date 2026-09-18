@@ -4,10 +4,12 @@ import { useState } from "react";
 import Image from "next/image";
 import type { SanityImage as SanityImageType } from "@/content/types";
 import { urlForImage } from "@/sanity/image";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Thumbnail grid + simple click-to-open lightbox with prev/next, for the
 // gallery photos on Experience/Photoshoot detail pages.
 export function Gallery({ images, alt }: { images: SanityImageType[]; alt: string }) {
+  const tr = useTr();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const urls = images.map((img) => urlForImage(img)?.url()).filter((u): u is string => Boolean(u));
 
@@ -42,7 +44,7 @@ export function Gallery({ images, alt }: { images: SanityImageType[]; alt: strin
           <button
             type="button"
             onClick={() => setOpenIndex(null)}
-            aria-label="Close gallery"
+            aria-label={tr("Close gallery")}
             className="absolute right-5 top-5 text-2xl text-white/80 transition hover:text-white"
           >
             ✕
@@ -55,7 +57,7 @@ export function Gallery({ images, alt }: { images: SanityImageType[]; alt: strin
                 e.stopPropagation();
                 setOpenIndex((i) => (i === null ? i : (i - 1 + urls.length) % urls.length));
               }}
-              aria-label="Previous photo"
+              aria-label={tr("Previous photo")}
               className="absolute left-4 text-3xl text-white/70 transition hover:text-white"
             >
               ‹
@@ -79,7 +81,7 @@ export function Gallery({ images, alt }: { images: SanityImageType[]; alt: strin
                 e.stopPropagation();
                 setOpenIndex((i) => (i === null ? i : (i + 1) % urls.length));
               }}
-              aria-label="Next photo"
+              aria-label={tr("Next photo")}
               className="absolute right-4 text-3xl text-white/70 transition hover:text-white"
             >
               ›

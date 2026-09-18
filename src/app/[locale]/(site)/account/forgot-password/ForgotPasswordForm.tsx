@@ -3,8 +3,10 @@
 import { useState, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { AuthInput } from "@/components/AuthCard";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export function ForgotPasswordForm() {
+  const tr = useTr();
   const [status, setStatus] = useState<"idle" | "sending" | "sent">("idle");
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -25,15 +27,15 @@ export function ForgotPasswordForm() {
   if (status === "sent") {
     return (
       <div className="rounded-2xl border border-gold/20 bg-sand-dim p-5 text-sm text-ink-soft/80">
-        <p className="font-semibold text-ink">Check your inbox</p>
-        <p className="mt-1.5">If an account exists for that email, we&rsquo;ve sent a link to reset your password.</p>
+        <p className="font-semibold text-ink">{tr("Check your inbox")}</p>
+        <p className="mt-1.5">{tr("If an account exists for that email, we’ve sent a link to reset your password.")}</p>
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <AuthInput label="Email" name="email" type="email" required autoComplete="email" />
+      <AuthInput label={tr("Email")} name="email" type="email" required autoComplete="email" />
       <button
         type="submit"
         disabled={status === "sending"}

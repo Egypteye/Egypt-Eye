@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const PLATFORMS = ["Instagram", "TikTok", "YouTube", "Facebook", "Blog / Website", "Other"];
 const COLLAB_TYPES = [
@@ -21,6 +22,7 @@ function inputClass(extra = "") {
 type Status = "idle" | "sending" | "sent" | "error";
 
 export function CollaborateForm() {
+  const tr = useTr();
   const [socials, setSocials] = useState<SocialRow[]>([{ platform: "Instagram", handle: "", followers: "" }]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -81,10 +83,8 @@ export function CollaborateForm() {
   if (status === "sent") {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
-        <p className="font-display text-2xl font-semibold text-ink">Application received</p>
-        <p className="mt-3 text-sm text-ink-soft/70">
-          Thanks for reaching out — our team reviews every application and will follow up if it&rsquo;s a fit.
-        </p>
+        <p className="font-display text-2xl font-semibold text-ink">{tr("Application received")}</p>
+        <p className="mt-3 text-sm text-ink-soft/70">{tr("Thanks for reaching out — our team reviews every application and will follow up if it’s a fit.")}</p>
       </div>
     );
   }
@@ -92,9 +92,7 @@ export function CollaborateForm() {
   return (
     <form onSubmit={handleSubmit} className="relative rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-10">
       <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-        <label>
-          Company
-          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
@@ -107,13 +105,9 @@ export function CollaborateForm() {
           Email *
           <input type="email" name="email" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          WhatsApp / Phone
-          <input type="tel" name="phone" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Portfolio / previous work
-          <input type="url" name="portfolioUrl" placeholder="https://" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Portfolio / previous work")}<input type="url" name="portfolioUrl" placeholder={tr("https://")} className={inputClass()} />
         </label>
       </div>
 
@@ -134,13 +128,13 @@ export function CollaborateForm() {
                 ))}
               </select>
               <input
-                placeholder="@handle"
+                placeholder={tr("@handle")}
                 value={row.handle}
                 onChange={(e) => updateSocial(i, "handle", e.target.value)}
                 className={inputClass()}
               />
               <input
-                placeholder="Followers"
+                placeholder={tr("Followers")}
                 value={row.followers}
                 onChange={(e) => updateSocial(i, "followers", e.target.value)}
                 className={inputClass()}
@@ -149,7 +143,7 @@ export function CollaborateForm() {
                 type="button"
                 onClick={() => removeSocialRow(i)}
                 disabled={socials.length === 1}
-                aria-label="Remove this account"
+                aria-label={tr("Remove this account")}
                 className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft/50 transition hover:bg-sand-dim hover:text-terracotta disabled:opacity-30"
               >
                 ×
@@ -162,29 +156,21 @@ export function CollaborateForm() {
           onClick={addSocialRow}
           className="mt-2 text-xs font-semibold text-gold-dark hover:underline"
         >
-          + Add another account
+          {tr("+ Add another account")}
         </button>
       </div>
 
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Average engagement rate
-          <input name="engagementRate" placeholder="e.g. 4-6%" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Average engagement rate")}<input name="engagementRate" placeholder={tr("e.g. 4-6%")} className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Audience countries
-          <input name="audienceCountries" placeholder="e.g. USA, UK, Germany" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Audience countries")}<input name="audienceCountries" placeholder={tr("e.g. USA, UK, Germany")} className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Preferred travel dates
-          <input name="travelDates" placeholder="e.g. Flexible, or March 2027" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Preferred travel dates")}<input name="travelDates" placeholder={tr("e.g. Flexible, or March 2027")} className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
           Collaboration type *
           <select name="collaborationType" required defaultValue="" className={inputClass()}>
-            <option value="" disabled>
-              Select a type
-            </option>
+            <option value="" disabled>{tr("Select a type")}</option>
             {COLLAB_TYPES.map((t) => (
               <option key={t} value={t}>
                 {t}
@@ -192,9 +178,7 @@ export function CollaborateForm() {
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
-          Tell us about your content and what you have in mind
-          <textarea name="message" rows={4} className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">{tr("Tell us about your content and what you have in mind")}<textarea name="message" rows={4} className={inputClass()} />
         </label>
       </div>
 
@@ -209,9 +193,7 @@ export function CollaborateForm() {
       </button>
 
       {status === "error" && (
-        <p className="mt-3 text-center text-xs text-terracotta">
-          Something went wrong sending your application. Please message us directly on WhatsApp instead.
-        </p>
+        <p className="mt-3 text-center text-xs text-terracotta">{tr("Something went wrong sending your application. Please message us directly on WhatsApp instead.")}</p>
       )}
     </form>
   );

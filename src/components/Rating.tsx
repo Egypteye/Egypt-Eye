@@ -1,3 +1,4 @@
+import { T, trAll } from "@/i18n/T";
 import type { Rating as RatingType } from "@/content/types";
 
 // Egypt Eye's traveler-review count.
@@ -35,9 +36,13 @@ export function hasProductReviews(rating?: RatingType): boolean {
   return Boolean(rating && rating.count > 0);
 }
 
-export function Rating({ rating }: { rating?: RatingType }) {
+export async function Rating({ rating }: { rating?: RatingType }) {
+  const ui = await trAll([
+    "Egypt Eye's traveler reviews, collected in the follow-up after every trip and shoot.",
+  ]);
+
   if (!rating || !rating.count) {
-    return <span className="text-sm text-ink-soft/60">New experience</span>;
+    return <span className="text-sm text-ink-soft/60"><T>New experience</T></span>;
   }
 
   const plural = rating.count === 1 ? "" : "s";
@@ -49,7 +54,7 @@ export function Rating({ rating }: { rating?: RatingType }) {
   return (
     <span
       className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft"
-      title="Egypt Eye's traveler reviews, collected in the follow-up after every trip and shoot."
+      title={ui["Egypt Eye's traveler reviews, collected in the follow-up after every trip and shoot."]}
     >
       <svg
         viewBox="0 0 20 20"

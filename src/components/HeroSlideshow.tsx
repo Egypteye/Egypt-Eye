@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { SanityImage as SanityImageType } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import type { ImageTone } from "@/content/types";
+import { useTr } from "@/i18n/LocaleProvider";
 
 type Slide = {
   image?: SanityImageType;
@@ -32,6 +33,7 @@ export function HeroSlideshow({
   slides: readonly Slide[];
   eyebrow?: string;
 }) {
+  const tr = useTr();
   const [index, setIndex] = useState(0);
   // Bumped on every manual (arrow/dot) navigation so the auto-advance timer
   // below restarts from zero instead of firing early right after a manual
@@ -98,10 +100,7 @@ export function HeroSlideshow({
           <div key={`b-${index}`} className="animate-fade-up mt-6 flex flex-wrap justify-center gap-4">
             <Link
               href="/customize"
-              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light"
-            >
-              Design Your Dream Tour
-            </Link>
+              className="rounded-full bg-gold px-7 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light">{tr("Design Your Dream Tour")}</Link>
             {active.linkHref && active.linkLabel && (
               <Link
                 href={active.linkHref}
@@ -123,7 +122,7 @@ export function HeroSlideshow({
             <div className="mt-8 flex items-center justify-center gap-4">
               <button
                 type="button"
-                aria-label="Previous slide"
+                aria-label={tr("Previous slide")}
                 onClick={() => goTo(index - 1)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cream/15 text-cream backdrop-blur-sm transition hover:bg-cream/30"
               >
@@ -146,7 +145,7 @@ export function HeroSlideshow({
               </div>
               <button
                 type="button"
-                aria-label="Next slide"
+                aria-label={tr("Next slide")}
                 onClick={() => goTo(index + 1)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cream/15 text-cream backdrop-blur-sm transition hover:bg-cream/30"
               >

@@ -7,6 +7,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { CollaborateForm } from "./CollaborateForm";
 import { SocialLinks } from "@/components/SocialLinks";
 import { getSiteSettings } from "@/sanity/fetchers";
+import { T, trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -69,6 +70,19 @@ const WHAT_WE_LOOK_FOR = [
 ];
 
 export default async function CollaboratePage() {
+  const ui = await trAll([
+    "A Fit, Not a Follower Count",
+    "Apply Now",
+    "Built Around Your Content, Not Ours",
+    "Detailed hieroglyphic reliefs on temple columns in Egypt",
+    "From Application to Trip",
+    "How It Works",
+    "Tell Us About You",
+    "We review every application personally — expect a response within a couple of weeks.",
+    "What We Look For",
+    "What You Get",
+  ]);
+
   const site = await getSiteSettings();
 
   return (
@@ -77,27 +91,22 @@ export default async function CollaboratePage() {
         <SmartImage
           image="/photos/pexels-15131539.jpg"
           tone="desert"
-          alt="Detailed hieroglyphic reliefs on temple columns in Egypt"
+          alt={ui["Detailed hieroglyphic reliefs on temple columns in Egypt"]}
           className="absolute inset-0"
           priority
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">Collaborate</p>
-          <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl">
-            Collaborate With Egypt Eye
-          </h1>
-          <p className="max-w-xl text-[15px] text-cream/80">
-            Content creators and influencers — apply for a sponsored trip, content partnership, or press coverage
-            with Egypt Eye.
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light"><T>Collaborate</T></p>
+          <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl"><T>Collaborate With Egypt Eye</T></h1>
+          <p className="max-w-xl text-[15px] text-cream/80"><T>Content creators and influencers — apply for a sponsored trip, content partnership, or press coverage with Egypt Eye.</T></p>
         </Container>
       </section>
 
       <section className="py-16">
         <Container>
-          <SectionHeading eyebrow="What You Get" title="Built Around Your Content, Not Ours" />
+          <SectionHeading eyebrow={ui["What You Get"]} title={ui["Built Around Your Content, Not Ours"]} />
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {WHAT_YOU_GET.map((item) => (
               <div key={item.title} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
@@ -111,7 +120,7 @@ export default async function CollaboratePage() {
 
       <section className="bg-sand-dim py-20">
         <Container>
-          <SectionHeading eyebrow="How It Works" title="From Application to Trip" align="center" />
+          <SectionHeading eyebrow={ui["How It Works"]} title={ui["From Application to Trip"]} align="center" />
           <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-3">
             {STEPS.map((s, i) => (
               <div key={s.title} className="rounded-2xl bg-cream p-6 text-center shadow-sm">
@@ -128,7 +137,7 @@ export default async function CollaboratePage() {
 
       <section className="py-16">
         <Container>
-          <SectionHeading eyebrow="What We Look For" title="A Fit, Not a Follower Count" />
+          <SectionHeading eyebrow={ui["What We Look For"]} title={ui["A Fit, Not a Follower Count"]} />
           <div className="mt-10 grid gap-6 sm:grid-cols-3">
             {WHAT_WE_LOOK_FOR.map((item) => (
               <div key={item.title} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
@@ -150,9 +159,9 @@ export default async function CollaboratePage() {
       <section className="bg-sand-dim py-16">
         <Container>
           <SectionHeading
-            eyebrow="Apply Now"
-            title="Tell Us About You"
-            description="We review every application personally — expect a response within a couple of weeks."
+            eyebrow={ui["Apply Now"]}
+            title={ui["Tell Us About You"]}
+            description={ui["We review every application personally — expect a response within a couple of weeks."]}
           />
           <div className="mx-auto mt-10 max-w-3xl">
             <CollaborateForm />

@@ -7,6 +7,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { ToursGrid } from "./ToursGrid";
 import { getListingPages, getTours } from "@/sanity/fetchers";
+import { trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -20,6 +21,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ToursPage() {
+  const ui = await trAll([
+    "Good to Know",
+    "Painted hieroglyphic columns at Luxor Temple",
+    "Planning an Egypt Trip",
+  ]);
+
   const [tours, listingPages] = await Promise.all([getTours(), getListingPages()]);
   const page = listingPages.tours;
   const sectionTitle = page.sectionTitleTemplate.replace("{count}", String(tours.length));
@@ -30,7 +37,7 @@ export default async function ToursPage() {
         <SmartImage
           image="/photos/pexels-36518565.jpg"
           tone="luxor"
-          alt="Painted hieroglyphic columns at Luxor Temple"
+          alt={ui["Painted hieroglyphic columns at Luxor Temple"]}
           className="absolute inset-0"
           priority
           sizes="100vw"
@@ -58,7 +65,7 @@ export default async function ToursPage() {
 
       <section className="bg-sand-dim py-20">
         <Container className="mx-auto max-w-3xl">
-          <SectionHeading eyebrow="Good to Know" title="Planning an Egypt Trip" align="center" />
+          <SectionHeading eyebrow={ui["Good to Know"]} title={ui["Planning an Egypt Trip"]} align="center" />
           <div className="mt-10">
             <FaqAccordion faqs={[...page.faqs]} />
           </div>

@@ -3,12 +3,14 @@
 import { useState } from "react";
 import type { PuzzleProps } from "@/lib/games/types";
 import { Glyph, GLYPH_COUNT } from "../glyphs";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Tier 3 — a stone combination-lock. Each wheel cycles independently via
 // its own up/down arrows; match the shown key combination across all
 // wheels. The target is always visible — this is a logic/matching puzzle,
 // not a memory one.
 export function HieroglyphWheels({ config, onSolved }: PuzzleProps) {
+  const tr = useTr();
   const wheelCount = typeof config.wheelCount === "number" ? config.wheelCount : 3;
   const symbolsPerWheel = typeof config.symbolsPerWheel === "number" ? config.symbolsPerWheel : GLYPH_COUNT;
 
@@ -35,7 +37,7 @@ export function HieroglyphWheels({ config, onSolved }: PuzzleProps) {
   return (
     <div className="flex flex-col items-center gap-8">
       <div className="flex flex-col items-center gap-2">
-        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-light/70">Match this combination</p>
+        <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-light/70">{tr("Match this combination")}</p>
         <div className="flex gap-3 rounded-2xl border border-gold/20 bg-black/20 px-4 py-3">
           {target.map((g, i) => (
             <Glyph key={i} index={g} className="h-7 w-7 text-gold" />
@@ -48,7 +50,7 @@ export function HieroglyphWheels({ config, onSolved }: PuzzleProps) {
           <div key={wheel} className="flex flex-col items-center gap-2">
             <button
               type="button"
-              aria-label="Turn wheel up"
+              aria-label={tr("Turn wheel up")}
               onClick={() => turn(wheel, -1)}
               className="text-cream/50 transition hover:text-gold-light"
             >
@@ -65,7 +67,7 @@ export function HieroglyphWheels({ config, onSolved }: PuzzleProps) {
             </div>
             <button
               type="button"
-              aria-label="Turn wheel down"
+              aria-label={tr("Turn wheel down")}
               onClick={() => turn(wheel, 1)}
               className="text-cream/50 transition hover:text-gold-light"
             >

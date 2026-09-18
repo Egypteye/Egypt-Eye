@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const SERVICE_OPTIONS = [
   "Inbound Tour Operator",
@@ -20,6 +21,7 @@ function inputClass(extra = "") {
 type Status = "idle" | "sending" | "sent" | "error";
 
 export function TravelAgentForm() {
+  const tr = useTr();
   const [services, setServices] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -70,11 +72,8 @@ export function TravelAgentForm() {
   if (status === "sent") {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
-        <p className="font-display text-2xl font-semibold text-ink">Application received</p>
-        <p className="mt-3 text-sm text-ink-soft/70">
-          Thanks for applying to the Egypt Eye Travel Agent Program. A specialist will review your application and
-          reach out to schedule a quick video call.
-        </p>
+        <p className="font-display text-2xl font-semibold text-ink">{tr("Application received")}</p>
+        <p className="mt-3 text-sm text-ink-soft/70">{tr("Thanks for applying to the Egypt Eye Travel Agent Program. A specialist will review your application and reach out to schedule a quick video call.")}</p>
       </div>
     );
   }
@@ -82,9 +81,7 @@ export function TravelAgentForm() {
   return (
     <form onSubmit={handleSubmit} className="relative rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-10">
       <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-        <label>
-          Company
-          <input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
@@ -105,9 +102,7 @@ export function TravelAgentForm() {
           WhatsApp / Phone *
           <input type="tel" name="phone" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Website
-          <input type="url" name="website" placeholder="https://" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Website")}<input type="url" name="website" placeholder={tr("https://")} className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
           Country *
@@ -133,9 +128,7 @@ export function TravelAgentForm() {
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
           Estimated Egypt bookings per year *
           <select name="estimatedBookings" required defaultValue="" className={inputClass()}>
-            <option value="" disabled>
-              Select a range
-            </option>
+            <option value="" disabled>{tr("Select a range")}</option>
             {BOOKING_RANGES.map((range) => (
               <option key={range} value={range}>
                 {range}
@@ -143,12 +136,10 @@ export function TravelAgentForm() {
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
-          Anything else we should know?
-          <textarea
+        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">{tr("Anything else we should know?")}<textarea
             name="message"
             rows={3}
-            placeholder="Your target markets, client types, or specific destinations you focus on."
+            placeholder={tr("Your target markets, client types, or specific destinations you focus on.")}
             className={inputClass()}
           />
         </label>
@@ -165,9 +156,7 @@ export function TravelAgentForm() {
       </button>
 
       {status === "error" && (
-        <p className="mt-3 text-center text-xs text-terracotta">
-          Something went wrong sending your application. Please message us directly on WhatsApp instead.
-        </p>
+        <p className="mt-3 text-center text-xs text-terracotta">{tr("Something went wrong sending your application. Please message us directly on WhatsApp instead.")}</p>
       )}
     </form>
   );

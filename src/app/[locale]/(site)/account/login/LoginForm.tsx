@@ -5,8 +5,10 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { AuthInput } from "@/components/AuthCard";
+import { useTr } from "@/i18n/LocaleProvider";
 
 export function LoginForm() {
+  const tr = useTr();
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/account";
@@ -44,12 +46,10 @@ export function LoginForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <AuthInput label="Email" name="email" type="email" required autoComplete="email" />
+      <AuthInput label={tr("Email")} name="email" type="email" required autoComplete="email" />
       <div className="flex flex-col gap-1.5">
-        <AuthInput label="Password" name="password" type="password" required autoComplete="current-password" />
-        <Link href="/account/forgot-password" className="self-end text-xs font-semibold text-gold-dark underline">
-          Forgot password?
-        </Link>
+        <AuthInput label={tr("Password")} name="password" type="password" required autoComplete="current-password" />
+        <Link href="/account/forgot-password" className="self-end text-xs font-semibold text-gold-dark underline">{tr("Forgot password?")}</Link>
       </div>
 
       {status === "error" && <p className="text-sm text-terracotta">{errorMessage}</p>}
@@ -64,9 +64,7 @@ export function LoginForm() {
 
       <p className="text-center text-xs text-ink-soft/60">
         New to Egypt Eye?{" "}
-        <Link href={`/account/signup?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">
-          Create an account
-        </Link>
+        <Link href={`/account/signup?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">{tr("Create an account")}</Link>
       </p>
     </form>
   );

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 const COUNTRIES = [
   { value: "egypt", label: "Egypt" },
@@ -26,6 +27,7 @@ export function SearchBar({
 }: {
   className?: string;
 }) {
+  const tr = useTr();
   const router = useRouter();
   const [country, setCountry] = useState("egypt");
   const [duration, setDuration] = useState("all");
@@ -55,9 +57,7 @@ export function SearchBar({
       className={`grid grid-cols-2 gap-x-3 gap-y-2 rounded-2xl bg-cream p-4 shadow-2xl shadow-black/20 sm:flex sm:flex-row sm:items-center sm:gap-0 sm:divide-x sm:divide-black/10 sm:p-3 ${className}`}
     >
       <label className="flex flex-1 flex-col gap-1 px-3 py-1">
-        <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
-          Country
-        </span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">{tr("Country")}</span>
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
@@ -72,9 +72,7 @@ export function SearchBar({
       </label>
 
       <label className="flex flex-1 flex-col gap-1 px-3 py-1">
-        <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
-          Length
-        </span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">{tr("Length")}</span>
         <select
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
@@ -89,9 +87,7 @@ export function SearchBar({
       </label>
 
       <label className="flex flex-1 flex-col gap-1 px-3 py-1">
-        <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">
-          Service
-        </span>
+        <span className="text-xs font-semibold uppercase tracking-wide text-gold-dark">{tr("Service")}</span>
         <select
           value={service}
           onChange={(e) => setService(e.target.value)}
@@ -112,9 +108,7 @@ export function SearchBar({
         <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
           <circle cx="9" cy="9" r="6" />
           <path d="M17 17l-4-4" strokeLinecap="round" />
-        </svg>
-        Search
-      </button>
+        </svg>{tr("Search")}</button>
     </form>
   );
 }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { SignatureExperience } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import { ExperienceRatingLink } from "./ExperienceRatingLink";
+import { T } from "@/i18n/T";
 
 // Deliberately editorial, not a standard tour-package card: a tall
 // full-bleed photo, a "who it's for" eyebrow instead of a price-first
@@ -29,9 +30,7 @@ export function SignatureExperienceCard({
           className={`${imageAspectClassName} w-full transition duration-700 ease-out group-hover:scale-[1.03]`}
         />
         {isComingSoon && (
-          <span className="absolute left-5 top-5 rounded-full bg-cream/95 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink">
-            Coming Soon
-          </span>
+          <span className="absolute left-5 top-5 rounded-full bg-cream/95 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink"><T>Coming Soon</T></span>
         )}
         {experience.luxuryLevel && (
           <span className="absolute right-5 top-5 rounded-full bg-ink/70 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-cream backdrop-blur-sm">
@@ -57,9 +56,7 @@ export function SignatureExperienceCard({
           <ExperienceRatingLink type="experience" slug={experience.slug} />
         </div>
 
-        <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink transition group-hover:gap-3">
-          See the full experience
-          <span aria-hidden="true">→</span>
+        <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink transition group-hover:gap-3"><T>See the full experience</T><span aria-hidden="true">→</span>
         </span>
       </div>
     </Link>

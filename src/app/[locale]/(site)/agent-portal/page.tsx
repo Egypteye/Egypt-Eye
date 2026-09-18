@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { T, trAll } from "@/i18n/T";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
 // never be statically prerendered. Declared explicitly rather than inferred
@@ -58,6 +59,15 @@ const AVAILABLE_SERVICES = [
 ];
 
 export default async function AgentPortalPage() {
+  const ui = await trAll([
+    "Contact person",
+    "Country",
+    "Partner since",
+    "Services offered",
+    "Website",
+    "WhatsApp / Phone",
+  ]);
+
   const user = await getCurrentUser();
   if (!user) redirect("/account/login?next=/agent-portal");
 
@@ -74,7 +84,7 @@ export default async function AgentPortalPage() {
     return (
       <section className="bg-sand py-24">
         <Container className="mx-auto max-w-lg text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">Partner Portal</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>Partner Portal</T></p>
           <h1 className="mt-3 font-display text-3xl font-semibold text-ink">
             {agent?.status === "suspended" ? "Partner access paused" : "Not a partner account yet"}
           </h1>
@@ -86,10 +96,7 @@ export default async function AgentPortalPage() {
           {!agent && (
             <Link
               href="/travel-agents"
-              className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"
-            >
-              Apply to the Partner Program
-            </Link>
+              className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Apply to the Partner Program</T></Link>
           )}
         </Container>
       </section>
@@ -107,29 +114,24 @@ export default async function AgentPortalPage() {
       <Container className="mx-auto max-w-4xl">
         <div className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">Partner Portal</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>Partner Portal</T></p>
             <h1 className="mt-2 font-display text-3xl font-semibold text-ink">{agent.company_name}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/account" className="text-sm font-semibold text-ink-soft/70 hover:text-ink">
-              My Account
-            </Link>
+            <Link href="/account" className="text-sm font-semibold text-ink-soft/70 hover:text-ink"><T>My Account</T></Link>
             <LogoutButton className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
           </div>
         </div>
 
         <div className="flex flex-col gap-8">
           <div className="rounded-3xl border border-gold/25 bg-ink p-6 sm:p-8">
-            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light">Your Partner Rate</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light"><T>Your Partner Rate</T></p>
             <p className="mt-2 font-display text-4xl font-semibold text-cream">{agent.partner_discount_percent}% off</p>
-            <p className="mt-3 max-w-xl text-sm text-cream/70">
-              Applies to tours, experiences, and photoshoots booked for your clients. Request a booking below or on
-              WhatsApp and quote your agency name — our team applies your partner rate when we confirm.
-            </p>
+            <p className="mt-3 max-w-xl text-sm text-cream/70"><T>Applies to tours, experiences, and photoshoots booked for your clients. Request a booking below or on WhatsApp and quote your agency name — our team applies your partner rate when we confirm.</T></p>
           </div>
 
           <div>
-            <h2 className="mb-4 font-display text-lg font-semibold text-ink">Available Services</h2>
+            <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Available Services</T></h2>
             <div className="grid gap-4 sm:grid-cols-2">
               {AVAILABLE_SERVICES.map((s) => (
                 <Link
@@ -146,7 +148,7 @@ export default async function AgentPortalPage() {
 
           <div>
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold text-ink">Your Bookings</h2>
+              <h2 className="font-display text-lg font-semibold text-ink"><T>Your Bookings</T></h2>
               <Link href="/customize" className="text-sm font-semibold text-gold-dark hover:underline">
                 + New booking request
               </Link>
@@ -154,9 +156,7 @@ export default async function AgentPortalPage() {
             {typedReservations.length === 0 ? (
               <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
                 No bookings yet.{" "}
-                <Link href="/customize" className="font-semibold text-gold-dark underline">
-                  Request an itinerary
-                </Link>{" "}
+                <Link href="/customize" className="font-semibold text-gold-dark underline"><T>Request an itinerary</T></Link>{" "}
                 for your first client.
               </p>
             ) : (
@@ -186,13 +186,13 @@ export default async function AgentPortalPage() {
           </div>
 
           <div>
-            <h2 className="mb-4 font-display text-lg font-semibold text-ink">Account Information</h2>
+            <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Account Information</T></h2>
             <div className="grid gap-4 sm:grid-cols-2">
-              <InfoField label="Contact person" value={agent.contact_name} />
-              <InfoField label="Country" value={agent.country ?? "—"} />
-              <InfoField label="WhatsApp / Phone" value={agent.phone ?? "—"} />
+              <InfoField label={ui["Contact person"]} value={agent.contact_name} />
+              <InfoField label={ui["Country"]} value={agent.country ?? "—"} />
+              <InfoField label={ui["WhatsApp / Phone"]} value={agent.phone ?? "—"} />
               <InfoField
-                label="Website"
+                label={ui["Website"]}
                 value={
                   agent.website ? (
                     <a href={agent.website} target="_blank" rel="noreferrer" className="underline">
@@ -203,8 +203,8 @@ export default async function AgentPortalPage() {
                   )
                 }
               />
-              <InfoField label="Services offered" value={agent.services.join(", ") || "—"} />
-              <InfoField label="Partner since" value={new Date(agent.approved_at).toLocaleDateString()} />
+              <InfoField label={ui["Services offered"]} value={agent.services.join(", ") || "—"} />
+              <InfoField label={ui["Partner since"]} value={new Date(agent.approved_at).toLocaleDateString()} />
             </div>
             <Link href="/account/profile" className="mt-4 inline-block text-sm font-semibold text-gold-dark hover:underline">
               Edit your personal profile & password →
