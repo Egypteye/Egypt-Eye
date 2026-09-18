@@ -10,7 +10,7 @@ import { LOCALES, localePath, splitLocale, type Locale } from "@/i18n/locales";
 // Switching keeps you on the page you were reading rather than dumping you on
 // the homepage: the current path is stripped of its locale prefix and rebuilt
 // under the new one, so /ar/tours/1-day-giza-tour becomes /tours/1-day-giza-tour
-// in English and /de/tours/1-day-giza-tour in German.
+// in English and /fr/tours/1-day-giza-tour in French.
 //
 // Plain <a> rather than next/link on purpose. A locale change swaps the
 // document's `lang` and `dir`, which live on <html> and are set by the root

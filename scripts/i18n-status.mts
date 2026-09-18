@@ -29,5 +29,6 @@ for (const info of LOCALES) {
     `${info.englishName.padEnd(10)} ${String(done).padStart(6)} ${bar} ${String(pct).padStart(3)}%  ${wordsLeft.toLocaleString().padStart(9)}`
   );
 }
-console.log(`\nFill a language:  npm run i18n:translate -- --locale de`);
-console.log(`Fill all six:     npm run i18n:translate -- --all`);
+const nonDefaultCount = LOCALES.filter((l) => l.code !== DEFAULT_LOCALE).length;
+console.log(`\nFill a language:  npm run i18n:translate -- --locale fr`);
+console.log(`Fill all ${nonDefaultCount}:      npm run i18n:translate -- --all`);

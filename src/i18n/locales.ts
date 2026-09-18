@@ -4,17 +4,17 @@
 //
 // The set is chosen from Egypt's actual inbound market rather than by adding
 // languages for the sake of a longer list. Egypt took ~19M visitors in 2025;
-// the UK, Germany and Russia remain the largest traditional source markets,
-// France, Italy and Spain are long-standing European ones, and Arabic covers
-// both GCC visitors and the domestic market. English stays the default and
-// also serves the US, India and every market without its own translation.
+// the UK and Russia remain the largest traditional source markets, France,
+// Italy and Spain are long-standing European ones, and Arabic covers both
+// GCC visitors and the domestic market. English stays the default and also
+// serves the US, India and every market without its own translation.
 //
 // Deliberately left out for now: Chinese and Polish. Both are real and
 // growing Egypt markets, but they skew to group-charter and Red Sea package
 // travel rather than the private Cairo/Giza tours and photoshoots this
 // business sells. They're one entry away if that changes.
 
-export type Locale = "en" | "ar" | "de" | "fr" | "es" | "it" | "ru";
+export type Locale = "en" | "ar" | "fr" | "es" | "it" | "ru";
 
 export type LocaleInfo = {
   code: Locale;
@@ -32,7 +32,6 @@ export const DEFAULT_LOCALE: Locale = "en";
 export const LOCALES: LocaleInfo[] = [
   { code: "en", nativeName: "English", englishName: "English", dir: "ltr", htmlLang: "en" },
   { code: "ar", nativeName: "العربية", englishName: "Arabic", dir: "rtl", htmlLang: "ar" },
-  { code: "de", nativeName: "Deutsch", englishName: "German", dir: "ltr", htmlLang: "de" },
   { code: "fr", nativeName: "Français", englishName: "French", dir: "ltr", htmlLang: "fr" },
   { code: "es", nativeName: "Español", englishName: "Spanish", dir: "ltr", htmlLang: "es" },
   { code: "it", nativeName: "Italiano", englishName: "Italian", dir: "ltr", htmlLang: "it" },

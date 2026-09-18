@@ -16,8 +16,8 @@ const EMPTY: ContentDictionary = Object.freeze({});
 const cache = new Map<Locale, ContentDictionary>();
 
 /**
- * Loaded per locale rather than imported statically for all seven: the files
- * are large, and a route rendering in German has no reason to carry the
+ * Loaded per locale rather than imported statically for all six: the files
+ * are large, and a route rendering in French has no reason to carry the
  * Russian catalogue in its serverless bundle.
  *
  * A missing file is the normal state for a locale the pipeline hasn't been
@@ -34,7 +34,6 @@ const cache = new Map<Locale, ContentDictionary>();
  */
 const loaders: Partial<Record<Locale, () => Promise<ContentDictionary>>> = {
   ar: async () => (await import("./generated/ar.json")).default,
-  de: async () => (await import("./generated/de.json")).default,
   fr: async () => (await import("./generated/fr.json")).default,
   es: async () => (await import("./generated/es.json")).default,
   it: async () => (await import("./generated/it.json")).default,

@@ -2,7 +2,7 @@
  * Fills the missing translations for a locale, using the Gemini key the site
  * already has for the AI concierge.
  *
- * Run: npm run i18n:translate -- --locale de
+ * Run: npm run i18n:translate -- --locale fr
  *      npm run i18n:translate -- --all --limit 500
  *
  * Incremental and resumable by construction. It reads the manifest, subtracts
