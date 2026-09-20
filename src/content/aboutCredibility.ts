@@ -249,6 +249,12 @@ export const hotelPartners = [
 ];
 
 // "Our Destinations — Egypt .. and Jordan!" — deck.
+// Deliberately a shorter list than the trust bar's "Destinations Covered",
+// which counts every place any tour visits (~36). This one is where Egypt Eye
+// has its own ground operation, so the two tiles carry different labels
+// rather than the same word over two different numbers. Names match the
+// `destinations` tags in content/tours.ts so the lists reconcile.
+//
 // Counted on /about as "Destinations we run ourselves", so each entry has to
 // be a destination rather than a site within one. "Khez Ali" was here until
 // September 2026: it is Khazali Canyon, which is inside Wadi Rum — already
@@ -256,7 +262,7 @@ export const hotelPartners = [
 // respelled, because the number under it is a claim people are invited to
 // check.
 export const coveredDestinations = {
-  egypt: ["Giza", "Cairo", "Alexandria", "Red Sea", "Aswan", "Siwa", "Fayoum", "Luxor"],
+  egypt: ["Giza", "Cairo", "Alexandria", "Red Sea", "Aswan", "Siwa Oasis", "Fayoum", "Luxor"],
   jordan: ["Petra", "Wadi Rum", "Dead Sea"],
 };
 
