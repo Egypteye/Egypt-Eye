@@ -36,8 +36,18 @@ const notoKufi = Noto_Kufi_Arabic({
   subsets: ["arabic"],
 });
 
+/**
+ * Only the languages actually offered to search engines are prerendered.
+ *
+ * A build was generating 2,296 pages, 85% of them for locales whose pages
+ * are noindex and canonicalise to English until the translation pipeline
+ * fills them — build minutes and ISR cache entries spent on pages nothing
+ * should be visiting yet. The rest still work: an unlisted locale renders on
+ * demand and is cached from then on, so the switcher behaves identically.
+ * Each language rejoins the prerender set as it crosses the threshold.
+ */
 export function generateStaticParams() {
-  return LOCALES.map((l) => ({ locale: l.code }));
+  return LOCALES.filter((l) => isLocalePublished(l.code)).map((l) => ({ locale: l.code }));
 }
 
 export async function generateMetadata({
