@@ -76,7 +76,7 @@ export default async function Home() {
       {/* Hero — an auto-rotating slideshow; each slide carries its own
           headline, subtext, and link, fully editable in the Studio. */}
       <section className="relative min-h-[82vh]">
-        <HeroSlideshow slides={site.heroImages} eyebrow={site.tagline} />
+        <HeroSlideshow slides={site.heroSlides} eyebrow={site.tagline} />
 
         {/* Search bar, peeking a fixed amount below the hero's bottom edge —
             a fixed translate (not a proportional translate-y-1/2) so the

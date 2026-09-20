@@ -9,6 +9,54 @@ export const site = {
   tagline: "Unveiling Egypt's Treasures",
   heroHeadline: "Unveiling Egypt's Treasures",
   heroSubheadline: "Journey Across the Land of Pharaohs",
+  // The homepage hero slideshow's default slides, shown until real photos
+  // are uploaded to Site Settings > Homepage hero slides. Kept here rather
+  // than beside the fetcher so the extraction pipeline — which only reads
+  // src/content/*.ts — actually sees these strings and can translate them.
+  // Named heroSlides, not heroImages — see the comment on
+  // ResolvedSiteSettings["heroSlides"] in content/types.ts for why.
+  heroSlides: [
+    {
+      tone: "giza",
+      image: "/photos/pexels-10124763.jpg",
+      headline: "Where It All Begins: Giza",
+      subtext: "Stand before the last surviving wonder of the ancient world, then climb inside the Great Pyramid itself.",
+      linkLabel: "See the Giza Tour",
+      linkHref: "/tours/1-day-giza-tour",
+    },
+    {
+      tone: "nile",
+      image: "/photos/pexels-15131486.jpg",
+      headline: "Temples That Rise Straight From the Water",
+      subtext: "A private cruise between Luxor and Aswan — the most scenic way to see ancient Egypt.",
+      linkLabel: "Explore Nile Cruises",
+      linkHref: "/tours/8-day-essential-egypt-nile-cruise",
+    },
+    {
+      tone: "luxor",
+      image: "/photos/pexels-18934702.jpg",
+      headline: "Ancient Thebes, Properly Explored",
+      subtext: "Karnak, the Valley of the Kings, and everything in between — how to actually see Luxor.",
+      linkLabel: "Read the Luxor Guide",
+      linkHref: "/stories/luxor-travel-guide",
+    },
+    {
+      tone: "redsea",
+      image: "/photos/pexels-36221985.jpg",
+      headline: "Turquoise Water, White Sand, Nothing on the Agenda",
+      subtext: "A slower few days on Egypt's Red Sea coast.",
+      linkLabel: "Explore the Red Sea",
+      linkHref: "/tours/red-sea-relaxation",
+    },
+    {
+      tone: "desert",
+      image: "/photos/pexels-20189345.jpg",
+      headline: "A Sahara Sunset by Quad Bike",
+      subtext: "Golden dunes, a private guide, and a ride you'll actually remember.",
+      linkLabel: "See the Desert Experience",
+      linkHref: "/experiences/atv-quad-bikes-sahara",
+    },
+  ],
   description:
     "Egypt Eye Travel and Tours turns a trip to Egypt into a personalized, memorable experience — combining private tours, professional photography, and concierge-level hospitality, tailored just for you.",
   positioning:

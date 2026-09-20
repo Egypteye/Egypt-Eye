@@ -16,14 +16,9 @@ import { resolveStops } from "@/lib/placeCoords";
 import { pickRelated } from "@/lib/relatedPicker";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
+import { contentDictionary, sayAll } from "@/i18n/contentStore";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T, trAll } from "@/i18n/T";
-
-const categoryLabels: Record<string, string> = {
-  "one-day": "One-Day Trip",
-  "multi-day": "Multi-Day Journey",
-  jordan: "Jordan Extension",
-};
 
 export async function generateStaticParams() {
   const slugs = await getAllTourSlugs();
@@ -56,7 +51,17 @@ export default async function TourDetailPage({
 }) {
   const ui = await trAll([
     "Breadcrumb",
+    "One-Day Trip",
+    "Multi-Day Journey",
+    "Jordan Extension",
+    "View Itinerary",
+    "See Details",
   ]);
+  const categoryLabels: Record<string, string> = {
+    "one-day": ui["One-Day Trip"],
+    "multi-day": ui["Multi-Day Journey"],
+    jordan: ui["Jordan Extension"],
+  };
 
   const { slug } = await params;
   const [tour, site] = await Promise.all([getTourBySlug(slug), getSiteSettings()]);
@@ -65,8 +70,14 @@ export default async function TourDetailPage({
   const allTours = await getTours();
   const related = pickRelated(allTours, tour, 3, (t) => t.category);
   // `mapStops` is the explicit override; almost every tour falls through to
-  // its own destination tags, so a newly added tour maps itself.
+  // its own destination tags, so a newly added tour maps itself. Always
+  // resolved from the raw English tags — never the translated display copy
+  // below — since the map matches place names against known coordinates.
   const mapStops = resolveStops(tour.mapStops ?? tour.destinations);
+  // Destinations are deliberately excluded from the content-wide translator
+  // (see OPAQUE_KEYS in localizeDeep.ts) for the same map-matching reason, so
+  // translate a display-only copy here rather than the tour object itself.
+  const destinationLabels = sayAll(await contentDictionary(await getLocale()), tour.destinations);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Tours", path: "/tours" },
@@ -127,7 +138,7 @@ export default async function TourDetailPage({
               href={tour.itinerary ? "#itinerary" : "#details"}
               className="inline-flex items-center gap-1.5 rounded-full border border-cream/30 bg-cream/10 px-7 py-3.5 text-sm font-semibold text-cream backdrop-blur-sm transition hover:bg-cream/20"
             >
-              {tour.itinerary ? "View Itinerary" : "See Details"} ↓
+              {tour.itinerary ? ui["View Itinerary"] : ui["See Details"]} ↓
             </a>
           </div>
         </Container>
@@ -137,7 +148,7 @@ export default async function TourDetailPage({
         <Container className="grid gap-12 lg:grid-cols-[1.6fr_1fr]">
           <div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-black/5 pb-6 text-sm text-ink-soft/70">
-              <span>📍 {tour.destinations.join(", ")}</span>
+              <span>📍 {destinationLabels.join(", ")}</span>
             </div>
 
             {tour.physicalLevel && (
