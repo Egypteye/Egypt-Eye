@@ -249,9 +249,15 @@ export const hotelPartners = [
 ];
 
 // "Our Destinations — Egypt .. and Jordan!" — deck.
+// Counted on /about as "Destinations we run ourselves", so each entry has to
+// be a destination rather than a site within one. "Khez Ali" was here until
+// September 2026: it is Khazali Canyon, which is inside Wadi Rum — already
+// listed — so it was both misspelled and counted twice. Removed rather than
+// respelled, because the number under it is a claim people are invited to
+// check.
 export const coveredDestinations = {
   egypt: ["Giza", "Cairo", "Alexandria", "Red Sea", "Aswan", "Siwa", "Fayoum", "Luxor"],
-  jordan: ["Petra", "Wadi Rum", "Dead Sea", "Khez Ali"],
+  jordan: ["Petra", "Wadi Rum", "Dead Sea"],
 };
 
 // "Our Services" + "What We Offer" + "Our Trendy Giveaways" — deck. Wording
