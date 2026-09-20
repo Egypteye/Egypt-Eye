@@ -1,11 +1,18 @@
 import type { EgyptCity } from "./types";
 
-// Real Egyptian cities and towns shown on the Explore Egypt map that Egypt
-// Eye doesn't currently run tours in — so the map reads as a complete,
-// honest map of the country, not just the ten places currently for sale.
-// Clicking one shows a "not yet offered here" note instead of a dead link
-// or a full destination page. mapX/mapY use the same equirectangular
-// projection as destinationHubs.ts (see the comment in EgyptMap.tsx):
+// Real Egyptian cities and towns shown as secondary markers on the Explore
+// Egypt map, so it reads as a complete, honest map of the country and not
+// just the places currently for sale.
+//
+// A marker with `hubSlug` is somewhere we DO sell tours, reached from a
+// bigger hub (Saqqara from Giza, Edfu from Aswan, the oases from the
+// Western Desert) — clicking it points at that hub. A marker without one is
+// genuinely not offered yet and shows the "not yet offered here" note.
+// Places that earned their own hub (Dahab, St. Catherine, Bahariya) are not
+// listed here at all — their hub pin sits at those coordinates instead.
+//
+// mapX/mapY use the same equirectangular projection as destinationHubs.ts
+// (see the comment in EgyptMap.tsx):
 //
 //   x = 8 + (lon - 24.70007) * cos(26.79°) * 7.7348
 //   y = 6 + (31.58568 - lat) * 7.7348
@@ -28,24 +35,21 @@ export const egyptCities: EgyptCity[] = [
   { slug: "asyut", name: "Asyut", region: "Nile Valley", mapX: 52.8, mapY: 40.1, mood: ["nile"] },
   { slug: "sohag", name: "Sohag", region: "Nile Valley", mapX: 56.3, mapY: 44.9, mood: ["history", "nile"] },
   { slug: "qena", name: "Qena", region: "Nile Valley", mapX: 63.3, mapY: 48.0, mood: ["history", "nile"] },
-  { slug: "dahshur", name: "Dahshur", region: "Nile Valley", mapX: 52.9, mapY: 19.9, mood: ["history", "desert"] },
-  { slug: "saqqara", name: "Saqqara", region: "Nile Valley", mapX: 53.0, mapY: 19.3, mood: ["history", "desert"] },
-  { slug: "edfu", name: "Edfu", region: "Upper Egypt / Nile Valley", mapX: 64.4, mapY: 57.1, mood: ["history", "nile"] },
-  { slug: "kom-ombo", name: "Kom Ombo", region: "Upper Egypt / Nile Valley", mapX: 64.8, mapY: 61.0, mood: ["history", "nile"] },
+  { slug: "dahshur", name: "Dahshur", region: "Nile Valley", mapX: 52.9, mapY: 19.9, mood: ["history", "desert"], hubSlug: "giza" },
+  { slug: "saqqara", name: "Saqqara", region: "Nile Valley", mapX: 53.0, mapY: 19.3, mood: ["history", "desert"], hubSlug: "giza" },
+  { slug: "edfu", name: "Edfu", region: "Upper Egypt / Nile Valley", mapX: 64.4, mapY: 57.1, mood: ["history", "nile"], hubSlug: "aswan" },
+  { slug: "kom-ombo", name: "Kom Ombo", region: "Upper Egypt / Nile Valley", mapX: 64.8, mapY: 61.0, mood: ["history", "nile"], hubSlug: "aswan" },
   { slug: "esna", name: "Esna", region: "Upper Egypt / Nile Valley", mapX: 62.2, mapY: 54.7, mood: ["history", "nile"] },
 
   // Western Desert oases
   { slug: "marsa-matruh", name: "Marsa Matruh", region: "Mediterranean Coast", mapX: 25.5, mapY: 7.8, mood: ["coast", "beaches"] },
-  { slug: "bahariya-oasis", name: "Bahariya Oasis", region: "Western Desert", mapX: 36.8, mapY: 31.0, mood: ["desert"] },
-  { slug: "farafra-oasis", name: "Farafra Oasis", region: "Western Desert", mapX: 30.6, mapY: 41.0, mood: ["desert"] },
-  { slug: "dakhla-oasis", name: "Dakhla Oasis", region: "Western Desert", mapX: 38.7, mapY: 53.1, mood: ["desert"] },
-  { slug: "kharga-oasis", name: "Kharga Oasis", region: "Western Desert", mapX: 48.4, mapY: 53.5, mood: ["desert"] },
+  { slug: "farafra-oasis", name: "Farafra Oasis", region: "Western Desert", mapX: 30.6, mapY: 41.0, mood: ["desert"], hubSlug: "western-desert" },
+  { slug: "dakhla-oasis", name: "Dakhla Oasis", region: "Western Desert", mapX: 38.7, mapY: 53.1, mood: ["desert"], hubSlug: "western-desert" },
+  { slug: "kharga-oasis", name: "Kharga Oasis", region: "Western Desert", mapX: 48.4, mapY: 53.5, mood: ["desert"], hubSlug: "western-desert" },
 
   // Sinai
-  { slug: "dahab", name: "Dahab", region: "Sinai Peninsula", mapX: 75.7, mapY: 29.8, mood: ["beaches", "diving", "desert"] },
-  { slug: "nuweiba", name: "Nuweiba", region: "Sinai Peninsula", mapX: 76.8, mapY: 25.8, mood: ["beaches", "diving"] },
-  { slug: "taba", name: "Taba", region: "Sinai Peninsula", mapX: 78.4, mapY: 22.2, mood: ["beaches", "diving"] },
-  { slug: "saint-catherine", name: "St. Catherine", region: "Sinai Peninsula", mapX: 72.0, mapY: 29.4, mood: ["desert", "history"] },
+  { slug: "nuweiba", name: "Nuweiba", region: "Sinai Peninsula", mapX: 76.8, mapY: 25.8, mood: ["beaches", "diving"], hubSlug: "dahab" },
+  { slug: "taba", name: "Taba", region: "Sinai Peninsula", mapX: 78.4, mapY: 22.2, mood: ["beaches", "diving"], hubSlug: "dahab" },
 
   // Red Sea coast
   { slug: "safaga", name: "Safaga", region: "Red Sea Coast", mapX: 71.7, mapY: 43.5, mood: ["beaches", "diving"] },

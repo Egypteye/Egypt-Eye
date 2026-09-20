@@ -1,5 +1,6 @@
 import { alternatesFor } from "@/i18n/alternates";
 import { DEFAULT_LOCALE, localePath, type Locale } from "@/i18n/locales";
+import { isLocalePublished } from "@/i18n/readiness";
 import type { Metadata } from "next";
 import type { SanityImage } from "./types";
 import { urlForImage } from "@/sanity/image";
@@ -43,11 +44,23 @@ export function resolveMetadata({
     : alternatesFor(path, locale);
   const ogImageUrl = urlForImage(seo?.ogImage || image)?.width(1200).height(630).url();
 
+  // Emitted only when there is something to say. Returning `robots: undefined`
+  // is not the same as leaving the key out: Next treats the key's presence as
+  // an override, so an explicit undefined replaced the layout's directive with
+  // nothing — every detail page shipped with no robots meta at all, which
+  // silently undid the noindex on 240+ untranslated locale pages while the
+  // listing pages above them carried it correctly.
+  const robots = seo?.noindex
+    ? { index: false, follow: false }
+    : isLocalePublished(locale)
+      ? undefined
+      : { index: false, follow: true };
+
   return {
     title: resolvedTitle,
     description: resolvedDescription,
     alternates,
-    robots: seo?.noindex ? { index: false, follow: false } : undefined,
+    ...(robots ? { robots } : {}),
     openGraph: {
       type: "website",
       title: resolvedTitle,

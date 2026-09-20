@@ -6,7 +6,7 @@
  * language and names the largest untranslated strings, which is where the
  * remaining visible English actually is.
  */
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { LOCALES, DEFAULT_LOCALE } from "../src/i18n/locales.js";
 
 const read = (p: string): Record<string, string> =>
@@ -29,5 +29,22 @@ for (const info of LOCALES) {
     `${info.englishName.padEnd(10)} ${String(done).padStart(6)} ${bar} ${String(pct).padStart(3)}%  ${wordsLeft.toLocaleString().padStart(9)}`
   );
 }
+// The site reads this to decide which languages to offer search engines
+// (src/i18n/readiness.ts). Written here rather than computed at request time
+// so a page render never has to open a quarter-million-word manifest.
+const counts: Record<string, number> = {};
+for (const info of LOCALES) {
+  if (info.code === DEFAULT_LOCALE) continue;
+  const dict = read(`src/i18n/generated/${info.code}.json`);
+  counts[info.code] = keys.filter((k) => dict[k]).length;
+}
+writeFileSync(
+  "src/i18n/generated/coverage.json",
+  JSON.stringify({ total: keys.length, locales: counts }) + "\n"
+);
+console.log(`\nWrote src/i18n/generated/coverage.json — a language is offered to`);
+console.log(`Google once it passes 90%; below that its pages are noindex and`);
+console.log(`canonicalise to English, so untranslated URLs never compete.`);
+
 console.log(`\nFill a language:  npm run i18n:translate -- --locale de`);
 console.log(`Fill all six:     npm run i18n:translate -- --all`);

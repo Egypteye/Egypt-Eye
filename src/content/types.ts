@@ -185,6 +185,12 @@ export type Photoshoot = {
   included: string[];
   addOns?: string[];
   delivery: string[];
+  /**
+   * Buying questions, rendered as an accordion and emitted as FAQPage
+   * structured data from the same pairs. Optional — a package without them
+   * renders exactly as before.
+   */
+  faqs?: Faq[];
   destinations?: string[];
   seo?: PageSeo;
 };
@@ -466,10 +472,21 @@ export type DestinationHub = {
   order: number;
 };
 
-// A real Egyptian city shown on the Explore Egypt map that Egypt Eye doesn't
-// (yet) run tours in — no dedicated page, just a marker with a "not yet
-// offered" note so the map reads as a complete, honest map of the country
-// rather than only the places currently for sale.
+// A real Egyptian city shown on the Explore Egypt map as a secondary marker,
+// so the map reads as a complete, honest map of the country rather than only
+// the places currently for sale.
+//
+// Two kinds, distinguished by `hubSlug`:
+//   - no hubSlug  — we genuinely don't run tours there yet; the marker opens
+//     a "not yet offered" note.
+//   - hubSlug set — a site we DO sell, but which is reached from a bigger
+//     hub rather than having its own (Saqqara from Giza, Edfu from Aswan);
+//     the marker points at that hub instead. Without this, the map told
+//     visitors "we don't run tours here" about places we actively sell.
+//
+// Invariant: if any tour/experience/photoshoot carries a destination tag
+// matching this city, it must either have a hubSlug or be promoted to a real
+// hub — `npm run check:destinations` enforces this.
 export type EgyptCity = {
   slug: string;
   name: string;
@@ -477,6 +494,8 @@ export type EgyptCity = {
   mapX: number;
   mapY: number;
   mood: Mood[];
+  /** Slug of the DestinationHub whose tours cover this place, if any. */
+  hubSlug?: string;
 };
 
 export type Interest = {

@@ -14,6 +14,10 @@ const icons: Record<string, React.ReactNode> = {
   ),
 };
 
+// "Destinations Covered" rather than "Destinations": this counts every place
+// any tour visits, which is a larger set than the "Destinations we run
+// ourselves" tile on /about. Two numbers under the same word, on the same
+// site, is the kind of thing a reader notices and stops believing.
 export async function TrustBar({
   tours,
   experiences,
@@ -30,7 +34,7 @@ export async function TrustBar({
 }) {
   const ui = await trAll([
     "Add-On Experiences",
-    "Destinations",
+    "Destinations Covered",
     "Private Tours",
   ]);
 
@@ -67,7 +71,7 @@ export async function TrustBar({
           />
         )}
         <Stat value={String(catalogStats.tourCount)} label={ui["Private Tours"]} />
-        <Stat value={String(catalogStats.destinationCount)} label={ui["Destinations"]} />
+        <Stat value={String(catalogStats.destinationCount)} label={ui["Destinations Covered"]} />
         <Stat value={`${catalogStats.experienceCount + catalogStats.photoshootCount}`} label={ui["Add-On Experiences"]} />
       </div>
     </div>

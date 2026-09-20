@@ -336,6 +336,7 @@ export async function GET(request: NextRequest) {
         included: p.included,
         addOns: p.addOns,
         delivery: p.delivery,
+        faqs: p.faqs?.map((f) => ({ ...f, _type: "faq", _key: key() })),
         destinations: p.destinations,
         order: i,
       });

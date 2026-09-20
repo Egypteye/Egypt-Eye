@@ -209,6 +209,19 @@ const nextConfig: NextConfig = {
         destination: "/about#contact",
         permanent: true,
       },
+
+      // WordPress numeric post IDs. The previous site addressed pages by ID,
+      // and Search Console still shows those URLs being requested —
+      // /experiences/425 alone accounts for most of the domain's remaining
+      // impressions. The ID is meaningless to this site (slugs replaced it and
+      // the mapping wasn't kept), so each one goes to the listing it belonged
+      // to: the same category of content the visitor was after, which is what
+      // Google asks for when the exact page can't be identified. A 404 there
+      // throws away a live inbound link; the listing keeps it.
+      { source: "/experiences/:id(\\d+)", destination: "/experiences", permanent: true },
+      { source: "/tours/:id(\\d+)", destination: "/tours", permanent: true },
+      { source: "/photoshoots/:id(\\d+)", destination: "/photoshoots", permanent: true },
+      { source: "/stories/:id(\\d+)", destination: "/stories", permanent: true },
     ];
   },
 };

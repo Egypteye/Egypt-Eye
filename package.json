@@ -13,7 +13,8 @@
     "i18n:extract": "tsx scripts/i18n-extract.mts",
     "i18n:translate": "tsx scripts/i18n-translate.mts",
     "i18n:keys": "tsx scripts/i18n-keys.mts",
-    "i18n:status": "tsx scripts/i18n-status.mts"
+    "i18n:status": "tsx scripts/i18n-status.mts",
+    "check:destinations": "tsx scripts/check-destinations.mts"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.0",

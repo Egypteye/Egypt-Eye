@@ -83,10 +83,10 @@ export const agencyTrips: (TripRecord & { also?: string })[] = [
   },
   {
     group: "Tin Trips Travel",
-    place: "Siwa",
+    place: "Siwa Oasis",
     when: "July 2023",
     photo: "/photos/about/tin-trips-travel-siwa.jpg",
-    alt: "A traveler floating in a turquoise salt pool in Siwa",
+    alt: "A traveler floating in a turquoise salt pool in Siwa Oasis",
     ratio: "480 / 720",
   },
   {
@@ -249,9 +249,21 @@ export const hotelPartners = [
 ];
 
 // "Our Destinations — Egypt .. and Jordan!" — deck.
+// Deliberately a shorter list than the trust bar's "Destinations Covered",
+// which counts every place any tour visits (~36). This one is where Egypt Eye
+// has its own ground operation, so the two tiles carry different labels
+// rather than the same word over two different numbers. Names match the
+// `destinations` tags in content/tours.ts so the lists reconcile.
+//
+// Counted on /about as "Destinations we run ourselves", so each entry has to
+// be a destination rather than a site within one. "Khez Ali" was here until
+// September 2026: it is Khazali Canyon, which is inside Wadi Rum — already
+// listed — so it was both misspelled and counted twice. Removed rather than
+// respelled, because the number under it is a claim people are invited to
+// check.
 export const coveredDestinations = {
-  egypt: ["Giza", "Cairo", "Alexandria", "Red Sea", "Aswan", "Siwa", "Fayoum", "Luxor"],
-  jordan: ["Petra", "Wadi Rum", "Dead Sea", "Khez Ali"],
+  egypt: ["Giza", "Cairo", "Alexandria", "Red Sea", "Aswan", "Siwa Oasis", "Fayoum", "Luxor"],
+  jordan: ["Petra", "Wadi Rum", "Dead Sea"],
 };
 
 // "Our Services" + "What We Offer" + "Our Trendy Giveaways" — deck. Wording

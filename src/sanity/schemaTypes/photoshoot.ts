@@ -60,6 +60,24 @@ export const photoshoot = defineType({
       type: "array",
       of: [{ type: "string" }],
     }),
+    defineField({
+      name: "faqs",
+      title: "FAQs",
+      description:
+        "Renders as an accordion on the package page and is also emitted as FAQPage structured data. Only answer what is actually true of this package — structured data that doesn't match the page is a manual-action risk.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "faq",
+          fields: [
+            defineField({ name: "question", title: "Question", type: "string" }),
+            defineField({ name: "answer", title: "Answer", type: "text", rows: 4 }),
+          ],
+          preview: { select: { title: "question" } },
+        },
+      ],
+    }),
     defineField({ name: "order", title: "Sort order (lower shows first)", type: "number", initialValue: 0 }),
     seoFields(),
   ],

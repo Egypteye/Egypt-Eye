@@ -1,0 +1,59 @@
+name: Checks
+
+# Runs on every push to the deploy branch and every pull request. Pushes to
+# claude/egypt-eye-travel-website-fckb5t go straight to the live site, so
+# these checks are the last gate before customers see a change.
+#
+# The content check is the reason this workflow exists. Two content-drift
+# failures shipped to production undetected because neither breaks a build
+# nor looks wrong on screen:
+#   - the Explore Egypt map told visitors "we don't run tours here yet"
+#     about eleven places we actively sell;
+#   - eighteen tours were reachable from no destination page at all.
+# Both are pure data mistakes in src/content/*.ts, so typecheck and lint
+# both pass happily. Only check:destinations catches them.
+#
+# `next build` is deliberately not run here: it fetches from Sanity, so a
+# CMS outage or a network hiccup would fail an otherwise-good commit, and
+# the deploy platform builds every push anyway.
+
+on:
+  push:
+    branches: [claude/egypt-eye-travel-website-fckb5t]
+  pull_request:
+  workflow_dispatch: {}
+
+# A newer push to the same branch makes an in-flight run obsolete.
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          # Matches "engines": { "node": "24.x" } in package.json.
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Every step below uses `if: ${{ !cancelled() }}` so one failure still
+      # reports the others — a red build shows every problem to fix in one
+      # pass instead of one per push.
+      - name: Destination coverage
+        if: ${{ !cancelled() }}
+        run: npm run check:destinations
+
+      - name: Lint
+        if: ${{ !cancelled() }}
+        run: npm run lint
+
+      - name: Typecheck
+        if: ${{ !cancelled() }}
+        run: npx tsc --noEmit

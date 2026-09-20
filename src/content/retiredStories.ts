@@ -12,6 +12,7 @@
 // removed and is not coming back, which drops it from the index in weeks
 // rather than the months of periodic re-crawling a 404 earns.
 export const RETIRED_STORY_SLUGS: ReadonlySet<string> = new Set([
+  "ai-photography-2026-premium-vs-commodity",
   "what-are-ai-agents-2026",
   "ai-generated-video-2026-guide",
   "ai-jobs-what-ai-can-and-cant-replace",
