@@ -10,6 +10,7 @@ import {
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
 import { LOCALES, localePath } from "@/i18n/locales";
+import { isLocalePublished } from "@/i18n/readiness";
 
 // Slugs that 301-redirect elsewhere (see next.config.ts) — keep them out of
 // the sitemap even if the underlying Sanity document hasn't been removed yet.
@@ -134,24 +135,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 }
 
 /**
- * Expands the English sitemap into every language.
+ * Expands the English sitemap into every language that is actually translated.
  *
- * Each page appears once per locale, and every row declares the full set of
- * translations via `alternates.languages`. That is what tells Google these
- * are the same page in different languages rather than seven competing
- * pages — the single most common way a multilingual sitemap backfires.
- * Derived from the locale registry, so a new language joins automatically.
+ * Each page appears once per published locale, and every row declares the
+ * full set via `alternates.languages`. That is what tells Google these are
+ * the same page in different languages rather than N competing pages — the
+ * single most common way a multilingual sitemap backfires.
+ *
+ * Untranslated locales are excluded rather than listed. Submitting a URL is
+ * a request to index it, and a locale still serving English copy has nothing
+ * to index that the English URL doesn't already cover. With six locales at
+ * 0% that was the difference between a 298-URL sitemap and a 2,086-URL one,
+ * on a site where 327 genuine pages were already sitting in "Discovered -
+ * currently not indexed" for want of crawl budget. Locales rejoin
+ * automatically as the pipeline fills them — see i18n/readiness.ts.
  */
 function withLocales(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
+  const published = LOCALES.filter((l) => isLocalePublished(l.code));
+
   return entries.flatMap((entry) => {
     const path = entry.url.startsWith(siteUrl) ? entry.url.slice(siteUrl.length) || "/" : entry.url;
     const languages: Record<string, string> = {};
-    for (const l of LOCALES) languages[l.htmlLang] = `${siteUrl}${localePath(path, l.code)}`;
+    for (const l of published) languages[l.htmlLang] = `${siteUrl}${localePath(path, l.code)}`;
 
-    return LOCALES.map((l) => ({
+    return published.map((l) => ({
       ...entry,
       url: `${siteUrl}${localePath(path, l.code)}`,
-      alternates: { languages },
+      ...(published.length > 1 ? { alternates: { languages } } : {}),
     }));
   });
 }

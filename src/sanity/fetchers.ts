@@ -28,6 +28,7 @@ import {
 } from "./queries";
 import { getCompanyRating as companyRatingFrom } from "@/content/aggregate";
 import { localized } from "@/i18n/localizeContent";
+import { pickRelated } from "@/lib/relatedPicker";
 import { localizeContent } from "@/i18n/localizeDeep";
 import { localizedListingPages } from "@/content/listingPageTranslations";
 import { photoshootTranslations, tourTranslations, type ProductTranslation } from "@/content/productTranslations";
@@ -408,11 +409,46 @@ async function getStoryBySlugInner(slug: string): Promise<Story | undefined> {
     : local;
   if (!story) return undefined;
 
-  // A story's related tours render as full TourCards, so they need the same
-  // review figure the tour would show anywhere else.
-  return story.relatedTours && story.relatedTours.length > 0
-    ? { ...story, relatedTours: story.relatedTours }
-    : story;
+  return withDerivedRelatedStories(story);
+}
+
+/**
+ * Gives every article a "keep reading" row, curated or not.
+ *
+ * `relatedStories` is an editorial field and only ~25 of 154 articles have it
+ * filled in. The rest had exactly one inbound internal link — the /stories
+ * listing — which is close to the weakest signal a page can carry, and it
+ * showed: Search Console had 327 pages sitting in "Discovered - currently
+ * not indexed", the state Google uses for URLs it knows about but hasn't
+ * judged worth crawling.
+ *
+ * Derived links cost no new URLs and no new content. They use the same ring
+ * rotation the tour catalogue uses (lib/relatedPicker.ts), so links spread
+ * evenly instead of piling onto whichever articles happen to sort first —
+ * with a count of 4, every article both gives and receives four. Curated
+ * relations always win; this only fills the gap.
+ */
+function withDerivedRelatedStories(story: Story): Story {
+  if (story.relatedStories && story.relatedStories.length > 0) return story;
+
+  const pool = localPublishedStories.filter((s) => s.slug !== story.slug);
+  if (pool.length === 0) return story;
+
+  const related = pickRelated(
+    [...pool, story as unknown as (typeof pool)[number]],
+    story as unknown as (typeof pool)[number],
+    4,
+    (s) => s.category
+  ).map((s) => ({
+    slug: s.slug,
+    title: s.title,
+    excerpt: s.excerpt,
+    image: s.image,
+    imageTone: s.imageTone,
+    category: s.category,
+  }));
+
+  return { ...story, relatedStories: related };
 }
 
 async function getDestinationHubsInner(): Promise<DestinationHub[]> {

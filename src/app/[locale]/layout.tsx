@@ -7,6 +7,7 @@ import { LOCALES, isLocale, localeInfo, DEFAULT_LOCALE, type Locale } from "@/i1
 import { dictionaryFor } from "@/i18n/dictionary";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
 import { uiDictionary } from "@/i18n/ui";
+import { isLocalePublished } from "@/i18n/readiness";
 import { alternatesFor } from "@/i18n/alternates";
 
 // Cyrillic is in the body face's subsets because Russian is one of the
@@ -70,7 +71,14 @@ export async function generateMetadata({
       description: site.description,
       images: ["/brand/egypt-eye-badge-gold.png"],
     },
-    robots: { index: true, follow: true },
+    // Every page inherits this unless it sets its own `robots` (a Studio
+    // noindex still wins). An untranslated language is English copy at a
+    // second URL, so its pages are kept out of the index until the pipeline
+    // fills them — `follow` stays on so Google still walks through to the
+    // English originals and sees the canonical pointing there.
+    robots: isLocalePublished(locale)
+      ? { index: true, follow: true }
+      : { index: false, follow: true },
   };
 }
 
