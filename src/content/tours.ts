@@ -212,7 +212,7 @@ export const tours: Tour[] = [
     duration: "1 day",
     lengthDays: 1,
     cities: 1,
-    destinations: ["Red Sea"],
+    destinations: ["Hurghada", "Red Sea"],
     imageLabel: "Red Sea Coast",
     imageTone: "redsea",
     image: "https://images.unsplash.com/photo-1777715821806-0af9fbd5f3e6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",

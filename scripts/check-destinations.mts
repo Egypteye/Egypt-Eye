@@ -29,15 +29,10 @@ const NON_HUB_TAGS = new Set(["Jordan", "Petra", "Wadi Rum", "Dead Sea"]);
 
 // Known-unlinked products, recorded rather than silently exempted. Each one
 // is a real gap awaiting a content decision; the check prints them on every
-// run so they can't be forgotten.
-const UNRESOLVED = new Map<string, string>([
-  [
-    "red-sea-relaxation",
-    'tagged only "Red Sea" — a mood-branded beach day that never names a ' +
-      "coast, so no hub can claim it. Needs a real location tag (which " +
-      "stretch of coast does it run on?) before it can be linked.",
-  ],
-]);
+// run so they can't be forgotten. Currently empty — keep it that way by
+// resolving the tag rather than adding an entry, unless the answer genuinely
+// needs someone who knows how the trip is sold.
+const UNRESOLVED = new Map<string, string>([]);
 
 const hubBySlug = new Map(destinationHubs.map((h) => [h.slug, h]));
 const allMatchNames = new Set(destinationHubs.flatMap((h) => h.matchNames));
