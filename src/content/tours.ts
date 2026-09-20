@@ -2899,7 +2899,7 @@ export const tours: Tour[] = [
     duration: "1 day",
     lengthDays: 1,
     cities: 1,
-    destinations: ["Sinai"],
+    destinations: ["Taba", "Sinai"],
     imageLabel: "Taba Coast",
     imageTone: "redsea",
     image: "https://images.unsplash.com/photo-1568575621216-ca74d9a8c687?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",

@@ -207,6 +207,10 @@ export function EgyptMap({
   }
 
   const openCity = cities.find((c) => c.slug === openCitySlug);
+  // A secondary marker for a place we DO sell (Saqqara, Edfu, the oases)
+  // carries the slug of the hub whose tours cover it, so the drawer can send
+  // the visitor there instead of claiming we don't go.
+  const openCityHub = openCity?.hubSlug ? hubs.find((h) => h.slug === openCity.hubSlug) : undefined;
 
   return (
     <div
@@ -317,9 +321,10 @@ export function EgyptMap({
           ))}
         </svg>
 
-        {/* Secondary markers — real Egyptian cities Egypt Eye doesn't run
-            tours in yet. Smaller, hollow, and non-navigating: clicking one
-            opens an inline note instead of a dead link or a full page. */}
+        {/* Secondary markers — real Egyptian cities and sites. Smaller and
+            hollow; clicking one opens the drawer below, which either points
+            at the hub whose tours cover it (city.hubSlug) or says we don't
+            run tours there yet. */}
         {cities.map((city) => {
           const matchesMood = moodFilter ? (city.mood ?? []).includes(moodFilter) : true;
           const open = city.slug === openCitySlug;
@@ -331,7 +336,9 @@ export function EgyptMap({
                 if (!interactive) return;
                 setOpenCitySlug((cur) => (cur === city.slug ? null : city.slug));
               }}
-              aria-label={`${city.name} — no tours here yet`}
+              aria-label={
+                city.hubSlug ? `${city.name} — see tours` : `${city.name} — no tours here yet`
+              }
               aria-expanded={open}
               disabled={!interactive}
               className={`group absolute flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition hover:z-10 focus-visible:z-10 ${
@@ -519,16 +526,37 @@ export function EgyptMap({
               </svg>
             </button>
           </div>
-          <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">{tr("We don’t run tours here yet — but we’re always adding new destinations. Tell us you’re interested and we’ll see what we can arrange.")}</p>
-          <Link
-            href="/customize"
-            className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-gold-dark hover:underline"
-          >
-            Suggest {openCity.name} to us
-            <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </Link>
+          {openCityHub ? (
+            <>
+              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">
+                {tr("We do visit here — it’s part of what we run from this destination:")}
+              </p>
+              <Link
+                href={`${linkBase}/${openCityHub.slug}`}
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-gold-dark hover:underline"
+              >
+                {tr("See tours in")} {openCityHub.name}
+                <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </>
+          ) : (
+            <>
+              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">
+                {tr("We don’t run tours here yet — but we’re always adding new destinations. Tell us you’re interested and we’ll see what we can arrange.")}
+              </p>
+              <Link
+                href="/customize"
+                className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-gold-dark hover:underline"
+              >
+                Suggest {openCity.name} to us
+                <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2}>
+                  <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </Link>
+            </>
+          )}
         </div>
       )}
     </div>
