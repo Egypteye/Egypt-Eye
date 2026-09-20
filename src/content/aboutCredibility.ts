@@ -86,7 +86,7 @@ export const agencyTrips: (TripRecord & { also?: string })[] = [
     place: "Siwa Oasis",
     when: "July 2023",
     photo: "/photos/about/tin-trips-travel-siwa.jpg",
-    alt: "A traveler floating in a turquoise salt pool in Siwa",
+    alt: "A traveler floating in a turquoise salt pool in Siwa Oasis",
     ratio: "480 / 720",
   },
   {
