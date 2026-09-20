@@ -68,8 +68,37 @@ const subscribeToNothing = () => () => {};
 const readSearch = () => window.location.search;
 const readNoSearch = () => "";
 
-export function ToursGrid({ tours }: { tours: Tour[] }) {
+export function ToursGrid({
+  tours,
+  destinationLabels,
+  viewTourLabel,
+}: {
+  tours: Tour[];
+  destinationLabels?: Record<string, string>;
+  viewTourLabel?: string;
+}) {
   const tr = useTr();
+  // Literal calls, not tr(variable) — the extractor that builds the UI
+  // manifest only recognizes tr("...") with a string literal argument, so
+  // each value needs its own call site to end up translatable.
+  const durationLabels: Record<string, string> = {
+    "Any Length": tr("Any Length"),
+    "1 Day": tr("1 Day"),
+    "2–5 Days": tr("2–5 Days"),
+    "6–7 Days": tr("6–7 Days"),
+    "8–11 Days": tr("8–11 Days"),
+    "12+ Days": tr("12+ Days"),
+  };
+  const styleLabels: Record<string, string> = {
+    Luxury: tr("Luxury"),
+    Private: tr("Private"),
+    Cultural: tr("Cultural"),
+    Family: tr("Family"),
+    Honeymoon: tr("Honeymoon"),
+    "Women's": tr("Women's"),
+    "Slow Travel": tr("Slow Travel"),
+    Adventure: tr("Adventure"),
+  };
   // Deliberately NOT useSearchParams(). That hook opts a component out of
   // prerendering, and with this grid inside a <Suspense fallback={null}>, the
   // bail-out meant /tours shipped its fallback — zero tour links — in the
@@ -185,7 +214,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
                   duration === d.value ? "bg-ink text-cream" : "text-ink-soft hover:bg-sand-dim"
                 }`}
               >
-                {d.label}
+                {durationLabels[d.label] ?? d.label}
               </button>
             ))}
           </div>
@@ -202,7 +231,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
                     destination === d ? "bg-gold/15 font-semibold text-gold-dark" : "text-ink-soft hover:bg-sand-dim"
                   }`}
                 >
-                  {d}
+                  {destinationLabels?.[d] ?? d}
                 </button>
               ))}
             </div>
@@ -221,7 +250,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
                     : "border-black/10 text-ink-soft/70 hover:border-gold/40"
                 }`}
               >
-                {s}
+                {styleLabels[s] ?? s}
               </button>
             ))}
           </div>
@@ -240,7 +269,7 @@ export function ToursGrid({ tours }: { tours: Tour[] }) {
         ) : (
           <div className="mt-4 grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
             {filtered.map((tour) => (
-              <TourCard key={tour.slug} tour={tour} />
+              <TourCard key={tour.slug} tour={tour} destinationLabels={destinationLabels} viewTourLabel={viewTourLabel} />
             ))}
           </div>
         )}

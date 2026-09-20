@@ -9,6 +9,7 @@ import { TransferBookingForm } from "./TransferBookingForm";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { transfersPage } from "@/content/transfers";
 import { localizedTransferCategories } from "@/content/productTranslations";
+import { localizeContent } from "@/i18n/localizeDeep";
 import { trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -34,8 +35,8 @@ export default async function TransfersPage() {
     "What's Taken Care Of",
   ]);
 
-  const page = transfersPage;
   const locale = await getLocale();
+  const page = await localizeContent(transfersPage, locale);
   const categories = localizedTransferCategories(locale);
 
   return (
@@ -79,7 +80,7 @@ export default async function TransfersPage() {
           </div>
 
           <div className="mx-auto mt-10 max-w-4xl">
-            <TransferBookingForm />
+            <TransferBookingForm vehicles={page.vehicles} zones={page.zones} />
           </div>
         </Container>
       </section>

@@ -18,40 +18,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const BENEFITS = [
-  {
-    title: "Special Partner Rates",
-    description: "Preferred pricing on every tour, experience, and photoshoot in our catalog, built for repeat agency bookings.",
-  },
-  {
-    title: "A Dedicated Specialist",
-    description: "One point of contact who knows your clients and can turn a request into a confirmed itinerary fast.",
-  },
-  {
-    title: "Full Support, Start to Finish",
-    description: "We handle logistics, guides, and on-the-ground details — you handle the relationship with your client.",
-  },
-  {
-    title: "Flexible & Custom Itineraries",
-    description: "From a single day trip to a full multi-city journey, we'll build around what your client actually wants.",
-  },
-];
-
-const STEPS = [
-  {
-    title: "Apply",
-    description: "Tell us about your agency — a couple of minutes, no commitment.",
-  },
-  {
-    title: "Connect With a Specialist",
-    description: "A quick video call to understand your clients and how we can work together.",
-  },
-  {
-    title: "We Help With Everything",
-    description: "Partner rates, sample itineraries, and a direct line to our team for every booking after that.",
-  },
-];
-
 export default async function TravelAgentsPage() {
   const ui = await trAll([
     "Apply Now",
@@ -62,7 +28,34 @@ export default async function TravelAgentsPage() {
     "Three Steps to Partner Rates",
     "We'll review your application and reach out to schedule a video call with a specialist.",
     "Why Partner With Us",
+    "Special Partner Rates",
+    "Preferred pricing on every tour, experience, and photoshoot in our catalog, built for repeat agency bookings.",
+    "A Dedicated Specialist",
+    "One point of contact who knows your clients and can turn a request into a confirmed itinerary fast.",
+    "Full Support, Start to Finish",
+    "We handle logistics, guides, and on-the-ground details — you handle the relationship with your client.",
+    "Flexible & Custom Itineraries",
+    "From a single day trip to a full multi-city journey, we'll build around what your client actually wants.",
+    "Apply",
+    "Tell us about your agency — a couple of minutes, no commitment.",
+    "Connect With a Specialist",
+    "A quick video call to understand your clients and how we can work together.",
+    "We Help With Everything",
+    "Partner rates, sample itineraries, and a direct line to our team for every booking after that.",
   ]);
+
+  const BENEFITS = [
+    { title: ui["Special Partner Rates"], description: ui["Preferred pricing on every tour, experience, and photoshoot in our catalog, built for repeat agency bookings."] },
+    { title: ui["A Dedicated Specialist"], description: ui["One point of contact who knows your clients and can turn a request into a confirmed itinerary fast."] },
+    { title: ui["Full Support, Start to Finish"], description: ui["We handle logistics, guides, and on-the-ground details — you handle the relationship with your client."] },
+    { title: ui["Flexible & Custom Itineraries"], description: ui["From a single day trip to a full multi-city journey, we'll build around what your client actually wants."] },
+  ];
+
+  const STEPS = [
+    { title: ui["Apply"], description: ui["Tell us about your agency — a couple of minutes, no commitment."] },
+    { title: ui["Connect With a Specialist"], description: ui["A quick video call to understand your clients and how we can work together."] },
+    { title: ui["We Help With Everything"], description: ui["Partner rates, sample itineraries, and a direct line to our team for every booking after that."] },
+  ];
 
   return (
     <>

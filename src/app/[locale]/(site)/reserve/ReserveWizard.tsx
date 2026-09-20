@@ -106,7 +106,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
       const data = await res.json();
       setDiscountState(data.valid ? { checked: true, valid: true, discountAmount: data.discountAmount } : { checked: true, valid: false, reason: data.reason });
     } catch {
-      setDiscountState({ checked: true, valid: false, reason: "Couldn't check that code right now." });
+      setDiscountState({ checked: true, valid: false, reason: tr("Couldn't check that code right now.") });
     } finally {
       setCheckingDiscount(false);
     }
@@ -133,10 +133,10 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong. Please try again.");
+      if (!res.ok) throw new Error(data.error || tr("Something went wrong. Please try again."));
       setConfirmation({ reference: data.reference, subtotal: data.subtotal, discountAmount: data.discountAmount, total: data.total });
     } catch (err) {
-      setSubmitError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setSubmitError(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));
       setSubmitStatus("error");
     }
   }
@@ -279,7 +279,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                     disabled={checkingDiscount || !form.discountCode.trim()}
                     className="shrink-0 rounded-lg bg-ink px-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-50"
                   >
-                    {checkingDiscount ? "Checking…" : "Apply"}
+                    {checkingDiscount ? tr("Checking…") : tr("Apply")}
                   </button>
                 </div>
               </Field>
@@ -319,7 +319,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                 onClick={handleSubmit}
                 className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
               >
-                {submitStatus === "submitting" ? "Submitting…" : "Submit Reservation Request"}
+                {submitStatus === "submitting" ? tr("Submitting…") : tr("Submit Reservation Request")}
               </button>
             )}
           </div>
@@ -363,14 +363,14 @@ function ReviewStep({
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Dates & Travelers")}</p>
         <p className="mt-1 text-ink">
-          {form.tripStartDate ? new Date(form.tripStartDate).toLocaleDateString() : "Dates to be confirmed"}
+          {form.tripStartDate ? new Date(form.tripStartDate).toLocaleDateString() : tr("Dates to be confirmed")}
           {form.tripEndDate ? ` – ${new Date(form.tripEndDate).toLocaleDateString()}` : ""} · {form.travelersAdults}{" "}
-          adult{form.travelersAdults === 1 ? "" : "s"}
-          {form.travelersChildren > 0 ? `, ${form.travelersChildren} child${form.travelersChildren === 1 ? "" : "ren"}` : ""}
+          {form.travelersAdults === 1 ? tr("adult") : tr("adults")}
+          {form.travelersChildren > 0 ? `, ${form.travelersChildren} ${form.travelersChildren === 1 ? tr("child") : tr("children")}` : ""}
         </p>
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Your Journey ({titles.length})</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Your Journey")} ({titles.length})</p>
         <ul className="mt-1 flex flex-col gap-1 text-ink">
           {titles.map((t) => (
             <li key={t}>{t}</li>

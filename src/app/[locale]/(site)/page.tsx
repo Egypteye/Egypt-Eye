@@ -31,6 +31,7 @@ import {
   getTours,
 } from "@/sanity/fetchers";
 import { T, trAll } from "@/i18n/T";
+import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -50,7 +51,9 @@ export default async function Home() {
     "Nine Pyramids View",
     "Planning a custom Egypt itinerary with Egypt Eye",
     "Red Sea Luxe Yachts",
+    "View tour →",
   ]);
+  const locale = await getLocale();
 
   const [site, home, tours, experiences, photoshoots, testimonials, faqs, destinationHubs] = await Promise.all([
     getSiteSettings(),
@@ -68,6 +71,8 @@ export default async function Home() {
   // A small curated set for the homepage teaser — the full searchable
   // catalog lives on /tours, not inline here.
   const popularTours = tours.filter((t) => t.featured).slice(0, 4);
+  const contentDict = await contentDictionary(locale);
+  const destinationLabels = destinationLabelMap(contentDict, popularTours.flatMap((t) => t.destinations));
   // Homepage teaser only — the full list lives on /photoshoots.
   const homepagePhotoshoots = photoshoots.slice(0, 2);
 
@@ -101,7 +106,7 @@ export default async function Home() {
           </Reveal>
           <Reveal delay={100} className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {popularTours.map((tour) => (
-              <TourCard key={tour.slug} tour={tour} />
+              <TourCard key={tour.slug} tour={tour} destinationLabels={destinationLabels} viewTourLabel={ui["View tour →"]} />
             ))}
           </Reveal>
           <Reveal delay={150} className="mt-10 flex flex-wrap items-center justify-center gap-4">

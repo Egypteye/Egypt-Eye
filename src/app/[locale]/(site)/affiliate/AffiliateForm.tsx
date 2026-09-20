@@ -23,6 +23,24 @@ type Status = "idle" | "sending" | "sent" | "error";
 
 export function AffiliateForm() {
   const tr = useTr();
+  // Literal tr() calls, not tr(variable) — "promotionMethods" values are
+  // sent to the backend as-is; only the displayed chip text translates.
+  const promotionMethodLabels: Record<string, string> = {
+    "Blog / Website": tr("Blog / Website"),
+    YouTube: tr("YouTube"),
+    "Instagram / TikTok": tr("Instagram / TikTok"),
+    "Email Newsletter": tr("Email Newsletter"),
+    "Facebook Group / Community": tr("Facebook Group / Community"),
+    "Coupon / Deals Site": tr("Coupon / Deals Site"),
+    Other: tr("Other"),
+  };
+  const audienceSizeLabels: Record<string, string> = {
+    "Under 1,000": tr("Under 1,000"),
+    "1,000–10,000": tr("1,000–10,000"),
+    "10,000–50,000": tr("10,000–50,000"),
+    "50,000–200,000": tr("50,000–200,000"),
+    "200,000+": tr("200,000+"),
+  };
   const [methods, setMethods] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -42,7 +60,7 @@ export function AffiliateForm() {
     }
 
     if (methods.length === 0) {
-      setErrorMessage("Please select at least one way you plan to promote Egypt Eye.");
+      setErrorMessage(tr("Please select at least one way you plan to promote Egypt Eye."));
       return;
     }
 
@@ -87,24 +105,24 @@ export function AffiliateForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Full name *
+          {tr("Full name *")}
           <input name="fullName" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Email *
+          {tr("Email *")}
           <input type="email" name="email" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Website, blog, or main platform *
+          {tr("Website, blog, or main platform *")}
           <input name="websiteOrPlatform" placeholder={tr("https:// or @handle")} required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Audience size")}<select name="audienceSize" defaultValue="" className={inputClass()}>
             <option value="">{tr("Prefer not to say")}</option>
             {AUDIENCE_SIZES.map((size) => (
               <option key={size} value={size}>
-                {size}
+                {audienceSizeLabels[size] ?? size}
               </option>
             ))}
           </select>
@@ -119,7 +137,7 @@ export function AffiliateForm() {
       </div>
 
       <div className="mt-6">
-        <p className="mb-2 text-sm font-medium text-ink-soft">How will you promote Egypt Eye? *</p>
+        <p className="mb-2 text-sm font-medium text-ink-soft">{tr("How will you promote Egypt Eye? *")}</p>
         <div className="flex flex-wrap gap-2">
           {PROMOTION_METHODS.map((option) => (
             <button
@@ -130,7 +148,7 @@ export function AffiliateForm() {
                 methods.includes(option) ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
               }`}
             >
-              {option}
+              {promotionMethodLabels[option] ?? option}
             </button>
           ))}
         </div>
@@ -151,7 +169,7 @@ export function AffiliateForm() {
         disabled={status === "sending"}
         className="mt-8 w-full rounded-full bg-ink py-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Apply to Become an Affiliate"}
+        {status === "sending" ? tr("Sending…") : tr("Apply to Become an Affiliate")}
       </button>
 
       {status === "error" && (

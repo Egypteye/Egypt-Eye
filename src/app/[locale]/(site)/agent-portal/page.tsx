@@ -13,10 +13,13 @@ import { T, trAll } from "@/i18n/T";
 // instead of silently shipping a cached logged-out page.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Partner Portal",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["Partner Portal"]);
+  return {
+    title: ui["Partner Portal"],
+    robots: { index: false, follow: true },
+  };
+}
 
 type Agent = {
   company_name: string;
@@ -41,23 +44,6 @@ type ReservationRow = {
   created_at: string;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  requested: "Requested",
-  confirmed: "Confirmed",
-  in_trip: "In Egypt",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
-
-const AVAILABLE_SERVICES = [
-  { href: "/tours", title: "Tours", description: "Our full catalog of guided and private tours across Egypt & Jordan." },
-  { href: "/signature-experiences", title: "Signature Experiences", description: "Multi-day flagship journeys built around a single unforgettable theme." },
-  { href: "/photoshoots", title: "Photoshoots", description: "Professional photography sessions at Egypt's most iconic locations." },
-  { href: "/hotel-deals", title: "Hotel Deals", description: "Preferred-rate hotel bookings to pair with any itinerary." },
-  { href: "/transfers", title: "Transfers", description: "Private airport and inter-city transfers for your clients." },
-  { href: "/customize", title: "Custom Itinerary", description: "Request a fully bespoke itinerary built around your client's brief." },
-];
-
 export default async function AgentPortalPage() {
   const ui = await trAll([
     "Contact person",
@@ -66,7 +52,54 @@ export default async function AgentPortalPage() {
     "Services offered",
     "Website",
     "WhatsApp / Phone",
+    "Requested",
+    "Confirmed",
+    "In Egypt",
+    "Completed",
+    "Cancelled",
+    "Tours",
+    "Our full catalog of guided and private tours across Egypt & Jordan.",
+    "Signature Experiences",
+    "Multi-day flagship journeys built around a single unforgettable theme.",
+    "Photoshoots",
+    "Professional photography sessions at Egypt's most iconic locations.",
+    "Hotel Deals",
+    "Preferred-rate hotel bookings to pair with any itinerary.",
+    "Transfers",
+    "Private airport and inter-city transfers for your clients.",
+    "Custom Itinerary",
+    "Request a fully bespoke itinerary built around your client's brief.",
+    "Partner access paused",
+    "Not a partner account yet",
+    "Your Travel Agent Partner access is currently paused. Contact us if you believe this is a mistake.",
+    "This account isn't linked to an approved Travel Agent Partner application yet. Apply below, or sign in with the email address your application used once it's approved.",
+    "+ New booking request",
+    "No bookings yet.",
+    "for your first client.",
+    "Dates to be confirmed",
+    "adult",
+    "adults",
+    "child",
+    "children",
+    "Edit your personal profile & password →",
   ]);
+
+  const STATUS_LABEL: Record<string, string> = {
+    requested: ui["Requested"],
+    confirmed: ui["Confirmed"],
+    in_trip: ui["In Egypt"],
+    completed: ui["Completed"],
+    cancelled: ui["Cancelled"],
+  };
+
+  const AVAILABLE_SERVICES = [
+    { href: "/tours", title: ui["Tours"], description: ui["Our full catalog of guided and private tours across Egypt & Jordan."] },
+    { href: "/signature-experiences", title: ui["Signature Experiences"], description: ui["Multi-day flagship journeys built around a single unforgettable theme."] },
+    { href: "/photoshoots", title: ui["Photoshoots"], description: ui["Professional photography sessions at Egypt's most iconic locations."] },
+    { href: "/hotel-deals", title: ui["Hotel Deals"], description: ui["Preferred-rate hotel bookings to pair with any itinerary."] },
+    { href: "/transfers", title: ui["Transfers"], description: ui["Private airport and inter-city transfers for your clients."] },
+    { href: "/customize", title: ui["Custom Itinerary"], description: ui["Request a fully bespoke itinerary built around your client's brief."] },
+  ];
 
   const user = await getCurrentUser();
   if (!user) redirect("/account/login?next=/agent-portal");
@@ -86,12 +119,12 @@ export default async function AgentPortalPage() {
         <Container className="mx-auto max-w-lg text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>Partner Portal</T></p>
           <h1 className="mt-3 font-display text-3xl font-semibold text-ink">
-            {agent?.status === "suspended" ? "Partner access paused" : "Not a partner account yet"}
+            {agent?.status === "suspended" ? ui["Partner access paused"] : ui["Not a partner account yet"]}
           </h1>
           <p className="mt-4 text-ink-soft/70">
             {agent?.status === "suspended"
-              ? "Your Travel Agent Partner access is currently paused. Contact us if you believe this is a mistake."
-              : "This account isn't linked to an approved Travel Agent Partner application yet. Apply below, or sign in with the email address your application used once it's approved."}
+              ? ui["Your Travel Agent Partner access is currently paused. Contact us if you believe this is a mistake."]
+              : ui["This account isn't linked to an approved Travel Agent Partner application yet. Apply below, or sign in with the email address your application used once it's approved."]}
           </p>
           {!agent && (
             <Link
@@ -150,14 +183,14 @@ export default async function AgentPortalPage() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-display text-lg font-semibold text-ink"><T>Your Bookings</T></h2>
               <Link href="/customize" className="text-sm font-semibold text-gold-dark hover:underline">
-                + New booking request
+                {ui["+ New booking request"]}
               </Link>
             </div>
             {typedReservations.length === 0 ? (
               <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
-                No bookings yet.{" "}
+                {ui["No bookings yet."]}{" "}
                 <Link href="/customize" className="font-semibold text-gold-dark underline"><T>Request an itinerary</T></Link>{" "}
-                for your first client.
+                {ui["for your first client."]}
               </p>
             ) : (
               <div className="flex flex-col gap-3">
@@ -166,9 +199,9 @@ export default async function AgentPortalPage() {
                     <div>
                       <p className="font-mono text-sm font-semibold text-ink">{r.reference}</p>
                       <p className="mt-0.5 text-xs text-ink-soft/60">
-                        {r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : "Dates to be confirmed"} ·{" "}
-                        {r.travelers_adults} adult{r.travelers_adults === 1 ? "" : "s"}
-                        {r.travelers_children > 0 ? `, ${r.travelers_children} child${r.travelers_children === 1 ? "" : "ren"}` : ""}
+                        {r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : ui["Dates to be confirmed"]} ·{" "}
+                        {r.travelers_adults} {r.travelers_adults === 1 ? ui["adult"] : ui["adults"]}
+                        {r.travelers_children > 0 ? `, ${r.travelers_children} ${r.travelers_children === 1 ? ui["child"] : ui["children"]}` : ""}
                       </p>
                     </div>
                     <div className="flex items-center gap-4">
@@ -207,7 +240,7 @@ export default async function AgentPortalPage() {
               <InfoField label={ui["Partner since"]} value={new Date(agent.approved_at).toLocaleDateString()} />
             </div>
             <Link href="/account/profile" className="mt-4 inline-block text-sm font-semibold text-gold-dark hover:underline">
-              Edit your personal profile & password →
+              {ui["Edit your personal profile & password →"]}
             </Link>
           </div>
         </div>

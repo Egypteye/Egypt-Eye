@@ -76,6 +76,20 @@ export function sayAll(dict: ContentDictionary, texts: readonly string[]): strin
 }
 
 /**
+ * A { English → translated } lookup for a set of place names, for
+ * components (TourCard, filter chips) that display a `destinations`-style
+ * field. That field is deliberately excluded from the general content
+ * translator — see OPAQUE_KEYS in localizeDeep.ts — because it also
+ * doubles as the input to map/facet matching elsewhere, so it can't be
+ * translated in place. This gives display code a way to translate a copy
+ * without touching the original values those other features rely on.
+ */
+export function destinationLabelMap(dict: ContentDictionary, allValues: readonly string[]): Record<string, string> {
+  const unique = Array.from(new Set(allValues));
+  return Object.fromEntries(unique.map((d) => [d, say(dict, d)]));
+}
+
+/**
  * How much of a set of English strings this locale actually has, as a
  * fraction. Feeds the admin coverage view — with a corpus this size the
  * useful question is never "is it translated" but "how far along is it".

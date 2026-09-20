@@ -15,7 +15,8 @@ import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, siteUrl } from "@/content/seo";
 import { site } from "@/content/site";
 import type { StoryCountdownBlock, StoryFaqBlock } from "@/content/types";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
+import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 
 export async function generateStaticParams() {
   const stories = await getStories();
@@ -55,6 +56,21 @@ export default async function StoryDetailPage({
   const { slug } = await params;
   const story = await getStoryBySlug(slug);
   if (!story) notFound();
+
+  const ui = await trAll([
+    "View tour →",
+    "Ancient Egypt",
+    "Behind the Scenes",
+    "Celestial Events",
+    "Culture",
+    "Culture & Trends",
+    "News",
+    "Travel Guides",
+  ]);
+  const destinationLabels = destinationLabelMap(
+    await contentDictionary(await getLocale()),
+    (story.relatedTours ?? []).flatMap((t) => t.destinations)
+  );
 
   const readingTime = estimateReadingTime(story.body);
   const publishedDate = story.publishedAt
@@ -156,7 +172,7 @@ export default async function StoryDetailPage({
         <Container className="relative flex min-h-[64vh] flex-col justify-end gap-4 pb-16 pt-32">
           {story.category && (
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-              {story.category}
+              {ui[story.category as keyof typeof ui] ?? story.category}
             </p>
           )}
           <h1 className="max-w-3xl text-balance font-display text-4xl font-semibold leading-[1.1] text-cream sm:text-5xl">
@@ -198,7 +214,7 @@ export default async function StoryDetailPage({
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Where This Takes You</T></p>
               <div className="mt-6 grid gap-6 sm:grid-cols-2">
                 {story.relatedTours.map((t) => (
-                  <TourCard key={t.slug} tour={t} />
+                  <TourCard key={t.slug} tour={t} destinationLabels={destinationLabels} viewTourLabel={ui["View tour →"]} />
                 ))}
               </div>
             </Reveal>

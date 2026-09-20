@@ -3,7 +3,7 @@ import { alternatesFor } from "@/i18n/alternates";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
 import { getSiteSettings } from "@/sanity/fetchers";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
 // Indexable on purpose. A real operator's terms and privacy policy are a
 // trust signal — for travellers comparing agencies and for Google reading the
@@ -19,39 +19,35 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const SECTIONS = [
-  {
-    title: "What information we collect",
-    note: "List every field collected from the Customize Your Tour form, the contact page, and WhatsApp conversations (e.g. name, email, phone, travel dates, party size).",
-  },
-  {
-    title: "How we use your information",
-    note: "Describe the actual use — building a quote, replying by email or WhatsApp, no marketing use unless that's true.",
-  },
-  {
-    title: "How we store and protect it",
-    note: "Name the actual systems involved (this website's form handler, the email provider used to deliver enquiries, any CRM or spreadsheet) and how long submissions are kept.",
-  },
-  {
-    title: "Third parties we share information with",
-    note: "List any service actually used to process this data (e.g. the email delivery provider). State plainly if no data is sold or shared for marketing.",
-  },
-  {
-    title: "Cookies and analytics",
-    note: "Disclose any analytics or tracking tool once one is added to the site. Currently none is active — update this section when that changes.",
-  },
-  {
-    title: "Your rights",
-    note: "Explain how a visitor can request their data be corrected or deleted (e.g. by emailing the contact address).",
-  },
-  {
-    title: "Contact",
-    note: "Confirm the email address visitors should use for a privacy request.",
-  },
-];
-
 export default async function PrivacyPage() {
   const site = await getSiteSettings();
+  const ui = await trAll([
+    "What information we collect",
+    "List every field collected from the Customize Your Tour form, the contact page, and WhatsApp conversations (e.g. name, email, phone, travel dates, party size).",
+    "How we use your information",
+    "Describe the actual use — building a quote, replying by email or WhatsApp, no marketing use unless that's true.",
+    "How we store and protect it",
+    "Name the actual systems involved (this website's form handler, the email provider used to deliver enquiries, any CRM or spreadsheet) and how long submissions are kept.",
+    "Third parties we share information with",
+    "List any service actually used to process this data (e.g. the email delivery provider). State plainly if no data is sold or shared for marketing.",
+    "Cookies and analytics",
+    "Disclose any analytics or tracking tool once one is added to the site. Currently none is active — update this section when that changes.",
+    "Your rights",
+    "Explain how a visitor can request their data be corrected or deleted (e.g. by emailing the contact address).",
+    "Contact",
+    "Confirm the email address visitors should use for a privacy request.",
+    "Questions in the meantime? Contact us at",
+  ]);
+
+  const SECTIONS = [
+    { title: ui["What information we collect"], note: ui["List every field collected from the Customize Your Tour form, the contact page, and WhatsApp conversations (e.g. name, email, phone, travel dates, party size)."] },
+    { title: ui["How we use your information"], note: ui["Describe the actual use — building a quote, replying by email or WhatsApp, no marketing use unless that's true."] },
+    { title: ui["How we store and protect it"], note: ui["Name the actual systems involved (this website's form handler, the email provider used to deliver enquiries, any CRM or spreadsheet) and how long submissions are kept."] },
+    { title: ui["Third parties we share information with"], note: ui["List any service actually used to process this data (e.g. the email delivery provider). State plainly if no data is sold or shared for marketing."] },
+    { title: ui["Cookies and analytics"], note: ui["Disclose any analytics or tracking tool once one is added to the site. Currently none is active — update this section when that changes."] },
+    { title: ui["Your rights"], note: ui["Explain how a visitor can request their data be corrected or deleted (e.g. by emailing the contact address)."] },
+    { title: ui["Contact"], note: ui["Confirm the email address visitors should use for a privacy request."] },
+  ];
 
   return (
     <section className="py-24">
@@ -77,7 +73,7 @@ export default async function PrivacyPage() {
         </div>
 
         <p className="mt-12 text-sm text-ink-soft/60">
-          Questions in the meantime? Contact us at{" "}
+          {ui["Questions in the meantime? Contact us at"]}{" "}
           <a href={`mailto:${site.contact.email}`} className="underline">
             {site.contact.email}
           </a>

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
-export const metadata: Metadata = {
-  title: "Page Not Found",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["Page Not Found"]);
+  return {
+    title: ui["Page Not Found"],
+    robots: { index: false, follow: true },
+  };
+}
 
 export default function NotFound() {
   return (

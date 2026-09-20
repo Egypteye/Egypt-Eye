@@ -7,7 +7,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { DiscountOfferCard } from "./DiscountOfferCard";
 import { JourneyList } from "./JourneyList";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
 // never be statically prerendered. Declared explicitly rather than inferred
@@ -15,10 +15,13 @@ import { T } from "@/i18n/T";
 // instead of silently shipping a cached logged-out page.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "My Account",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["My Account"]);
+  return {
+    title: ui["My Account"],
+    robots: { index: false, follow: true },
+  };
+}
 
 type JourneyRow = {
   id: string;
@@ -49,15 +52,34 @@ type DiscountCodeRow = {
   discount_campaigns: { name: string; discount_type: string; value: number } | null;
 };
 
-const STATUS_LABEL: Record<string, string> = {
-  requested: "Requested",
-  confirmed: "Confirmed",
-  in_trip: "In Egypt",
-  completed: "Completed",
-  cancelled: "Cancelled",
-};
-
 export default async function AccountPage() {
+  const ui = await trAll([
+    "Requested",
+    "Confirmed",
+    "In Egypt",
+    "Completed",
+    "Cancelled",
+    "Welcome back",
+    "+ Add more",
+    "Your {pct}% partner rate is ready",
+    "No saved journeys yet.",
+    "to build one.",
+    "No reservations yet.",
+    "when you're ready.",
+    "Dates to be confirmed",
+    "adult",
+    "adults",
+    "child",
+    "children",
+  ]);
+  const STATUS_LABEL: Record<string, string> = {
+    requested: ui["Requested"],
+    confirmed: ui["Confirmed"],
+    in_trip: ui["In Egypt"],
+    completed: ui["Completed"],
+    cancelled: ui["Cancelled"],
+  };
+
   const user = await getCurrentUser();
   if (!user) redirect("/account/login?next=/account");
 
@@ -92,7 +114,7 @@ export default async function AccountPage() {
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>My Account</T></p>
             <h1 className="mt-2 font-display text-3xl font-semibold text-ink">
-              Welcome back{user.firstName ? `, ${user.firstName}` : ""}
+              {ui["Welcome back"]}{user.firstName ? `, ${user.firstName}` : ""}
             </h1>
           </div>
           <div className="flex items-center gap-3">
@@ -106,7 +128,7 @@ export default async function AccountPage() {
             <div className="rounded-3xl border border-gold/20 bg-ink p-6 sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-light"><T>Travel Agent Partner</T></p>
               <h3 className="mt-2 font-display text-xl font-semibold text-cream">
-                Your {typedAgent.partner_discount_percent}% partner rate is ready
+                {ui["Your {pct}% partner rate is ready"].replace("{pct}", String(typedAgent.partner_discount_percent))}
               </h3>
               <Link
                 href="/agent-portal"
@@ -129,14 +151,14 @@ export default async function AccountPage() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="font-display text-lg font-semibold text-ink"><T>Saved Journeys</T></h2>
               <Link href="/explore-egypt" className="text-sm font-semibold text-gold-dark hover:underline">
-                + Add more
+                {ui["+ Add more"]}
               </Link>
             </div>
             {typedJourneys.length === 0 ? (
               <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
-                No saved journeys yet.{" "}
+                {ui["No saved journeys yet."]}{" "}
                 <Link href="/explore-egypt" className="font-semibold text-gold-dark underline"><T>Start exploring Egypt</T></Link>{" "}
-                to build one.
+                {ui["to build one."]}
               </p>
             ) : (
               <JourneyList journeys={typedJourneys} />
@@ -147,9 +169,9 @@ export default async function AccountPage() {
             <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Your Reservations</T></h2>
             {typedReservations.length === 0 ? (
               <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
-                No reservations yet.{" "}
+                {ui["No reservations yet."]}{" "}
                 <Link href="/my-journey" className="font-semibold text-gold-dark underline"><T>Request your journey</T></Link>{" "}
-                when you&rsquo;re ready.
+                {ui["when you're ready."]}
               </p>
             ) : (
               <div className="flex flex-col gap-3">
@@ -158,9 +180,9 @@ export default async function AccountPage() {
                     <div>
                       <p className="font-mono text-sm font-semibold text-ink">{r.reference}</p>
                       <p className="mt-0.5 text-xs text-ink-soft/60">
-                        {r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : "Dates to be confirmed"} ·{" "}
-                        {r.travelers_adults} adult{r.travelers_adults === 1 ? "" : "s"}
-                        {r.travelers_children > 0 ? `, ${r.travelers_children} child${r.travelers_children === 1 ? "" : "ren"}` : ""}
+                        {r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : ui["Dates to be confirmed"]} ·{" "}
+                        {r.travelers_adults} {r.travelers_adults === 1 ? ui["adult"] : ui["adults"]}
+                        {r.travelers_children > 0 ? `, ${r.travelers_children} ${r.travelers_children === 1 ? ui["child"] : ui["children"]}` : ""}
                       </p>
                     </div>
                     <span className="rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold text-gold-dark">

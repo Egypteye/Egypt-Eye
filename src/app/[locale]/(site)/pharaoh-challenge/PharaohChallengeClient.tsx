@@ -54,7 +54,7 @@ export function PharaohChallengeClient({
         setTierStartedAt(Date.now());
         setPhase("playing");
       } catch {
-        setError("Couldn't start the challenge. Please try again.");
+        setError(tr("Couldn't start the challenge. Please try again."));
       }
     });
   }
@@ -68,7 +68,7 @@ export function PharaohChallengeClient({
         setAttempt(updated);
         setPhase("cleared");
       } catch {
-        setError("Something went wrong saving your progress. Please try again.");
+        setError(tr("Something went wrong saving your progress. Please try again."));
       }
     });
   }
@@ -87,7 +87,7 @@ export function PharaohChallengeClient({
         setAttempt((prev) => (prev ? { ...prev, status: "completed" } : prev));
         setPhase("achievement");
       } catch {
-        setError("Couldn't issue your reward. Please try again.");
+        setError(tr("Couldn't issue your reward. Please try again."));
       }
     });
   }
@@ -114,7 +114,7 @@ export function PharaohChallengeClient({
             disabled={pending}
             className="rounded-full bg-gold px-8 py-3.5 text-base font-semibold text-ink transition hover:bg-gold-light disabled:opacity-60"
           >
-            {pending ? "Opening the way…" : "Begin the Challenge"}
+            {pending ? tr("Opening the way…") : tr("Begin the Challenge")}
           </button>
         </div>
       )}
@@ -133,8 +133,10 @@ export function PharaohChallengeClient({
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">{tr("Chamber Cleared")}</p>
           <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{clearedTier.name}</h2>
           <p className="max-w-sm text-lg text-cream/70">
-            You&rsquo;ve secured a {REWARD_VALUES[clearedTier.tier_number]}% reward. Continue deeper for a better one,
-            or stop here and claim what you&rsquo;ve won.
+            {tr("You've secured a {pct}% reward. Continue deeper for a better one, or stop here and claim what you've won.").replace(
+              "{pct}",
+              String(REWARD_VALUES[clearedTier.tier_number])
+            )}
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             {attempt.current_tier <= 5 && attempt.highest_tier_completed < 5 && (
@@ -143,7 +145,7 @@ export function PharaohChallengeClient({
                 onClick={handleContinue}
                 className="rounded-full bg-gold px-7 py-3 text-base font-semibold text-ink transition hover:bg-gold-light"
               >
-                Continue to Chamber {attempt.current_tier}
+                {tr("Continue to Chamber {n}").replace("{n}", String(attempt.current_tier))}
               </button>
             )}
             <button
@@ -152,7 +154,9 @@ export function PharaohChallengeClient({
               disabled={pending}
               className="rounded-full border border-cream/25 px-7 py-3 text-base font-semibold text-cream/80 transition hover:bg-cream/10 disabled:opacity-60"
             >
-              {pending ? "Sealing your reward…" : `Claim My ${REWARD_VALUES[clearedTier.tier_number]}% & Stop Here`}
+              {pending
+                ? tr("Sealing your reward…")
+                : tr("Claim My {pct}% & Stop Here").replace("{pct}", String(REWARD_VALUES[clearedTier.tier_number]))}
             </button>
           </div>
         </div>
@@ -182,7 +186,7 @@ export function PharaohChallengeClient({
             tierName={clearedTier?.name ?? campaign.name}
             rewardPercent={REWARD_VALUES[attempt?.highest_tier_completed ?? 0] ?? 0}
             shareUrl={shareUrl}
-            shareText="I just made it through the Pharaoh's Challenge at Egypt Eye 𓁿 — try it yourself:"
+            shareText={tr("I just made it through the Pharaoh's Challenge at Egypt Eye 𓁿 — try it yourself:")}
           />
           <Link href="/account" className="text-base font-semibold text-gold-light underline underline-offset-4">{tr("View my reward in My Account")}</Link>
         </div>

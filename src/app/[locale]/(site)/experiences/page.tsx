@@ -10,6 +10,7 @@ import { Reveal } from "@/components/Reveal";
 import { activityDestinationGroups } from "@/content/activities";
 import type { Experience } from "@/content/types";
 import { getExperiences, getListingPages } from "@/sanity/fetchers";
+import { localizeContent } from "@/i18n/localizeDeep";
 import { T, trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,14 +27,19 @@ export async function generateMetadata(): Promise<Metadata> {
 // Groups an activity under the FIRST of its `destinations` tags that a group
 // claims. Anything unclaimed lands in a trailing bucket rather than vanishing
 // off the page — adding an activity should never require touching this file.
-function groupByDestination(experiences: Experience[]) {
+function groupByDestination(
+  experiences: Experience[],
+  destinationGroups: typeof activityDestinationGroups,
+  moreLabel: string,
+  moreBlurb: string
+) {
   const buckets = new Map<string, Experience[]>();
   const leftovers: Experience[] = [];
 
   for (const e of experiences) {
     const primary = e.destinations?.[0];
     const group = primary
-      ? activityDestinationGroups.find((g) => g.match.includes(primary))
+      ? destinationGroups.find((g) => g.match.includes(primary))
       : undefined;
     if (!group) {
       leftovers.push(e);
@@ -44,15 +50,15 @@ function groupByDestination(experiences: Experience[]) {
     else buckets.set(group.key, [e]);
   }
 
-  const groups = activityDestinationGroups
+  const groups = destinationGroups
     .map((g) => ({ ...g, items: buckets.get(g.key) ?? [] }))
     .filter((g) => g.items.length > 0);
 
   if (leftovers.length > 0) {
     groups.push({
       key: "more",
-      name: "More Experiences",
-      blurb: "Everything else we run as an add-on.",
+      name: moreLabel,
+      blurb: moreBlurb,
       match: [],
       items: leftovers,
     });
@@ -65,11 +71,23 @@ export default async function ExperiencesPage() {
   const ui = await trAll([
     "A desert oasis lake in Egypt's Western Desert",
     "Jump to a destination",
+    "More Experiences",
+    "Everything else we run as an add-on.",
   ]);
 
-  const [experiences, listingPages] = await Promise.all([getExperiences(), getListingPages()]);
+  const locale = await getLocale();
+  const [experiences, listingPages, destinationGroups] = await Promise.all([
+    getExperiences(),
+    getListingPages(),
+    localizeContent(activityDestinationGroups, locale),
+  ]);
   const page = listingPages.experiences;
-  const groups = groupByDestination(experiences);
+  const groups = groupByDestination(
+    experiences,
+    destinationGroups,
+    ui["More Experiences"],
+    ui["Everything else we run as an add-on."]
+  );
 
   return (
     <>

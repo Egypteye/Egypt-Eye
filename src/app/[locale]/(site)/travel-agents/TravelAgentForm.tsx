@@ -22,6 +22,22 @@ type Status = "idle" | "sending" | "sent" | "error";
 
 export function TravelAgentForm() {
   const tr = useTr();
+  // Literal tr() calls, not tr(variable) — "services"/"estimatedBookings"
+  // values are sent to the backend as-is; only the displayed text translates.
+  const serviceLabels: Record<string, string> = {
+    "Inbound Tour Operator": tr("Inbound Tour Operator"),
+    "Outbound Travel Agency": tr("Outbound Travel Agency"),
+    DMC: tr("DMC"),
+    "OTA / Online Marketplace": tr("OTA / Online Marketplace"),
+    "Corporate Travel": tr("Corporate Travel"),
+    Other: tr("Other"),
+  };
+  const bookingRangeLabels: Record<string, string> = {
+    "1–10 travelers/year": tr("1–10 travelers/year"),
+    "11–50 travelers/year": tr("11–50 travelers/year"),
+    "51–200 travelers/year": tr("51–200 travelers/year"),
+    "200+ travelers/year": tr("200+ travelers/year"),
+  };
   const [services, setServices] = useState<string[]>([]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -41,7 +57,7 @@ export function TravelAgentForm() {
     }
 
     if (services.length === 0) {
-      setErrorMessage("Please select at least one service you offer.");
+      setErrorMessage(tr("Please select at least one service you offer."));
       return;
     }
 
@@ -87,29 +103,29 @@ export function TravelAgentForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Company / Agency name *
+          {tr("Company / Agency name *")}
           <input name="companyName" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Contact person *
+          {tr("Contact person *")}
           <input name="contactName" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Email *
+          {tr("Email *")}
           <input type="email" name="email" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          WhatsApp / Phone *
+          {tr("WhatsApp / Phone *")}
           <input type="tel" name="phone" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Website")}<input type="url" name="website" placeholder={tr("https://")} className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Country *
+          {tr("Country *")}
           <input name="country" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
-          Services you offer *
+          {tr("Services you offer *")}
           <div className="flex flex-wrap gap-2">
             {SERVICE_OPTIONS.map((option) => (
               <button
@@ -120,18 +136,18 @@ export function TravelAgentForm() {
                   services.includes(option) ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
                 }`}
               >
-                {option}
+                {serviceLabels[option] ?? option}
               </button>
             ))}
           </div>
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
-          Estimated Egypt bookings per year *
+          {tr("Estimated Egypt bookings per year *")}
           <select name="estimatedBookings" required defaultValue="" className={inputClass()}>
             <option value="" disabled>{tr("Select a range")}</option>
             {BOOKING_RANGES.map((range) => (
               <option key={range} value={range}>
-                {range}
+                {bookingRangeLabels[range] ?? range}
               </option>
             ))}
           </select>
@@ -152,7 +168,7 @@ export function TravelAgentForm() {
         disabled={status === "sending"}
         className="mt-8 w-full rounded-full bg-ink py-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Apply to Partner With Us"}
+        {status === "sending" ? tr("Sending…") : tr("Apply to Partner With Us")}
       </button>
 
       {status === "error" && (

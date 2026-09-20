@@ -7,7 +7,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { ProfileForm } from "./ProfileForm";
 import { ChangePasswordForm } from "./ChangePasswordForm";
 import { AvatarUpload } from "./AvatarUpload";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
 // never be statically prerendered. Declared explicitly rather than inferred
@@ -15,12 +15,16 @@ import { T } from "@/i18n/T";
 // instead of silently shipping a cached logged-out page.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "Edit Profile",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["Edit Profile"]);
+  return {
+    title: ui["Edit Profile"],
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function ProfilePage() {
+  const ui = await trAll(["← Back to My Account"]);
   const user = await getCurrentUser();
   if (!user) redirect("/account/login?next=/account/profile");
 
@@ -35,7 +39,7 @@ export default async function ProfilePage() {
     <section className="bg-sand py-14 sm:py-20">
       <Container className="mx-auto max-w-lg">
         <Link href="/account" className="text-sm font-semibold text-ink-soft/60 hover:text-ink">
-          ← Back to My Account
+          {ui["← Back to My Account"]}
         </Link>
         <h1 className="mt-3 font-display text-3xl font-semibold text-ink"><T>Edit Profile</T></h1>
 

@@ -47,6 +47,10 @@ const PROSE_KEYS = new Set([
   // and the singular/plural pair on the signature-experience collection.
   "time", "notes", "age", "deposit", "voucher", "cancellation", "options",
   "singular", "plural", "luxuryLevel", "price", "currency",
+  // About page credibility trips ("place": "Luxor") — display-only, unlike
+  // destinations/matchNames/mapStops, which double as map/facet matching
+  // input and must stay opaque.
+  "place", "fact",
 ]);
 
 /**

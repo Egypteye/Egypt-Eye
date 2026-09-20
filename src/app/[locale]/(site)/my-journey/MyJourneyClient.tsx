@@ -119,12 +119,12 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
           <div className="flex flex-col gap-3">
             <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{tr("My Journey")}</p>
             <h1 className="max-w-2xl text-balance font-display text-4xl font-semibold text-cream sm:text-5xl">
-              {isEmpty ? "Your journey is still a blank page" : "The Egypt you're planning"}
+              {isEmpty ? tr("Your journey is still a blank page") : tr("The Egypt you're planning")}
             </h1>
             <p className="max-w-xl text-[15px] text-cream/70">
               {isEmpty
-                ? "Browse Explore Egypt, Tours, Experiences, or Photoshoots and tap “Add to My Journey” on anything that catches your eye."
-                : "Everything you've added, in one place — remove anything that doesn't belong, then request it or hand it to us to customize."}
+                ? tr("Browse Explore Egypt, Tours, Experiences, or Photoshoots and tap “Add to My Journey” on anything that catches your eye.")
+                : tr("Everything you've added, in one place — remove anything that doesn't belong, then request it or hand it to us to customize.")}
             </p>
           </div>
           <ExploreModeToggle />
@@ -169,7 +169,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                     {tripDays > 0 && (
                       <div className="flex items-center justify-between border-t border-black/5 pt-3">
                         <dt className="text-ink-soft/60">{tr("Estimated trip length")}</dt>
-                        <dd className="font-semibold text-gold-dark">{tripDays}+ days</dd>
+                        <dd className="font-semibold text-gold-dark">{tr("{n}+ days").replace("{n}", String(tripDays))}</dd>
                       </div>
                     )}
                   </dl>
@@ -211,7 +211,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
               <div className="flex flex-col gap-10">
                 {items.length > 0 && status === "idle" && (
-                  <p className="text-sm text-ink-soft/60">Loading your journey…</p>
+                  <p className="text-sm text-ink-soft/60">{tr("Loading your journey…")}</p>
                 )}
                 {status === "error" && (
                   <p className="text-sm text-terracotta">{tr("Couldn’t load the latest details for your journey — your selections are still saved.")}</p>
@@ -238,7 +238,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                             <button
                               type="button"
                               onClick={() => removeJourneyItem("destination", hub.slug)}
-                              aria-label={`Remove ${hub.name}`}
+                              aria-label={tr("Remove {name}").replace("{name}", hub.name)}
                               className="shrink-0 text-ink-soft/40 hover:text-terracotta"
                             >
                               ×
@@ -262,7 +262,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                           <button
                             type="button"
                             onClick={() => removeJourneyItem("tour", tour.slug)}
-                            aria-label={`Remove ${tour.title} from My Journey`}
+                            aria-label={tr("Remove {name} from My Journey").replace("{name}", tour.title)}
                             className="absolute right-3 top-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-cream backdrop-blur-sm transition hover:bg-terracotta"
                           >
                             ×
@@ -284,7 +284,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                           <button
                             type="button"
                             onClick={() => removeJourneyItem("experience", experience.slug)}
-                            aria-label={`Remove ${experience.title} from My Journey`}
+                            aria-label={tr("Remove {name} from My Journey").replace("{name}", experience.title)}
                             className="absolute right-3 top-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-cream backdrop-blur-sm transition hover:bg-terracotta"
                           >
                             ×
@@ -306,7 +306,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                           <button
                             type="button"
                             onClick={() => removeJourneyItem("photoshoot", photoshoot.slug)}
-                            aria-label={`Remove ${photoshoot.title} from My Journey`}
+                            aria-label={tr("Remove {name} from My Journey").replace("{name}", photoshoot.title)}
                             className="absolute right-3 top-3 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 text-cream backdrop-blur-sm transition hover:bg-terracotta"
                           >
                             ×

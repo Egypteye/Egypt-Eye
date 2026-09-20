@@ -3,10 +3,13 @@ import { AuthCard } from "@/components/AuthCard";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
 import { trAll } from "@/i18n/T";
 
-export const metadata: Metadata = {
-  title: "Reset Your Password",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["Reset Your Password"]);
+  return {
+    title: ui["Reset Your Password"],
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function ForgotPasswordPage() {
   const ui = await trAll([

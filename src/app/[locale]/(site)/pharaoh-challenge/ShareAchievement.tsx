@@ -44,6 +44,8 @@ async function buildAchievementCard(opts: {
   tierName: string;
   rewardPercent: number;
   siteUrl: string;
+  cardTitle: string;
+  rewardLabel: string;
 }): Promise<Blob | null> {
   const canvas = document.createElement("canvas");
   canvas.width = CARD_WIDTH;
@@ -92,7 +94,7 @@ async function buildAchievementCard(opts: {
   ctx.textAlign = "center";
   ctx.fillStyle = "#e4c878";
   ctx.font = "600 32px Georgia, 'Times New Roman', serif";
-  ctx.fillText("P H A R A O H ' S   C H A L L E N G E", CARD_WIDTH / 2, 500);
+  ctx.fillText(opts.cardTitle, CARD_WIDTH / 2, 500);
 
   ctx.fillStyle = "#f7f2e7";
   ctx.font = "700 76px Georgia, 'Times New Roman', serif";
@@ -105,7 +107,7 @@ async function buildAchievementCard(opts: {
 
   ctx.fillStyle = "rgba(247,242,231,0.75)";
   ctx.font = "400 42px Georgia, 'Times New Roman', serif";
-  ctx.fillText("REWARD UNLOCKED", CARD_WIDTH / 2, 1195);
+  ctx.fillText(opts.rewardLabel, CARD_WIDTH / 2, 1195);
 
   ctx.fillStyle = "rgba(247,242,231,0.5)";
   ctx.font = "400 34px Georgia, 'Times New Roman', serif";
@@ -165,7 +167,14 @@ export function ShareAchievement({
   }
 
   async function buildCard(): Promise<Blob | null> {
-    return buildAchievementCard({ campaignName, tierName, rewardPercent, siteUrl: shareUrl.replace("/pharaoh-challenge", "") });
+    return buildAchievementCard({
+      campaignName,
+      tierName,
+      rewardPercent,
+      siteUrl: shareUrl.replace("/pharaoh-challenge", ""),
+      cardTitle: tr("P H A R A O H ' S   C H A L L E N G E"),
+      rewardLabel: tr("REWARD UNLOCKED"),
+    });
   }
 
   async function handleNativeShare() {
@@ -174,13 +183,14 @@ export function ShareAchievement({
       const blob = await buildCard();
       const file = blob ? new File([blob], "pharaohs-challenge-egypt-eye.png", { type: "image/png" }) : null;
       const canShareFile = file && typeof navigator.canShare === "function" && navigator.canShare({ files: [file] });
+      const shareTitle = tr("Pharaoh's Challenge — Egypt Eye");
 
       if (canShareFile && file) {
         // Sharing a real image file is what surfaces Instagram (Stories/DM)
         // as a target in the OS share sheet — text+url alone won't.
-        await navigator.share({ title: "Pharaoh's Challenge — Egypt Eye", text: shareText, files: [file] });
+        await navigator.share({ title: shareTitle, text: shareText, files: [file] });
       } else {
-        await navigator.share({ title: "Pharaoh's Challenge — Egypt Eye", text: shareText, url: shareUrl });
+        await navigator.share({ title: shareTitle, text: shareText, url: shareUrl });
       }
       track("native");
     } catch {
@@ -230,7 +240,7 @@ export function ShareAchievement({
             disabled={busy !== null}
             className="rounded-full bg-gold px-6 py-3 text-base font-semibold text-ink transition hover:bg-gold-light disabled:opacity-60"
           >
-            {busy === "share" ? "Preparing image…" : "Share My Achievement"}
+            {busy === "share" ? tr("Preparing image…") : tr("Share My Achievement")}
           </button>
         )}
         <button
@@ -251,7 +261,7 @@ export function ShareAchievement({
           onClick={handleCopy}
           className="rounded-full border border-cream/25 px-6 py-3 text-base font-semibold text-cream/80 transition hover:bg-cream/10"
         >
-          {copied ? "Link Copied ✓" : "Copy Link"}
+          {copied ? tr("Link Copied ✓") : tr("Copy Link")}
         </button>
       </div>
       <button
@@ -260,7 +270,7 @@ export function ShareAchievement({
         disabled={busy !== null}
         className="text-sm font-semibold text-cream/60 underline underline-offset-4 transition hover:text-cream disabled:opacity-60"
       >
-        {busy === "download" ? "Preparing image…" : "Download my achievement card"}
+        {busy === "download" ? tr("Preparing image…") : tr("Download my achievement card")}
       </button>
       <p className="max-w-xs text-center text-sm text-cream/40">
         {tr("For Instagram: tap Share My Achievement (or download the card) and post it to your Story.")}

@@ -7,6 +7,8 @@ import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { T, trAll } from "@/i18n/T";
+import { getLocale } from "@/i18n/dictionary";
+import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 
 function PanelSection({
   title,
@@ -46,7 +48,14 @@ export async function DestinationPanel({
     "Photoshoots",
     "Stories",
     "Tours",
+    "View tour →",
+    "More tours and experiences for {name} are on the way — in the meantime,",
+    "and we'll build it for you.",
   ]);
+  const destinationLabels = destinationLabelMap(
+    await contentDictionary(await getLocale()),
+    tours.flatMap((t) => t.destinations)
+  );
 
   const MAX = 4;
   const isEmpty = tours.length === 0 && experiences.length === 0 && photoshoots.length === 0 && stories.length === 0;
@@ -70,15 +79,15 @@ export async function DestinationPanel({
 
         {isEmpty ? (
           <p className="mt-8 border-t border-black/5 pt-6 text-sm text-ink-soft/60">
-            More tours and experiences for {hub.name} are on the way — in the meantime,{" "}
+            {ui["More tours and experiences for {name} are on the way — in the meantime,"].replace("{name}", hub.name)}{" "}
             <Link href="/customize" className="font-semibold text-gold-dark underline"><T>tell us what you have in mind</T></Link>{" "}
-            and we&rsquo;ll build it for you.
+            {ui["and we'll build it for you."]}
           </p>
         ) : (
           <div className="mt-6 flex flex-col gap-6">
             <PanelSection title={ui["Tours"]} count={tours.length}>
               {tours.slice(0, MAX).map((tour) => (
-                <TourCard key={tour.slug} tour={tour} />
+                <TourCard key={tour.slug} tour={tour} destinationLabels={destinationLabels} viewTourLabel={ui["View tour →"]} />
               ))}
             </PanelSection>
             <PanelSection title={ui["Experiences"]} count={experiences.length}>

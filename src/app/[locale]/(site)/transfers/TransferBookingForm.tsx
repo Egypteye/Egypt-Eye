@@ -1,19 +1,16 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
-import { transfersPage } from "@/content/transfers";
 import { localizedTransferCategories } from "@/content/productTranslations";
 import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { getTransferQuote } from "@/lib/transferPricing";
-import type { TransferCategory, TransferVehicleId, TransferZone } from "@/content/types";
-
-const { vehicles, zones } = transfersPage;
+import type { TransferCategory, TransferVehicle, TransferVehicleId, TransferZone } from "@/content/types";
 
 const DURATION_OPTIONS = [3, 4, 5, 6, 8, 10];
 
 type Status = "idle" | "sending" | "sent" | "error";
 
-function zonesFor(category: TransferCategory): TransferZone[] {
+function zonesFor(zones: readonly TransferZone[], category: TransferCategory): TransferZone[] {
   if (category === "intercity") return [...zones];
   return zones.filter((z) => z.group === "Cairo & Giza" || z.isCustom);
 }
@@ -46,7 +43,13 @@ function Stepper({ value, onChange, min = 1, max = 60, label }: { value: number;
   );
 }
 
-export function TransferBookingForm() {
+export function TransferBookingForm({
+  vehicles,
+  zones,
+}: {
+  vehicles: readonly TransferVehicle[];
+  zones: readonly TransferZone[];
+}) {
   const tr = useTr();
   const { locale } = useLocale();
   const categories = useMemo(() => localizedTransferCategories(locale), [locale]);
@@ -69,7 +72,7 @@ export function TransferBookingForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const zoneOptions = zonesFor(category);
+  const zoneOptions = zonesFor(zones, category);
   const selectedVehicle = vehicles.find((v) => v.id === vehicleId)!;
   const fromZone = zones.find((z) => z.id === fromZoneId);
   const toZone = zones.find((z) => z.id === toZoneId);

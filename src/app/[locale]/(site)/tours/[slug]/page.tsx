@@ -16,7 +16,7 @@ import { resolveStops } from "@/lib/placeCoords";
 import { pickRelated } from "@/lib/relatedPicker";
 import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
-import { contentDictionary, sayAll } from "@/i18n/contentStore";
+import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T, trAll } from "@/i18n/T";
 
@@ -56,6 +56,7 @@ export default async function TourDetailPage({
     "Jordan Extension",
     "View Itinerary",
     "See Details",
+    "View tour →",
   ]);
   const categoryLabels: Record<string, string> = {
     "one-day": ui["One-Day Trip"],
@@ -77,7 +78,13 @@ export default async function TourDetailPage({
   // Destinations are deliberately excluded from the content-wide translator
   // (see OPAQUE_KEYS in localizeDeep.ts) for the same map-matching reason, so
   // translate a display-only copy here rather than the tour object itself.
-  const destinationLabels = sayAll(await contentDictionary(await getLocale()), tour.destinations);
+  // Covers the related tours' destinations too, so their cards' image labels
+  // translate as well.
+  const contentDict = await contentDictionary(await getLocale());
+  const destinationLabels = destinationLabelMap(contentDict, [
+    ...tour.destinations,
+    ...related.flatMap((t) => t.destinations),
+  ]);
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Tours", path: "/tours" },
@@ -148,7 +155,7 @@ export default async function TourDetailPage({
         <Container className="grid gap-12 lg:grid-cols-[1.6fr_1fr]">
           <div>
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-black/5 pb-6 text-sm text-ink-soft/70">
-              <span>📍 {destinationLabels.join(", ")}</span>
+              <span>📍 {tour.destinations.map((d) => destinationLabels[d] ?? d).join(", ")}</span>
             </div>
 
             {tour.physicalLevel && (
@@ -291,7 +298,7 @@ export default async function TourDetailPage({
             <h2 className="font-display text-2xl font-semibold text-ink"><T>You might also like</T></h2>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((t) => (
-                <TourCard key={t.slug} tour={t} />
+                <TourCard key={t.slug} tour={t} destinationLabels={destinationLabels} viewTourLabel={ui["View tour →"]} />
               ))}
             </div>
             <Link
