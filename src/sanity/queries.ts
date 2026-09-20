@@ -77,12 +77,14 @@ export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.curr
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations
+  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations,
+  faqs[]{question, answer}
 }`;
 
 const photoshootDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, seo
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, seo,
+  faqs[]{question, answer}
 `;
 
 export const photoshootBySlugQuery = groq`*[_type == "photoshoot" && slug.current == $slug][0] {

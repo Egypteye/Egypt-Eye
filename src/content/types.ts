@@ -185,6 +185,12 @@ export type Photoshoot = {
   included: string[];
   addOns?: string[];
   delivery: string[];
+  /**
+   * Buying questions, rendered as an accordion and emitted as FAQPage
+   * structured data from the same pairs. Optional — a package without them
+   * renders exactly as before.
+   */
+  faqs?: Faq[];
   destinations?: string[];
   seo?: PageSeo;
 };
