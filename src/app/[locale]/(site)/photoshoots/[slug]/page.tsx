@@ -6,6 +6,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { Gallery } from "@/components/Gallery";
+import { FaqAccordion } from "@/components/FaqAccordion";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
@@ -46,6 +47,22 @@ export default async function PhotoshootDetailPage({
   const [photoshoot, site] = await Promise.all([getPhotoshootBySlug(slug), getSiteSettings()]);
   if (!photoshoot) notFound();
 
+  // Emitted from the exact pairs the accordion below renders — structured
+  // data that says something the page doesn't is a manual-action risk, not a
+  // rich result.
+  const faqJsonLd =
+    photoshoot.faqs && photoshoot.faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: photoshoot.faqs.map((f) => ({
+            "@type": "Question",
+            name: f.question,
+            acceptedAnswer: { "@type": "Answer", text: f.answer },
+          })),
+        }
+      : null;
+
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Photoshoots", path: "/photoshoots" },
     { name: photoshoot.title, path: `/photoshoots/${photoshoot.slug}` },
@@ -62,6 +79,9 @@ export default async function PhotoshootDetailPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
     <section className="py-14">
       <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>
@@ -136,6 +156,15 @@ export default async function PhotoshootDetailPage({
               ))}
             </ul>
           </div>
+
+          {photoshoot.faqs && photoshoot.faqs.length > 0 && (
+            <div className="mt-10">
+              <h2 className="font-display text-lg font-semibold text-ink"><T>Good to know</T></h2>
+              <div className="mt-4">
+                <FaqAccordion faqs={[...photoshoot.faqs]} />
+              </div>
+            </div>
+          )}
 
           {photoshoot.gallery && photoshoot.gallery.length > 0 && (
             <div className="mt-10">

@@ -12108,6 +12108,7 @@ export const stories: Story[] = [
         ],
         "Frequently Asked Questions"
       ),
+          cta({ title: "Book Your Cairo Airport Transfer", body: "A private, air-conditioned car with a driver waiting at arrivals, and your flight tracked so a delay doesn't cost you the pickup.", buttonLabel: "See Transfer Options", buttonHref: "/transfers" }),
     ],
   },
   {
@@ -12224,6 +12225,7 @@ export const stories: Story[] = [
         ],
         "Frequently Asked Questions"
       ),
+          cta({ title: "Skip the Arrivals-Hall Negotiation", body: "A fixed price agreed before you land, a named driver at the gate, and no meter to argue about at midnight.", buttonLabel: "Get a Transfer Quote", buttonHref: "/transfers" }),
     ],
   },
   {
@@ -12343,6 +12345,7 @@ export const stories: Story[] = [
         ],
         "Frequently Asked Questions"
       ),
+          cta({ title: "Arrange Meet & Assist at Cairo", body: "Meet and greet at arrivals is included on every Egypt Eye airport transfer. Tell us your flight and we'll handle the rest.", buttonLabel: "Book an Airport Transfer", buttonHref: "/transfers" }),
     ],
   },
   {
@@ -12478,6 +12481,7 @@ export const stories: Story[] = [
         ],
         "Frequently Asked Questions"
       ),
+          cta({ title: "Private Transport, Priced in Minutes", body: "Airport runs, hotel-to-hotel, intercity, or a driver by the day. Pick the vehicle and most routes quote on the spot.", buttonLabel: "See Transfer Options", buttonHref: "/transfers" }),
     ],
   },
   {
@@ -12606,6 +12610,7 @@ export const stories: Story[] = [
         ],
         "Frequently Asked Questions"
       ),
+          cta({ title: "See What We Actually Run", body: "Private itineraries across Egypt and Jordan, each with its own vehicle, its own guide, and a pace you set.", buttonLabel: "Browse Our Tours", buttonHref: "/tours" }),
     ],
   },
   {
@@ -12730,6 +12735,7 @@ export const stories: Story[] = [
         ],
         "Frequently Asked Questions"
       ),
+          cta({ title: "Judge Us by the Same Checklist", body: "Licensed Egyptologists, a private vehicle on every tour, and an itinerary you can change before you book.", buttonLabel: "Browse Our Tours", buttonHref: "/tours" }),
     ],
   },
   {

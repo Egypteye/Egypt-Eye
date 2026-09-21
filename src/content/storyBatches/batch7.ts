@@ -332,7 +332,12 @@ export const stories: Story[] = [
   },
 
   {
-    status: "published",
+    // Retired 20 September 2026. The last of the world-trends batch that never
+    // got rewritten into an Egypt subject: sole occupant of a "Tech & AI"
+    // category on a tour operator's site, and the only article of 154 with no
+    // link to anything bookable. Nothing about it helps someone planning a
+    // trip to Egypt, and it blurs what the domain is about.
+    status: "archived",
     featured: false,
     slug: "ai-photography-2026-premium-vs-commodity",
     title: "AI Ended Stock Photography. It Made Real Photoshoots More Valuable.",
