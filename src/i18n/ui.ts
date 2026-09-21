@@ -23,7 +23,6 @@ import { say, type ContentDictionary } from "./contentStore";
 
 const uiLoaders: Partial<Record<Locale, () => Promise<ContentDictionary>>> = {
   ar: async () => (await import("./generated/ui/ar.json")).default,
-  de: async () => (await import("./generated/ui/de.json")).default,
   fr: async () => (await import("./generated/ui/fr.json")).default,
   es: async () => (await import("./generated/ui/es.json")).default,
   it: async () => (await import("./generated/ui/it.json")).default,

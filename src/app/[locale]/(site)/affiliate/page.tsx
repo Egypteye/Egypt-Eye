@@ -19,47 +19,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const BENEFITS = [
-  {
-    title: "A Personal Referral Code",
-    description: "Your own code, credited to every booking it brings in — no spreadsheets, no guesswork on your end.",
-  },
-  {
-    title: "Real Commission, Every Booking",
-    description: "Earn on every confirmed tour, experience, or photoshoot your code is used on — not just a one-time flat fee.",
-  },
-  {
-    title: "A Discount for Your Audience",
-    description: "Your code also gives the people you send us a genuine discount, so it's an easy recommendation, not a hard sell.",
-  },
-  {
-    title: "Monthly Payouts",
-    description: "Commission is tallied and paid out monthly by PayPal or bank transfer — no minimum threshold games.",
-  },
-];
-
-const STEPS = [
-  {
-    title: "Apply",
-    description: "Tell us where you'd share Egypt Eye — a couple of minutes, no commitment.",
-  },
-  {
-    title: "Get Your Code",
-    description: "Once approved, we'll email your personal referral code and link, ready to share.",
-  },
-  {
-    title: "Earn as You Refer",
-    description: "Share it however fits your audience — every booking it brings in earns you commission.",
-  },
-];
-
-const GOOD_FIT = [
-  "Travel bloggers and YouTubers covering Egypt, Jordan, or the wider Middle East",
-  "Newsletter writers or communities with travel-curious readers",
-  "Deal/coupon sites and travel-planning tools",
-  "Anyone with an audience who trusts your travel recommendations",
-];
-
 export default async function AffiliatePage() {
   const ui = await trAll([
     "A Good Fit, Not a Follower Count",
@@ -72,7 +31,46 @@ export default async function AffiliatePage() {
     "We review every application personally — expect a response within a few business days.",
     "Who It's For",
     "Why Join",
+    "A Personal Referral Code",
+    "Your own code, credited to every booking it brings in — no spreadsheets, no guesswork on your end.",
+    "Real Commission, Every Booking",
+    "Earn on every confirmed tour, experience, or photoshoot your code is used on — not just a one-time flat fee.",
+    "A Discount for Your Audience",
+    "Your code also gives the people you send us a genuine discount, so it's an easy recommendation, not a hard sell.",
+    "Monthly Payouts",
+    "Commission is tallied and paid out monthly by PayPal or bank transfer — no minimum threshold games.",
+    "Apply",
+    "Tell us where you'd share Egypt Eye — a couple of minutes, no commitment.",
+    "Get Your Code",
+    "Once approved, we'll email your personal referral code and link, ready to share.",
+    "Earn as You Refer",
+    "Share it however fits your audience — every booking it brings in earns you commission.",
+    "Travel bloggers and YouTubers covering Egypt, Jordan, or the wider Middle East",
+    "Newsletter writers or communities with travel-curious readers",
+    "Deal/coupon sites and travel-planning tools",
+    "Anyone with an audience who trusts your travel recommendations",
+    "Note: this program is for ongoing referral partnerships. Looking for a sponsored trip or content collaboration instead?",
   ]);
+
+  const BENEFITS = [
+    { title: ui["A Personal Referral Code"], description: ui["Your own code, credited to every booking it brings in — no spreadsheets, no guesswork on your end."] },
+    { title: ui["Real Commission, Every Booking"], description: ui["Earn on every confirmed tour, experience, or photoshoot your code is used on — not just a one-time flat fee."] },
+    { title: ui["A Discount for Your Audience"], description: ui["Your code also gives the people you send us a genuine discount, so it's an easy recommendation, not a hard sell."] },
+    { title: ui["Monthly Payouts"], description: ui["Commission is tallied and paid out monthly by PayPal or bank transfer — no minimum threshold games."] },
+  ];
+
+  const STEPS = [
+    { title: ui["Apply"], description: ui["Tell us where you'd share Egypt Eye — a couple of minutes, no commitment."] },
+    { title: ui["Get Your Code"], description: ui["Once approved, we'll email your personal referral code and link, ready to share."] },
+    { title: ui["Earn as You Refer"], description: ui["Share it however fits your audience — every booking it brings in earns you commission."] },
+  ];
+
+  const GOOD_FIT = [
+    ui["Travel bloggers and YouTubers covering Egypt, Jordan, or the wider Middle East"],
+    ui["Newsletter writers or communities with travel-curious readers"],
+    ui["Deal/coupon sites and travel-planning tools"],
+    ui["Anyone with an audience who trusts your travel recommendations"],
+  ];
 
   return (
     <>
@@ -139,8 +137,7 @@ export default async function AffiliatePage() {
             ))}
           </ul>
           <p className="mx-auto mt-6 max-w-3xl text-center text-xs text-ink-soft/50">
-            Note: this program is for ongoing referral partnerships. Looking for a sponsored trip or content
-            collaboration instead?{" "}
+            {ui["Note: this program is for ongoing referral partnerships. Looking for a sponsored trip or content collaboration instead?"]}{" "}
             <Link href="/collaborate" className="underline hover:text-ink"><T>See our Creators & Influencers program</T></Link>
             .
           </p>

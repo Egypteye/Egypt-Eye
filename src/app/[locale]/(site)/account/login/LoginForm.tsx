@@ -31,9 +31,9 @@ export function LoginForm() {
     if (error) {
       setErrorMessage(
         error.message.toLowerCase().includes("invalid login")
-          ? "Incorrect email or password."
+          ? tr("Incorrect email or password.")
           : error.message.toLowerCase().includes("email not confirmed")
-            ? "Please verify your email first — check your inbox for the confirmation link."
+            ? tr("Please verify your email first — check your inbox for the confirmation link.")
             : error.message
       );
       setStatus("error");
@@ -59,11 +59,11 @@ export function LoginForm() {
         disabled={status === "sending"}
         className="mt-2 rounded-full bg-ink py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Logging in…" : "Log In"}
+        {status === "sending" ? tr("Logging in…") : tr("Log In")}
       </button>
 
       <p className="text-center text-xs text-ink-soft/60">
-        New to Egypt Eye?{" "}
+        {tr("New to Egypt Eye?")}{" "}
         <Link href={`/account/signup?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">{tr("Create an account")}</Link>
       </p>
     </form>

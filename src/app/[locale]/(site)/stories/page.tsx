@@ -9,6 +9,7 @@ import { Reveal } from "@/components/Reveal";
 import { getListingPages, getStories } from "@/sanity/fetchers";
 import { estimateReadingTime } from "@/content/readingTime";
 import { StoriesGrid } from "./StoriesGrid";
+import { trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -24,6 +25,18 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function StoriesPage() {
   const [stories, listingPages] = await Promise.all([getStories(), getListingPages()]);
   const page = listingPages.stories;
+  // Same fixed-vocabulary lookup as StoriesGrid.tsx — story.category isn't
+  // reclassified as translatable globally since "category" is also used
+  // opaquely elsewhere (tour.category compared with === against English).
+  const categoryLabels = await trAll([
+    "Ancient Egypt",
+    "Behind the Scenes",
+    "Celestial Events",
+    "Culture",
+    "Culture & Trends",
+    "News",
+    "Travel Guides",
+  ]);
 
   if (stories.length === 0) {
     return <Container className="py-24 text-center text-ink-soft/60">{page.emptyStateText}</Container>;
@@ -58,7 +71,7 @@ export default async function StoriesPage() {
               <div className="flex flex-col justify-center gap-4 p-10 sm:p-14">
                 {featured.category && (
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-light">
-                    {featured.category}
+                    {categoryLabels[featured.category as keyof typeof categoryLabels] ?? featured.category}
                   </p>
                 )}
                 <h2 className="text-balance font-display text-3xl font-semibold text-cream sm:text-4xl">

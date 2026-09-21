@@ -4,24 +4,6 @@ import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
 
-const COUNTRIES = [
-  { value: "egypt", label: "Egypt" },
-  { value: "jordan", label: "Jordan" },
-];
-
-const DURATIONS = [
-  { value: "all", label: "Any length" },
-  { value: "1", label: "1 day" },
-  { value: "2-5", label: "2 – 5 days" },
-  { value: "6-7", label: "6 – 7 days" },
-  { value: "8-11", label: "8 – 11 days" },
-];
-
-const SERVICES = [
-  { value: "tours", label: "Tours" },
-  { value: "experiences", label: "Extra Experiences" },
-];
-
 export function SearchBar({
   className = "",
 }: {
@@ -32,6 +14,24 @@ export function SearchBar({
   const [country, setCountry] = useState("egypt");
   const [duration, setDuration] = useState("all");
   const [service, setService] = useState("tours");
+
+  const COUNTRIES = [
+    { value: "egypt", label: tr("Egypt") },
+    { value: "jordan", label: tr("Jordan") },
+  ];
+
+  const DURATIONS = [
+    { value: "all", label: tr("Any length") },
+    { value: "1", label: tr("1 day") },
+    { value: "2-5", label: tr("2 – 5 days") },
+    { value: "6-7", label: tr("6 – 7 days") },
+    { value: "8-11", label: tr("8 – 11 days") },
+  ];
+
+  const SERVICES = [
+    { value: "tours", label: tr("Tours") },
+    { value: "experiences", label: tr("Extra Experiences") },
+  ];
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();

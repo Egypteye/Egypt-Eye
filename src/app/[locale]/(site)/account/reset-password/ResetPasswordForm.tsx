@@ -19,12 +19,12 @@ export function ResetPasswordForm() {
     const confirm = (form.get("confirmPassword") as string) ?? "";
 
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters.");
+      setErrorMessage(tr("Password must be at least 8 characters."));
       setStatus("error");
       return;
     }
     if (password !== confirm) {
-      setErrorMessage("Passwords don't match.");
+      setErrorMessage(tr("Passwords don't match."));
       setStatus("error");
       return;
     }
@@ -60,7 +60,7 @@ export function ResetPasswordForm() {
         disabled={status === "sending"}
         className="mt-2 rounded-full bg-ink py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Saving…" : "Set New Password"}
+        {status === "sending" ? tr("Saving…") : tr("Set New Password")}
       </button>
     </form>
   );

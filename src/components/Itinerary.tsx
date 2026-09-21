@@ -31,7 +31,7 @@ export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
               i === activeDay ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
             }`}
           >
-            Day {d.dayNumber}
+            {tr("Day {n}").replace("{n}", String(d.dayNumber))}
           </button>
         ))}
       </div>
@@ -50,7 +50,7 @@ export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
 
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
-            Day {day.dayNumber}
+            {tr("Day {n}").replace("{n}", String(day.dayNumber))}
           </p>
           <h3 className="mt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
             {day.title}

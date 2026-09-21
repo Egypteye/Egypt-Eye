@@ -2,8 +2,9 @@ import Link from "next/link";
 import type { SanityImage } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import type { Destination, Tour } from "@/content/types";
+import { trAll } from "@/i18n/T";
 
-export function DestinationsPanel({
+export async function DestinationsPanel({
   photos,
   tours,
   destinations,
@@ -12,6 +13,7 @@ export function DestinationsPanel({
   tours: Tour[];
   destinations: readonly Destination[];
 }) {
+  const ui = await trAll(["{n}+ day", "{n}+ days"]);
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
       {destinations.map((d) => {
@@ -40,7 +42,7 @@ export function DestinationsPanel({
               <p className="font-display text-base font-semibold text-cream sm:text-lg">
                 {d.name}
               </p>
-              <p className="text-xs text-cream/70">{d.days}+ day{d.days > 1 ? "s" : ""}</p>
+              <p className="text-xs text-cream/70">{(d.days > 1 ? ui["{n}+ days"] : ui["{n}+ day"]).replace("{n}", String(d.days))}</p>
             </div>
           </Link>
         );

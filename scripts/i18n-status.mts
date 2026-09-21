@@ -46,5 +46,6 @@ console.log(`\nWrote src/i18n/generated/coverage.json — a language is offered 
 console.log(`Google once it passes 90%; below that its pages are noindex and`);
 console.log(`canonicalise to English, so untranslated URLs never compete.`);
 
-console.log(`\nFill a language:  npm run i18n:translate -- --locale de`);
-console.log(`Fill all six:     npm run i18n:translate -- --all`);
+const nonDefaultCount = LOCALES.filter((l) => l.code !== DEFAULT_LOCALE).length;
+console.log(`\nFill a language:  npm run i18n:translate -- --locale fr`);
+console.log(`Fill all ${nonDefaultCount}:      npm run i18n:translate -- --all`);

@@ -19,18 +19,6 @@ import { useTr } from "@/i18n/LocaleProvider";
 // projection it's built on now live in lib/egyptMapGeometry.ts, shared with
 // the small per-tour route map so both stay in sync.
 
-// Real-world reference labels — not decorative filler, these are the
-// actual bodies of water / regions at these coordinates.
-const MAP_LABELS = [
-  { text: "MEDITERRANEAN SEA", x: 44.5, y: 3.6, size: 2.6 },
-  { text: "SINAI", x: 71.5, y: 23.7, size: 2.8 },
-  { text: "RED SEA", x: 82, y: 46, size: 2.6, rotate: 78 },
-  { text: "WESTERN DESERT", x: 26, y: 42, size: 2.4 },
-  { text: "LAKE NASSER", x: 60, y: 74, size: 2 },
-  { text: "GULF OF SUEZ", x: 65.5, y: 16.5, size: 1.7, rotate: 62 },
-  { text: "GULF OF AQABA", x: 79, y: 26.5, size: 1.7, rotate: 62 },
-];
-
 const MIN_SCALE = 1;
 const MAX_SCALE = 4.5;
 const ZOOM_STEP = 1.6;
@@ -73,6 +61,19 @@ export function EgyptMap({
   className?: string;
 }) {
   const tr = useTr();
+
+  // Real-world reference labels — not decorative filler, these are the
+  // actual bodies of water / regions at these coordinates.
+  const MAP_LABELS = [
+    { text: tr("MEDITERRANEAN SEA"), x: 44.5, y: 3.6, size: 2.6 },
+    { text: tr("SINAI"), x: 71.5, y: 23.7, size: 2.8 },
+    { text: tr("RED SEA"), x: 82, y: 46, size: 2.6, rotate: 78 },
+    { text: tr("WESTERN DESERT"), x: 26, y: 42, size: 2.4 },
+    { text: tr("LAKE NASSER"), x: 60, y: 74, size: 2 },
+    { text: tr("GULF OF SUEZ"), x: 65.5, y: 16.5, size: 1.7, rotate: 62 },
+    { text: tr("GULF OF AQABA"), x: 79, y: 26.5, size: 1.7, rotate: 62 },
+  ];
+
   const interactive = Boolean(onSelect || linkBase);
   const containerRef = useRef<HTMLDivElement>(null);
   const [view, setView] = useState<View>({ scale: 1, tx: 0, ty: 0 });

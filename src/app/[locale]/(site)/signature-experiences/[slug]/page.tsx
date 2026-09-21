@@ -69,6 +69,10 @@ export default async function SignatureExperienceDetailPage({
     "The people responsible for how this experience actually feels, day to day.",
     "What a Day Actually Feels Like",
     "Your People",
+    "Ask to Be Notified",
+    "Enquire About This Experience",
+    "Be the First to Know When This Opens",
+    "This Was Designed for You",
   ]);
 
   const { slug } = await params;
@@ -86,7 +90,7 @@ export default async function SignatureExperienceDetailPage({
       ? "Hi! I'd like to be notified when this becomes available."
       : "Hi! I'd love to know more about this experience.",
   });
-  const ctaLabel = isComingSoon ? "Ask to Be Notified" : "Enquire About This Experience";
+  const ctaLabel = isComingSoon ? ui["Ask to Be Notified"] : ui["Enquire About This Experience"];
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Signature Experiences", path: "/signature-experiences" },
@@ -310,7 +314,7 @@ export default async function SignatureExperienceDetailPage({
                 {experience.name}
               </p>
               <h2 className="max-w-xl font-display text-3xl font-semibold text-cream sm:text-4xl">
-                {isComingSoon ? "Be the First to Know When This Opens" : "This Was Designed for You"}
+                {isComingSoon ? ui["Be the First to Know When This Opens"] : ui["This Was Designed for You"]}
               </h2>
               <div className="mt-1">
                 <PriceTag price={experience.price} />

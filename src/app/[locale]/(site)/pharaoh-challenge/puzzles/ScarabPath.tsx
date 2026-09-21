@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { PuzzleProps } from "@/lib/games/types";
+import { useTr } from "@/i18n/LocaleProvider";
 import { Glyph } from "../glyphs";
 
 const TILE_COUNT = 4;
@@ -14,6 +15,7 @@ function sleep(ms: number) {
 // dark. Tap them back in the same order. A wrong tap simply replays the
 // sequence — no penalty, just observation and memory.
 export function ScarabPath({ config, onSolved }: PuzzleProps) {
+  const tr = useTr();
   const length = typeof config.sequenceLength === "number" ? config.sequenceLength : 4;
 
   // useState lazy initializer (not useMemo) — see SundialGate.tsx for why.
@@ -81,7 +83,7 @@ export function ScarabPath({ config, onSolved }: PuzzleProps) {
               type="button"
               onClick={() => handleTap(i)}
               disabled={phase !== "input"}
-              aria-label={`Floor tile ${i + 1}`}
+              aria-label={tr("Floor tile {n}").replace("{n}", String(i + 1))}
               className={`flex h-16 w-16 items-center justify-center rounded-xl border transition-all duration-200 sm:h-20 sm:w-20 ${
                 isWrong
                   ? "border-terracotta bg-terracotta/20"
@@ -96,9 +98,9 @@ export function ScarabPath({ config, onSolved }: PuzzleProps) {
         })}
       </div>
       <p className="text-base text-cream/60">
-        {phase === "showing" && "Watch the path the light takes…"}
-        {phase === "input" && "Now walk it yourself — tap the tiles in order."}
-        {phase === "solved" && "The stones settle. The way is clear."}
+        {phase === "showing" && tr("Watch the path the light takes…")}
+        {phase === "input" && tr("Now walk it yourself — tap the tiles in order.")}
+        {phase === "solved" && tr("The stones settle. The way is clear.")}
       </p>
     </div>
   );

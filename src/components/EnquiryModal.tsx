@@ -5,13 +5,6 @@ import { useTr } from "@/i18n/LocaleProvider";
 
 type ItemType = "tour" | "experience" | "photoshoot" | "signatureExperience";
 
-const ITEM_LABELS: Record<ItemType, string> = {
-  tour: "Tour",
-  experience: "Experience",
-  photoshoot: "Photoshoot",
-  signatureExperience: "Signature Experience",
-};
-
 const inputClass =
   "w-full rounded-lg border border-black/10 bg-sand px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-gold";
 
@@ -39,6 +32,13 @@ export function EnquiryModal({
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState("");
   const [flexibleDates, setFlexibleDates] = useState(false);
+
+  const ITEM_LABELS: Record<ItemType, string> = {
+    tour: tr("Tour"),
+    experience: tr("Experience"),
+    photoshoot: tr("Photoshoot"),
+    signatureExperience: tr("Signature Experience"),
+  };
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -89,12 +89,12 @@ export function EnquiryModal({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Something went wrong. Please try again.");
+        throw new Error(data.error || tr("Something went wrong. Please try again."));
       }
       setStatus("success");
     } catch (err) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));
     }
   }
 
@@ -114,7 +114,7 @@ export function EnquiryModal({
         <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-black/5 bg-cream/95 p-6 backdrop-blur-sm">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-dark">
-              Enquire About This {ITEM_LABELS[itemType]}
+              {tr("Enquire About This {item}").replace("{item}", ITEM_LABELS[itemType])}
             </p>
             <p id="enquiry-modal-title" className="mt-1 font-display text-lg font-semibold leading-snug text-ink">
               {itemTitle}
@@ -185,7 +185,7 @@ export function EnquiryModal({
             </div>
 
             <div className="grid grid-cols-2 gap-3">
-              <Field label={flexibleDates ? "Around this date" : "Start Date"} htmlFor="enq-start">
+              <Field label={flexibleDates ? tr("Around this date") : tr("Start Date")} htmlFor="enq-start">
                 <input
                   id="enq-start"
                   name="startDate"
@@ -250,7 +250,7 @@ export function EnquiryModal({
               disabled={status === "submitting"}
               className="mt-1 rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
             >
-              {status === "submitting" ? "Sending…" : "Send Enquiry"}
+              {status === "submitting" ? tr("Sending…") : tr("Send Enquiry")}
             </button>
           </form>
         )}

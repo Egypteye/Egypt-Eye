@@ -7,7 +7,23 @@ import { AddToJourneyButton } from "./AddToJourneyButton";
 import { PhysicalLevelChip } from "./PhysicalLevelBar";
 import { ExperienceRatingLink } from "./ExperienceRatingLink";
 
-export function TourCard({ tour }: { tour: Tour }) {
+// destinationLabels/viewTourLabel are optional, pre-translated lookups
+// passed down from the server page (via contentDictionary()/tr()) rather
+// than looked up here — this card renders inside both server and client
+// trees, so it stays a plain function component with no i18n hooks of its
+// own. Falling back to the raw English keeps it safe to call without them.
+export function TourCard({
+  tour,
+  destinationLabels,
+  viewTourLabel = "View tour →",
+}: {
+  tour: Tour;
+  destinationLabels?: Record<string, string>;
+  viewTourLabel?: string;
+}) {
+  const destinations = destinationLabels
+    ? tour.destinations.map((d) => destinationLabels[d] ?? d)
+    : tour.destinations;
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm transition hover:shadow-lg hover:shadow-black/5">
       <Link href={`/tours/${tour.slug}`} className="absolute inset-0 z-10" aria-label={tour.title} />
@@ -15,7 +31,7 @@ export function TourCard({ tour }: { tour: Tour }) {
         image={tour.image}
         tone={tour.imageTone}
         alt={tour.title}
-        label={tour.destinations.join(" · ")}
+        label={destinations.join(" · ")}
         className="h-52 w-full transition duration-500 group-hover:scale-105"
       />
       <div className="flex flex-1 flex-col gap-3 p-5">
@@ -47,7 +63,7 @@ export function TourCard({ tour }: { tour: Tour }) {
         <div className="flex items-center justify-between border-t border-black/5 pt-3">
           <PriceTag price={tour.price} />
           <span className="text-sm font-semibold text-gold-dark transition group-hover:translate-x-1">
-            View tour →
+            {viewTourLabel}
           </span>
         </div>
       </div>

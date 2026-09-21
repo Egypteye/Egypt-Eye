@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { PuzzleProps } from "@/lib/games/types";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Tier 5, the finale — concentric stone rings that must all point to the
 // notch at the top at the same time.
@@ -26,12 +27,14 @@ const DEG_PER_STEP = 360 / STEPS;
 // with room for the marker dots to render on the stroke.
 const DIAMETERS = [208, 152, 96, 48];
 
-function ringLabel(index: number, total: number): string {
-  if (total === 3) return ["Outer", "Middle", "Inner"][index];
-  return `Ring ${index + 1}`;
-}
-
 export function EyeOfRaThreshold({ config, onSolved }: PuzzleProps) {
+  const tr = useTr();
+
+  function ringLabel(index: number, total: number): string {
+    if (total === 3) return [tr("Outer"), tr("Middle"), tr("Inner")][index];
+    return tr("Ring {n}").replace("{n}", String(index + 1));
+  }
+
   const ringCount = Math.min(
     Math.max(typeof config.ringCount === "number" ? config.ringCount : 3, 2),
     DIAMETERS.length
@@ -135,9 +138,10 @@ export function EyeOfRaThreshold({ config, onSolved }: PuzzleProps) {
               type="button"
               onClick={() => turn(ring)}
               disabled={solved}
-              aria-label={`Turn the ${ringLabel(ring, ringCount).toLowerCase()} ring${
-                isAligned ? " — currently aligned" : ""
-              }`}
+              aria-label={
+                tr("Turn the {ring} ring").replace("{ring}", ringLabel(ring, ringCount).toLowerCase()) +
+                (isAligned ? tr(" — currently aligned") : "")
+              }
               className={`flex min-h-[48px] min-w-[104px] items-center justify-center gap-2 rounded-full border px-5 text-sm font-semibold transition-colors duration-200 disabled:opacity-50 ${
                 isAligned
                   ? "border-gold bg-gold/20 text-gold-light"
@@ -156,8 +160,10 @@ export function EyeOfRaThreshold({ config, onSolved }: PuzzleProps) {
 
       <p aria-live="polite" className="text-center text-base text-cream/60">
         {solved
-          ? "All rings turn as one. The Eye opens."
-          : `${alignedCount} of ${ringCount} rings aligned — turning a ring also turns the ones inside it.`}
+          ? tr("All rings turn as one. The Eye opens.")
+          : tr("{n} of {total} rings aligned — turning a ring also turns the ones inside it.")
+              .replace("{n}", String(alignedCount))
+              .replace("{total}", String(ringCount))}
       </p>
     </div>
   );

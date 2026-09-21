@@ -7,14 +7,6 @@ import { MOOD_COLORS, MOOD_ORDER } from "@/lib/moodColors";
 import type { DestinationHub, EgyptCity, Mood } from "@/content/types";
 import { useTr } from "@/i18n/LocaleProvider";
 
-// Each mood gets its own color so the row reads at a glance (blue for
-// water/beaches, orange for history, etc.) rather than one uniform brand
-// gold for every button — a deliberate, scoped exception to the site's
-// single-accent system, since these are functional filter chips, not
-// brand chrome. Colors live in lib/moodColors so the map pins they filter
-// can match the same colors.
-const MOODS = MOOD_ORDER.map((value) => ({ value, ...MOOD_COLORS[value] }));
-
 // The map + everything directly around it on /explore-egypt: the mood
 // buttons that help an undecided visitor narrow things down, the map
 // itself, and the flat list of hub names below it. Kept as one client
@@ -31,6 +23,22 @@ export function ExploreMapPanel({
 }) {
   const tr = useTr();
   const [mood, setMood] = useState<Mood | null>(null);
+
+  // Each mood gets its own color so the row reads at a glance (blue for
+  // water/beaches, orange for history, etc.) rather than one uniform brand
+  // gold for every button — a deliberate, scoped exception to the site's
+  // single-accent system, since these are functional filter chips, not
+  // brand chrome. Colors live in lib/moodColors so the map pins they filter
+  // can match the same colors.
+  const MOOD_LABELS: Record<Mood, string> = {
+    history: tr("History & Monuments"),
+    beaches: tr("Red Sea & Beaches"),
+    desert: tr("Desert & Oases"),
+    diving: tr("Diving & Snorkeling"),
+    nile: tr("Nile & River Towns"),
+    coast: tr("Mediterranean Coast"),
+  };
+  const MOODS = MOOD_ORDER.map((value) => ({ value, ...MOOD_COLORS[value], label: MOOD_LABELS[value] }));
 
   return (
     <div className="lg:sticky lg:top-24 lg:self-start">

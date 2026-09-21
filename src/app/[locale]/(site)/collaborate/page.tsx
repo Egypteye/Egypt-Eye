@@ -20,55 +20,6 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const WHAT_YOU_GET = [
-  {
-    title: "A Fully Hosted Experience",
-    description: "Tour, guide, and access arranged around what you're there to create — not a generic itinerary.",
-  },
-  {
-    title: "A Story Worth Telling",
-    description: "Access most visitors don't get — private timing, real conversations, and moments built for a real narrative, not a stock shot.",
-  },
-  {
-    title: "A Team That Gets Content",
-    description: "We plan around your shot list and posting schedule, not the other way around.",
-  },
-  {
-    title: "Long-Term Relationships",
-    description: "The best collaborations become repeat ones — return trips, new destinations, an ongoing partnership.",
-  },
-];
-
-const STEPS = [
-  {
-    title: "Apply",
-    description: "Tell us about your platform, your audience, and what you'd want to create.",
-  },
-  {
-    title: "We Review & Reply",
-    description: "Every application is reviewed personally — expect a response within a couple of weeks.",
-  },
-  {
-    title: "We Build the Trip Together",
-    description: "Dates, itinerary, and deliverables agreed before you travel — no surprises on either side.",
-  },
-];
-
-const WHAT_WE_LOOK_FOR = [
-  {
-    title: "Genuine Storytelling",
-    description: "Creators who show Egypt as it really is — history, culture, people — not just a backdrop.",
-  },
-  {
-    title: "An Engaged Audience",
-    description: "We care more about a real, engaged following than a follower count alone.",
-  },
-  {
-    title: "A Clear Idea",
-    description: "Tell us what you'd want to create and why it's a fit for Egypt Eye and your audience.",
-  },
-];
-
 export default async function CollaboratePage() {
   const ui = await trAll([
     "A Fit, Not a Follower Count",
@@ -81,7 +32,47 @@ export default async function CollaboratePage() {
     "We review every application personally — expect a response within a couple of weeks.",
     "What We Look For",
     "What You Get",
+    "A Fully Hosted Experience",
+    "Tour, guide, and access arranged around what you're there to create — not a generic itinerary.",
+    "A Story Worth Telling",
+    "Access most visitors don't get — private timing, real conversations, and moments built for a real narrative, not a stock shot.",
+    "A Team That Gets Content",
+    "We plan around your shot list and posting schedule, not the other way around.",
+    "Long-Term Relationships",
+    "The best collaborations become repeat ones — return trips, new destinations, an ongoing partnership.",
+    "Apply",
+    "Tell us about your platform, your audience, and what you'd want to create.",
+    "We Review & Reply",
+    "Every application is reviewed personally — expect a response within a couple of weeks.",
+    "We Build the Trip Together",
+    "Dates, itinerary, and deliverables agreed before you travel — no surprises on either side.",
+    "Genuine Storytelling",
+    "Creators who show Egypt as it really is — history, culture, people — not just a backdrop.",
+    "An Engaged Audience",
+    "We care more about a real, engaged following than a follower count alone.",
+    "A Clear Idea",
+    "Tell us what you'd want to create and why it's a fit for Egypt Eye and your audience.",
+    "Have a look at what we're already making before you apply:",
   ]);
+
+  const WHAT_YOU_GET = [
+    { title: ui["A Fully Hosted Experience"], description: ui["Tour, guide, and access arranged around what you're there to create — not a generic itinerary."] },
+    { title: ui["A Story Worth Telling"], description: ui["Access most visitors don't get — private timing, real conversations, and moments built for a real narrative, not a stock shot."] },
+    { title: ui["A Team That Gets Content"], description: ui["We plan around your shot list and posting schedule, not the other way around."] },
+    { title: ui["Long-Term Relationships"], description: ui["The best collaborations become repeat ones — return trips, new destinations, an ongoing partnership."] },
+  ];
+
+  const STEPS = [
+    { title: ui["Apply"], description: ui["Tell us about your platform, your audience, and what you'd want to create."] },
+    { title: ui["We Review & Reply"], description: ui["Every application is reviewed personally — expect a response within a couple of weeks."] },
+    { title: ui["We Build the Trip Together"], description: ui["Dates, itinerary, and deliverables agreed before you travel — no surprises on either side."] },
+  ];
+
+  const WHAT_WE_LOOK_FOR = [
+    { title: ui["Genuine Storytelling"], description: ui["Creators who show Egypt as it really is — history, culture, people — not just a backdrop."] },
+    { title: ui["An Engaged Audience"], description: ui["We care more about a real, engaged following than a follower count alone."] },
+    { title: ui["A Clear Idea"], description: ui["Tell us what you'd want to create and why it's a fit for Egypt Eye and your audience."] },
+  ];
 
   const site = await getSiteSettings();
 
@@ -149,7 +140,7 @@ export default async function CollaboratePage() {
 
           <div className="mt-12 flex flex-col items-center gap-3 text-center">
             <p className="text-sm text-ink-soft/70">
-              Have a look at what we&rsquo;re already making before you apply:
+              {ui["Have a look at what we're already making before you apply:"]}
             </p>
             <SocialLinks site={site} tone="light" />
           </div>

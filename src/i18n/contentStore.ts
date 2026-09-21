@@ -16,8 +16,8 @@ const EMPTY: ContentDictionary = Object.freeze({});
 const cache = new Map<Locale, ContentDictionary>();
 
 /**
- * Loaded per locale rather than imported statically for all seven: the files
- * are large, and a route rendering in German has no reason to carry the
+ * Loaded per locale rather than imported statically for all six: the files
+ * are large, and a route rendering in French has no reason to carry the
  * Russian catalogue in its serverless bundle.
  *
  * A missing file is the normal state for a locale the pipeline hasn't been
@@ -34,7 +34,6 @@ const cache = new Map<Locale, ContentDictionary>();
  */
 const loaders: Partial<Record<Locale, () => Promise<ContentDictionary>>> = {
   ar: async () => (await import("./generated/ar.json")).default,
-  de: async () => (await import("./generated/de.json")).default,
   fr: async () => (await import("./generated/fr.json")).default,
   es: async () => (await import("./generated/es.json")).default,
   it: async () => (await import("./generated/it.json")).default,
@@ -74,6 +73,20 @@ export function say(dict: ContentDictionary, text: string): string {
 /** The list form, for string arrays like highlights and inclusions. */
 export function sayAll(dict: ContentDictionary, texts: readonly string[]): string[] {
   return texts.map((text) => say(dict, text));
+}
+
+/**
+ * A { English → translated } lookup for a set of place names, for
+ * components (TourCard, filter chips) that display a `destinations`-style
+ * field. That field is deliberately excluded from the general content
+ * translator — see OPAQUE_KEYS in localizeDeep.ts — because it also
+ * doubles as the input to map/facet matching elsewhere, so it can't be
+ * translated in place. This gives display code a way to translate a copy
+ * without touching the original values those other features rely on.
+ */
+export function destinationLabelMap(dict: ContentDictionary, allValues: readonly string[]): Record<string, string> {
+  const unique = Array.from(new Set(allValues));
+  return Object.fromEntries(unique.map((d) => [d, say(dict, d)]));
 }
 
 /**

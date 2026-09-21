@@ -57,7 +57,7 @@ export function CountdownBanner({ tripStartDate, tripEndDate }: { tripStartDate:
     <div className="text-center">
       <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-light">{tr("Your Egypt begins in")}</p>
       <p className="mt-2 font-display text-6xl font-bold text-cream sm:text-7xl">{days}</p>
-      <p className="mt-1 text-sm font-semibold uppercase tracking-[0.2em] text-cream/60">{days === 1 ? "Day" : "Days"}</p>
+      <p className="mt-1 text-sm font-semibold uppercase tracking-[0.2em] text-cream/60">{days === 1 ? tr("Day") : tr("Days")}</p>
     </div>
   );
 }

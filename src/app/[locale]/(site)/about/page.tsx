@@ -29,6 +29,8 @@ import {
 import { alternatesFor } from "@/i18n/alternates";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { T, trAll } from "@/i18n/T";
+import { localizeContent } from "@/i18n/localizeDeep";
+import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 
 export async function generateMetadata() {
   const locale = await getLocale();
@@ -41,12 +43,30 @@ export async function generateMetadata() {
   };
 }
 
-// Photos that carry a caption in the mosaic. The hero group shot and the two
-// VIP portraits are placed by hand elsewhere on the page, so the mosaic is
-// exactly "every trip in the index that came with a photograph".
-const tripPhotos = agencyTrips.filter((t) => t.photo);
-
 export default async function AboutPage() {
+  // aboutCredibility.ts's exports are plain repo constants, not Sanity
+  // content, so — like transfersPage/activityDestinationGroups — nothing
+  // localizes them automatically; each needs an explicit pass here.
+  const locale = await getLocale();
+  const [localizedTrips, localizedVipGuest, localizedAgencyPartner, localizedVipClients, localizedHero, localizedOperations, contentDict] =
+    await Promise.all([
+      localizeContent(agencyTrips, locale),
+      localizeContent(headlineVipGuest, locale),
+      localizeContent(headlineAgencyPartner, locale),
+      localizeContent(vipClients, locale),
+      localizeContent(groupHeroPhoto, locale),
+      localizeContent(groundOperations, locale),
+      contentDictionary(locale),
+    ]);
+  // Photos that carry a caption in the mosaic. The hero group shot and the two
+  // VIP portraits are placed by hand elsewhere on the page, so the mosaic is
+  // exactly "every trip in the index that came with a photograph".
+  const tripPhotos = localizedTrips.filter((t) => t.photo);
+  // Plain place names, not a matching key anywhere on this page, so a
+  // straightforward display-only translation is enough.
+  const egyptLabels = destinationLabelMap(contentDict, coveredDestinations.egypt);
+  const jordanLabels = destinationLabelMap(contentDict, coveredDestinations.jordan);
+
   const ui = await trAll([
     "A traveler with The LA Adams Travel standing between the colossi at Luxor Temple",
     "Egypt Eye seal",
@@ -54,6 +74,11 @@ export default async function AboutPage() {
     "Real words from real trips — a small sample of what's waiting for you on the full page.",
     "Traveler Stories",
     "What Our Travelers Say",
+    "Based in",
+    "We operate in",
+    "Egypt & Jordan",
+    "In-house",
+    "Tours, photography, concierge",
   ]);
 
   const [site, page, contact, testimonials, tours] = await Promise.all([
@@ -112,9 +137,9 @@ export default async function AboutPage() {
 
             <dl className="mt-12 grid max-w-lg grid-cols-2 gap-x-8 gap-y-6 border-t border-white/10 pt-8 sm:grid-cols-3">
               {[
-                { t: "Based in", d: site.footer.location },
-                { t: "We operate in", d: "Egypt & Jordan" },
-                { t: "In-house", d: "Tours, photography, concierge" },
+                { t: ui["Based in"], d: site.footer.location },
+                { t: ui["We operate in"], d: ui["Egypt & Jordan"] },
+                { t: ui["In-house"], d: ui["Tours, photography, concierge"] },
               ].map((item) => (
                 <div key={item.t}>
                   <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/55">
@@ -140,10 +165,10 @@ export default async function AboutPage() {
               </div>
             </Frame>
             <Photo
-              src={groupHeroPhoto.photo}
-              alt={groupHeroPhoto.alt}
+              src={localizedHero.photo}
+              alt={localizedHero.alt}
               ratio="800 / 533"
-              caption={groupHeroPhoto.caption}
+              caption={localizedHero.caption}
               tone="dark"
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 40vw, 22vw"
               className="col-span-5 self-center sm:col-span-2 sm:mt-16"
@@ -269,22 +294,22 @@ export default async function AboutPage() {
                 <div className="flex h-full flex-col rounded-[1.625rem] px-7 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:px-9 sm:py-10">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-light"><T>Handled by Egypt Eye</T></p>
                   <h3 className="mt-5 font-display text-4xl font-semibold leading-none text-cream sm:text-5xl">
-                    {headlineVipGuest.name}
+                    {localizedVipGuest.name}
                   </h3>
                   <p className="mt-3 text-sm font-semibold uppercase tracking-[0.14em] text-cream/50">
-                    {headlineVipGuest.role}
+                    {localizedVipGuest.role}
                   </p>
                   <div className="my-7 h-px w-full bg-gradient-to-r from-gold/70 via-gold/20 to-transparent" />
-                  <p className="text-[15px] leading-relaxed text-cream/75">{headlineVipGuest.fact}</p>
+                  <p className="text-[15px] leading-relaxed text-cream/75">{localizedVipGuest.fact}</p>
                   <p className="mt-auto pt-8 text-xs leading-relaxed text-cream/50">
-                    Planning something with a schedule this tight?{" "}
+                    <T>Planning something with a schedule this tight?</T>{" "}
                     <Link href="/customize" className="text-gold-light underline-offset-4 hover:underline"><T>Tell us the dates.</T></Link>
                   </p>
                 </div>
               </article>
             </Reveal>
 
-            {vipClients
+            {localizedVipClients
               .filter((v) => v.photo)
               .map((v, i) => (
                 <Reveal key={v.name} delay={(i + 1) * 80} className="h-full">
@@ -303,7 +328,7 @@ export default async function AboutPage() {
             <div className="mt-16">
               <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>The guest list</T></h3>
               <ul className="mt-6 grid gap-x-12 sm:grid-cols-2 lg:grid-cols-3">
-                {vipClients.map((v) => (
+                {localizedVipClients.map((v) => (
                   <IndexRow key={v.name} primary={v.name} secondary={v.role} />
                 ))}
               </ul>
@@ -331,10 +356,10 @@ export default async function AboutPage() {
                 <div className="rounded-[1.625rem] bg-cream px-7 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-9 sm:py-10">
                   <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>Longest-running agency partner</T></p>
                   <h3 className="mt-5 font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl">
-                    {headlineAgencyPartner.name}
+                    {localizedAgencyPartner.name}
                   </h3>
                   <p className="mt-2.5 text-sm font-semibold uppercase tracking-[0.14em] text-ink-soft/55">
-                    {headlineAgencyPartner.role}
+                    {localizedAgencyPartner.role}
                   </p>
                   <div className="my-7 h-px w-full bg-gradient-to-r from-gold/60 via-gold/20 to-transparent" />
                   <p className="font-display text-[2.75rem] font-semibold leading-none tabular-nums text-gold-dark">
@@ -342,7 +367,7 @@ export default async function AboutPage() {
                   </p>
                   <p className="mt-2 text-sm font-semibold text-ink"><T>travelers a year, through us</T></p>
                   <p className="mt-5 text-[15px] leading-relaxed text-ink-soft/80">
-                    {headlineAgencyPartner.fact}
+                    {localizedAgencyPartner.fact}
                   </p>
                   <Link
                     href="/travel-agents"
@@ -360,7 +385,7 @@ export default async function AboutPage() {
               <div>
                 <h3 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Groups we’ve hosted</T></h3>
                 <ul className="mt-5">
-                  {agencyTrips.map((t) => (
+                  {localizedTrips.map((t) => (
                     <IndexRow
                       key={t.group}
                       primary={t.group}
@@ -427,7 +452,7 @@ export default async function AboutPage() {
           </Reveal>
 
           <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {groundOperations.map((item, i) => (
+            {localizedOperations.map((item, i) => (
               <Reveal key={item.title} delay={i * 50} className="h-full">
                 <div className="h-full rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                   <div className="flex h-full flex-col rounded-[1.375rem] bg-cream px-6 py-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
@@ -447,13 +472,13 @@ export default async function AboutPage() {
                 <p className="mt-4 text-sm font-semibold text-ink"><T>Egypt</T></p>
                 <div className="mt-2.5 flex flex-wrap gap-2">
                   {coveredDestinations.egypt.map((d) => (
-                    <Wordmark key={d}>{d}</Wordmark>
+                    <Wordmark key={d}>{egyptLabels[d] ?? d}</Wordmark>
                   ))}
                 </div>
                 <p className="mt-6 text-sm font-semibold text-ink"><T>Jordan</T></p>
                 <div className="mt-2.5 flex flex-wrap gap-2">
                   {coveredDestinations.jordan.map((d) => (
-                    <Wordmark key={d}>{d}</Wordmark>
+                    <Wordmark key={d}>{jordanLabels[d] ?? d}</Wordmark>
                   ))}
                 </div>
               </div>

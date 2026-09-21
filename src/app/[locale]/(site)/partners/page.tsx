@@ -18,39 +18,48 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-const PROGRAMS = [
-  {
-    href: "/travel-agents",
-    eyebrow: "For Agencies & Tour Operators",
-    title: "Travel Agent Partner Program",
-    description:
-      "Special partner rates, a dedicated specialist, and full booking support for agencies sending clients to Egypt & Jordan.",
-    cta: "See Partner Rates",
-  },
-  {
-    href: "/affiliate",
-    eyebrow: "For Bloggers, Creators & Communities",
-    title: "Affiliate Program",
-    description:
-      "A personal referral code and commission on every booking it brings in, plus a real discount for the people you send us.",
-    cta: "See Commission Details",
-  },
-  {
-    href: "/collaborate",
-    eyebrow: "For Content Creators & Influencers",
-    title: "Creators & Influencers",
-    description:
-      "Apply for a sponsored trip, content partnership, or press coverage — for creators who show Egypt as it really is.",
-    cta: "See How to Apply",
-  },
-];
-
 export default async function PartnersPage() {
   const ui = await trAll([
     "Choose Your Program",
     "Find the Fit",
     "Sunrise light over the Pyramids of Giza",
+    "For Agencies & Tour Operators",
+    "Travel Agent Partner Program",
+    "Special partner rates, a dedicated specialist, and full booking support for agencies sending clients to Egypt & Jordan.",
+    "See Partner Rates",
+    "For Bloggers, Creators & Communities",
+    "Affiliate Program",
+    "A personal referral code and commission on every booking it brings in, plus a real discount for the people you send us.",
+    "See Commission Details",
+    "For Content Creators & Influencers",
+    "Creators & Influencers",
+    "Apply for a sponsored trip, content partnership, or press coverage — for creators who show Egypt as it really is.",
+    "See How to Apply",
   ]);
+
+  const PROGRAMS = [
+    {
+      href: "/travel-agents",
+      eyebrow: ui["For Agencies & Tour Operators"],
+      title: ui["Travel Agent Partner Program"],
+      description: ui["Special partner rates, a dedicated specialist, and full booking support for agencies sending clients to Egypt & Jordan."],
+      cta: ui["See Partner Rates"],
+    },
+    {
+      href: "/affiliate",
+      eyebrow: ui["For Bloggers, Creators & Communities"],
+      title: ui["Affiliate Program"],
+      description: ui["A personal referral code and commission on every booking it brings in, plus a real discount for the people you send us."],
+      cta: ui["See Commission Details"],
+    },
+    {
+      href: "/collaborate",
+      eyebrow: ui["For Content Creators & Influencers"],
+      title: ui["Creators & Influencers"],
+      description: ui["Apply for a sponsored trip, content partnership, or press coverage — for creators who show Egypt as it really is."],
+      cta: ui["See How to Apply"],
+    },
+  ];
 
   return (
     <>

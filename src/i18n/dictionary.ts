@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "./locales";
 import { en, type Dictionary } from "./dictionaries/en";
 import { ar } from "./dictionaries/ar";
-import { de } from "./dictionaries/de";
 import { fr } from "./dictionaries/fr";
 import { es } from "./dictionaries/es";
 import { it } from "./dictionaries/it";
@@ -13,7 +12,7 @@ import { ru } from "./dictionaries/ru";
 // generation of every page in every language — a dynamic import would buy
 // nothing and cost a await-per-page.
 
-const DICTIONARIES: Record<Locale, Dictionary> = { en, ar, de, fr, es, it, ru };
+const DICTIONARIES: Record<Locale, Dictionary> = { en, ar, fr, es, it, ru };
 
 export type { Dictionary };
 

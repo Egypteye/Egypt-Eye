@@ -23,6 +23,25 @@ type Status = "idle" | "sending" | "sent" | "error";
 
 export function CollaborateForm() {
   const tr = useTr();
+  // Literal tr() calls, not tr(variable) — values sent to the backend
+  // (form.get("collaborationType") etc.) must stay the fixed English
+  // strings; only the displayed option text translates.
+  const platformLabels: Record<string, string> = {
+    Instagram: tr("Instagram"),
+    TikTok: tr("TikTok"),
+    YouTube: tr("YouTube"),
+    Facebook: tr("Facebook"),
+    "Blog / Website": tr("Blog / Website"),
+    Other: tr("Other"),
+  };
+  const collabTypeLabels: Record<string, string> = {
+    "Sponsored Trip": tr("Sponsored Trip"),
+    "Content Partnership": tr("Content Partnership"),
+    "Paid Campaign": tr("Paid Campaign"),
+    "Press Trip / Media Coverage": tr("Press Trip / Media Coverage"),
+    "Ambassador Program": tr("Ambassador Program"),
+    Other: tr("Other"),
+  };
   const [socials, setSocials] = useState<SocialRow[]>([{ platform: "Instagram", handle: "", followers: "" }]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,7 +70,7 @@ export function CollaborateForm() {
 
     const validSocials = socials.filter((s) => s.handle.trim());
     if (validSocials.length === 0) {
-      setErrorMessage("Please add at least one social media account.");
+      setErrorMessage(tr("Please add at least one social media account."));
       return;
     }
 
@@ -98,11 +117,11 @@ export function CollaborateForm() {
 
       <div className="grid gap-5 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Full name *
+          {tr("Full name *")}
           <input name="fullName" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Email *
+          {tr("Email *")}
           <input type="email" name="email" required className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
@@ -112,7 +131,7 @@ export function CollaborateForm() {
       </div>
 
       <div className="mt-6">
-        <p className="mb-2 text-sm font-medium text-ink-soft">Social media accounts *</p>
+        <p className="mb-2 text-sm font-medium text-ink-soft">{tr("Social media accounts *")}</p>
         <div className="flex flex-col gap-3">
           {socials.map((row, i) => (
             <div key={i} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2">
@@ -123,7 +142,7 @@ export function CollaborateForm() {
               >
                 {PLATFORMS.map((p) => (
                   <option key={p} value={p}>
-                    {p}
+                    {platformLabels[p] ?? p}
                   </option>
                 ))}
               </select>
@@ -168,12 +187,12 @@ export function CollaborateForm() {
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Preferred travel dates")}<input name="travelDates" placeholder={tr("e.g. Flexible, or March 2027")} className={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
-          Collaboration type *
+          {tr("Collaboration type *")}
           <select name="collaborationType" required defaultValue="" className={inputClass()}>
             <option value="" disabled>{tr("Select a type")}</option>
             {COLLAB_TYPES.map((t) => (
               <option key={t} value={t}>
-                {t}
+                {collabTypeLabels[t] ?? t}
               </option>
             ))}
           </select>
@@ -189,7 +208,7 @@ export function CollaborateForm() {
         disabled={status === "sending"}
         className="mt-8 w-full rounded-full bg-ink py-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Submit Application"}
+        {status === "sending" ? tr("Sending…") : tr("Submit Application")}
       </button>
 
       {status === "error" && (

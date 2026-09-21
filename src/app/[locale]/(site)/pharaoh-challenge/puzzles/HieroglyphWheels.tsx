@@ -80,7 +80,9 @@ export function HieroglyphWheels({ config, onSolved }: PuzzleProps) {
       </div>
 
       <p className="text-base text-cream/60">
-        {solved ? "The wheels lock into place. Stone grinds against stone as the way opens." : "Turn each wheel to match the key above."}
+        {solved
+          ? tr("The wheels lock into place. Stone grinds against stone as the way opens.")
+          : tr("Turn each wheel to match the key above.")}
       </p>
     </div>
   );

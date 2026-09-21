@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
-export const metadata: Metadata = {
-  title: "Subscription Confirmed",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["Subscription Confirmed"]);
+  return {
+    title: ui["Subscription Confirmed"],
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function NewsletterConfirmedPage({
   searchParams,
@@ -14,6 +17,11 @@ export default async function NewsletterConfirmedPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const { status } = await searchParams;
+  const ui = await trAll([
+    "You're confirmed 🇪🇬",
+    "This email is currently unsubscribed from Egypt Eye emails. Want back in?",
+    "This confirmation link is invalid or has already been used. If you're trying to subscribe,",
+  ]);
 
   return (
     <section className="bg-sand py-20 sm:py-28">
@@ -21,7 +29,7 @@ export default async function NewsletterConfirmedPage({
         {status === "ok" ? (
           <>
             <p className="text-sm font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>Subscribed</T></p>
-            <h1 className="mt-3 font-display text-3xl font-semibold text-ink sm:text-4xl">You&rsquo;re confirmed 🇪🇬</h1>
+            <h1 className="mt-3 font-display text-3xl font-semibold text-ink sm:text-4xl">{ui["You're confirmed 🇪🇬"]}</h1>
             <p className="mt-4 text-ink-soft/80"><T>Check your inbox — we’ve just sent your unique 4% off code, ready whenever you’re ready to plan your Egypt journey.</T></p>
             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <Link href="/explore-egypt" className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Plan My Egypt</T></Link>
@@ -32,7 +40,7 @@ export default async function NewsletterConfirmedPage({
           <>
             <h1 className="font-display text-3xl font-semibold text-ink"><T>You’re unsubscribed</T></h1>
             <p className="mt-4 text-ink-soft/80">
-              This email is currently unsubscribed from Egypt Eye emails. Want back in?{" "}
+              {ui["This email is currently unsubscribed from Egypt Eye emails. Want back in?"]}{" "}
               <Link href="/#newsletter" className="font-semibold text-gold-dark underline"><T>Subscribe again</T></Link>
               .
             </p>
@@ -41,7 +49,7 @@ export default async function NewsletterConfirmedPage({
           <>
             <h1 className="font-display text-3xl font-semibold text-ink"><T>That link isn’t valid</T></h1>
             <p className="mt-4 text-ink-soft/80">
-              This confirmation link is invalid or has already been used. If you&rsquo;re trying to subscribe,{" "}
+              {ui["This confirmation link is invalid or has already been used. If you're trying to subscribe,"]}{" "}
               <Link href="/#newsletter" className="font-semibold text-gold-dark underline"><T>try again here</T></Link>
               .
             </p>

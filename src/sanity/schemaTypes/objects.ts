@@ -201,7 +201,6 @@ export function translationsField(name = "translations", title = "Translations")
       "Optional. Leave a language empty and the English text is shown instead — a partly translated catalogue still reads correctly in every language.",
     fields: [
       defineField({ name: "ar", title: "العربية (Arabic)", type: "text", rows: 2 }),
-      defineField({ name: "de", title: "Deutsch (German)", type: "text", rows: 2 }),
       defineField({ name: "fr", title: "Français (French)", type: "text", rows: 2 }),
       defineField({ name: "es", title: "Español (Spanish)", type: "text", rows: 2 }),
       defineField({ name: "it", title: "Italiano (Italian)", type: "text", rows: 2 }),

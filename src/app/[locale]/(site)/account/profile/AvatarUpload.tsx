@@ -24,12 +24,12 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
 
     if (!ALLOWED_TYPES.includes(file.type)) {
       setStatus("error");
-      setError("Please choose a JPG, PNG, or WebP image.");
+      setError(tr("Please choose a JPG, PNG, or WebP image."));
       return;
     }
     if (file.size > MAX_BYTES) {
       setStatus("error");
-      setError("Please choose an image under 5MB.");
+      setError(tr("Please choose an image under 5MB."));
       return;
     }
 
@@ -44,7 +44,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
     });
     if (uploadError) {
       setStatus("error");
-      setError("Couldn't upload that photo. Please try again.");
+      setError(tr("Couldn't upload that photo. Please try again."));
       return;
     }
 
@@ -57,7 +57,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
     const { error: updateError } = await supabase.from("profiles").update({ avatar_url: freshUrl }).eq("id", userId);
     if (updateError) {
       setStatus("error");
-      setError("Photo uploaded, but couldn't save it to your profile. Please try again.");
+      setError(tr("Photo uploaded, but couldn't save it to your profile. Please try again."));
       return;
     }
 
@@ -75,7 +75,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
     const { error: updateError } = await supabase.from("profiles").update({ avatar_url: null }).eq("id", userId);
     if (updateError) {
       setStatus("error");
-      setError("Couldn't remove your photo. Please try again.");
+      setError(tr("Couldn't remove your photo. Please try again."));
       return;
     }
 
@@ -109,7 +109,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
             disabled={status === "saving"}
             className="rounded-full border border-black/10 px-4 py-2 text-xs font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink disabled:opacity-60"
           >
-            {status === "saving" ? "Saving…" : preview ? "Change Photo" : "Upload Photo"}
+            {status === "saving" ? tr("Saving…") : preview ? tr("Change Photo") : tr("Upload Photo")}
           </button>
           {preview && (
             <button

@@ -36,6 +36,8 @@ export async function TrustBar({
     "Add-On Experiences",
     "Destinations Covered",
     "Private Tours",
+    "Traveler Reviews",
+    "{count} reviews",
   ]);
 
   const catalogStats = getCatalogStats(tours, experiences, photoshoots);
@@ -65,8 +67,8 @@ export async function TrustBar({
             }
             label={
               typeof rating.score === "number"
-                ? `${rating.count.toLocaleString()} reviews`
-                : "Traveler Reviews"
+                ? ui["{count} reviews"].replace("{count}", rating.count.toLocaleString())
+                : ui["Traveler Reviews"]
             }
           />
         )}

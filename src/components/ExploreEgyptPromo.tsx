@@ -2,13 +2,14 @@ import Link from "next/link";
 import { EgyptMap } from "./EgyptMap";
 import { Reveal } from "./Reveal";
 import type { DestinationHub } from "@/content/types";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
 // A compact, high-impact homepage promo for /explore-egypt — built around a
 // live, decorative preview of the real interactive map (not stock imagery
 // or a fake mockup), inside the same dark rounded-panel language already
 // used by the Flying Dress / Red Sea / Custom Tours sections on this page.
-export function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
+export async function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
+  const ui = await trAll(["{n} destinations · one live map"]);
   return (
     <Reveal>
       <div className="relative overflow-hidden rounded-3xl bg-ink">
@@ -34,7 +35,7 @@ export function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
                 </span>
               </Link>
               <p className="text-xs font-medium uppercase tracking-[0.15em] text-cream/40">
-                {hubs.length} destinations · one live map
+                {ui["{n} destinations · one live map"].replace("{n}", String(hubs.length))}
               </p>
             </div>
           </div>

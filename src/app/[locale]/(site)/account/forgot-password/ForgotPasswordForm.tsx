@@ -41,7 +41,7 @@ export function ForgotPasswordForm() {
         disabled={status === "sending"}
         className="mt-2 rounded-full bg-ink py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Send Reset Link"}
+        {status === "sending" ? tr("Sending…") : tr("Send Reset Link")}
       </button>
     </form>
   );

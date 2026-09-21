@@ -6,6 +6,7 @@ import { loadExploreEgyptData } from "../data";
 import { ExploreEgyptView } from "../ExploreEgyptView";
 import { getDestinationHubs, getListingPages } from "@/sanity/fetchers";
 import { resolveMetadata } from "@/content/seo";
+import { trAll } from "@/i18n/T";
 
 export async function generateStaticParams() {
   const hubs = await getDestinationHubs();
@@ -22,10 +23,18 @@ export async function generateMetadata({
   const hub = hubs.find((h) => h.slug === slug);
   if (!hub) return {};
 
+  const locale = await getLocale();
+  const ui = await trAll([
+    "{name} — Explore Egypt",
+    "{tagline}. Discover the tours, experiences, and photoshoots Egypt Eye offers in {name}, and add them to your journey.",
+  ]);
+
   return resolveMetadata({
-    locale: await getLocale(),
-    title: `${hub.name} — Explore Egypt`,
-    description: `${hub.tagline}. Discover the tours, experiences, and photoshoots Egypt Eye offers in ${hub.name}, and add them to your journey.`,
+    locale,
+    title: ui["{name} — Explore Egypt"].replace("{name}", hub.name),
+    description: ui["{tagline}. Discover the tours, experiences, and photoshoots Egypt Eye offers in {name}, and add them to your journey."]
+      .replace("{tagline}", hub.tagline)
+      .replace("{name}", hub.name),
     image: hub.image,
     path: `/explore-egypt/${hub.slug}`,
   });

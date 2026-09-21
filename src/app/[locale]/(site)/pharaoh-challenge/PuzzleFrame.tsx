@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Shared stone-chamber frame every puzzle renders inside — keeps the visual
 // language (sandstone gradient, gold hairline border, torch-glow corners,
@@ -19,6 +20,7 @@ export function PuzzleFrame({
   hint?: string;
   children: ReactNode;
 }) {
+  const tr = useTr();
   return (
     <div className="relative overflow-hidden rounded-[2rem] border border-gold/25 bg-[radial-gradient(ellipse_at_top,_#2a2118_0%,_#1b2a20_55%,_#14201a_100%)] p-6 shadow-[0_0_80px_-20px_rgba(201,162,39,0.35)] sm:p-10">
       <div
@@ -31,7 +33,7 @@ export function PuzzleFrame({
       />
       <div className="relative flex flex-col items-center gap-2 text-center">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">
-          Chamber {tierNumber} of 5 — {name}
+          {tr("Chamber {n} of 5 — {name}").replace("{n}", String(tierNumber)).replace("{name}", name)}
         </p>
         <p className="max-w-md text-base text-cream/70">{flavorText}</p>
       </div>

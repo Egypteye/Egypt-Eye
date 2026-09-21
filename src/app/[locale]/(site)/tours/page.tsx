@@ -7,6 +7,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { ToursGrid } from "./ToursGrid";
 import { getListingPages, getTours } from "@/sanity/fetchers";
+import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 import { trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -25,9 +26,16 @@ export default async function ToursPage() {
     "Good to Know",
     "Painted hieroglyphic columns at Luxor Temple",
     "Planning an Egypt Trip",
+    "View tour →",
   ]);
 
-  const [tours, listingPages] = await Promise.all([getTours(), getListingPages()]);
+  const locale = await getLocale();
+  const [tours, listingPages, contentDict] = await Promise.all([
+    getTours(),
+    getListingPages(),
+    contentDictionary(locale),
+  ]);
+  const destinationLabels = destinationLabelMap(contentDict, tours.flatMap((t) => t.destinations));
   const page = listingPages.tours;
   const sectionTitle = page.sectionTitleTemplate.replace("{count}", String(tours.length));
 
@@ -58,7 +66,7 @@ export default async function ToursPage() {
             <SectionHeading title={sectionTitle} description={page.sectionDescription} />
           </div>
           <div className="mt-6 lg:mt-10">
-            <ToursGrid tours={tours} />
+            <ToursGrid tours={tours} destinationLabels={destinationLabels} viewTourLabel={ui["View tour →"]} />
           </div>
         </Container>
       </section>

@@ -68,7 +68,7 @@ function JourneyRow({ journey }: { journey: Journey }) {
           )}
         </div>
         <button type="button" onClick={() => setExpanded((v) => !v)} className="shrink-0 text-xs font-semibold text-ink-soft/60 hover:text-ink">
-          {journey.journey_items.length} item{journey.journey_items.length === 1 ? "" : "s"} {expanded ? "▲" : "▼"}
+          {(journey.journey_items.length === 1 ? tr("{n} item") : tr("{n} items")).replace("{n}", String(journey.journey_items.length))} {expanded ? "▲" : "▼"}
         </button>
       </div>
 
@@ -83,7 +83,7 @@ function JourneyRow({ journey }: { journey: Journey }) {
                   {item.title}
                   {item.subtitle && <span className="text-ink-soft/50"> — {item.subtitle}</span>}
                 </span>
-                <button type="button" onClick={() => removeItem(item.id)} aria-label={`Remove ${item.title}`} className="shrink-0 text-ink-soft/40 hover:text-terracotta">
+                <button type="button" onClick={() => removeItem(item.id)} aria-label={tr("Remove {name}").replace("{name}", item.title)} className="shrink-0 text-ink-soft/40 hover:text-terracotta">
                   ×
                 </button>
               </li>

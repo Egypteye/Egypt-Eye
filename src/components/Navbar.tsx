@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ResolvedSiteSettings } from "@/content/types";
 import { useJourneyItems } from "@/lib/journey";
 import { useSessionUser } from "@/lib/auth/useSessionUser";
-import { useLocale } from "@/i18n/LocaleProvider";
+import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { localePath } from "@/i18n/locales";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 
@@ -22,6 +22,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
   const moreRef = useRef<HTMLDivElement>(null);
   const journeyCount = useJourneyItems().length;
   const { locale, dict } = useLocale();
+  const tr = useTr();
   // Nav labels are translated by href, not by their English text, and every
   // nav link is rewritten into the active language so browsing never drops
   // the visitor back into English.
@@ -172,8 +173,8 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
           <Link
             href={to(currentUser ? "/account" : "/account/login")}
             className="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 text-ink-soft transition hover:border-gold/40 hover:text-ink"
-            aria-label={currentUser ? "My Account" : "Log in"}
-            title={currentUser ? `My Account${currentUser.firstName ? ` — ${currentUser.firstName}` : ""}` : "Log in"}
+            aria-label={currentUser ? tr("My Account") : tr("Log in")}
+            title={currentUser ? `${tr("My Account")}${currentUser.firstName ? ` — ${currentUser.firstName}` : ""}` : tr("Log in")}
           >
             {currentUser?.avatarUrl ? (
               <Image src={currentUser.avatarUrl} alt="" width={40} height={40} className="h-full w-full object-cover" />
@@ -244,7 +245,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               className="mt-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium text-ink-soft hover:bg-sand-dim"
               onClick={() => setOpen(false)}
             >
-              {currentUser ? `My Account${currentUser.firstName ? ` (${currentUser.firstName})` : ""}` : "Log In / Create Account"}
+              {currentUser ? `${tr("My Account")}${currentUser.firstName ? ` (${currentUser.firstName})` : ""}` : tr("Log In / Create Account")}
             </Link>
           </div>
         </nav>

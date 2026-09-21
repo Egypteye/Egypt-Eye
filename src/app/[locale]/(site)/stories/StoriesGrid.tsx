@@ -7,6 +7,20 @@ import { useTr } from "@/i18n/LocaleProvider";
 
 export function StoriesGrid({ stories }: { stories: Story[] }) {
   const tr = useTr();
+  // Literal tr() calls, not tr(variable) — the UI-manifest extractor only
+  // recognizes a string literal argument, so each known category needs its
+  // own call site. story.category isn't reclassified as translatable
+  // content globally because "category" is also used opaquely elsewhere
+  // (tour.category is compared with === against fixed English values).
+  const categoryLabels: Record<string, string> = {
+    "Ancient Egypt": tr("Ancient Egypt"),
+    "Behind the Scenes": tr("Behind the Scenes"),
+    "Celestial Events": tr("Celestial Events"),
+    Culture: tr("Culture"),
+    "Culture & Trends": tr("Culture & Trends"),
+    News: tr("News"),
+    "Travel Guides": tr("Travel Guides"),
+  };
   const categories = useMemo(
     () => Array.from(new Set(stories.map((s) => s.category).filter((c): c is string => Boolean(c)))),
     [stories]
@@ -34,7 +48,7 @@ export function StoriesGrid({ stories }: { stories: Story[] }) {
                 filter === c ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
               }`}
             >
-              {c}
+              {categoryLabels[c] ?? c}
             </button>
           ))}
         </div>

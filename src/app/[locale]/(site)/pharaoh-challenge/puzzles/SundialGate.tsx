@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { PuzzleProps } from "@/lib/games/types";
+import { useTr } from "@/i18n/LocaleProvider";
 
 function angleFromCenter(cx: number, cy: number, x: number, y: number) {
   const deg = (Math.atan2(y - cy, x - cx) * 180) / Math.PI;
@@ -17,6 +18,7 @@ function angleDiff(a: number, b: number) {
 // up with the fixed notch carved into the gate. Easiest tier: generous
 // tolerance, single continuous drag gesture.
 export function SundialGate({ config, onSolved }: PuzzleProps) {
+  const tr = useTr();
   const tolerance = typeof config.toleranceDegrees === "number" ? config.toleranceDegrees : 18;
   // A useState lazy initializer (not useMemo) — the React Compiler's purity
   // rule disallows calling Math.random directly during render/in useMemo,
@@ -90,7 +92,7 @@ export function SundialGate({ config, onSolved }: PuzzleProps) {
         )}
       </div>
       <p className="text-base text-cream/60">
-        {solved ? "The disc catches the light — the gate slides open." : "Drag the disc to align it with the mark."}
+        {solved ? tr("The disc catches the light — the gate slides open.") : tr("Drag the disc to align it with the mark.")}
       </p>
     </div>
   );

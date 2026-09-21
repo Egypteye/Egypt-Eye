@@ -21,10 +21,13 @@ import { T, trAll } from "@/i18n/T";
 // instead of silently shipping a cached logged-out page.
 export const dynamic = "force-dynamic";
 
-export const metadata: Metadata = {
-  title: "My Egypt",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["My Egypt"]);
+  return {
+    title: ui["My Egypt"],
+    robots: { index: false, follow: true },
+  };
+}
 
 type ItineraryItem = { time?: string; title: string; location?: string; notes?: string };
 type ItineraryDay = { day: number; date?: string; title: string; items: ItineraryItem[] };

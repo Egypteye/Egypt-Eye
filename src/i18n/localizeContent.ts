@@ -7,7 +7,7 @@ import { DEFAULT_LOCALE, LOCALE_CODES, type Locale } from "./locales";
 // live in a dictionary in the repo. Instead each translatable field gains an
 // optional sibling holding its translations, keyed by locale:
 //
-//   { title: "1 Day Giza Tour", title_i18n: { ar: "...", de: "..." } }
+//   { title: "1 Day Giza Tour", title_i18n: { ar: "...", fr: "..." } }
 //
 // Two properties make this safe to roll out gradually, which matters when
 // there are 79 tours and 114 articles:

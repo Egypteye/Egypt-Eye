@@ -6,11 +6,14 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { LoginForm } from "./LoginForm";
 import { trAll } from "@/i18n/T";
 
-export const metadata: Metadata = {
-  title: "Log In",
-  description: "Log in to your Egypt Eye account.",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll(["Log In", "Log in to your Egypt Eye account."]);
+  return {
+    title: ui["Log In"],
+    description: ui["Log in to your Egypt Eye account."],
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function LoginPage() {
   const ui = await trAll([

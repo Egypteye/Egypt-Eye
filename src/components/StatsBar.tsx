@@ -1,4 +1,5 @@
 import type { ResolvedSiteSettings } from "@/content/types";
+import { trAll } from "@/i18n/T";
 
 // A bold, full-width version of TrustBar's own stat treatment (dark
 // background, gold numbers) — not a new visual language. Every tile is
@@ -6,7 +7,7 @@ import type { ResolvedSiteSettings } from "@/content/types";
 // sourced from Site Settings → Trust stats bar, which only accepts real
 // numbers. A tile with no value simply doesn't render — never a
 // placeholder or an invented figure.
-export function StatsBar({
+export async function StatsBar({
   trustStats,
   tourCount,
   destinationCount,
@@ -15,20 +16,29 @@ export function StatsBar({
   tourCount: number;
   destinationCount: number;
 }) {
+  const ui = await trAll([
+    "Years in Egypt",
+    "Happy Guests",
+    "Unique Itineraries",
+    "Destinations Covered",
+    "{name} Rating",
+    "Rating",
+  ]);
+
   const tiles: { value: string; label: string; href?: string }[] = [];
 
   if (trustStats?.yearsInEgypt) {
-    tiles.push({ value: `${trustStats.yearsInEgypt}+`, label: "Years in Egypt" });
+    tiles.push({ value: `${trustStats.yearsInEgypt}+`, label: ui["Years in Egypt"] });
   }
   if (trustStats?.happyGuestsLabel) {
-    tiles.push({ value: trustStats.happyGuestsLabel, label: "Happy Guests" });
+    tiles.push({ value: trustStats.happyGuestsLabel, label: ui["Happy Guests"] });
   }
-  tiles.push({ value: `${tourCount}+`, label: "Unique Itineraries" });
-  tiles.push({ value: `${destinationCount}+`, label: "Destinations Covered" });
+  tiles.push({ value: `${tourCount}+`, label: ui["Unique Itineraries"] });
+  tiles.push({ value: `${destinationCount}+`, label: ui["Destinations Covered"] });
   if (trustStats?.reviewPlatformRating) {
     tiles.push({
       value: `${trustStats.reviewPlatformRating}★`,
-      label: trustStats.reviewPlatformName ? `${trustStats.reviewPlatformName} Rating` : "Rating",
+      label: trustStats.reviewPlatformName ? ui["{name} Rating"].replace("{name}", trustStats.reviewPlatformName) : ui["Rating"],
       href: trustStats.reviewPlatformUrl,
     });
   }

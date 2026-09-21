@@ -7,11 +7,17 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { SignupForm } from "./SignupForm";
 import { trAll } from "@/i18n/T";
 
-export const metadata: Metadata = {
-  title: "Create Your Account",
-  description: "Create your Egypt Eye account to save journeys, manage reservations, and access your personalized trip.",
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const ui = await trAll([
+    "Create Your Account",
+    "Create your Egypt Eye account to save journeys, manage reservations, and access your personalized trip.",
+  ]);
+  return {
+    title: ui["Create Your Account"],
+    description: ui["Create your Egypt Eye account to save journeys, manage reservations, and access your personalized trip."],
+    robots: { index: false, follow: true },
+  };
+}
 
 export default async function SignupPage() {
   const ui = await trAll([

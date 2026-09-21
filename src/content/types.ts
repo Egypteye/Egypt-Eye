@@ -529,7 +529,13 @@ export type ResolvedSiteSettings = {
     pinterest?: string;
   };
   nav: readonly { label: string; href: string }[];
-  heroImages: readonly {
+  // Named heroSlides rather than heroImages: the latter tail-matches the
+  // "images" opaque key in localizeDeep.ts (meant for raw photo arrays) and
+  // would silently exclude every slide's headline/subtext/linkLabel from
+  // translation. This is purely the resolved/output shape — the Sanity
+  // schema field and GROQ query keep the name heroImages, so no CMS data
+  // migration is needed.
+  heroSlides: readonly {
     image?: SanityImage;
     tone: ImageTone;
     headline?: string;

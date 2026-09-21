@@ -31,9 +31,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const hotel = await getHotelBySlug(slug);
   if (!hotel) return {};
+  const locale = await getLocale();
+  const ui = await trAll(["{name} — Egypt Eye Hotel Deals"]);
   return resolveMetadata({
-    locale: await getLocale(),
-    title: `${hotel.name} — Egypt Eye Hotel Deals`,
+    locale,
+    title: ui["{name} — Egypt Eye Hotel Deals"].replace("{name}", hotel.name),
     description: hotel.short_description,
     image: hotel.photos[0],
     path: `/hotel-deals/${hotel.slug}`,
@@ -89,6 +91,8 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
     "Rates shown are indicative, not guaranteed. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate.",
     "Room Types & Indicative Rates",
     "Rooms & Rates",
+    "Ask us about our current rate for this hotel.",
+    "Up to {count} guests",
   ]);
 
   const { slug } = await params;
@@ -174,7 +178,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
             <div className="rounded-2xl border border-gold/15 bg-cream p-6 shadow-sm">
               <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50"><T>Egypt Eye Deal</T></p>
               <p className="mt-2 text-sm text-ink-soft/70">
-                {hotel.deal_description || "Ask us about our current rate for this hotel."}
+                {hotel.deal_description || ui["Ask us about our current rate for this hotel."]}
               </p>
               <RateRequestButton
                 hotelId={hotel.id}
@@ -207,7 +211,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
                   </h3>
                   <p className="text-xs uppercase tracking-wide text-ink-soft/50">
                     {room.view ? `${room.view} · ` : ""}
-                    Up to {room.max_occupancy} guests
+                    {ui["Up to {count} guests"].replace("{count}", String(room.max_occupancy))}
                   </p>
                 </div>
                 {room.description && <p className="mt-2 text-sm text-ink-soft/70">{room.description}</p>}

@@ -101,7 +101,7 @@ export function CustomizeForm({
     }
 
     if (missingRequired) {
-      setErrorMessage("Please fill in all required fields.");
+      setErrorMessage(tr("Please fill in all required fields."));
       return;
     }
 
@@ -161,7 +161,7 @@ export function CustomizeForm({
                 <button
                   type="button"
                   onClick={() => removeJourneyItem(item.type, item.slug)}
-                  aria-label={`Remove ${item.title}`}
+                  aria-label={`${tr("Remove")} ${item.title}`}
                   className="text-ink-soft/50 hover:text-terracotta"
                 >
                   ×
@@ -201,12 +201,12 @@ export function CustomizeForm({
         disabled={status === "sending"}
         className="mt-8 w-full rounded-full bg-ink py-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Send My Request"}
+        {status === "sending" ? tr("Sending…") : tr("Send My Request")}
       </button>
 
       {status === "sent" && (
         <p className="mt-3 text-center text-xs text-ink-soft/60">
-          Thanks — your request has been sent. We&rsquo;ll reply by email soon. Prefer to chat now? Message us on{" "}
+          {tr("Thanks — your request has been sent. We'll reply by email soon. Prefer to chat now? Message us on")}{" "}
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
@@ -217,12 +217,12 @@ export function CustomizeForm({
 
       {status === "error" && (
         <p className="mt-3 text-center text-xs text-terracotta">
-          Something went wrong sending your request. Please message us directly on{" "}
+          {tr("Something went wrong sending your request. Please message us directly on")}{" "}
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "the Customize Your Tour page", intro: "Hi, I'd like to plan a custom trip." }}
             className="underline">{tr("WhatsApp")}</WhatsAppBookButton>{" "}
-          or email{" "}
+          {tr("or email")}{" "}
           <a href={`mailto:${site.contact.email}`} className="underline">
             {site.contact.email}
           </a>

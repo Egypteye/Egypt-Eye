@@ -106,13 +106,13 @@ export function EventCountdown({ event }: { event: EventCountdownData }) {
 
         {phase === "today" && (
           <p className="max-w-xl font-display text-2xl font-semibold text-cream sm:text-3xl">
-            {event.dayOfMessage || `Today is the day: ${event.name}.`}
+            {event.dayOfMessage || tr("Today is the day: {name}.").replace("{name}", event.name)}
           </p>
         )}
 
         {phase === "ended" && (
           <p className="max-w-xl font-display text-2xl font-semibold text-cream sm:text-3xl">
-            {event.endedMessage || event.dayOfMessage || `${event.name} has passed.`}
+            {event.endedMessage || event.dayOfMessage || tr("{name} has passed.").replace("{name}", event.name)}
           </p>
         )}
 

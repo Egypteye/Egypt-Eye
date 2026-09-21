@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { PuzzleProps } from "@/lib/games/types";
+import { useTr } from "@/i18n/LocaleProvider";
 
 // Tier 4 — drag the sun along the sky; the obelisk's shadow swings the
 // opposite way and lengthens near the horizon, shortens near noon. Land the
@@ -9,6 +10,7 @@ import type { PuzzleProps } from "@/lib/games/types";
 // because the relationship is inverse: the shadow moves away from the
 // light, not with it.
 export function ObeliskShadow({ config, onSolved }: PuzzleProps) {
+  const tr = useTr();
   const tolerance = typeof config.toleranceDegrees === "number" ? config.toleranceDegrees / 2 : 6; // % tolerance
   // Ground offset from the obelisk base, in percent of the scene width.
   // One of a handful of achievable left/right positions.
@@ -95,7 +97,7 @@ export function ObeliskShadow({ config, onSolved }: PuzzleProps) {
         />
       </div>
       <p className="text-base text-cream/60">
-        {solved ? "The shadow falls true. The obelisk has shown the way." : "Move the sun — watch where the shadow falls."}
+        {solved ? tr("The shadow falls true. The obelisk has shown the way.") : tr("Move the sun — watch where the shadow falls.")}
       </p>
     </div>
   );

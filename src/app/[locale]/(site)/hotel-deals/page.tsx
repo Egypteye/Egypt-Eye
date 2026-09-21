@@ -26,6 +26,8 @@ export default async function HotelDealsPage() {
     "Luxury Long-Stay Apartments",
     "Not a Hotel — A Home",
     "Rates shown are indicative Egypt Eye deal rates, not live booking-engine availability. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate.",
+    "{count} hotel with current deals",
+    "{count} hotels with current deals",
   ]);
 
   const allHotels = await getEnabledHotels();
@@ -54,7 +56,10 @@ export default async function HotelDealsPage() {
       <section className="py-16">
         <Container>
           <SectionHeading
-            title={`${hotels.length} hotel${hotels.length === 1 ? "" : "s"} with current deals`}
+            title={(hotels.length === 1 ? ui["{count} hotel with current deals"] : ui["{count} hotels with current deals"]).replace(
+              "{count}",
+              String(hotels.length)
+            )}
             description={ui["Rates shown are indicative Egypt Eye deal rates, not live booking-engine availability. Hotel rates are subject to change based on travel dates, availability, seasonality, and hotel conditions — send an enquiry to confirm the latest available rate."]}
           />
           <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
