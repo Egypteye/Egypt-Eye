@@ -1,5 +1,6 @@
 import type { ResolvedSiteSettings } from "@/content/types";
 import { whatsappHref } from "@/lib/whatsapp";
+import { tr } from "@/i18n/T";
 
 // One definition of "where Egypt Eye is on social", rendered everywhere the
 // links appear (footer, About's Get in Touch, the creators programme page).
@@ -80,7 +81,7 @@ export function getSocialPlatforms(
     .map(([key, href]) => ({ key, label: LABELS[key], href, path: ICONS[key] }));
 }
 
-export function SocialLinks({
+export async function SocialLinks({
   site,
   tone = "dark",
   includeWhatsApp = false,
@@ -94,6 +95,7 @@ export function SocialLinks({
 }) {
   const platforms = getSocialPlatforms(site, includeWhatsApp);
   if (platforms.length === 0) return null;
+  const ariaTemplate = await tr("Egypt Eye on {platform}");
 
   const styles =
     tone === "dark"
@@ -108,7 +110,7 @@ export function SocialLinks({
             href={p.href}
             target="_blank"
             rel="noreferrer"
-            aria-label={`Egypt Eye on ${p.label}`}
+            aria-label={ariaTemplate.replace("{platform}", p.label)}
             title={p.label}
             className={`flex h-11 w-11 items-center justify-center rounded-full border transition-colors duration-200 ${styles}`}
           >

@@ -31,7 +31,7 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
       return (
         <figure className="my-8">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={src} alt={value.caption || "Photo from this story"} loading="lazy" className="w-full rounded-2xl" />
+          <img src={src} alt={value.caption || ui["Photo from this story"]} loading="lazy" className="w-full rounded-2xl" />
           {value.caption && (
             <figcaption className="mt-2 text-center text-sm text-ink-soft/55">{value.caption}</figcaption>
           )}
@@ -55,7 +55,7 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
     photoBlock: ({ value }) => (
       <figure className="my-8">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={value.url} alt={value.alt || value.caption || "Photo from this story"} loading="lazy" className="w-full rounded-2xl" />
+        <img src={value.url} alt={value.alt || value.caption || ui["Photo from this story"]} loading="lazy" className="w-full rounded-2xl" />
         {value.caption && (
           <figcaption className="mt-2 text-center text-sm text-ink-soft/55">{value.caption}</figcaption>
         )}
@@ -75,7 +75,7 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
           <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-ink">
             <iframe
               src={src}
-              title={value.caption || "Embedded video"}
+              title={value.caption || ui["Embedded video"]}
               className="absolute inset-0 h-full w-full"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -98,7 +98,7 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
       value.experience ? (
         <div className="not-prose my-12 rounded-3xl border border-gold/20 bg-sand-dim p-6 sm:p-8">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
-            {value.eyebrow || "Want to Experience It?"}
+            {value.eyebrow || ui["Want to Experience It?"]}
           </p>
           <div className="mt-5 max-w-sm">
             <SignatureExperienceCard experience={value.experience} />
@@ -133,6 +133,9 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
 export async function StoryBody({ body }: { body: StoryBodyBlock[] }) {
   const ui = await trAll([
     "Gallery",
+    "Photo from this story",
+    "Embedded video",
+    "Want to Experience It?",
   ]);
 
   return (

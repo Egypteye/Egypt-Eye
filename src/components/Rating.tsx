@@ -39,17 +39,21 @@ export function hasProductReviews(rating?: RatingType): boolean {
 export async function Rating({ rating }: { rating?: RatingType }) {
   const ui = await trAll([
     "Egypt Eye's traveler reviews, collected in the follow-up after every trip and shoot.",
+    "{count} Egypt Eye review",
+    "{count} Egypt Eye reviews",
+    "{count} review",
+    "{count} reviews",
   ]);
 
   if (!rating || !rating.count) {
     return <span className="text-sm text-ink-soft/60"><T>New experience</T></span>;
   }
 
-  const plural = rating.count === 1 ? "" : "s";
+  const count = rating.count.toLocaleString();
   const reviews =
     rating.scope === "company"
-      ? `${rating.count.toLocaleString()} Egypt Eye review${plural}`
-      : `${rating.count.toLocaleString()} review${plural}`;
+      ? (rating.count === 1 ? ui["{count} Egypt Eye review"] : ui["{count} Egypt Eye reviews"]).replace("{count}", count)
+      : (rating.count === 1 ? ui["{count} review"] : ui["{count} reviews"]).replace("{count}", count);
 
   return (
     <span

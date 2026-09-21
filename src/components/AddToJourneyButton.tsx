@@ -27,6 +27,7 @@ export function AddToJourneyButton({
   suggestions?: JourneySuggestion[];
   className?: string;
 }) {
+  const tr = useTr();
   const items = useJourneyItems();
   const added = items.some((i) => i.type === type && i.slug === slug);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -49,12 +50,12 @@ export function AddToJourneyButton({
         } ${className}`}
       >
         <span aria-hidden="true">{added ? "✓" : "+"}</span>
-        {added ? "Added to My Journey" : "Add to My Journey"}
+        {added ? tr("Added to My Journey") : tr("Add to My Journey")}
       </button>
 
       {showSuggestions && suggestions && suggestions.length > 0 && (
         <SuggestionToast
-          label={`Added “${title}” — travelers also like`}
+          label={tr("Added “{title}” — travelers also like").replace("{title}", title)}
           suggestions={suggestions}
           onClose={() => setShowSuggestions(false)}
         />
@@ -112,6 +113,7 @@ export function SuggestionToast({
 }
 
 function SuggestionRow({ suggestion }: { suggestion: JourneySuggestion }) {
+  const tr = useTr();
   const items = useJourneyItems();
   const added = items.some((i) => i.type === suggestion.type && i.slug === suggestion.slug);
 
@@ -128,7 +130,7 @@ function SuggestionRow({ suggestion }: { suggestion: JourneySuggestion }) {
           added ? "bg-gold/20 text-gold-light" : "bg-gold text-ink hover:bg-gold-light"
         }`}
       >
-        {added ? "✓ Added" : "+ Add"}
+        {added ? tr("✓ Added") : tr("+ Add")}
       </button>
     </div>
   );

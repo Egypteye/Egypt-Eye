@@ -30,10 +30,10 @@ export function NewsletterSignup({
         body: JSON.stringify({ email, firstName: firstName || undefined, source, company }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Something went wrong.");
+      if (!res.ok) throw new Error(data.error || tr("Something went wrong."));
       setStatus("sent");
     } catch (err) {
-      setErrorMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));
       setStatus("error");
     }
   }
@@ -68,7 +68,7 @@ export function NewsletterSignup({
           disabled={status === "sending"}
           className="shrink-0 whitespace-nowrap rounded-full bg-gold-dark px-5 py-2.5 text-sm font-semibold text-cream transition hover:bg-ink disabled:opacity-60"
         >
-          {status === "sending" ? "Sending…" : "Get My 4% Off"}
+          {status === "sending" ? tr("Sending…") : tr("Get My 4% Off")}
         </button>
         {status === "error" && <p className="text-xs text-terracotta sm:basis-full">{errorMessage}</p>}
       </form>
@@ -89,7 +89,7 @@ export function NewsletterSignup({
             </label>
           </div>
           <label className="sr-only" htmlFor="newsletter-firstname">
-            First name (optional)
+            {tr("First name (optional)")}
           </label>
           <input
             id="newsletter-firstname"
@@ -112,7 +112,7 @@ export function NewsletterSignup({
             disabled={status === "sending"}
             className="shrink-0 whitespace-nowrap rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light disabled:opacity-60"
           >
-            {status === "sending" ? "Sending…" : "Get My 4% Off"}
+            {status === "sending" ? tr("Sending…") : tr("Get My 4% Off")}
           </button>
         </form>
         {status === "error" && <p className="mt-3 text-sm text-terracotta">{errorMessage}</p>}

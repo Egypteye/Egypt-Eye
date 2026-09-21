@@ -1,7 +1,9 @@
 import type { Host } from "@/content/types";
 import { SmartImage } from "./SmartImage";
+import { tr } from "@/i18n/T";
 
-export function HostCard({ host }: { host: Host }) {
+export async function HostCard({ host }: { host: Host }) {
+  const speaksLabel = host.languages && host.languages.length > 0 ? await tr("Speaks {languages}") : "";
   return (
     <div className="flex flex-col overflow-hidden rounded-3xl bg-cream shadow-sm shadow-black/5">
       <SmartImage
@@ -20,7 +22,7 @@ export function HostCard({ host }: { host: Host }) {
         <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-black/5 pt-3 text-xs text-ink-soft/60">
           {host.experience && <span>{host.experience}</span>}
           {host.languages && host.languages.length > 0 && (
-            <span>Speaks {host.languages.join(", ")}</span>
+            <span>{speaksLabel.replace("{languages}", host.languages.join(", "))}</span>
           )}
         </div>
       </div>
