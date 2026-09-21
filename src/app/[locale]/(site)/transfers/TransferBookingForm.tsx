@@ -20,12 +20,13 @@ function inputClass(extra = "") {
 }
 
 function Stepper({ value, onChange, min = 1, max = 60, label }: { value: number; onChange: (n: number) => void; min?: number; max?: number; label: string }) {
+  const tr = useTr();
   return (
     <div className={inputClass("flex items-center justify-between gap-3")}>
       <button
         type="button"
         onClick={() => onChange(Math.max(min, value - 1))}
-        aria-label={`Decrease ${label}`}
+        aria-label={tr("Decrease {label}").replace("{label}", label)}
         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sand-dim text-ink-soft transition hover:bg-sand-deep hover:text-ink"
       >
         −
@@ -34,7 +35,7 @@ function Stepper({ value, onChange, min = 1, max = 60, label }: { value: number;
       <button
         type="button"
         onClick={() => onChange(Math.min(max, value + 1))}
-        aria-label={`Increase ${label}`}
+        aria-label={tr("Increase {label}").replace("{label}", label)}
         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-sand-dim text-ink-soft transition hover:bg-sand-deep hover:text-ink"
       >
         +
@@ -94,19 +95,20 @@ export function TransferBookingForm({
   );
 
   function routeSummary(): string {
-    if (isPrivateDriver) return `Private Driver — ${isDailyRate ? "Full day" : `${durationHours} hours`} (${selectedVehicle.name})`;
-    if (isCustomCategory) return `${customFrom || "Pickup (custom)"} → ${customTo || "Destination (custom)"}`;
-    const fromLabel = fromZone?.isCustom ? customFrom || "Pickup (custom)" : fromZone?.label || "Pickup";
-    const toLabel = toZone?.isCustom ? customTo || "Destination (custom)" : toZone?.label || "Destination";
+    if (isPrivateDriver)
+      return `${tr("Private Driver")} — ${isDailyRate ? tr("Full day") : tr("{n} hours").replace("{n}", String(durationHours))} (${selectedVehicle.name})`;
+    if (isCustomCategory) return `${customFrom || tr("Pickup (custom)")} → ${customTo || tr("Destination (custom)")}`;
+    const fromLabel = fromZone?.isCustom ? customFrom || tr("Pickup (custom)") : fromZone?.label || tr("Pickup");
+    const toLabel = toZone?.isCustom ? customTo || tr("Destination (custom)") : toZone?.label || tr("Destination");
     return `${fromLabel} → ${toLabel}`;
   }
 
   function priceSummary(): string {
     if (quote.kind === "priced") {
-      const suffix = isPrivateDriver && !isDailyRate ? ` for ${durationHours}h` : "";
+      const suffix = isPrivateDriver && !isDailyRate ? tr(" for {n}h").replace("{n}", String(durationHours)) : "";
       return `$${quote.amount}${suffix}`;
     }
-    return "Quote requested";
+    return tr("Quote requested");
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -412,7 +414,7 @@ export function TransferBookingForm({
         disabled={status === "sending"}
         className="w-full rounded-full bg-ink py-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Sending…" : "Request This Transfer"}
+        {status === "sending" ? tr("Sending…") : tr("Request This Transfer")}
       </button>
 
       {status === "error" && (

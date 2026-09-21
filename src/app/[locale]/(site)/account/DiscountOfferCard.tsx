@@ -19,20 +19,21 @@ const STATUS_STYLE: Record<DiscountCode["status"], string> = {
   revoked: "bg-terracotta/10 text-terracotta",
 };
 
-const STATUS_LABEL: Record<DiscountCode["status"], string> = {
-  available: "Available",
-  redeemed: "Redeemed",
-  expired: "Expired",
-  revoked: "No Longer Valid",
-};
-
 export function DiscountOfferCard({ code }: { code: DiscountCode }) {
   const tr = useTr();
   const [copied, setCopied] = useState(false);
+
+  const STATUS_LABEL: Record<DiscountCode["status"], string> = {
+    available: tr("Available"),
+    redeemed: tr("Redeemed"),
+    expired: tr("Expired"),
+    revoked: tr("No Longer Valid"),
+  };
+
   const label =
     code.discount_campaigns?.discount_type === "fixed"
-      ? "Special Offer"
-      : `${code.discount_campaigns?.value ?? 4}% OFF`;
+      ? tr("Special Offer")
+      : tr("{pct}% OFF").replace("{pct}", String(code.discount_campaigns?.value ?? 4));
 
   async function handleCopy() {
     try {
@@ -55,7 +56,7 @@ export function DiscountOfferCard({ code }: { code: DiscountCode }) {
       <p className="mt-2 font-mono text-lg font-bold tracking-wide text-ink">{code.code}</p>
       {code.expires_at && (
         <p className="mt-1 text-xs text-ink-soft/50">
-          {code.status === "expired" ? "Expired" : "Valid until"} {new Date(code.expires_at).toLocaleDateString()}
+          {code.status === "expired" ? tr("Expired") : tr("Valid until")} {new Date(code.expires_at).toLocaleDateString()}
         </p>
       )}
       <div className="mt-4 flex gap-2">
@@ -64,7 +65,7 @@ export function DiscountOfferCard({ code }: { code: DiscountCode }) {
           onClick={handleCopy}
           className="flex-1 rounded-full border border-black/10 py-2 text-xs font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink"
         >
-          {copied ? "Copied ✓" : "Copy Code"}
+          {copied ? tr("Copied ✓") : tr("Copy Code")}
         </button>
         {code.status === "available" && (
           <Link

@@ -67,7 +67,7 @@ export function ProfileForm({ userId, profile }: { userId: string; profile: Prof
         disabled={status === "saving"}
         className="mt-2 self-start rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "saving" ? "Saving…" : "Save Changes"}
+        {status === "saving" ? tr("Saving…") : tr("Save Changes")}
       </button>
     </form>
   );

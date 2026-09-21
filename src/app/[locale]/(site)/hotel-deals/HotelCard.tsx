@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { SmartImage } from "@/components/SmartImage";
 import type { Hotel } from "@/lib/hotels";
-import { T } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
-export function HotelCard({ hotel }: { hotel: Hotel }) {
+export async function HotelCard({ hotel }: { hotel: Hotel }) {
+  const ui = await trAll(["View Details", "View Rates"]);
   const isApartment = hotel.property_type === "apartment";
   return (
     <div
@@ -44,7 +45,7 @@ export function HotelCard({ hotel }: { hotel: Hotel }) {
           href={`/hotel-deals/${hotel.slug}`}
           className="mt-auto inline-flex items-center justify-center rounded-full bg-ink py-2.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
         >
-          {isApartment ? "View Details" : "View Rates"}
+          {isApartment ? ui["View Details"] : ui["View Rates"]}
         </Link>
       </div>
     </div>

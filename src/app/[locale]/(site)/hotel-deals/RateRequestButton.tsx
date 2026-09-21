@@ -100,12 +100,12 @@ function RateRequestModal({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "Something went wrong. Please try again.");
+        throw new Error(data.error || tr("Something went wrong. Please try again."));
       }
       setStatus("success");
     } catch (err) {
       setStatus("error");
-      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setError(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));
     }
   }
 
@@ -243,7 +243,7 @@ function RateRequestModal({
               disabled={status === "submitting"}
               className="mt-1 rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
             >
-              {status === "submitting" ? "Sending…" : "Request Latest Rate"}
+              {status === "submitting" ? tr("Sending…") : tr("Request Latest Rate")}
             </button>
           </form>
         )}

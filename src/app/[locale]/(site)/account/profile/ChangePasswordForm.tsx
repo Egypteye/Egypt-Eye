@@ -17,12 +17,12 @@ export function ChangePasswordForm() {
     const confirm = (form.get("confirmPassword") as string) ?? "";
 
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters.");
+      setErrorMessage(tr("Password must be at least 8 characters."));
       setStatus("error");
       return;
     }
     if (password !== confirm) {
-      setErrorMessage("Passwords don't match.");
+      setErrorMessage(tr("Passwords don't match."));
       setStatus("error");
       return;
     }
@@ -52,7 +52,7 @@ export function ChangePasswordForm() {
         disabled={status === "saving"}
         className="self-start rounded-full border border-ink/15 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-ink hover:text-cream disabled:opacity-60"
       >
-        {status === "saving" ? "Saving…" : "Change Password"}
+        {status === "saving" ? tr("Saving…") : tr("Change Password")}
       </button>
     </form>
   );

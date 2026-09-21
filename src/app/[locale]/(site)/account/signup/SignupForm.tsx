@@ -25,7 +25,7 @@ export function SignupForm() {
     const marketingConsent = form.get("marketingConsent") === "on";
 
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters.");
+      setErrorMessage(tr("Password must be at least 8 characters."));
       setStatus("error");
       return;
     }
@@ -46,7 +46,7 @@ export function SignupForm() {
     if (error) {
       setErrorMessage(
         error.message.toLowerCase().includes("already registered") || error.status === 422
-          ? "An account with this email already exists — try logging in instead."
+          ? tr("An account with this email already exists — try logging in instead.")
           : error.message
       );
       setStatus("error");
@@ -96,11 +96,11 @@ export function SignupForm() {
         disabled={status === "sending"}
         className="mt-2 rounded-full bg-ink py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
       >
-        {status === "sending" ? "Creating your account…" : "Create My Account"}
+        {status === "sending" ? tr("Creating your account…") : tr("Create My Account")}
       </button>
 
       <p className="text-center text-xs text-ink-soft/60">
-        Already have an account?{" "}
+        {tr("Already have an account?")}{" "}
         <Link href={`/account/login?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">{tr("Log in")}</Link>
       </p>
     </form>

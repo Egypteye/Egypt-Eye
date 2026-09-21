@@ -38,12 +38,12 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
         body: JSON.stringify({ messages: next.map(({ role, content }) => ({ role, content })) }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Something went wrong");
+      if (!res.ok) throw new Error(data?.error || tr("Something went wrong"));
       setMessages([...next, { role: "assistant", content: data.reply, suggestedRequest: data.suggestedRequest, requestStatus: "idle" }]);
       setStatus("idle");
     } catch (err) {
       setStatus("error");
-      setErrorMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setErrorMessage(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));
     }
   }
 
@@ -93,7 +93,7 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
                       disabled={m.requestStatus === "sending"}
                       className="mt-2 rounded-full bg-ink px-3 py-1.5 font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
                     >
-                      {m.requestStatus === "sending" ? "Sending…" : "Yes, send this request"}
+                      {m.requestStatus === "sending" ? tr("Sending…") : tr("Yes, send this request")}
                     </button>
                   )}
                 </div>
