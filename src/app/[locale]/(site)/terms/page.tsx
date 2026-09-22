@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { alternatesFor } from "@/i18n/alternates";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
@@ -27,7 +28,7 @@ export default async function TermsPage() {
     "Pricing and payment",
     "Confirm currency, what's included in the quoted price, and accepted payment methods for the remaining balance.",
     "Cancellations and refunds",
-    "Set out the actual cancellation window and refund terms this business honors.",
+    "Published in full, and binding on every booking — see the Cancellation Policy page.",
     "Changes to an itinerary",
     "Explain who can request a change, and any cutoff before departure.",
     "Traveler responsibilities",
@@ -41,10 +42,14 @@ export default async function TermsPage() {
     "Questions in the meantime? Contact us at",
   ]);
 
-  const SECTIONS = [
+  const SECTIONS: { title: string; note: string; href?: string }[] = [
     { title: ui["Booking and confirmation"], note: ui["State how a booking becomes confirmed (the deposit terms already live on the Contact page's policy cards — reuse the real figures from there, don't restate a different number here)."] },
     { title: ui["Pricing and payment"], note: ui["Confirm currency, what's included in the quoted price, and accepted payment methods for the remaining balance."] },
-    { title: ui["Cancellations and refunds"], note: ui["Set out the actual cancellation window and refund terms this business honors."] },
+    {
+      title: ui["Cancellations and refunds"],
+      note: ui["Published in full, and binding on every booking — see the Cancellation Policy page."],
+      href: "/cancellation-policy",
+    },
     { title: ui["Changes to an itinerary"], note: ui["Explain who can request a change, and any cutoff before departure."] },
     { title: ui["Traveler responsibilities"], note: ui["Cover passports/visas, travel insurance, and health requirements the traveler is responsible for arranging themselves."] },
     { title: ui["Liability"], note: ui["This needs a lawyer's input — do not publish liability language without legal review."] },
@@ -70,7 +75,16 @@ export default async function TermsPage() {
               <h2 className="font-display text-xl font-semibold text-ink">
                 {i + 1}. {s.title}
               </h2>
-              <p className="mt-2 text-sm italic text-ink-soft/60">{s.note}</p>
+              {"href" in s && s.href ? (
+                <p className="mt-2 text-sm text-ink-soft/75">
+                  {s.note}{" "}
+                  <Link href={s.href} className="font-medium text-gold-dark underline underline-offset-2 hover:text-ink">
+                    <T>Read the Cancellation Policy</T>
+                  </Link>
+                </p>
+              ) : (
+                <p className="mt-2 text-sm italic text-ink-soft/60">{s.note}</p>
+              )}
             </div>
           ))}
         </div>

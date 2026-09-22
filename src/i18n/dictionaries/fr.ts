@@ -47,6 +47,7 @@ export const fr: Dictionary = {
     travelerReviews: "Avis voyageurs",
     privacy: "Politique de confidentialité",
     terms: "Conditions générales",
+    cancellation: "Politique d’annulation",
     rightsReserved: "Tous droits réservés.",
   },
 
@@ -236,6 +237,11 @@ export const fr: Dictionary = {
       title: "Conditions générales",
       description:
         "Les conditions de réservation, de paiement, d'annulation et de responsabilité applicables à chaque voyage, transfert et séance photo Egypt Eye Travel & Tours.",
+    },
+    "/cancellation-policy": {
+      title: "Politique d’annulation",
+      description:
+        "Comment fonctionnent les annulations, les modifications, les remboursements et l’avoir voyage pour chaque voyage, transfert et séance photo Egypt Eye Travel & Tours.",
     },
     "/pharaoh-challenge": {
       title: "Pharaoh's Challenge — jouez et gagnez",

@@ -287,6 +287,11 @@ export default async function TourDetailPage({
             <div className="mt-6 space-y-3 border-t border-black/5 pt-6 text-xs text-ink-soft/60">
               <p>{site.policies.deposit}</p>
               <p>{site.policies.currency}</p>
+              <p>
+                <Link href="/cancellation-policy" className="underline underline-offset-2 hover:text-ink">
+                  <T>Cancellation Policy</T>
+                </Link>
+              </p>
             </div>
           </aside>
         </Container>
