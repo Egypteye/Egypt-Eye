@@ -47,6 +47,7 @@ export const ru: Dictionary = {
     travelerReviews: "Отзывы путешественников",
     privacy: "Политика конфиденциальности",
     terms: "Условия использования",
+    cancellation: "Политика отмены",
     rightsReserved: "Все права защищены.",
   },
 
@@ -236,6 +237,11 @@ export const ru: Dictionary = {
       title: "Условия использования",
       description:
         "Условия бронирования, оплаты, отмены и ответственности, действующие для каждой поездки, трансфера и фотосессии Egypt Eye Travel & Tours.",
+    },
+    "/cancellation-policy": {
+      title: "Политика отмены",
+      description:
+        "Как работают отмены, изменения, возвраты и туристический кредит для каждой поездки, трансфера и фотосессии Egypt Eye Travel & Tours.",
     },
     "/pharaoh-challenge": {
       title: "Pharaoh's Challenge — играйте и выигрывайте",

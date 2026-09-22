@@ -655,6 +655,12 @@ export default async function AboutPage() {
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                   <p className="font-display text-lg font-semibold text-ink"><T>Cancellation Policy</T></p>
                   <p className="mt-2 text-sm text-ink-soft/75">{site.policies.cancellation}</p>
+                  <Link
+                    href="/cancellation-policy"
+                    className="mt-3 inline-block text-sm font-medium text-gold-dark underline underline-offset-2 hover:text-ink"
+                  >
+                    <T>Read the full Cancellation Policy</T>
+                  </Link>
                 </div>
               </div>
             </div>

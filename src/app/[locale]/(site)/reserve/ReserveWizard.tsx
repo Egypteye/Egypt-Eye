@@ -389,6 +389,17 @@ function ReviewStep({
           We&rsquo;ll confirm your exact pricing directly once we&rsquo;ve reviewed your journey
           {hasDiscount ? " — your discount code will be applied to that quote." : "."}
         </p>
+        {/* Submitting this form costs nothing and commits nothing: it is a
+            request, and payment happens later, offline. So this deliberately
+            says the policy applies "once you pay a deposit" rather than
+            implying that sending the request accepts it. */}
+        <p className="mt-2 text-xs text-ink-soft/70">
+          {tr("Sending this request is free and commits you to nothing. Once you pay a deposit, our Cancellation Policy applies — deposits and payments are non-refundable.")}{" "}
+          <Link href="/cancellation-policy" className="font-medium text-ink underline underline-offset-2">
+            {tr("Read it before you pay")}
+          </Link>
+          .
+        </p>
       </div>
 
       {submitError && <p className="text-sm text-terracotta">{submitError}</p>}

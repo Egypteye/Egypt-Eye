@@ -123,6 +123,9 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
             <Link href={to("/terms")} className="hover:text-cream/70">
               {dict.footer.terms}
             </Link>
+            <Link href={to("/cancellation-policy")} className="hover:text-cream/70">
+              {dict.footer.cancellation}
+            </Link>
             <p>{site.footer.location}</p>
           </div>
         </Container>

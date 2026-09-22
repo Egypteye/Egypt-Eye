@@ -48,6 +48,7 @@ export const ar: Dictionary = {
     travelerReviews: "آراء المسافرين",
     privacy: "سياسة الخصوصية",
     terms: "شروط الخدمة",
+    cancellation: "سياسة الإلغاء",
     rightsReserved: "جميع الحقوق محفوظة.",
   },
 
@@ -237,6 +238,11 @@ export const ar: Dictionary = {
       title: "شروط الخدمة",
       description:
         "شروط الحجز والدفع والإلغاء والمسؤولية المطبّقة على كل رحلة وتنقّل وجلسة تصوير مع Egypt Eye Travel & Tours.",
+    },
+    "/cancellation-policy": {
+      title: "سياسة الإلغاء",
+      description:
+        "كيف تعمل عمليات الإلغاء والتغيير والاسترداد ورصيد السفر في كل رحلة وتنقّل وجلسة تصوير مع Egypt Eye Travel & Tours.",
     },
     "/pharaoh-challenge": {
       title: "تحدّي الفرعون — العب واربح",

@@ -36,6 +36,9 @@ import { site } from "../src/content/site.js";
 import { faqs } from "../src/content/faq.js";
 import { testimonials } from "../src/content/testimonials.js";
 import { agencyTrips } from "../src/content/aboutCredibility.js";
+// Already flattened to just the translatable strings, so the walk never
+// sees the structural `kind`/`id` fields that carry no prose.
+import { cancellationPolicyStrings } from "../src/content/cancellationPolicy.js";
 
 const MANIFEST = "src/i18n/generated/manifest.json";
 const UI_MANIFEST = "src/i18n/generated/ui-manifest.json";
@@ -58,6 +61,10 @@ const sources: [string, unknown][] = [
   ["faqs", faqs],
   ["testimonials", testimonials],
   ["agencyTrips", agencyTrips],
+  // Wrapped under a prose key: collectStrings classifies by field name and
+  // an array inherits its parent's key, so a bare top-level array of
+  // strings is collected as nothing.
+  ["cancellationPolicy", { body: cancellationPolicyStrings }],
 ];
 
 const all = new Map<string, string>();
