@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState, type FormEvent } from "react";
+import Link from "next/link";
 import { localizedTransferCategories } from "@/content/productTranslations";
 import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { getTransferQuote } from "@/lib/transferPricing";
@@ -416,6 +417,14 @@ export function TransferBookingForm({
       >
         {status === "sending" ? tr("Sending…") : tr("Request This Transfer")}
       </button>
+
+      <p className="mt-3 text-center text-xs text-ink-soft/60">
+        {tr("Free to ask, no obligation. Deposits become non-refundable once a booking is confirmed —")}{" "}
+        <Link href="/cancellation-policy" className="underline underline-offset-2 hover:text-ink">
+          {tr("see our Cancellation Policy")}
+        </Link>
+        .
+      </p>
 
       {status === "error" && (
         <p className="mt-3 text-center text-xs text-terracotta">{tr("Something went wrong sending your request. Please message us directly on WhatsApp instead.")}</p>

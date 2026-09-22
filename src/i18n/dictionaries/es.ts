@@ -47,6 +47,7 @@ export const es: Dictionary = {
     travelerReviews: "Opiniones de viajeros",
     privacy: "Política de privacidad",
     terms: "Términos del servicio",
+    cancellation: "Política de cancelación",
     rightsReserved: "Todos los derechos reservados.",
   },
 
@@ -236,6 +237,11 @@ export const es: Dictionary = {
       title: "Términos del servicio",
       description:
         "Las condiciones de reserva, pago, cancelación y responsabilidad que se aplican a cada viaje, traslado y sesión de fotos de Egypt Eye Travel & Tours.",
+    },
+    "/cancellation-policy": {
+      title: "Política de cancelación",
+      description:
+        "Cómo funcionan las cancelaciones, los cambios, los reembolsos y el crédito de viaje en cada viaje, traslado y sesión de fotos de Egypt Eye Travel & Tours.",
     },
     "/pharaoh-challenge": {
       title: "Pharaoh's Challenge — juega y gana",

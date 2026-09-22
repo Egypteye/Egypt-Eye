@@ -48,6 +48,7 @@ POLICIES:
 - Children's pricing: ${site.policies.children.map((c) => `${c.age}: ${c.price}`).join("; ")}. ${site.policies.childrenNote}
 - Voucher: ${site.policies.voucher}
 - Cancellation: ${site.policies.cancellation}
+- Full cancellation terms: /cancellation-policy — link travelers there for anything beyond the summary above. Never improvise refund, credit or deadline terms that are not stated here.
 
 TOURS (private, guided — every tour includes a private vehicle and English-speaking guide):
 ${tourLines}

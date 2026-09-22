@@ -1,5 +1,6 @@
 // Global site configuration. Edit brand copy, contact info, and policies here —
 // changes here update every page that references them.
+import { cancellationSummary } from "./cancellationPolicy";
 import { destinations } from "./destinations";
 import { interests } from "./interests";
 
@@ -122,7 +123,7 @@ export const site = {
   },
   policies: {
     deposit:
-      "A 20% down payment secures your reservation. The remaining balance can be paid in cash or via PayPal at the end of the day or tour.",
+      "A 20% down payment secures your reservation and is non-refundable. The remaining balance can be paid in cash or via PayPal at the end of the day or tour.",
     currency:
       "You may pay in USD, Euro, or British Pound. Once your tour is confirmed, the rate we quote you is guaranteed not to change.",
     children: [
@@ -134,8 +135,11 @@ export const site = {
       "If airfare is involved, an additional child airfare charge may apply.",
     voucher:
       "After confirmation, we email you a final confirmation and voucher containing your tour information, operator contact numbers, customer-care information, and other useful details.",
-    cancellation:
-      "For force majeure situations (e.g. volcanoes, earthquakes, or other circumstances outside our control), we do not charge a cancellation fee. If you cancel for personal or business reasons after we have incurred costs on your behalf, those costs may be transferred to you.",
+    // Short form only — the binding text lives in content/cancellationPolicy.ts
+    // and is published at /cancellation-policy, which every surface quoting
+    // this summary links to. Imported rather than duplicated so the two can
+    // never drift apart.
+    cancellation: cancellationSummary,
   },
   // Intentionally empty until real numbers are supplied (years operating,
   // an actual guest count, a genuine review-platform rating) — the trust

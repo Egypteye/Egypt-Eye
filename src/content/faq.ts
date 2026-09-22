@@ -17,7 +17,7 @@ export const faqs = [
   {
     question: "How does payment work?",
     answer:
-      "A 20% deposit secures your booking. The remaining balance is paid in cash or via PayPal at the end of your tour. Prices are quoted in USD, and we also accept Euro and British Pound — once confirmed, your price won't change.",
+      "A 20% deposit secures your booking and is non-refundable. The remaining balance is paid in cash or via PayPal at the end of your tour. Prices are quoted in USD, and we also accept Euro and British Pound — once confirmed, your price won't change.",
   },
   {
     question: "Is it just my group, or will I be grouped with strangers?",
@@ -27,6 +27,6 @@ export const faqs = [
   {
     question: "What if my plans change or I need to cancel?",
     answer:
-      "We don't charge a cancellation fee for force-majeure situations outside anyone's control. For personal cancellations after we've already incurred costs on your behalf, those costs may be passed on — see our full cancellation policy on the Contact page.",
+      "Deposits and payments are non-refundable, because we commit costs to guides, drivers, hotels and permits as soon as a booking is confirmed. If you cancel, we may be able to hold the recoverable value as travel credit or move it to another date, at our discretion and subject to what our suppliers release. For force majeure we charge no cancellation fee of our own, though supplier terms still apply. The full terms are on our Cancellation Policy page.",
   },
 ] as const;

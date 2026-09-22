@@ -53,6 +53,7 @@ export const en = {
     travelerReviews: "Traveler Reviews",
     privacy: "Privacy Policy",
     terms: "Terms of Service",
+    cancellation: "Cancellation Policy",
     rightsReserved: "All rights reserved.",
   },
 
@@ -250,6 +251,11 @@ export const en = {
       title: "Terms of Service",
       description:
         "The booking, payment, cancellation and liability terms that apply to every Egypt Eye Travel & Tours trip, transfer and photoshoot.",
+    },
+    "/cancellation-policy": {
+      title: "Cancellation Policy",
+      description:
+        "How cancellations, changes, refunds and travel credit work on every Egypt Eye Travel & Tours trip, transfer and photoshoot.",
     },
     "/pharaoh-challenge": {
       title: "Pharaoh's Challenge — Play & Win",

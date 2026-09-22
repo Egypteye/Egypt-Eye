@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import type { CustomizeFormField, CustomizeFormSection, Destination, Interest, ResolvedSiteSettings } from "@/content/types";
 import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
@@ -203,6 +204,17 @@ export function CustomizeForm({
       >
         {status === "sending" ? tr("Sending…") : tr("Send My Request")}
       </button>
+
+      {/* Requesting a quote is free and non-binding — payment happens later,
+          off-site — so this points at the policy rather than implying that
+          sending the form accepts it. */}
+      <p className="mt-3 text-center text-xs text-ink-soft/60">
+        {tr("Free to ask, no obligation. Deposits become non-refundable once a booking is confirmed —")}{" "}
+        <Link href="/cancellation-policy" className="underline underline-offset-2 hover:text-ink">
+          {tr("see our Cancellation Policy")}
+        </Link>
+        .
+      </p>
 
       {status === "sent" && (
         <p className="mt-3 text-center text-xs text-ink-soft/60">
