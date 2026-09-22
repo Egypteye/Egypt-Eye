@@ -6,10 +6,10 @@ import { localePath } from "@/i18n/locales";
 import { Container } from "@/components/Container";
 import { getSiteSettings } from "@/sanity/fetchers";
 import { T, trAll } from "@/i18n/T";
+import { localizeContent } from "@/i18n/localizeDeep";
 import {
   cancellationIntro,
   cancellationLastUpdated,
-  cancellationPolicyStrings,
   cancellationSections,
 } from "@/content/cancellationPolicy";
 
@@ -35,13 +35,16 @@ export default async function CancellationPolicyPage() {
   const site = await getSiteSettings();
   const to = (path: string) => localePath(path, locale);
 
-  // One hoisted call covering the policy body plus this page's own chrome —
-  // `await tr()` inside the .map() below would not translate.
-  const ui = await trAll([
-    ...cancellationPolicyStrings,
-    "Last updated",
-    "Questions about a booking? Contact us at",
+  // Two stores, deliberately. The policy text is content — it is registered
+  // with the extractor's source list and lands in the content manifest, which
+  // only localizeContent reads. This page's own chrome is UI, written as
+  // literals here, so it goes through trAll. Running policy text through
+  // trAll silently returns English: the UI store has never heard of it.
+  const [sections, { intro }] = await Promise.all([
+    localizeContent(cancellationSections, locale),
+    localizeContent({ intro: cancellationIntro }, locale),
   ]);
+  const ui = await trAll(["Last updated", "Questions about a booking? Contact us at"]);
 
   return (
     <section className="py-24">
@@ -53,7 +56,7 @@ export default async function CancellationPolicyPage() {
           <T>Cancellation Policy</T>
         </h1>
 
-        <p className="mt-6 text-base leading-relaxed text-ink-soft/80">{ui[cancellationIntro]}</p>
+        <p className="mt-6 text-base leading-relaxed text-ink-soft/80">{intro}</p>
 
         <p className="mt-4 text-xs uppercase tracking-[0.2em] text-ink-soft/50">
           {ui["Last updated"]}{" "}
@@ -61,21 +64,21 @@ export default async function CancellationPolicyPage() {
         </p>
 
         <ol className="mt-12 space-y-10">
-          {cancellationSections.map((section, i) => (
+          {sections.map((section, i) => (
             <li key={section.id} id={section.id} className="scroll-mt-28">
               <h2 className="font-display text-xl font-semibold text-ink">
-                {i + 1}. {ui[section.title]}
+                {i + 1}. {section.title}
               </h2>
               <div className="mt-3 space-y-3">
                 {section.blocks.map((block, bi) =>
                   block.kind === "p" ? (
                     <p key={bi} className="text-sm leading-relaxed text-ink-soft/80">
-                      {ui[block.text]}
+                      {block.text}
                     </p>
                   ) : (
                     <ul key={bi} className="ml-5 list-disc space-y-1.5 text-sm leading-relaxed text-ink-soft/80 marker:text-gold-dark">
                       {block.items.map((item) => (
-                        <li key={item}>{ui[item]}</li>
+                        <li key={item}>{item}</li>
                       ))}
                     </ul>
                   )

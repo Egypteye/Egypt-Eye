@@ -30,7 +30,7 @@ const PROSE_KEYS = new Set([
   "eyebrow", "badge", "label", "caption", "alt", "text", "summary",
   // Lists that render as bullets
   "highlights", "included", "excluded", "addOns", "delivery", "goodFor",
-  "goodToKnow", "careItems", "locations", "steps", "perks", "features",
+  "goodToKnow", "careItems", "locations", "steps", "perks", "features", "items",
   // Q&A and quotes
   "question", "answer", "quote", "attribution", "context", "role", "bio",
   // Product detail that is displayed, never matched on
