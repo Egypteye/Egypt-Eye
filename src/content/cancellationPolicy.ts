@@ -87,6 +87,28 @@ export const cancellationSections: PolicySection[] = [
     ],
   },
   {
+    id: "future-trip-credit",
+    title: "Future trip credit",
+    blocks: [
+      {
+        kind: "p",
+        text: "Payments and deposits are not refundable in cash, but they need not be lost. Where a booking is cancelled, the eligible value can usually be held as a travel credit toward a future trip with us.",
+      },
+      {
+        kind: "p",
+        text: "That credit can go toward the same trip on a later date, or toward an entirely different tour, transfer, photoshoot or custom itinerary we arrange — it is not tied to the trip you originally booked.",
+      },
+      {
+        kind: "p",
+        text: "Any non-refundable costs, supplier cancellation fees or expenses already incurred on your behalf are deducted before the credit is issued. Where the new trip costs more than the credit available, the difference is payable by you.",
+      },
+      {
+        kind: "p",
+        text: "Credit cannot be exchanged for cash, and remains subject to availability and to the terms that apply to the new booking.",
+      },
+    ],
+  },
+  {
     id: "last-minute-cancellations",
     title: "Last-minute cancellations",
     blocks: [
