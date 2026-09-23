@@ -5,6 +5,10 @@ const FIELD_TYPES = [
   { title: "Short text", value: "text" },
   { title: "Email", value: "email" },
   { title: "Phone", value: "tel" },
+  // Pairs a required dialling-code dropdown with the number and submits them
+  // as one value. Prefer this over plain "Phone": a number typed without a
+  // country code often cannot be dialled at all.
+  { title: "Phone with country code", value: "tel-country" },
   { title: "Number", value: "number" },
   { title: "Date", value: "date" },
   { title: "Long text (textarea)", value: "textarea" },

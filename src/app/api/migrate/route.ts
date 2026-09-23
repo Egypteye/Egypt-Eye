@@ -183,6 +183,19 @@ export async function GET(request: NextRequest) {
     existingSignatureMedia = new Map(rows.map((r) => [r._id, { heroImage: r.heroImage, gallery: r.gallery }]));
   }
 
+  // And for the Customize page's banner photo. Same rule as every block
+  // above — a Studio upload has no equivalent in content/customizePage.ts, so
+  // rewriting bannerImage from the content file alone would blank it. This was
+  // missing, which meant any customizePage migration silently dropped an
+  // uploaded banner back to the gradient placeholder.
+  let existingCustomizeMedia: { image?: unknown } = {};
+  if (shouldRun("customizePage")) {
+    const row = await client.fetch<{ bannerImage?: { image?: unknown } } | null>(
+      `*[_id == "customizePage"][0]{bannerImage}`
+    );
+    existingCustomizeMedia = { image: row?.bannerImage?.image };
+  }
+
   // Same reasoning again, for siteSettings' own image fields. These have no
   // equivalent in content/site.ts at all — heroImages (the homepage hero
   // slideshow), the four banner photos, and destinationPhotos are Studio-only
@@ -502,7 +515,11 @@ export async function GET(request: NextRequest) {
       eyebrow: customizePage.eyebrow,
       headline: customizePage.headline,
       subtext: customizePage.subtext,
-      bannerImage: { _type: "object", tone: customizePage.bannerImage.tone },
+      bannerImage: {
+        _type: "object",
+        tone: customizePage.bannerImage.tone,
+        image: existingCustomizeMedia.image,
+      },
       steps: customizePage.steps.map((s) => ({ ...s, _type: "object", _key: key() })),
       formIntroEyebrow: customizePage.formIntroEyebrow,
       formIntroTitle: customizePage.formIntroTitle,
