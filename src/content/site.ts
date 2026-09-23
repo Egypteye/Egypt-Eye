@@ -112,7 +112,7 @@ export const site = {
       body: "Message us on WhatsApp and hear back from an actual person — not a bot — usually within hours.",
     },
   ],
-  destinations,
+  citySpotlights: destinations,
   interests,
   footer: {
     exploreLabel: "Explore",

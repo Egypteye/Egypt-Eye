@@ -338,7 +338,9 @@ export function EgyptMap({
                 setOpenCitySlug((cur) => (cur === city.slug ? null : city.slug));
               }}
               aria-label={
-                city.hubSlug ? `${city.name} — see tours` : `${city.name} — no tours here yet`
+                city.hubSlug
+                  ? tr("{name} — see tours").replace("{name}", city.name)
+                  : tr("{name} — no tours here yet").replace("{name}", city.name)
               }
               aria-expanded={open}
               disabled={!interactive}
@@ -551,7 +553,7 @@ export function EgyptMap({
                 href="/customize"
                 className="mt-3 inline-flex items-center gap-1.5 text-xs font-semibold text-gold-dark hover:underline"
               >
-                Suggest {openCity.name} to us
+                {tr("Suggest {name} to us").replace("{name}", openCity.name)}
                 <svg viewBox="0 0 20 20" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
