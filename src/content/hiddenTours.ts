@@ -96,7 +96,7 @@ export function isHiddenTour(slug: string): boolean {
  * instead of having to remember.
  */
 export function withoutHiddenTours<T extends { slug: string }>(tours: T[]): T[] {
-  return tours.filter((tour) => !hiddenTourSlugs.has(tour.slug));
+  return tours.filter((tour) => tour && !hiddenTourSlugs.has(tour.slug));
 }
 
 /**
@@ -111,9 +111,17 @@ export function withoutHiddenTours<T extends { slug: string }>(tours: T[]): T[] 
 export function withoutHiddenRelatedTours<T extends { relatedTours?: { slug: string }[] }>(
   items: T[]
 ): T[] {
-  return items.map((item) =>
-    item.relatedTours?.some((t) => hiddenTourSlugs.has(t.slug))
-      ? { ...item, relatedTours: item.relatedTours.filter((t) => !hiddenTourSlugs.has(t.slug)) }
-      : item
-  );
+  return items.map((item) => {
+    const related = item.relatedTours;
+    if (!related) return item;
+    // `null` entries are real: GROQ's `relatedTours[]->` dereferences to null
+    // when the referenced tour has been deleted or unpublished, so a document
+    // that still holds a stale reference comes back with a hole in the array.
+    // The local fallback never contains one, which is why reading `t.slug`
+    // straight off each entry survived every sandbox check and then crashed
+    // the build the moment Sanity was the one answering. Dropping the holes
+    // here also spares every consumer downstream the same guard.
+    const cleaned = related.filter((t) => t && !hiddenTourSlugs.has(t.slug));
+    return cleaned.length === related.length ? item : { ...item, relatedTours: cleaned };
+  });
 }
