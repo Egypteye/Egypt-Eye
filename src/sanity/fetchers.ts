@@ -610,7 +610,7 @@ async function getSiteSettingsInner(): Promise<ResolvedSiteSettings> {
     trustStats: { ...localSite.trustStats, ...result.trustStats },
     nav: nav.length > 0 ? nav : localSite.nav,
     trustBadges: trustBadges.length > 0 ? trustBadges : localSite.trustBadges,
-    destinations: destinations.length > 0 ? destinations : localSite.destinations,
+    citySpotlights: destinations.length > 0 ? destinations : localSite.citySpotlights,
     interests: interests.length > 0 ? interests : localSite.interests,
     footer: { ...localSite.footer, ...result.footer },
   };
