@@ -583,6 +583,10 @@ export type CustomizeFormFieldType =
   | "text"
   | "email"
   | "tel"
+  // A dialling-code dropdown paired with the number, submitted as one value.
+  // Plain "tel" leaves the code optional, and a number without one often
+  // cannot be dialled at all.
+  | "tel-country"
   | "number"
   | "date"
   | "textarea"
