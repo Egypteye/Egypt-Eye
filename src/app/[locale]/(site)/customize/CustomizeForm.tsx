@@ -12,10 +12,11 @@ const CHIPS_TYPES = new Set(["chips", "chips-destinations", "chips-interests"]);
 function optionsFor(
   field: CustomizeFormField,
   destinations: readonly Destination[],
-  interests: readonly Interest[]
+  interests: readonly Interest[],
+  dayLabels: { day: string; days: string }
 ): string[] {
   if (field.fieldType === "chips-destinations") {
-    return destinations.map((d) => `${d.name} (${d.days}+ day${d.days > 1 ? "s" : ""})`);
+    return destinations.map((d) => `${d.name} (${d.days}+ ${d.days > 1 ? dayLabels.days : dayLabels.day})`);
   }
   if (field.fieldType === "chips-interests") {
     return interests.map((i) => i.label);
@@ -187,7 +188,7 @@ export function CustomizeForm({
                 field={field}
                 selected={chipSelections[field.fieldKey] ?? []}
                 onToggleChip={(value) => toggleChip(field.fieldKey, value)}
-                destinations={site.destinations}
+                destinations={site.citySpotlights}
                 interests={site.interests}
               />
             ))}
@@ -261,11 +262,17 @@ function FieldRenderer({
   const widthClass = field.width === "full" ? "sm:col-span-2" : "";
   const label = field.required ? `${field.label} *` : field.label;
 
+  const tr = useTr();
+
   if (CHIPS_TYPES.has(field.fieldType)) {
     return (
       <div className={widthClass}>
         <p className="mb-2 text-sm font-medium text-ink-soft">{label}</p>
-        <ChipGroup options={optionsFor(field, destinations, interests)} selected={selected} onToggle={onToggleChip} />
+        <ChipGroup
+          options={optionsFor(field, destinations, interests, { day: tr("day"), days: tr("days") })}
+          selected={selected}
+          onToggle={onToggleChip}
+        />
       </div>
     );
   }

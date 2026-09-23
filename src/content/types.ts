@@ -568,7 +568,12 @@ export type ResolvedSiteSettings = {
     reviewPlatformUrl?: string;
   };
   trustBadges: readonly { icon: "shield" | "coin" | "chat"; title: string; body: string }[];
-  destinations: readonly Destination[];
+  // Named citySpotlights, not destinations — "destinations" tail-matches the
+  // OPAQUE_KEYS entry used for the Tour/Experience destination-tag arrays
+  // (which double as map-matching input and must never translate), so
+  // localizeContent() would skip this whole array, city names included, if
+  // it kept the same name. Same fix as heroImages -> heroSlides.
+  citySpotlights: readonly Destination[];
   interests: readonly Interest[];
   footer: {
     exploreLabel: string;

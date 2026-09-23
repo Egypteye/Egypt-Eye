@@ -442,7 +442,7 @@ export async function GET(request: NextRequest) {
       trustStats: { _type: "object", ...site.trustStats },
       nav: site.nav.map((n) => ({ ...n, _type: "object", _key: key() })),
       trustBadges: site.trustBadges.map((b) => ({ ...b, _type: "object", _key: key() })),
-      destinations: site.destinations.map((d) => ({ ...d, _type: "object", _key: key() })),
+      destinations: site.citySpotlights.map((d) => ({ ...d, _type: "object", _key: key() })),
       interests: site.interests.map((i) => ({ ...i, _type: "object", _key: key() })),
       footer: { _type: "object", ...site.footer },
       policies: {

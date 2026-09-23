@@ -39,6 +39,7 @@ import { agencyTrips } from "../src/content/aboutCredibility.js";
 // Already flattened to just the translatable strings, so the walk never
 // sees the structural `kind`/`id` fields that carry no prose.
 import { cancellationPolicyStrings } from "../src/content/cancellationPolicy.js";
+import { egyptCities } from "../src/content/egyptCities.js";
 
 const MANIFEST = "src/i18n/generated/manifest.json";
 const UI_MANIFEST = "src/i18n/generated/ui-manifest.json";
@@ -65,6 +66,7 @@ const sources: [string, unknown][] = [
   // an array inherits its parent's key, so a bare top-level array of
   // strings is collected as nothing.
   ["cancellationPolicy", { body: cancellationPolicyStrings }],
+  ["egyptCities", egyptCities],
 ];
 
 const all = new Map<string, string>();
