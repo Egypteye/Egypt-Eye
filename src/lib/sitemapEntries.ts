@@ -9,17 +9,17 @@ import {
 } from "@/sanity/fetchers";
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
-import { LOCALES, localePath } from "@/i18n/locales";
+import { LOCALES, localePath, type Locale, type LocaleInfo } from "@/i18n/locales";
 import { isLocalePublished } from "@/i18n/readiness";
 
 // Slugs that 301-redirect elsewhere (see next.config.ts) — keep them out of
 // the sitemap even if the underlying Sanity document hasn't been removed yet.
 const REDIRECTED_STORY_SLUGS = new Set(["best-travel-agencies-in-egypt-2025-guide"]);
 
-// Cached rather than rebuilt per request. Every source below is a network
-// call, and a sitemap that re-queries Sanity and Supabase on each Googlebot
-// fetch is both slow and fragile. Matches the fetchers' own window.
-export const revalidate = 3600;
+// Both sitemap routes set `revalidate = 3600` themselves — Next needs that as
+// a literal, so it cannot be shared from here. Every source below is a network
+// call, and re-querying Sanity and Supabase on each Googlebot fetch would be
+// both slow and fragile; an hour matches the fetchers' own window.
 
 /**
  * A sitemap that cannot fail.
@@ -38,7 +38,19 @@ async function safeList<T>(label: string, load: () => Promise<T[]>): Promise<T[]
   }
 }
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+/**
+ * The URLs for one locale's sitemap.
+ *
+ * Not a Next metadata file. app/sitemap.ts would own /sitemap.xml and, under
+ * generateSitemaps(), serve the children at /sitemap/<locale>.xml while
+ * leaving /sitemap.xml itself a 404 — and Next then refuses a route handler
+ * there, because the metadata convention reserves the path whether or not it
+ * answers. Since /sitemap.xml is the URL robots.txt advertises and Search
+ * Console already has, both routes are written by hand instead and this
+ * module is the shared source behind them.
+ */
+export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sitemap> {
+  const locale = publishedLocales().find((l) => l.code === code) ?? LOCALES[0];
   const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories, destinationHubs, hotels] =
     await Promise.all([
       safeList("tours", getAllTourSlugs),
@@ -123,7 +135,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.75,
   }));
 
-  return withLocales([
+  return forLocale([
     ...staticRoutes,
     ...tourRoutes,
     ...experienceRoutes,
@@ -132,7 +144,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...signatureExperienceRoutes,
     ...storyRoutes,
     ...destinationRoutes,
-  ]);
+  ], locale);
 }
 
 /**
@@ -151,19 +163,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
  * currently not indexed" for want of crawl budget. Locales rejoin
  * automatically as the pipeline fills them — see i18n/readiness.ts.
  */
-function withLocales(entries: MetadataRoute.Sitemap): MetadataRoute.Sitemap {
-  const published = LOCALES.filter((l) => isLocalePublished(l.code));
+export function publishedLocales() {
+  return LOCALES.filter((l) => isLocalePublished(l.code));
+}
 
-  return entries.flatMap((entry) => {
+function forLocale(entries: MetadataRoute.Sitemap, locale: LocaleInfo): MetadataRoute.Sitemap {
+  const published = publishedLocales();
+
+  return entries.map((entry) => {
     const path = entry.url.startsWith(siteUrl) ? entry.url.slice(siteUrl.length) || "/" : entry.url;
     const languages: Record<string, string> = {};
     for (const l of published) languages[l.htmlLang] = `${siteUrl}${localePath(path, l.code)}`;
 
-    return published.map((l) => ({
+    return {
       ...entry,
-      url: `${siteUrl}${localePath(path, l.code)}`,
+      url: `${siteUrl}${localePath(path, locale.code)}`,
+      // Each file still declares every language for the page it lists. That
+      // is what tells Google the six files are one site in six languages
+      // rather than six sites competing for the same queries.
       ...(published.length > 1 ? { alternates: { languages } } : {}),
-    }));
+    };
   });
 }
 
