@@ -34,6 +34,7 @@ import { localizedListingPages } from "@/content/listingPageTranslations";
 import { photoshootTranslations, tourTranslations, type ProductTranslation } from "@/content/productTranslations";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
+import { withoutHiddenTours } from "@/content/hiddenTours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
 import { testimonials as localTestimonials } from "@/content/testimonials";
@@ -264,7 +265,14 @@ async function currentLocale(): Promise<Locale> {
   }
 }
 
-async function getToursInner(): Promise<Tour[]> {
+// Every list of tours the site renders comes through here, so this is where
+// a withheld trip is dropped — once, rather than in each of the eight pages
+// that show a tour list. Applied after the Sanity/local merge so it holds
+// whichever side supplied the row; see content/hiddenTours.ts for why the
+// list can't live in Sanity. The by-slug lookups below deliberately do NOT
+// filter: a hidden tour's own page, a saved journey and an editorial link
+// inside a story must all still resolve.
+async function allToursInner(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
   return withTranslations(
     withLocalTranslations(
@@ -272,6 +280,10 @@ async function getToursInner(): Promise<Tour[]> {
       tourTranslations
     )
   );
+}
+
+async function getToursInner(): Promise<Tour[]> {
+  return withoutHiddenTours(await allToursInner());
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -301,7 +313,20 @@ async function getToursBySlugsInner(slugs: string[]): Promise<Tour[]> {
   return withTranslations(withLocalTranslations(found, tourTranslations));
 }
 
+/**
+ * Every tour slug, hidden ones included — this feeds generateStaticParams,
+ * and a hidden tour's page still has to be built: it stays reachable so old
+ * bookmarks, saved journeys and editorial links inside stories resolve
+ * instead of 404ing. For the sitemap, which should list only what the site
+ * actually offers, use getListedTourSlugs.
+ */
 export async function getAllTourSlugs(): Promise<string[]> {
+  const tours = await allToursInner();
+  return tours.map((t) => t.slug);
+}
+
+/** The slugs the site offers — hidden tours excluded. */
+export async function getListedTourSlugs(): Promise<string[]> {
   const tours = await getToursInner();
   return tours.map((t) => t.slug);
 }

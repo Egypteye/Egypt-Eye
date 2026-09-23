@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import {
   getAllSignatureExperienceSlugs,
-  getAllTourSlugs,
+  getListedTourSlugs,
   getDestinationHubs,
   getExperiences,
   getPhotoshoots,
@@ -53,7 +53,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
   const locale = publishedLocales().find((l) => l.code === code) ?? LOCALES[0];
   const [tourSlugs, experiences, photoshoots, signatureExperienceSlugs, stories, destinationHubs, hotels] =
     await Promise.all([
-      safeList("tours", getAllTourSlugs),
+      safeList("tours", getListedTourSlugs),
       safeList("experiences", getExperiences),
       safeList("photoshoots", getPhotoshoots),
       safeList("signatureExperiences", getAllSignatureExperienceSlugs),

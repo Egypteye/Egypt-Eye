@@ -1,14 +1,9 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { signatureExperiences } from "../signatureExperiences";
-import { tours } from "../tours";
-import { p, h2, bullets, callout, faq, cta } from "../storyBlocks";
+import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
 
 const editorialTeam = authors[0];
-
-function toursBySlug(...slugs: string[]) {
-  return slugs.map((slug) => tours.find((t) => t.slug === slug)).filter((t): t is (typeof tours)[number] => Boolean(t));
-}
 
 const fourteenDayJourney = signatureExperiences.find((e) => e.slug === "complete-14-day-egypt-journey");
 

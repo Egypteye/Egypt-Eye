@@ -1,13 +1,8 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
-import { tours } from "../tours";
-import { p, h2, bullets, callout, faq, cta } from "../storyBlocks";
+import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
 
 const editorialTeam = authors[0];
-
-function toursBySlug(...slugs: string[]) {
-  return slugs.map((slug) => tours.find((t) => t.slug === slug)).filter((t): t is (typeof tours)[number] => Boolean(t));
-}
 
 // World-trends cohort, batch 7 of 10: humanoid robots, robots in
 // everyday life, longevity technology, brain-computer interfaces, and

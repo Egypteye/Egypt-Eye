@@ -41,15 +41,20 @@ export const egyptCities: EgyptCity[] = [
   { slug: "kom-ombo", name: "Kom Ombo", region: "Upper Egypt / Nile Valley", mapX: 64.8, mapY: 61.0, mood: ["history", "nile"], hubSlug: "aswan" },
   { slug: "esna", name: "Esna", region: "Upper Egypt / Nile Valley", mapX: 62.2, mapY: 54.7, mood: ["history", "nile"] },
 
+  // Farafra, Dakhla and Kharga below, and Nuweiba and Taba under Sinai,
+  // lost their hubSlug when the tours covering them were withheld (see
+  // content/hiddenTours.ts). Their markers are back to "not offered yet",
+  // which is true again. Restoring a tour restores the tag, and
+  // check:destinations will ask for the hubSlug back.
   // Western Desert oases
   { slug: "marsa-matruh", name: "Marsa Matruh", region: "Mediterranean Coast", mapX: 25.5, mapY: 7.8, mood: ["coast", "beaches"] },
-  { slug: "farafra-oasis", name: "Farafra Oasis", region: "Western Desert", mapX: 30.6, mapY: 41.0, mood: ["desert"], hubSlug: "western-desert" },
-  { slug: "dakhla-oasis", name: "Dakhla Oasis", region: "Western Desert", mapX: 38.7, mapY: 53.1, mood: ["desert"], hubSlug: "western-desert" },
-  { slug: "kharga-oasis", name: "Kharga Oasis", region: "Western Desert", mapX: 48.4, mapY: 53.5, mood: ["desert"], hubSlug: "western-desert" },
+  { slug: "farafra-oasis", name: "Farafra Oasis", region: "Western Desert", mapX: 30.6, mapY: 41.0, mood: ["desert"] },
+  { slug: "dakhla-oasis", name: "Dakhla Oasis", region: "Western Desert", mapX: 38.7, mapY: 53.1, mood: ["desert"] },
+  { slug: "kharga-oasis", name: "Kharga Oasis", region: "Western Desert", mapX: 48.4, mapY: 53.5, mood: ["desert"] },
 
   // Sinai
-  { slug: "nuweiba", name: "Nuweiba", region: "Sinai Peninsula", mapX: 76.8, mapY: 25.8, mood: ["beaches", "diving"], hubSlug: "dahab" },
-  { slug: "taba", name: "Taba", region: "Sinai Peninsula", mapX: 78.4, mapY: 22.2, mood: ["beaches", "diving"], hubSlug: "dahab" },
+  { slug: "nuweiba", name: "Nuweiba", region: "Sinai Peninsula", mapX: 76.8, mapY: 25.8, mood: ["beaches", "diving"] },
+  { slug: "taba", name: "Taba", region: "Sinai Peninsula", mapX: 78.4, mapY: 22.2, mood: ["beaches", "diving"] },
 
   // Red Sea coast
   { slug: "safaga", name: "Safaga", region: "Red Sea Coast", mapX: 71.7, mapY: 43.5, mood: ["beaches", "diving"] },

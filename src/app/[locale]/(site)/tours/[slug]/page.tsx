@@ -18,6 +18,7 @@ import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/san
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { isHiddenTour } from "@/content/hiddenTours";
 import { T, trAll } from "@/i18n/T";
 
 export async function generateStaticParams() {
@@ -38,7 +39,11 @@ export async function generateMetadata({
     locale: await getLocale(),
     title: `${tour.title} — ${dict.seo.privateTourSuffix}`,
     description: tour.tagline,
-    seo: tour.seo,
+    // A withheld tour keeps a working page — an old bookmark, a saved
+    // journey and an editorial link inside a story all still land somewhere
+    // real — but nothing links to it any more, and a page Google still
+    // ranks is not hidden. noindex lets it go without a 404.
+    seo: isHiddenTour(tour.slug) ? { ...tour.seo, noindex: true } : tour.seo,
     image: tour.image,
     path: `/tours/${tour.slug}`,
   });
