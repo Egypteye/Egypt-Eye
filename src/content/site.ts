@@ -80,15 +80,17 @@ export const site = {
     youtube: "https://www.youtube.com/@egypt_eye_",
     pinterest: "https://www.pinterest.com/EgyptEyeTours/",
   },
+  // Signature Experiences and Hotel Deals are deliberately absent: both
+  // sections are withdrawn (content/withdrawnSections.ts). The Footer
+  // renders from this same list, so removing an entry here removes it
+  // from the header and the footer together.
   nav: [
     { label: "Home", href: "/" },
     { label: "Explore Egypt", href: "/explore-egypt" },
-    { label: "Signature Experiences", href: "/signature-experiences" },
     { label: "Best Seller Tours", href: "/tours" },
     { label: "Extra Experiences", href: "/experiences" },
     { label: "Unique Photoshoots", href: "/photoshoots" },
     { label: "Transfers", href: "/transfers" },
-    { label: "Hotel Deals", href: "/hotel-deals" },
     { label: "Customize Your Tour", href: "/customize" },
     { label: "Stories", href: "/stories" },
     { label: "Partner With Us", href: "/partners" },
@@ -112,7 +114,7 @@ export const site = {
       body: "Message us on WhatsApp and hear back from an actual person — not a bot — usually within hours.",
     },
   ],
-  destinations,
+  citySpotlights: destinations,
   interests,
   footer: {
     exploreLabel: "Explore",

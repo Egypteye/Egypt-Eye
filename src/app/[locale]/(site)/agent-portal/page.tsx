@@ -92,11 +92,13 @@ export default async function AgentPortalPage() {
     cancelled: ui["Cancelled"],
   };
 
+  // Signature Experiences and Hotel Deals are gone from this list because
+  // the sections are withdrawn (content/withdrawnSections.ts). Agents
+  // sell from it, so leaving them would have partners quoting clients on
+  // something we no longer offer.
   const AVAILABLE_SERVICES = [
     { href: "/tours", title: ui["Tours"], description: ui["Our full catalog of guided and private tours across Egypt & Jordan."] },
-    { href: "/signature-experiences", title: ui["Signature Experiences"], description: ui["Multi-day flagship journeys built around a single unforgettable theme."] },
     { href: "/photoshoots", title: ui["Photoshoots"], description: ui["Professional photography sessions at Egypt's most iconic locations."] },
-    { href: "/hotel-deals", title: ui["Hotel Deals"], description: ui["Preferred-rate hotel bookings to pair with any itinerary."] },
     { href: "/transfers", title: ui["Transfers"], description: ui["Private airport and inter-city transfers for your clients."] },
     { href: "/customize", title: ui["Custom Itinerary"], description: ui["Request a fully bespoke itinerary built around your client's brief."] },
   ];

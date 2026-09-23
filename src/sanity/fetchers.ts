@@ -34,6 +34,8 @@ import { localizedListingPages } from "@/content/listingPageTranslations";
 import { photoshootTranslations, tourTranslations, type ProductTranslation } from "@/content/productTranslations";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
+import { withoutHiddenTours, withoutHiddenRelatedTours } from "@/content/hiddenTours";
+import { isWithdrawnPath } from "@/content/withdrawnSections";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
 import { testimonials as localTestimonials } from "@/content/testimonials";
@@ -264,7 +266,14 @@ async function currentLocale(): Promise<Locale> {
   }
 }
 
-async function getToursInner(): Promise<Tour[]> {
+// Every list of tours the site renders comes through here, so this is where
+// a withheld trip is dropped — once, rather than in each of the eight pages
+// that show a tour list. Applied after the Sanity/local merge so it holds
+// whichever side supplied the row; see content/hiddenTours.ts for why the
+// list can't live in Sanity. The by-slug lookups below deliberately do NOT
+// filter: a hidden tour's own page, a saved journey and an editorial link
+// inside a story must all still resolve.
+async function allToursInner(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
   return withTranslations(
     withLocalTranslations(
@@ -272,6 +281,10 @@ async function getToursInner(): Promise<Tour[]> {
       tourTranslations
     )
   );
+}
+
+async function getToursInner(): Promise<Tour[]> {
+  return withoutHiddenTours(await allToursInner());
 }
 
 // The single-slug and batched lookups below share this, so "what happens when
@@ -301,7 +314,20 @@ async function getToursBySlugsInner(slugs: string[]): Promise<Tour[]> {
   return withTranslations(withLocalTranslations(found, tourTranslations));
 }
 
+/**
+ * Every tour slug, hidden ones included — this feeds generateStaticParams,
+ * and a hidden tour's page still has to be built: it stays reachable so old
+ * bookmarks, saved journeys and editorial links inside stories resolve
+ * instead of 404ing. For the sitemap, which should list only what the site
+ * actually offers, use getListedTourSlugs.
+ */
 export async function getAllTourSlugs(): Promise<string[]> {
+  const tours = await allToursInner();
+  return tours.map((t) => t.slug);
+}
+
+/** The slugs the site offers — hidden tours excluded. */
+export async function getListedTourSlugs(): Promise<string[]> {
   const tours = await getToursInner();
   return tours.map((t) => t.slug);
 }
@@ -319,19 +345,29 @@ function withLocalExperienceRelations(exps: Experience[]): Experience[] {
   );
 }
 
+// Same gap as the story detail above: an Experience carries its own
+// relatedTours[]-> references in Sanity, and the locally derived relation
+// reads localTours directly. Both bypass the filtered tour list, so both are
+// cleaned here — the one place every Experience lookup already passes
+// through.
+function mergeExperienceRelations(exps: Experience[]): Experience[] {
+  return withoutHiddenRelatedTours(withLocalExperienceRelations(exps));
+}
+
 async function getExperiencesInner(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
   return withValidSlugs(
     result && result.length > 0
       ? withLocalImageFallback(result, localExperiences)
-      : withLocalExperienceRelations(localExperiences)
+      : mergeExperienceRelations(localExperiences)
   );
 }
 
 function mergeExperienceWithLocal(result: Experience | null, slug: string): Experience | undefined {
   const local = localExperiences.find((e) => e.slug === slug);
-  if (!result) return local && withLocalExperienceRelations([local])[0];
-  return result.image ? result : { ...result, image: local?.image };
+  if (!result) return local && mergeExperienceRelations([local])[0];
+  const merged = result.image ? result : { ...result, image: local?.image };
+  return mergeExperienceRelations([merged])[0];
 }
 
 async function getExperienceBySlugInner(slug: string): Promise<Experience | undefined> {
@@ -409,7 +445,33 @@ async function getStoryBySlugInner(slug: string): Promise<Story | undefined> {
     : local;
   if (!story) return undefined;
 
-  return withDerivedRelatedStories(story);
+  // A Sanity story resolves its own relatedTours[]-> references, so they
+  // never pass through the tour list and the hidden filter there misses
+  // them. Without this, a story served from Sanity kept a live "you might
+  // also like" card for a withdrawn trip.
+  return withDerivedRelatedStories(
+    withoutWithdrawnPromos(withoutHiddenRelatedTours([story])[0])
+  );
+}
+
+/**
+ * Strips a story's promo cards for a withdrawn section.
+ *
+ * `relatedExperience` and the inline experienceCardBlock both render a
+ * SignatureExperienceCard linking into /signature-experiences. They are
+ * recommendation widgets rather than prose, so they come out with the
+ * section — seven articles carry one today. Prose and CTA links in the body
+ * are deliberately left alone: those are editorial sentences, and the
+ * section's pages still resolve.
+ */
+function withoutWithdrawnPromos(story: Story): Story {
+  if (!isWithdrawnPath("/signature-experiences")) return story;
+  const body = story.body?.filter((block) => block?._type !== "experienceCardBlock");
+  return {
+    ...story,
+    relatedExperience: undefined,
+    ...(body && body.length !== story.body?.length ? { body } : {}),
+  };
 }
 
 /**
@@ -610,7 +672,7 @@ async function getSiteSettingsInner(): Promise<ResolvedSiteSettings> {
     trustStats: { ...localSite.trustStats, ...result.trustStats },
     nav: nav.length > 0 ? nav : localSite.nav,
     trustBadges: trustBadges.length > 0 ? trustBadges : localSite.trustBadges,
-    destinations: destinations.length > 0 ? destinations : localSite.destinations,
+    citySpotlights: destinations.length > 0 ? destinations : localSite.citySpotlights,
     interests: interests.length > 0 ? interests : localSite.interests,
     footer: { ...localSite.footer, ...result.footer },
   };

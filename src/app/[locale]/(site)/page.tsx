@@ -162,7 +162,7 @@ export default async function Home() {
             />
           </Reveal>
           <Reveal delay={100}>
-            <DestinationsPanel photos={site.destinationPhotos} tours={tours} destinations={site.destinations} />
+            <DestinationsPanel photos={site.destinationPhotos} tours={tours} destinations={site.citySpotlights} />
           </Reveal>
         </Container>
       </section>

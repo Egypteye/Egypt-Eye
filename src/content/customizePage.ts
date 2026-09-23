@@ -28,7 +28,7 @@ export const customizePage: ResolvedCustomizePage = {
         { label: "Full name", fieldKey: "fullName", fieldType: "text", required: true, placeholder: "Jane Traveler", width: "half" },
         { label: "Nationality", fieldKey: "nationality", fieldType: "text", required: true, placeholder: "American", width: "half" },
         { label: "Age", fieldKey: "age", fieldType: "number", placeholder: "34", width: "half" },
-        { label: "Phone number", fieldKey: "phone", fieldType: "tel", placeholder: "+1 555 123 4567", width: "half" },
+        { label: "Phone number", fieldKey: "phone", fieldType: "tel-country", required: true, placeholder: "555 123 4567", width: "half" },
         { label: "Email", fieldKey: "email", fieldType: "email", required: true, placeholder: "jane@email.com", width: "half" },
         { label: "Instagram username", fieldKey: "instagram", fieldType: "text", placeholder: "@jane.travels", width: "half" },
       ],

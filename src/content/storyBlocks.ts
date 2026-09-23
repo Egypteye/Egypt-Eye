@@ -1,4 +1,6 @@
 import type { StoryBodyBlock, StoryFaqItem } from "./types";
+import { tours } from "./tours";
+import { hiddenTourSlugs } from "./hiddenTours";
 
 // Small body-block builders shared by every Stories content file (the main
 // src/content/stories.ts plus any src/content/storyBatches/*.ts), so a new
@@ -69,4 +71,23 @@ export function cta(opts: { title?: string; body?: string; buttonLabel: string; 
     buttonLabel: opts.buttonLabel,
     buttonHref: opts.buttonHref,
   };
+}
+
+/**
+ * Resolves a story's "related tours" strip from slugs.
+ *
+ * Shared by every Stories file rather than redefined in each one: this used
+ * to be a copy-pasted local helper in sixteen places, so a change to what
+ * counts as a recommendable tour had to be remembered sixteen times.
+ *
+ * Hidden tours are dropped (see content/hiddenTours.ts). The strip is a
+ * recommendation, and recommending a trip that is no longer offered is worse
+ * than showing one card fewer. Prose and CTA links inside a story body are
+ * deliberately untouched — those are editorial sentences, and a hidden
+ * tour's own page still resolves.
+ */
+export function toursBySlug(...slugs: string[]) {
+  return slugs
+    .map((slug) => tours.find((t) => t.slug === slug))
+    .filter((t): t is (typeof tours)[number] => Boolean(t) && !hiddenTourSlugs.has(t!.slug));
 }

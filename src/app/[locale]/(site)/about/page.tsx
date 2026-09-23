@@ -492,9 +492,7 @@ export default async function AboutPage() {
                 <p className="mt-5 text-sm leading-relaxed text-ink-soft/70">
                   From international properties on the Nile to the small pyramid-view guesthouses in
                   Giza — we book what suits the trip, and we&rsquo;re the ones who fix it if the room
-                  is wrong.{" "}
-                  <Link href="/hotel-deals" className="font-semibold text-gold-dark underline-offset-4 hover:underline"><T>See current hotel deals</T></Link>
-                  .
+                  is wrong.
                 </p>
               </div>
             </div>

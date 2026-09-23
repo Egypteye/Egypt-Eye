@@ -6,16 +6,34 @@ import type { CustomizeFormField, CustomizeFormSection, Destination, Interest, R
 import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { useTr } from "@/i18n/LocaleProvider";
+import { countryDialCodes, flagFor } from "@/content/countryCodes";
+
+/**
+ * Joins a dialling code and a local number into one submitted value.
+ *
+ * Returns "" when either half is missing so the caller's required check sees
+ * an empty field — picking a code without typing a number, or the reverse,
+ * is not a usable phone number. Any leading zero on the local part is dropped:
+ * it is a domestic trunk prefix and makes the number undiallable once a
+ * country code is in front of it.
+ */
+function joinDialCode(dial: string, local: string): string {
+  const code = dial.trim();
+  const number = local.trim().replace(/^0+/, "");
+  if (!code || !number) return "";
+  return `${code} ${number}`;
+}
 
 const CHIPS_TYPES = new Set(["chips", "chips-destinations", "chips-interests"]);
 
 function optionsFor(
   field: CustomizeFormField,
   destinations: readonly Destination[],
-  interests: readonly Interest[]
+  interests: readonly Interest[],
+  dayLabels: { day: string; days: string }
 ): string[] {
   if (field.fieldType === "chips-destinations") {
-    return destinations.map((d) => `${d.name} (${d.days}+ day${d.days > 1 ? "s" : ""})`);
+    return destinations.map((d) => `${d.name} (${d.days}+ ${d.days > 1 ? dayLabels.days : dayLabels.day})`);
   }
   if (field.fieldType === "chips-interests") {
     return interests.map((i) => i.label);
@@ -92,9 +110,18 @@ export function CustomizeForm({
 
     for (const section of sections) {
       for (const field of section.fields) {
+        // A tel-country field renders two controls and reports one value, so
+        // the team receives "+20 1234567890" rather than a bare number they
+        // have to guess the country of. Blank unless BOTH parts are filled,
+        // which is what makes the required check below cover the code too.
         const value = CHIPS_TYPES.has(field.fieldType)
           ? (chipSelections[field.fieldKey] ?? []).join(", ")
-          : ((form.get(field.fieldKey) as string) ?? "").trim();
+          : field.fieldType === "tel-country"
+            ? joinDialCode(
+                (form.get(`${field.fieldKey}CountryCode`) as string) ?? "",
+                (form.get(field.fieldKey) as string) ?? ""
+              )
+            : ((form.get(field.fieldKey) as string) ?? "").trim();
 
         if (field.required && !value) missingRequired = true;
         collected.push({ fieldKey: field.fieldKey, label: field.label, fieldType: field.fieldType, value });
@@ -187,7 +214,7 @@ export function CustomizeForm({
                 field={field}
                 selected={chipSelections[field.fieldKey] ?? []}
                 onToggleChip={(value) => toggleChip(field.fieldKey, value)}
-                destinations={site.destinations}
+                destinations={site.citySpotlights}
                 interests={site.interests}
               />
             ))}
@@ -258,6 +285,7 @@ function FieldRenderer({
   destinations: readonly Destination[];
   interests: readonly Interest[];
 }) {
+  const tr = useTr();
   const widthClass = field.width === "full" ? "sm:col-span-2" : "";
   const label = field.required ? `${field.label} *` : field.label;
 
@@ -265,7 +293,55 @@ function FieldRenderer({
     return (
       <div className={widthClass}>
         <p className="mb-2 text-sm font-medium text-ink-soft">{label}</p>
-        <ChipGroup options={optionsFor(field, destinations, interests)} selected={selected} onToggle={onToggleChip} />
+        <ChipGroup
+          options={optionsFor(field, destinations, interests, { day: tr("day"), days: tr("days") })}
+          selected={selected}
+          onToggle={onToggleChip}
+        />
+      </div>
+    );
+  }
+
+  // Two controls, one field. They share a single bordered shell so the pair
+  // reads as one input, matching every other field on the form; the border
+  // lives on the wrapper and focus-within moves it to gold the way :focus
+  // does elsewhere.
+  if (field.fieldType === "tel-country") {
+    return (
+      <div className={widthClass}>
+        <label htmlFor={field.fieldKey} className="text-sm font-medium text-ink-soft">
+          {label}
+        </label>
+        <div className="mt-1.5 flex rounded-lg border border-black/10 bg-sand focus-within:border-gold">
+          <select
+            name={`${field.fieldKey}CountryCode`}
+            required={field.required}
+            defaultValue=""
+            aria-label={tr("Country code")}
+            className="w-[7.5rem] shrink-0 cursor-pointer rounded-l-lg border-0 border-r border-black/10 bg-transparent py-2.5 pl-3 pr-1 text-ink outline-none"
+          >
+            <option value="" disabled>
+              {tr("Code")}
+            </option>
+            {countryDialCodes.map((c) => (
+              // Value carries only the dial code — the name and flag are for
+              // finding your country in the list, not for the team's inbox.
+              <option key={c.iso} value={c.dial}>
+                {flagFor(c.iso)} {c.dial} · {c.name}
+              </option>
+            ))}
+          </select>
+          <input
+            id={field.fieldKey}
+            name={field.fieldKey}
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel-national"
+            required={field.required}
+            placeholder={field.placeholder}
+            className="w-full min-w-0 rounded-r-lg border-0 bg-transparent px-4 py-2.5 text-ink outline-none"
+          />
+        </div>
       </div>
     );
   }

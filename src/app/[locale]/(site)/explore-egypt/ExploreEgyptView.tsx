@@ -4,9 +4,11 @@ import { ExploreModeToggle } from "@/components/ExploreModeToggle";
 import { DestinationPanel } from "./DestinationPanel";
 import { experiencesForHub, photoshootsForHub, storiesForHub, toursForHub } from "./data";
 import { egyptCities } from "@/content/egyptCities";
+import { getLocale } from "@/i18n/dictionary";
+import { localizeContent } from "@/i18n/localizeDeep";
 import type { DestinationHub, Experience, Photoshoot, ResolvedListingPages, Story, Tour } from "@/content/types";
 
-export function ExploreEgyptView({
+export async function ExploreEgyptView({
   hubs,
   selectedHub,
   tours,
@@ -23,6 +25,7 @@ export function ExploreEgyptView({
   stories: Story[];
   copy: ResolvedListingPages["exploreEgypt"];
 }) {
+  const cities = await localizeContent(egyptCities, await getLocale());
   return (
     <>
       <section className="relative overflow-hidden bg-ink pb-10 pt-28 sm:pb-14 sm:pt-32">
@@ -42,7 +45,7 @@ export function ExploreEgyptView({
       <section className="bg-sand py-10 sm:py-14">
         <Container>
           <div className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr] lg:items-start lg:gap-10">
-            <ExploreMapPanel hubs={hubs} cities={egyptCities} selectedSlug={selectedHub.slug} />
+            <ExploreMapPanel hubs={hubs} cities={cities} selectedSlug={selectedHub.slug} />
 
             <DestinationPanel
               hub={selectedHub}

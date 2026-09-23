@@ -15,6 +15,7 @@
 import { destinationHubs } from "../src/content/destinationHubs";
 import { egyptCities } from "../src/content/egyptCities";
 import { tours } from "../src/content/tours";
+import { hiddenTourSlugs } from "../src/content/hiddenTours";
 import { activities } from "../src/content/activities";
 import { photoshoots } from "../src/content/photoshoots";
 
@@ -37,8 +38,15 @@ const UNRESOLVED = new Map<string, string>([]);
 const hubBySlug = new Map(destinationHubs.map((h) => [h.slug, h]));
 const allMatchNames = new Set(destinationHubs.flatMap((h) => h.matchNames));
 
+// Hidden tours are excluded on purpose. The map's whole job is to say what
+// we sell where, and a withheld trip is not sold — counting it would make a
+// marker promise tours nobody can find, which is failure (1) below wearing
+// the opposite face. Once a tour comes back out of hiddenTours.ts the check
+// covers it again with no edit here.
+const listedTours = (tours as Tagged[]).filter((t) => !hiddenTourSlugs.has(t.slug));
+
 const catalogue: { kind: string; items: Tagged[] }[] = [
-  { kind: "tour", items: tours as Tagged[] },
+  { kind: "tour", items: listedTours },
   { kind: "experience", items: activities as Tagged[] },
   { kind: "photoshoot", items: photoshoots as Tagged[] },
 ];
@@ -87,6 +95,17 @@ for (const { kind, items } of catalogue) {
   }
 }
 
+// 3. Every hidden slug must still name a real tour. A withheld tour that
+//    gets deleted or renamed leaves a dead entry behind, and the list stops
+//    being a readable account of what is withheld and why.
+for (const slug of hiddenTourSlugs) {
+  if (!tours.some((t) => t.slug === slug))
+    errors.push(
+      `hiddenTours: "${slug}" matches no tour — it was renamed or deleted. ` +
+        `Drop the line, or fix the slug.`,
+    );
+}
+
 if (errors.length > 0) {
   console.error(`\ncheck-destinations: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -96,6 +115,7 @@ if (errors.length > 0) {
 
 console.log(
   `check-destinations: ok — ${destinationHubs.length} hubs, ${egyptCities.length} secondary markers, ` +
-    `${catalogue.reduce((n, c) => n + c.items.length, 0)} catalogue items.`,
+    `${catalogue.reduce((n, c) => n + c.items.length, 0)} catalogue items ` +
+    `(${hiddenTourSlugs.size} tours withheld).`,
 );
 for (const [slug, why] of UNRESOLVED) console.log(`  ! ${slug}: ${why}`);

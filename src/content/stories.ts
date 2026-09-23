@@ -2,18 +2,13 @@ import type { Story } from "./types";
 import { authors } from "./authors";
 import { events } from "./events";
 import { signatureExperiences } from "./signatureExperiences";
-import { tours } from "./tours";
-import { nextBlockKey, p, h2, bullets, callout, faq, photo, cta } from "./storyBlocks";
+import { nextBlockKey, p, h2, bullets, callout, faq, photo, cta, toursBySlug } from "./storyBlocks";
 import { trendStories } from "./storyBatches";
 
 const editorialTeam = authors[0];
 const eclipseEvent = events[0];
 const eclipseExperience = signatureExperiences.find((e) => e.slug === "the-luxor-eclipse");
 const herEgyptExperience = signatureExperiences.find((e) => e.slug === "her-egypt");
-
-function toursBySlug(...slugs: string[]) {
-  return slugs.map((slug) => tours.find((t) => t.slug === slug)).filter((t): t is (typeof tours)[number] => Boolean(t));
-}
 
 // Stories / blog listing.
 
