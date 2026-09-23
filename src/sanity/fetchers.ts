@@ -34,7 +34,7 @@ import { localizedListingPages } from "@/content/listingPageTranslations";
 import { photoshootTranslations, tourTranslations, type ProductTranslation } from "@/content/productTranslations";
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
-import { withoutHiddenTours } from "@/content/hiddenTours";
+import { withoutHiddenTours, withoutHiddenRelatedTours } from "@/content/hiddenTours";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
 import { testimonials as localTestimonials } from "@/content/testimonials";
@@ -344,19 +344,29 @@ function withLocalExperienceRelations(exps: Experience[]): Experience[] {
   );
 }
 
+// Same gap as the story detail above: an Experience carries its own
+// relatedTours[]-> references in Sanity, and the locally derived relation
+// reads localTours directly. Both bypass the filtered tour list, so both are
+// cleaned here — the one place every Experience lookup already passes
+// through.
+function mergeExperienceRelations(exps: Experience[]): Experience[] {
+  return withoutHiddenRelatedTours(withLocalExperienceRelations(exps));
+}
+
 async function getExperiencesInner(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
   return withValidSlugs(
     result && result.length > 0
       ? withLocalImageFallback(result, localExperiences)
-      : withLocalExperienceRelations(localExperiences)
+      : mergeExperienceRelations(localExperiences)
   );
 }
 
 function mergeExperienceWithLocal(result: Experience | null, slug: string): Experience | undefined {
   const local = localExperiences.find((e) => e.slug === slug);
-  if (!result) return local && withLocalExperienceRelations([local])[0];
-  return result.image ? result : { ...result, image: local?.image };
+  if (!result) return local && mergeExperienceRelations([local])[0];
+  const merged = result.image ? result : { ...result, image: local?.image };
+  return mergeExperienceRelations([merged])[0];
 }
 
 async function getExperienceBySlugInner(slug: string): Promise<Experience | undefined> {
@@ -434,7 +444,11 @@ async function getStoryBySlugInner(slug: string): Promise<Story | undefined> {
     : local;
   if (!story) return undefined;
 
-  return withDerivedRelatedStories(story);
+  // A Sanity story resolves its own relatedTours[]-> references, so they
+  // never pass through the tour list and the hidden filter there misses
+  // them. Without this, a story served from Sanity kept a live "you might
+  // also like" card for a withdrawn trip.
+  return withDerivedRelatedStories(withoutHiddenRelatedTours([story])[0]);
 }
 
 /**

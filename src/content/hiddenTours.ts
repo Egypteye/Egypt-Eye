@@ -98,3 +98,22 @@ export function isHiddenTour(slug: string): boolean {
 export function withoutHiddenTours<T extends { slug: string }>(tours: T[]): T[] {
   return tours.filter((tour) => !hiddenTourSlugs.has(tour.slug));
 }
+
+/**
+ * Strips withheld tours out of a document's `relatedTours` relation.
+ *
+ * Needed separately from withoutHiddenTours because a Story or an Experience
+ * carries its own `relatedTours[]->` references in Sanity, resolved by the
+ * document's own query — those never pass through the tour list, so filtering
+ * the list alone left a live "you might also like" card pointing at a
+ * withdrawn trip on every Sanity-served story and experience page.
+ */
+export function withoutHiddenRelatedTours<T extends { relatedTours?: { slug: string }[] }>(
+  items: T[]
+): T[] {
+  return items.map((item) =>
+    item.relatedTours?.some((t) => hiddenTourSlugs.has(t.slug))
+      ? { ...item, relatedTours: item.relatedTours.filter((t) => !hiddenTourSlugs.has(t.slug)) }
+      : item
+  );
+}
