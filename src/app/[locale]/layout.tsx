@@ -9,6 +9,7 @@ import { LocaleProvider } from "@/i18n/LocaleProvider";
 import { uiDictionary } from "@/i18n/ui";
 import { isLocalePublished } from "@/i18n/readiness";
 import { alternatesFor } from "@/i18n/alternates";
+import { getTestimonials } from "@/sanity/fetchers";
 
 // Cyrillic is in the body face's subsets because Russian is one of the
 // supported languages and Cormorant covers it; without it every Russian page
@@ -127,6 +128,12 @@ export default async function RootLayout({
   const info = localeInfo(locale);
   const dict = dictionaryFor(locale);
   const ui = await uiDictionary(locale);
+  // Whether any collected review exists, read once here and handed to the
+  // client via context. Same cached fetch every review surface already makes
+  // (revalidate 3600), and it keeps ExperienceRatingLink — which renders on
+  // every product card and hero — from having to be passed a prop by each of
+  // its dozen callers.
+  const hasReviews = (await getTestimonials()).length > 0;
 
   return (
     <html
@@ -143,7 +150,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        <LocaleProvider locale={locale} dict={dict} ui={ui}>
+        <LocaleProvider locale={locale} dict={dict} ui={ui} hasReviews={hasReviews}>
           {children}
         </LocaleProvider>
       </body>
