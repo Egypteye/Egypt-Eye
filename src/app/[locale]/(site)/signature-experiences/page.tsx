@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { withdrawnRobots } from "@/content/withdrawnSections";
 import { alternatesFor } from "@/i18n/alternates";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { Container } from "@/components/Container";
@@ -17,6 +18,10 @@ export async function generateMetadata(): Promise<Metadata> {
     title: meta.title,
     description: meta.description,
     alternates: alternatesFor("/signature-experiences", locale),
+    // Section withdrawn — see content/withdrawnSections.ts. The page still
+    // answers for anyone holding an old link; it is simply no longer linked
+    // to, listed in the sitemap, or offered to search.
+    robots: withdrawnRobots,
   };
 }
 

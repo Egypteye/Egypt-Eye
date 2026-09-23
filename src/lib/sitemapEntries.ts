@@ -9,6 +9,7 @@ import {
 } from "@/sanity/fetchers";
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
+import { isWithdrawnPath } from "@/content/withdrawnSections";
 import { LOCALES, localePath, type Locale, type LocaleInfo } from "@/i18n/locales";
 import { isLocalePublished } from "@/i18n/readiness";
 
@@ -135,7 +136,14 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     priority: 0.75,
   }));
 
-  return forLocale([
+  // Withdrawn sections are dropped here, at the end, rather than by deleting
+  // their route blocks above. The blocks stay because the data behind them
+  // is still live and the section can come back; filtering by path means one
+  // list in content/withdrawnSections.ts governs both the sitemap and the
+  // pages' robots directive, so the two cannot disagree — and a detail route
+  // cannot be left behind the way it would if each block were removed by
+  // hand.
+  const all = [
     ...staticRoutes,
     ...tourRoutes,
     ...experienceRoutes,
@@ -144,7 +152,9 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     ...signatureExperienceRoutes,
     ...storyRoutes,
     ...destinationRoutes,
-  ], locale);
+  ].filter((entry) => !isWithdrawnPath(entry.url.slice(siteUrl.length) || "/"));
+
+  return forLocale(all, locale);
 }
 
 /**

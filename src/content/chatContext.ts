@@ -2,6 +2,8 @@
 // context, so it answers from the site's real catalog and policies instead
 // of guessing. Server-only — never sent to the browser directly.
 import { tours } from "./tours";
+import { hiddenTourSlugs } from "./hiddenTours";
+import { isWithdrawnPath } from "./withdrawnSections";
 import { experiences } from "./experiences";
 import { photoshoots } from "./photoshoots";
 import { signatureExperiences } from "./signatureExperiences";
@@ -10,7 +12,12 @@ import { faqs } from "./faq";
 import { site } from "./site";
 
 export function buildChatContext(): string {
+  // Withheld tours are excluded: this digest is what the assistant answers
+  // from, so leaving them in would have it recommending, describing and
+  // quoting trips that are no longer sold — the one surface where a stale
+  // catalogue talks back to a customer.
   const tourLines = tours
+    .filter((t) => !hiddenTourSlugs.has(t.slug))
     .map(
       (t) =>
         `- "${t.title}" (${t.category}, ${t.duration}, destinations: ${t.destinations.join(", ")}) — ${t.tagline}`
@@ -25,10 +32,15 @@ export function buildChatContext(): string {
     .map((p) => `- "${p.title}" (${p.duration}, locations: ${p.locations.join(", ")}) — ${p.description}`)
     .join("\n");
 
-  const signatureLines = signatureExperiences
-    .filter((e) => e.status === "published" || e.status === "comingSoon")
-    .map((e) => `- "${e.name}" (${e.status === "comingSoon" ? "coming soon" : "available"}) — ${e.shortDescription}`)
-    .join("\n");
+  // Dropped wholesale while the section is withdrawn (withdrawnSections.ts):
+  // the assistant must not offer a Signature Experience it can no longer
+  // point anyone at.
+  const signatureLines = isWithdrawnPath("/signature-experiences")
+    ? ""
+    : signatureExperiences
+        .filter((e) => e.status === "published" || e.status === "comingSoon")
+        .map((e) => `- "${e.name}" (${e.status === "comingSoon" ? "coming soon" : "available"}) — ${e.shortDescription}`)
+        .join("\n");
 
   const storyLines = stories
     .filter((s) => s.status === "published")
@@ -59,10 +71,7 @@ ${experienceLines}
 PHOTOSHOOT PACKAGES:
 ${photoshootLines}
 
-SIGNATURE EXPERIENCES (fully custom, multi-day, private-guided journeys):
-${signatureLines}
-
-BLOG / TRAVEL GUIDES (link to these when relevant instead of restating everything yourself):
+${signatureLines ? `SIGNATURE EXPERIENCES (fully custom, multi-day, private-guided journeys):\n${signatureLines}\n\n` : ""}BLOG / TRAVEL GUIDES (link to these when relevant instead of restating everything yourself):
 ${storyLines}
 
 FREQUENTLY ASKED QUESTIONS:

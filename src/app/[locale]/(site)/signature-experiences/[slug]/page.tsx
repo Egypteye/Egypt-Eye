@@ -45,7 +45,10 @@ export async function generateMetadata({
       seoDescription: experience.seoDescription,
       canonicalUrl: experience.canonicalUrl,
       ogImage: experience.ogImage,
-      noindex: experience.noindex,
+      // Section withdrawn (content/withdrawnSections.ts), so noindex whatever
+      // the document says. An editor can still set noindex in Studio for
+      // their own reasons; this only ever adds it, never clears it.
+      noindex: true,
     },
     image: experience.heroImage,
     path: `/signature-experiences/${experience.slug}`,

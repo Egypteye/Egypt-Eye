@@ -37,6 +37,8 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     locale,
     title: ui["{name} — Egypt Eye Hotel Deals"].replace("{name}", hotel.name),
     description: hotel.short_description,
+    // Section withdrawn — see content/withdrawnSections.ts.
+    seo: { noindex: true },
     image: hotel.photos[0],
     path: `/hotel-deals/${hotel.slug}`,
   });

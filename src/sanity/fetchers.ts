@@ -35,6 +35,7 @@ import { photoshootTranslations, tourTranslations, type ProductTranslation } fro
 import { DEFAULT_LOCALE, isLocale, type Locale } from "@/i18n/locales";
 import { tours as localTours } from "@/content/tours";
 import { withoutHiddenTours, withoutHiddenRelatedTours } from "@/content/hiddenTours";
+import { isWithdrawnPath } from "@/content/withdrawnSections";
 import { experiences as localExperiences } from "@/content/experiences";
 import { photoshoots as localPhotoshoots } from "@/content/photoshoots";
 import { testimonials as localTestimonials } from "@/content/testimonials";
@@ -448,7 +449,29 @@ async function getStoryBySlugInner(slug: string): Promise<Story | undefined> {
   // never pass through the tour list and the hidden filter there misses
   // them. Without this, a story served from Sanity kept a live "you might
   // also like" card for a withdrawn trip.
-  return withDerivedRelatedStories(withoutHiddenRelatedTours([story])[0]);
+  return withDerivedRelatedStories(
+    withoutWithdrawnPromos(withoutHiddenRelatedTours([story])[0])
+  );
+}
+
+/**
+ * Strips a story's promo cards for a withdrawn section.
+ *
+ * `relatedExperience` and the inline experienceCardBlock both render a
+ * SignatureExperienceCard linking into /signature-experiences. They are
+ * recommendation widgets rather than prose, so they come out with the
+ * section — seven articles carry one today. Prose and CTA links in the body
+ * are deliberately left alone: those are editorial sentences, and the
+ * section's pages still resolve.
+ */
+function withoutWithdrawnPromos(story: Story): Story {
+  if (!isWithdrawnPath("/signature-experiences")) return story;
+  const body = story.body?.filter((block) => block?._type !== "experienceCardBlock");
+  return {
+    ...story,
+    relatedExperience: undefined,
+    ...(body && body.length !== story.body?.length ? { body } : {}),
+  };
 }
 
 /**
