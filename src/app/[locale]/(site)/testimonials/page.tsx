@@ -41,9 +41,17 @@ export default async function TestimonialsPage() {
           <h1 className="mt-3 max-w-2xl text-balance font-display text-4xl font-semibold text-ink sm:text-5xl">
             {dict.reviews.heading}
           </h1>
-          <p className="mt-4 max-w-xl text-ink-soft/75">
-            {dict.reviews.intro}
-          </p>
+          {/* The intro ends with "use the filters to narrow them to a
+              category or a single tour" — true of a populated page, a
+              contradiction on an empty one, where there is no browser and
+              nothing to filter. Suppressed rather than reworded so the empty
+              state needs no new string in six languages; the heading and the
+              "reviews are on their way" line below read on their own. */}
+          {entries.length > 0 && (
+            <p className="mt-4 max-w-xl text-ink-soft/75">
+              {dict.reviews.intro}
+            </p>
+          )}
 
           <div className="mt-10">
             {entries.length === 0 ? (

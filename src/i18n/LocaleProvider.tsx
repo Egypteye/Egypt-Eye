@@ -20,21 +20,34 @@ type LocaleContextValue = {
    * to cross the boundary, unlike the catalogue store.
    */
   ui: ContentDictionary;
+  /**
+   * Whether the site has any collected reviews at all.
+   *
+   * Only ExperienceRatingLink reads it, and only to decide whether to render
+   * at all. It lives here because that chip appears on every product card
+   * and hero across the site, and threading a prop through all of them would
+   * mean every card's caller had to know about reviews.
+   */
+  hasReviews: boolean;
 };
 
 const LocaleContext = createContext<LocaleContextValue>({
   locale: DEFAULT_LOCALE,
   dict: en,
   ui: {},
+  hasReviews: false,
 });
 
 export function LocaleProvider({
   locale,
   dict,
   ui,
+  hasReviews,
   children,
 }: LocaleContextValue & { children: React.ReactNode }) {
-  return <LocaleContext.Provider value={{ locale, dict, ui }}>{children}</LocaleContext.Provider>;
+  return (
+    <LocaleContext.Provider value={{ locale, dict, ui, hasReviews }}>{children}</LocaleContext.Provider>
+  );
 }
 
 export function useLocale(): LocaleContextValue {
