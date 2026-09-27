@@ -50,6 +50,10 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:destinations
 
+      - name: Story cover photos
+        if: ${{ !cancelled() }}
+        run: npm run check:stories
+
       - name: Lint
         if: ${{ !cancelled() }}
         run: npm run lint

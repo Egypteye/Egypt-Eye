@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -24,7 +25,8 @@ export const stories: Story[] = [
     excerpt:
       "Cosmic-ray detectors have been looking through the Great Pyramid since 2015, and they have found two spaces nobody knew about. What that does and does not mean.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1503177119275-0aa32b3a9368"),
+    imageCredit: unsplashCredit("Jeremy Bishop", "https://unsplash.com/photos/pyramid-of-khafre-HcgK4WoBwzg"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "ScanPyramids",
@@ -97,7 +99,8 @@ export const stories: Story[] = [
     excerpt:
       "An evening show that has been projecting light and narration onto the Sphinx and the pyramids since 1961. What it is, what it isn't, who tends to enjoy it, and how to fit it around the rest of a day at Giza.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1667765460178-db9eae077f00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1574864745093-5566c5be5855"),
+    imageCredit: unsplashCredit("Andrés Dallimonti", "https://unsplash.com/photos/landscape-photography-of-pyramid-3lliBG4a5sI"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-03-01",
     primaryKeyword: "Giza sound and light show",
@@ -260,7 +263,8 @@ export const stories: Story[] = [
     excerpt:
       "It is the most visited object in the British Museum and one of the least read. The Rosetta Stone is a tax decree — and the reason anyone alive today can read a hieroglyph at all.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1608817576203-3c27ed168bd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1785935120761-d87409b4ddd4"),
+    imageCredit: unsplashCredit("David Billington", "https://unsplash.com/photos/stone-foot-sculpture-on-pedestal-UBhbcFHHzgM"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "what does the Rosetta Stone say",

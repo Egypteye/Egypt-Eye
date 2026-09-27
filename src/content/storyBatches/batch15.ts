@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -30,7 +31,8 @@ export const stories: Story[] = [
     excerpt:
       "Egyptian painting is not bad perspective. It is a different system, and it is consistent. Learn five rules before you go and the walls stop being decoration and start being sentences.",
     imageTone: "nile",
-    image: "https://images.unsplash.com/photo-1591040608370-e51e70b4b7ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1675372802255-1dea0a7add1a"),
+    imageCredit: unsplashCredit("M abnodey", "https://unsplash.com/photos/a-statue-of-an-egyptian-god-next-to-a-pillar-UM4NfyJVqZA"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "how to read Egyptian tomb art",
@@ -176,7 +178,8 @@ export const stories: Story[] = [
     excerpt:
       "The men who cut the royal tombs lived together in one walled village a short walk away. They left tens of thousands of notes behind — sick days, loans, quarrels, and the first recorded strike in history.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1711098288636-32ba6477e73d"),
+    imageCredit: unsplashCredit("Andrea Ferrario", "https://unsplash.com/photos/a-row-of-statues-in-front-of-a-brick-wall-T-9IGDa3E-c"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "Deir el-Medina",
@@ -282,7 +285,8 @@ export const stories: Story[] = [
     excerpt:
       "A court official overhears something he should not, panics, and runs. What follows was copied and recopied by Egyptian scribes for a millennium — the closest thing the ancient world had to a bestseller.",
     imageTone: "nile",
-    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1720173697174-f908ca764f03"),
+    imageCredit: unsplashCredit("Ed Ward", "https://unsplash.com/photos/a-group-of-people-walking-around-a-museum-nN-6GzhGZIA"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "Tale of Sinuhe",

@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -25,7 +26,8 @@ export const stories: Story[] = [
     excerpt:
       "The small mummiform figures in every museum case are not idols or portraits. They are substitute labourers, inscribed with the spell that makes them answer when the afterlife calls your name.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1714592627070-cec4a7909c16"),
+    imageCredit: unsplashCredit("George Platakis", "https://unsplash.com/photos/a-woman-standing-in-front-of-a-bunch-of-statues-h_IvCiWrH_M"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "ushabti",
@@ -166,7 +168,8 @@ export const stories: Story[] = [
     excerpt:
       "Not a heaven, and not a reward for faith. The Egyptian afterlife was a place you could fail to reach — through a judgement, a set of passwords, and a monster waiting beside the scales.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1619525673991-abb47426c650"),
+    imageCredit: unsplashCredit("wu yi", "https://unsplash.com/photos/black-desk-globe-on-brown-wooden-desk-ZuEbR0rPCjA"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "ancient Egyptian afterlife",
@@ -238,7 +241,8 @@ export const stories: Story[] = [
     excerpt:
       "Seventy days, a great deal of natron, and a set of decisions about which parts of a person mattered. The Egyptians kept the liver, lungs, stomach and intestines. They discarded the brain.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1608817576203-3c27ed168bd3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1619525674125-3b94490f5842"),
+    imageCredit: unsplashCredit("wu yi", "https://unsplash.com/photos/clear-cut-glass-table-lamp-on-white-wooden-table-KEtQHedcTJ8"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "how mummification worked",
@@ -311,7 +315,8 @@ export const stories: Story[] = [
     excerpt:
       "A 2010 genetic study put names to the mummies around Tutankhamun, identified his likely parents, and found malaria in his bloodstream. It also started an argument that has not finished.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1667082800153-36afd169df99"),
+    imageCredit: unsplashCredit("BEN ELLIOTT", "https://unsplash.com/photos/a-statue-of-a-lion-and-a-person-in-a-building-2pYCgsPuBAY"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "Tutankhamun DNA",

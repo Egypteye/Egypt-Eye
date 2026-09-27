@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -275,7 +276,8 @@ export const stories: Story[] = [
     excerpt:
       "The temples you stand in front of at Abu Simbel are not where Ramesses II put them. Between 1964 and 1968 the entire site was sawn into blocks, lifted 65 metres up the cliff, and rebuilt inside a hollow artificial mountain — to save it from the lake now behind you.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1539768942893-daf53e448371?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1775129841035-1a8667ab7302"),
+    imageCredit: unsplashCredit("Noha Badawi", "https://unsplash.com/photos/large-hotel-on-a-cliff-overlooking-boats-on-the-nile-usHmk_bsL3w"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "how Abu Simbel was moved",

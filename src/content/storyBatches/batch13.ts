@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -24,7 +25,8 @@ export const stories: Story[] = [
     excerpt:
       "A 365-day calendar, a clock made of stars painted inside coffin lids, and a new year announced by one star rising just before dawn. Egyptian astronomy was practical before it was anything else.",
     imageTone: "nile",
-    image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1488866022504-f2584929ca5f"),
+    imageCredit: unsplashCredit("Nathan Anderson", "https://unsplash.com/photos/milky-way-over-mountain-landscape-at-night-L95xDkSSuWw"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "ancient Egyptian astronomy",
@@ -98,7 +100,8 @@ export const stories: Story[] = [
     excerpt:
       "A colonnade at Deir el-Bahari carries the illustrated report of a trading voyage sent south around 1470 BC — the ships, the cargo, the houses on stilts, and the ruler of Punt with his wife. Nobody is certain where they went.",
     imageTone: "nile",
-    image: "https://images.unsplash.com/photo-1591040608370-e51e70b4b7ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1681403507733-943ebe8a1819"),
+    imageCredit: unsplashCredit("Jordi Orts Segalés", "https://unsplash.com/photos/a-row-of-statues-in-front-of-a-pyramid-lmI1572-5EI"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "Hatshepsut expedition to Punt",
@@ -263,7 +266,8 @@ export const stories: Story[] = [
     excerpt:
       "Beer was not a treat in ancient Egypt. It was payment, nutrition, offering and the base for a large part of the medical pharmacopoeia — and it was being brewed at industrial scale before the pyramids.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1590133324192-1df305deea6f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1777891257717-6a83ac8e0bac"),
+    imageCredit: unsplashCredit("Husien Bisky", "https://unsplash.com/photos/grilled-meat-skewers-with-flatbread-and-grilled-vegetables-0gSpvtwdKuk"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "ancient Egyptian beer",
@@ -336,7 +340,8 @@ export const stories: Story[] = [
     excerpt:
       "Cut into a cliff in Middle Egypt are Middle Kingdom tombs whose walls carry hundreds of wrestling holds, painted in sequence. Almost no tour goes there, which is most of the appeal.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1663665152202-ddfe5821ba79"),
+    imageCredit: unsplashCredit("Albert Dehon", "https://unsplash.com/photos/a-group-of-ancient-carvings-aB7EA1IZCoA"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "Beni Hasan tombs",

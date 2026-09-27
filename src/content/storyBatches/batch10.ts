@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -318,7 +319,8 @@ export const stories: Story[] = [
     excerpt:
       "Thirty squares in three rows, played with casting sticks rather than dice, and buried with pharaohs — because by the New Kingdom, winning at senet had come to mean something about the afterlife.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1710795723705-f1af3905ae3a"),
+    imageCredit: unsplashCredit("Jordyn St. John", "https://unsplash.com/photos/a-museum-display-of-various-types-of-dinosaurs-L-tciXndh7s"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "senet game",

@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -25,7 +26,8 @@ export const stories: Story[] = [
     excerpt:
       "The black line around every painted Egyptian eye was made from compounds that do not occur in nature and had to be manufactured. A 2010 analysis suggested why.",
     imageTone: "desert",
-    image: "https://images.unsplash.com/photo-1568322445389-f64ac2515020?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1526285849717-482456cd7436"),
+    imageCredit: unsplashCredit("Cristina Gottardi", "https://unsplash.com/photos/woman-watching-statues-05P65mxLuW8"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "ancient Egyptian kohl",
@@ -96,7 +98,8 @@ export const stories: Story[] = [
     excerpt:
       "Obelisks in Rome, sphinxes on Georgian furniture, Art Deco cinemas, a Vegas pyramid. Egypt has been the world's most reliably recycled aesthetic for two thousand years, and each revival says more about the borrower.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1707068226685-27a15039f19b"),
+    imageCredit: unsplashCredit("Dilip Poddar", "https://unsplash.com/photos/a-group-of-people-standing-in-front-of-a-building-i3uxqVIRWmI"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "Egyptomania",
@@ -245,7 +248,8 @@ export const stories: Story[] = [
     excerpt:
       "On 31 December 1999, Jean-Michel Jarre staged a concert on the Giza plateau to carry the world into the new millennium. It was not the first spectacle at the pyramids and it will not be the last.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1667765460178-db9eae077f00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1705628080778-f86b2f90a114"),
+    imageCredit: unsplashCredit("Moxin Wang", "https://unsplash.com/photos/a-group-of-people-riding-camels-in-front-of-three-pyramids-LqKS08FCehc"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "Jean-Michel Jarre pyramids concert",

@@ -341,6 +341,14 @@ export type Story = {
   imageLabel?: string;
   image?: SanityImage;
   imageTone: ImageTone;
+  /**
+   * Where the cover photo came from, when it isn't Egypt Eye's own. Stories
+   * carried Unsplash hot-links with no provenance at all, which content/
+   * unsplash.ts explicitly requires — so a cover could not be traced to its
+   * photographer or its licence, and there was nothing to check a broken one
+   * against.
+   */
+  imageCredit?: ImageCredit;
   body?: StoryBodyBlock[];
   relatedExperience?: SignatureExperience;
   relatedTours?: Tour[];

@@ -1,6 +1,7 @@
 import type { Story } from "../types";
 import { authors } from "../authors";
 import { p, h2, bullets, callout, faq, cta, toursBySlug } from "../storyBlocks";
+import { unsplashUrl, unsplashCredit } from "../unsplash";
 
 const editorialTeam = authors[0];
 
@@ -189,7 +190,8 @@ export const stories: Story[] = [
     excerpt:
       "Egyptian kings routinely chiselled out their predecessors' names and carved their own into the gap. Once a guide shows you the first recut cartouche, you will see them on every wall in Egypt.",
     imageTone: "nile",
-    image: "https://images.unsplash.com/photo-1591040608370-e51e70b4b7ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1706552604002-f7efaebebca6"),
+    imageCredit: unsplashCredit("Camila Credidio", "https://unsplash.com/photos/a-group-of-people-standing-around-a-museum-P8pWGVGdHPo"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "usurped cartouches",
@@ -263,7 +265,8 @@ export const stories: Story[] = [
     excerpt:
       "Three thousand years of royal statues and almost none of them are portraits. Egyptian kings were shown as an office, not a face — which is why the exceptions are so startling.",
     imageTone: "giza",
-    image: "https://images.unsplash.com/photo-1568366715736-cf1bb3ea5a4e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    image: unsplashUrl("photo-1776719315535-db22b66ed757"),
+    imageCredit: unsplashCredit("Vidar Nordli-Mathisen", "https://unsplash.com/photos/ancient-marble-bust-of-a-young-man-wearing-a-cap-DrJXrV5yfIE"),
     publishedAt: "2026-09-08T09:00:00+02:00",
     contentReviewDate: "2027-06-01",
     primaryKeyword: "why do pharaohs look the same",
