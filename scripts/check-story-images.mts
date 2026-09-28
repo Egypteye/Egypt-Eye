@@ -15,6 +15,7 @@
  * broken image, the same image twice, or an uncredited one. Run in CI.
  */
 import { stories } from "../src/content/stories";
+import { STORY_REDIRECTS } from "../src/content/redirectedStories";
 
 const published = stories.filter((s) => s.status === "published");
 const errors: string[] = [];
@@ -51,6 +52,25 @@ for (const [image, slugs] of byImage) {
   }
 }
 
+// A retirement is three coordinated facts (a 301, a sitemap exclusion, and a
+// Sanity document to remove), and all three read from STORY_REDIRECTS.
+// Two ways that map can rot silently, both of which serve a broken page:
+const publishedSlugs = new Set(published.map((s) => s.slug));
+for (const [from, to] of Object.entries(STORY_REDIRECTS)) {
+  if (!publishedSlugs.has(to)) {
+    errors.push(
+      `/stories/${from} redirects to /stories/${to}, which is not a ` +
+        `published story — a 301 into a 404 is worse than the 404 it replaced.`,
+    );
+  }
+  if (publishedSlugs.has(from)) {
+    errors.push(
+      `/stories/${from} is listed as redirected but is still published — the ` +
+        `redirect in next.config.ts shadows it, so the article is unreachable.`,
+    );
+  }
+}
+
 if (errors.length > 0) {
   console.error(`\ncheck-story-images: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -60,5 +80,6 @@ if (errors.length > 0) {
 
 console.log(
   `check-story-images: ok — ${published.length} published stories, ` +
-    `${byImage.size} distinct covers, all credited.`,
+    `${byImage.size} distinct covers, all credited, ` +
+    `${Object.keys(STORY_REDIRECTS).length} story redirects resolving.`,
 );

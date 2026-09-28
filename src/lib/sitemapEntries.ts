@@ -10,12 +10,13 @@ import {
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
 import { isWithdrawnPath } from "@/content/withdrawnSections";
+// Slugs that 301-redirect elsewhere (see next.config.ts, which builds its
+// redirects from the same map) — keep them out of the sitemap even where the
+// underlying Sanity document hasn't been removed yet.
+import { REDIRECTED_STORY_SLUGS } from "@/content/redirectedStories";
 import { LOCALES, localePath, type Locale, type LocaleInfo } from "@/i18n/locales";
 import { isLocalePublished } from "@/i18n/readiness";
 
-// Slugs that 301-redirect elsewhere (see next.config.ts) — keep them out of
-// the sitemap even if the underlying Sanity document hasn't been removed yet.
-const REDIRECTED_STORY_SLUGS = new Set(["best-travel-agencies-in-egypt-2025-guide"]);
 
 // Both sitemap routes set `revalidate = 3600` themselves — Next needs that as
 // a literal, so it cannot be shared from here. Every source below is a network

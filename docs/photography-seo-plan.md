@@ -295,18 +295,36 @@ with real search demand and **zero** existing article.
    A2 as a new URL. **Rewrite and expand `private-photographer-egypt` in place**,
    keeping the URL and its existing equity, and retitle it to the hiring pillar.
    This is the single most important decision in this plan.
-2. **Three Instagram-spot articles.** Keep `most-instagrammable-places-in-egypt`
-   as the canonical list. Redirect `best-instagram-photo-spots-egypt` into it
-   (301). Re-angle `best-photo-spots-in-egypt` toward *shoot* locations and link
-   it to products.
+2. **~~Three Instagram-spot articles.~~ Two, and the third does not exist.**
+   This item was written against a `most-instagrammable-places-in-egypt` that
+   is not in the content files, in Sanity, or in the redirect map — the title
+   was misremembered. The two real articles are `best-instagram-photo-spots-egypt`
+   (Giza, Khan el-Khalili, Luxor, Fayoum, Siwa) and `best-photo-spots-in-egypt`
+   (timing-led: the balloon, Abu Simbel, the White Desert, Philae, Nine
+   Pyramids View). They overlap on Giza and golden-hour advice but answer
+   different questions, so **no 301 was issued** — merging them would have
+   destroyed real content to fix a duplicate that wasn't one.
+   **Done instead:** split them explicitly by intent. `best-photo-spots-in-egypt`
+   is re-angled toward *shoot* locations and linked to the flying dress and
+   exclusive Pyramids products; `best-instagram-photo-spots-egypt` keeps the
+   shoot-it-yourself angle. Each now opens by naming the other.
 3. **Five flying-dress articles.** Merge `best-time-flying-dress-photoshoot` into
    `flying-dress-photoshoot-egypt-guide` as a section; 301 the old URL. Keep the
    locations and what-to-wear pieces — they hold distinct long-tail.
 4. **A4 Cairo vs A1/A3 Giza.** Keep A4 on Cairo-as-a-base framing.
 
-Every merge above must use a 301 — `next.config.ts` already has a redirect block
-and `REDIRECTED_STORY_SLUGS` in `src/lib/sitemapEntries.ts` exists to keep
-retired slugs out of the sitemap. Use both.
+Every merge above must use a 301. Both mechanisms now read from one map,
+`STORY_REDIRECTS` in `src/content/redirectedStories.ts`: `next.config.ts`
+generates its `redirects()` entries from it, and `src/lib/sitemapEntries.ts`
+filters the sitemap against it. Adding a redirect there is the whole change.
+`scripts/check-story-images.mts` fails the build if a destination isn't a
+published story, or if a redirected slug is still published.
+
+Not to be confused with `RETIRED_STORY_SLUGS` in `src/content/retiredStories.ts`
+— that is the 410 Gone list for articles pulled with no replacement, read by
+`src/proxy.ts` on the Edge runtime. The two lists must not overlap: a 301 in
+`next.config.ts` runs before middleware, so a slug in both would never reach
+its 410.
 
 ---
 

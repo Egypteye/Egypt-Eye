@@ -10133,28 +10133,64 @@ export const stories: Story[] = [
     status: "published",
     featured: false,
     slug: "best-photo-spots-in-egypt",
-    title: "The Best Photo Spots in Egypt",
+    title: "The Best Photo Spots in Egypt — and Which Ones to Book a Shoot At",
     category: "Travel Guides",
     tags: ["Photography", "Trip Planning"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-guide",
+        title: "The Complete Guide to a Pyramids Photoshoot in Giza",
+        excerpt:
+          "Everything involved in a professional Pyramids photoshoot at Giza — permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session — including the best time of day to shoot one — involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-instagram-photo-spots-egypt",
+        title: "Best Places in Egypt for Instagram-Worthy Photos",
+        excerpt:
+          "Real, specific Instagram photo spots across Giza, Cairo, Luxor, Fayoum, and Siwa — genuinely useful for a traveler shooting with a phone or camera, not just a professional-shoot listicle.",
+        imageTone: "luxor",
+        category: "Culture & Trends",
+      },
+    ],
     author: editorialTeam,
-    excerpt: "Where the light, the angle, and the crowd size actually line up.",
+    excerpt:
+      "Where the light, the angle, and the crowd size line up — and which of these locations you can book a produced photoshoot at rather than shooting yourself.",
     imageLabel: "Giza Pyramids",
     imageTone: "giza",
     image: unsplashUrl("photo-1602452895817-4ffbe522ae50"),
     imageCredit: unsplashCredit("Taylor Brandon", "https://unsplash.com/photos/woman-in-blue-sleeveless-dress-wearing-white-cowboy-hat-walking-on-brown-sand-during-daytime-d-HOgxTgtZY"),
     publishedAt: "2026-03-15T09:00:00+02:00",
     primaryKeyword: "best photo spots in egypt",
-    secondaryKeywords: ["egypt photography locations", "instagram spots egypt"],
+    secondaryKeywords: [
+      "egypt photography locations",
+      "best photoshoot locations egypt",
+      "where to do a photoshoot in egypt",
+      "giza photoshoot locations",
+      "nine pyramids view photoshoot",
+    ],
     relatedTours: toursBySlug("1-day-giza-tour", "hot-air-balloon-luxor-east-bank-combo", "white-desert-safari-bahariya", "aswan-abu-simbel-tour"),
-    seoTitle: "The Best Photo Spots in Egypt: A Timing Guide",
+    seoTitle: "Best Photo Spots in Egypt: Locations, Timing, and Shoots",
     seoDescription:
-      "The best photo locations in Egypt — from the Giza Panoramic Point to a Luxor sunrise balloon flight — and the exact timing that makes each one work.",
+      "The best photo locations in Egypt — from the Giza Panoramic Point to a Luxor sunrise balloon — the timing each one needs, and which can be booked as a produced photoshoot.",
     body: [
       p(
         "Egypt photographs itself, to a point — put a camera anywhere near the Pyramids of Giza and you'll come home with something worth keeping. But there's a real difference between a photo that just documents you were there and one that actually captures why the place is remarkable, and that difference almost always comes down to timing, angle, and knowing exactly where to stand before you arrive rather than figuring it out on the spot."
       ),
       p(
         "This isn't an exhaustive list of every scenic corner of the country — it's the handful of locations where light, vantage point, and crowd size consistently line up, based on where the strongest results actually come from."
+      ),
+      p(
+        "A note on what this list is and isn't: these are locations chosen for the quality of the photograph you can take at them, which is not quite the same question as where to take a good phone photo while sightseeing. If you're travelling with a phone and want spots that work on the way round, our guide to Egypt's best Instagram photo spots covers Khan el-Khalili, Fayoum and Siwa from that angle. This one is about where the strongest images actually come from, including the handful of locations where booking a photographer with site access changes what you can get."
       ),
       h2("The Giza Panoramic Point"),
       p(
@@ -10184,6 +10220,12 @@ export const stories: Story[] = [
       p(
         "A short drive past the pyramids, the desert opens into rolling sand dunes that photograph completely differently from the plateau itself — clean lines, warm color, and none of the crowds or infrastructure visible in a standard pyramid shot. It's become a popular setting specifically for portrait and fashion-style photography in Egypt, including flowing-dress shoots where the fabric catches the desert wind, because the dunes give you texture and movement in the frame without competing with the monuments for attention. Late afternoon light works best here, when the low sun rakes across the sand and throws long shadows into the dune ridges."
       ),
+      cta({
+        title: "The Dunes, With a Dress That Catches the Wind",
+        body: "The flowing-dress sessions this stretch of desert is known for, run as a produced shoot with wardrobe, hair and makeup, and transport included.",
+        buttonLabel: "See the Flying Dress Photoshoot",
+        buttonHref: "/photoshoots/flying-dress-photoshoot",
+      }),
       h2("Nine Pyramids View"),
       p(
         "Slightly further out from the main Giza plateau, this vantage point does what its name promises — it lines up all nine pyramids of the Giza necropolis (the three major pyramids plus the six smaller queens' pyramids) into a single sweeping frame, something that's genuinely difficult to achieve from anywhere closer in. It's a favorite spot for private, uncrowded shoots for exactly that reason: the composition is rare, and the distance from the main tourist paths means far fewer people wandering into your shot."
@@ -10201,6 +10243,12 @@ export const stories: Story[] = [
         "Midday between roughly 11 AM and 3 PM is the hardest light of the day almost everywhere in Egypt — plan indoor sites, museum visits, or transit time for that window and save outdoor shooting for the edges of the day",
         "If you're traveling specifically for photography, tell your guide in advance — itineraries can usually be reordered to hit a site at the right light rather than whenever it happens to fit the day's logistics",
       ]),
+      cta({
+        title: "Shoot These Locations Properly",
+        body: "A private photoshoot at Giza covers the dunes, the panoramic angles, and the Nine Pyramids View with a photographer who already knows the light at each one.",
+        buttonLabel: "See the Exclusive Pyramids Photoshoot",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
       faq(
         [
           {
@@ -11252,14 +11300,6 @@ export const stories: Story[] = [
         imageTone: "desert",
         category: "Travel Guides",
       },
-      {
-        slug: "best-time-flying-dress-photoshoot",
-        title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
-        excerpt:
-          "Golden hour, wind, and season — a practical breakdown of the best time of day for a flying dress photoshoot in Egypt, and why timing matters more than almost any other decision.",
-        imageTone: "desert",
-        category: "Travel Guides",
-      },
     ],
     author: editorialTeam,
     excerpt:
@@ -11279,10 +11319,15 @@ export const stories: Story[] = [
       "Egypt photoshoot experience",
       "wind dress photography Egypt",
       "flowy dress desert photos",
+      "best time for flying dress photoshoot",
+      "flying dress photoshoot timing",
+      "golden hour desert photoshoot",
+      "flying dress photoshoot sunrise",
+      "flying dress photoshoot sunset",
     ],
     seoTitle: "Flying Dress Photoshoot in Egypt: The Complete Guide",
     seoDescription:
-      "Everything to know before booking a flying dress photoshoot in Egypt — how it works, what a real session involves, and where to shoot it.",
+      "Everything to know before booking a flying dress photoshoot in Egypt — how it works, what a real session involves, the best time of day to shoot it, and where.",
     body: [
       p(
         "If you've spent any time on Instagram scrolling through Egypt travel photos, you've seen it: a single figure in a bright, impossibly long dress, fabric caught mid-air against the Pyramids or a wall of golden sand, looking less like a tourist photo and more like a scene from a film. That's a flying dress photoshoot, and it has quietly become one of the most requested experiences in Egyptian travel photography — not a passing trend, but a genuinely distinct kind of shoot with its own techniques, its own logistics, and its own reasons for working so well here specifically."
@@ -11327,9 +11372,35 @@ export const stories: Story[] = [
       p(
         "A single session typically covers two to four distinct setups rather than one static spot — a few different angles on a dune, a change in backdrop, sometimes a second dress for variety. This is where the choice of location does the most work: shooting near the Pyramids of Giza puts a globally recognizable monument in frame, while a Fayoum desert session trades that landmark for uninterrupted dunes and total privacy, with nobody else in the frame at any point."
       ),
-      h2("Timing"),
+      h2("Timing: Why Light and Wind Decide the Shot"),
       p(
-        "Flying dress shoots are scheduled around light and wind, not convenience — generally early morning or the couple of hours before sunset, when the sun sits low enough to backlight the fabric and the wind is present but manageable. A midday booking, even if it's the only slot that fits your itinerary, will produce flatter, harsher images and a less cooperative breeze."
+        "Of every decision that goes into booking a flying dress photoshoot, timing has the largest effect on how the final photos look — more than the dress color, more than the exact location. Light and wind are the two variables the whole shot depends on, and both change dramatically depending on when you book."
+      ),
+      p(
+        "Golden hour — the window shortly after sunrise and shortly before sunset — produces low, warm, directional light that does two things a flying dress shoot needs. It backlights the fabric, making it glow and read as almost translucent at the edges rather than flat, and it casts long, soft shadows across the sand that add depth to what would otherwise be a fairly featureless background. Midday sun sits almost directly overhead in Egypt for much of the year, which flattens shadows and blows out highlights on light-colored fabric. A midday booking, even if it is the only slot that fits your itinerary, produces harsher images and a less cooperative breeze."
+      ),
+      h2("The Wind Problem: Enough Breeze, But Not Too Much"),
+      p(
+        "This is the part people underestimate. A flying dress needs wind to work — without any breeze at all the fabric has to be manually thrown and caught by an assistant, which is exhausting and produces a narrower range of usable shapes than genuine wind lifting it on its own. But too much wind is just as much of a problem: strong, gusty conditions make the fabric unpredictable, can whip it into your face or tangle it, and make it far harder for a photographer to time the shutter to a shape that looks intentional rather than chaotic."
+      ),
+      photo("https://images.unsplash.com/photo-1618768638775-4e4b35be986e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600", {
+        caption: "A moderate, steady breeze — enough to lift the fabric cleanly without making it unpredictable.",
+        alt: "Wind sweeping sand across a dune at golden hour",
+      }),
+      p(
+        "This is exactly why early morning and late afternoon work so well for more than just the light: Egypt's desert wind tends to be calmer and more consistent in these windows than during the hottest part of the afternoon, when thermal updrafts off the heated sand create gustier, less predictable conditions. An experienced local photographer reads this on the day and adjusts — but scheduling within the right window in the first place removes most of the guesswork."
+      ),
+      h2("Sunrise vs. Sunset"),
+      p(
+        "Both ends of the day offer genuinely good light, and the choice between them comes down to practical factors rather than one being objectively better."
+      ),
+      ...bullets([
+        "Sunrise: the coolest temperatures of the day, the calmest wind, and — at busier sites like Giza — the quietest crowds, since most visitors haven't arrived yet. The trade-off is an early wake-up and less flexibility if hair and makeup runs long.",
+        "Sunset: a more forgiving start time with no pre-dawn alarm, and light that builds gradually toward golden hour rather than starting bright and fading. The trade-off is warmer temperatures early in the session, since you are often on-site before the light is ideal, and a day's worth of crowds that haven't fully cleared at popular sites.",
+      ]),
+      h2("Seasonal Timing"),
+      p(
+        "Egypt's desert climate shifts significantly across the year, and it affects a flying dress shoot more than most other activities on an itinerary. Summer months (June through August) bring intense heat even in the early morning window, which shortens how long you can comfortably stay in a heavy dress and makes shade and hydration between setups more important. Winter months (November through February) are noticeably more comfortable for standing in desert sun for an hour or two, though mornings can start genuinely cold before the sun is fully up — worth factoring into what you wear to and from the shoot. Spring can bring occasional haze or dust depending on regional wind patterns, worth checking with your operator close to your travel dates if you are set on crystal-clear conditions."
       ),
       h2("What You Get Delivered"),
       p(
@@ -11383,6 +11454,16 @@ export const stories: Story[] = [
             question: "Can I do a flying dress photoshoot and a regular Pyramids photoshoot in the same trip?",
             answer:
               "Yes, and many travelers do — they're different styles (one built around a single dramatic prop, the other around more traditional posed and candid shots) and pair well as two separate sessions rather than one combined shoot.",
+          },
+          {
+            question: "Is sunrise or sunset better for a flying dress photoshoot?",
+            answer:
+              "Both offer strong golden-hour light. Sunrise tends to have calmer wind and fewer crowds at popular sites, while sunset doesn't require an early wake-up. Neither is definitively better — it depends on your schedule.",
+          },
+          {
+            question: "What's the best season for a flying dress photoshoot in Egypt?",
+            answer:
+              "Winter, roughly November through February, offers the most comfortable temperatures for an extended outdoor session, though early mornings can be cool. Summer is workable but demands more heat management during the shoot itself.",
           },
         ],
         "Frequently Asked Questions"
@@ -11533,14 +11614,6 @@ export const stories: Story[] = [
         excerpt:
           "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session with dress fitting, hair and makeup, and desert locations involves from start to finish.",
         imageTone: "giza",
-        category: "Travel Guides",
-      },
-      {
-        slug: "best-time-flying-dress-photoshoot",
-        title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
-        excerpt:
-          "Golden hour, wind, and season — a practical breakdown of the best time of day for a flying dress photoshoot in Egypt, and why timing matters more than almost any other decision.",
-        imageTone: "desert",
         category: "Travel Guides",
       },
       {
@@ -11786,8 +11859,12 @@ export const stories: Story[] = [
       ),
     ],
   },
+  // Merged into flying-dress-photoshoot-egypt-guide: its timing, wind and
+  // seasonal material is now the guide's "Timing" sections, and /stories/
+  // best-time-flying-dress-photoshoot 301s there (next.config.ts). Archived
+  // rather than deleted so the original wording stays recoverable in git.
   {
-    status: "published",
+    status: "archived",
     featured: false,
     slug: "best-time-flying-dress-photoshoot",
     title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
@@ -13008,11 +13085,11 @@ export const stories: Story[] = [
         category: "Travel Guides",
       },
       {
-        slug: "best-time-flying-dress-photoshoot",
-        title: "The Best Time of Day for a Flying Dress Photoshoot in Egypt",
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
         excerpt:
-          "Golden hour, wind, and season — a practical breakdown of the best time of day for a flying dress photoshoot in Egypt, and why timing matters more than almost any other decision.",
-        imageTone: "desert",
+          "What a flying dress photoshoot actually is, why it works so well in Egypt's deserts, and what a real session — including the best time of day to shoot one — involves from start to finish.",
+        imageTone: "giza",
         category: "Travel Guides",
       },
     ],
@@ -15138,6 +15215,14 @@ export const stories: Story[] = [
         imageTone: "desert",
         category: "Travel Guides",
       },
+      {
+        slug: "best-photo-spots-in-egypt",
+        title: "The Best Photo Spots in Egypt — and Which Ones to Book a Shoot At",
+        excerpt:
+          "Where the light, the angle, and the crowd size line up — and which of these locations you can book a produced photoshoot at rather than shooting yourself.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
     ],
     author: editorialTeam,
     excerpt:
@@ -15162,7 +15247,7 @@ export const stories: Story[] = [
       "Real, specific Instagram photo spots across Giza, Cairo, Luxor, Fayoum, and Siwa — genuinely useful locations, not a generic listicle.",
     body: [
       p(
-        "Most 'best photo spots in Egypt' lists repeat the same three or four obvious answers. This one is built around specific, varied locations across five different parts of the country — some needing nothing more than a phone and the right hour of the day, others benefiting from a bit of planning around light and crowds."
+        "Most lists of this kind repeat the same three or four obvious answers. This one is built around specific, varied locations across five different parts of the country, chosen for shooting yourself — some needing nothing more than a phone and the right hour of the day, others benefiting from a bit of planning around light and crowds. If you are looking instead for the locations worth booking a professional session at, our guide to the best photo spots in Egypt covers those and the timing each one needs."
       ),
       h2("Giza: Beyond the Standard Pyramid Shot"),
       p(
