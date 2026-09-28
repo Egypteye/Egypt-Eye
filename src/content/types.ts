@@ -195,6 +195,76 @@ export type Photoshoot = {
   seo?: PageSeo;
 };
 
+// A Weekly Trip: a scheduled small-group departure travellers buy a seat on,
+// rather than a private tour they book outright.
+//
+// This type is only the REPEATABLE half of the product — what the trip is,
+// where it goes, what's included. The dated half (14 November, 12 seats, $95)
+// lives in the trip_departures table, because it changes every week and the
+// team has to edit it without a deploy. See supabase/migrations/0018 for why
+// the split falls where it does.
+//
+// Deliberately not a variant of Tour. A tour is priced per private group and
+// runs on any date the customer picks; a trip is priced per seat and runs on
+// dates Egypt Eye picks. Almost every field that looks shared (price, group
+// size, duration) means a different thing on each, and collapsing them would
+// have meant a Tour full of fields that only apply half the time.
+export type WeeklyTripCategory = "desert" | "oasis" | "sea" | "ancient" | "nature";
+
+export type WeeklyTrip = {
+  slug: string;
+  title: string;
+  tagline: string;
+  category: WeeklyTripCategory;
+  /** How it reads to a traveller — "One long day" / "2 days, 1 night". */
+  duration: string;
+  /** Nights away; 0 for a day trip. Drives the day-trip/overnight filter. */
+  nights: number;
+  /** Where the group actually leaves from, stated because a seat is shared. */
+  departsFrom: string;
+  destinations: string[];
+  titleTranslations?: Record<string, string>;
+  taglineTranslations?: Record<string, string>;
+  descriptionTranslations?: Record<string, string>;
+  imageLabel?: string;
+  image?: SanityImage;
+  imageTone: ImageTone;
+  imageCredit?: ImageCredit;
+  gallery?: SanityImage[];
+  description: string;
+  highlights: string[];
+  included: string[];
+  excluded: string[];
+  /** Kit that genuinely changes the day — a head torch, a warm layer. */
+  bringWithYou?: string[];
+  /** Hours within the day, not days within a trip — hence ActivityStep. */
+  plan?: ActivityStep[];
+  physicalLevel?: PhysicalLevel;
+  /**
+   * The cap this trip is designed around, in words ("Up to 12 travellers").
+   * Only a fallback for a trip with no departure scheduled yet — wherever a
+   * real departure is loaded, its own capacity is shown instead.
+   *
+   * There is deliberately no price field here. What a seat costs is a fact
+   * about a departure, not about a trip: the same desert camp is priced
+   * differently in November and in March. Cards show "from $X" computed from
+   * the cheapest upcoming departure, and "Dates coming soon" when there is
+   * none — which is true, rather than a number nobody has committed to.
+   */
+  typicalGroupSize?: string;
+  /**
+   * When this trip actually runs. Egypt's seasons are hard operational
+   * limits, not a marketing line: the White Desert is unbookable in July.
+   */
+  season?: string;
+  featured?: boolean;
+  faqs?: Faq[];
+  /** Internal links into the existing catalogue, by slug. */
+  relatedTourSlugs?: string[];
+  relatedStorySlugs?: string[];
+  seo?: PageSeo;
+};
+
 export type Testimonial = {
   name: string;
   quote: string;

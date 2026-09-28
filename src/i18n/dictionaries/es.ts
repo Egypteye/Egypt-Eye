@@ -24,6 +24,7 @@ export const es: Dictionary = {
       "/explore-egypt": "Descubre Egipto",
       "/signature-experiences": "Experiencias exclusivas",
       "/tours": "Circuitos más solicitados",
+      "/weekly-trips": "Excursiones semanales",
       "/experiences": "Experiencias adicionales",
       "/photoshoots": "Sesiones de fotos",
       "/transfers": "Traslados",
@@ -162,6 +163,11 @@ export const es: Dictionary = {
       title: "Circuitos privados por Egipto y Jordania",
       description:
         "Circuitos privados con guía por Egipto y Jordania — excursiones de un día, itinerarios de varios días y cruceros por el Nilo. Vehículo privado y guía incluidos.",
+    },
+    "/weekly-trips": {
+      title: "Excursiones semanales desde El Cairo — únete a un grupo reducido",
+      description:
+        "Excursiones en grupo reducido con fechas fijas desde El Cairo y plazas limitadas — Desierto Blanco, Wadi El Hitan, Siwa, Sinaí, Dahshur y Alejandría. Consulta próximas fechas, precios y plazas disponibles.",
     },
     "/photoshoots": {
       title: "Sesiones de fotos en las pirámides y Flying Dress en Egipto",

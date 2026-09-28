@@ -23,6 +23,7 @@ export const it: Dictionary = {
       "/explore-egypt": "Scopri l'Egitto",
       "/signature-experiences": "Esperienze esclusive",
       "/tours": "Tour più richiesti",
+      "/weekly-trips": "Viaggi settimanali",
       "/experiences": "Esperienze extra",
       "/photoshoots": "Servizi fotografici",
       "/transfers": "Transfer",
@@ -161,6 +162,11 @@ export const it: Dictionary = {
       title: "Tour privati in Egitto e Giordania",
       description:
         "Tour privati con guida in Egitto e Giordania — escursioni in giornata, itinerari di più giorni e crociere sul Nilo. Ogni tour include veicolo privato e guida.",
+    },
+    "/weekly-trips": {
+      title: "Viaggi settimanali da Il Cairo — unisciti a un piccolo gruppo",
+      description:
+        "Viaggi in piccolo gruppo a date fisse da Il Cairo con posti limitati — Deserto Bianco, Wadi El Hitan, Siwa, Sinai, Dahshur e Alessandria. Date in programma, prezzi e posti ancora disponibili.",
     },
     "/photoshoots": {
       title: "Servizi fotografici alle piramidi e Flying Dress in Egitto",

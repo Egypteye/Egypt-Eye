@@ -552,3 +552,187 @@ export function hotelRateRequestEmail({
 
   return { subject: `New Rate Request: ${hotelName}`, html, text };
 }
+
+// ---------------------------------------------------------------------------
+// Weekly Trips — seat bookings
+// ---------------------------------------------------------------------------
+
+/**
+ * What the traveller gets after reserving a seat.
+ *
+ * Two genuinely different messages behind one function, because a waitlist
+ * confirmation that reads like a booking confirmation is how people end up at
+ * a meeting point at 6am for a trip they were never on. The waitlisted version
+ * says what it is in the subject line, states plainly that no seat is held,
+ * and quotes no price.
+ */
+export function tripSeatConfirmationEmail({
+  guestName,
+  reference,
+  tripTitle,
+  tripPath,
+  departsOn,
+  departureTime,
+  seats,
+  totalUsd,
+  waitlisted,
+  guaranteed,
+  seatsToGuarantee,
+}: {
+  guestName: string;
+  reference: string;
+  tripTitle: string;
+  tripPath: string;
+  departsOn: string;
+  departureTime?: string | null;
+  seats: number;
+  totalUsd: number | null;
+  waitlisted: boolean;
+  guaranteed: boolean;
+  seatsToGuarantee: number;
+}) {
+  const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
+  const tripUrl = `${SITE_URL}${tripPath}`;
+  const seatWord = seats === 1 ? "seat" : "seats";
+  const when = departureTime ? `${departsOn} · ${departureTime}` : departsOn;
+
+  if (waitlisted) {
+    const html = baseLayout({
+      preheader: `You're on the waitlist for ${tripTitle} on ${departsOn}.`,
+      bodyHtml: `
+        <p style="margin:0 0 16px;">${greeting}</p>
+        <p style="margin:0 0 16px;">This departure is currently full, so we've put you on the waitlist rather than turning you away. <strong>No seat is held yet and nothing is owed.</strong></p>
+        <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+          <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Trip</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(tripTitle)}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Date</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(when)}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Waiting for</td><td style="padding:6px 0;font-weight:600;">${seats} ${seatWord}</td></tr>
+          <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Reference</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(reference)}</td></tr>
+        </table>
+        <p style="margin:0 0 16px;">If someone drops out we'll contact you in the order names came in. We'll also tell you when the next date for this trip goes up.</p>
+        ${ctaButton("See Other Dates", tripUrl)}
+      `,
+      footerHtml: `Egypt Eye Travel and Tours — questions? Just reply to this email.`,
+    });
+    const text = `${greeting}\n\nThis departure is full, so you're on the waitlist. No seat is held yet and nothing is owed.\n\nTrip: ${tripTitle}\nDate: ${when}\nWaiting for: ${seats} ${seatWord}\nReference: ${reference}\n\nIf someone drops out we'll contact you in the order names came in.\n\nOther dates: ${tripUrl}`;
+    return { subject: `Waitlist: ${tripTitle}, ${departsOn}`, html, text };
+  }
+
+  // A held seat is not the same as a confirmed trip. Saying so here is what
+  // stops a minimum-group cancellation later from feeling like a bait and
+  // switch.
+  const runsLine = guaranteed
+    ? `<p style="margin:0 0 16px;">This departure has already met its minimum group size, so <strong>it's confirmed to run.</strong></p>`
+    : `<p style="margin:0 0 16px;">This trip needs <strong>${seatsToGuarantee} more ${seatsToGuarantee === 1 ? "traveller" : "travellers"}</strong> to go ahead. We'll confirm as soon as it does, and if it doesn't, you pay nothing.</p>`;
+
+  const html = baseLayout({
+    preheader: `Your ${seatWord} on ${tripTitle}, ${departsOn} — reference ${reference}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">${greeting}</p>
+      <p style="margin:0 0 16px;">Your ${seatWord} on this departure ${seats === 1 ? "is" : "are"} held. Here's what we have:</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Trip</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(tripTitle)}</td></tr>
+        <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Date</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(when)}</td></tr>
+        <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Seats</td><td style="padding:6px 0;font-weight:600;">${seats}</td></tr>
+        ${totalUsd !== null ? `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Total</td><td style="padding:6px 0;font-weight:600;">$${totalUsd.toFixed(2)} USD</td></tr>` : ""}
+        <tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;">Reference</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(reference)}</td></tr>
+      </table>
+      ${runsLine}
+      <p style="margin:0 0 16px;">One of the team will be in touch shortly to confirm your pickup point and take payment. Nothing is charged through this website.</p>
+      ${ctaButton("View the Trip", tripUrl)}
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — questions about this booking? Just reply to this email.`,
+  });
+
+  const text = `${greeting}\n\nYour ${seatWord} on this departure ${seats === 1 ? "is" : "are"} held.\n\nTrip: ${tripTitle}\nDate: ${when}\nSeats: ${seats}${
+    totalUsd !== null ? `\nTotal: $${totalUsd.toFixed(2)} USD` : ""
+  }\nReference: ${reference}\n\n${
+    guaranteed
+      ? "This departure has met its minimum group size, so it's confirmed to run."
+      : `This trip needs ${seatsToGuarantee} more traveller(s) to go ahead. We'll confirm as soon as it does, and if it doesn't, you pay nothing.`
+  }\n\nOne of the team will be in touch to confirm your pickup point and take payment. Nothing is charged through this website.\n\n${tripUrl}`;
+
+  return { subject: `Seat held: ${tripTitle}, ${departsOn} (${reference})`, html, text };
+}
+
+/** The operational heads-up to the Egypt Eye desk. */
+export function tripSeatTeamEmail({
+  reference,
+  tripTitle,
+  departsOn,
+  seats,
+  seatsLeft,
+  capacity,
+  guaranteed,
+  seatsToGuarantee,
+  waitlisted,
+  guestName,
+  guestEmail,
+  guestPhone,
+  preferences,
+  reviewUrl,
+}: {
+  reference: string;
+  tripTitle: string;
+  departsOn: string;
+  seats: number;
+  seatsLeft: number;
+  capacity: number;
+  guaranteed: boolean;
+  seatsToGuarantee: number;
+  waitlisted: boolean;
+  guestName: string;
+  guestEmail: string;
+  guestPhone?: string | null;
+  preferences?: string | null;
+  reviewUrl: string;
+}) {
+  const rows: [string, string][] = [
+    ["Trip", tripTitle],
+    ["Departs", departsOn],
+    [waitlisted ? "Waitlisted seats" : "Seats booked", String(seats)],
+    ["Seats left", waitlisted ? "0 (full)" : `${seatsLeft} of ${capacity}`],
+    [
+      "Runs?",
+      guaranteed ? "Yes — minimum met" : `Not yet — needs ${seatsToGuarantee} more`,
+    ],
+    ["Name", guestName],
+    ["Email", guestEmail],
+    ["Phone", guestPhone || "Not provided"],
+    ["Reference", reference],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const heading = waitlisted ? "Waitlist Request" : "New Seat Booking";
+
+  const html = baseLayout({
+    preheader: `${guestName} — ${seats} ${seats === 1 ? "seat" : "seats"} on ${tripTitle}, ${departsOn}.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">${escapeHtml(heading)}</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(tripTitle)} — ${escapeHtml(departsOn)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${
+        preferences
+          ? `<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">Notes from the traveller</p><p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(preferences)}</p>`
+          : ""
+      }
+      ${ctaButton("Open in Admin", reviewUrl)}
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to reach the traveller directly.</p>
+    `,
+    footerHtml: `Sent from the Weekly Trips booking form.`,
+  });
+
+  const text = `${heading}\n${tripTitle} — ${departsOn}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}${
+    preferences ? `\n\nNotes:\n${preferences}` : ""
+  }\n\nAdmin: ${reviewUrl}`;
+
+  return {
+    subject: `${waitlisted ? "Waitlist" : "Seat booking"}: ${tripTitle}, ${departsOn} (${seats})`,
+    html,
+    text,
+  };
+}

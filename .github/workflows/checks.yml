@@ -54,6 +54,13 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:stories
 
+      # Weekly Trip slugs are referenced by trip_departures rows in Supabase,
+      # which no typecheck can see. Renaming one silently orphans every
+      # scheduled departure, so the slugs are pinned and this is what notices.
+      - name: Weekly Trips catalogue
+        if: ${{ !cancelled() }}
+        run: npm run check:trips
+
       - name: Lint
         if: ${{ !cancelled() }}
         run: npm run lint

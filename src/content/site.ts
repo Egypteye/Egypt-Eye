@@ -88,6 +88,7 @@ export const site = {
     { label: "Home", href: "/" },
     { label: "Explore Egypt", href: "/explore-egypt" },
     { label: "Best Seller Tours", href: "/tours" },
+    { label: "Weekly Trips", href: "/weekly-trips" },
     { label: "Extra Experiences", href: "/experiences" },
     { label: "Unique Photoshoots", href: "/photoshoots" },
     { label: "Transfers", href: "/transfers" },
@@ -99,9 +100,16 @@ export const site = {
   ],
   trustBadges: [
     {
+      // Reworded when Weekly Trips launched. The old line promised we "never
+      // merge bookings into larger group tours" full stop, which a scheduled
+      // shared departure flatly contradicts. The promise that actually
+      // matters — book a private tour and it stays private — is kept and
+      // sharpened; the shared product is named rather than hidden, because a
+      // trust badge that a visitor can disprove by clicking the nav is worse
+      // than no badge.
       icon: "shield",
-      title: "Private, Not Pooled",
-      body: "Every tour is your own vehicle and guide — we never merge bookings into larger group tours.",
+      title: "Your Private Tour Stays Private",
+      body: "Book a tour and it's your own vehicle and guide — we never merge a private booking into someone else's group. Our Weekly Trips are shared by design, and say so on every page.",
     },
     {
       icon: "coin",

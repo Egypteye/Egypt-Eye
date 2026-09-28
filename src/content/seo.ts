@@ -136,6 +136,113 @@ export function touristTripJsonLd({
  * actually on the page — a trail that begins at "Tours" while the page shows
  * "Home › Tours › …" is a mismatch, and callers kept forgetting to pass it.
  */
+/**
+ * FAQPage built from the exact question/answer pairs the page renders.
+ *
+ * Takes the same array the accordion is given rather than a separate list, so
+ * the markup cannot claim an answer the page doesn't show — which is a
+ * manual-action risk rather than a rich result. The photoshoots pages build
+ * this inline and predate the helper; new pages should use this.
+ */
+export function faqJsonLd(faqs: { question: string; answer: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((f) => ({
+      "@type": "Question",
+      name: f.question,
+      acceptedAnswer: { "@type": "Answer", text: f.answer },
+    })),
+  };
+}
+
+/**
+ * A scheduled Weekly Trips departure, as schema.org Event.
+ *
+ * Event rather than TouristTrip because a departure is a dated, ticketed
+ * occurrence with finite capacity, and that is precisely what Event models:
+ * `startDate`, `offers.availability` and `remainingAttendeeCapacity` are the
+ * three facts the product is built on, and there is nowhere to put any of
+ * them on TouristTrip. The trip page itself still carries TouristTrip for the
+ * repeatable experience — the two describe different things and coexist.
+ *
+ * Every field here is read off the departure row rather than assumed, so this
+ * cannot drift from what the page shows. A cancelled departure is published
+ * as EventCancelled rather than dropped: Google specifically asks to be told
+ * about cancellations rather than left to infer them from a missing entry.
+ */
+export function tripDepartureEventJsonLd({
+  tripTitle,
+  tripDescription,
+  tripPath,
+  image,
+  departsOn,
+  returnsOn,
+  priceUsd,
+  seatsLeft,
+  capacity,
+  state,
+  departsFrom,
+}: {
+  tripTitle: string;
+  tripDescription: string;
+  tripPath: string;
+  image?: SanityImage;
+  departsOn: string;
+  returnsOn?: string | null;
+  priceUsd: number;
+  seatsLeft: number;
+  capacity: number;
+  state: "open" | "almost_full" | "sold_out" | "closed" | "cancelled" | "departed";
+  departsFrom: string;
+}) {
+  const imageUrl = urlForImage(image)?.width(1200).height(630).url();
+  const url = `${siteUrl}${tripPath}`;
+
+  const availability =
+    state === "sold_out"
+      ? "https://schema.org/SoldOut"
+      : state === "closed" || state === "cancelled" || state === "departed"
+        ? "https://schema.org/OutOfStock"
+        : "https://schema.org/InStock";
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: `${tripTitle} — ${departsOn}`,
+    description: tripDescription,
+    ...(imageUrl ? { image: imageUrl } : {}),
+    startDate: departsOn,
+    ...(returnsOn && returnsOn !== departsOn ? { endDate: returnsOn } : { endDate: departsOn }),
+    eventStatus:
+      state === "cancelled" ? "https://schema.org/EventCancelled" : "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    location: {
+      "@type": "Place",
+      name: departsFrom,
+      address: { "@type": "PostalAddress", addressLocality: departsFrom, addressCountry: "EG" },
+    },
+    organizer: {
+      "@type": "TravelAgency",
+      name: "Egypt Eye Travel and Tours",
+      url: siteUrl,
+    },
+    // maximumAttendeeCapacity and remainingAttendeeCapacity are real counts
+    // from the departure row, never estimates — publishing a capacity that
+    // isn't the one being sold against would be fabricated structured data.
+    maximumAttendeeCapacity: capacity,
+    remainingAttendeeCapacity: seatsLeft,
+    offers: {
+      "@type": "Offer",
+      url,
+      price: priceUsd,
+      priceCurrency: "USD",
+      availability,
+      validFrom: new Date().toISOString().slice(0, 10),
+    },
+  };
+}
+
 export function breadcrumbJsonLd(items: { name: string; path: string }[]) {
   const trail = [{ name: "Home", path: "/" }, ...items];
   return {

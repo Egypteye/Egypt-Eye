@@ -30,6 +30,7 @@ export const en = {
       "/explore-egypt": "Explore Egypt",
       "/signature-experiences": "Signature Experiences",
       "/tours": "Best Seller Tours",
+      "/weekly-trips": "Weekly Trips",
       "/experiences": "Extra Experiences",
       "/photoshoots": "Unique Photoshoots",
       "/transfers": "Transfers",
@@ -176,6 +177,11 @@ export const en = {
       title: "Private Tours Across Egypt & Jordan",
       description:
         "Private, guided tours across Egypt and Jordan — one-day trips, multi-day itineraries, and Nile cruises. Every tour includes a private vehicle and guide.",
+    },
+    "/weekly-trips": {
+      title: "Weekly Trips from Cairo — Join a Small Group",
+      description:
+        "Scheduled small-group trips from Cairo with limited seats — the White Desert, Wadi El Hitan, Siwa, Sinai, Dahshur and Alexandria. See upcoming dates, prices and how many seats are left.",
     },
     "/photoshoots": {
       title: "Pyramids & Flying Dress Photoshoots in Egypt",

@@ -15,6 +15,7 @@ const FULL_NAV = [
   { href: "/admin/newsletter", label: "Newsletter" },
   { href: "/admin/reviews", label: "Reviews" },
   { href: "/admin/reservations", label: "Reservations" },
+  { href: "/admin/departures", label: "Weekly Trips" },
   { href: "/admin/concierge", label: "Concierge" },
   { href: "/admin/collaborations", label: "Collaborations" },
   { href: "/admin/travel-agents", label: "Travel Agents" },

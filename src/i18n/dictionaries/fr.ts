@@ -24,6 +24,7 @@ export const fr: Dictionary = {
       "/explore-egypt": "Découvrir l'Égypte",
       "/signature-experiences": "Expériences signature",
       "/tours": "Circuits les plus demandés",
+      "/weekly-trips": "Excursions hebdomadaires",
       "/experiences": "Expériences complémentaires",
       "/photoshoots": "Séances photo",
       "/transfers": "Transferts",
@@ -162,6 +163,11 @@ export const fr: Dictionary = {
       title: "Circuits privés en Égypte et en Jordanie",
       description:
         "Circuits privés guidés en Égypte et en Jordanie — excursions à la journée, itinéraires de plusieurs jours et croisières sur le Nil. Véhicule privé et guide inclus.",
+    },
+    "/weekly-trips": {
+      title: "Excursions hebdomadaires au départ du Caire — en petit groupe",
+      description:
+        "Excursions en petit groupe à dates fixes au départ du Caire, avec places limitées — Désert Blanc, Wadi El Hitan, Siwa, Sinaï, Dahchour et Alexandrie. Dates à venir, tarifs et places restantes.",
     },
     "/photoshoots": {
       title: "Séances photo aux pyramides et Flying Dress en Égypte",

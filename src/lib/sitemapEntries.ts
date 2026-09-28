@@ -9,6 +9,7 @@ import {
 } from "@/sanity/fetchers";
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
+import { weeklyTrips } from "@/content/weeklyTrips";
 import { isWithdrawnPath } from "@/content/withdrawnSections";
 // Slugs that 301-redirect elsewhere (see next.config.ts, which builds its
 // redirects from the same map) — keep them out of the sitemap even where the
@@ -69,6 +70,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     { url: `${siteUrl}/explore-egypt`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/signature-experiences`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${siteUrl}/tours`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${siteUrl}/weekly-trips`, changeFrequency: "daily", priority: 0.9 },
     { url: `${siteUrl}/experiences`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/photoshoots`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/hotel-deals`, changeFrequency: "weekly", priority: 0.7 },
@@ -131,6 +133,16 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
       lastModified: s.publishedAt,
     }));
 
+  // Weekly Trips come from a content file rather than a backend, so unlike
+  // every other list here they can't fail to load. changeFrequency is weekly
+  // because the page's departures and seat counts genuinely change that often,
+  // even though the trip copy itself rarely does.
+  const weeklyTripRoutes: MetadataRoute.Sitemap = weeklyTrips.map((t) => ({
+    url: `${siteUrl}/weekly-trips/${t.slug}`,
+    changeFrequency: "weekly",
+    priority: 0.8,
+  }));
+
   const destinationRoutes: MetadataRoute.Sitemap = destinationHubs.map((d) => ({
     url: `${siteUrl}/explore-egypt/${d.slug}`,
     changeFrequency: "monthly",
@@ -153,6 +165,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     ...signatureExperienceRoutes,
     ...storyRoutes,
     ...destinationRoutes,
+    ...weeklyTripRoutes,
   ].filter((entry) => !isWithdrawnPath(entry.url.slice(siteUrl.length) || "/"));
 
   return forLocale(all, locale);
