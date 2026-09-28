@@ -13435,6 +13435,285 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
+    slug: "what-happens-pyramids-photoshoot",
+    title: "What Actually Happens During a Pyramids Photoshoot",
+    category: "Travel Guides",
+    tags: ["Pyramids Photoshoot", "Egypt Photoshoots", "Giza Pyramids", "Trip Planning"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-what-included",
+        title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+        excerpt:
+          "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-for-pyramids-photoshoot",
+        title: "Best Time for a Pyramids Photoshoot: Sunrise, Sunset, or Midday?",
+        excerpt:
+          "How light, heat, and crowd levels change through the day at Giza, and which window actually suits the photos you want.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1708992485876-f193e746f6dd"),
+    imageCredit: unsplashCredit("Phillip Wang", "https://unsplash.com/photos/a-group-of-people-riding-on-the-backs-of-camels-in-the-desert-r6OQUkvOHcw"),
+    publishedAt: "2026-09-28T09:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "what happens during a pyramids photoshoot",
+    secondaryKeywords: [
+      "how does a pyramids photoshoot work",
+      "how long does a pyramids photoshoot take",
+      "where do photographers meet clients at the pyramids",
+      "do I need to know how to pose",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "Most people booking a photoshoot at the Pyramids have never been professionally photographed before. The uncertainty is rarely about the photographs \u2014 it is about the two hours around them. Where do we meet. What am I supposed to do with my hands. What if it is windy. Here is the whole thing, start to finish."
+      ),
+      h2("Before the day"),
+      p(
+        "A deposit secures your date, and the earlier the better for sunrise and the last hour before sunset \u2014 the two windows everyone wants. You tell us where you are staying; we handle getting you there and back."
+      ),
+      h2("Pickup"),
+      p(
+        "We collect you from your hotel. Private transportation is part of the package, along with parking and road tolls, so there is no taxi to negotiate and no meeting point to find in an unfamiliar city. This is the part travelers most often assume they have to solve themselves, and it is worth checking wherever you book \u2014 arriving at Giza independently, on time, in the right place, is harder than it sounds."
+      ),
+      h2("The session"),
+      p(
+        "One to two hours at the Giza Pyramids and the Nine Pyramids View \u2014 the vantage point that gives you the pyramids in a line rather than one wall of stone filling the frame. The photographer brings all the equipment; you bring yourself and whatever you want to wear."
+      ),
+      p(
+        "You do not need to know how to pose, and it is worth saying clearly that almost nobody does. The photographer directs the session throughout: where to stand, which way to face, how to move, where the light is falling. Being told what to do is the normal experience of a shoot, not a sign that it is going badly."
+      ),
+      callout(
+        "The most common thing people say afterwards is that they relaxed about ten minutes in. Budget the first few minutes for feeling self-conscious \u2014 everyone does, and it does not show in the photographs."
+      ),
+      h2("Horses, camels and video"),
+      p(
+        "An Arabian horse, a camel experience or a professional video Reel can be added to the session. If you want any of them, say so when you book rather than on the day \u2014 they are arranged in advance, not summoned on request. There are also two dedicated horse packages if the horse is the point rather than an extra."
+      ),
+      h2("What you leave with, the same day"),
+      p(
+        "The raw, unedited photos are yours the same day. This matters more than it sounds: it means you see what was shot while you are still in Egypt, rather than flying home and hoping. The edited gallery follows \u2014 80+ edited pictures from the Pyramids session, with an optional larger gallery of 100+ high-resolution edited images available within five days."
+      ),
+      p(
+        "There is 24-hour follow-up after the shoot, which is the window for anything that needs sorting out."
+      ),
+      cta({
+        title: "Book the Exclusive Pyramids Photoshoot",
+        body: "A private 1\u20132 hour session at the Giza Pyramids and the Nine Pyramids View, with 80+ edited pictures and transport included \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      h2("If something goes wrong"),
+      ...bullets([
+        "Bad weather \u2014 we reschedule. There is nothing to gain from spending your session in light that will not produce the photographs you came for.",
+        "Running late \u2014 also a reschedule. A delayed flight or a slow morning is not a forfeited booking.",
+        "Not sure what to wear \u2014 ask before the day rather than on it, and bring the outfit you feel most like yourself in.",
+      ]),
+      h2("Can it fit around a tour?"),
+      p(
+        "Yes, with any of our tours. Several multi-day itineraries already build a Giza photoshoot into the Pyramids day, so the photographer is part of the plan rather than a separate booking to coordinate around it."
+      ),
+      faq(
+        [
+          {
+            question: "How long does a Pyramids photoshoot take?",
+            answer:
+              "The Exclusive Pyramids Photoshoot runs one to two hours at the site, not counting the drive. Allow more of the morning or evening than the session length alone, since pickup and return are part of the day.",
+          },
+          {
+            question: "Where do I meet the photographer?",
+            answer:
+              "You do not have to. Pickup and drop-off are included, so we collect you from your hotel and bring you back afterwards.",
+          },
+          {
+            question: "Do I need to know how to pose?",
+            answer:
+              "No. The photographer directs the entire session \u2014 where to stand, how to move, where the light is. Most people booking have never been professionally photographed before.",
+          },
+          {
+            question: "Can I change outfits during the session?",
+            answer:
+              "Bring what you would like to wear and raise it when you book, so the session is planned with the time in it rather than squeezed at the end.",
+          },
+          {
+            question: "What happens if the weather is bad, or I am running late?",
+            answer:
+              "We reschedule in both cases. A photoshoot depends on light and timing, and neither is worth spending on a session that will disappoint you.",
+          },
+          {
+            question: "When do I get the photos?",
+            answer:
+              "The raw unedited photos are yours the same day. The edited gallery of 80+ pictures follows, with an optional larger gallery of 100+ high-resolution edited images within five days.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "The session itself is the short part. What makes it work is everything arranged around it \u2014 the light you booked into, the transport you did not have to think about, and someone telling you where to stand."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "pyramids-photoshoot-what-included",
+    title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+    category: "Travel Guides",
+    tags: ["Pyramids Photoshoot", "Egypt Photoshoots", "Giza Pyramids", "Trip Planning"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Hire a Photographer in Egypt: A Traveler\u2019s Guide",
+        excerpt:
+          "Where to find a photographer in Egypt, how to tell a real operator from a tout, what a session costs, and every question worth settling before you pay a deposit.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1544815521-80841127c00f"),
+    imageCredit: unsplashCredit("Ricardo Gomez Angel", "https://unsplash.com/photos/pyramid-of-giza-hAw4e-F4klY"),
+    publishedAt: "2026-09-28T10:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "what is included in a pyramids photoshoot",
+    secondaryKeywords: [
+      "how many photos do you get from a pyramids photoshoot",
+      "do photographers edit the photos",
+      "how long does it take to receive photos from a photoshoot",
+      "are entrance tickets included pyramids photoshoot",
+    ],
+    destinations: ["Giza", "Cairo", "Fayoum"],
+    body: [
+      p(
+        "\u201cWhat\u2019s included\u201d is the question that decides most photoshoot bookings, and the one most often answered vaguely. Here is the full list for a Pyramids session \u2014 including the part that is not included, which is the part worth knowing before you are standing at the gate."
+      ),
+      h2("What comes with the session"),
+      ...bullets([
+        "A private professional photographer \u2014 the session is yours, not a shared slot.",
+        "Professional camera equipment. You bring nothing.",
+        "Private transportation, with hotel pickup and drop-off.",
+        "Parking and road tolls.",
+        "80+ edited pictures.",
+        "24-hour follow-up after the shoot.",
+      ]),
+      h2("What is not included"),
+      p(
+        "Site entrance tickets. You buy those at the gate, and they are the only cost to expect on the day beyond the package itself."
+      ),
+      p(
+        "It is a small thing stated plainly and a genuinely annoying thing discovered late, which is why it is worth asking every operator directly. A package that does not mention tickets either way is not telling you it includes them."
+      ),
+      h2("How many photographs, and when"),
+      p(
+        "80+ edited pictures from the Pyramids session. You also get the raw, unedited photos the same day, so you leave with your images rather than waiting on them from another continent. An optional larger gallery of 100+ high-resolution edited images is available within five days."
+      ),
+      p(
+        "This is worth comparing carefully. A common structure elsewhere delivers around 20 edited images from a one-hour session, rising to roughly 50 for four hours, with the gallery arriving up to two weeks later. Photo count and delivery date are the two numbers to get in writing anywhere you book."
+      ),
+      callout(
+        "Do photographers edit the photos? They should, and the number that matters is how many edited images you are promised \u2014 not how many frames were taken on the day."
+      ),
+      h2("What costs extra"),
+      ...bullets([
+        "Arabian horse photography \u2014 or one of the two dedicated horse packages, at $120 and $160.",
+        "A camel experience.",
+        "A professional video Reel, if you want moving footage as well as stills.",
+        "A group photoshoot, for larger parties.",
+        "The larger 100+ image high-resolution gallery.",
+      ]),
+      h2("How payment works"),
+      p(
+        "A deposit secures your date. The balance is paid the same day, after the photoshoot, in cash or by transfer \u2014 so the bulk of it is settled once you have seen what was shot."
+      ),
+      cta({
+        title: "See every package and what it includes",
+        body: "Six photoshoot packages from $75, each listing its session length, photo count and inclusions in full.",
+        buttonLabel: "Browse Photoshoot Packages",
+        buttonHref: "/photoshoots",
+      }),
+      h2("What is included in the other packages"),
+      p(
+        "The flying dress sessions \u2014 $199 in the sand dunes near Giza, $219 at Fayoum\u2019s Wadi El Rayan and the Magic Lake \u2014 run an hour and include the dress, which is the main practical difference from a standard session. The Pyramids Proposal Romance Setup is $150 for a styled setup ready before you arrive, with photography available as an add-on rather than built in. Each package page lists its own inclusions."
+      ),
+      faq(
+        [
+          {
+            question: "What is included in a Pyramids photoshoot?",
+            answer:
+              "A private professional photographer, professional camera equipment, private transportation with hotel pickup and drop-off, parking and road tolls, 80+ edited pictures, and 24-hour follow-up after the shoot.",
+          },
+          {
+            question: "Are entrance tickets included?",
+            answer:
+              "No. Site entrance tickets are bought at the gate and are the only cost to expect on the day beyond the package itself.",
+          },
+          {
+            question: "How many photos do you get from a Pyramids photoshoot?",
+            answer:
+              "80+ edited pictures, plus the raw unedited photos the same day. An optional larger gallery of 100+ high-resolution edited images is available within five days.",
+          },
+          {
+            question: "Do photographers edit the photos?",
+            answer:
+              "Yes \u2014 the 80+ pictures you receive are edited. The raw unedited files come to you the same day as well, so you have both.",
+          },
+          {
+            question: "How long does it take to receive the photos?",
+            answer:
+              "The raw photos arrive the same day. The larger high-resolution edited gallery, if you choose it, is delivered within five days.",
+          },
+          {
+            question: "Is transport included, or do I arrange my own?",
+            answer:
+              "Included. Private transportation with hotel pickup and drop-off, plus parking and road tolls, are part of the package.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Judge a photoshoot package on three things: how many edited photographs you are promised, when they arrive, and what you will still be paying for on the day. Everything else is presentation."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
     slug: "best-instagram-photo-spots-egypt",
     title: "Best Places in Egypt for Instagram-Worthy Photos",
     category: "Culture & Trends",
