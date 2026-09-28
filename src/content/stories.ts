@@ -13714,6 +13714,138 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
+    slug: "photographer-in-cairo",
+    title: "Hiring a Photographer in Cairo: How It Actually Works",
+    category: "Travel Guides",
+    tags: ["Cairo", "Egypt Photoshoots", "Giza Pyramids", "Trip Planning"],
+    relatedStories: [
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Hire a Photographer in Egypt: A Traveler\u2019s Guide",
+        excerpt:
+          "Where to find a photographer in Egypt, how to tell a real operator from a tout, what a session costs, and every question worth settling before you pay a deposit.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-photo-spots-in-egypt",
+        title: "The Best Photo Spots in Egypt",
+        excerpt:
+          "Where the photographs actually are across Giza, Cairo, Luxor, Aswan and the Western Desert \u2014 and what makes each one work.",
+        imageTone: "luxor",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "What travelers searching for a Cairo photographer usually want, why the shoot happens in Giza, and how a session works when you are staying in the city.",
+    imageTone: "nile",
+    image: unsplashUrl("photo-1601411972741-1042bdb41df2"),
+    imageCredit: unsplashCredit("Yousef Salhamoud", "https://unsplash.com/photos/people-standing-on-dock-near-city-buildings-during-daytime-v-SmvA0JadI"),
+    publishedAt: "2026-09-28T11:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour", "islamic-coptic-cairo-walking-tour"),
+    primaryKeyword: "photographer in Cairo",
+    secondaryKeywords: [
+      "private photographer Cairo",
+      "Cairo photoshoot",
+      "where can I take professional photos in Cairo",
+      "professional photographer Egypt",
+      "photographer for tourists in Cairo",
+    ],
+    destinations: ["Cairo", "Giza"],
+    body: [
+      p(
+        "Almost everyone searching for a photographer in Cairo wants the same photograph, and it is not in Cairo. It is at the Pyramids \u2014 which sit in Giza, on the other side of the river, about forty-five minutes from most central hotels depending on the traffic you hit."
+      ),
+      p(
+        "That is not a technicality. It changes how you book, what it costs, and how much of your day it takes. Here is how it actually works when Cairo is where you are staying."
+      ),
+      h2("Cairo is the base. Giza is the shoot."),
+      p(
+        "Our photoshoot packages are at the Giza Pyramids and the Nine Pyramids View, in the sand dunes nearby, and out at Fayoum. We do not sell a separate Cairo city package, and it is worth saying so plainly rather than letting you find out after booking."
+      ),
+      p(
+        "What we do instead is collect you from your Cairo hotel and bring you back afterwards. Private transportation, parking and road tolls are inside the price of the Pyramids session rather than beside it \u2014 which, for a traveler staying in Zamalek or Downtown with no interest in negotiating a cab to Giza twice, is most of the practical problem solved."
+      ),
+      callout(
+        "If a photographer quotes you a Cairo price and the shoot is at the Pyramids, ask whether transport is included. Getting to Giza and back is a real cost, and leaving it out makes a quote look smaller than it is."
+      ),
+      h2("What the session looks like from Cairo"),
+      ...bullets([
+        "Pickup from your hotel, at the hour you booked \u2014 sunrise and the last hour before sunset are the two windows worth planning around.",
+        "One to two hours at the Giza Pyramids and the Nine Pyramids View.",
+        "80+ edited pictures, with the raw unedited photos the same day.",
+        "Drop-off back in Cairo afterwards.",
+      ]),
+      p(
+        "The Exclusive Pyramids Photoshoot is $75. Site entrance tickets are not included and are bought at the gate \u2014 the only cost to expect on the day beyond the package itself."
+      ),
+      cta({
+        title: "See the Pyramids photoshoot",
+        body: "A private 1\u20132 hour session with hotel pickup from Cairo, 80+ edited pictures, and the raw photos the same day \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      h2("Where can you take professional photos in Cairo itself?"),
+      p(
+        "Plenty of places, and they are genuinely worth your camera \u2014 Islamic Cairo\u2019s streets and minarets, Khan el-Khalili, the Coptic quarter, the Nile at dusk. For those we would point you at our guide to the best photo spots in Egypt and at the Islamic and Coptic Cairo walking tour, which covers the same ground with someone who knows it."
+      ),
+      p(
+        "But be clear with yourself about which photograph you are after. A guided walk through Old Cairo with your own camera is a different thing from a directed session with a professional photographer, and the second one is what our packages are."
+      ),
+      h2("Fitting a shoot into a Cairo itinerary"),
+      p(
+        "A photoshoot can be arranged alongside any of our tours, and several multi-day itineraries already build a Giza photoshoot into the Pyramids day \u2014 which is the efficient version, since you are going to Giza anyway. If you are already booking a trip, mention the photoshoot and it gets planned into the day rather than bolted onto it."
+      ),
+      p(
+        "If you are only in Cairo for a short stop, the sunrise slot is usually the one that costs you least \u2014 it is finished before most itineraries start."
+      ),
+      faq(
+        [
+          {
+            question: "Do you offer photoshoots in Cairo itself?",
+            answer:
+              "Our photoshoot packages are at the Giza Pyramids and the Nine Pyramids View, the nearby sand dunes, and Fayoum. We collect you from your Cairo hotel and bring you back, so Cairo is the base rather than the location.",
+          },
+          {
+            question: "How much is a photographer in Cairo?",
+            answer:
+              "The Exclusive Pyramids Photoshoot is $75 for a private 1\u20132 hour session delivering 80+ edited pictures, with transport from your Cairo hotel included. Our packages run from $75 to $219.",
+          },
+          {
+            question: "How far is Giza from central Cairo?",
+            answer:
+              "Around forty-five minutes by road from most central hotels, though Cairo traffic makes that a range rather than a promise. Pickup and drop-off are included in the package, so the timing is ours to manage.",
+          },
+          {
+            question: "Where can I take professional photos in Cairo?",
+            answer:
+              "Islamic Cairo, Khan el-Khalili, the Coptic quarter and the Nile at dusk are all strong with your own camera, and our Islamic and Coptic Cairo walking tour covers that ground. Our professional photoshoot packages are at Giza and Fayoum.",
+          },
+          {
+            question: "Can I do the photoshoot on the same day as a Cairo tour?",
+            answer:
+              "Yes. A photoshoot can be arranged alongside any of our tours, and several multi-day itineraries already include a Giza photoshoot on the Pyramids day.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Cairo is where you sleep, eat and get stuck in traffic. Giza is where the photograph is. The only thing that really matters is whether whoever you book has taken responsibility for the distance between the two."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
     slug: "best-instagram-photo-spots-egypt",
     title: "Best Places in Egypt for Instagram-Worthy Photos",
     category: "Culture & Trends",
