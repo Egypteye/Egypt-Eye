@@ -10,7 +10,8 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
-import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
+import { getPhotoshootBySlug, getPhotoshoots, getSiteSettings, getTestimonials } from "@/sanity/fetchers";
+import { ProductReviews } from "@/components/ProductReviews";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T } from "@/i18n/T";
@@ -44,7 +45,11 @@ export default async function PhotoshootDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const [photoshoot, site] = await Promise.all([getPhotoshootBySlug(slug), getSiteSettings()]);
+  const [photoshoot, site, testimonials] = await Promise.all([
+    getPhotoshootBySlug(slug),
+    getSiteSettings(),
+    getTestimonials(),
+  ]);
   if (!photoshoot) notFound();
 
   // Emitted from the exact pairs the accordion below renders — structured
@@ -204,6 +209,17 @@ export default async function PhotoshootDetailPage({
         </aside>
       </Container>
     </section>
+
+      {/* Photography reviews specifically: a traveller describing how the
+          photographer worked is the single most persuasive thing on a shoot
+          page, and far more use here than a generic five stars. */}
+      <Container>
+        <ProductReviews
+          reviews={testimonials}
+          subject={{ type: "photoshoot", slug: photoshoot.slug, title: photoshoot.title }}
+          themes={["photography", "flying-dress", "proposal", "birthday", "couples"]}
+        />
+      </Container>
     </>
   );
 }

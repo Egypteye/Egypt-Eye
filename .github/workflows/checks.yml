@@ -61,6 +61,14 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:trips
 
+      # The review rules are legal ones — excerpting third-party reviews
+      # rather than republishing them, keeping imported ratings out of
+      # structured data, dropping photos we don't have rights to. All of it
+      # renders fine when broken, so it is asserted instead.
+      - name: Review policy
+        if: ${{ !cancelled() }}
+        run: npm run check:reviews
+
       - name: Lint
         if: ${{ !cancelled() }}
         run: npm run lint

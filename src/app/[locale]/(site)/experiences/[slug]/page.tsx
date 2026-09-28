@@ -14,7 +14,8 @@ import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
-import { getExperienceBySlug, getExperiences, getSiteSettings } from "@/sanity/fetchers";
+import { getExperienceBySlug, getExperiences, getSiteSettings, getTestimonials } from "@/sanity/fetchers";
+import { ProductReviews } from "@/components/ProductReviews";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T } from "@/i18n/T";
@@ -54,7 +55,7 @@ export default async function ExperienceDetailPage({
   // Without this, an experience is only ever reachable from /experiences —
   // one inbound link each. Grouping on the first destination keeps the row
   // relevant (the listing page groups the same way).
-  const allExperiences = await getExperiences();
+  const [allExperiences, testimonials] = await Promise.all([getExperiences(), getTestimonials()]);
   const related = pickRelated(allExperiences, experience, 3, (e) => e.destinations?.[0]);
 
   // Most experiences run at a single place, so this usually resolves to one
@@ -252,6 +253,14 @@ export default async function ExperienceDetailPage({
         </aside>
       </Container>
       </section>
+
+      <Container>
+        <ProductReviews
+          reviews={testimonials}
+          subject={{ type: "experience", slug: experience.slug, title: experience.title }}
+          themes={["guide", "planning", "communication"]}
+        />
+      </Container>
 
       {related.length > 0 && (
         <section className="bg-sand-dim py-20">

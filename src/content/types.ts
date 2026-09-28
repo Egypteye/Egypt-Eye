@@ -33,6 +33,16 @@ export type Rating = {
    * on the page.
    */
   source: "computed" | "manual";
+  /**
+   * True when any review behind this figure was written on another platform.
+   *
+   * Such a figure is perfectly honest to SHOW — those reviews are real — but
+   * it must never reach AggregateRating markup, because Google's review
+   * snippet policy is explicit: "Don't aggregate reviews or ratings from
+   * other websites." Carried on the figure itself rather than checked at each
+   * call site, so a page cannot emit the markup by forgetting.
+   */
+  includesThirdParty?: boolean;
 } | null;
 
 export type ItineraryDay = {
@@ -265,10 +275,79 @@ export type WeeklyTrip = {
   seo?: PageSeo;
 };
 
+// Where a review was written. This is the field that decides what the site is
+// allowed to do with it, so it is not decoration.
+//
+//   "direct" — a review Egypt Eye collected itself, through the WhatsApp
+//   follow-up after a trip. Egypt Eye's own content: free to publish in full,
+//   and the ONLY kind that may carry Review/AggregateRating structured data.
+//
+//   anything else — the traveller wrote it on someone else's platform. That
+//   text is the platform's copyrighted content, and Google's review-snippet
+//   policy says in as many words: "Don't aggregate reviews or ratings from
+//   other websites." So these are shown as attributed, linked excerpts and
+//   are excluded from structured data. See lib/reviewPolicy.ts, which
+//   enforces both rather than leaving it to whoever edits next.
+export const REVIEW_PLATFORMS = [
+  "direct",
+  "tripadvisor",
+  "airbnb",
+  "google",
+  "viator",
+  "getyourguide",
+] as const;
+
+export type ReviewPlatform = (typeof REVIEW_PLATFORMS)[number];
+
+export type ReviewSource = {
+  platform: ReviewPlatform;
+  /**
+   * The page a visitor can read the original on. Required for every platform
+   * except "direct" — an unlinked third-party quote is an unverifiable claim
+   * about someone else's words, which is exactly what the FTC's Consumer
+   * Review Rule is about.
+   */
+  url?: string;
+  /** ISO date the traveller posted it, where the platform shows one. */
+  reviewedAt?: string;
+};
+
+/**
+ * What a traveller actually talked about.
+ *
+ * This is what lets the right review appear on the right page: "the
+ * photographer helped us pose" belongs on a photoshoot page, "our driver was
+ * waiting at arrivals" belongs on /transfers, and "great experience" belongs
+ * nowhere in particular. Derived from the review's own words by
+ * lib/reviewThemes.ts and overridable by hand in Studio — never used to
+ * change what a review says, only to decide where it is worth showing.
+ */
+export const REVIEW_THEMES = [
+  "photography",
+  "flying-dress",
+  "guide",
+  "pickup",
+  "communication",
+  "proposal",
+  "birthday",
+  "family",
+  "couples",
+  "solo",
+  "desert",
+  "nile",
+  "diving",
+  "planning",
+  "value",
+] as const;
+
+export type ReviewTheme = (typeof REVIEW_THEMES)[number];
+
 export type Testimonial = {
   name: string;
   quote: string;
   context?: string;
+  /** The reviewer's own headline, where the platform has one (TripAdvisor does). */
+  title?: string;
   /** The star value this traveler gave, where the follow-up captured one. */
   score?: number;
   /**
@@ -276,6 +355,51 @@ export type Testimonial = {
    * in Studio. Overrides whatever `context` says — see lib/reviewAttribution.
    */
   subjectSlug?: string;
+  /**
+   * Absent means "direct" — every review collected before this field existed
+   * came through the WhatsApp follow-up.
+   */
+  source?: ReviewSource;
+  /** Set by hand in Studio to override the themes derived from the text. */
+  themes?: ReviewTheme[];
+  /**
+   * Photos the traveller gave Egypt Eye permission to publish.
+   *
+   * Direct reviews only, and enforced in code rather than trusted: a photo
+   * attached to a review on TripAdvisor or Airbnb belongs to the traveller
+   * and is hosted under that platform's terms, so re-hosting it here is a
+   * bigger copyright problem than the text ever is. lib/reviewPolicy.ts drops
+   * photos on any non-direct review.
+   */
+  photos?: SanityImage[];
+  /** Promotes this review into the Customer Stories rail and the homepage. */
+  featured?: boolean;
+};
+
+/**
+ * A platform's own headline numbers, as a linked badge.
+ *
+ * Deliberately separate from the reviews themselves, and the single safest
+ * high-value thing on this page: "4.9 from 312 reviews on TripAdvisor →" is a
+ * statement of fact with a link to the proof. It republishes nothing, so no
+ * copyright or policy question arises, and it carries the trust the platform
+ * has already earned.
+ *
+ * Typed in by hand and stamped with the date it was checked, because there is
+ * no API access here. `checkedOn` is shown to the visitor for the same reason
+ * a price carries a date: a number with no date is a number nobody can
+ * evaluate, and a stale review count is the kind of thing the FTC and the CMA
+ * treat as a misrepresentation rather than an oversight.
+ */
+export type ReviewSourceSummary = {
+  platform: ReviewPlatform;
+  /** What the platform calls this listing — it may not match a product name. */
+  label: string;
+  url: string;
+  score?: number;
+  count: number;
+  /** ISO date these numbers were last verified against the platform. */
+  checkedOn: string;
 };
 
 export type Author = {

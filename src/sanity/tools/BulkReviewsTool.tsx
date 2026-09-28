@@ -8,19 +8,37 @@ import { reviewDuplicateKey } from "@/lib/testimonials/normalize";
 // creating them one document at a time. Uses the Studio's own logged-in
 // session for write access — no separate API token needed.
 
-type ParsedReview = { name: string; quote: string; context?: string };
+type ParsedReview = {
+  name: string;
+  quote: string;
+  context?: string;
+  title?: string;
+  source?: string;
+  url?: string;
+  date?: string;
+  score?: number;
+};
 type ParseIssue = { block: string; reason: string };
 
+const PLATFORMS = ["direct", "tripadvisor", "airbnb", "google", "viator", "getyourguide"];
+
 const PLACEHOLDER = `Name: Sarah M.
-Quote: The photos genuinely look like they belong in a magazine — our guide knew exactly how to pose us.
+Quote: The photographer kept showing us the back of the camera so we knew exactly what we were getting.
 Context: Exclusive Pyramids Photoshoot
+Source: tripadvisor
+Url: https://www.tripadvisor.com/ShowUserReviews-...
+Date: 2026-03-14
+Score: 5
 ---
 Name: James & Emma
 Quote: From the airport pickup to the last night's dinner cruise, it felt like traveling with friends.
 Context: 6 Days: Cairo, Giza & Luxor
+Source: direct
+Score: 5
 ---
 Name: Priya K.
-Quote: I've never felt so looked after on a solo trip.`;
+Quote: I've never felt so looked after on a solo trip.
+Source: direct`;
 
 function parseReviews(raw: string): { reviews: ParsedReview[]; issues: ParseIssue[] } {
   const blocks = raw
@@ -36,24 +54,69 @@ function parseReviews(raw: string): { reviews: ParsedReview[]; issues: ParseIssu
     let currentKey: string | null = null;
 
     for (const line of block.split("\n")) {
-      const match = line.match(/^\s*(name|quote|review|context|tour)\s*:\s*(.*)$/i);
+      const match = line.match(/^\s*(name|quote|review|context|tour|title|headline|source|platform|url|link|date|score|rating)\s*:\s*(.*)$/i);
       if (match) {
-        currentKey = match[1].toLowerCase() === "review" ? "quote" : match[1].toLowerCase() === "tour" ? "context" : match[1].toLowerCase();
+        const raw = match[1].toLowerCase();
+        currentKey =
+          raw === "review" ? "quote"
+          : raw === "tour" ? "context"
+          : raw === "headline" ? "title"
+          : raw === "platform" ? "source"
+          : raw === "link" ? "url"
+          : raw === "rating" ? "score"
+          : raw;
         fields[currentKey] = match[2].trim();
       } else if (currentKey && line.trim()) {
         fields[currentKey] = `${fields[currentKey]}\n${line.trim()}`.trim();
       }
     }
 
+    const short = block.length > 60 ? block.slice(0, 60) + "…" : block;
+
     if (!fields.name || !fields.quote) {
+      issues.push({ block: short, reason: !fields.name ? "Missing a Name: line" : "Missing a Quote: line" });
+      continue;
+    }
+
+    const source = (fields.source || "direct").toLowerCase();
+    if (!PLATFORMS.includes(source)) {
+      issues.push({ block: short, reason: `Source "${source}" isn't one of: ${PLATFORMS.join(", ")}` });
+      continue;
+    }
+
+    // The one rule this tool refuses to bend. A review copied from another
+    // platform without a link back is an unverifiable claim about someone
+    // else's words, and quoting-with-attribution is the only defensible way
+    // to show content that platform owns.
+    if (source !== "direct" && !fields.url) {
       issues.push({
-        block: block.length > 60 ? block.slice(0, 60) + "…" : block,
-        reason: !fields.name ? "Missing a Name: line" : "Missing a Quote: line",
+        block: short,
+        reason: `A ${source} review needs a Url: line linking to the original — required for attribution.`,
       });
       continue;
     }
 
-    reviews.push({ name: fields.name, quote: fields.quote, context: fields.context || undefined });
+    const score = fields.score ? Number(fields.score) : undefined;
+    if (score !== undefined && (!Number.isFinite(score) || score < 1 || score > 5)) {
+      issues.push({ block: short, reason: `Score "${fields.score}" isn't a number from 1 to 5` });
+      continue;
+    }
+
+    if (fields.date && !/^\d{4}-\d{2}-\d{2}$/.test(fields.date)) {
+      issues.push({ block: short, reason: `Date "${fields.date}" should be YYYY-MM-DD` });
+      continue;
+    }
+
+    reviews.push({
+      name: fields.name,
+      quote: fields.quote,
+      context: fields.context || undefined,
+      title: fields.title || undefined,
+      source,
+      url: fields.url || undefined,
+      date: fields.date || undefined,
+      score,
+    });
   }
 
   return { reviews, issues };
@@ -105,6 +168,13 @@ export default function BulkReviewsTool() {
           name: r.name,
           quote: r.quote,
           context: r.context,
+          title: r.title,
+          score: r.score,
+          source: {
+            platform: r.source ?? "direct",
+            url: r.url,
+            reviewedAt: r.date,
+          },
           order: nextOrder++,
         });
       }
@@ -124,10 +194,18 @@ export default function BulkReviewsTool() {
     <div style={{ maxWidth: 780, margin: "0 auto", padding: "40px 24px", fontFamily: "system-ui, sans-serif" }}>
       <h1 style={{ fontSize: 22, fontWeight: 600, marginBottom: 4 }}>Bulk Add Reviews</h1>
       <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
-        Paste as many real, genuinely collected reviews as you have below, one per block, separated by a line
-        containing just <code>---</code>. Each block needs a <code>Name:</code> and a <code>Quote:</code> line;{" "}
-        <code>Context:</code> (which tour it was) is optional. Only use real customer reviews here — this feeds
-        directly into the public Reviews section on the site.
+        Paste real reviews below, one per block, separated by a line containing just <code>---</code>. Each
+        block needs <code>Name:</code> and <code>Quote:</code>. Optional:{" "}
+        <code>Context:</code> (which tour), <code>Title:</code>, <code>Score:</code> (1-5),{" "}
+        <code>Date:</code> (YYYY-MM-DD), <code>Source:</code> (direct, tripadvisor, airbnb, google, viator,
+        getyourguide) and <code>Url:</code>.
+      </p>
+      <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+        <strong>Copy each quote exactly.</strong> Don&rsquo;t tidy the wording, shorten for punch, merge two
+        people&rsquo;s reviews, or translate — a review is evidence, and edited evidence isn&rsquo;t evidence.
+        Anything from another platform needs a <code>Url:</code> to the original: the site shows those as a
+        linked excerpt rather than republishing them in full, and leaves them out of search-engine rating
+        markup, which is what Google&rsquo;s policy on aggregating other sites&rsquo; reviews requires.
       </p>
 
       <textarea

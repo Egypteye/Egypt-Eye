@@ -16,7 +16,8 @@
     "i18n:status": "tsx scripts/i18n-status.mts",
     "check:destinations": "tsx scripts/check-destinations.mts",
     "check:stories": "tsx scripts/check-story-images.mts",
-    "check:trips": "tsx scripts/check-weekly-trips.mts"
+    "check:trips": "tsx scripts/check-weekly-trips.mts",
+    "check:reviews": "tsx scripts/check-reviews.mts"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.0",

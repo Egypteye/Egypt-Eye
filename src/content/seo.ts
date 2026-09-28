@@ -92,7 +92,13 @@ export function touristTripJsonLd({
   description: string;
   image?: SanityImage;
   path: string;
-  rating?: { score?: number; count: number; scope?: "product" | "company"; source?: "computed" | "manual" } | null;
+  rating?: {
+    score?: number;
+    count: number;
+    scope?: "product" | "company";
+    source?: "computed" | "manual";
+    includesThirdParty?: boolean;
+  } | null;
 }) {
   const imageUrl = urlForImage(image)?.width(1200).height(630).url();
   return {
@@ -117,6 +123,9 @@ export function touristTripJsonLd({
     ...(rating &&
     rating.scope === "product" &&
     rating.source === "computed" &&
+    // Never for a figure that counts reviews from another platform — see
+    // Rating.includesThirdParty and lib/reviewPolicy.ts.
+    !rating.includesThirdParty &&
     rating.count > 0 &&
     typeof rating.score === "number"
       ? {

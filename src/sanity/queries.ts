@@ -112,7 +112,16 @@ export const destinationHubsBySlugsQuery = groq`*[_type == "destinationHub" && s
 }`;
 
 export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
-  name, quote, context, score, "subjectSlug": subject->slug.current
+  name, quote, title, context, score, featured, themes, photos,
+  "subjectSlug": subject->slug.current,
+  source{platform, url, reviewedAt}
+}`;
+
+// The platform ratings badges. Deliberately its own document type rather than
+// a field on siteSettings: there is one per listing, Egypt Eye has several,
+// and each carries its own last-checked date.
+export const reviewSourceSummariesQuery = groq`*[_type == "reviewSourceSummary"] | order(order asc) {
+  platform, label, url, score, count, checkedOn
 }`;
 
 // Lightweight experience summary used wherever a Story links to a

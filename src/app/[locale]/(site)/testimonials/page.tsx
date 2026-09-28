@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
-import { getExperiences, getPhotoshoots, getSignatureExperiences, getTestimonials, getTours } from "@/sanity/fetchers";
+import {
+  getExperiences,
+  getPhotoshoots,
+  getReviewSourceSummaries,
+  getSignatureExperiences,
+  getTestimonials,
+  getTours,
+} from "@/sanity/fetchers";
+import { ReviewSourceBadges } from "@/components/ReviewSourceBadges";
+import { freshSummaries } from "@/lib/reviewPolicy";
 import { buildReviewEntries, collectReviewSubjects } from "@/lib/reviewSubjects";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
@@ -19,13 +28,15 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function TestimonialsPage() {
-  const [testimonials, tours, photoshoots, experiences, signatureExperiences] = await Promise.all([
-    getTestimonials(),
-    getTours(),
-    getPhotoshoots(),
-    getExperiences(),
-    getSignatureExperiences(),
-  ]);
+  const [testimonials, tours, photoshoots, experiences, signatureExperiences, sourceSummaries] =
+    await Promise.all([
+      getTestimonials(),
+      getTours(),
+      getPhotoshoots(),
+      getExperiences(),
+      getSignatureExperiences(),
+      getReviewSourceSummaries(),
+    ]);
 
   const dict = await getDictionary();
   const locale = await getLocale();
@@ -51,6 +62,20 @@ export default async function TestimonialsPage() {
             <p className="mt-4 max-w-xl text-ink-soft/75">
               {dict.reviews.intro}
             </p>
+          )}
+
+          {/* The platform ratings sit above the wall, and show whether or not
+              any reviews have been imported yet. They are the strongest proof
+              on the page — a number Egypt Eye cannot edit, on a site the
+              visitor already trusts, one click away. */}
+          {freshSummaries(sourceSummaries).length > 0 && (
+            <div className="mt-8">
+              <ReviewSourceBadges summaries={sourceSummaries} />
+              <p className="mt-3 max-w-2xl text-xs text-ink-soft/55">
+                Ratings shown as published by each platform on the date given. Reviews written on
+                another platform are quoted in part and linked to the original, never rewritten.
+              </p>
+            </div>
           )}
 
           <div className="mt-10">

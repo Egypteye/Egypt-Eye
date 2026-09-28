@@ -14,7 +14,8 @@ import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
 import { RouteMap } from "@/components/RouteMap";
 import { resolveStops } from "@/lib/placeCoords";
 import { pickRelated } from "@/lib/relatedPicker";
-import { getAllTourSlugs, getSiteSettings, getTourBySlug, getTours } from "@/sanity/fetchers";
+import { getAllTourSlugs, getSiteSettings, getTestimonials, getTourBySlug, getTours } from "@/sanity/fetchers";
+import { ProductReviews } from "@/components/ProductReviews";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
@@ -73,7 +74,7 @@ export default async function TourDetailPage({
   const [tour, site] = await Promise.all([getTourBySlug(slug), getSiteSettings()]);
   if (!tour) notFound();
 
-  const allTours = await getTours();
+  const [allTours, testimonials] = await Promise.all([getTours(), getTestimonials()]);
   const related = pickRelated(allTours, tour, 3, (t) => t.category);
   // `mapStops` is the explicit override; almost every tour falls through to
   // its own destination tags, so a newly added tour maps itself. Always
@@ -301,6 +302,17 @@ export default async function TourDetailPage({
           </aside>
         </Container>
       </section>
+
+      {/* Reviews of this tour, or of Egypt Eye by travellers who did something
+          like it. Selected by relevance rather than recency — see
+          components/ProductReviews. Renders nothing when none are relevant. */}
+      <Container>
+        <ProductReviews
+          reviews={testimonials}
+          subject={{ type: "tour", slug: tour.slug, title: tour.title }}
+          themes={["guide", "planning", "pickup", "communication"]}
+        />
+      </Container>
 
       {related.length > 0 && (
         <section className="bg-sand-dim py-20">

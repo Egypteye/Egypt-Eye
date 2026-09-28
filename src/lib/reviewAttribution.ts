@@ -1,4 +1,5 @@
 import type { Rating, Testimonial } from "@/content/types";
+import { isFirstParty } from "./reviewPolicy";
 
 // Egypt Eye's reviews arrive over WhatsApp, and the follow-up records which
 // trip or shoot the traveler was on in the testimonial's `context` — "6 Days:
@@ -67,6 +68,7 @@ export function getProductRating(product: ProductLike, reviews: Testimonial[]): 
   return {
     scope: "product",
     source: "computed",
+    includesThirdParty: matched.some((t) => !isFirstParty(t)),
     count: matched.length,
     score:
       scored.length > 0

@@ -1,4 +1,5 @@
 import type { Experience, Photoshoot, Rating, Testimonial, Tour } from "./types";
+import { isFirstParty } from "@/lib/reviewPolicy";
 
 // Derives real stats from whatever content is passed in (local files or
 // Sanity, via the fetchers) instead of hardcoding numbers — keeps homepage
@@ -28,6 +29,9 @@ export function getCompanyRating(testimonials: Testimonial[]): Rating {
   return {
     scope: "company",
     source: "computed",
+    // Imported reviews count toward what a visitor is shown — they are real —
+    // but they disqualify the figure from structured data.
+    includesThirdParty: testimonials.some((t) => !isFirstParty(t)),
     count: testimonials.length,
     score:
       scored.length > 0

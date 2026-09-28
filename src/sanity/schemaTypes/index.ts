@@ -3,7 +3,7 @@ import { tour } from "./tour";
 import { experience } from "./experience";
 import { photoshoot } from "./photoshoot";
 import { destinationHub } from "./destinationHub";
-import { testimonial } from "./testimonial";
+import { testimonial, reviewSourceSummary } from "./testimonial";
 import { story } from "./story";
 import { faqItem } from "./faqItem";
 import { siteSettings } from "./siteSettings";
@@ -31,6 +31,7 @@ export const schemaTypes = [
   signatureExperience,
   host,
   testimonial,
+  reviewSourceSummary,
   story,
   author,
   event,
