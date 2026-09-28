@@ -4,6 +4,8 @@ import { TestimonialCard } from "./TestimonialCard";
 import { reviewMatchesProduct } from "@/lib/reviewAttribution";
 import { pickRelevantReviews } from "@/lib/reviewThemes";
 import { subjectReviewsHref, type ReviewSubjectType } from "@/lib/reviewSubjects";
+import { getLocale } from "@/i18n/dictionary";
+import { localePath } from "@/i18n/locales";
 
 // The reviews worth showing on THIS page.
 //
@@ -21,7 +23,7 @@ import { subjectReviewsHref, type ReviewSubjectType } from "@/lib/reviewSubjects
 // product is not evidence about the product, and showing it anyway is
 // precisely how a site starts looking like it is manufacturing testimonials.
 
-export function ProductReviews({
+export async function ProductReviews({
   reviews,
   subject,
   themes,
@@ -47,6 +49,8 @@ export function ProductReviews({
 
   if (picked.length === 0) return null;
 
+  const locale = await getLocale();
+
   // Whether these are reviews OF this product, or reviews of Egypt Eye that
   // happen to speak to what this page is about. The heading says which,
   // because quietly presenting the second as the first overstates the
@@ -67,11 +71,17 @@ export function ProductReviews({
             </p>
           )}
         </div>
+        {/* Deep-link to this product's group only when it has one. Where
+            these are themed stand-ins, the anchor would match nothing and
+            the visitor would land on the whole wall with no explanation. */}
         <Link
-          href={subjectReviewsHref({ type: subject.type, slug: subject.slug })}
+          href={localePath(
+            aboutThisProduct ? subjectReviewsHref({ type: subject.type, slug: subject.slug }) : "/testimonials",
+            locale
+          )}
           className="text-sm font-semibold text-gold-dark transition hover:translate-x-0.5"
         >
-          All traveller reviews →
+          {aboutThisProduct ? "All traveller reviews →" : "Browse all reviews →"}
         </Link>
       </div>
 

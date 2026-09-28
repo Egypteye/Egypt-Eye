@@ -28,6 +28,7 @@ import {
 } from "@/sanity/fetchers";
 import { alternatesFor } from "@/i18n/alternates";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
+import { localePath } from "@/i18n/locales";
 import { T, trAll } from "@/i18n/T";
 import { localizeContent } from "@/i18n/localizeDeep";
 import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
@@ -570,7 +571,7 @@ export default async function AboutPage() {
             </div>
             <div className="mt-10 text-center">
               <Link
-                href="/testimonials"
+                href={localePath("/testimonials", locale)}
                 className="inline-flex items-center gap-2 rounded-full bg-ink px-7 py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Read All Reviews</T><svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M7 4l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>

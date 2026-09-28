@@ -167,3 +167,28 @@ export function buildReviewEntries(
   const options = [...withReviews.values()].sort((a, b) => a.title.localeCompare(b.title));
   return { entries, options };
 }
+
+/**
+ * The anchors that actually have at least one review behind them.
+ *
+ * The star chip on a product card links to that product's group on
+ * /testimonials. Before any reviews existed, one global "are there reviews at
+ * all" flag was enough to decide whether to show it. It isn't any more: with
+ * reviews imported for four products and none for the other fifty-odd, a
+ * global flag puts a star on every card, and fifty of them link to an anchor
+ * that matches nothing — so the visitor lands on the full wall having been
+ * promised reviews of the tour they were looking at.
+ *
+ * This is what lets the chip appear only where it leads somewhere true.
+ */
+export function reviewedSubjectKeys(
+  testimonials: Testimonial[],
+  subjects: ReviewSubject[]
+): string[] {
+  const keys = new Set<string>();
+  for (const testimonial of testimonials) {
+    const subject = subjects.find((s) => reviewMatchesProduct(testimonial, s));
+    if (subject) keys.add(subjectAnchor(subject));
+  }
+  return [...keys];
+}

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { subjectReviewsHref, type ReviewSubjectType } from "@/lib/reviewSubjects";
+import { subjectAnchor, subjectReviewsHref, type ReviewSubjectType } from "@/lib/reviewSubjects";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { localePath } from "@/i18n/locales";
 
@@ -14,17 +14,16 @@ import { localePath } from "@/i18n/locales";
 // a chip that asserts no number can't overstate one — and it's why no
 // AggregateRating markup goes with it.
 //
-// Shown on every product as long as the site has reviews at all. It then
-// always has somewhere real to land: /testimonials gives every product an
-// anchor, either its own group of reviews or its entry among its siblings in
-// "Other Tours" / "Other Photoshoots" / "Other Services" — so a product
-// nobody has reviewed yet still takes the visitor to reviews of its
-// neighbours rather than nowhere.
+// Shown only on a product that actually has reviews, because the chip is a
+// promise: it says "people have reviewed THIS", and it lands on that
+// product's own group on /testimonials. With reviews imported for a handful
+// of products and none for the rest, a global "are there reviews anywhere"
+// check would put a star on every card and send fifty of them to an anchor
+// that matches nothing.
 //
-// With no reviews anywhere that stops being true: every anchor is gone and
-// the chip becomes a star on every card pointing at an empty page. So it
-// renders nothing while the Testimonials list is empty, and comes back on
-// its own the moment a real review is imported — no code change, no setting.
+// The set of products that have reviews comes from context (see
+// i18n/LocaleProvider and the root layout), resolved once per request rather
+// than passed down by each of this component's dozen callers.
 
 export function ExperienceRatingLink({
   type,
@@ -38,13 +37,17 @@ export function ExperienceRatingLink({
   tone?: "light" | "dark";
   className?: string;
 }) {
-  const { locale, dict, hasReviews } = useLocale();
+  const { locale, dict, reviewedKeys } = useLocale();
   const palette =
     tone === "dark"
       ? "bg-cream/15 text-cream backdrop-blur-sm hover:bg-cream/25"
       : "text-ink-soft hover:text-ink";
 
-  if (!hasReviews) return null;
+  // Only where it leads somewhere true. A star on a product nobody has
+  // reviewed yet links to an anchor that matches nothing, and drops the
+  // visitor into the full wall having implied reviews of the thing they were
+  // actually looking at.
+  if (!reviewedKeys.includes(subjectAnchor({ type, slug }))) return null;
 
   return (
     <Link

@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Testimonial } from "@/content/types";
 import { TestimonialCard } from "./TestimonialCard";
 import { trAll } from "@/i18n/T";
+import { getLocale } from "@/i18n/dictionary";
+import { localePath } from "@/i18n/locales";
 
 // Speed scales with the number of cards (~7.5s per card, matching the pace
 // a small hand-picked set had at the old fixed 40s duration) so adding more
@@ -13,6 +15,10 @@ export async function ReviewsMarquee({ testimonials, href }: { testimonials: Tes
   const ui = await trAll([
     "Read more traveler stories",
   ]);
+  // Localised here rather than by the caller: a raw href drops a French or
+  // Arabic visitor onto the English reviews page, and this strip is the main
+  // route into reviews from the homepage.
+  const locale = await getLocale();
 
   // Duplicate the list once so the CSS marquee (-50%) loops seamlessly.
   const loop = [...testimonials, ...testimonials];
@@ -36,7 +42,7 @@ export async function ReviewsMarquee({ testimonials, href }: { testimonials: Tes
   if (!href) return track;
 
   return (
-    <Link href={href} aria-label={ui["Read more traveler stories"]} className="block cursor-pointer">
+    <Link href={localePath(href, locale)} aria-label={ui["Read more traveler stories"]} className="block cursor-pointer">
       {track}
     </Link>
   );
