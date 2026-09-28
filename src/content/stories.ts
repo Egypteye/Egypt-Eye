@@ -14535,6 +14535,580 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
+    slug: "photographer-vs-phone-photos-egypt",
+    title: "Is It Worth Hiring a Photographer at the Pyramids?",
+    category: "Travel Guides",
+    tags: ["Pyramids Photoshoot", "Egypt Photoshoots", "Giza Pyramids", "Travel Photography"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-what-included",
+        title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+        excerpt:
+          "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "An honest comparison between your phone, a passing stranger and a booked photographer at Giza \u2014 including when hiring one is not worth it.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1553913861-c0fddf2619ee"),
+    imageCredit: unsplashCredit("Spencer Davis", "https://unsplash.com/photos/person-walking-near-the-great-sphinx-ONVA6s03hg8"),
+    publishedAt: "2026-09-29T08:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "is it worth hiring a photographer at the pyramids",
+    secondaryKeywords: [
+      "photographer vs phone photos",
+      "do I need a photographer for the pyramids",
+      "professional photos pyramids worth it",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "Modern phones take excellent photographs of the Pyramids. That is genuinely true, and any article that pretends otherwise is selling something. The question is not whether your phone is good enough for the Pyramids. It is whether it is good enough for the photographs with you in them."
+      ),
+      h2("What your phone actually does well"),
+      ...bullets([
+        "Wide landscape shots of the site. Excellent, and a photographer will not beat them by much.",
+        "Detail and texture in good light. Very good.",
+        "Anything you can frame yourself, with time to try again.",
+      ]),
+      h2("Where it falls down"),
+      p(
+        "Every photograph of you. A selfie at the Pyramids puts your face across half the frame and the pyramid somewhere behind your ear. The alternative is handing your phone to a stranger, who will take one shot, from standing height, without checking it, while wanting to get back to their own day."
+      ),
+      p(
+        "This is the actual gap. Not image quality \u2014 composition, direction and the fact that somebody is trying."
+      ),
+      callout(
+        "Look through your last trip. Count the photographs of the place, then count the good ones of you in it. That ratio is what you are buying."
+      ),
+      h2("When it is not worth it"),
+      p(
+        "If you are travelling to photograph the site rather than yourself, keep your money. If you already have a friend who shoots well and will spend an hour on it, you do not need us. And if you are visiting at midday in July with no flexibility on timing, a photographer cannot fix the light \u2014 book a different hour instead, or accept what the hour gives you."
+      ),
+      h2("When it is"),
+      p(
+        "Anything you cannot re-stage. A honeymoon, a proposal, a milestone birthday, a first trip with grown children, a solo journey you saved years for. Those are the ones people regret not photographing properly, and the regret does not surface until months later."
+      ),
+      h2("The numbers, plainly"),
+      p(
+        "The Exclusive Pyramids Photoshoot is $75 for a private one-to-two hour session at the Giza Pyramids and the Nine Pyramids View, delivering 80+ edited pictures, with the raw unedited photos the same day. Private transportation with hotel pickup and drop-off is included; site entrance tickets are not and are bought at the gate."
+      ),
+      p(
+        "Set against the cost of getting to Egypt at all, it is a small number. That is not an argument for spending it \u2014 it is a reason to decide deliberately rather than default to your phone and find out later."
+      ),
+      cta({
+        title: "See the Pyramids photoshoot",
+        body: "A private 1\u20132 hour session, 80+ edited pictures, raw photos the same day, transport included \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      faq(
+        [
+          {
+            question: "Do I need a photographer for the Pyramids?",
+            answer:
+              "Need, no \u2014 your phone will photograph the site well. What it will not do is produce good photographs of you at the site, which is the gap a session fills.",
+          },
+          {
+            question: "Is a Pyramids photoshoot worth the money?",
+            answer:
+              "It depends what the trip is. For an ordinary sightseeing day, probably not. For anything you cannot re-stage \u2014 a honeymoon, a proposal, a milestone \u2014 $75 for 80+ edited pictures is a small share of the trip's cost.",
+          },
+          {
+            question: "Can I just ask another tourist to take photos?",
+            answer:
+              "You can, and you will get one frame, from standing height, unchecked. That is the realistic comparison, not a professional versus a good phone.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Your phone will bring home Egypt. It will not bring home you in Egypt, and that is the only photograph nobody else is taking."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "photoshoot-photo-delivery-editing",
+    title: "When Do You Get Your Photos? Delivery and Editing Explained",
+    category: "Travel Guides",
+    tags: ["Egypt Photoshoots", "Pyramids Photoshoot", "Trip Planning"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-what-included",
+        title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+        excerpt:
+          "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "How long photos take to arrive after a shoot in Egypt, what editing actually means, and why same-day raw files matter more than travelers expect.",
+    imageTone: "desert",
+    image: unsplashUrl("photo-1595977992305-105693035987"),
+    imageCredit: unsplashCredit("Drew Gilliam", "https://unsplash.com/photos/woman-in-brown-and-black-floral-dress-standing-on-road-during-daytime-jE-hMojSQ2c"),
+    publishedAt: "2026-09-29T09:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "how long does it take to receive photos from a photoshoot",
+    secondaryKeywords: [
+      "do photographers edit the photos",
+      "photo delivery time photoshoot Egypt",
+      "how many edited photos do you get",
+    ],
+    destinations: ["Giza", "Cairo", "Fayoum"],
+    body: [
+      p(
+        "Delivery is the part of a photoshoot that gets agreed vaguely and remembered precisely. You will not think about it while booking. You will think about it a great deal on day nine of waiting."
+      ),
+      h2("What you get, and when"),
+      ...bullets([
+        "The raw, unedited photos \u2014 the same day as your Pyramids session.",
+        "80+ edited pictures from that session.",
+        "An optional larger gallery of 100+ high-resolution edited images, within five days.",
+        "24-hour follow-up after the shoot, for anything that needs sorting out.",
+      ]),
+      p(
+        "The same-day raw files are the part worth understanding. It means you see what was shot while you are still in Egypt \u2014 still able to ask about a frame, still in the country if something needs revisiting \u2014 rather than landing home and hoping."
+      ),
+      h2("How that compares"),
+      p(
+        "A common structure elsewhere delivers around 20 edited images from a one-hour session, rising to roughly 50 for four hours, with the gallery arriving up to two weeks later. Two weeks is after most travelers have flown home, unpacked, and lost the thread of the trip."
+      ),
+      callout(
+        "Two numbers decide a photoshoot booking: how many edited photographs, and what date they arrive. Get both in writing before you pay, wherever you book."
+      ),
+      h2("What editing actually means"),
+      p(
+        "Colour, exposure, contrast and crop \u2014 the work that turns a correct frame into a finished photograph. It is not a redrawing of you. High-end retouching is a separate thing, available as an upgrade on the flying dress sessions, and it is worth being clear which one you are being promised."
+      ),
+      p(
+        "\u201cDo photographers edit the photos?\u201d is a question with an easy yes and a harder follow-up: how many of them. A shoot that takes six hundred frames and edits twenty has not given you six hundred photographs."
+      ),
+      h2("Why you also want the raw files"),
+      p(
+        "Because an edit is a choice. Getting the unedited set means the frames nobody selected are still yours \u2014 including, occasionally, the one you would have picked."
+      ),
+      cta({
+        title: "See what each package delivers",
+        body: "Six photoshoot packages, each listing its photo count and delivery terms in full.",
+        buttonLabel: "Browse Photoshoot Packages",
+        buttonHref: "/photoshoots",
+      }),
+      faq(
+        [
+          {
+            question: "How long does it take to receive photos from a photoshoot?",
+            answer:
+              "The raw unedited photos from a Pyramids session are yours the same day. The optional larger gallery of 100+ high-resolution edited images is delivered within five days.",
+          },
+          {
+            question: "How many photos do you get?",
+            answer:
+              "80+ edited pictures from the Exclusive Pyramids Photoshoot, plus the raw unedited files.",
+          },
+          {
+            question: "Do photographers edit the photos?",
+            answer:
+              "Yes \u2014 colour, exposure, contrast and crop. High-end retouching is a separate upgrade, available on the flying dress sessions.",
+          },
+          {
+            question: "Do I get all the photos, or only the edited ones?",
+            answer:
+              "Both. The edited gallery, and the raw unedited photos the same day.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Ask when the photographs arrive before you ask how many. A large gallery two weeks after you land home is worth less than a smaller one you saw the same evening."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "combine-photoshoot-with-tour-egypt",
+    title: "Combining a Photoshoot With a Tour in Egypt",
+    category: "Travel Guides",
+    tags: ["Egypt Photoshoots", "Pyramids Photoshoot", "Trip Planning", "Giza Pyramids"],
+    relatedStories: [
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Hire a Photographer in Egypt: A Traveler\u2019s Guide",
+        excerpt:
+          "Where to find a photographer in Egypt, how to tell a real operator from a tout, what a session costs, and every question worth settling before you pay a deposit.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "How a photoshoot fits into a touring itinerary, which trips already include one, and why doing both on the same Giza day is the efficient version.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1623674587543-9c7564de99d1"),
+    imageCredit: unsplashCredit("Ruben Hanssen", "https://unsplash.com/photos/white-and-brown-houses-under-blue-sky-during-daytime-2dp1Ud5gG2A"),
+    publishedAt: "2026-09-29T10:00:00+02:00",
+    relatedTours: toursBySlug("8-day-essential-egypt-nile-cruise", "10-day-private-luxurious-trip", "epic-8-day-egypt-escapade"),
+    primaryKeyword: "combine photoshoot with tour Egypt",
+    secondaryKeywords: [
+      "photoshoot and tour same day Giza",
+      "can I add a photoshoot to my Egypt tour",
+      "Giza tour with photographer",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "Most people book the tour first and think about photographs afterwards, which is the expensive way round. You are going to Giza anyway. The only question is whether someone is photographing you properly while you are there."
+      ),
+      h2("Itineraries that already include a photoshoot"),
+      p(
+        "Three of our multi-day trips build a Giza photoshoot into the Pyramids day rather than leaving it as something to arrange separately:"
+      ),
+      ...bullets([
+        "8 Days Essential Egypt + 5-Day Nile Cruise \u2014 the Giza day includes the photoshoot.",
+        "10-Day Private & Luxurious Trip \u2014 the same, with a free day in Cairo later.",
+        "Epic 8-Day Egypt Escapade \u2014 photoshoot on the Pyramids day, before Luxor and the Red Sea.",
+      ]),
+      p(
+        "If one of those is already your trip, the photographer is part of the plan and there is nothing else to book."
+      ),
+      h2("Adding one to any other tour"),
+      p(
+        "A photoshoot can be arranged alongside any of our tours. Mention it when you book the trip rather than afterwards, so the Giza day is built with the session in it \u2014 which usually means starting earlier and taking the light rather than the queue."
+      ),
+      callout(
+        "Sunrise is the slot that costs you least from an itinerary. It is finished before most touring days properly begin."
+      ),
+      h2("Why the same day works"),
+      ...bullets([
+        "One journey to Giza instead of two. Pickup and drop-off are included either way, but your time is not infinite.",
+        "You are already dressed for the site and already there at the right hour.",
+        "The photographs are of the day you actually had, not a staged return visit.",
+      ]),
+      h2("When to keep them separate"),
+      p(
+        "If the photographs are the point of the trip \u2014 a proposal, a milestone, a flying dress session \u2014 give them their own morning. A shoot squeezed into a full touring day is a shoot with one eye on the clock, and it shows."
+      ),
+      cta({
+        title: "Tell us the dates",
+        body: "If you are planning a trip and want a photoshoot inside it, say so and the Giza day gets built around it.",
+        buttonLabel: "Plan Your Trip",
+        buttonHref: "/customize",
+      }),
+      faq(
+        [
+          {
+            question: "Can I combine a photoshoot with a Pyramids tour?",
+            answer:
+              "Yes, with any of our tours. Three multi-day itineraries already include a Giza photoshoot on the Pyramids day: the 8 Days Essential Egypt + Nile Cruise, the 10-Day Private & Luxurious Trip, and the Epic 8-Day Egypt Escapade.",
+          },
+          {
+            question: "Is it cheaper to do both on the same day?",
+            answer:
+              "It saves a journey and a morning rather than a fee \u2014 the photoshoot is priced the same either way. What you gain is time and the right hour.",
+          },
+          {
+            question: "Should I book the photoshoot separately?",
+            answer:
+              "Only if the photographs are the point of the trip. For a proposal or a flying dress session, give them their own morning rather than fitting them around sightseeing.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "You are making the trip to Giza once. Decide before you go whether anyone is photographing you while you are there."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "what-to-wear-pyramids-photoshoot",
+    title: "What to Wear for a Pyramids Photoshoot",
+    category: "Travel Guides",
+    tags: ["Pyramids Photoshoot", "Egypt Photoshoots", "Giza Pyramids", "What to Wear"],
+    relatedStories: [
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-to-wear-flying-dress-photoshoot",
+        title: "What to Wear (and Bring) for a Flying Dress Photoshoot",
+        excerpt:
+          "The dress is provided \u2014 what you actually need to bring, and what to wear underneath, for a flying dress session in Egypt.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "Colours that work against sand and stone, what the heat and wind do to an outfit, and how modesty at the site fits with the photographs you want.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1645088930126-f669feb0fc5f"),
+    imageCredit: unsplashCredit("Sajimon Sahadevan", "https://unsplash.com/photos/a-woman-in-a-yellow-dress-standing-on-top-of-a-rock-AWC94dVpTPc"),
+    publishedAt: "2026-09-29T11:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "what to wear for a pyramids photoshoot",
+    secondaryKeywords: [
+      "what to wear photoshoot Egypt",
+      "photoshoot outfit Giza",
+      "colours for desert photos",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "Giza is sand, limestone and sky \u2014 a background of beige, beige and blue. Almost everything about dressing for a shoot there follows from that one fact."
+      ),
+      h2("Colours that work"),
+      ...bullets([
+        "Strong solid colours. Red, deep blue, emerald, white, black \u2014 anything that separates you from the ground.",
+        "Flowing fabric. Movement is what stops a desert photograph looking like a passport picture, and there is almost always wind.",
+        "One statement, not three. The site is already doing a lot.",
+      ]),
+      h2("Colours that disappear"),
+      p(
+        "Beige, sand, camel, pale khaki, light grey. They are the natural instinct for a desert and they are exactly the ones that merge you into the background. Busy small prints do the same thing at distance \u2014 they read as noise rather than pattern."
+      ),
+      callout(
+        "Hold the outfit up against a photograph of the Pyramids before you pack it. If it blends, pick again."
+      ),
+      h2("What the site does to an outfit"),
+      p(
+        "It is hot, open and dusty, with almost no shade. Long, light fabric is more comfortable than short and tight, and photographs better. Sand gets into hems. Heels are a mistake \u2014 the ground is uneven and sandy, and you will be walking between spots. Bring the shoes you can move in and change for the frames that need them."
+      ),
+      h2("Modesty and comfort"),
+      p(
+        "Giza is a tourist site and dress is relaxed by Egyptian standards, but covered shoulders and knees draw less attention and make for an easier morning. This is practical advice rather than a rule, and it happens to align with what photographs well \u2014 longer, looser, more fabric to move."
+      ),
+      h2("Outfit changes"),
+      p(
+        "If you want more than one look, say so when you book so the session is planned with the time in it. There is nowhere convenient to change at the site, so it is worth being realistic about how many changes are actually practical."
+      ),
+      h2("Flying dress sessions are different"),
+      p(
+        "For the Sand Dunes and Fayoum flying dress shoots the dress is provided in the colour you choose, so the question becomes what to wear underneath and what to bring \u2014 which our flying dress what-to-wear guide covers separately."
+      ),
+      cta({
+        title: "See the Pyramids photoshoot",
+        body: "A private 1\u20132 hour session at Giza, 80+ edited pictures, transport included \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      faq(
+        [
+          {
+            question: "What should I wear for a Pyramids photoshoot?",
+            answer:
+              "Strong solid colours in flowing fabric \u2014 red, deep blue, emerald, white or black. Avoid beige, sand and pale khaki, which blend into the background, and avoid heels on uneven sandy ground.",
+          },
+          {
+            question: "Can I bring more than one outfit?",
+            answer:
+              "Yes, but mention it when you book so the time is planned in. There is nowhere convenient to change at the site, so be realistic about the number.",
+          },
+          {
+            question: "Do I need to dress modestly?",
+            answer:
+              "Dress at Giza is relaxed, but covered shoulders and knees attract less attention and make for an easier morning \u2014 and longer, looser clothing photographs better in the desert anyway.",
+          },
+          {
+            question: "Is the dress provided for a flying dress shoot?",
+            answer:
+              "Yes \u2014 the flying dress sessions include the dress in your chosen colour.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Pick the colour that fights the sand, and fabric that moves in wind you cannot control. Everything else is detail."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "fayoum-photoshoot-guide",
+    title: "A Fayoum Photoshoot: Wadi El Rayan and the Magic Lake",
+    category: "Travel Guides",
+    tags: ["Fayoum", "Flying Dress", "Egypt Photoshoots", "Trip Planning"],
+    relatedStories: [
+      {
+        slug: "flying-dress-photoshoot-egypt-guide",
+        title: "Flying Dress Photoshoot in Egypt: The Complete Guide",
+        excerpt:
+          "What a flying dress photoshoot actually is, why it works so well in Egypt\u2019s deserts, and what a real session involves from start to finish.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-flying-dress-photoshoot-locations-egypt",
+        title: "Best Flying Dress Photoshoot Locations in Egypt",
+        excerpt:
+          "Where flying dress sessions actually work in Egypt \u2014 the dunes, Fayoum, and what each location gives you.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "What a Fayoum flying dress session involves, how it differs from shooting at Giza, what is included at $219, and who it actually suits.",
+    imageTone: "desert",
+    image: unsplashUrl("photo-1523044883946-4b4ad5c9bf45"),
+    imageCredit: unsplashCredit("Savvas Kalimeris", "https://unsplash.com/photos/desert-at-daytime-olwpLxIDM70"),
+    publishedAt: "2026-09-29T12:00:00+02:00",
+    relatedTours: toursBySlug("fayoum-nature-tour", "fayoum-wadi-el-rayan-waterfalls-tour"),
+    primaryKeyword: "Fayoum photoshoot",
+    secondaryKeywords: [
+      "flying dress Fayoum",
+      "Wadi El Rayan photoshoot",
+      "Magic Lake photos Egypt",
+      "desert photoshoot Egypt",
+    ],
+    destinations: ["Fayoum", "Cairo"],
+    body: [
+      p(
+        "Fayoum is the answer to a specific complaint about Giza: that everyone has that photograph. Wadi El Rayan and the Magic Lake give you desert, water and dunes with almost nobody in the frame \u2014 and a landscape most people do not associate with Egypt at all."
+      ),
+      h2("What the session is"),
+      p(
+        "The Fayoum Flying Dress Photoshoot is $219, runs an hour, and takes place at Wadi El Rayan and the Magic Lake. It includes the flying dress in your chosen colour, a professional photographer with posing direction, private transportation with pickup and return from Cairo, Wadi El Rayan and Magic Lake access, edited images, and an Egyptian souvenir."
+      ),
+      p(
+        "Worth noting, because it differs from the Pyramids sessions: site access is included here. At Giza you buy entrance tickets at the gate."
+      ),
+      h2("Fayoum or the sand dunes?"),
+      p(
+        "The Sand Dunes Flying Dress Photoshoot is $199 and shoots in the dunes near Giza \u2014 closer, shorter as a day, and pure desert. Fayoum is $219 and further out, but gives you water against sand, which is the thing you cannot get near the Pyramids."
+      ),
+      ...bullets([
+        "Choose the dunes if you are short on time or combining it with a Cairo itinerary.",
+        "Choose Fayoum if you want a landscape nobody will recognise as Egypt, and have a day to give it.",
+      ]),
+      callout(
+        "Fayoum is a drive. The hour of shooting sits inside most of a day once travel is counted \u2014 which is the real difference from a Giza session, more than the $20."
+      ),
+      h2("Who it suits"),
+      p(
+        "People on a second trip to Egypt, people who already have their Pyramids photographs, and anyone whose priority is a landscape rather than a monument. It also suits travelers who dislike crowds: Wadi El Rayan is quiet in a way Giza never is."
+      ),
+      h2("The dress"),
+      p(
+        "Provided, in the colour you choose. High-end retouching is available as an upgrade. What you bring is what goes underneath and shoes you can walk in on sand \u2014 our flying dress what-to-wear guide covers the detail."
+      ),
+      cta({
+        title: "See the Fayoum Flying Dress Photoshoot",
+        body: "An hour at Wadi El Rayan and the Magic Lake, dress included, transport from Cairo and site access included \u2014 $219.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/fayoum-flying-dress-photoshoot",
+      }),
+      faq(
+        [
+          {
+            question: "How much is a Fayoum photoshoot?",
+            answer:
+              "The Fayoum Flying Dress Photoshoot is $219 for an hour at Wadi El Rayan and the Magic Lake, including the dress, transport from Cairo, site access, edited images and a souvenir.",
+          },
+          {
+            question: "How is Fayoum different from a shoot at Giza?",
+            answer:
+              "Fayoum gives you desert and water with very few people in it, and site access is included. Giza gives you the monument, costs less, takes less of the day, and entrance tickets are bought at the gate.",
+          },
+          {
+            question: "Is transport from Cairo included?",
+            answer:
+              "Yes \u2014 private transportation with pickup and return from Cairo is part of the package.",
+          },
+          {
+            question: "Is the dress included?",
+            answer:
+              "Yes, in the colour you choose. High-end retouching is available as an upgrade.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Giza is the photograph people expect from Egypt. Fayoum is the one they ask about."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
     slug: "best-instagram-photo-spots-egypt",
     title: "Best Places in Egypt for Instagram-Worthy Photos",
     category: "Culture & Trends",
