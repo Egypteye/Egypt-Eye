@@ -10,38 +10,20 @@ defensible.
 
 The fourth link is the one most travel sites skip, and it is the one that makes
 the rest believable. Every review on this site either was collected by Egypt Eye
-directly, or carries a badge naming the platform it was written on and a link to
-the original. A visitor can always go and check.
+directly, or names the platform it was written on and links to the original. A
+visitor can always go and check.
 
 ---
 
-## The three things you can publish
+## The two things you can publish
 
-### 1. Platform ratings badges — start here
+Egypt Eye deliberately does **not** show platform ratings badges — no "4.9 from
+312 reviews on Tripadvisor" summary cards, and no coloured platform pill on
+review cards. Attribution is carried as a plain text link on each third-party
+review instead. That is a house style decision, not a technical limit; the
+attribution itself is not optional, for the reasons below.
 
-A document per listing under **Review source (ratings badge)** in Studio:
-platform, what the listing is called there, the link, the score, the review
-count, and the date you checked.
-
-This is the strongest trust element on the site and the safest. It republishes
-nothing — no review text, no photo — so no copyright question arises, and it
-borrows credibility the platform has already earned. It also works **before a
-single review has been imported**, which is why it is the first thing to fill
-in. It appears on the homepage and on `/testimonials`.
-
-Each badge **hides itself once the date is more than 180 days old.** A review
-count nobody has re-checked is not a fact about today, and a stale or inflated
-one is an enforcement matter rather than an oversight. `/admin/reviews` lists
-which badges have expired.
-
-Egypt Eye's known listings:
-
-- Tripadvisor — Egypt Eye Travels
-- Tripadvisor — Instagram Style Photo shoot at Pyramids
-- Tripadvisor — 1 Hour Photoshoot at Pyramids of Giza
-- Airbnb — experience 1372754
-
-### 2. Reviews collected directly — the real asset
+### 1. Reviews collected directly — the real asset
 
 A review a traveller gave Egypt Eye over WhatsApp or email is Egypt Eye's own
 content. It can be published in full, it can carry the traveller's photos with
@@ -52,14 +34,14 @@ If a traveller has already reviewed you on Tripadvisor, asking them to send the
 same words directly is the single highest-value thing you can do here. It turns
 a quoted excerpt into content you own outright.
 
-### 3. Reviews from another platform — quoted, attributed, linked
+### 2. Reviews from another platform — quoted, attributed, linked
 
 Set `Source` to the platform and paste the review **exactly as written**, with a
 `Url` to the original. The site then:
 
 - shows an **excerpt** (capped at 450 characters) rather than the full text,
   with "Read the full review on Tripadvisor" beside it;
-- shows a platform badge and a link on every card;
+- names the platform and links to the original on every card;
 - **drops any photos** attached to it;
 - **excludes it from `AggregateRating` structured data.**
 
@@ -125,7 +107,7 @@ starts looking like it is manufacturing testimonials.
 
 | Surface | What it shows |
 |---|---|
-| Homepage | Platform badges + featured reviews marquee |
+| Homepage | Featured reviews marquee, once reviews exist |
 | `/testimonials` | The full wall, filtered by category, product, **source** and **mentions** |
 | Tour pages | Reviews of that tour, or themed on guides / planning / pickups |
 | Photoshoot pages | Reviews of that shoot, or themed on photography / flying dress / occasions |
@@ -157,6 +139,6 @@ Duplicates are skipped automatically on reviewer name + quote text.
 ## Checking your work
 
 - `/admin/reviews` — attribution coverage, unmatched contexts, compliance
-  flags, badge staleness, source mix, and what travellers mention.
+  flags, source mix, and what travellers mention.
 - `npm run check:reviews` — asserts the excerpting, photo handling, schema
   eligibility, staleness and theme-matching rules still hold. Runs in CI.

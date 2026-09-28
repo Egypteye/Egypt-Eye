@@ -16,15 +16,6 @@ import { toDisplayReview } from "@/lib/reviewPolicy";
 // link to the original is a fundamentally different object from an unsourced
 // testimonial — it is checkable, which is what makes it worth believing.
 
-const PLATFORM_STYLES: Record<string, string> = {
-  direct: "bg-gold/15 text-gold-dark",
-  tripadvisor: "bg-emerald-50 text-emerald-800",
-  airbnb: "bg-rose-50 text-rose-800",
-  google: "bg-sky-50 text-sky-800",
-  viator: "bg-indigo-50 text-indigo-800",
-  getyourguide: "bg-orange-50 text-orange-900",
-};
-
 function Stars({ score }: { score: number }) {
   const rounded = Math.round(score);
   return (
@@ -63,20 +54,13 @@ export function TestimonialCard({
   return (
     <figure className="flex h-full flex-col justify-between rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
       <div className="flex-1">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex items-start gap-3">
           {typeof testimonial.score === "number" ? (
             <Stars score={testimonial.score} />
           ) : (
             <svg viewBox="0 0 32 24" className="h-6 w-6 text-gold/40" fill="currentColor" aria-hidden="true">
               <path d="M0 24V14.4C0 6.4 4.8 1.2 12.8 0l1.6 3.2C9.6 4.8 7.2 8 7.2 11.6h6.4V24H0Zm17.6 0V14.4c0-8 4.8-13.2 12.8-14.4l1.6 3.2c-4.8 1.6-7.2 4.8-7.2 8.4h6.4V24H17.6Z" />
             </svg>
-          )}
-          {showSource && !d.firstParty && (
-            <span
-              className={`shrink-0 rounded-full px-2.5 py-1 text-[11px] font-semibold ${PLATFORM_STYLES[d.platform] ?? "bg-black/5 text-ink-soft"}`}
-            >
-              {d.platformLabel}
-            </span>
           )}
         </div>
 

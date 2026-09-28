@@ -1,22 +1,10 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
-import {
-  getExperiences,
-  getPhotoshoots,
-  getReviewSourceSummaries,
-  getTestimonials,
-  getTours,
-} from "@/sanity/fetchers";
+import { getExperiences, getPhotoshoots, getTestimonials, getTours } from "@/sanity/fetchers";
 import { getAttributionCoverage, getProductRating } from "@/lib/reviewAttribution";
-import {
-  PLATFORM_LABELS,
-  SUMMARY_STALE_AFTER_DAYS,
-  isSummaryFresh,
-  platformOf,
-  reviewComplianceIssues,
-  summaryAgeDays,
-} from "@/lib/reviewPolicy";
+import { PLATFORM_LABELS, platformOf, reviewComplianceIssues } from "@/lib/reviewPolicy";
 import { deriveThemes, THEME_LABELS } from "@/lib/reviewThemes";
+import type { ReviewPlatform, ReviewTheme, Testimonial } from "@/content/types";
 
 export const metadata = { title: "Review Attribution", robots: { index: false, follow: false } };
 
@@ -32,12 +20,11 @@ export default async function AdminReviewsPage() {
   const user = await getCurrentUser();
   if (user?.role !== "admin") redirect("/admin/reservations");
 
-  const [reviews, tours, experiences, photoshoots, summaries] = await Promise.all([
+  const [reviews, tours, experiences, photoshoots] = await Promise.all([
     getTestimonials(),
     getTours(),
     getExperiences(),
     getPhotoshoots(),
-    getReviewSourceSummaries(),
   ]);
 
   const products = [...tours, ...experiences, ...photoshoots].map((p) => ({
@@ -55,13 +42,13 @@ export default async function AdminReviewsPage() {
 
   // Anything that would make a review indefensible if someone looked at it.
   const flagged = reviews
-    .map((r) => ({ review: r, issues: reviewComplianceIssues(r) }))
-    .filter((r) => r.issues.length > 0);
+    .map((r: Testimonial) => ({ review: r, issues: reviewComplianceIssues(r) }))
+    .filter((r: { issues: string[] }) => r.issues.length > 0);
 
   // How the review mix breaks down by platform, and how many carry no theme at
   // all — a review with no themes is one no product page will ever select,
   // so it counts toward the total and does nothing else.
-  const byPlatform = new Map<string, number>();
+  const byPlatform = new Map<ReviewPlatform, number>();
   let untagged = 0;
   for (const r of reviews) {
     const p = platformOf(r);
@@ -69,13 +56,12 @@ export default async function AdminReviewsPage() {
     if (deriveThemes(r).length === 0) untagged += 1;
   }
 
-  const themeCounts = new Map<string, number>();
+  const themeCounts = new Map<ReviewTheme, number>();
   for (const r of reviews) {
     for (const t of deriveThemes(r)) themeCounts.set(t, (themeCounts.get(t) ?? 0) + 1);
   }
   const topThemes = [...themeCounts.entries()].sort((a, b) => b[1] - a[1]);
 
-  const staleSummaries = summaries.filter((s) => !isSummaryFresh(s));
 
   return (
     <div>
@@ -121,53 +107,6 @@ export default async function AdminReviewsPage() {
       )}
 
       <section className="mt-10">
-        <h2 className="font-display text-lg font-semibold text-ink">Platform ratings badges</h2>
-        <p className="mt-2 max-w-2xl text-sm text-ink-soft/70">
-          Shown on the homepage and Customer Stories. Each hides itself once it&rsquo;s more than{" "}
-          {SUMMARY_STALE_AFTER_DAYS} days old, because a review count nobody has re-checked stops being a
-          fact. Re-check the numbers on the platform and update the date in Studio.
-        </p>
-        {summaries.length === 0 ? (
-          <p className="mt-3 text-sm text-ink-soft/60">
-            None published yet. Add one per listing under &ldquo;Review source (ratings badge)&rdquo; in
-            Studio — these work before any review text is imported, and are the strongest trust element
-            available.
-          </p>
-        ) : (
-          <ul className="mt-4 divide-y divide-black/5 rounded-2xl border border-black/5 bg-cream">
-            {summaries.map((s) => {
-              const age = summaryAgeDays(s);
-              const stale = !isSummaryFresh(s);
-              return (
-                <li key={`${s.platform}-${s.url}`} className="flex items-center justify-between gap-4 px-5 py-3">
-                  <span className="min-w-0">
-                    <span className="block truncate text-sm text-ink">{s.label}</span>
-                    <span className="text-xs text-ink-soft/60">
-                      {PLATFORM_LABELS[s.platform]} · {s.count.toLocaleString()} reviews
-                      {typeof s.score === "number" ? ` · ${s.score.toFixed(1)}★` : ""}
-                    </span>
-                  </span>
-                  <span
-                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      stale ? "bg-rose-100 text-rose-800" : "bg-emerald-50 text-emerald-800"
-                    }`}
-                  >
-                    {stale ? `Hidden — ${age} days old` : `Checked ${age} days ago`}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
-        )}
-        {staleSummaries.length > 0 && (
-          <p className="mt-3 text-sm font-medium text-rose-800">
-            {staleSummaries.length} badge{staleSummaries.length === 1 ? " is" : "s are"} hidden from the site
-            until re-checked.
-          </p>
-        )}
-      </section>
-
-      <section className="mt-10">
         <h2 className="font-display text-lg font-semibold text-ink">Where reviews came from</h2>
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
           {[...byPlatform.entries()]
@@ -175,7 +114,7 @@ export default async function AdminReviewsPage() {
             .map(([p, n]) => (
               <div key={p} className="rounded-2xl border border-black/5 bg-cream p-4">
                 <p className="font-display text-xl font-semibold text-ink">{n.toLocaleString()}</p>
-                <p className="text-xs text-ink-soft/60">{PLATFORM_LABELS[p as keyof typeof PLATFORM_LABELS]}</p>
+                <p className="text-xs text-ink-soft/60">{PLATFORM_LABELS[p]}</p>
               </div>
             ))}
         </div>
@@ -201,7 +140,7 @@ export default async function AdminReviewsPage() {
                 key={t}
                 className="rounded-full border border-black/10 bg-cream px-3 py-1.5 text-sm text-ink-soft"
               >
-                {THEME_LABELS[t as keyof typeof THEME_LABELS]}{" "}
+                {THEME_LABELS[t]}{" "}
                 <span className="font-semibold text-ink">{n}</span>
               </li>
             ))}

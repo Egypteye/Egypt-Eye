@@ -14,7 +14,6 @@ import { StatsBar } from "@/components/StatsBar";
 import { TourCard } from "@/components/TourCard";
 import { DestinationsPanel } from "@/components/DestinationsPanel";
 import { ReviewsMarquee } from "@/components/ReviewsMarquee";
-import { ReviewSourceBadges } from "@/components/ReviewSourceBadges";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { Reveal } from "@/components/Reveal";
 import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
@@ -29,7 +28,6 @@ import {
   getPhotoshoots,
   getSiteSettings,
   getTestimonials,
-  getReviewSourceSummaries,
   getTours,
 } from "@/sanity/fetchers";
 import { T, trAll } from "@/i18n/T";
@@ -57,7 +55,7 @@ export default async function Home() {
   ]);
   const locale = await getLocale();
 
-  const [site, home, tours, experiences, photoshoots, testimonials, faqs, destinationHubs, sourceSummaries] = await Promise.all([
+  const [site, home, tours, experiences, photoshoots, testimonials, faqs, destinationHubs] = await Promise.all([
     getSiteSettings(),
     getHomepage(),
     getTours(),
@@ -66,7 +64,6 @@ export default async function Home() {
     getTestimonials(),
     getFaqs(),
     getDestinationHubs(),
-    getReviewSourceSummaries(),
   ]);
   // One real figure, from the reviews actually collected (see aggregate.ts).
   const companyRating = getCompanyRating(testimonials);
@@ -208,15 +205,8 @@ export default async function Home() {
       </section>
 
       {/* Reviews — only shown once real, collected testimonials exist in the
-          CMS, or Egypt Eye has published its platform ratings. No placeholder
-          or illustrative quotes are ever displayed here.
-          
-          The platform badges render independently of the quote marquee on
-          purpose: they are the strongest proof available and they work before
-          a single review has been imported, so the homepage is not silent
-          about a 4.9 on Tripadvisor just because nobody has pasted the text
-          of a review into Studio yet. */}
-      {(testimonials.length > 0 || sourceSummaries.length > 0) && (
+          CMS. No placeholder or illustrative quotes are ever displayed here. */}
+      {testimonials.length > 0 && (
         <section className="bg-ink py-16">
           <Container>
             <Reveal>
@@ -228,19 +218,10 @@ export default async function Home() {
                 tone="dark"
               />
             </Reveal>
-            {sourceSummaries.length > 0 && (
-              <Reveal delay={60}>
-                <div className="mt-8 flex justify-center">
-                  <ReviewSourceBadges summaries={sourceSummaries} tone="dark" className="justify-center" />
-                </div>
-              </Reveal>
-            )}
           </Container>
-          {testimonials.length > 0 && (
-            <Reveal delay={100} className="mt-10">
-              <ReviewsMarquee testimonials={testimonials} href="/testimonials" />
-            </Reveal>
-          )}
+          <Reveal delay={100} className="mt-10">
+            <ReviewsMarquee testimonials={testimonials} href="/testimonials" />
+          </Reveal>
         </section>
       )}
 

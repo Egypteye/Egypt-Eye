@@ -22,7 +22,6 @@ import {
   storiesQuery,
   storyBySlugQuery,
   testimonialsQuery,
-  reviewSourceSummariesQuery,
   tourBySlugQuery,
   toursBySlugsQuery,
   toursQuery,
@@ -72,7 +71,6 @@ import type {
   SiteSettings,
   Story,
   Testimonial,
-  ReviewSourceSummary,
   Tour,
 } from "@/content/types";
 
@@ -421,20 +419,6 @@ async function getTestimonialsInner(): Promise<Testimonial[]> {
   return result && result.length > 0 ? result : localTestimonials;
 }
 
-/**
- * The platform ratings badges — "4.9 from 312 reviews on Tripadvisor".
- *
- * No local fallback, unlike every other fetcher here. These numbers are a
- * factual claim about what a third-party site currently shows, and a stale
- * hardcoded copy in the repo is exactly the kind of figure that goes wrong
- * quietly. Sanity is the only source, and an empty result simply hides the
- * badges — see lib/reviewPolicy.ts, which also hides any summary older than
- * six months.
- */
-async function getReviewSourceSummariesInner(): Promise<ReviewSourceSummary[]> {
-  const result = await safeFetch<ReviewSourceSummary[]>(reviewSourceSummariesQuery);
-  return result ?? [];
-}
 
 // The GROQ queries filter to status == "published"; the local fallback has
 // to apply the same rule itself, or a story archived in the content files
@@ -844,9 +828,6 @@ export const getPhotoshoots = translated(getPhotoshootsInner);
 export const getPhotoshootBySlug = translated(getPhotoshootBySlugInner);
 export const getPhotoshootsBySlugs = translated(getPhotoshootsBySlugsInner);
 export const getTestimonials = translated(getTestimonialsInner);
-// Not run through translated(): a platform name, a listing title and a
-// review count are facts about another site, not site copy to translate.
-export const getReviewSourceSummaries = getReviewSourceSummariesInner;
 export const getStories = translated(getStoriesInner);
 export const getStoryBySlug = translated(getStoryBySlugInner);
 export const getDestinationHubs = translated(getDestinationHubsInner);

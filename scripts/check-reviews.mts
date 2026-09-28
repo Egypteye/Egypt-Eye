@@ -13,11 +13,10 @@
  * because "eat" appears inside "weather", "beaten" and "great". The same
  * mistake in review tagging would put a proposal review on a family tour.
  */
-import type { Testimonial, ReviewSourceSummary } from "../src/content/types";
+import type { Testimonial } from "../src/content/types";
 import {
   THIRD_PARTY_EXCERPT_CHARS,
   isFirstParty,
-  isSummaryFresh,
   reviewComplianceIssues,
   schemaEligible,
   schemaEligibleReviews,
@@ -104,21 +103,6 @@ ok(
 ok("a plain direct review is not flagged", reviewComplianceIssues(review({ quote: "Great" })).length === 0);
 
 // ---------------------------------------------------------------------------
-// Staleness: a hand-typed platform count expires rather than aging silently.
-// ---------------------------------------------------------------------------
-const summary = (checkedOn: string): ReviewSourceSummary => ({
-  platform: "tripadvisor",
-  label: "Egypt Eye Travels",
-  url: "https://x.test",
-  count: 312,
-  score: 4.9,
-  checkedOn,
-});
-const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toISOString().slice(0, 10);
-ok("a recently checked badge shows", isSummaryFresh(summary(daysAgo(10))));
-ok("a badge checked a year ago is hidden", !isSummaryFresh(summary(daysAgo(365))));
-
-// ---------------------------------------------------------------------------
 // Themes: word-anchored, never substring.
 // ---------------------------------------------------------------------------
 ok(
@@ -183,4 +167,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, staleness and theme matching all hold.");
+console.log("check-reviews: ok — excerpting, photo handling, schema eligibility and theme matching all hold.");

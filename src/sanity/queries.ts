@@ -117,13 +117,6 @@ export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order as
   source{platform, url, reviewedAt}
 }`;
 
-// The platform ratings badges. Deliberately its own document type rather than
-// a field on siteSettings: there is one per listing, Egypt Eye has several,
-// and each carries its own last-checked date.
-export const reviewSourceSummariesQuery = groq`*[_type == "reviewSourceSummary"] | order(order asc) {
-  platform, label, url, score, count, checkedOn
-}`;
-
 // Lightweight experience summary used wherever a Story links to a
 // Signature Experience — a card teaser, not the full detail-page payload.
 const relatedExperienceFields = groq`

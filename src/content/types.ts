@@ -376,32 +376,6 @@ export type Testimonial = {
   featured?: boolean;
 };
 
-/**
- * A platform's own headline numbers, as a linked badge.
- *
- * Deliberately separate from the reviews themselves, and the single safest
- * high-value thing on this page: "4.9 from 312 reviews on TripAdvisor →" is a
- * statement of fact with a link to the proof. It republishes nothing, so no
- * copyright or policy question arises, and it carries the trust the platform
- * has already earned.
- *
- * Typed in by hand and stamped with the date it was checked, because there is
- * no API access here. `checkedOn` is shown to the visitor for the same reason
- * a price carries a date: a number with no date is a number nobody can
- * evaluate, and a stale review count is the kind of thing the FTC and the CMA
- * treat as a misrepresentation rather than an oversight.
- */
-export type ReviewSourceSummary = {
-  platform: ReviewPlatform;
-  /** What the platform calls this listing — it may not match a product name. */
-  label: string;
-  url: string;
-  score?: number;
-  count: number;
-  /** ISO date these numbers were last verified against the platform. */
-  checkedOn: string;
-};
-
 export type Author = {
   slug: string;
   name: string;

@@ -1,4 +1,4 @@
-import type { ReviewPlatform, ReviewSourceSummary, Testimonial } from "@/content/types";
+import type { ReviewPlatform, Testimonial } from "@/content/types";
 
 // The rules about third-party reviews, in code.
 //
@@ -143,28 +143,4 @@ export function reviewComplianceIssues(review: Testimonial): string[] {
     issues.push("No reviewer name.");
   }
   return issues;
-}
-
-/**
- * Whether the ratings summaries are stale enough to stop showing.
- *
- * A platform count typed in by hand drifts as reviews accumulate. Six months
- * is the point at which "4.9 from 312 reviews" stops being a fact about today
- * and starts being a claim nobody has checked, so the badge hides itself and
- * /admin/reviews asks for it to be re-checked rather than quietly aging.
- */
-export const SUMMARY_STALE_AFTER_DAYS = 180;
-
-export function summaryAgeDays(summary: ReviewSourceSummary, now = new Date()): number {
-  const checked = Date.parse(summary.checkedOn);
-  if (Number.isNaN(checked)) return Number.POSITIVE_INFINITY;
-  return Math.floor((now.getTime() - checked) / 86_400_000);
-}
-
-export function isSummaryFresh(summary: ReviewSourceSummary, now = new Date()): boolean {
-  return summaryAgeDays(summary, now) <= SUMMARY_STALE_AFTER_DAYS;
-}
-
-export function freshSummaries(summaries: ReviewSourceSummary[], now = new Date()): ReviewSourceSummary[] {
-  return summaries.filter((s) => isSummaryFresh(s, now) && s.count > 0 && Boolean(s.url));
 }
