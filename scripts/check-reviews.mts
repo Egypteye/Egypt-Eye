@@ -23,6 +23,7 @@ import {
   toDisplayReview,
 } from "../src/lib/reviewPolicy";
 import { deriveThemes, pickRelevantReviews, specificityScore } from "../src/lib/reviewThemes";
+import { normalizeReviewDate, parseCsv, parseReviewInput } from "../src/lib/testimonials/importParse";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -160,6 +161,55 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// Importing: an export's gaps must stay gaps.
+// ---------------------------------------------------------------------------
+// A review body routinely contains commas, quotes and hard newlines, so a CSV
+// row is not a line. Splitting on newlines silently truncates reviews.
+const tricky = parseCsv(
+  'Name,Quote\n"A","Line one\nline two, with a comma and ""quotes"""\n"B","Plain"'
+);
+ok("CSV keeps an embedded newline inside one field", tricky[1][1].includes("\n"));
+ok("CSV keeps an embedded comma", tricky[1][1].includes("with a comma"));
+ok('CSV un-escapes doubled quotes', tricky[1][1].includes('"quotes"'));
+ok("CSV finds both rows", tricky.length === 3);
+
+const NOW = new Date("2026-09-28T00:00:00Z");
+
+// Platforms give month precision at best. Storing a day nobody recorded would
+// be inventing it, so everything lands on the first of its month — which is
+// exactly what the site displays.
+ok("a full date is trusted as given", normalizeReviewDate("2026-03-14", NOW) === "2026-03-14");
+ok('"August 2026" becomes that month', normalizeReviewDate("August 2026", NOW) === "2026-08-01");
+ok('"Aug 2026" becomes that month', normalizeReviewDate("Aug 2026", NOW) === "2026-08-01");
+ok('"3 weeks ago" resolves to September', normalizeReviewDate("3 weeks ago", NOW) === "2026-09-01");
+ok('"2 months ago" resolves to July', normalizeReviewDate("2 months ago", NOW) === "2026-07-01");
+ok('"Not provided" is not a date', normalizeReviewDate("Not provided", NOW) === undefined);
+ok("gibberish is dropped rather than guessed", normalizeReviewDate("sometime last spring", NOW) === undefined);
+
+// A real export: no per-review link, no score, placeholder text in the gaps.
+const exportCsv =
+  'Name,Quote,Context,Source,Url,Date,Score\n' +
+  '"\'Hayden","Beyond amazing!","Exclusive Pyramids Photoshoot","tripadvisor","Not provided","April 2026","Not provided"\n' +
+  '"Tara","Mena took my photos.","Exclusive Pyramids Photoshoot","tripadvisor","Not provided","1 week ago","Not provided"';
+
+const noFallback = parseReviewInput(exportCsv, { now: NOW });
+ok("a third-party export with no links is refused outright", noFallback.reviews.length === 0);
+ok("and says why, per row", noFallback.issues.length === 2);
+
+const withFallback = parseReviewInput(exportCsv, { defaultUrl: "https://example.test/listing", now: NOW });
+ok("a fallback listing link lets the export through", withFallback.reviews.length === 2);
+ok("it is detected as CSV", withFallback.format === "csv");
+ok("every row carries the link", withFallback.reviews.every((r) => r.url === "https://example.test/listing"));
+ok('"Not provided" never becomes a score', withFallback.reviews.every((r) => r.score === undefined));
+ok("Excel's leading apostrophe is stripped from a name", withFallback.reviews[0].name === "Hayden");
+ok("the quote itself is untouched", withFallback.reviews[0].quote === "Beyond amazing!");
+
+// The typed block format still works, and still needs a link.
+const blocks = parseReviewInput("Name: Jo\nQuote: Lovely day out.\nSource: direct", { now: NOW });
+ok("blocks are still detected", blocks.format === "blocks");
+ok("a direct review needs no link", blocks.reviews.length === 1);
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-reviews: ${errors.length} failure(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -167,4 +217,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log("check-reviews: ok — excerpting, photo handling, schema eligibility and theme matching all hold.");
+console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, theme matching and importing all hold.");

@@ -2,31 +2,15 @@ import { useState } from "react";
 import { useClient } from "sanity";
 import { apiVersion } from "../env";
 import { reviewDuplicateKey } from "@/lib/testimonials/normalize";
+import { parseReviewInput } from "@/lib/testimonials/importParse";
 
-// A custom Studio pane (registered in structure.ts, right under
-// "Testimonials") for pasting many real reviews at once instead of
-// creating them one document at a time. Uses the Studio's own logged-in
-// session for write access — no separate API token needed.
+const PLACEHOLDER = `Paste a CSV export (with a header row), or type blocks:
 
-type ParsedReview = {
-  name: string;
-  quote: string;
-  context?: string;
-  title?: string;
-  source?: string;
-  url?: string;
-  date?: string;
-  score?: number;
-};
-type ParseIssue = { block: string; reason: string };
-
-const PLATFORMS = ["direct", "tripadvisor", "airbnb", "google", "viator", "getyourguide"];
-
-const PLACEHOLDER = `Name: Sarah M.
+Name: Sarah M.
 Quote: The photographer kept showing us the back of the camera so we knew exactly what we were getting.
 Context: Exclusive Pyramids Photoshoot
 Source: tripadvisor
-Url: https://www.tripadvisor.com/ShowUserReviews-...
+Url: https://www.tripadvisor.com/...
 Date: 2026-03-14
 Score: 5
 ---
@@ -34,103 +18,23 @@ Name: James & Emma
 Quote: From the airport pickup to the last night's dinner cruise, it felt like traveling with friends.
 Context: 6 Days: Cairo, Giza & Luxor
 Source: direct
-Score: 5
----
-Name: Priya K.
-Quote: I've never felt so looked after on a solo trip.
-Source: direct`;
+Score: 5`;
 
-function parseReviews(raw: string): { reviews: ParsedReview[]; issues: ParseIssue[] } {
-  const blocks = raw
-    .split(/\n\s*---\s*\n/)
-    .map((b) => b.trim())
-    .filter(Boolean);
-
-  const reviews: ParsedReview[] = [];
-  const issues: ParseIssue[] = [];
-
-  for (const block of blocks) {
-    const fields: Record<string, string> = {};
-    let currentKey: string | null = null;
-
-    for (const line of block.split("\n")) {
-      const match = line.match(/^\s*(name|quote|review|context|tour|title|headline|source|platform|url|link|date|score|rating)\s*:\s*(.*)$/i);
-      if (match) {
-        const raw = match[1].toLowerCase();
-        currentKey =
-          raw === "review" ? "quote"
-          : raw === "tour" ? "context"
-          : raw === "headline" ? "title"
-          : raw === "platform" ? "source"
-          : raw === "link" ? "url"
-          : raw === "rating" ? "score"
-          : raw;
-        fields[currentKey] = match[2].trim();
-      } else if (currentKey && line.trim()) {
-        fields[currentKey] = `${fields[currentKey]}\n${line.trim()}`.trim();
-      }
-    }
-
-    const short = block.length > 60 ? block.slice(0, 60) + "…" : block;
-
-    if (!fields.name || !fields.quote) {
-      issues.push({ block: short, reason: !fields.name ? "Missing a Name: line" : "Missing a Quote: line" });
-      continue;
-    }
-
-    const source = (fields.source || "direct").toLowerCase();
-    if (!PLATFORMS.includes(source)) {
-      issues.push({ block: short, reason: `Source "${source}" isn't one of: ${PLATFORMS.join(", ")}` });
-      continue;
-    }
-
-    // The one rule this tool refuses to bend. A review copied from another
-    // platform without a link back is an unverifiable claim about someone
-    // else's words, and quoting-with-attribution is the only defensible way
-    // to show content that platform owns.
-    if (source !== "direct" && !fields.url) {
-      issues.push({
-        block: short,
-        reason: `A ${source} review needs a Url: line linking to the original — required for attribution.`,
-      });
-      continue;
-    }
-
-    const score = fields.score ? Number(fields.score) : undefined;
-    if (score !== undefined && (!Number.isFinite(score) || score < 1 || score > 5)) {
-      issues.push({ block: short, reason: `Score "${fields.score}" isn't a number from 1 to 5` });
-      continue;
-    }
-
-    if (fields.date && !/^\d{4}-\d{2}-\d{2}$/.test(fields.date)) {
-      issues.push({ block: short, reason: `Date "${fields.date}" should be YYYY-MM-DD` });
-      continue;
-    }
-
-    reviews.push({
-      name: fields.name,
-      quote: fields.quote,
-      context: fields.context || undefined,
-      title: fields.title || undefined,
-      source,
-      url: fields.url || undefined,
-      date: fields.date || undefined,
-      score,
-    });
-  }
-
-  return { reviews, issues };
-}
+// A custom Studio pane (registered in structure.ts, right under
+// "Testimonials") for pasting many real reviews at once instead of
+// creating them one document at a time. Uses the Studio's own logged-in
+// session for write access — no separate API token needed.
 
 export default function BulkReviewsTool() {
   const client = useClient({ apiVersion });
   const [raw, setRaw] = useState("");
+  const [fallbackUrl, setFallbackUrl] = useState("");
   const [status, setStatus] = useState<"idle" | "importing" | "done" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [importedCount, setImportedCount] = useState(0);
   const [skippedDuplicateCount, setSkippedDuplicateCount] = useState(0);
 
-  const { reviews, issues } = parseReviews(raw);
+  const { reviews, issues, format } = parseReviewInput(raw, { defaultUrl: fallbackUrl });
 
   async function handleImport() {
     if (reviews.length === 0) return;
@@ -194,19 +98,44 @@ export default function BulkReviewsTool() {
     <div style={{ maxWidth: 780, margin: "0 auto", padding: "40px 24px", fontFamily: "system-ui, sans-serif" }}>
       <h1 style={{ fontSize: 22, fontWeight: 600, marginBottom: 4 }}>Bulk Add Reviews</h1>
       <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
-        Paste real reviews below, one per block, separated by a line containing just <code>---</code>. Each
-        block needs <code>Name:</code> and <code>Quote:</code>. Optional:{" "}
-        <code>Context:</code> (which tour), <code>Title:</code>, <code>Score:</code> (1-5),{" "}
-        <code>Date:</code> (YYYY-MM-DD), <code>Source:</code> (direct, tripadvisor, airbnb, google, viator,
-        getyourguide) and <code>Url:</code>.
+        Paste a <strong>CSV export</strong> (with a header row — columns are matched by name: Name, Quote,
+        Context, Source, Url, Date, Score) or type <strong>blocks</strong> separated by a line containing
+        just <code>---</code>. Either way, Name and Quote are the only required fields. Cells reading
+        &ldquo;Not provided&rdquo;, &ldquo;N/A&rdquo; or blank are treated as missing rather than imported
+        as text, and dates like &ldquo;August 2026&rdquo; or &ldquo;3 weeks ago&rdquo; are normalised to the
+        month they were written in — which is the precision the site displays.
       </p>
-      <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 24, lineHeight: 1.6 }}>
+      <p style={{ color: "#6b7280", fontSize: 14, marginBottom: 20, lineHeight: 1.6 }}>
         <strong>Copy each quote exactly.</strong> Don&rsquo;t tidy the wording, shorten for punch, merge two
         people&rsquo;s reviews, or translate — a review is evidence, and edited evidence isn&rsquo;t evidence.
-        Anything from another platform needs a <code>Url:</code> to the original: the site shows those as a
-        linked excerpt rather than republishing them in full, and leaves them out of search-engine rating
-        markup, which is what Google&rsquo;s policy on aggregating other sites&rsquo; reviews requires.
+        Anything from another platform needs a link to the original: the site shows those as a linked excerpt
+        rather than republishing them in full, and leaves them out of search-engine rating markup, which is
+        what Google&rsquo;s policy on aggregating other sites&rsquo; reviews requires.
       </p>
+
+      <label style={{ display: "block", marginBottom: 20 }}>
+        <span style={{ display: "block", fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 6 }}>
+          Fallback link for reviews with no Url
+        </span>
+        <input
+          value={fallbackUrl}
+          onChange={(e) => setFallbackUrl(e.target.value)}
+          placeholder="https://www.tripadvisor.com/Attraction_Review-..."
+          style={{
+            width: "100%",
+            padding: "8px 12px",
+            fontSize: 13,
+            border: "1px solid #d1d5db",
+            borderRadius: 8,
+            boxSizing: "border-box",
+          }}
+        />
+        <span style={{ display: "block", fontSize: 12, color: "#6b7280", marginTop: 6, lineHeight: 1.5 }}>
+          Platform exports rarely include a per-review link. Paste the listing page these reviews were left
+          on and it covers every row that has none — the reader still lands where the review can be read.
+          Leave blank for reviews collected directly.
+        </span>
+      </label>
 
       <textarea
         value={raw}
@@ -230,12 +159,12 @@ export default function BulkReviewsTool() {
         <div style={{ marginTop: 20 }}>
           <p style={{ fontSize: 13, fontWeight: 600, color: "#374151", marginBottom: 8 }}>
             {reviews.length} review{reviews.length === 1 ? "" : "s"} ready to import
-            {issues.length > 0 ? `, ${issues.length} skipped` : ""}
+            {issues.length > 0 ? `, ${issues.length} skipped` : ""} · read as {format === "csv" ? "CSV" : "blocks"}
           </p>
 
           {reviews.length > 0 && (
             <div style={{ border: "1px solid #e5e7eb", borderRadius: 8, overflow: "hidden", marginBottom: 12 }}>
-              {reviews.map((r, i) => (
+              {reviews.slice(0, 20).map((r, i) => (
                 <div
                   key={i}
                   style={{
@@ -254,7 +183,7 @@ export default function BulkReviewsTool() {
 
           {issues.length > 0 && (
             <div style={{ marginBottom: 12 }}>
-              {issues.map((iss, i) => (
+              {issues.slice(0, 20).map((iss, i) => (
                 <p key={i} style={{ fontSize: 12, color: "#b45309" }}>
                   Skipped &ldquo;{iss.block}&rdquo; — {iss.reason}
                 </p>

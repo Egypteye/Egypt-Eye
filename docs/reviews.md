@@ -118,7 +118,30 @@ starts looking like it is manufacturing testimonials.
 
 ## Importing
 
-**Studio → Bulk Add Reviews.** Blocks separated by `---`:
+**Studio → Bulk Add Reviews.** Two formats, detected automatically.
+
+**A CSV export** with a header row — columns matched by name (Name, Quote,
+Context, Source, Url, Date, Score; common synonyms like Reviewer/Review/Rating
+also work). Quoted fields, embedded commas and hard newlines inside a review
+are handled properly, because a review body is not one line.
+
+Platform exports are messy in three predictable ways, all handled:
+
+- Cells reading `Not provided`, `N/A`, `-` or blank are treated as **missing**,
+  not imported as literal text.
+- Dates like `August 2026` or `3 weeks ago` are normalised to the **first of
+  the month they were written in**. Platforms give month precision at best, the
+  site displays month and year only, and storing a day nobody recorded would be
+  inventing it. Anything unreadable is left blank rather than guessed.
+- A **leading apostrophe** on a name is Excel's text escape, and is stripped.
+  Nothing else about a name or a quote is ever changed.
+
+Exports almost never carry a per-review link, and the importer won't accept a
+third-party review without one. Use the **fallback link** field: paste the
+listing page the reviews were left on and it covers every row that has none. A
+reader still lands where the review can be read.
+
+**Or typed blocks** separated by `---`:
 
 ```
 Name: Sarah M.
