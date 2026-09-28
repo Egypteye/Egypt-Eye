@@ -58,8 +58,10 @@ export default async function TestimonialsPage() {
               claim the whole wall rests on. */}
           {entries.length > 0 && (
             <p className="mt-6 max-w-2xl text-xs text-ink-soft/55">
-              Reviews written on another platform are quoted in part, never rewritten, and linked
-              to the original so you can read them in full there.
+              Reviews written on another platform are quoted in part, never rewritten, and linked to
+              the original so you can read them in full there. The names of our guides, hosts and
+              photographers have been removed for their privacy — nothing else about a review has
+              been changed.
             </p>
           )}
 

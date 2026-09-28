@@ -4,6 +4,12 @@ import { apiVersion } from "../env";
 import { reviewDuplicateKey } from "@/lib/testimonials/normalize";
 import { parseReviewInput } from "@/lib/testimonials/importParse";
 
+// Sanity refuses an oversized mutation, and a few thousand review bodies in
+// one transaction is oversized. Small enough to always be accepted, large
+// enough that a full import is a couple of dozen round trips rather than
+// thousands.
+const IMPORT_BATCH_SIZE = 100;
+
 const PLACEHOLDER = `Paste a CSV export (with a header row), or type blocks:
 
 Name: Sarah M.
@@ -33,6 +39,7 @@ export default function BulkReviewsTool() {
   const [errorMessage, setErrorMessage] = useState("");
   const [importedCount, setImportedCount] = useState(0);
   const [skippedDuplicateCount, setSkippedDuplicateCount] = useState(0);
+  const [progress, setProgress] = useState(0);
 
   const { reviews, issues, format } = parseReviewInput(raw, { defaultUrl: fallbackUrl });
 
@@ -40,6 +47,7 @@ export default function BulkReviewsTool() {
     if (reviews.length === 0) return;
     setStatus("importing");
     setErrorMessage("");
+    setProgress(0);
     try {
       const existing = await client.fetch<{ order: number | null; name?: string; quote?: string }[]>(
         `*[_type == "testimonial"]{order, name, quote}`
@@ -65,26 +73,54 @@ export default function BulkReviewsTool() {
         toImport.push(r);
       }
 
-      const tx = client.transaction();
-      for (const r of toImport) {
-        tx.create({
-          _type: "testimonial",
-          name: r.name,
-          quote: r.quote,
-          context: r.context,
-          title: r.title,
-          score: r.score,
-          source: {
-            platform: r.source ?? "direct",
-            url: r.url,
-            reviewedAt: r.date,
-          },
-          order: nextOrder++,
-        });
+      // Committed in batches rather than one transaction. A real import is
+      // thousands of reviews with long bodies, and a single mutation that
+      // large is refused outright by the API — which fails the whole run and
+      // imports nothing.
+      //
+      // Partial progress is safe to resume: the duplicate check above is
+      // against what is actually in Sanity, so re-pasting the same file after
+      // a failure skips everything that already landed and continues from
+      // there. That is why a mid-run error reports the count instead of
+      // trying to roll back.
+      let done = 0;
+      try {
+        for (let i = 0; i < toImport.length; i += IMPORT_BATCH_SIZE) {
+          const batch = toImport.slice(i, i + IMPORT_BATCH_SIZE);
+          const tx = client.transaction();
+          for (const r of batch) {
+            tx.create({
+              _type: "testimonial",
+              name: r.name,
+              quote: r.quote,
+              context: r.context,
+              title: r.title,
+              score: r.score,
+              source: {
+                platform: r.source ?? "direct",
+                url: r.url,
+                reviewedAt: r.date,
+              },
+              order: nextOrder++,
+            });
+          }
+          await tx.commit();
+          done += batch.length;
+          setProgress(done);
+        }
+      } catch (err) {
+        setImportedCount(done);
+        setSkippedDuplicateCount(skipped);
+        setStatus("error");
+        setErrorMessage(
+          `Imported ${done} of ${toImport.length} before failing: ${
+            err instanceof Error ? err.message : "unknown error"
+          }. Paste the same file again — the ${done} already added will be skipped as duplicates and it will carry on from there.`
+        );
+        return;
       }
-      await tx.commit();
 
-      setImportedCount(toImport.length);
+      setImportedCount(done);
       setSkippedDuplicateCount(skipped);
       setStatus("done");
       setRaw("");
@@ -206,7 +242,9 @@ export default function BulkReviewsTool() {
               opacity: reviews.length === 0 || status === "importing" ? 0.5 : 1,
             }}
           >
-            {status === "importing" ? "Importing…" : `Import ${reviews.length} Review${reviews.length === 1 ? "" : "s"}`}
+            {status === "importing"
+              ? `Importing… ${progress}/${reviews.length}`
+              : `Import ${reviews.length} Review${reviews.length === 1 ? "" : "s"}`}
           </button>
         </div>
       )}
