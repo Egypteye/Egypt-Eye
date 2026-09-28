@@ -21,12 +21,17 @@ type LocaleContextValue = {
    */
   ui: ContentDictionary;
   /**
+   * Whether the site has any collected reviews at all — what decides whether
+   * the star chip renders.
+   */
+  hasReviews: boolean;
+  /**
    * The /testimonials anchors that actually have reviews behind them.
    *
-   * Only ExperienceRatingLink reads it, to decide whether to render its star
-   * for THIS product. It lives here because that chip appears on every
-   * product card and hero across the site, and threading a prop through all
-   * of them would mean every card's caller had to know about reviews.
+   * The chip shows on every product, but only a product with its own reviews
+   * can deep-link to its own group; for the rest the anchor would match
+   * nothing and the hash would be dead. So this decides where the link
+   * points, not whether it appears.
    *
    * An array rather than a Set because it crosses the server/client boundary.
    */
@@ -37,6 +42,7 @@ const LocaleContext = createContext<LocaleContextValue>({
   locale: DEFAULT_LOCALE,
   dict: en,
   ui: {},
+  hasReviews: false,
   reviewedKeys: [],
 });
 
@@ -44,11 +50,12 @@ export function LocaleProvider({
   locale,
   dict,
   ui,
+  hasReviews,
   reviewedKeys,
   children,
 }: LocaleContextValue & { children: React.ReactNode }) {
   return (
-    <LocaleContext.Provider value={{ locale, dict, ui, reviewedKeys }}>{children}</LocaleContext.Provider>
+    <LocaleContext.Provider value={{ locale, dict, ui, hasReviews, reviewedKeys }}>{children}</LocaleContext.Provider>
   );
 }
 

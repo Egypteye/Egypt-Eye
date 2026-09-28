@@ -14,14 +14,17 @@ import { localePath } from "@/i18n/locales";
 // a chip that asserts no number can't overstate one — and it's why no
 // AggregateRating markup goes with it.
 //
-// Shown only on a product that actually has reviews, because the chip is a
-// promise: it says "people have reviewed THIS", and it lands on that
-// product's own group on /testimonials. With reviews imported for a handful
-// of products and none for the rest, a global "are there reviews anywhere"
-// check would put a star on every card and send fifty of them to an anchor
-// that matches nothing.
+// Shown on every tour, experience, photoshoot and service as long as the
+// site has reviews at all — it is a consistent door into the traveller
+// reviews, not a per-product rating readout.
 //
-// The set of products that have reviews comes from context (see
+// Where it LANDS does vary, and has to. A product with its own reviews deep-
+// links to its own group on /testimonials. A product without any would link
+// to an anchor matching nothing, so it goes to the top of the reviews page
+// instead — same button, same promise ("read what travellers said"), but it
+// never leaves the visitor at a dead hash.
+//
+// Which products have their own reviews comes from context (see
 // i18n/LocaleProvider and the root layout), resolved once per request rather
 // than passed down by each of this component's dozen callers.
 
@@ -37,21 +40,21 @@ export function ExperienceRatingLink({
   tone?: "light" | "dark";
   className?: string;
 }) {
-  const { locale, dict, reviewedKeys } = useLocale();
+  const { locale, dict, hasReviews, reviewedKeys } = useLocale();
   const palette =
     tone === "dark"
       ? "bg-cream/15 text-cream backdrop-blur-sm hover:bg-cream/25"
       : "text-ink-soft hover:text-ink";
 
-  // Only where it leads somewhere true. A star on a product nobody has
-  // reviewed yet links to an anchor that matches nothing, and drops the
-  // visitor into the full wall having implied reviews of the thing they were
-  // actually looking at.
-  if (!reviewedKeys.includes(subjectAnchor({ type, slug }))) return null;
+  if (!hasReviews) return null;
+
+  // Its own group where it has one, the reviews page itself where it doesn't.
+  const hasOwnReviews = reviewedKeys.includes(subjectAnchor({ type, slug }));
+  const href = hasOwnReviews ? subjectReviewsHref({ type, slug }) : "/testimonials";
 
   return (
     <Link
-      href={localePath(subjectReviewsHref({ type, slug }), locale)}
+      href={localePath(href, locale)}
       // relative z-20 lifts it above the card's full-bleed overlay link, so
       // the chip wins the click on a card that is otherwise one big link.
       className={`relative z-20 inline-flex items-center gap-1.5 rounded-full text-sm font-medium transition ${palette} ${className}`}

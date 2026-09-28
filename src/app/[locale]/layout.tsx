@@ -152,6 +152,7 @@ export default async function RootLayout({
     getExperiences(),
     getSignatureExperiences(),
   ]);
+  const hasReviews = testimonials.length > 0;
   const reviewedKeys = reviewedSubjectKeys(
     testimonials,
     collectReviewSubjects({ tours, photoshoots, experiences, signatureExperiences })
@@ -172,7 +173,7 @@ export default async function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        <LocaleProvider locale={locale} dict={dict} ui={ui} reviewedKeys={reviewedKeys}>
+        <LocaleProvider locale={locale} dict={dict} ui={ui} hasReviews={hasReviews} reviewedKeys={reviewedKeys}>
           {children}
         </LocaleProvider>
       </body>
