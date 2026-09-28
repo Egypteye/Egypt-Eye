@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/Container";
 import { getExperiences, getPhotoshoots, getSignatureExperiences, getTestimonials, getTours } from "@/sanity/fetchers";
-import { buildReviewEntries, collectReviewSubjects } from "@/lib/reviewSubjects";
+import { buildReviewEntries, collectReviewSubjects, subjectAnchor } from "@/lib/reviewSubjects";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
 import { alternatesFor } from "@/i18n/alternates";
 import { TestimonialsBrowser } from "./TestimonialsBrowser";
+import { WriteReviewForm, type ReviewProductOption } from "@/components/WriteReviewForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -32,6 +33,15 @@ export default async function TestimonialsPage() {
   const to = (href: string) => localePath(href, locale);
   const subjects = collectReviewSubjects({ tours, photoshoots, experiences, signatureExperiences });
   const { entries, options } = buildReviewEntries(testimonials, subjects);
+
+  // Every product a traveler could have been on, for the form's dropdown —
+  // not `options`, which is only the handful that already have reviews. The
+  // whole point of the form is the trip nobody has written about yet.
+  const productOptions: ReviewProductOption[] = [
+    ...new Map(
+      subjects.map((s) => [subjectAnchor(s), { key: subjectAnchor(s), mega: s.mega, title: s.title }])
+    ).values(),
+  ].sort((a, b) => a.title.localeCompare(b.title));
 
   return (
     <>
@@ -78,6 +88,15 @@ export default async function TestimonialsPage() {
               <TestimonialsBrowser entries={entries} options={options} />
             )}
           </div>
+        </Container>
+      </section>
+
+      {/* The other half of a review wall: somewhere to add to it. Sits under
+          the reviews, above the "plan a trip" CTA, so the page reads as
+          read-then-write rather than read-then-buy. */}
+      <section id="write-a-review" className="scroll-mt-28 pb-20">
+        <Container>
+          <WriteReviewForm products={productOptions} />
         </Container>
       </section>
 
