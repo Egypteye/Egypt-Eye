@@ -13118,7 +13118,7 @@ export const stories: Story[] = [
     status: "published",
     featured: false,
     slug: "private-photographer-egypt",
-    title: "How to Book a Private Photographer in Egypt",
+    title: "How to Hire a Photographer in Egypt: A Traveler\u2019s Guide",
     category: "Travel Guides",
     tags: ["Private Photographer", "Egypt Photoshoots", "Giza Pyramids", "Travel Photography"],
     relatedStories: [
@@ -13149,13 +13149,13 @@ export const stories: Story[] = [
     ],
     author: editorialTeam,
     excerpt:
-      "What to actually look for when booking a private photographer in Egypt — site access, editing turnaround, usage rights, and the red flags that separate a real operator from a freelancer.",
+      "Where to find a photographer in Egypt, how to tell a real operator from a tout, what a session costs, and every question worth settling before you pay a deposit.",
     imageTone: "desert",
     image: unsplashUrl("photo-1696538404784-1be42a421c2e"),
     imageCredit: unsplashCredit("Karsten Winegeart", "https://unsplash.com/photos/a-woman-wearing-a-hat-standing-in-a-field-of-cacti-Eq28kygC3w4"),
     publishedAt: "2026-08-30T08:00:00+02:00",
     relatedTours: toursBySlug("1-day-giza-tour"),
-    primaryKeyword: "private photographer Egypt",
+    primaryKeyword: "how to hire a photographer in Egypt",
     secondaryKeywords: [
       "book photographer Egypt",
       "Egypt photoshoot booking",
@@ -13169,82 +13169,266 @@ export const stories: Story[] = [
       "What to look for when booking a private photographer in Egypt — site access, editing, usage rights, and red flags to avoid before you book.",
     body: [
       p(
-        "Booking a private photographer for a trip to Egypt sounds simple — search, find someone with a nice portfolio, book a slot — but the reality is more uneven than that. Egypt's most photographed sites, Giza chief among them, have real access rules, and there's a meaningful gap between a photographer who works these locations routinely and one who's improvising on the day. Here's what actually separates a good booking from a disappointing one."
+        "Hiring a photographer in Egypt is not the hard part. Standing at the foot of the Great Pyramid with someone who has your deposit, no clear answer about how many photos you are getting, and a vague promise to send them soon — that is the hard part. This is what to settle before any of that, whoever you end up booking with."
       ),
-      h2("Site Access Knowledge Is the First Thing to Check"),
+      h2("Can tourists hire a photographer in Egypt?"),
       p(
-        "This is the single biggest differentiator, and it's easy to overlook when you're comparing portfolios online. Sites like the Giza Plateau operate under rules for professional photography setups that shift depending on exact location, and a photographer without an established, ongoing presence there can end up turned away from the vantage point you were picturing, or restricted to a worse spot on the day itself — which you won't discover until you've already shown up in full hair and makeup. Ask directly: how often do you shoot at this specific location, and what happens if access to a particular spot isn't available that morning? A vague answer is itself useful information."
+        "Yes. Professional photoshoots at Giza happen every day, and travelers book them routinely — solo, as couples, as families, for proposals and birthdays. There is nothing unusual about arriving at the Pyramids with a photographer."
       ),
-      h2("Licensed Local Team vs. Independent Freelancer"),
       p(
-        "There's a real trade-off between booking through an established local operator and booking an independent freelancer found through social media, and it's worth understanding before you commit."
+        "Egypt introduced rules in 2022 allowing personal photography in public places without a permit. Where published guidance genuinely disagrees is on tripods and heavier professional equipment: some sources treat them as covered, others say they need prior authorisation. If a specific setup matters to your shoot, ask your operator what they actually do on site rather than trusting a blog post — this one included. Drones are the clear-cut case: prohibited without a Ministry of Defence permit, and included in no photoshoot package anywhere."
+      ),
+      h2("Where travelers actually find a photographer"),
+      ...bullets([
+        "Booking platforms and marketplaces — wide choice and readable reviews, but you are usually matched with whoever is free rather than choosing who shoots you, and the platform's cut shows up in the price.",
+        "Freelancers found on Instagram — you see the portfolio up front, which is a genuine advantage. The risk is accountability: if the day goes wrong, there is no company behind the booking.",
+        "Photographers who approach you at the site — avoid. No portfolio to check, no agreement about what you receive, no recourse once you have paid.",
+        "Travel companies that run photography as a real product — the session comes with transport, a defined package, and someone who answers afterwards.",
+      ]),
+      h2("How to tell a real operator from a tout"),
+      p(
+        "The test is not the portfolio. Anyone can show good photographs. The test is whether direct questions get direct answers, in writing, before money changes hands."
       ),
       ...bullets([
-        "A licensed local team typically brings consistent site relationships, a track record of shoots at the specific location you want, backup plans if a spot or time slot falls through, and accountability if something goes wrong — since they're a business with a reputation to protect, not a single person working solo.",
-        "An independent freelancer can sometimes offer a lower price and a highly personal creative style, but with more risk: less certainty around site access, no backup if they're unavailable or something comes up, and less recourse if the delivered work doesn't match what was promised.",
-        "For a one-time, high-stakes shoot — a proposal, a milestone celebration, a trip you're not repeating — the reliability of an established local operator generally outweighs a modest cost difference.",
+        "How many edited photos will I receive? A real answer is a number, not \u201cplenty\u201d.",
+        "When do I get them? A real answer is a date you could hold someone to.",
+        "What is included, and what will I still pay for on the day?",
+        "How much is due before the shoot, and how is the rest paid?",
+        "What happens if the weather is bad, or my flight is delayed?",
+        "Can I see work from this exact location?",
       ]),
-      photo("https://images.unsplash.com/photo-1613750590255-eabc3d5b2e77?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600", {
-        caption: "A photographer working a site regularly builds the access knowledge and technical familiarity a one-off freelancer often lacks.",
-        alt: "Photographer holding a camera outdoors",
-      }),
-      h2("Editing Turnaround"),
-      p(
-        "Ask specifically how long it takes to receive your final, edited images — not just 'do you edit,' since virtually everyone will say yes, but the actual timeline. Some operators deliver within days; others take weeks, which matters if you want images to share while your trip is still fresh, or if you're traveling onward and want to review the gallery before you're back home and distracted by everything else waiting for you."
+      callout(
+        "If an operator will not put the photo count and the delivery time in writing before you pay, that is your answer."
       ),
-      h2("Usage Rights"),
+      h2("What it costs"),
       p(
-        "This is the detail travelers most often forget to ask about and most often regret not clarifying. If you plan to use the images commercially — for a business, a publication, paid content, or anything beyond personal social media and printing — confirm in writing what usage rights are included in your package. Many photographers retain certain rights to their own work by default, and a clear, upfront conversation avoids a dispute after the fact."
+        "Prices vary more than most travelers expect. The common shape elsewhere is around $190 per person for a session delivering roughly 20 edited images from an hour, with the gallery arriving up to two weeks later. Flying dress sessions are usually quoted from $400. Those are the numbers worth having in mind as a comparison."
       ),
-      h2("What a Good Package Actually Includes"),
+      p(
+        "Egypt Eye's Exclusive Pyramids Photoshoot is $75 for a one-to-two hour private session at the Giza Pyramids and the Nine Pyramids View, delivering 80+ edited pictures — plus the raw, unedited photos the same day, so you leave Egypt with your images instead of waiting for them at home. A larger gallery of 100+ high-resolution edited images is available within five days. Private transportation, parking and road tolls are included rather than billed separately."
+      ),
+      p(
+        "The range runs from that $75 session up to $219 for the Fayoum Flying Dress shoot at Wadi El Rayan, with horse packages at $120 and $160 and a Pyramids proposal setup at $150 in between."
+      ),
+      h2("What is not included"),
+      p(
+        "Site entrance tickets. You buy those at the gate, and they are the only cost to expect on the day beyond the package itself. Any operator vague about this is leaving you to find out at the ticket window."
+      ),
+      h2("How booking actually works"),
       ...bullets([
-        "A clear session length and number of locations or setups, not a vague 'as long as it takes.'",
-        "A stated number of final edited images, or a clear explanation of how many you'll receive and how additional images (if wanted) are priced.",
-        "A defined delivery timeline.",
-        "Clarity on hair and makeup, wardrobe, or props if the shoot involves them (a flying dress session, for instance, should specify what's provided).",
-        "A clear cancellation or rescheduling policy — Egyptian weather and site conditions are generally reliable, but having a plan for the unexpected matters.",
+        "A deposit secures your date. The best light — sunrise, and the last hour before sunset — goes first.",
+        "We collect you from your hotel and drop you back. No arranging transport, no negotiating a taxi to Giza.",
+        "The session runs one to two hours. All equipment comes with the photographer, who directs throughout: where to stand, how to move, where the light is. Most people booking have never been professionally photographed before.",
+        "The balance is paid the same day, after the shoot, in cash or by transfer — so you settle up having already seen what was shot.",
+        "Raw photos the same day, the edited gallery after, and 24-hour follow-up if anything needs sorting out.",
       ]),
+      p(
+        "If the weather turns or you are running late, we reschedule. There is nothing to gain from spending a session you paid for in conditions that will not produce the photographs you came for."
+      ),
       cta({
-        title: "See What's Included",
-        body: "Egypt Eye runs photoshoots directly with an in-house team — no outsourcing to unknown freelancers.",
-        buttonLabel: "Explore Our Photoshoots",
+        title: "See what each package includes",
+        body: "Six photoshoot packages from $75, each listing its photo count, session length and inclusions in full — including what you still pay at the gate.",
+        buttonLabel: "Browse Photoshoot Packages",
         buttonHref: "/photoshoots",
       }),
-      h2("Red Flags to Watch For"),
+      h2("Booking a photoshoot alongside a tour"),
+      p(
+        "This works with any of our tours, and several multi-day itineraries already build a Giza photoshoot into the Pyramids day, so the photographer is part of the plan rather than another thing to coordinate. If you are already booking a trip, say so and it gets arranged around the itinerary you have."
+      ),
+      h2("Red flags"),
       ...bullets([
-        "Vague answers about site access or permits when you ask directly.",
-        "No clear number of final images or editing timeline in writing before you pay.",
-        "Pricing that seems unusually low compared to other operators offering similar packages — often a sign of corners being cut somewhere, whether in equipment, editing quality, or site access reliability.",
-        "No portfolio of past work at the specific location you're booking, or a portfolio that looks inconsistent in quality or style.",
-        "Pressure to pay the full amount well in advance with no clear cancellation terms.",
+        "No photo count, or no delivery date, in writing before payment.",
+        "Full payment demanded well in advance with no stated cancellation terms.",
+        "Vague answers about what you will still pay for on the day.",
+        "No portfolio from the specific location you are booking.",
+        "An approach at the site itself, with a price that drops as you keep walking.",
       ]),
       faq(
         [
           {
-            question: "How far in advance should I book a private photographer in Egypt?",
+            question: "Can tourists hire a photographer at the Pyramids?",
             answer:
-              "As early as your travel dates are confirmed, particularly for popular time slots like sunrise at Giza. Locations and time windows with the best light fill up, especially during peak travel season.",
+              "Yes. Professional photoshoots run at Giza daily and travelers book them routinely. Egypt's 2022 rules allow personal photography in public places without a permit; published guidance on tripods and heavier professional equipment conflicts, so ask your operator what they do on site. Drones are prohibited without a Ministry of Defence permit.",
           },
           {
-            question: "Is it worth paying more for a licensed local operator over an independent freelancer?",
+            question: "How much does a photographer in Egypt cost?",
             answer:
-              "For most travelers, yes — especially for a one-time, high-stakes session like a proposal or milestone shoot. An established operator brings consistent site access, accountability, and backup plans that an independent freelancer often can't guarantee.",
+              "Egypt Eye's Exclusive Pyramids Photoshoot is $75 for a 1–2 hour private session delivering 80+ edited pictures, with packages running up to $219. Elsewhere you will commonly see around $190 per person for roughly 20 edited images, and flying dress sessions quoted from $400.",
           },
           {
-            question: "What should be included in a private photoshoot package in Egypt?",
+            question: "How do I pay, and how much is due up front?",
             answer:
-              "At minimum: a defined session length, a stated number of edited final images, a clear delivery timeline, and clarity on usage rights — all confirmed before you pay, not assumed.",
+              "A deposit secures your date. The balance is paid the same day, after the photoshoot, in cash or by transfer — so most of it is paid once you have already seen what was shot.",
           },
           {
-            question: "Do I need to bring my own outfit for a private photoshoot?",
+            question: "Is transport to the Pyramids included?",
             answer:
-              "This depends entirely on the type of session. A standard portrait or couples shoot generally uses your own clothing, while specialty sessions like a flying dress photoshoot provide wardrobe as part of the package — confirm which applies before you book.",
+              "Yes. Pickup and drop-off are included, along with parking and road tolls. Site entrance tickets are not included and are bought at the gate.",
+          },
+          {
+            question: "What happens if the weather is bad?",
+            answer:
+              "We reschedule, and the same applies if you are running late. A photoshoot depends on light, and there is nothing to gain from using your session in conditions that will not produce good photographs.",
+          },
+          {
+            question: "Do I need to know how to pose?",
+            answer:
+              "No. The photographer directs the whole session and brings all the equipment. Most people booking have never been professionally photographed before.",
           },
         ],
         "Frequently Asked Questions"
       ),
       p(
-        "The best private photographer booking in Egypt isn't necessarily the one with the flashiest portfolio — it's the one who answers direct questions about access, delivery, and rights clearly and specifically, before you've handed over a deposit."
+        "The photographer worth booking in Egypt is not the one with the best feed. It is the one who tells you the photo count, the delivery date, and what you will still pay at the gate — before you have handed over anything."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "pyramids-photoshoot-cost",
+    title: "How Much Does a Pyramids Photoshoot Cost?",
+    category: "Travel Guides",
+    tags: ["Pyramids Photoshoot", "Egypt Photoshoots", "Giza Pyramids", "Trip Planning"],
+    relatedStories: [
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Hire a Photographer in Egypt: A Traveler\u2019s Guide",
+        excerpt:
+          "Where to find a photographer in Egypt, how to tell a real operator from a tout, what a session costs, and every question worth settling before you pay a deposit.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-guide",
+        title: "The Complete Guide to a Pyramids Photoshoot in Giza",
+        excerpt:
+          "Everything involved in a professional Pyramids photoshoot at Giza \u2014 permits and access, timing around crowds, styling ideas, and what actually makes a strong shot at the site.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "best-time-for-pyramids-photoshoot",
+        title: "Best Time for a Pyramids Photoshoot: Sunrise, Sunset, or Midday?",
+        excerpt:
+          "How light, heat, and crowd levels change through the day at Giza, and which window actually suits the photos you want.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1539650116574-8efeb43e2750"),
+    imageCredit: unsplashCredit("Leonardo Ramos", "https://unsplash.com/photos/pyramid-of-giza-CJ4mbwSK3EY"),
+    publishedAt: "2026-09-28T08:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza"),
+    primaryKeyword: "how much does a pyramids photoshoot cost",
+    secondaryKeywords: [
+      "pyramids photoshoot price",
+      "photographer in Giza cost",
+      "how much is a photographer in Cairo",
+      "Giza photoshoot cost",
+      "Egypt photoshoot price",
+    ],
+    destinations: ["Giza", "Cairo", "Fayoum"],
+    body: [
+      p(
+        "Photoshoot pricing in Egypt is quoted in ways designed to be hard to compare. One operator charges per person, another per session. One counts hours, another counts photographs. Here is what the money actually buys, and how to compare two quotes properly."
+      ),
+      h2("The short answer"),
+      p(
+        "Egypt Eye's Exclusive Pyramids Photoshoot is $75. That is a private one-to-two hour session at the Giza Pyramids and the Nine Pyramids View, delivering 80+ edited pictures, with the raw unedited photos the same day. Our six packages run from $75 to $219."
+      ),
+      p(
+        "Elsewhere, the common shape is around $190 per person for roughly 20 edited images from a one-hour session, with the gallery delivered up to two weeks later. Flying dress sessions are frequently quoted from $400, and specialist rooftop sessions considerably higher."
+      ),
+      h2("Why \u201cper hour\u201d is the wrong comparison"),
+      p(
+        "Session length is what gets advertised, but it is not what you keep. You keep photographs. A widely used pricing ladder elsewhere runs 20 final images for one hour, 30 for two, 40 for three, 50 for four \u2014 so buying four hours quadruples the cost to roughly double the pictures."
+      ),
+      p(
+        "Measured that way, the $75 session delivering 80+ edited pictures is not a cheaper version of a $190 session delivering 20. It is a different proposition. When you compare quotes, divide the price by the number of edited photographs you are promised in writing, and compare those figures instead."
+      ),
+      callout(
+        "Ask for two numbers before you compare anything: how many edited photographs, and what date they arrive. An operator who will not commit to both in writing has not really given you a price."
+      ),
+      h2("What the six packages cost"),
+      ...bullets([
+        "Exclusive Pyramids Photoshoot \u2014 $75, 1\u20132 hours, Giza Pyramids and the Nine Pyramids View, 80+ edited pictures.",
+        "Jumping Horse Photoshoot \u2014 $120, 1\u20132 hours, at the same Giza locations.",
+        "Pyramids Proposal Romance Setup \u2014 $150, 1 hour, styled and ready before you arrive.",
+        "Running Horse Video + Jumping Horse Photoshoot \u2014 $160, 1\u20132 hours, video and stills together.",
+        "Sand Dunes Flying Dress Photoshoot \u2014 $199, 1 hour, in the dunes near Giza.",
+        "Fayoum Flying Dress Photoshoot \u2014 $219, 1 hour, at Wadi El Rayan and the Magic Lake.",
+      ]),
+      h2("What moves the price"),
+      ...bullets([
+        "The type of shoot. A flying dress session costs more than a standard portrait session because the dress, the styling and the location all come with it.",
+        "Add-ons. An Arabian horse, a camel experience, a professional video Reel or a group photoshoot are each priced on top of the base package.",
+        "Location. Fayoum costs more than Giza \u2014 it is a longer drive to Wadi El Rayan and the Magic Lake, and the day is built around getting there.",
+        "How many photographs you want edited. The standard Pyramids gallery is 80+; an optional larger gallery of 100+ high-resolution edited images is available within five days.",
+      ]),
+      h2("What is included"),
+      p(
+        "For the Pyramids session: a private professional photographer, professional camera equipment, private transportation with hotel pickup and drop-off, parking and road tolls, your 80+ edited pictures, and 24-hour follow-up afterwards. Transport being inside the price rather than beside it matters more than it sounds \u2014 getting to Giza and back is otherwise a negotiation every time."
+      ),
+      h2("What is not included"),
+      p(
+        "Site entrance tickets. You buy those at the gate, and they are the only cost to expect on the day beyond the package itself. It is worth asking any operator this question directly, because it is the one most often left unsaid until you are standing at the ticket window."
+      ),
+      h2("How you actually pay"),
+      p(
+        "A deposit secures your date. The balance is paid the same day, after the photoshoot, in cash or by transfer. You pay most of it having already seen what was shot \u2014 which is a reasonable thing to expect, and worth asking for wherever you book."
+      ),
+      cta({
+        title: "Compare all six packages",
+        body: "Every package with its price, session length, photo count and inclusions listed in full.",
+        buttonLabel: "See Photoshoot Packages",
+        buttonHref: "/photoshoots",
+      }),
+      h2("Is the cheapest option a false economy?"),
+      p(
+        "Sometimes. The risk at the bottom of the market is not usually the photography \u2014 it is everything around it: no agreement about what you receive, no transport, no one to contact when the gallery does not arrive. What protects you is not paying more. It is getting the photo count, the delivery date and the inclusions in writing before you pay a deposit."
+      ),
+      faq(
+        [
+          {
+            question: "How much does a Pyramids photoshoot cost?",
+            answer:
+              "Egypt Eye's Exclusive Pyramids Photoshoot is $75 for a private 1\u20132 hour session delivering 80+ edited pictures. Our six packages run from $75 to $219. Elsewhere in Egypt you will commonly see around $190 per person for roughly 20 edited images.",
+          },
+          {
+            question: "Is the price per person or per session?",
+            answer:
+              "Our packages are priced for the session, which is private to your group. Larger parties are covered by the group photoshoot add-on. Many operators price per person instead, which is worth checking before you compare two quotes.",
+          },
+          {
+            question: "Are entrance tickets included?",
+            answer:
+              "No. Site entrance tickets are bought at the gate and are the only cost to expect on the day beyond the package itself.",
+          },
+          {
+            question: "How many photos do I get, and when?",
+            answer:
+              "80+ edited pictures from the Pyramids session, plus the raw unedited photos the same day. An optional larger gallery of 100+ high-resolution edited images is available within five days.",
+          },
+          {
+            question: "How much is due before the shoot?",
+            answer:
+              "A deposit to secure your date. The balance is paid the same day, after the photoshoot, in cash or by transfer.",
+          },
+          {
+            question: "Is transport included in the price?",
+            answer:
+              "Yes \u2014 private transportation with hotel pickup and drop-off, including parking and road tolls.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Compare photoshoot quotes on two numbers: what you receive, and when. Session length and headline price tell you far less than either."
       ),
     ],
   },
