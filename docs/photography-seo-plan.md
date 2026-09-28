@@ -28,8 +28,14 @@ larger gallery of 100+ high-resolution edited images within 5 days.
 **Add-ons:** professional video Reel, Arabian horse photography, camel
 experience, group photoshoot.
 
-**Entrance tickets are NOT in any included list.** This is a real, recurring
-pre-booking question and the content must handle it honestly.
+**Entrance tickets are NOT included — confirmed.** Travelers buy them at the
+gate. This is a real, recurring pre-booking question and the content says so
+plainly rather than staying silent.
+
+**Also confirmed (2026-09-28):** a deposit secures the date, with the balance
+paid the same day *after* the shoot in cash or by transfer; bad weather and late
+arrivals are handled by rescheduling; pickup and drop-off are included; a
+photoshoot can be combined with any tour; all required equipment is provided.
 
 ### 1.2 The 15 published photography articles
 
@@ -132,7 +138,8 @@ product. No article sits more than one click from a bookable page.
 
 **Must answer:** the real price range in Egypt; what changes it (duration, people,
 horse/camel, video, flying dress); what is included vs extra; **that entrance
-tickets are not included**; why photo count matters more than hourly rate; the
+tickets are not included, and that transport is**; how the deposit-then-balance
+payment actually works; why photo count matters more than hourly rate; the
 80-photos-for-$75 comparison against 20-photos-for-$190.
 
 **H2s:** What a Pyramids photoshoot costs in 2026 · What actually drives the price ·
@@ -143,8 +150,10 @@ Egypt Eye's pricing, plainly · Is the cheapest option a false economy?
 all 6 products in a price table, `hiring-a-photographer-in-egypt`, `pyramids-photoshoot-guide`
 **CTA:** "See all six packages and what each includes →"
 **Schema:** Article + FAQPage. *(Do not use Product/Offer schema on an article.)*
-**FAQs:** Is $75 realistic? · Do I pay per person or per session? · Are entrance
-tickets included? · Can I pay on the day? **[NEEDS CONFIRMATION — payment terms]**
+**FAQs:** Is $75 realistic? · Are entrance tickets included? (no — bought at the
+gate) · How does payment work? (deposit secures the date; balance the same day
+after the shoot, cash or transfer) · Is transport extra? (no — pickup and
+drop-off included)
 **Cannibalisation:** None. Genuine gap.
 
 ---
@@ -226,10 +235,10 @@ pricing; transport from Cairo hotels (**included** in the Pyramids package).
 Absorbs: how does it work · where do we meet · how long · do I need to pose ·
 what if I'm late · what if the weather is bad · how private is it.
 
-**Must answer:** hour by hour, from pickup to delivery. Uses real facts: private
-transportation included, parking and tolls covered, 1–2 hours, raw photos the
-same day, 24-hour follow-up. **[NEEDS CONFIRMATION]** late arrivals, bad weather,
-exact meeting point.
+**Must answer:** hour by hour, from pickup to delivery. All confirmed: hotel
+pickup and drop-off included, parking and tolls covered, 1–2 hours, all equipment
+provided, the photographer directs throughout, raw photos the same day, 24-hour
+follow-up, and rescheduling if the weather turns or you are running late.
 **CTA:** "Book the Exclusive Pyramids Photoshoot — $75 →"
 **Schema:** Article + FAQPage + HowTo (genuinely step-based)
 

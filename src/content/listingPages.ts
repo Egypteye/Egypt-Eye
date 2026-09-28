@@ -47,6 +47,63 @@ export const listingPages: ResolvedListingPages = {
     sectionTitle: "Our signature products",
     sectionDescription:
       "Egypt Eye began as a travel company — but our photography is what travelers remember most. Every package includes a private photographer and professional editing.",
+    // The questions travelers actually search before booking a photoshoot —
+    // price, photo count, delivery, payment, pickup, what happens if the
+    // weather turns. These are published as FAQ structured data, so every
+    // answer states only what we actually provide: the numbers come straight
+    // from content/photoshoots.ts and must be updated with it.
+    faqs: [
+      {
+        question: "How much does a photoshoot at the Pyramids cost?",
+        answer:
+          "The Exclusive Pyramids Photoshoot is $75 — a 1–2 hour private session at the Giza Pyramids and the Nine Pyramids View. Our six packages run from $75 to $219, the upper end being the Fayoum Flying Dress shoot at Wadi El Rayan. The price is for the session, and add-ons like an Arabian horse, a camel or a video Reel are priced separately.",
+      },
+      {
+        question: "How many photos do I get, and how soon?",
+        answer:
+          "The Pyramids package delivers 80+ edited pictures, and you get the raw, unedited photos the same day as your shoot — you leave with your images rather than waiting a fortnight. A larger gallery of 100+ high-resolution edited images is available within 5 days as an option.",
+      },
+      {
+        question: "What's included — and are entrance tickets included?",
+        answer:
+          "Included: a private professional photographer, professional camera equipment, private transportation with pickup and drop-off, parking and road tolls, your edited gallery, and 24-hour follow-up after the shoot. Site entrance tickets are not included — you buy those at the gate, and they are the only cost you should expect on the day beyond the package itself.",
+      },
+      {
+        question: "How does payment work?",
+        answer:
+          "A deposit secures your date. The balance is paid on the same day, after the photoshoot, in cash or by transfer — so you settle up once you have seen what we shot, not before.",
+      },
+      {
+        question: "Do you pick me up from my hotel?",
+        answer:
+          "Yes. Pickup and drop-off are included, along with parking and road tolls, so you do not need to arrange transport or negotiate a taxi to the site.",
+      },
+      {
+        question: "What happens if the weather is bad, or I'm running late?",
+        answer:
+          "We reschedule. A photoshoot depends on light and conditions, and there is no sense spending your session in weather that will not produce the photos you came for.",
+      },
+      {
+        question: "Do I need to bring anything, or know how to pose?",
+        answer:
+          "No. We bring all the equipment needed, and the photographer directs the session throughout — where to stand, how to move, where the light is. Most people who book have never been professionally photographed before.",
+      },
+      {
+        question: "Can I combine a photoshoot with a tour?",
+        answer:
+          "Yes. A photoshoot can be arranged alongside any of our tours, and several multi-day itineraries already build a Giza photoshoot into the Pyramids day.",
+      },
+      {
+        question: "Can couples, families and groups book a photoshoot?",
+        answer:
+          "Yes. Sessions are private, so it is your group and the photographer rather than a shared slot, and a group photoshoot add-on covers larger parties. The Pyramids Proposal Romance Setup is a separate package for proposals, at $150.",
+      },
+      {
+        question: "Can I add a horse, a camel or video?",
+        answer:
+          "Yes. Arabian horse photography, a camel experience, a professional video Reel and a group photoshoot are all available as add-ons. There are also two dedicated horse packages: the Jumping Horse Photoshoot at $120, and the Running Horse Video + Jumping Horse Photoshoot at $160.",
+      },
+    ],
   },
   signatureExperiences: {
     heroEyebrow: "Signature Experiences",

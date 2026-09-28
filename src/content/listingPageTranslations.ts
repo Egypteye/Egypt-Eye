@@ -69,6 +69,13 @@ const tours = {
  * reordering FAQs in Studio must not silently move a translated answer under
  * a different question.
  */
+// Deliberately empty for now. `say` falls back to the English it was written
+// against whenever a translation is missing, so the photoshoot FAQ serves
+// correct English in every locale until the i18n pipeline fills these in —
+// which is the right failure mode for answers that quote real prices and
+// delivery terms. Add entries here exactly as tourFaqs below does.
+const photoshootFaqs: Record<string, { question: Phrase; answer: Phrase }> = {};
+
 const tourFaqs: Record<string, { question: Phrase; answer: Phrase }> = {
   "How many days do I need in Egypt?": {
     question: {
@@ -395,6 +402,13 @@ export function localizedListingPages(
       sectionDescription: say(pages.experiences.sectionDescription, experiences.sectionDescription, locale),
     },
     photoshoots: {
+      faqs: pages.photoshoots.faqs.map((faq) => {
+        const entry = photoshootFaqs[faq.question];
+        return {
+          question: say(faq.question, entry?.question, locale),
+          answer: say(faq.answer, entry?.answer, locale),
+        };
+      }),
       heroEyebrow: say(pages.photoshoots.heroEyebrow, photoshoots.heroEyebrow, locale),
       heroTitle: say(pages.photoshoots.heroTitle, photoshoots.heroTitle, locale),
       sectionTitle: say(pages.photoshoots.sectionTitle, photoshoots.sectionTitle, locale),

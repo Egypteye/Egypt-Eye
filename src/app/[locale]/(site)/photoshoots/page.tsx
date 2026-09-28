@@ -5,8 +5,9 @@ import { Container } from "@/components/Container";
 import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
+import { FaqAccordion } from "@/components/FaqAccordion";
 import { getListingPages, getPhotoshoots } from "@/sanity/fetchers";
-import { trAll } from "@/i18n/T";
+import { T, trAll } from "@/i18n/T";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -22,13 +23,34 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function PhotoshootsPage() {
   const ui = await trAll([
     "Ornately carved columns at Karnak Temple in Luxor",
+    "Before You Book",
+    "Photoshoot Questions, Answered",
   ]);
 
   const [photoshoots, listingPages] = await Promise.all([getPhotoshoots(), getListingPages()]);
   const page = listingPages.photoshoots;
 
+  // Built from the exact pairs the accordion renders — structured data that
+  // claims something the page doesn't show is a manual-action risk, not a
+  // rich result. Mirrors photoshoots/[slug]/page.tsx.
+  const faqJsonLd =
+    page.faqs.length > 0
+      ? {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: page.faqs.map((f) => ({
+            "@type": "Question",
+            name: f.question,
+            acceptedAnswer: { "@type": "Answer", text: f.answer },
+          })),
+        }
+      : null;
+
   return (
     <>
+      {faqJsonLd && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      )}
       <section className="relative">
         <SmartImage
           image="/photos/pexels-17034971.jpg"
@@ -55,6 +77,23 @@ export default async function PhotoshootsPage() {
           </div>
         </Container>
       </section>
+
+      {/* The questions travelers search before booking — price, photo count,
+          delivery, payment, pickup. This page had none, while the product
+          pages below it already publish theirs as structured data. */}
+      {page.faqs.length > 0 && (
+        <section className="bg-sand-dim py-20">
+          <Container className="mx-auto max-w-3xl">
+            <SectionHeading eyebrow={ui["Before You Book"]} title={ui["Photoshoot Questions, Answered"]} align="center" />
+            <div className="mt-10">
+              <FaqAccordion faqs={[...page.faqs]} />
+            </div>
+            <p className="mt-10 text-center text-sm text-ink-soft/70">
+              <T>Still deciding? Tell us the date and we will confirm what is possible.</T>
+            </p>
+          </Container>
+        </section>
+      )}
     </>
   );
 }

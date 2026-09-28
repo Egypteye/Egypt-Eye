@@ -825,7 +825,13 @@ export type ListingPages = {
     faqs?: { question: string; answer: string }[];
   };
   experiences?: { heroEyebrow?: string; heroTitle?: string; sectionTitle?: string; sectionDescription?: string };
-  photoshoots?: { heroEyebrow?: string; heroTitle?: string; sectionTitle?: string; sectionDescription?: string };
+  photoshoots?: {
+    heroEyebrow?: string;
+    heroTitle?: string;
+    sectionTitle?: string;
+    sectionDescription?: string;
+    faqs?: { question: string; answer: string }[];
+  };
   signatureExperiences?: {
     heroEyebrow?: string;
     heroTitle?: string;
@@ -856,7 +862,13 @@ export type ResolvedListingPages = {
     faqs: readonly { question: string; answer: string }[];
   };
   experiences: { heroEyebrow: string; heroTitle: string; sectionTitle: string; sectionDescription: string };
-  photoshoots: { heroEyebrow: string; heroTitle: string; sectionTitle: string; sectionDescription: string };
+  photoshoots: {
+    heroEyebrow: string;
+    heroTitle: string;
+    sectionTitle: string;
+    sectionDescription: string;
+    faqs: readonly { question: string; answer: string }[];
+  };
   signatureExperiences: {
     heroEyebrow: string;
     heroTitle: string;

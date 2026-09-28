@@ -61,6 +61,24 @@ export const listingPages = defineType({
         defineField({ name: "heroTitle", title: "Hero title", type: "string" }),
         defineField({ name: "sectionTitle", title: "Section title", type: "string" }),
         defineField({ name: "sectionDescription", title: "Section description", type: "text", rows: 2 }),
+        defineField({
+          name: "faqs",
+          title: "FAQ (this page only, separate from the site-wide FAQ list)",
+          description:
+            "Answers the questions travelers search before booking a photoshoot. Published as FAQ structured data, so keep every answer factually true of what we actually provide.",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              name: "faqItem",
+              fields: [
+                defineField({ name: "question", title: "Question", type: "string", validation: (r) => r.required() }),
+                defineField({ name: "answer", title: "Answer", type: "text", validation: (r) => r.required() }),
+              ],
+              preview: { select: { title: "question" } },
+            },
+          ],
+        }),
       ],
     }),
     defineField({
