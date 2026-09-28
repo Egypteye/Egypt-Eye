@@ -13846,6 +13846,695 @@ export const stories: Story[] = [
   {
     status: "published",
     featured: false,
+    slug: "horse-camel-photoshoot-pyramids",
+    title: "Horse and Camel Photoshoots at the Pyramids",
+    category: "Travel Guides",
+    tags: ["Pyramids Photoshoot", "Egypt Photoshoots", "Giza Pyramids", "Horses"],
+    relatedStories: [
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-what-included",
+        title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+        excerpt:
+          "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "Arabian horses and camels at Giza \u2014 the two dedicated horse packages, what the add-ons cost, and whether you need to be able to ride.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1547234936-74a4b1ee7f42"),
+    imageCredit: unsplashCredit("Juli Kosolapova", "https://unsplash.com/photos/person-riding-on-white-camel-near-mountain-be5B3YGDmtc"),
+    publishedAt: "2026-09-28T12:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "horse photoshoot pyramids",
+    secondaryKeywords: [
+      "Arabian horse photoshoot Egypt",
+      "camel photoshoot Giza",
+      "jumping horse photoshoot",
+      "horse photos at the pyramids",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "A horse at the Pyramids is the photograph people picture before they book anything. It is also the one most likely to be arranged badly \u2014 a tired animal produced on the spot, no agreement about what you are paying for, and a photographer improvising around whatever turns up."
+      ),
+      h2("The two horse packages"),
+      ...bullets([
+        "Jumping Horse Photoshoot \u2014 $120, one to two hours at the Giza Pyramids and the Nine Pyramids View.",
+        "Running Horse Video + Jumping Horse Photoshoot \u2014 $160, the same session with moving footage as well as stills.",
+      ]),
+      p(
+        "Both deliver a professionally edited gallery, with the raw unedited photos the same day. If the horse is the point of the shoot rather than a flourish, these are the packages built around it."
+      ),
+      h2("Adding a horse or camel to a standard session"),
+      p(
+        "If you would rather have the Pyramids session as the main event, Arabian horse photography and a camel experience are both available as add-ons to the $75 Exclusive Pyramids Photoshoot. A professional video Reel is a separate add-on again, for anyone who wants footage as well as photographs."
+      ),
+      p(
+        "Either way, say so when you book. These are arranged in advance rather than summoned on the day \u2014 which is exactly the difference between a planned shoot and whatever is standing near the gate."
+      ),
+      callout(
+        "Anyone offering you a horse or camel photograph at the site itself, for cash, at a price that drops as you keep walking, is not running a photoshoot. Arrange it beforehand."
+      ),
+      h2("Do you need to know how to ride?"),
+      p(
+        "No. The photographs do not depend on your riding \u2014 the photographer directs the session, including how you sit, where you look and how the animal is positioned in the frame. Most people booking have not ridden in years, if ever."
+      ),
+      h2("Horse or camel?"),
+      p(
+        "A camel reads as unmistakably Egypt: the silhouette against the pyramids is the photograph most people have in their head. An Arabian horse reads as cinematic \u2014 more movement, more drama, and considerably better in video, which is why the running horse package pairs footage with stills."
+      ),
+      p(
+        "If you want both in one session, ask when booking rather than assuming, so the time is planned in."
+      ),
+      cta({
+        title: "See the horse packages",
+        body: "The Jumping Horse Photoshoot at $120 and the Running Horse Video + Jumping Horse Photoshoot at $160, both at the Giza Pyramids and the Nine Pyramids View.",
+        buttonLabel: "Browse Photoshoot Packages",
+        buttonHref: "/photoshoots",
+      }),
+      faq(
+        [
+          {
+            question: "How much is a horse photoshoot at the Pyramids?",
+            answer:
+              "The Jumping Horse Photoshoot is $120 and the Running Horse Video + Jumping Horse Photoshoot is $160, each running one to two hours at the Giza Pyramids and the Nine Pyramids View. Arabian horse photography is also available as an add-on to the $75 Exclusive Pyramids Photoshoot.",
+          },
+          {
+            question: "Can I add a camel to my photoshoot?",
+            answer:
+              "Yes \u2014 a camel experience is one of the add-ons to the Exclusive Pyramids Photoshoot. Arrange it when you book rather than on the day.",
+          },
+          {
+            question: "Do I need to know how to ride?",
+            answer:
+              "No. The photographer directs the session, including how you sit and how the animal is positioned. Most people booking have little or no riding experience.",
+          },
+          {
+            question: "Can I get video as well as photographs?",
+            answer:
+              "Yes. The Running Horse Video + Jumping Horse Photoshoot at $160 includes moving footage, and a professional video Reel is available as an add-on to other sessions.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "The horse is not the hard part. Arranging it in advance, with someone who has planned the session around it, is what separates the photograph you imagined from the one you settle for."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "proposal-photographer-pyramids",
+    title: "Planning a Proposal at the Pyramids",
+    category: "Travel Guides",
+    tags: ["Proposals", "Pyramids Photoshoot", "Giza Pyramids", "Egypt Photoshoots"],
+    relatedStories: [
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "private-photographer-egypt",
+        title: "How to Hire a Photographer in Egypt: A Traveler\u2019s Guide",
+        excerpt:
+          "Where to find a photographer in Egypt, how to tell a real operator from a tout, what a session costs, and every question worth settling before you pay a deposit.",
+        imageTone: "desert",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "How a proposal at the Giza Pyramids actually works \u2014 the styled setup, keeping the photographer discreet, timing, and what it costs.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1635446997009-a1fd4a92dbe6"),
+    imageCredit: unsplashCredit("SOURAV BHADRA", "https://unsplash.com/photos/a-group-of-pyramids-in-the-desert-with-a-sky-background-YWsP_ZCDSSM"),
+    publishedAt: "2026-09-28T13:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "proposal photographer Egypt",
+    secondaryKeywords: [
+      "proposal at the pyramids",
+      "engagement photoshoot Giza",
+      "surprise proposal Egypt",
+      "romantic setup pyramids",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "A proposal is the one shoot where the photography is the least of it. What actually decides whether it goes well is the half hour beforehand \u2014 whether the setup is ready, whether they suspect anything, and whether the person holding the camera knows to stay out of sight until the right moment."
+      ),
+      h2("The setup"),
+      p(
+        "The Pyramids Proposal Romance Setup is $150, runs an hour, and is at the Giza Pyramids and the Nine Pyramids View. It is styled and ready before you arrive \u2014 which is the part that matters, because the alternative is arranging something in front of the person you are proposing to."
+      ),
+      p(
+        "Professional photography is available with it, through the Pyramids Proposal Photoshoot add-on, rather than being built into the setup price. Worth deciding early: a proposal is the single hardest thing to re-stage if you decide afterwards that you wish someone had been photographing it."
+      ),
+      h2("Keeping it a surprise"),
+      ...bullets([
+        "Book it yourself, from your own email. The confirmation is the most common way these get spoiled.",
+        "Give the real story as a cover: a sunrise visit to the Pyramids needs no explanation in Egypt.",
+        "Tell us it is a proposal when you book, so the timing and the photographer\u2019s position are planned around the surprise rather than improvised.",
+        "Decide who else knows. A group that is in on it changes the photographs \u2014 sometimes for the better, sometimes not.",
+      ]),
+      callout(
+        "The most useful thing you can tell us is the exact moment you plan to ask. Everything else \u2014 where the photographer stands, when the setup is revealed \u2014 is arranged backwards from that."
+      ),
+      h2("Timing"),
+      p(
+        "Sunrise and the last hour before sunset are the two windows worth building around, for light and for crowds. Sunrise is quieter, which matters more for a proposal than for most sessions. Book the date as early as you can \u2014 those slots go first."
+      ),
+      h2("Afterwards"),
+      p(
+        "With the photography add-on you get a professionally edited gallery, and the raw unedited photos the same day \u2014 which means you can send the photograph to family the same evening rather than a week later. Pickup and drop-off are included, so neither of you is arranging a taxi immediately after."
+      ),
+      cta({
+        title: "See the Pyramids Proposal Romance Setup",
+        body: "A styled setup at the Giza Pyramids, ready before you arrive \u2014 $150, with photography available as an add-on.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/pyramids-proposal-romance-setup",
+      }),
+      faq(
+        [
+          {
+            question: "Can I book a photographer for a proposal at the Pyramids?",
+            answer:
+              "Yes. The Pyramids Proposal Romance Setup is $150 for a styled setup ready before you arrive, and professional photography is available with it through the Pyramids Proposal Photoshoot add-on.",
+          },
+          {
+            question: "How do you keep the proposal a surprise?",
+            answer:
+              "Book it from your own email, tell us the exact moment you plan to ask, and let us plan the photographer\u2019s position and the timing around that. The setup is styled and ready before you arrive, so nothing is assembled in front of them.",
+          },
+          {
+            question: "What is the best time of day for a proposal at Giza?",
+            answer:
+              "Sunrise or the last hour before sunset. Sunrise is quieter, which matters more for a proposal than for an ordinary session. Both slots book up first.",
+          },
+          {
+            question: "When do we get the photographs?",
+            answer:
+              "The raw unedited photos the same day, with the edited gallery following \u2014 so you can send the picture to family the same evening.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Tell whoever you book the moment you intend to ask. A proposal photographed well is a proposal someone planned backwards from that one sentence."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "couples-photoshoot-pyramids",
+    title: "Couples Photoshoot at the Pyramids",
+    category: "Travel Guides",
+    tags: ["Couples", "Pyramids Photoshoot", "Giza Pyramids", "Egypt Photoshoots"],
+    relatedStories: [
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-what-included",
+        title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+        excerpt:
+          "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "What a couples photoshoot at Giza involves, what it costs, and how to get photographs that look like the two of you rather than a catalogue.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1622266234859-e4654e3587d8"),
+    imageCredit: unsplashCredit("Karsten Winegeart", "https://unsplash.com/photos/person-in-brown-jacket-walking-on-brown-sand-during-daytime-fuv0htLwyOQ"),
+    publishedAt: "2026-09-28T14:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza"),
+    primaryKeyword: "couple photoshoot at the pyramids",
+    secondaryKeywords: [
+      "couples photoshoot Giza",
+      "honeymoon photoshoot Egypt",
+      "anniversary photos pyramids",
+      "romantic photoshoot Egypt",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "The best couples photographs from Giza are rarely the posed ones. They are the frame just after \u2014 someone laughing at how ridiculous it feels to be told where to put their hands, in front of a structure that has been there for four and a half thousand years."
+      ),
+      h2("What it costs, and what you get"),
+      p(
+        "The Exclusive Pyramids Photoshoot is $75. It is a private session \u2014 the two of you and the photographer, not a shared slot \u2014 running one to two hours at the Giza Pyramids and the Nine Pyramids View, delivering 80+ edited pictures with the raw unedited photos the same day."
+      ),
+      p(
+        "Private transportation with hotel pickup and drop-off is included. Site entrance tickets are not, and are bought at the gate."
+      ),
+      h2("Neither of you needs to know what to do"),
+      p(
+        "This is the thing worth saying plainly to couples: almost nobody is comfortable being photographed together at first, and it is not a problem. The photographer directs the whole session \u2014 where to stand, which way to face, how to move. The self-consciousness lasts about ten minutes and does not show in the pictures."
+      ),
+      callout(
+        "If one of you hates being photographed, say so when you book rather than on the day. It changes how the session is run, and it is a very common thing to say."
+      ),
+      h2("Honeymoons and anniversaries"),
+      p(
+        "The session is the same; what changes is usually the timing. If the photographs are the point of the day, take the sunrise slot \u2014 better light, fewer people, and it leaves the rest of the day free. If you are marking an anniversary and want something staged rather than candid, the Pyramids Proposal Romance Setup is a styled setup at $150 that is not only for proposals."
+      ),
+      h2("Adding to the session"),
+      p(
+        "An Arabian horse, a camel experience or a professional video Reel can each be added. Couples who want moving footage as well as stills tend to be the ones who use the Reel most \u2014 it is the format that gets shared."
+      ),
+      cta({
+        title: "Book the Exclusive Pyramids Photoshoot",
+        body: "A private 1\u20132 hour session for the two of you, 80+ edited pictures, raw photos the same day, transport included \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      faq(
+        [
+          {
+            question: "Can couples have a photoshoot at the Pyramids?",
+            answer:
+              "Yes. The Exclusive Pyramids Photoshoot is a private session for your group at $75, running 1\u20132 hours and delivering 80+ edited pictures.",
+          },
+          {
+            question: "Is the price per person or for both of us?",
+            answer:
+              "It is priced for the session, which is private to you. Larger groups are covered by the group photoshoot add-on.",
+          },
+          {
+            question: "We are awkward in photos. Does that matter?",
+            answer:
+              "No, and it is the most common thing people say beforehand. The photographer directs the entire session, and most people relax within the first ten minutes.",
+          },
+          {
+            question: "Can we do this for a honeymoon or anniversary?",
+            answer:
+              "Yes \u2014 it is the same session. For something styled rather than candid, the Pyramids Proposal Romance Setup at $150 is a staged setup that is not only used for proposals.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Book the light, not the pose. Sunrise at Giza does more for a couples photograph than any amount of planning what to do with your hands."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "family-photoshoot-pyramids",
+    title: "Family Photoshoot at the Pyramids: What Works With Kids",
+    category: "Travel Guides",
+    tags: ["Families", "Pyramids Photoshoot", "Giza Pyramids", "Egypt Photoshoots"],
+    relatedStories: [
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-what-included",
+        title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+        excerpt:
+          "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "Timing, heat, attention spans and group size \u2014 how a family photoshoot at Giza actually goes, and how to plan one that does not end in tears.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1655417591786-32c3833be1a6"),
+    imageCredit: unsplashCredit("Faqih Abdul", "https://unsplash.com/photos/a-pyramid-with-people-standing-around-Yi6Y5RvXwBk"),
+    publishedAt: "2026-09-28T15:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour", "3-day-cairo-giza"),
+    primaryKeyword: "family photoshoot at the pyramids",
+    secondaryKeywords: [
+      "family photos Giza",
+      "photographer for families in Cairo",
+      "kids photoshoot Egypt",
+      "group photoshoot pyramids",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "A family photoshoot at Giza is a logistics problem with a photograph at the end of it. The site is hot, open and bigger than it looks, and small children reach their limit faster than anyone plans for. None of that is a reason not to do it \u2014 it is a reason to book the right hour."
+      ),
+      h2("Book the sunrise slot"),
+      p(
+        "For families this is not a stylistic preference. Sunrise is cooler, quieter, and lands before most children are tired of being told where to stand. The last hour before sunset is the other good window, but by then you are competing with a full day already spent."
+      ),
+      p(
+        "The session runs one to two hours at the Giza Pyramids and the Nine Pyramids View, and it does not have to use all of it. A shorter, better-tempered session produces better photographs than a long one nobody is enjoying."
+      ),
+      h2("What it costs for a family"),
+      p(
+        "The Exclusive Pyramids Photoshoot is $75 and is priced for the session, not per person \u2014 it is your family and the photographer. For larger parties there is a group photoshoot add-on. You get 80+ edited pictures, with the raw unedited photos the same day."
+      ),
+      p(
+        "Pickup and drop-off from your hotel are included, along with parking and road tolls. With children, not having to arrange transport to Giza and back is worth more than it sounds. Site entrance tickets are not included and are bought at the gate."
+      ),
+      callout(
+        "Tell us the ages when you book. A session with a four-year-old is planned differently from one with teenagers, and it is easier to plan for than to improvise around."
+      ),
+      h2("What actually helps on the day"),
+      ...bullets([
+        "Water, hats and sunscreen. The site is open desert with very little shade.",
+        "Let the youngest set the pace. The photographer works around children rather than expecting them to hold still.",
+        "Do the whole-family frames first, while everyone is fresh, and the individual shots afterwards.",
+        "A camel is often the thing that buys another twenty minutes of enthusiasm \u2014 it is available as an add-on, arranged in advance.",
+      ]),
+      h2("If the weather turns"),
+      p(
+        "We reschedule, and the same applies if you are running late. With children, mornings go wrong; a delayed start is not a forfeited booking."
+      ),
+      cta({
+        title: "Book the Exclusive Pyramids Photoshoot",
+        body: "A private 1\u20132 hour session for your family, 80+ edited pictures, raw photos the same day, hotel pickup included \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      faq(
+        [
+          {
+            question: "Can families book a photoshoot at the Pyramids?",
+            answer:
+              "Yes. The Exclusive Pyramids Photoshoot is a private session priced at $75 for the session rather than per person, and a group photoshoot add-on covers larger parties.",
+          },
+          {
+            question: "What is the best time of day with young children?",
+            answer:
+              "Sunrise. It is cooler, quieter, and comes before children are tired. The last hour before sunset works too, but competes with a full day already spent.",
+          },
+          {
+            question: "Do we have to use the full two hours?",
+            answer:
+              "No. A shorter session that everyone is enjoying produces better photographs than a long one nobody is.",
+          },
+          {
+            question: "Is transport included?",
+            answer:
+              "Yes \u2014 hotel pickup and drop-off, parking and road tolls. Site entrance tickets are not included and are bought at the gate.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Book sunrise, tell us the ages, and let the youngest set the pace. Everything else about a family shoot at Giza looks after itself."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "solo-photoshoot-egypt",
+    title: "Solo Photoshoot in Egypt: Photographs of You, Not Your Shadow",
+    category: "Travel Guides",
+    tags: ["Solo Travel", "Pyramids Photoshoot", "Giza Pyramids", "Egypt Photoshoots"],
+    relatedStories: [
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-what-included",
+        title: "What\u2019s Included in a Pyramids Photoshoot (and What Isn\u2019t)",
+        excerpt:
+          "Exactly what comes with a Pyramids photoshoot \u2014 photographer, equipment, transport, edited gallery \u2014 and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "Why solo travelers come home without a single good photograph of themselves, and what a private session at Giza actually involves.",
+    imageTone: "desert",
+    image: unsplashUrl("photo-1639528582719-06bf34d476d1"),
+    imageCredit: unsplashCredit("Soheil Kmp", "https://unsplash.com/photos/a-woman-laying-on-a-sand-dune-in-the-desert-BP1WmLKeJ30"),
+    publishedAt: "2026-09-28T16:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "solo photoshoot in Egypt",
+    secondaryKeywords: [
+      "solo traveler photos Egypt",
+      "photographer for solo travelers Cairo",
+      "solo female travel photos Giza",
+      "travel portraits Egypt",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "Solo travelers come home from Egypt with three thousand photographs of the Pyramids and none of themselves in front of them. What you get instead is a handful of stranger-taken shots, framed badly, taken in a hurry by someone who did not want to be holding your phone."
+      ),
+      h2("What a session actually solves"),
+      p(
+        "The Exclusive Pyramids Photoshoot is $75 for a private one-to-two hour session at the Giza Pyramids and the Nine Pyramids View, with 80+ edited pictures and the raw photos the same day. Private, in this context, means it is you and the photographer \u2014 not a group slot you are joining."
+      ),
+      p(
+        "For a solo traveler the practical parts matter as much as the photographs. Pickup and drop-off from your hotel are included, so you are not negotiating a taxi to Giza alone at sunrise, and parking and tolls are covered. Entrance tickets are not included and are bought at the gate."
+      ),
+      h2("Being photographed alone"),
+      p(
+        "Almost everyone finds the first few minutes uncomfortable, and being alone in front of the camera concentrates that. The photographer directs the entire session \u2014 where to stand, which way to turn, what to do with your hands \u2014 so there is no moment of standing there wondering what is expected. Most people settle within about ten minutes."
+      ),
+      callout(
+        "You do not need to arrive with a plan or a pose. Turning up and being told what to do is the normal experience of a shoot."
+      ),
+      h2("Timing it around a solo itinerary"),
+      p(
+        "Sunrise is the slot most solo travelers should take. The light is better, the site is quieter, and it is finished before the rest of your day starts \u2014 which matters when you are managing your own schedule with nobody to split logistics with."
+      ),
+      p(
+        "A photoshoot can also be arranged alongside any of our tours, and several multi-day itineraries already include a Giza photoshoot on the Pyramids day."
+      ),
+      h2("If you want more than stills"),
+      p(
+        "A professional video Reel is available as an add-on, as are an Arabian horse and a camel experience. Solo travelers tend to use the Reel more than couples do \u2014 it is the format that works for a single subject and gets shared."
+      ),
+      cta({
+        title: "Book a private session at Giza",
+        body: "One to two hours, 80+ edited pictures, raw photos the same day, hotel pickup included \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      faq(
+        [
+          {
+            question: "Can solo travelers book a photoshoot in Egypt?",
+            answer:
+              "Yes, and it is one of the more common bookings. The Exclusive Pyramids Photoshoot at $75 is a private session \u2014 you and the photographer, not a shared group slot.",
+          },
+          {
+            question: "Is the price the same for one person?",
+            answer:
+              "Yes. It is priced for the session rather than per person.",
+          },
+          {
+            question: "I feel awkward being photographed. Is that a problem?",
+            answer:
+              "No. The photographer directs the whole session, so there is no point at which you are left guessing what to do. Most people relax within the first ten minutes.",
+          },
+          {
+            question: "Do I have to get myself to Giza?",
+            answer:
+              "No \u2014 pickup and drop-off from your hotel are included, along with parking and road tolls.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "The photographs you will actually want from Egypt are the ones with you in them. They are also the only ones you cannot take yourself."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "birthday-photoshoot-egypt",
+    title: "Birthday Photoshoot in Egypt: How to Mark the Day at the Pyramids",
+    category: "Travel Guides",
+    tags: ["Birthdays", "Pyramids Photoshoot", "Giza Pyramids", "Egypt Photoshoots"],
+    relatedStories: [
+      {
+        slug: "couples-photoshoot-pyramids",
+        title: "Couples Photoshoot at the Pyramids",
+        excerpt:
+          "What a couples photoshoot at Giza involves, what it costs, and how to get photographs that look like the two of you rather than a catalogue.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "what-happens-pyramids-photoshoot",
+        title: "What Actually Happens During a Pyramids Photoshoot",
+        excerpt:
+          "A Pyramids photoshoot hour by hour \u2014 pickup, the shoot itself, posing, outfit changes, what happens if the weather turns, and when the photos arrive.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+      {
+        slug: "pyramids-photoshoot-cost",
+        title: "How Much Does a Pyramids Photoshoot Cost?",
+        excerpt:
+          "What a Pyramids photoshoot actually costs in 2026, what changes the price, what is included, and the one thing you still pay for at the gate.",
+        imageTone: "giza",
+        category: "Travel Guides",
+      },
+    ],
+    author: editorialTeam,
+    excerpt:
+      "Spending a birthday at the Pyramids and wanting photographs of it \u2014 which session to book, when, and what can be added.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1591638845067-01d6c176afbd"),
+    imageCredit: unsplashCredit("Tori Wise", "https://unsplash.com/photos/woman-in-white-and-purple-stripe-tank-dress-standing-on-brown-sand-during-daytime-h66XccaKuyI"),
+    publishedAt: "2026-09-28T17:00:00+02:00",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    primaryKeyword: "birthday photoshoot at the pyramids",
+    secondaryKeywords: [
+      "birthday photos Egypt",
+      "celebration photoshoot Giza",
+      "milestone birthday trip Egypt",
+    ],
+    destinations: ["Giza", "Cairo"],
+    body: [
+      p(
+        "Spending a birthday at the Pyramids is a good idea that people tend to under-plan. The day fills up, the light goes, and the only record of it is a phone photograph taken by someone standing too far back."
+      ),
+      h2("Which session to book"),
+      p(
+        "There is no separate birthday package, and it is worth saying so plainly \u2014 what you want is the Exclusive Pyramids Photoshoot at $75: a private one-to-two hour session at the Giza Pyramids and the Nine Pyramids View, with 80+ edited pictures and the raw photos the same day."
+      ),
+      p(
+        "Private means the session is yours, whether that is one person or a group. Larger parties are covered by the group photoshoot add-on."
+      ),
+      h2("Book it first, not last"),
+      p(
+        "The mistake is treating the photographs as something to fit around the day. Take the sunrise slot and the birthday starts with the thing you will remember, with the light everyone wants, before the site fills up \u2014 and the rest of the day is free."
+      ),
+      callout(
+        "Same-day raw photos matter more for a birthday than for most sessions. You can send them to people at home that evening, while it is still the day."
+      ),
+      h2("What can be added"),
+      ...bullets([
+        "A professional video Reel \u2014 the format that actually gets shared.",
+        "An Arabian horse or a camel experience.",
+        "A group photoshoot, for a larger party.",
+      ]),
+      p(
+        "If you want something styled rather than candid, the Pyramids Proposal Romance Setup is a $150 styled setup at the same locations. It is built for proposals, but it is a setup rather than a proposal \u2014 worth asking about if a staged scene is what you have in mind."
+      ),
+      h2("Milestone birthdays"),
+      p(
+        "For a thirtieth, fortieth or fiftieth marked in Egypt, the thing worth spending on is not a longer session but a better hour. Sunrise, a private session, and 80+ photographs you actually like beats two hours in the middle of the day."
+      ),
+      cta({
+        title: "Book the Exclusive Pyramids Photoshoot",
+        body: "A private 1\u20132 hour session, 80+ edited pictures, raw photos the same day, hotel pickup included \u2014 $75.",
+        buttonLabel: "See the Package",
+        buttonHref: "/photoshoots/exclusive-pyramids-photoshoot",
+      }),
+      faq(
+        [
+          {
+            question: "Is there a birthday photoshoot package?",
+            answer:
+              "Not a separate one. The Exclusive Pyramids Photoshoot at $75 is the session most people book for a birthday \u2014 private, one to two hours, 80+ edited pictures.",
+          },
+          {
+            question: "Can a group come along?",
+            answer:
+              "Yes. The session is private to your party, and a group photoshoot add-on covers larger groups.",
+          },
+          {
+            question: "When should we book it on the day?",
+            answer:
+              "Sunrise. Better light, a quieter site, and the day starts with it rather than trying to fit it in later.",
+          },
+          {
+            question: "How quickly do we get the photographs?",
+            answer:
+              "The raw unedited photos the same day, so you can send them while it is still the birthday. The edited gallery follows.",
+          },
+        ],
+        "Frequently Asked Questions"
+      ),
+      p(
+        "Book the sunrise slot and the birthday begins with the photograph rather than ending with a scramble for one."
+      ),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
     slug: "best-instagram-photo-spots-egypt",
     title: "Best Places in Egypt for Instagram-Worthy Photos",
     category: "Culture & Trends",
