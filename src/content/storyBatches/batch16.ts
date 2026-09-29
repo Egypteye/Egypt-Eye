@@ -575,4 +575,756 @@ export const stories: Story[] = [
       }),
     ],
   },
+  // ---------------------------------------------------------------------
+  // The SEO cohort from docs/content-strategy.md. Nine articles, not sixty:
+  // 24 of the proposed topics were already live and 19 more were partially
+  // covered, so these are the genuine gaps. Several are deliberate merges —
+  // the celebrations pillar absorbs seven briefed topics, the desert
+  // comparison absorbs two, the yacht page absorbs two.
+  //
+  // Prices below come from src/content/photoshoots.ts and
+  // src/content/transfers.ts. Distances are stated as approximations because
+  // that is how they are known.
+  // ---------------------------------------------------------------------
+  {
+    status: "published",
+    featured: false,
+    slug: "celebrating-a-milestone-in-egypt",
+    title: "Celebrating a Milestone in Egypt: Proposals, Birthdays and Anniversaries",
+    category: "Travel Guides",
+    tags: ["Proposals", "Birthdays", "Anniversaries", "Celebrations", "Giza"],
+    author: editorialTeam,
+    excerpt:
+      "What it actually takes to mark an occasion in Egypt rather than just visit during one — where it works, what it costs, and the logistics nobody mentions until you are standing there.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1579555973297-560c43ca7562"),
+    imageCredit: unsplashCredit(
+      "Andre Jackson",
+      "https://unsplash.com/photos/person-holding-silver-diamond-ring-IXLS59CTgDE"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    relatedTours: toursBySlug("1-day-giza-tour"),
+    seoTitle: "Celebrating a Milestone in Egypt — Proposals, Birthdays, Anniversaries",
+    seoDescription:
+      "How to plan a proposal, birthday or anniversary in Egypt: where it works, what it costs, and the practical constraints at the pyramids nobody warns you about.",
+    body: [
+      p(
+        "Plenty of people celebrate something while they happen to be in Egypt. Fewer plan the trip around the occasion, and the two are not the same job. One needs a restaurant booking. The other needs a location, an hour, a photographer, and a plan for the ten minutes when everything has to work."
+      ),
+      p(
+        "This covers the occasions we are actually asked to arrange, and what each one really requires."
+      ),
+
+      h2("Proposals"),
+      p(
+        "The pyramids are the most requested proposal location in Egypt and, handled badly, one of the worst. The plateau is busy, open, and full of people with cameras. A proposal there works when it is planned around three things: the hour, the spot, and who else knows."
+      ),
+      p(
+        "The hour matters most. Early morning is quieter and the light is better, and those two facts are the same fact — the crowds and the harsh sun arrive together. Our Pyramids Proposal Romance Setup runs one hour at the Giza Pyramids or Nine Pyramids View and costs 150 dollars, with the setup and the photographer arranged in advance so nothing depends on improvising on the day."
+      ),
+      ...bullets([
+        "Decide whether you want the moment photographed from a distance or up close. Distance is more natural; close is more usable.",
+        "Tell us if it is a surprise. It changes the pickup, the cover story and where the photographer stands.",
+        "Entrance tickets to the plateau are bought at the gate and are not included.",
+        "Have a plan for wind. It is the single most common reason a setup has to be adjusted.",
+      ]),
+
+      h2("Birthdays"),
+      p(
+        "A birthday in Cairo does not have to be a restaurant. The versions that people remember are the ones where the day itself is the gift: a private Giza morning before the coaches, a photoshoot, a felucca hour on the Nile as the light goes. The pattern is the same — pick one thing that could only happen here, and do it properly rather than doing four things badly."
+      ),
+      p(
+        "If the birthday is for someone else and it is a surprise, the constraint is the same as with proposals: somebody has to be in on the logistics. That is usually the person reading this."
+      ),
+
+      h2("Anniversaries"),
+      p(
+        "Anniversary trips tend to have a tradition attached — a photograph in the same clothes, a return to a kind of place, a repeated ritual. Those work well in Egypt because the backdrop is unmistakable, which is exactly what a recurring tradition needs. A photograph taken here will never be confused with a photograph taken anywhere else."
+      ),
+      p(
+        "If you are bringing something with you — a dress, an outfit, an object that appears in every year's photograph — tell us before the day. Preparation is not something to improvise on a plateau."
+      ),
+
+      h2("Gender reveals and other announcements"),
+      p(
+        "These are less common and more logistically specific, because the result has to be visible in a photograph and usually involves something that blows away. They have their own guide."
+      ),
+
+      callout(
+        "Whatever the occasion, the same three decisions do most of the work: which hour, which spot, and who knows. Everything else is arrangement. If you get those three right, a celebration in Egypt is not harder to organise than one at home — it just has to be organised earlier.",
+        { title: "The short version", tone: "Highlight" }
+      ),
+
+      h2("What it costs"),
+      p(
+        "For the photography side, the published prices are the ones to plan against: the Exclusive Pyramids Photoshoot is 75 dollars for one to two hours with 80 or more edited pictures, the Pyramids Proposal Romance Setup is 150 dollars for an hour, and the flying dress shoots are 199 dollars at the Giza sand dunes or 219 dollars in Fayoum. Transport is included in the photoshoots. Plateau entrance tickets are not."
+      ),
+
+      faq(
+        [
+          {
+            question: "Can you propose at the pyramids?",
+            answer:
+              "Yes. The practical constraints are the hour and the crowds rather than permission — early morning is both quieter and better lit. The setup and photographer are arranged in advance.",
+          },
+          {
+            question: "How far ahead should a celebration be booked?",
+            answer:
+              "Further than an ordinary tour, because the hour is fixed rather than flexible. A week is comfortable. Less is often possible, but the early slot is the first thing to go.",
+          },
+          {
+            question: "Can a celebration be added to a tour we already booked?",
+            answer:
+              "Usually yes. A photoshoot can be combined with any tour, and a proposal or birthday setup slots into the start of a Giza morning rather than replacing it.",
+          },
+          {
+            question: "What happens if the weather is bad?",
+            answer:
+              "Shoots and setups are rescheduled rather than run in conditions that will not produce anything worth keeping. Wind is a more common problem than rain.",
+          },
+        ],
+        "Planning a celebration in Egypt"
+      ),
+
+      cta({
+        title: "Tell us what you are marking",
+        body: "The occasion decides the hour, the spot and the arrangements. Tell us which one and we will build the day around it.",
+        buttonLabel: "Plan a celebration",
+        buttonHref: "/customize",
+      }),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "gender-reveal-in-egypt-guide",
+    title: "How to Plan a Gender Reveal in Egypt",
+    category: "Travel Guides",
+    tags: ["Gender Reveal", "Celebrations", "Photoshoot", "Giza"],
+    author: editorialTeam,
+    excerpt:
+      "A gender reveal is a photography problem disguised as a party. Here is what works in Egypt, what the wind does to it, and how to plan the ten seconds that matter.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1788462810750-b8e78f17d80f"),
+    imageCredit: unsplashCredit(
+      "gabbiistudios",
+      "https://unsplash.com/photos/woman-and-man-with-pastel-balloons-celebration-KIX1vLpmwT8"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "How to Plan a Gender Reveal in Egypt",
+    seoDescription:
+      "Planning a gender reveal at the pyramids or a Cairo rooftop: what works outdoors, how wind affects it, and how the photography has to be set up in advance.",
+    body: [
+      p(
+        "A gender reveal is not really an event. It is one photograph, or one short video, and everything else exists to produce it. That reframing is the most useful thing to understand before planning one abroad, because it tells you what actually has to be got right."
+      ),
+
+      h2("The three things that decide it"),
+      p(
+        "Wind, light, and who is holding the camera. In that order."
+      ),
+      p(
+        "Wind is first because almost every reveal mechanism is something light and coloured that has to travel in a predictable direction — powder, confetti, balloons, smoke. Outdoors in Egypt, especially on open desert ground, wind is not an occasional inconvenience. It is the default condition, and it decides where everyone stands."
+      ),
+      p(
+        "Light is second because the colour has to read. A reveal that happens in flat midday sun photographs as a pale smudge. The same reveal in low early or late light photographs as the thing you planned."
+      ),
+      p(
+        "And the camera is third because the moment does not repeat. A phone held by a relative produces a phone video of a moment that cost you a trip to Egypt."
+      ),
+
+      h2("Where it works"),
+      ...bullets([
+        "Giza and Nine Pyramids View — the most recognisable backdrop, and open enough that wind direction has to be planned rather than hoped for.",
+        "A Cairo rooftop — more shelter, a city skyline instead of desert, and easier to control who is present.",
+        "The sand dunes outside Giza — the most dramatic setting, and the most exposed.",
+      ]),
+      callout(
+        "Plan the reveal to happen with the wind behind the camera, not behind the people. Colour blowing towards the lens photographs as a wall; colour blowing away from it photographs as a reveal.",
+        { title: "The one thing people get wrong", tone: "Info" }
+      ),
+
+      h2("The practical sequence"),
+      p(
+        "Arrive early, before the location fills. Set up while the light is still low. Do one rehearsal without the colour so everyone knows where to stand and where to look. Then do it once, properly, with the photographer already in position."
+      ),
+      p(
+        "Bring the reveal materials with you rather than assuming they can be sourced locally on the morning. Whatever you are using, pack it in hand luggage."
+      ),
+
+      faq(
+        [
+          {
+            question: "Can you do a gender reveal at the pyramids?",
+            answer:
+              "Yes, and the constraints are practical rather than bureaucratic: the hour, the crowds and the wind. Early morning solves the first two and makes the third manageable.",
+          },
+          {
+            question: "What about a rooftop instead?",
+            answer:
+              "A rooftop gives you shelter from wind, a controlled guest list and a Cairo skyline. It is the better choice if the reveal mechanism is delicate or the group is large.",
+          },
+          {
+            question: "Do we need our own photographer?",
+            answer:
+              "You need someone whose only job is the photograph. The moment is a few seconds long and does not repeat, which is the whole argument against handing a phone to a relative.",
+          },
+        ],
+        "Gender reveals in Egypt"
+      ),
+
+      cta({
+        title: "Arranging one",
+        body: "Tell us the location you have in mind and what the reveal involves. The wind and the light decide the rest.",
+        buttonLabel: "See photoshoot options",
+        buttonHref: "/photoshoots",
+      }),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "white-desert-vs-black-desert",
+    title: "White Desert vs Black Desert: What Is Actually Different",
+    category: "Travel Guides",
+    tags: ["White Desert", "Black Desert", "Bahariya", "Western Desert"],
+    author: editorialTeam,
+    excerpt:
+      "They are an hour apart and people treat them as one trip. They are not the same landscape, they do not photograph alike, and only one of them is worth sleeping in.",
+    imageTone: "desert",
+    image: unsplashUrl("photo-1708008434267-dbd151d62a54"),
+    imageCredit: unsplashCredit(
+      "Ahmed Azab",
+      "https://unsplash.com/photos/a-view-of-the-desert-from-a-distance-otWbS3M7Qpo"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "White Desert vs Black Desert, Egypt — The Real Difference",
+    seoDescription:
+      "How Egypt's White Desert and Black Desert differ in landscape, light and what they are worth doing, and why most trips visit both on the way through.",
+    body: [
+      p(
+        "Both sit in Egypt's Western Desert, both are reached from Bahariya Oasis, and almost every trip that goes to one passes the other. That is where the similarity ends."
+      ),
+
+      h2("The Black Desert"),
+      p(
+        "The Black Desert is a stretch of low hills capped with dark volcanic rock, which from a distance makes the sand look scorched. It sits between Bahariya and the White Desert, so you drive through it rather than to it."
+      ),
+      p(
+        "It is genuinely striking and it is genuinely brief. An hour there is enough: climb one of the cones, look at a landscape that appears to have been burnt, take photographs that will confuse everyone who sees them, and move on. Nobody camps in the Black Desert, and there is no reason to."
+      ),
+
+      h2("The White Desert"),
+      p(
+        "The White Desert is chalk. Wind has cut the plateau into free-standing formations — mushrooms, towers, shapes that look deliberate — standing on pale ground that reads as snow in photographs."
+      ),
+      p(
+        "It is the one worth staying in. At midday it is bright and flat and slightly disappointing. At sunset the chalk turns orange and the shadows arrive, and at night, with no light pollution for a hundred kilometres, the sky is the reason people come. A day trip to the White Desert shows you the rocks. An overnight shows you why anyone bothered."
+      ),
+
+      h2("Side by side"),
+      ...bullets([
+        "Colour: dark volcanic caps against yellow sand, versus white chalk against pale ground.",
+        "Time needed: an hour for the Black Desert, a full evening and a night for the White.",
+        "Best light: Black Desert reads well in hard daylight; White Desert needs the low sun at either end of the day.",
+        "Camping: only the White Desert, and it is the point of going.",
+        "Between them sits Crystal Mountain, a quartz outcrop that is a five-minute stop and worth the five minutes.",
+      ]),
+      callout(
+        "If someone offers you a one-day round trip from Cairo taking in both, do the arithmetic before agreeing. It is roughly four to five hours each way to Bahariya before you have seen anything. You would be spending nine or ten hours in a vehicle to be in the White Desert during its worst light.",
+        { title: "The trap", tone: "Safety" }
+      ),
+
+      h2("So which one"),
+      p(
+        "This is not really a choice. The Black Desert is on the road to the White Desert, so you get it either way. The real question is whether you stay the night, and the answer is yes — the overnight camp is the difference between having seen the White Desert and having been in it."
+      ),
+
+      faq(
+        [
+          {
+            question: "Are the White and Black Deserts close together?",
+            answer:
+              "Yes. The Black Desert lies between Bahariya Oasis and the White Desert, so any trip to the White Desert drives through it.",
+          },
+          {
+            question: "Can you visit both in one day from Cairo?",
+            answer:
+              "Physically yes, sensibly no. Bahariya is about four to five hours from Cairo each way, which leaves you in the White Desert in the middle of the day, when it photographs worst.",
+          },
+          {
+            question: "Is the White Desert worth an overnight?",
+            answer:
+              "It is the reason to go. Sunset, then a night sky with effectively no light pollution, then sunrise on the chalk. A day visit skips all three.",
+          },
+          {
+            question: "What is Crystal Mountain?",
+            answer:
+              "A small quartz outcrop on the road between the Black and White Deserts. A brief stop, not a destination, but on the way regardless.",
+          },
+        ],
+        "White Desert and Black Desert"
+      ),
+
+      cta({
+        title: "Going out there",
+        body: "Our White Desert overnight camp runs from Cairo and includes the Black Desert and Crystal Mountain on the way through.",
+        buttonLabel: "See the White Desert trip",
+        buttonHref: "/weekly-trips",
+      }),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "how-to-get-from-cairo-to-bahariya-oasis",
+    title: "How to Get From Cairo to Bahariya Oasis",
+    category: "Travel Guides",
+    tags: ["Bahariya", "Western Desert", "Transport", "Cairo"],
+    author: editorialTeam,
+    excerpt:
+      "Every Western Desert trip starts with the same four hours of road. Here are the actual options, what each costs you in time and flexibility, and when to leave.",
+    imageTone: "desert",
+    image: unsplashUrl("photo-1596625676083-8b29beb59f71"),
+    imageCredit: unsplashCredit(
+      "Charlotte Harrison",
+      "https://unsplash.com/photos/gray-concrete-road-under-gray-sky-2VDu7YD6Gf8"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "Cairo to Bahariya Oasis — How to Get There",
+    seoDescription:
+      "The road from Cairo to Bahariya Oasis: how long it takes, the bus and private car options, when to leave, and why it matters for a White Desert trip.",
+    body: [
+      p(
+        "Bahariya Oasis is roughly 365 kilometres southwest of Cairo, about four to five hours by road depending on traffic getting out of the city. It is the gateway to the Black Desert, the White Desert and Crystal Mountain, which means almost nobody goes to Bahariya for Bahariya. They go through it."
+      ),
+      p(
+        "That matters, because it makes the journey part of the itinerary rather than a preamble to it."
+      ),
+
+      h2("The options"),
+      ...bullets([
+        "Private car with a driver. Four to five hours, leaves when you want, stops when you want, and continues into the desert rather than stopping at the town. The only option that puts you in the White Desert for sunset the same day.",
+        "Public bus. Cheapest, runs to a fixed schedule, and drops you in Bahariya town — where you then need separate desert transport, because a coach cannot go where the formations are.",
+        "Joining a scheduled trip. Someone else has already solved the timing, the vehicle and the camp.",
+      ]),
+      p(
+        "The distinction that decides it is not comfort, it is the vehicle. A saloon car can reach Bahariya. It cannot reach the White Desert. Everything past the tarmac needs a four-wheel drive, so any plan that ends with you standing in Bahariya town still has a gap in it."
+      ),
+
+      h2("When to leave"),
+      p(
+        "Early. Cairo traffic is the variable that turns a four-hour drive into a six-hour one, and leaving before the morning peak removes it entirely. It also puts you in the desert with the afternoon still ahead, which is when the light starts working."
+      ),
+      callout(
+        "A departure around 7am generally has you through the Black Desert by early afternoon and in the White Desert well before sunset. A departure at 11am generally does not.",
+        { title: "Timing", tone: "Info" }
+      ),
+
+      h2("What is actually in Bahariya"),
+      p(
+        "The oasis itself is a working farming town with palm groves, hot and cold springs, and a small museum holding some of the Golden Mummies found nearby. It is a reasonable place to stop, eat and break the drive. It is not, on its own, a reason to spend four hours in a car."
+      ),
+
+      faq(
+        [
+          {
+            question: "How long is the drive from Cairo to Bahariya?",
+            answer:
+              "About four to five hours for roughly 365 kilometres, with Cairo traffic being the main variable. Leaving early removes most of the uncertainty.",
+          },
+          {
+            question: "Can you get there by bus?",
+            answer:
+              "Yes, and it is the cheapest way. It leaves you in Bahariya town, though, and the desert beyond needs a four-wheel drive you would then have to arrange separately.",
+          },
+          {
+            question: "Do you need a 4x4?",
+            answer:
+              "Not for Bahariya itself, which is reached on tarmac. Yes for the Black and White Deserts, where there is no road.",
+          },
+          {
+            question: "Can you do Bahariya as a day trip from Cairo?",
+            answer:
+              "You can, but eight to ten hours of driving for a few hours in an oasis is a poor trade. Bahariya makes sense as the first leg of a desert trip rather than a destination.",
+          },
+        ],
+        "Getting to Bahariya"
+      ),
+
+      cta({
+        title: "The whole run, arranged",
+        body: "Cairo to Bahariya, the Black Desert, Crystal Mountain and a night in the White Desert, in one vehicle with one driver.",
+        buttonLabel: "See desert trips",
+        buttonHref: "/weekly-trips",
+      }),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "weekend-trips-from-cairo",
+    title: "Weekend Trips From Cairo: Where Two Days Actually Gets You",
+    category: "Travel Guides",
+    tags: ["Weekend Trips", "Cairo", "Siwa", "White Desert", "Ain Sokhna"],
+    author: editorialTeam,
+    excerpt:
+      "A day trip from Cairo means being back by dinner. Two days changes which places are reachable at all — and the difference is not what most itineraries suggest.",
+    imageTone: "giza",
+    image: unsplashUrl("photo-1696269061458-0b405e2fe812"),
+    imageCredit: unsplashCredit(
+      "Joe deSousa",
+      "https://unsplash.com/photos/a-group-of-camels-sitting-in-the-middle-of-a-desert-0rhh2jagTTI"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "Weekend Trips From Cairo — What Two Days Gets You",
+    seoDescription:
+      "Where you can actually get from Cairo in a weekend: the White Desert, Ain Sokhna, Alexandria, Fayoum and Siwa, with honest travel times.",
+    body: [
+      p(
+        "Day trips from Cairo are well covered and the answer is always the same handful of places, because the constraint is the drive home. A weekend removes that constraint, and the map opens considerably."
+      ),
+      p(
+        "Here is what two days genuinely reaches, ordered by how much the extra day changes things."
+      ),
+
+      h2("The White Desert — the trip a weekend exists for"),
+      p(
+        "Four to five hours to Bahariya, then off-road into the Black Desert and on to the White Desert, where you camp. This is the clearest case in the list: as a day trip it is absurd, and as an overnight it is one of the best things in Egypt. Sunset on the chalk, a night sky with no light pollution for a hundred kilometres, sunrise, and back."
+      ),
+
+      h2("Ain Sokhna — the shortest useful escape"),
+      p(
+        "Roughly 120 kilometres east, an hour and a half to two hours, and you are on the Red Sea. It is the closest real coastline to Cairo, which makes it the default when the point is water rather than distance. A night there turns a long drive into a short one."
+      ),
+
+      h2("Alexandria — a different country, sort of"),
+      p(
+        "Two and a half to three hours north. Mediterranean rather than desert, Greco-Roman rather than pharaonic, and a city that feels almost nothing like Cairo. It is doable in a day and considerably better in two, because half of Alexandria is the evening."
+      ),
+
+      h2("Fayoum and Wadi El Rayan — closer than it sounds"),
+      p(
+        "About two hours southwest. Lakes, waterfalls, the Magic Lake and Wadi El Hitan, the valley of fossil whales. It works as a day trip and rewards an overnight mostly because of the light on the lakes at either end of the day."
+      ),
+
+      h2("Siwa — the honest answer is no"),
+      p(
+        "Siwa is ten to eleven hours from Cairo by road, near the Libyan border. People do it in a weekend and they spend most of the weekend in a vehicle. Siwa is a long-weekend destination at minimum — three days, better four — and treating it as two is the most common planning mistake in this whole category."
+      ),
+      callout(
+        "The rule of thumb that survives contact with reality: if the one-way drive is over five hours, two days is not enough. That puts the White Desert at the far edge of a weekend and puts Siwa outside it.",
+        { title: "How to judge it yourself", tone: "Highlight" }
+      ),
+
+      h2("What to do with the second day"),
+      p(
+        "The mistake is treating the extra day as extra distance. The places above are not better because you can drive further; they are better because you get the two hours at each end of the day when the light works, instead of arriving and leaving in the middle."
+      ),
+
+      faq(
+        [
+          {
+            question: "What is the best weekend trip from Cairo?",
+            answer:
+              "The White Desert, by a distance. It is the one destination in range that is transformed by staying overnight rather than merely made more comfortable.",
+          },
+          {
+            question: "Can you do Siwa in a weekend?",
+            answer:
+              "Not sensibly. It is ten to eleven hours each way from Cairo. Siwa needs a long weekend at minimum.",
+          },
+          {
+            question: "Where is the closest beach to Cairo?",
+            answer:
+              "Ain Sokhna on the Red Sea, roughly 120 kilometres east and about an hour and a half to two hours by road.",
+          },
+        ],
+        "Weekends out of Cairo"
+      ),
+
+      cta({
+        title: "Scheduled weekends",
+        body: "Several of these run as fixed-date small-group trips, so you can join one rather than arrange it.",
+        buttonLabel: "See weekly trips",
+        buttonHref: "/weekly-trips",
+      }),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "private-yacht-day-trip-ain-sokhna",
+    title: "A Private Yacht Day From Cairo to Ain Sokhna: How It Works",
+    category: "Travel Guides",
+    tags: ["Yacht", "Ain Sokhna", "Red Sea", "Day Trip"],
+    author: editorialTeam,
+    excerpt:
+      "Cairo to the Red Sea and onto a boat, there and back in a day. What the timings really look like, what it costs to get there, and who it is genuinely worth it for.",
+    imageTone: "redsea",
+    image: unsplashUrl("photo-1667852976428-3b6f59f0db4f"),
+    imageCredit: unsplashCredit(
+      "XAVIER PHOTOGRAPHY",
+      "https://unsplash.com/photos/a-boat-docked-at-a-pier-m6leBM35XyI"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "Private Yacht Day Trip From Cairo to Ain Sokhna",
+    seoDescription:
+      "How a yacht day trip from Cairo to Ain Sokhna actually works: travel times, transfer costs, what the day contains, and whether it is worth doing in one day.",
+    body: [
+      p(
+        "Ain Sokhna is the closest the Red Sea gets to Cairo — roughly 120 kilometres east, about an hour and a half to two hours by road. That proximity is the entire reason a yacht day from Cairo is possible at all. From anywhere else on the Egyptian coast it would be a flight."
+      ),
+
+      h2("What the day actually looks like"),
+      p(
+        "Leave Cairo early. You want to be at the marina in the morning rather than at midday, because the wind typically picks up as the day goes on and the water is calmest early. Board, head out, and spend the day on flat turquoise water with the desert mountains behind you on one side and nothing on the other."
+      ),
+      p(
+        "Then the same road back. It is a long day with two hours of driving at each end, and being honest about that is the difference between a good day and a rushed one."
+      ),
+
+      h2("What it costs to get there"),
+      p(
+        "The transfer is the part with published prices. Cairo to Ain Sokhna runs 65 dollars in a sedan, 80 in an SUV, 95 in a van, 120 in a minibus and 150 in a VIP Mercedes-class car, each way. The boat itself is quoted separately depending on the vessel, the group size and the length of the day."
+      ),
+
+      h2("Is it worth it in one day"),
+      p(
+        "It depends on one thing: whether you want the water or the boat. If you want to swim and snorkel in the Red Sea, Ain Sokhna in a day is a reasonable way to do it and far cheaper in time than flying to Hurghada. If you want a full day at sea, the four hours of round-trip driving eat into it enough that an overnight makes more sense."
+      ),
+      callout(
+        "The version that works best is a private boat with a small group — a family, a couple of couples, a celebration. A private yacht for two people on a day trip is an expensive way to be on a boat. For six it becomes one of the better value days out of Cairo.",
+        { title: "Who it suits", tone: "Highlight" }
+      ),
+
+      h2("Practical notes"),
+      ...bullets([
+        "Go early. Calmer water, better light, and you are ahead of the traffic in both directions.",
+        "The Red Sea is warm nearly year-round; the wind, not the temperature, decides whether a day is pleasant.",
+        "Bring more sun protection than you think. There is no shade on open water and the reflection doubles the exposure.",
+        "If anyone in the group is prone to seasickness, say so when booking — it changes which boat and which route.",
+      ]),
+
+      faq(
+        [
+          {
+            question: "How far is Ain Sokhna from Cairo?",
+            answer:
+              "About 120 kilometres east, roughly an hour and a half to two hours by road depending on when you leave the city.",
+          },
+          {
+            question: "Can you do a yacht trip from Cairo in one day?",
+            answer:
+              "Yes. Ain Sokhna is close enough that a morning departure gives you a full day on the water and gets you back the same evening.",
+          },
+          {
+            question: "What does the transfer cost?",
+            answer:
+              "Cairo to Ain Sokhna is 65 dollars in a sedan, 80 in an SUV, 95 in a van, 120 in a minibus and 150 in a VIP car, each way. The boat is quoted separately.",
+          },
+          {
+            question: "Is it better than going to Hurghada?",
+            answer:
+              "For a day, yes — Hurghada needs a flight. For a week, no. Ain Sokhna is the Red Sea you can reach by car, not the Red Sea you would build a holiday around.",
+          },
+        ],
+        "Yacht days from Cairo"
+      ),
+
+      cta({
+        title: "Arranging a day on the water",
+        body: "Tell us the group size and the date and we will price the boat and the transfer together.",
+        buttonLabel: "Plan the day",
+        buttonHref: "/customize",
+      }),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "professional-photoshoot-in-cairo",
+    title: "Planning a Professional Photoshoot in Cairo (Not Giza)",
+    category: "Photography",
+    tags: ["Photoshoot", "Cairo", "Islamic Cairo", "Rooftop"],
+    author: editorialTeam,
+    excerpt:
+      "Everyone photographs the pyramids. Cairo itself is a harder and more interesting shoot — different light, different permissions, different results.",
+    imageTone: "nile",
+    image: unsplashUrl("photo-1764043432344-c9640be09a48"),
+    imageCredit: unsplashCredit(
+      "Ömer Evren",
+      "https://unsplash.com/photos/dense-urban-cityscape-with-many-apartment-buildings-iQF8dpQXBh4"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "How to Plan a Professional Photoshoot in Cairo",
+    seoDescription:
+      "Shooting in Cairo rather than at the pyramids: the locations that work, how the light behaves in a dense city, and what to arrange in advance.",
+    body: [
+      p(
+        "A Giza photoshoot is a known quantity: one landscape, one kind of light, one set of decisions. Cairo is not. It is a dense, layered, twelve-hundred-year-old city, and shooting in it is a different job with a different set of constraints."
+      ),
+      p(
+        "It is also where you get photographs that do not look like everyone else's."
+      ),
+
+      h2("Where Cairo actually works"),
+      ...bullets([
+        "Islamic Cairo — carved stone, wooden screens, narrow streets and doorways. The richest texture in the city, and the most crowded.",
+        "Coptic Cairo — quieter, more contained, older-feeling, and easier to shoot without a crowd in every frame.",
+        "Rooftops — the skyline, minarets, and in the right spot the pyramids on the horizon. The most controllable option.",
+        "The Nile and the feluccas — the only place in the city with open water and open sky.",
+        "Downtown's Belle Epoque facades — European architecture with Cairo weather on it, which is a look nowhere else has.",
+      ]),
+
+      h2("Light behaves differently here"),
+      p(
+        "At Giza the problem is that there is nothing to block the sun. In Cairo the problem is the opposite: the streets are narrow and the buildings are tall, so for much of the day the good spots are in deep shade while a strip of wall two metres away is blown out."
+      ),
+      p(
+        "That makes timing more important, not less. Early morning gives you low light that reaches down into the streets, and it is also the only time Islamic Cairo is quiet enough to photograph without choreographing around people."
+      ),
+      callout(
+        "Rooftops are the exception to all of this. They get clean light all day, they are private, and they are the one Cairo location where you can plan a specific background and be confident it will be there.",
+        { title: "If you only have one slot", tone: "Info" }
+      ),
+
+      h2("What to arrange in advance"),
+      p(
+        "Cairo shoots have more moving parts than Giza ones: getting between locations in traffic eats time, several of the interesting interiors are working religious buildings with their own expectations, and a rooftop needs the owner's agreement rather than a ticket."
+      ),
+      p(
+        "Plan two locations, not five. The distance between them will cost more than the shooting."
+      ),
+
+      faq(
+        [
+          {
+            question: "Can you do a photoshoot in Islamic Cairo?",
+            answer:
+              "Yes, and early morning is the only time it works properly — later in the day the streets are too busy to shoot without a crowd in the frame.",
+          },
+          {
+            question: "Is Cairo better than Giza for photographs?",
+            answer:
+              "It is different. Giza gives you one unmistakable backdrop. Cairo gives you texture, variety and pictures that do not look like everybody else's.",
+          },
+          {
+            question: "How many locations fit in one session?",
+            answer:
+              "Two, realistically. Cairo traffic means moving between locations costs more time than photographing at them.",
+          },
+          {
+            question: "What about shooting inside mosques and churches?",
+            answer:
+              "Several are working places of worship with their own rules on photography and dress. That has to be checked per building rather than assumed, and it is one of the things worth arranging before the day.",
+          },
+        ],
+        "Photoshoots in Cairo"
+      ),
+
+      cta({
+        title: "A Cairo session",
+        body: "Tell us which side of the city you want — the old stone, the rooftops or the river — and we will build the session around the hour that suits it.",
+        buttonLabel: "See photoshoot options",
+        buttonHref: "/photoshoots",
+      }),
+    ],
+  },
+  {
+    status: "published",
+    featured: false,
+    slug: "flight-delayed-airport-transfer-egypt",
+    title: "What Happens to Your Airport Transfer If Your Flight Is Delayed",
+    category: "Travel Guides",
+    tags: ["Transfers", "Cairo Airport", "Flight Delays", "Booking"],
+    author: editorialTeam,
+    excerpt:
+      "The question people ask right before booking, and almost nobody answers properly. Short version: the pickup follows the aircraft, not the clock.",
+    imageTone: "nile",
+    image: unsplashUrl("photo-1664190426381-5f2cf0ea4ef4"),
+    imageCredit: unsplashCredit(
+      "Joseph Bobadilla",
+      "https://unsplash.com/photos/a-group-of-people-in-a-room-EmqjMxS7IsY"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "Flight Delayed After Booking an Airport Transfer — What Happens",
+    seoDescription:
+      "What happens to a pre-booked Cairo airport transfer when your flight is delayed, diverted or cancelled, and what you should give when booking.",
+    body: [
+      p(
+        "This is the question that stops people booking a transfer in advance. The worry is reasonable: you are paying now for a car to be somewhere at a time you cannot control, in a country you have not arrived in yet."
+      ),
+      p("The answer is that the booking is tied to your flight, not to a time you typed in."),
+
+      h2("Why the flight number matters more than the time"),
+      p(
+        "When you book an airport transfer with a flight number, the arrival is tracked. The driver's schedule follows the aircraft. If you land two hours late, the car arrives two hours later. If you land early, it is already there."
+      ),
+      p(
+        "This is the single practical difference between a booked transfer and a taxi rank, and it is why the flight number is the most important field on the form. A transfer booked with only a time is a transfer that cannot adapt."
+      ),
+      callout(
+        "Give the flight number and the airline, not just the landing time. Everything else in this article depends on that one field being filled in correctly.",
+        { title: "The thing to get right", tone: "Safety" }
+      ),
+
+      h2("The three situations"),
+      p(
+        "A delay is the straightforward one. The pickup moves with the flight and there is nothing for you to do."
+      ),
+      p(
+        "A diversion is less common and needs a message. If you land somewhere other than Cairo, tracking will show the aircraft did not arrive, but it cannot know your onward plan. Tell us what you are doing and the transfer is rearranged around it."
+      ),
+      p(
+        "A cancellation means the trip is rescheduled to your new flight. What you should not do is say nothing and hope — a driver waiting at arrivals for a flight that is not coming helps nobody."
+      ),
+
+      h2("What to do on your side"),
+      ...bullets([
+        "Book with the flight number and airline, not an estimated time.",
+        "Message us if your flight is cancelled or diverted, as soon as you know. A delay needs nothing.",
+        "Keep the booking contact on a number that works before you have an Egyptian SIM — a messaging app over airport wifi is enough.",
+        "Do not rebook a second transfer because the first one now looks wrong. It has already moved.",
+      ]),
+
+      h2("The departure side"),
+      p(
+        "The same logic runs in reverse, with one difference: on the way out, the risk is not your flight moving, it is Cairo traffic. Departure pickups are set against the flight with enough margin for the road and the security queue, which varies by hours depending on the time of day. If your outbound flight is delayed, that is usually a reason to keep the original pickup rather than change it — the airport is a better place to wait than the road."
+      ),
+
+      faq(
+        [
+          {
+            question: "What if my flight is delayed after I book a transfer?",
+            answer:
+              "Nothing, from your side. Airport transfers are booked against a flight number and the arrival is tracked, so the driver's timing follows the aircraft.",
+          },
+          {
+            question: "What if my flight is cancelled?",
+            answer:
+              "Message us with the new flight and the transfer is rescheduled to it. Tracking can see that the original flight did not operate, but not what you rebooked onto.",
+          },
+          {
+            question: "What if I am diverted to another airport?",
+            answer:
+              "Tell us what your onward plan is. The pickup is rearranged around it rather than waiting at Cairo for a flight that is not coming.",
+          },
+          {
+            question: "How long will the driver wait?",
+            answer:
+              "The waiting time is measured from the actual landing, not from your original scheduled arrival, which is the point of tracking the flight in the first place.",
+          },
+        ],
+        "Delays and airport transfers"
+      ),
+
+      cta({
+        title: "Booking an arrival",
+        body: "Give us the flight number and the rest takes care of itself.",
+        buttonLabel: "See transfer options",
+        buttonHref: "/transfers",
+      }),
+    ],
+  },
 ];

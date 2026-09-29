@@ -13,7 +13,7 @@ import { LanguageSwitcher } from "./LanguageSwitcher";
 // Only these stay visible in the desktop nav bar; every other site.nav item
 // (Home is already reachable via the logo) is tucked into the "More"
 // dropdown so the bar doesn't get crowded as the nav list grows.
-const PRIMARY_NAV_LABELS = ["Best Seller Tours", "Signature Experiences", "Unique Photoshoots"];
+const PRIMARY_NAV_LABELS = ["Best Seller Tours", "Weekly Trips", "Signature Experiences", "Unique Photoshoots"];
 
 export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   const [open, setOpen] = useState(false);
