@@ -34,7 +34,7 @@ export async function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
                   </svg>
                 </span>
               </Link>
-              <p className="text-xs font-medium uppercase tracking-[0.15em] text-cream/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cream/60">
                 {ui["{n} destinations · one live map"].replace("{n}", String(hubs.length))}
               </p>
             </div>

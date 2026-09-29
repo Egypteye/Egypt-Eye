@@ -14,7 +14,7 @@ export function NewsletterComposer({ recipientCount }: { recipientCount: number 
 
   return (
     <form action={formAction} className="grid gap-4">
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+      <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
         Subject
         <input
           name="subject"
@@ -23,7 +23,7 @@ export function NewsletterComposer({ recipientCount }: { recipientCount: number 
           className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold"
         />
       </label>
-      <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+      <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
         Message
         <textarea
           name="body"
@@ -44,7 +44,7 @@ export function NewsletterComposer({ recipientCount }: { recipientCount: number 
         </button>
       </div>
       {result && (
-        <p className="text-sm font-medium text-nile">
+        <p className="text-sm font-semibold text-nile">
           Sent to {result.sent} subscriber{result.sent === 1 ? "" : "s"}
           {result.skipped > 0 ? ` (${result.skipped} already sent this exact broadcast)` : ""}
           {result.failed > 0 ? ` — ${result.failed} failed, check RESEND_API_KEY / logs.` : "."}

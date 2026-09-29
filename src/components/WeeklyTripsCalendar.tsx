@@ -58,7 +58,7 @@ export function WeeklyTripsCalendar({
   const months = useMemo(() => groupByMonth(filtered, locale), [filtered, locale]);
 
   const chip = (active: boolean) =>
-    `rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
+    `rounded-full px-3.5 py-1.5 text-sm font-semibold transition ${
       active ? "bg-ink text-cream" : "bg-sand text-ink-soft hover:bg-sand-dim"
     }`;
 
@@ -131,7 +131,7 @@ export function WeeklyTripsCalendar({
                             </span>
                             <SeatPill departure={d} />
                           </div>
-                          <p className="mt-1 truncate font-medium text-ink">{d.trip.title}</p>
+                          <p className="mt-1 truncate font-semibold text-ink">{d.trip.title}</p>
                           <p className="mt-0.5 text-sm text-ink-soft">
                             {d.trip.duration} · {tr("from")} {d.trip.departsFrom}
                           </p>

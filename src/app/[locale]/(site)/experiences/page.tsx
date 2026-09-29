@@ -100,7 +100,7 @@ export default async function ExperiencesPage() {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/65 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{page.heroEyebrow}</p>
           <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl">{page.heroTitle}</h1>
@@ -123,7 +123,7 @@ export default async function ExperiencesPage() {
                   className="rounded-full border border-black/10 bg-cream px-4 py-2 text-sm font-semibold text-ink-soft transition-colors duration-200 hover:border-gold/50 hover:bg-gold/10 hover:text-gold-dark"
                 >
                   {g.name}
-                  <span className="ml-2 text-xs font-normal text-ink-soft/85">{g.items.length}</span>
+                  <span className="ml-2 text-xs font-medium text-ink-soft/85">{g.items.length}</span>
                 </a>
               ))}
             </nav>

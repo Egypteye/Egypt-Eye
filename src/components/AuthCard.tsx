@@ -36,7 +36,7 @@ export function AuthInput({
   ...props
 }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+    <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
       {label}
       <input
         {...props}

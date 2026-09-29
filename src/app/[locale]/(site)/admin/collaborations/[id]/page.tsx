@@ -93,7 +93,7 @@ export default async function AdminCollaborationDetailPage({ params }: { params:
         <ul className="mt-3 flex flex-col gap-2">
           {application.social_accounts.map((s, i) => (
             <li key={i} className="flex items-center justify-between rounded-xl bg-sand px-4 py-2.5 text-sm">
-              <span className="font-medium text-ink">{s.platform}</span>
+              <span className="font-semibold text-ink">{s.platform}</span>
               <span className="text-ink-soft">{s.handle}</span>
               <span className="text-ink-soft/85">{s.followers || "—"} followers</span>
             </li>

@@ -111,7 +111,7 @@ export default async function AdminPinterestPage({
                 same OAuth Route Handler as above; needs a real navigation. */}
             <a
               href="/api/pinterest/oauth/start"
-              className="whitespace-nowrap text-sm font-medium text-ink-soft/85 underline decoration-dotted underline-offset-4 transition hover:text-ink"
+              className="whitespace-nowrap text-sm font-semibold text-ink-soft/85 underline decoration-dotted underline-offset-4 transition hover:text-ink"
             >
               Reconnect Pinterest
             </a>

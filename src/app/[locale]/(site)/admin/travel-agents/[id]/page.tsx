@@ -89,7 +89,7 @@ export default async function AdminTravelAgentDetailPage({ params }: { params: P
         <div className="mt-3 flex flex-wrap items-end gap-3">
           {application.status !== "approved" && (
             <form action={approve} className="flex items-end gap-2">
-              <label className="flex flex-col gap-1 text-xs font-medium text-ink-soft">
+              <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
                 Partner discount %
                 <input
                   type="number"
@@ -136,7 +136,7 @@ export default async function AdminTravelAgentDetailPage({ params }: { params: P
 
           <div className="mt-4 flex flex-wrap items-end gap-3">
             <form action={updateRate} className="flex items-end gap-2">
-              <label className="flex flex-col gap-1 text-xs font-medium text-ink-soft">
+              <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
                 Partner discount %
                 <input
                   type="number"

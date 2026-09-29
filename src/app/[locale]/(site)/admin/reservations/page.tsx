@@ -44,7 +44,7 @@ export default async function AdminReservationsPage() {
       <h1 className="font-display text-2xl font-semibold text-ink">Reservations</h1>
       <div className="mt-6 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
+          <thead className="border-b border-black/5 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Reference</th>
               <th className="px-4 py-3">Guest</th>

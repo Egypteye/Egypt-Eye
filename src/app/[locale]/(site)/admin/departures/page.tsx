@@ -62,7 +62,7 @@ export default async function AdminDeparturesPage() {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="font-display text-2xl font-semibold text-ink">Weekly Trip Departures</h1>
-        <Link href="/weekly-trips" className="text-sm font-medium text-gold-dark hover:underline">
+        <Link href="/weekly-trips" className="text-sm font-semibold text-gold-dark hover:underline">
           View the public page →
         </Link>
       </div>
@@ -116,7 +116,7 @@ export default async function AdminDeparturesPage() {
                     {d.seatsTaken}/{d.capacity}
                   </p>
                   <p className="text-xs text-ink-soft/85">seats · ${d.priceUsd} each</p>
-                  <p className="mt-0.5 text-xs font-medium text-ink-soft">
+                  <p className="mt-0.5 text-xs font-semibold text-ink-soft">
                     ${(d.seatsTaken * d.priceUsd).toFixed(0)} booked
                   </p>
                 </div>

@@ -57,7 +57,7 @@ export function ExperienceRatingLink({
       href={localePath(href, locale)}
       // relative z-20 lifts it above the card's full-bleed overlay link, so
       // the chip wins the click on a card that is otherwise one big link.
-      className={`relative z-20 inline-flex items-center gap-1.5 rounded-full text-sm font-medium transition ${palette} ${className}`}
+      className={`relative z-20 inline-flex items-center gap-1.5 rounded-full text-sm font-semibold transition ${palette} ${className}`}
     >
       <svg viewBox="0 0 20 20" fill="currentColor" className="h-4 w-4 shrink-0 text-gold" aria-hidden="true">
         <path d="M10 1.5l2.6 5.6 6.15.62-4.63 4.2 1.3 6.08L10 14.9l-5.42 3.1 1.3-6.08-4.63-4.2 6.15-.62L10 1.5z" />

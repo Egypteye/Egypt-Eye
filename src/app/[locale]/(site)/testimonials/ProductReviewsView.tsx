@@ -40,7 +40,7 @@ export function pageWindow(current: number, last: number): (number | "gap")[] {
 }
 
 const STEP =
-  "inline-flex h-10 min-w-10 items-center justify-center rounded-full px-3 text-sm font-medium transition";
+  "inline-flex h-10 min-w-10 items-center justify-center rounded-full px-3 text-sm font-semibold transition";
 const STEP_IDLE = "border border-black/10 text-ink-soft hover:border-gold/40 hover:text-ink";
 
 async function Pagination({

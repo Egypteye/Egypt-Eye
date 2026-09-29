@@ -44,7 +44,7 @@ export default async function SignatureExperiencesPage() {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/15" />
         <Container className="relative flex min-h-[46vh] flex-col justify-end gap-4 pb-16 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{page.heroEyebrow}</p>
           <h1 className="max-w-2xl text-balance font-display text-4xl font-semibold text-cream sm:text-5xl">

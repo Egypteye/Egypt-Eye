@@ -57,7 +57,7 @@ export function LanguageSwitcher({ tone = "light" }: { tone?: "light" | "dark" }
         aria-haspopup="menu"
         aria-expanded={open}
         aria-label={dict.language.choose}
-        className={`inline-flex items-center gap-1.5 rounded-full border border-black/10 px-3 py-1.5 text-sm font-medium transition hover:border-gold/40 ${trigger}`}
+        className={`inline-flex items-center gap-1.5 rounded-full border border-black/10 px-3 py-1.5 text-sm font-semibold transition hover:border-gold/40 ${trigger}`}
       >
         <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4 shrink-0" aria-hidden="true">
           <circle cx="10" cy="10" r="7.25" />
@@ -93,7 +93,7 @@ export function LanguageSwitcher({ tone = "light" }: { tone?: "light" | "dark" }
                 }`}
               >
                 <span>{l.nativeName}</span>
-                <span className="text-xs uppercase tracking-wide text-ink-soft/85">{l.code}</span>
+                <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{l.code}</span>
               </a>
             );
           })}

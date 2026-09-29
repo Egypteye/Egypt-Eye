@@ -637,7 +637,7 @@ export default async function AboutPage() {
                   <ul className="mt-2 space-y-1 text-sm text-ink-soft">
                     {site.policies.children.map((c) => (
                       <li key={c.age}>
-                        <span className="font-medium text-ink">{c.age}:</span> {c.price}
+                        <span className="font-semibold text-ink">{c.age}:</span> {c.price}
                       </li>
                     ))}
                   </ul>
@@ -656,7 +656,7 @@ export default async function AboutPage() {
                   <p className="mt-2 text-sm text-ink-soft">{site.policies.cancellation}</p>
                   <Link
                     href="/cancellation-policy"
-                    className="mt-3 inline-block text-sm font-medium text-gold-dark underline underline-offset-2 hover:text-ink"
+                    className="mt-3 inline-block text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink"
                   >
                     <T>Read the full Cancellation Policy</T>
                   </Link>

@@ -116,22 +116,22 @@ export function CollaborateForm() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Full name *")}
           <input name="fullName" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Email *")}
           <input type="email" name="email" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Portfolio / previous work")}<input type="url" name="portfolioUrl" placeholder={tr("https://")} className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Portfolio / previous work")}<input type="url" name="portfolioUrl" placeholder={tr("https://")} className={inputClass()} />
         </label>
       </div>
 
       <div className="mt-6">
-        <p className="mb-2 text-sm font-medium text-ink-soft">{tr("Social media accounts *")}</p>
+        <p className="mb-2 text-sm font-semibold text-ink-soft">{tr("Social media accounts *")}</p>
         <div className="flex flex-col gap-3">
           {socials.map((row, i) => (
             <div key={i} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2">
@@ -180,13 +180,13 @@ export function CollaborateForm() {
       </div>
 
       <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Average engagement rate")}<input name="engagementRate" placeholder={tr("e.g. 4-6%")} className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Average engagement rate")}<input name="engagementRate" placeholder={tr("e.g. 4-6%")} className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Audience countries")}<input name="audienceCountries" placeholder={tr("e.g. USA, UK, Germany")} className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Audience countries")}<input name="audienceCountries" placeholder={tr("e.g. USA, UK, Germany")} className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Preferred travel dates")}<input name="travelDates" placeholder={tr("e.g. Flexible, or March 2027")} className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Preferred travel dates")}<input name="travelDates" placeholder={tr("e.g. Flexible, or March 2027")} className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Collaboration type *")}
           <select name="collaborationType" required defaultValue="" className={inputClass()}>
             <option value="" disabled>{tr("Select a type")}</option>
@@ -197,11 +197,11 @@ export function CollaborateForm() {
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">{tr("Tell us about your content and what you have in mind")}<textarea name="message" rows={4} className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">{tr("Tell us about your content and what you have in mind")}<textarea name="message" rows={4} className={inputClass()} />
         </label>
       </div>
 
-      {errorMessage && <p className="mt-4 text-sm font-medium text-terracotta">{errorMessage}</p>}
+      {errorMessage && <p className="mt-4 text-sm font-semibold text-terracotta">{errorMessage}</p>}
 
       <button
         type="submit"

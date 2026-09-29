@@ -173,7 +173,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
               </div>
             ))}
           </div>
-          <p className="mt-2 text-xs font-medium text-ink-soft/85">
+          <p className="mt-2 text-xs font-semibold text-ink-soft/85">
             Step {step + 1} of {STEPS.length} — {STEPS[step]}
           </p>
         </div>
@@ -333,7 +333,7 @@ const inputClass = "rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-i
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+    <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
       {label}
       {children}
     </label>
@@ -395,7 +395,7 @@ function ReviewStep({
             implying that sending the request accepts it. */}
         <p className="mt-2 text-xs text-ink-soft">
           {tr("Sending this request is free and commits you to nothing. Once you pay a deposit, our Cancellation Policy applies — deposits and payments are non-refundable.")}{" "}
-          <Link href="/cancellation-policy" className="font-medium text-ink underline underline-offset-2">
+          <Link href="/cancellation-policy" className="font-semibold text-ink underline underline-offset-2">
             {tr("Read it before you pay")}
           </Link>
           .
@@ -437,11 +437,11 @@ function Confirmation({
 
           {form.tripStartDate && (
             <p className="mt-4 text-sm text-ink-soft">
-              Trip start: <span className="font-medium text-ink">{new Date(form.tripStartDate).toLocaleDateString()}</span>
+              Trip start: <span className="font-semibold text-ink">{new Date(form.tripStartDate).toLocaleDateString()}</span>
             </p>
           )}
           <p className="mt-1 text-sm text-ink-soft">
-            Travelers: <span className="font-medium text-ink">{form.travelersAdults} adult{form.travelersAdults === 1 ? "" : "s"}{form.travelersChildren > 0 ? `, ${form.travelersChildren} child${form.travelersChildren === 1 ? "" : "ren"}` : ""}</span>
+            Travelers: <span className="font-semibold text-ink">{form.travelersAdults} adult{form.travelersAdults === 1 ? "" : "s"}{form.travelersChildren > 0 ? `, ${form.travelersChildren} child${form.travelersChildren === 1 ? "" : "ren"}` : ""}</span>
           </p>
 
           <p className="mt-4 border-t border-black/5 pt-4 text-sm text-ink-soft">

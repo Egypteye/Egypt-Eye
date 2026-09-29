@@ -127,7 +127,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
 
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
-            <label htmlFor={`${uid}-name`} className="mb-1.5 block text-sm font-medium text-ink">
+            <label htmlFor={`${uid}-name`} className="mb-1.5 block text-sm font-semibold text-ink">
               {tr("Your name")}
             </label>
             <input
@@ -141,7 +141,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
             />
           </div>
           <div>
-            <label htmlFor={`${uid}-email`} className="mb-1.5 block text-sm font-medium text-ink">
+            <label htmlFor={`${uid}-email`} className="mb-1.5 block text-sm font-semibold text-ink">
               {tr("Your email")}
             </label>
             <input
@@ -158,7 +158,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
         </div>
 
         <div>
-          <label htmlFor={`${uid}-product`} className="mb-1.5 block text-sm font-medium text-ink">
+          <label htmlFor={`${uid}-product`} className="mb-1.5 block text-sm font-semibold text-ink">
             {tr("What did you do with us?")}
           </label>
           <select id={`${uid}-product`} name="product" required defaultValue="" className={fieldClass}>
@@ -179,7 +179,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
         </div>
 
         <fieldset>
-          <legend className="mb-1.5 text-sm font-medium text-ink">{tr("Your rating")}</legend>
+          <legend className="mb-1.5 text-sm font-semibold text-ink">{tr("Your rating")}</legend>
           {/* Radios rather than buttons: a real radiogroup, so it arrives
               with the form data, works without JavaScript and is reachable
               with the arrow keys. The stars are the label, not the input. */}
@@ -224,7 +224,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
         </fieldset>
 
         <div>
-          <label htmlFor={`${uid}-body`} className="mb-1.5 block text-sm font-medium text-ink">
+          <label htmlFor={`${uid}-body`} className="mb-1.5 block text-sm font-semibold text-ink">
             {tr("Your review")}
           </label>
           <textarea

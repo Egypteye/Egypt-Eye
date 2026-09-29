@@ -27,7 +27,7 @@ export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
               setActiveDay(i);
               setOpenItem(0);
             }}
-            className={`rounded-full px-5 py-2.5 text-sm font-medium transition ${
+            className={`rounded-full px-5 py-2.5 text-sm font-semibold transition ${
               i === activeDay ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
             }`}
           >

@@ -49,12 +49,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-light">Egypt Eye Admin</p>
           <nav className="flex flex-wrap gap-4">
             {nav.map((item) => (
-              <Link key={item.href} href={item.href} className="text-sm font-medium text-cream/70 hover:text-cream">
+              <Link key={item.href} href={item.href} className="text-sm font-semibold text-cream/70 hover:text-cream">
                 {item.label}
               </Link>
             ))}
           </nav>
-          <Link href="/account" className="ml-auto text-sm font-medium text-cream/50 hover:text-cream">
+          <Link href="/account" className="ml-auto text-sm font-semibold text-cream/50 hover:text-cream">
             ← Back to site
           </Link>
         </Container>

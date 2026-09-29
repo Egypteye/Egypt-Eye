@@ -101,7 +101,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
             <Link
               key={item.href}
               href={to(item.href)}
-              className={`whitespace-nowrap text-[13px] font-medium transition ${
+              className={`whitespace-nowrap text-[13px] font-semibold transition ${
                 item.label === "Signature Experiences"
                   ? "text-gold-dark hover:text-gold"
                   : "text-ink-soft hover:text-gold-dark"
@@ -117,7 +117,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                 type="button"
                 onClick={() => setMoreOpen((v) => !v)}
                 aria-expanded={moreOpen}
-                className="flex items-center gap-1 whitespace-nowrap text-[13px] font-medium text-ink-soft transition hover:text-gold-dark"
+                className="flex items-center gap-1 whitespace-nowrap text-[13px] font-semibold text-ink-soft transition hover:text-gold-dark"
               >
                 {dict.nav.more}
                 <svg
@@ -141,7 +141,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                     key={item.href}
                     href={to(item.href)}
                     onClick={() => setMoreOpen(false)}
-                    className="block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium text-ink-soft transition hover:bg-sand-dim hover:text-gold-dark"
+                    className="block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-semibold text-ink-soft transition hover:bg-sand-dim hover:text-gold-dark"
                   >
                     {label(item)}
                   </Link>
@@ -215,7 +215,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               <Link
                 key={item.href}
                 href={to(item.href)}
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-ink-soft hover:bg-sand-dim"
+                className="rounded-lg px-3 py-2.5 text-sm font-semibold text-ink-soft hover:bg-sand-dim"
                 onClick={() => setOpen(false)}
               >
                 {label(item)}
@@ -242,7 +242,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
             </Link>
             <Link
               href={to(currentUser ? "/account" : "/account/login")}
-              className="mt-1 rounded-lg px-3 py-2.5 text-center text-sm font-medium text-ink-soft hover:bg-sand-dim"
+              className="mt-1 rounded-lg px-3 py-2.5 text-center text-sm font-semibold text-ink-soft hover:bg-sand-dim"
               onClick={() => setOpen(false)}
             >
               {currentUser ? `${tr("My Account")}${currentUser.firstName ? ` (${currentUser.firstName})` : ""}` : tr("Log In / Create Account")}

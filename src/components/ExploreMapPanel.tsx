@@ -51,7 +51,7 @@ export function ExploreMapPanel({
               type="button"
               onClick={() => setMood((cur) => (cur === m.value ? null : m.value))}
               aria-pressed={mood === m.value}
-              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                 mood === m.value ? m.active : "border-black/10 text-ink-soft hover:border-black/25 hover:text-ink"
               }`}
             >
@@ -75,7 +75,7 @@ export function ExploreMapPanel({
               key={hub.slug}
               href={`/explore-egypt/${hub.slug}`}
               scroll={false}
-              className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                 isSelected
                   ? "border-gold-dark bg-gold/15 text-gold-dark"
                   : matchesMood && mood

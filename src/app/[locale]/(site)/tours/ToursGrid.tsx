@@ -194,7 +194,7 @@ export function ToursGrid({
               <button
                 key={type.value}
                 onClick={() => setFilter(type.value)}
-                className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
+                className={`rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${
                   filter === type.value ? "bg-ink text-cream" : "text-ink-soft hover:bg-sand-dim"
                 }`}
               >
@@ -210,7 +210,7 @@ export function ToursGrid({
               <button
                 key={d.value}
                 onClick={() => setDuration(d.value)}
-                className={`rounded-lg px-3 py-2 text-left text-sm font-medium transition ${
+                className={`rounded-lg px-3 py-2 text-left text-sm font-semibold transition ${
                   duration === d.value ? "bg-ink text-cream" : "text-ink-soft hover:bg-sand-dim"
                 }`}
               >
@@ -244,7 +244,7 @@ export function ToursGrid({
               <button
                 key={s}
                 onClick={() => setStyle(style === s ? null : s)}
-                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                   style === s
                     ? "border-gold-dark bg-gold/15 text-gold-dark"
                     : "border-black/10 text-ink-soft hover:border-gold/40"

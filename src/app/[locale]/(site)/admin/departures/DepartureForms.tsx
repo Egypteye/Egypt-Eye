@@ -18,14 +18,14 @@ import type { Departure } from "@/lib/departureModel";
 
 const input =
   "w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-gold";
-const label = "mb-1 block text-xs font-medium text-ink-soft";
+const label = "mb-1 block text-xs font-semibold text-ink-soft";
 
 function Message({ result }: { result: ActionResult | null }) {
   if (!result) return null;
   return result.ok ? (
-    <p className="mt-2 text-sm font-medium text-emerald-700">Saved.</p>
+    <p className="mt-2 text-sm font-semibold text-emerald-700">Saved.</p>
   ) : (
-    <p className="mt-2 text-sm font-medium text-rose-700">{result.error}</p>
+    <p className="mt-2 text-sm font-semibold text-rose-700">{result.error}</p>
   );
 }
 
@@ -169,7 +169,7 @@ export function DepartureActions({ departure }: { departure: Departure }) {
       if (r.ok) setOpen(null);
     });
 
-  const btn = "rounded-full border border-black/10 px-3 py-1 text-xs font-medium text-ink transition hover:border-gold";
+  const btn = "rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-ink transition hover:border-gold";
 
   return (
     <div className="mt-2">

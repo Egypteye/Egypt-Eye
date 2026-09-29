@@ -111,9 +111,9 @@ export default async function TourDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
       <section className="relative">
         <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" priority sizes="100vw" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20" />
         <Container className="relative flex min-h-[54vh] flex-col justify-end gap-4 pb-14 pt-32">
-          <nav aria-label={ui["Breadcrumb"]} className="flex items-center gap-1.5 text-xs font-medium text-cream/60">
+          <nav aria-label={ui["Breadcrumb"]} className="flex items-center gap-1.5 text-xs font-semibold text-cream/60">
             <Link href="/" className="transition hover:text-cream"><T>Home</T></Link>
             <span aria-hidden="true">›</span>
             <Link href="/tours" className="transition hover:text-cream"><T>Tours</T></Link>
@@ -254,7 +254,7 @@ export default async function TourDetailPage({
                     <Link
                       key={e.slug}
                       href={`/experiences/${e.slug}`}
-                      className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium text-ink-soft transition hover:border-gold/40 hover:text-ink"
+                      className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink"
                     >
                       {e.title} →
                     </Link>

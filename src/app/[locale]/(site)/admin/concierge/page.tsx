@@ -44,7 +44,7 @@ export default async function AdminConciergePage() {
                 <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
                   {r.profiles?.first_name ?? r.profiles?.email} {r.reservations?.reference && `· ${r.reservations.reference}`}
                 </p>
-                <p className="mt-1 text-sm font-medium text-ink">{r.question}</p>
+                <p className="mt-1 text-sm font-semibold text-ink">{r.question}</p>
                 {r.answer && <p className="mt-1 text-sm text-ink-soft/85">{r.answer}</p>}
               </div>
               <span

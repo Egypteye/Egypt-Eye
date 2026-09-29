@@ -219,7 +219,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {visitedHubs.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Destinations")}<span className="text-sm font-sans font-normal text-ink-soft/85">({visitedHubs.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Destinations")}<span className="text-sm font-sans font-medium text-ink-soft/85">({visitedHubs.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {visitedHubs.map((hub) => (
@@ -244,7 +244,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                               ×
                             </button>
                           ) : (
-                            <span className="shrink-0 text-xs uppercase tracking-wide text-ink-soft/85">{tr("via selection")}</span>
+                            <span className="shrink-0 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{tr("via selection")}</span>
                           )}
                         </div>
                       ))}
@@ -254,7 +254,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {details && details.tours.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Tours")}<span className="text-sm font-sans font-normal text-ink-soft/85">({details.tours.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Tours")}<span className="text-sm font-sans font-medium text-ink-soft/85">({details.tours.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.tours.map((tour) => (
@@ -276,7 +276,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {details && details.experiences.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Experiences")}<span className="text-sm font-sans font-normal text-ink-soft/85">({details.experiences.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Experiences")}<span className="text-sm font-sans font-medium text-ink-soft/85">({details.experiences.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.experiences.map((experience) => (
@@ -298,7 +298,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {details && details.photoshoots.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Photoshoots")}<span className="text-sm font-sans font-normal text-ink-soft/85">({details.photoshoots.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Photoshoots")}<span className="text-sm font-sans font-medium text-ink-soft/85">({details.photoshoots.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.photoshoots.map((photoshoot) => (

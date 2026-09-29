@@ -71,7 +71,7 @@ export function GuaranteeNote({ departure, className = "" }: { departure: Depart
 
   if (departure.guaranteed) {
     return (
-      <span className={`inline-flex items-center gap-1.5 text-xs font-medium text-emerald-800 ${className}`}>
+      <span className={`inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-800 ${className}`}>
         <svg aria-hidden viewBox="0 0 16 16" className="h-3.5 w-3.5 fill-current">
           <path d="M6.2 11.3 3.5 8.6l.9-.9 1.8 1.8 5.4-5.4.9.9z" />
         </svg>
@@ -82,7 +82,7 @@ export function GuaranteeNote({ departure, className = "" }: { departure: Depart
 
   const n = departure.seatsToGuarantee;
   return (
-    <span className={`text-xs font-medium text-ink-soft ${className}`}>
+    <span className={`text-xs font-semibold text-ink-soft ${className}`}>
       {n === 1
         ? tr("Needs 1 more traveller to run")
         : tr("Needs {n} more travellers to run").replace("{n}", String(n))}

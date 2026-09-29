@@ -93,7 +93,7 @@ export default async function AdminReviewsPage() {
               <li key={`${review.name}-${i}`} className="rounded-xl bg-white/70 px-4 py-2.5">
                 <p className="text-sm font-semibold text-ink">
                   {review.name}{" "}
-                  <span className="font-normal text-ink-soft/85">· {PLATFORM_LABELS[platformOf(review)]}</span>
+                  <span className="font-medium text-ink-soft/85">· {PLATFORM_LABELS[platformOf(review)]}</span>
                 </p>
                 {issues.map((issue) => (
                   <p key={issue} className="text-xs text-amber-900">
@@ -203,7 +203,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-cream p-5">
       <p className="font-display text-2xl font-semibold text-ink">{value}</p>
-      <p className="mt-1 text-xs uppercase tracking-wide text-ink-soft/85">{label}</p>
+      <p className="mt-1 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{label}</p>
     </div>
   );
 }

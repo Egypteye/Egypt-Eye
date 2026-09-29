@@ -29,7 +29,7 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
           {photoshoot.goodFor.slice(0, 3).map((g) => (
             <span
               key={g}
-              className="rounded-full bg-sand-dim px-2.5 py-1 text-xs font-medium text-ink-soft"
+              className="rounded-full bg-sand-dim px-2.5 py-1 text-xs font-semibold text-ink-soft"
             >
               {g}
             </span>

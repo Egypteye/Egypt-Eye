@@ -120,7 +120,7 @@ export function EventCountdown({ event }: { event: EventCountdownData }) {
           <p className="max-w-lg text-sm leading-relaxed text-cream/70">{event.supportingText}</p>
         )}
         {event.timezoneLabel && (
-          <p className="text-xs uppercase tracking-[0.15em] text-cream/60">{event.timezoneLabel}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-cream/60">{event.timezoneLabel}</p>
         )}
       </div>
     </div>

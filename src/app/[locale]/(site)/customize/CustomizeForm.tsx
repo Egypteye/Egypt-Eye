@@ -57,7 +57,7 @@ function ChipGroup({
           type="button"
           key={option}
           onClick={() => onToggle(option)}
-          className={`rounded-full px-3.5 py-2 text-left text-xs font-medium transition ${
+          className={`rounded-full px-3.5 py-2 text-left text-xs font-semibold transition ${
             selected.includes(option)
               ? "bg-gold text-ink"
               : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
@@ -183,7 +183,7 @@ export function CustomizeForm({
             {journeyItems.map((item) => (
               <span
                 key={item.id}
-                className="flex items-center gap-2 rounded-full bg-cream px-3 py-1.5 text-xs font-medium text-ink"
+                className="flex items-center gap-2 rounded-full bg-cream px-3 py-1.5 text-xs font-semibold text-ink"
               >
                 {item.title}
                 <button
@@ -222,7 +222,7 @@ export function CustomizeForm({
         </FormSection>
       ))}
 
-      {errorMessage && <p className="mt-4 text-sm font-medium text-terracotta">{errorMessage}</p>}
+      {errorMessage && <p className="mt-4 text-sm font-semibold text-terracotta">{errorMessage}</p>}
 
       <button
         type="submit"
@@ -292,7 +292,7 @@ function FieldRenderer({
   if (CHIPS_TYPES.has(field.fieldType)) {
     return (
       <div className={widthClass}>
-        <p className="mb-2 text-sm font-medium text-ink-soft">{label}</p>
+        <p className="mb-2 text-sm font-semibold text-ink-soft">{label}</p>
         <ChipGroup
           options={optionsFor(field, destinations, interests, { day: tr("day"), days: tr("days") })}
           selected={selected}
@@ -309,7 +309,7 @@ function FieldRenderer({
   if (field.fieldType === "tel-country") {
     return (
       <div className={widthClass}>
-        <label htmlFor={field.fieldKey} className="text-sm font-medium text-ink-soft">
+        <label htmlFor={field.fieldKey} className="text-sm font-semibold text-ink-soft">
           {label}
         </label>
         <div className="mt-1.5 flex rounded-lg border border-black/10 bg-sand focus-within:border-gold">
@@ -348,7 +348,7 @@ function FieldRenderer({
 
   if (field.fieldType === "textarea") {
     return (
-      <label className={`flex flex-col gap-1.5 text-sm font-medium text-ink-soft ${widthClass}`}>
+      <label className={`flex flex-col gap-1.5 text-sm font-semibold text-ink-soft ${widthClass}`}>
         {label}
         <textarea
           name={field.fieldKey}
@@ -363,7 +363,7 @@ function FieldRenderer({
 
   if (field.fieldType === "select") {
     return (
-      <label className={`flex flex-col gap-1.5 text-sm font-medium text-ink-soft ${widthClass}`}>
+      <label className={`flex flex-col gap-1.5 text-sm font-semibold text-ink-soft ${widthClass}`}>
         {label}
         <select
           name={field.fieldKey}
@@ -383,7 +383,7 @@ function FieldRenderer({
 
   if (field.fieldType === "date") {
     return (
-      <label className={`flex flex-col gap-1.5 text-sm font-medium text-ink-soft ${widthClass}`}>
+      <label className={`flex flex-col gap-1.5 text-sm font-semibold text-ink-soft ${widthClass}`}>
         {label}
         <input
           name={field.fieldKey}
@@ -397,7 +397,7 @@ function FieldRenderer({
   }
 
   return (
-    <label className={`flex flex-col gap-1.5 text-sm font-medium text-ink-soft ${widthClass}`}>
+    <label className={`flex flex-col gap-1.5 text-sm font-semibold text-ink-soft ${widthClass}`}>
       {label}
       <input
         name={field.fieldKey}

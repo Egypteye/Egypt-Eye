@@ -102,29 +102,29 @@ export function TravelAgentForm() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Company / Agency name *")}
           <input name="companyName" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Contact person *")}
           <input name="contactName" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Email *")}
           <input type="email" name="email" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("WhatsApp / Phone *")}
           <input type="tel" name="phone" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Website")}<input type="url" name="website" placeholder={tr("https://")} className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Website")}<input type="url" name="website" placeholder={tr("https://")} className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Country *")}
           <input name="country" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">
           {tr("Services you offer *")}
           <div className="flex flex-wrap gap-2">
             {SERVICE_OPTIONS.map((option) => (
@@ -132,7 +132,7 @@ export function TravelAgentForm() {
                 type="button"
                 key={option}
                 onClick={() => toggleService(option)}
-                className={`rounded-full px-3.5 py-2 text-left text-xs font-medium transition ${
+                className={`rounded-full px-3.5 py-2 text-left text-xs font-semibold transition ${
                   services.includes(option) ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
                 }`}
               >
@@ -141,7 +141,7 @@ export function TravelAgentForm() {
             ))}
           </div>
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">
           {tr("Estimated Egypt bookings per year *")}
           <select name="estimatedBookings" required defaultValue="" className={inputClass()}>
             <option value="" disabled>{tr("Select a range")}</option>
@@ -152,7 +152,7 @@ export function TravelAgentForm() {
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">{tr("Anything else we should know?")}<textarea
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">{tr("Anything else we should know?")}<textarea
             name="message"
             rows={3}
             placeholder={tr("Your target markets, client types, or specific destinations you focus on.")}
@@ -161,7 +161,7 @@ export function TravelAgentForm() {
         </label>
       </div>
 
-      {errorMessage && <p className="mt-4 text-sm font-medium text-terracotta">{errorMessage}</p>}
+      {errorMessage && <p className="mt-4 text-sm font-semibold text-terracotta">{errorMessage}</p>}
 
       <button
         type="submit"

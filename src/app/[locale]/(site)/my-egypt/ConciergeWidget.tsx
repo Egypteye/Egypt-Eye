@@ -82,7 +82,7 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
               </div>
               {m.suggestedRequest && (
                 <div className="rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs text-ink-soft">
-                  <p className="font-medium text-ink">{tr("Would you like me to send this request to the Egypt Eye team?")}</p>
+                  <p className="font-semibold text-ink">{tr("Would you like me to send this request to the Egypt Eye team?")}</p>
                   <p className="mt-1 text-ink-soft">&ldquo;{m.suggestedRequest}&rdquo;</p>
                   {m.requestStatus === "sent" ? (
                     <p className="mt-2 font-semibold text-nile">Sent to Egypt Eye ✓</p>

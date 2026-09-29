@@ -75,7 +75,7 @@ export function HeroSlideshow({
           sizes="100vw"
         />
       ))}
-      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/25" />
+      <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/25" />
 
       <div className="relative flex h-full flex-col items-center justify-center gap-4 px-5 pb-56 pt-24 text-center sm:gap-6 sm:px-8 sm:pb-28 sm:pt-40">
         <div className="mx-auto flex w-full max-w-3xl flex-col items-center">

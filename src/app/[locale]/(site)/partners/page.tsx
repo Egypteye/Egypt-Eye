@@ -72,7 +72,7 @@ export default async function PartnersPage() {
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/50 to-ink/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/65 to-ink/10" />
         <Container className="relative flex min-h-[38vh] flex-col justify-end gap-3 pb-14 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light"><T>Partner With Us</T></p>
           <h1 className="max-w-2xl font-display text-4xl font-semibold text-cream sm:text-5xl"><T>Three Ways to Work With Egypt Eye</T></h1>

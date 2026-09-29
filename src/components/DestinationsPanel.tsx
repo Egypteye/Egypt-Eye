@@ -37,12 +37,16 @@ export async function DestinationsPanel({
               className="absolute inset-0 transition duration-500 group-hover:scale-110"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+            {/* The name and the day count sit directly on the photograph, so
+                the scrim under them is doing the work a background colour
+                would elsewhere. via-black/10 was barely a tint — a pale sky
+                behind the caption left it on light grey. */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
             <div className="relative p-4">
               <p className="font-display text-base font-semibold text-cream sm:text-lg">
                 {d.name}
               </p>
-              <p className="text-xs text-cream/70">{(d.days > 1 ? ui["{n}+ days"] : ui["{n}+ day"]).replace("{n}", String(d.days))}</p>
+              <p className="text-xs font-semibold text-cream/85">{(d.days > 1 ? ui["{n}+ days"] : ui["{n}+ day"]).replace("{n}", String(d.days))}</p>
             </div>
           </Link>
         );

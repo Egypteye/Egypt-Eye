@@ -57,7 +57,7 @@ export default async function AdminNewsletterPage() {
         <h2 className="font-display text-lg font-semibold text-ink">Add a Subscriber</h2>
         <p className="mt-1 text-sm text-ink-soft/85">Adds directly as verified — no confirmation email sent, no discount code minted.</p>
         <form action={addSubscriberManually} className="mt-4 flex flex-wrap items-end gap-3">
-          <label className="flex flex-1 min-w-[200px] flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-1 min-w-[200px] flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Email
             <input
               name="email"
@@ -66,7 +66,7 @@ export default async function AdminNewsletterPage() {
               className="rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold"
             />
           </label>
-          <label className="flex flex-1 min-w-[160px] flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-1 min-w-[160px] flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             First name (optional)
             <input
               name="firstName"
@@ -84,7 +84,7 @@ export default async function AdminNewsletterPage() {
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
+          <thead className="border-b border-black/5 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Name</th>

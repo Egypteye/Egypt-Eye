@@ -37,14 +37,14 @@ export function StoriesGrid({ stories }: { stories: Story[] }) {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setFilter(null)}
-            className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+            className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
               filter === null ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
             }`}>{tr("All Stories")}</button>
           {categories.map((c) => (
             <button
               key={c}
               onClick={() => setFilter(c)}
-              className={`rounded-full px-4 py-2 text-sm font-medium transition ${
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
                 filter === c ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
               }`}
             >

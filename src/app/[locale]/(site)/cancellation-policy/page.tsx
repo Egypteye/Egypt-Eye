@@ -58,7 +58,7 @@ export default async function CancellationPolicyPage() {
 
         <p className="mt-6 text-base leading-relaxed text-ink-soft">{intro}</p>
 
-        <p className="mt-4 text-xs uppercase tracking-[0.2em] text-ink-soft/85">
+        <p className="mt-4 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
           {ui["Last updated"]}{" "}
           <time dateTime={cancellationLastUpdated}>{cancellationLastUpdated}</time>
         </p>
@@ -92,7 +92,7 @@ export default async function CancellationPolicyPage() {
           <div className="rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
             <p className="text-sm text-ink-soft">
               {ui["Questions about a booking? Contact us at"]}{" "}
-              <a href={`mailto:${site.contact.email}`} className="font-medium text-ink underline underline-offset-2">
+              <a href={`mailto:${site.contact.email}`} className="font-semibold text-ink underline underline-offset-2">
                 {site.contact.email}
               </a>
               .

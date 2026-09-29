@@ -61,7 +61,7 @@ export function SearchBar({
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          className="rounded bg-transparent text-sm font-medium text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          className="rounded bg-transparent text-sm font-semibold text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
           {COUNTRIES.map((c) => (
             <option key={c.value} value={c.value}>
@@ -76,7 +76,7 @@ export function SearchBar({
         <select
           value={duration}
           onChange={(e) => setDuration(e.target.value)}
-          className="rounded bg-transparent text-sm font-medium text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          className="rounded bg-transparent text-sm font-semibold text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
           {DURATIONS.map((d) => (
             <option key={d.value} value={d.value}>
@@ -91,7 +91,7 @@ export function SearchBar({
         <select
           value={service}
           onChange={(e) => setService(e.target.value)}
-          className="rounded bg-transparent text-sm font-medium text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          className="rounded bg-transparent text-sm font-semibold text-ink outline-none focus-visible:ring-2 focus-visible:ring-gold"
         >
           {SERVICES.map((s) => (
             <option key={s.value} value={s.value}>

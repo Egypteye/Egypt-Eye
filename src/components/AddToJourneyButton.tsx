@@ -120,7 +120,7 @@ function SuggestionRow({ suggestion }: { suggestion: JourneySuggestion }) {
   return (
     <div className="flex items-center justify-between gap-3 rounded-xl bg-cream/5 px-3 py-2">
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-cream">{suggestion.title}</p>
+        <p className="truncate text-sm font-semibold text-cream">{suggestion.title}</p>
         {suggestion.subtitle && <p className="truncate text-xs text-cream/50">{suggestion.subtitle}</p>}
       </div>
       <button

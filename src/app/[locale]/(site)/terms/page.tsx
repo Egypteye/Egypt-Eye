@@ -78,7 +78,7 @@ export default async function TermsPage() {
               {"href" in s && s.href ? (
                 <p className="mt-2 text-sm text-ink-soft">
                   {s.note}{" "}
-                  <Link href={s.href} className="font-medium text-gold-dark underline underline-offset-2 hover:text-ink">
+                  <Link href={s.href} className="font-semibold text-gold-dark underline underline-offset-2 hover:text-ink">
                     <T>Read the Cancellation Policy</T>
                   </Link>
                 </p>

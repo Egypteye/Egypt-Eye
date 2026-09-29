@@ -83,7 +83,7 @@ export default async function AdminHotelsPage() {
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[560px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
+          <thead className="border-b border-black/5 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Type</th>
@@ -96,7 +96,7 @@ export default async function AdminHotelsPage() {
             {hotels.map((h) => (
               <tr key={h.id} className="border-b border-black/5 last:border-0 hover:bg-sand-dim">
                 <td className="px-4 py-3">
-                  <Link href={`/admin/hotels/${h.id}`} className="font-medium text-ink hover:text-gold-dark">
+                  <Link href={`/admin/hotels/${h.id}`} className="font-semibold text-ink hover:text-gold-dark">
                     {h.name}
                   </Link>
                 </td>

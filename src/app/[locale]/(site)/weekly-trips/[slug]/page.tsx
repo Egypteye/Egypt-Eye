@@ -134,9 +134,9 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20" />
         <Container className="relative flex min-h-[52vh] flex-col justify-end gap-4 pb-14 pt-32">
-          <nav aria-label={ui["Breadcrumb"]} className="flex items-center gap-1.5 text-xs font-medium text-cream/60">
+          <nav aria-label={ui["Breadcrumb"]} className="flex items-center gap-1.5 text-xs font-semibold text-cream/60">
             <Link href={localePath("/weekly-trips", locale)} className="transition hover:text-gold-light">
               {ui["Weekly Trips"]}
             </Link>
@@ -160,13 +160,13 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
               <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
                 {ui["Departs from"]}
               </dt>
-              <dd className="mt-1 font-medium text-ink">{trip.departsFrom}</dd>
+              <dd className="mt-1 font-semibold text-ink">{trip.departsFrom}</dd>
             </div>
             <div>
               <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
                 {ui["Group size"]}
               </dt>
-              <dd className="mt-1 font-medium text-ink">
+              <dd className="mt-1 font-semibold text-ink">
                 {departures[0] ? `Up to ${departures[0].capacity} travellers` : (trip.typicalGroupSize ?? "—")}
               </dd>
             </div>
@@ -175,7 +175,7 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
                   {ui["Season"]}
                 </dt>
-                <dd className="mt-1 font-medium text-ink">{trip.season}</dd>
+                <dd className="mt-1 font-semibold text-ink">{trip.season}</dd>
               </div>
             )}
           </dl>

@@ -49,7 +49,7 @@ function RateTable({ room }: { room: HotelRoom }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-black/5">
       <table className="w-full text-left text-sm">
-        <thead className="bg-sand-dim text-xs uppercase tracking-wide text-ink-soft/85">
+        <thead className="bg-sand-dim text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
           <tr>
             <th className="px-4 py-3"><T>Occupancy</T></th>
             <th className="px-4 py-3"><T>Meal Plan</T></th>
@@ -67,7 +67,7 @@ function RateTable({ room }: { room: HotelRoom }) {
                   {showPrice ? (
                     <span className="text-ink">
                       {formatPrice(rate.price_per_night!)}
-                      <span className="ml-1 text-xs font-normal text-ink-soft/85">/ night</span>
+                      <span className="ml-1 text-xs font-medium text-ink-soft/85">/ night</span>
                     </span>
                   ) : (
                     <span className="text-ink-soft/85"><T>Contact us for latest rate</T></span>
@@ -113,7 +113,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <section className="relative">
         <SmartImage image={hotel.photos[0]} tone="nile" alt={hotel.name} className="absolute inset-0" priority sizes="100vw" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/55 to-ink/15" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/15" />
         <Container className="relative flex min-h-[46vh] flex-col justify-end gap-3 pb-14 pt-32">
           {hotel.deal_headline && (
             <span className="w-fit rounded-full bg-gold px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wide text-ink">
@@ -211,7 +211,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
                       <span className="ml-2 rounded-full bg-gold/15 px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide text-gold-dark"><T>Suite</T></span>
                     )}
                   </h3>
-                  <p className="text-xs uppercase tracking-wide text-ink-soft/85">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
                     {room.view ? `${room.view} · ` : ""}
                     {ui["Up to {count} guests"].replace("{count}", String(room.max_occupancy))}
                   </p>

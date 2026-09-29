@@ -119,59 +119,59 @@ export default async function AdminHotelEditPage({ params }: { params: Promise<{
         <h2 className="font-display text-lg font-semibold text-ink">Details</h2>
         <form action={updateHotel.bind(null, typedHotel.id)} className="mt-4 grid gap-4">
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Name
               <input name="name" defaultValue={typedHotel.name} required className={inputClass} />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Location
               <input name="location" defaultValue={typedHotel.location} required className={inputClass} />
             </label>
           </div>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Property type
             <select name="propertyType" defaultValue={typedHotel.property_type} className={inputClass}>
               <option value="hotel">Hotel</option>
               <option value="apartment">Apartment / Long-Stay (like Spacey)</option>
             </select>
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Short description (shown on the hotel card)
             <input name="shortDescription" defaultValue={typedHotel.short_description} required className={inputClass} />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Full description
             <textarea name="fullDescription" defaultValue={typedHotel.full_description} rows={4} className={inputClass} />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Highlights (one per line)
               <textarea name="highlights" defaultValue={typedHotel.highlights.join("\n")} rows={4} className={inputClass} />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Amenities (one per line)
               <textarea name="amenities" defaultValue={typedHotel.amenities.join("\n")} rows={4} className={inputClass} />
             </label>
           </div>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Photo URLs (one per line — the first is used as the cover photo)
             <textarea name="photos" defaultValue={typedHotel.photos.join("\n")} rows={3} className={inputClass} />
           </label>
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Deal headline (e.g. &ldquo;15% Off + Free Breakfast&rdquo;)
               <input name="dealHeadline" defaultValue={typedHotel.deal_headline ?? ""} className={inputClass} />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Deal description
               <input name="dealDescription" defaultValue={typedHotel.deal_description ?? ""} className={inputClass} />
             </label>
           </div>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Child &amp; family policy
             <textarea name="childFamilyPolicy" defaultValue={typedHotel.child_family_policy ?? ""} rows={2} className={inputClass} />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Special notes
             <textarea name="specialNotes" defaultValue={typedHotel.special_notes ?? ""} rows={2} className={inputClass} />
           </label>
@@ -196,26 +196,26 @@ export default async function AdminHotelEditPage({ params }: { params: Promise<{
         <details className="mt-4 rounded-2xl border border-dashed border-black/15 bg-cream p-6">
           <summary className="cursor-pointer text-sm font-semibold text-gold-dark">+ Add a room type</summary>
           <form action={addRoom.bind(null, typedHotel.id)} className="mt-4 grid gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Room name
               <input name="name" required placeholder="e.g. Deluxe Room" className={inputClass} />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Category
               <select name="roomCategory" defaultValue="standard" className={inputClass}>
                 <option value="standard">Standard</option>
                 <option value="suite">Suite</option>
               </select>
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               View
               <input name="view" placeholder="e.g. Nile View" className={inputClass} />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
               Max occupancy
               <input name="maxOccupancy" type="number" min={1} max={12} defaultValue={2} className={inputClass} />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">
               Description
               <textarea name="description" rows={2} className={inputClass} />
             </label>
@@ -248,26 +248,26 @@ function RoomEditor({ hotelId, room, rates }: { hotelId: string; room: Room; rat
       </div>
 
       <form action={updateRoom.bind(null, hotelId, room.id)} className="mt-4 grid gap-3 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
           Name
           <input name="name" defaultValue={room.name} required className={inputClass} />
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
           Category
           <select name="roomCategory" defaultValue={room.room_category} className={inputClass}>
             <option value="standard">Standard</option>
             <option value="suite">Suite</option>
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
           View
           <input name="view" defaultValue={room.view ?? ""} className={inputClass} />
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
           Max occupancy
           <input name="maxOccupancy" type="number" min={1} max={12} defaultValue={room.max_occupancy} className={inputClass} />
         </label>
-        <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft sm:col-span-2">
+        <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft sm:col-span-2">
           Description
           <textarea name="description" defaultValue={room.description ?? ""} rows={2} className={inputClass} />
         </label>
@@ -331,18 +331,18 @@ function RateEditor({ hotelId, rate }: { hotelId: string; rate: Rate }) {
 function RateFields({ defaultValues }: { defaultValues?: Rate }) {
   return (
     <>
-      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
         Occupancy
         <select name="occupancy" defaultValue={defaultValues?.occupancy ?? "double"} className={inputClass}>
           <option value="single">Single</option>
           <option value="double">Double</option>
         </select>
       </label>
-      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
         Meal plan
         <input name="mealPlan" defaultValue={defaultValues?.meal_plan ?? "Bed & Breakfast"} className={inputClass} />
       </label>
-      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
         Price / night (USD)
         <input
           name="pricePerNight"
@@ -353,11 +353,11 @@ function RateFields({ defaultValues }: { defaultValues?: Rate }) {
           className={inputClass}
         />
       </label>
-      <label className="flex flex-col gap-1.5 text-xs font-medium text-ink-soft">
+      <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
         Rate expires
         <input name="validUntil" type="date" defaultValue={defaultValues?.valid_until ?? ""} className={inputClass} />
       </label>
-      <label className="flex items-center gap-2 self-end pb-2.5 text-xs font-medium text-ink-soft">
+      <label className="flex items-center gap-2 self-end pb-2.5 text-xs font-semibold text-ink-soft">
         <input
           type="checkbox"
           name="contactForRate"

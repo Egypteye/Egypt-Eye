@@ -16,7 +16,7 @@ export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
               onClick={() => setOpen(isOpen ? null : i)}
               className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
             >
-              <span className="font-medium text-ink">{faq.question}</span>
+              <span className="font-semibold text-ink">{faq.question}</span>
               <span
                 className={`shrink-0 text-xl text-gold-dark transition-transform ${
                   isOpen ? "rotate-45" : ""

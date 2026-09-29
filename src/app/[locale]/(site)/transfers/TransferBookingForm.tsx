@@ -224,7 +224,7 @@ export function TransferBookingForm({
 
         {isPrivateDriver ? (
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Pickup area")}<select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Pickup area")}<select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
                 <option value="">{tr("Select an area")}</option>
                 {zoneOptions
                   .filter((z) => !z.isCustom)
@@ -235,17 +235,17 @@ export function TransferBookingForm({
                   ))}
               </select>
             </label>
-            <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Hire length")}<div className="flex flex-wrap gap-2">
+            <div className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Hire length")}<div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => setIsDailyRate(false)}
-                  className={`rounded-full px-3.5 py-2 text-xs font-medium transition ${
+                  className={`rounded-full px-3.5 py-2 text-xs font-semibold transition ${
                     !isDailyRate ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
                   }`}>{tr("By the hour")}</button>
                 <button
                   type="button"
                   onClick={() => setIsDailyRate(true)}
-                  className={`rounded-full px-3.5 py-2 text-xs font-medium transition ${
+                  className={`rounded-full px-3.5 py-2 text-xs font-semibold transition ${
                     isDailyRate ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
                   }`}>{tr("Full day")}</button>
               </div>
@@ -266,14 +266,14 @@ export function TransferBookingForm({
           </div>
         ) : isCustomCategory ? (
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Pickup location")}<input
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Pickup location")}<input
                 value={customFrom}
                 onChange={(e) => setCustomFrom(e.target.value)}
                 placeholder={tr("e.g. Marsa Alam Airport")}
                 className={inputClass()}
               />
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Destination")}<input
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Destination")}<input
                 value={customTo}
                 onChange={(e) => setCustomTo(e.target.value)}
                 placeholder={tr("e.g. Cairo, Downtown Hotel")}
@@ -283,7 +283,7 @@ export function TransferBookingForm({
           </div>
         ) : (
           <div className="grid gap-5 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Pickup location")}<select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Pickup location")}<select value={fromZoneId} onChange={(e) => setFromZoneId(e.target.value)} className={inputClass()}>
                 <option value="">{tr("Select pickup")}</option>
                 {zoneOptions.map((z) => (
                   <option key={z.id} value={z.id}>
@@ -300,7 +300,7 @@ export function TransferBookingForm({
                 />
               )}
             </label>
-            <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Destination")}<select value={toZoneId} onChange={(e) => setToZoneId(e.target.value)} className={inputClass()}>
+            <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Destination")}<select value={toZoneId} onChange={(e) => setToZoneId(e.target.value)} className={inputClass()}>
                 <option value="">{tr("Select destination")}</option>
                 {zoneOptions.map((z) => (
                   <option key={z.id} value={z.id}>
@@ -321,7 +321,7 @@ export function TransferBookingForm({
         )}
 
         <div className="mt-5 grid gap-5 sm:grid-cols-4">
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Date")}<input
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Date")}<input
               type="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -330,11 +330,11 @@ export function TransferBookingForm({
               className={inputClass()}
             />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Time")}<input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass()} />
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Time")}<input type="time" value={time} onChange={(e) => setTime(e.target.value)} className={inputClass()} />
           </label>
-          <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Passengers")}<Stepper value={passengers} onChange={setPassengers} max={40} label={tr("passengers")} />
+          <div className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Passengers")}<Stepper value={passengers} onChange={setPassengers} max={40} label={tr("passengers")} />
           </div>
-          <div className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Luggage")}<Stepper value={luggage} onChange={setLuggage} min={0} max={30} label={tr("luggage")} />
+          <div className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Luggage")}<Stepper value={luggage} onChange={setLuggage} min={0} max={30} label={tr("luggage")} />
           </div>
         </div>
       </div>
@@ -358,14 +358,14 @@ export function TransferBookingForm({
             >
               <p className="text-sm font-semibold text-ink">{v.name}</p>
               <p className="mt-1 text-xs text-ink-soft/85">{v.tagline}</p>
-              <p className="mt-2 text-xs uppercase tracking-wide text-ink-soft/85">
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
                 Up to {v.passengers} pax · {v.luggage} bags
               </p>
             </button>
           ))}
         </div>
         {overCapacity && (
-          <p className="mt-3 text-xs font-medium text-terracotta">
+          <p className="mt-3 text-xs font-semibold text-terracotta">
             {selectedVehicle.name} seats up to {selectedVehicle.passengers} passengers — choose a larger vehicle or reduce your
             passenger count.
           </p>
@@ -385,19 +385,19 @@ export function TransferBookingForm({
           <h3 className="font-display text-lg font-semibold text-ink">{tr("Your details")}</h3>
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Full name *
             <input value={name} onChange={(e) => setName(e.target.value)} required className={inputClass()} />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             Email *
             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required className={inputClass()} />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             WhatsApp / Phone *
             <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required className={inputClass()} />
           </label>
-          <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft sm:col-span-2">{tr("Flight number or other notes")}<textarea
+          <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">{tr("Flight number or other notes")}<textarea
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
@@ -408,7 +408,7 @@ export function TransferBookingForm({
         </div>
       </div>
 
-      {errorMessage && <p className="mb-4 text-sm font-medium text-terracotta">{errorMessage}</p>}
+      {errorMessage && <p className="mb-4 text-sm font-semibold text-terracotta">{errorMessage}</p>}
 
       <button
         type="submit"

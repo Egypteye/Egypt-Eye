@@ -57,7 +57,7 @@ export async function Rating({ rating }: { rating?: RatingType }) {
 
   return (
     <span
-      className="inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft"
+      className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-soft"
       title={ui["Egypt Eye's traveler reviews, collected in the follow-up after every trip and shoot."]}
     >
       <svg

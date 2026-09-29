@@ -116,7 +116,7 @@ export default async function PhotoshootDetailPage({
             {photoshoot.goodFor.map((g) => (
               <span
                 key={g}
-                className="rounded-full bg-sand-dim px-3 py-1.5 text-xs font-medium text-ink-soft"
+                className="rounded-full bg-sand-dim px-3 py-1.5 text-xs font-semibold text-ink-soft"
               >
                 {g}
               </span>

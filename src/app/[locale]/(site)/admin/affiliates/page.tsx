@@ -54,14 +54,14 @@ export default async function AdminAffiliatesPage() {
         {STATUSES.map((s) => (
           <div key={s} className="rounded-2xl border border-black/5 bg-cream p-3 text-center shadow-sm">
             <p className="text-lg font-bold text-ink">{applications.filter((a) => a.status === s).length}</p>
-            <p className="text-xs uppercase tracking-wide text-ink-soft/85">{s}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{s}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[680px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
+          <thead className="border-b border-black/5 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Email</th>
@@ -74,7 +74,7 @@ export default async function AdminAffiliatesPage() {
             {applications.map((a) => (
               <tr key={a.id} className="border-b border-black/5 last:border-0 hover:bg-sand-dim">
                 <td className="px-4 py-3">
-                  <Link href={`/admin/affiliates/${a.id}`} className="font-medium text-ink hover:text-gold-dark">
+                  <Link href={`/admin/affiliates/${a.id}`} className="font-semibold text-ink hover:text-gold-dark">
                     {a.full_name}
                   </Link>
                 </td>

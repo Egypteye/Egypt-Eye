@@ -55,7 +55,7 @@ export function SmartImage({
           sizes={sizes}
         />
         {label && (
-          <span className="absolute bottom-3 left-3 rounded-full bg-black/30 px-3 py-1 text-xs font-medium tracking-wide text-white/90 backdrop-blur-sm">
+          <span className="absolute bottom-3 left-3 rounded-full bg-black/30 px-3 py-1 text-xs font-semibold tracking-wide text-white/90 backdrop-blur-sm">
             {label}
           </span>
         )}

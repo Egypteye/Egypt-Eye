@@ -104,21 +104,21 @@ export function AffiliateForm() {
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Full name *")}
           <input name="fullName" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Email *")}
           <input type="email" name="email" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("Website, blog, or main platform *")}
           <input name="websiteOrPlatform" placeholder={tr("https:// or @handle")} required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Audience size")}<select name="audienceSize" defaultValue="" className={inputClass()}>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Audience size")}<select name="audienceSize" defaultValue="" className={inputClass()}>
             <option value="">{tr("Prefer not to say")}</option>
             {AUDIENCE_SIZES.map((size) => (
               <option key={size} value={size}>
@@ -127,7 +127,7 @@ export function AffiliateForm() {
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Preferred payout method")}<select name="payoutMethod" defaultValue="" className={inputClass()}>
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Preferred payout method")}<select name="payoutMethod" defaultValue="" className={inputClass()}>
             <option value="">{tr("Not sure yet")}</option>
             <option value="PayPal">{tr("PayPal")}</option>
             <option value="Bank Transfer">{tr("Bank Transfer")}</option>
@@ -137,14 +137,14 @@ export function AffiliateForm() {
       </div>
 
       <div className="mt-6">
-        <p className="mb-2 text-sm font-medium text-ink-soft">{tr("How will you promote Egypt Eye? *")}</p>
+        <p className="mb-2 text-sm font-semibold text-ink-soft">{tr("How will you promote Egypt Eye? *")}</p>
         <div className="flex flex-wrap gap-2">
           {PROMOTION_METHODS.map((option) => (
             <button
               type="button"
               key={option}
               onClick={() => toggleMethod(option)}
-              className={`rounded-full px-3.5 py-2 text-left text-xs font-medium transition ${
+              className={`rounded-full px-3.5 py-2 text-left text-xs font-semibold transition ${
                 methods.includes(option) ? "bg-gold text-ink" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
               }`}
             >
@@ -154,7 +154,7 @@ export function AffiliateForm() {
         </div>
       </div>
 
-      <label className="mt-6 flex flex-col gap-1.5 text-sm font-medium text-ink-soft">{tr("Anything else we should know?")}<textarea
+      <label className="mt-6 flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Anything else we should know?")}<textarea
           name="message"
           rows={3}
           placeholder={tr("Past affiliate results, your audience, or how you'd plan to feature Egypt Eye.")}
@@ -162,7 +162,7 @@ export function AffiliateForm() {
         />
       </label>
 
-      {errorMessage && <p className="mt-4 text-sm font-medium text-terracotta">{errorMessage}</p>}
+      {errorMessage && <p className="mt-4 text-sm font-semibold text-terracotta">{errorMessage}</p>}
 
       <button
         type="submit"

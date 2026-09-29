@@ -23,7 +23,7 @@ function PanelSection({
   return (
     <div className="border-t border-black/5 pt-6">
       <h3 className="font-display text-lg font-semibold text-ink">
-        {title} <span className="text-sm font-sans font-normal text-ink-soft/85">({count})</span>
+        {title} <span className="text-sm font-sans font-medium text-ink-soft/85">({count})</span>
       </h3>
       <div className="mt-4 grid gap-5 sm:grid-cols-2">{children}</div>
     </div>

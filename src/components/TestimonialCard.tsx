@@ -123,12 +123,12 @@ export function TestimonialCard({
             {productHref ? (
               <Link
                 href={productHref}
-                className="inline-block rounded-full bg-sand-dim px-3 py-1 text-xs font-medium text-ink-soft transition hover:text-ink"
+                className="inline-block rounded-full bg-sand-dim px-3 py-1 text-xs font-semibold text-ink-soft transition hover:text-ink"
               >
                 {productTitle}
               </Link>
             ) : (
-              <span className="inline-block rounded-full bg-sand-dim px-3 py-1 text-xs font-medium text-ink-soft">
+              <span className="inline-block rounded-full bg-sand-dim px-3 py-1 text-xs font-semibold text-ink-soft">
                 {productTitle}
               </span>
             )}

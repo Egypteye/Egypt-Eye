@@ -215,7 +215,7 @@ export default async function ExperienceDetailPage({
                   <Link
                     key={t.slug}
                     href={`/tours/${t.slug}`}
-                    className="rounded-full border border-black/10 px-4 py-2 text-sm font-medium text-ink-soft transition hover:border-gold/40 hover:text-ink"
+                    className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink"
                   >
                     {t.title} →
                   </Link>

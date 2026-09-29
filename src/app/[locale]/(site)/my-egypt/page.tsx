@@ -99,7 +99,7 @@ export default async function MyEgyptPage() {
         <div className="bg-star-field animate-drift-stars absolute inset-0 opacity-30" aria-hidden="true" />
         <Container className="relative">
           <CountdownBanner tripStartDate={reservation.trip_start_date} tripEndDate={reservation.trip_end_date} />
-          <p className="mt-4 text-center text-xs font-medium uppercase tracking-widest text-cream/50">
+          <p className="mt-4 text-center text-xs font-semibold uppercase tracking-widest text-cream/50">
             Reference {reservation.reference} · {reservation.travelers_adults} adult
             {reservation.travelers_adults === 1 ? "" : "s"}
             {reservation.travelers_children > 0 ? `, ${reservation.travelers_children} child${reservation.travelers_children === 1 ? "" : "ren"}` : ""}
@@ -117,7 +117,7 @@ export default async function MyEgyptPage() {
                 {todayItinerary.items.map((item, i) => (
                   <li key={i} className="rounded-xl bg-sand-dim p-4 text-sm">
                     {item.time && <p className="font-semibold text-gold-dark">{item.time}</p>}
-                    <p className="font-medium text-ink">{item.title}</p>
+                    <p className="font-semibold text-ink">{item.title}</p>
                     {item.location && <p className="text-ink-soft/85">{item.location}</p>}
                     {item.notes && <p className="mt-1 text-ink-soft/85">{item.notes}</p>}
                   </li>
@@ -248,7 +248,7 @@ export default async function MyEgyptPage() {
                 {[...suggestedExperiences, ...suggestedPhotoshoots].map((item) => (
                   <div key={item.slug} className="flex items-center justify-between gap-3 rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-ink">{item.title}</p>
+                      <p className="truncate font-semibold text-ink">{item.title}</p>
                       <p className="text-xs text-ink-soft/85">{item.duration}</p>
                     </div>
                     <AddExperienceButton reservationId={reservation.id} slug={item.slug} title={item.title} />

@@ -85,7 +85,7 @@ export default async function AdminPharaohChallengePage() {
         </dl>
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-[480px] text-left text-sm">
-            <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
+            <thead className="border-b border-black/5 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
               <tr>
                 <th className="py-2 pr-4">Chamber</th>
                 <th className="py-2 pr-4">Cleared</th>
@@ -95,7 +95,7 @@ export default async function AdminPharaohChallengePage() {
             <tbody>
               {stats.tiers.map((t) => (
                 <tr key={t.tierNumber} className="border-b border-black/5 last:border-0">
-                  <td className="py-2 pr-4 font-medium text-ink">
+                  <td className="py-2 pr-4 font-semibold text-ink">
                     {t.tierNumber}. {t.name}
                   </td>
                   <td className="py-2 pr-4 text-ink-soft">{t.completions}</td>
@@ -137,7 +137,7 @@ export default async function AdminPharaohChallengePage() {
           <details key={tier.id} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
             <summary className="cursor-pointer font-display text-lg font-semibold text-ink">
               Chamber {tier.tier_number} — {tier.name}
-              {tier.reward && <span className="ml-3 text-sm font-normal text-gold-dark">{tier.reward.value}% reward</span>}
+              {tier.reward && <span className="ml-3 text-sm font-medium text-gold-dark">{tier.reward.value}% reward</span>}
             </summary>
             <form action={updateTier.bind(null, tier.id)} className="mt-4 grid gap-4 sm:grid-cols-2">
               <Field label="Name">

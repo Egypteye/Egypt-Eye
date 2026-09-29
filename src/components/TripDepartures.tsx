@@ -262,7 +262,7 @@ export function TripDepartures({
 
             <div className="mt-4 space-y-3">
               <div>
-                <label htmlFor="trip-seats" className="mb-1 block text-sm font-medium text-ink">
+                <label htmlFor="trip-seats" className="mb-1 block text-sm font-semibold text-ink">
                   {selected.waitlistable ? tr("Seats wanted") : tr("Seats")}
                 </label>
                 <select

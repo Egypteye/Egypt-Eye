@@ -18,7 +18,13 @@
   --color-gold: #c9a227;
   --color-gold-light: #e4c878;
   --color-gold-dark: #8c6d1f;
-  --color-nile: #5c7a5f;
+  /* Deepened from #5c7a5f. That green was too light to carry text either way
+     round: cream/70 on a solid nile panel measured 3.20:1, and nile as text on
+     cream only 4.69:1 — the Red Sea tile on the homepage was the visible
+     symptom. #415741 is the same hue, one step darker, and fixes both
+     directions at once (cream/70 on it 4.77:1, it on cream 7.75:1). The
+     bg-nile/10 and /20 tint chips are unaffected to the eye. */
+  --color-nile: #415741;
   --color-nile-light: #8faa8f;
   --color-terracotta: #a8562e;
   --color-cream: #fffdf8;
@@ -62,6 +68,22 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  /* The body face is Cormorant Garamond, which is a DISPLAY serif. Its 400 is
+     far lighter than a text serif's 400 — it is drawn for headlines at 40px,
+     where the delicacy is the point, and at 13-16px the same strokes go to
+     hairlines. That is why so much of this site read as "visible but hard to
+     read" even after the sizes and colours were fixed: the problem was stroke
+     weight, not size or contrast.
+
+     500 is the weight this face holds a paragraph at. It is already in the
+     loaded set, so it costs nothing, and it changes no size, colour or layout
+     — only the thickness of the line. Headings are Cinzel and set their own
+     weight, so they are untouched.
+
+     Consequence to know about: font-medium is also 500, so it is now a no-op.
+     Small text that used it has been moved to font-semibold, where the intent
+     ("stronger than body") still lands. */
+  font-weight: 500;
 }
 
 h1, h2, h3, h4, .font-display {

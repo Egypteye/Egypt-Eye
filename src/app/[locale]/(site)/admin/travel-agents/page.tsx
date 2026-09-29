@@ -70,14 +70,14 @@ export default async function AdminTravelAgentsPage() {
         {APPLICATION_STATUSES.map((s) => (
           <div key={s} className="rounded-2xl border border-black/5 bg-cream p-3 text-center shadow-sm">
             <p className="text-lg font-bold text-ink">{applications.filter((a) => a.status === s).length}</p>
-            <p className="text-xs uppercase tracking-wide text-ink-soft/85">{s}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{s}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[680px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
+          <thead className="border-b border-black/5 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Contact</th>
@@ -90,7 +90,7 @@ export default async function AdminTravelAgentsPage() {
             {applications.map((a) => (
               <tr key={a.id} className="border-b border-black/5 last:border-0 hover:bg-sand-dim">
                 <td className="px-4 py-3">
-                  <Link href={`/admin/travel-agents/${a.id}`} className="font-medium text-ink hover:text-gold-dark">
+                  <Link href={`/admin/travel-agents/${a.id}`} className="font-semibold text-ink hover:text-gold-dark">
                     {a.company_name}
                   </Link>
                 </td>
@@ -121,7 +121,7 @@ export default async function AdminTravelAgentsPage() {
       <p className="mt-1 text-sm text-ink-soft/85">Approved agencies, their partner rate, and whether they&rsquo;ve signed in yet.</p>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[560px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
+          <thead className="border-b border-black/5 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Partner Rate</th>
@@ -134,11 +134,11 @@ export default async function AdminTravelAgentsPage() {
               <tr key={agent.email} className="border-b border-black/5 last:border-0 hover:bg-sand-dim">
                 <td className="px-4 py-3">
                   {agent.application_id ? (
-                    <Link href={`/admin/travel-agents/${agent.application_id}`} className="font-medium text-ink hover:text-gold-dark">
+                    <Link href={`/admin/travel-agents/${agent.application_id}`} className="font-semibold text-ink hover:text-gold-dark">
                       {agent.company_name}
                     </Link>
                   ) : (
-                    <span className="font-medium text-ink">{agent.company_name}</span>
+                    <span className="font-semibold text-ink">{agent.company_name}</span>
                   )}
                 </td>
                 <td className="px-4 py-3 text-ink-soft">{agent.partner_discount_percent}%</td>
