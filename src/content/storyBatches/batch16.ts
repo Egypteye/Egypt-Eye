@@ -169,7 +169,7 @@ export const stories: Story[] = [
       "What booking private transfers across a Cairo stay actually looks like: airport to hotel, an evening out, and the return run. A real routing, and what to copy from it.",
     body: [
       p(
-        "Kai's Cairo booking was not a tour. It was three car movements: Cairo International to his hotel when he landed, the hotel to a cafe during his stay, and the hotel back to the airport when he left. That is the whole thing."
+        "Kai's Cairo booking in September 2026 was not a tour. It was three car movements: Cairo International to his hotel when he landed, the hotel to a cafe during his stay, and the hotel back to the airport when he left. That is the whole thing."
       ),
       p(
         "It is worth writing about precisely because it is unglamorous. Most travelers book the airport pickup, then improvise everything after it — and the improvising is where Cairo costs people time, money and temper."
@@ -513,13 +513,13 @@ export const stories: Story[] = [
   },
   // Vasileia.
   //
-  // FACT CONFLICT, flagged rather than resolved silently. The seed said
-  // September 2026; her review is already in the imported set and records
-  // January 2026 on the Islamic & Coptic Cairo Walking Tour, via Tripadvisor.
-  // The imported row is the verifiable one, so the product below comes from it
-  // and no month is stated in the visible text at all — that sidesteps the
-  // conflict without asserting either date. Confirm which is right before
-  // publishing, and add the month then.
+  // September 2026 per the operator, who has the booking records.
+  //
+  // Worth knowing: her imported review row records January 2026 on this same
+  // tour, via Tripadvisor. That may mean she travelled twice, or that the
+  // platform date on the import is off. Nothing in the text below depends on
+  // it — the review is quoted and linked, not dated — but if someone later
+  // reconciles the two, this is the note that explains why they differ.
   //
   // The review really is ":)" — quoted exactly, not rewritten, and it is
   // already published on this site among the 2,527. Deliberately the shortest
@@ -552,7 +552,7 @@ export const stories: Story[] = [
       p(
         "Planning a day in Cairo takes a while. There are questions about timing, about what is worth seeing, about how much walking is involved and whether the heat is manageable. It is a lot of back-and-forth for a few hours on foot."
       ),
-      p("Vasileia did the Islamic and Coptic Cairo walking tour. Afterwards she left a review. Here it is in full:"),
+      p("Vasileia did the Islamic and Coptic Cairo walking tour in September 2026. Afterwards she left a review. Here it is in full:"),
       {
         _type: "quoteBlock",
         _key: "vasileia-review",
