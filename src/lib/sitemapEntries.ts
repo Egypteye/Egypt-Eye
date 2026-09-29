@@ -15,6 +15,8 @@ import { isWithdrawnPath } from "@/content/withdrawnSections";
 // redirects from the same map) — keep them out of the sitemap even where the
 // underlying Sanity document hasn't been removed yet.
 import { REDIRECTED_STORY_SLUGS } from "@/content/redirectedStories";
+import { loadReviewData } from "@/lib/reviewData";
+import { productReviewsPath } from "@/lib/reviewPages";
 import { LOCALES, localePath, type Locale, type LocaleInfo } from "@/i18n/locales";
 import { isLocalePublished } from "@/i18n/readiness";
 
@@ -64,6 +66,12 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
       safeList("destinationHubs", getDestinationHubs),
       safeList("hotels", getEnabledHotelsPublic),
     ]);
+
+  // Products that have reviews of their own. Isolated like the rest: if the
+  // testimonials query fails, the sitemap loses this section and nothing else.
+  const reviewGroups = (
+    await safeList("reviewGroups", async () => (await loadReviewData()).groups)
+  ).map((g) => g.subject);
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: siteUrl, changeFrequency: "weekly", priority: 1 },
@@ -143,6 +151,18 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     priority: 0.8,
   }));
 
+  // Page one of each product's reviews, and only page one. Pages 2+ are
+  // ordinary linked pages with self-referencing canonicals — they are
+  // crawlable and indexable, they just aren't worth submitting: on a site
+  // already sitting on a crawl-budget problem, asking Google to fetch
+  // nineteen more pages of one tour's reviews spends that budget on the
+  // least useful end of the set.
+  const productReviewRoutes: MetadataRoute.Sitemap = reviewGroups.map((subject) => ({
+    url: `${siteUrl}${productReviewsPath(subject)}`,
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }));
+
   const destinationRoutes: MetadataRoute.Sitemap = destinationHubs.map((d) => ({
     url: `${siteUrl}/explore-egypt/${d.slug}`,
     changeFrequency: "monthly",
@@ -166,6 +186,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     ...storyRoutes,
     ...destinationRoutes,
     ...weeklyTripRoutes,
+    ...productReviewRoutes,
   ].filter((entry) => !isWithdrawnPath(entry.url.slice(siteUrl.length) || "/"));
 
   return forLocale(all, locale);

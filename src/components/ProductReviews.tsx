@@ -3,7 +3,8 @@ import type { ReviewTheme, Testimonial } from "@/content/types";
 import { TestimonialCard } from "./TestimonialCard";
 import { reviewMatchesProduct } from "@/lib/reviewAttribution";
 import { pickRelevantReviews } from "@/lib/reviewThemes";
-import { subjectReviewsHref, type ReviewSubjectType } from "@/lib/reviewSubjects";
+import { type ReviewSubjectType } from "@/lib/reviewSubjects";
+import { productReviewsPath } from "@/lib/reviewPages";
 import { getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
 
@@ -71,12 +72,12 @@ export async function ProductReviews({
             </p>
           )}
         </div>
-        {/* Deep-link to this product's group only when it has one. Where
-            these are themed stand-ins, the anchor would match nothing and
-            the visitor would land on the whole wall with no explanation. */}
+        {/* Through to this product's own reviews page only when it has one.
+            Where these are themed stand-ins there is no such page, so the
+            link goes to the hub and says so. */}
         <Link
           href={localePath(
-            aboutThisProduct ? subjectReviewsHref({ type: subject.type, slug: subject.slug }) : "/testimonials",
+            aboutThisProduct ? productReviewsPath({ type: subject.type, slug: subject.slug }) : "/testimonials",
             locale
           )}
           className="text-sm font-semibold text-gold-dark transition hover:translate-x-0.5"

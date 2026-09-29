@@ -38,23 +38,19 @@ export const MEGA_CATEGORIES: { mega: MegaCategory; label: string }[] = [
 ];
 
 /**
- * Where this subject's reviews sit on /testimonials.
+ * A stable key for "this product's reviews".
  *
- * Type-prefixed rather than mega-prefixed because slugs are only unique within
- * a catalogue: the pyramids proposal setup exists as both an experience and a
- * photoshoot, and an unprefixed anchor would send both chips to one group.
+ * Type-prefixed because slugs are only unique within a catalogue: the pyramids
+ * proposal setup exists as both an experience and a photoshoot, and an
+ * unprefixed key would merge the two.
+ *
+ * It was the page anchor when every review lived on one page; now it is the
+ * key the reviews are grouped under, and the URL is built from the same two
+ * parts (see lib/reviewPages). It is still what the old `#reviews-…` deep
+ * links carry, which is how those are mapped forward.
  */
 export function subjectAnchor(subject: Pick<ReviewSubject, "type" | "slug">): string {
   return `reviews-${subject.type}-${subject.slug}`;
-}
-
-export function megaAnchor(mega: MegaCategory): string {
-  return `reviews-${mega}`;
-}
-
-/** The link a product's star chip points at. */
-export function subjectReviewsHref(subject: Pick<ReviewSubject, "type" | "slug">): string {
-  return `/testimonials#${subjectAnchor(subject)}`;
 }
 
 type Catalogues = {

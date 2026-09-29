@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { subjectAnchor, subjectReviewsHref, type ReviewSubjectType } from "@/lib/reviewSubjects";
+import { subjectAnchor, type ReviewSubjectType } from "@/lib/reviewSubjects";
+import { productReviewsPath } from "@/lib/reviewPages";
 import { useLocale } from "@/i18n/LocaleProvider";
 import { localePath } from "@/i18n/locales";
 
@@ -18,11 +19,10 @@ import { localePath } from "@/i18n/locales";
 // site has reviews at all — it is a consistent door into the traveller
 // reviews, not a per-product rating readout.
 //
-// Where it LANDS does vary, and has to. A product with its own reviews deep-
-// links to its own group on /testimonials. A product without any would link
-// to an anchor matching nothing, so it goes to the top of the reviews page
-// instead — same button, same promise ("read what travellers said"), but it
-// never leaves the visitor at a dead hash.
+// Where it LANDS does vary, and has to. A product with its own reviews goes
+// to its own reviews page. A product without any has no such page, so it goes
+// to the reviews hub instead — same button, same promise ("read what
+// travellers said"), but it never leaves the visitor at a dead URL.
 //
 // Which products have their own reviews comes from context (see
 // i18n/LocaleProvider and the root layout), resolved once per request rather
@@ -48,9 +48,9 @@ export function ExperienceRatingLink({
 
   if (!hasReviews) return null;
 
-  // Its own group where it has one, the reviews page itself where it doesn't.
+  // Its own review page where it has one, the hub where it doesn't.
   const hasOwnReviews = reviewedKeys.includes(subjectAnchor({ type, slug }));
-  const href = hasOwnReviews ? subjectReviewsHref({ type, slug }) : "/testimonials";
+  const href = hasOwnReviews ? productReviewsPath({ type, slug }) : "/testimonials";
 
   return (
     <Link

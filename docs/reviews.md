@@ -108,11 +108,65 @@ starts looking like it is manufacturing testimonials.
 | Surface | What it shows |
 |---|---|
 | Homepage | Featured reviews marquee, once reviews exist |
-| `/testimonials` | The full wall, filtered by category, product, **source** and **mentions** |
+| `/testimonials` | The hub: totals, what travellers mention, and each product's three best reviews |
+| `/testimonials/<type>/<slug>` | Every review of one product, 48 to a page |
+| `/testimonials/<type>/<slug>/page/<n>` | Pages two and up |
 | Tour pages | Reviews of that tour, or themed on guides / planning / pickups |
 | Photoshoot pages | Reviews of that shoot, or themed on photography / flying dress / occasions |
 | Experience pages | Reviews of that experience, or themed on guides / planning |
-| Product cards | The star chip, linking to that product's reviews |
+| Product cards | The star chip, linking to that product's review page |
+
+### Why the reviews are split across pages
+
+They used to be one wall: every review in one document, with filters narrowing
+what was visible. At a few dozen that was right — everything was one Ctrl+F
+away. At 2,527 it stopped being. The live page measured **6.3 MB**, and only
+**717 KB** of that was review text. The rest was card markup, carried twice:
+an App Router page embeds the flight payload for its tree alongside the HTML,
+so whatever it renders it also ships as serialised React. That doubling is
+inherent — it is ~60% of the new pages too — so the only lever is how much a
+page renders.
+
+Measured on a production build of the real 2,527:
+
+| | HTML | embedded flight | total |
+|---|---|---|---|
+| Old single wall | 4,048 KB | 2,247 KB | **6,295 KB** |
+| New hub | 61 KB | 90 KB | **150 KB** |
+| A product page (48 reviews) | 96 KB | 144 KB | **240 KB** |
+
+So `src/lib/reviewPages.ts` now decides the layout, and the rules are:
+
+- **Page one is the bare product path**, never `/page/1`. `parseReviewPage`
+  rejects `1`, `01`, `2.0` and anything non-numeric, so one page of reviews
+  never has two URLs.
+- **48 a page** — divides evenly into 2, 3 and 4 columns, and at the observed
+  median review length keeps a page near 150 KB.
+- **Ordered by what a review says, not when it was written.** 43% of the
+  imported reviews are under 200 characters; date order puts those above a
+  paragraph describing the day. Nothing is hidden by this — every review is
+  still on some page — it only decides which page.
+- **A product with no reviews gets no page.** An address promising reviews of
+  something nobody has reviewed is worse than no address.
+- **Everything renders on the server.** No filter state on the product pages,
+  so nothing hydrates and nothing is sent twice.
+
+`check:reviews` asserts the paging is a partition — every review on exactly
+one page, no page over the limit — at several sizes either side of a page
+boundary, because an off-by-one there drops a traveller's review off the site
+silently.
+
+**Old deep links still work.** Before the split, a star chip pointed at
+`/testimonials#reviews-tour-1-day-giza-tour`. A fragment never reaches the
+server, so no redirect rule in `next.config.ts` can catch one — instead
+`LegacyReviewHashRedirect` on the hub reads the hash in the browser and
+forwards it to the product page. Anchors with no page behind them are left
+alone and the visitor stays on the hub.
+
+**The sitemap lists page one only.** Pages 2+ are ordinary linked pages with
+self-referencing canonicals — crawlable and indexable, just not submitted. On
+a site already short of crawl budget, asking Google to fetch nineteen more
+pages of one tour's reviews spends it at the least useful end.
 
 ---
 

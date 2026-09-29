@@ -23,6 +23,18 @@ import {
   toDisplayReview,
 } from "../src/lib/reviewPolicy";
 import { deriveThemes, pickRelevantReviews, specificityScore } from "../src/lib/reviewThemes";
+import {
+  REVIEWS_PER_PAGE,
+  groupReviewsByProduct,
+  isReviewSubjectType,
+  parseReviewPage,
+  productReviewsPagePath,
+  productReviewsPath,
+  reviewPageCount,
+  reviewPageSlice,
+  sortByPull,
+} from "../src/lib/reviewPages";
+import { subjectAnchor, type ReviewEntry, type ReviewSubject } from "../src/lib/reviewSubjects";
 import { normalizeReviewDate, parseCsv, parseReviewInput } from "../src/lib/testimonials/importParse";
 
 const errors: string[] = [];
@@ -210,6 +222,84 @@ ok("blocks are still detected", blocks.format === "blocks");
 ok("a direct review needs no link", blocks.reviews.length === 1);
 
 // ---------------------------------------------------------------------------
+// Paging: every review lands on exactly one page, and one page only.
+//
+// The wall was split across URLs because it had grown to 6.3MB. The risk that
+// comes with paging is silent loss — an off-by-one in the slice drops a
+// traveller's review off the end of the site with nothing to show for it, and
+// no page looks broken. So the arithmetic is asserted rather than trusted.
+// ---------------------------------------------------------------------------
+const pagedSubject: ReviewSubject = {
+  type: "tour",
+  mega: "tours",
+  slug: "1-day-giza-tour",
+  title: "1 Day Giza Tour",
+  href: "/tours/1-day-giza-tour",
+};
+
+ok("page one is the bare path, never /page/1", productReviewsPagePath(pagedSubject, 1) === productReviewsPath(pagedSubject));
+ok("the path is type-prefixed", productReviewsPath(pagedSubject) === "/testimonials/tour/1-day-giza-tour");
+ok("page two is /page/2", productReviewsPagePath(pagedSubject, 2) === "/testimonials/tour/1-day-giza-tour/page/2");
+
+ok("/page/1 is refused, so one page never has two URLs", parseReviewPage("1") === null);
+ok("/page/0 is refused", parseReviewPage("0") === null);
+ok("a padded page number is refused", parseReviewPage("01") === null);
+ok("a decimal page number is refused", parseReviewPage("2.0") === null);
+ok("a non-numeric page is refused", parseReviewPage("last") === null);
+ok("a real page number parses", parseReviewPage("12") === 12);
+
+ok("an empty product still has one page", reviewPageCount(0) === 1);
+ok("a full page is one page", reviewPageCount(REVIEWS_PER_PAGE) === 1);
+ok("one more is two pages", reviewPageCount(REVIEWS_PER_PAGE + 1) === 2);
+
+// The property that matters: paging is a partition. Nothing is dropped and
+// nothing is shown twice, at any size — including the awkward ones either
+// side of a page boundary.
+for (const total of [0, 1, REVIEWS_PER_PAGE - 1, REVIEWS_PER_PAGE, REVIEWS_PER_PAGE + 1, 928]) {
+  const all = Array.from({ length: total }, (_, i) => i);
+  const pages = reviewPageCount(total);
+  const seen = Array.from({ length: pages }, (_, i) => reviewPageSlice(all, i + 1)).flat();
+  ok(`every review appears exactly once across the pages (${total})`, seen.length === total && seen.every((v, i) => v === i));
+  ok(`no page is over the limit (${total})`, Array.from({ length: pages }, (_, i) => reviewPageSlice(all, i + 1)).every((p) => p.length <= REVIEWS_PER_PAGE));
+}
+
+// ---------------------------------------------------------------------------
+// Grouping: a review reaches the page for the product it is about, and the
+// ordering puts the reviews that say something first.
+// ---------------------------------------------------------------------------
+const entry = (quote: string, productKey: string | null, featured = false): ReviewEntry => ({
+  testimonial: review({ quote, featured: featured || undefined }),
+  mega: productKey ? "tours" : null,
+  productKey,
+  productTitle: productKey ? pagedSubject.title : null,
+  productHref: productKey ? pagedSubject.href : null,
+});
+
+const anchor = subjectAnchor(pagedSubject);
+const grouped = groupReviewsByProduct(
+  [
+    entry("Great.", anchor),
+    entry("Our guide collected us at six and the pyramids were empty when we reached the plateau.", anchor),
+    entry("No idea what this was about.", null),
+  ],
+  [pagedSubject]
+);
+ok("reviews group under their product", grouped.groups.length === 1 && grouped.groups[0].entries.length === 2);
+ok("a review naming no product is kept, not dropped", grouped.unattributed.length === 1);
+ok("the review that says more leads", grouped.groups[0].entries[0].testimonial.quote.startsWith("Our guide"));
+
+const featuredFirst = sortByPull([
+  entry("Our guide collected us at six and the pyramids were empty when we reached the plateau.", anchor),
+  entry("Good.", anchor, true),
+]);
+ok("a featured review still outranks a longer one", featuredFirst[0].testimonial.quote === "Good.");
+
+ok("a product with no reviews gets no page", groupReviewsByProduct([], [pagedSubject]).groups.length === 0);
+
+ok("the URL type segment is validated", isReviewSubjectType("tour") && isReviewSubjectType("photoshoot"));
+ok("an invented type segment is rejected", !isReviewSubjectType("tours") && !isReviewSubjectType("../admin"));
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-reviews: ${errors.length} failure(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -217,4 +307,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, theme matching and importing all hold.");
+console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, theme matching, paging and importing all hold.");
