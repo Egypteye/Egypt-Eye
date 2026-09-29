@@ -133,4 +133,111 @@ export const stories: Story[] = [
       }),
     ],
   },
+  // Kai's transfer story.
+  //
+  // DRAFT, deliberately. Everything below is either a fact the operator gave
+  // us directly — Cairo airport to the hotel, the hotel to a cafe, the hotel
+  // back to the airport — or a service fact taken from src/content/transfers.ts.
+  // Nothing about Kai himself is invented: no date, no quote, no hotel name,
+  // no cafe name, no nationality, no reaction, because none of that was
+  // supplied.
+  //
+  // Before flipping status to "published", confirm: (1) Kai has agreed to be
+  // named, (2) the month, (3) the vehicle class, and (4) whether the hotel and
+  // cafe can be named. Any of those turns this from a good explainer into a
+  // genuinely specific story — and the cafe run is the part no competitor
+  // writes about, so it is worth getting.
+  {
+    status: "draft",
+    featured: false,
+    slug: "kai-cairo-transfers-airport-hotel-cafe",
+    title: "Three Movements, One Booking: How Kai Got Around Cairo",
+    category: "Traveler Stories",
+    tags: ["Transfers", "Cairo", "Airport Transfer", "Private Driver"],
+    author: editorialTeam,
+    excerpt:
+      "Kai booked us for three separate movements across one Cairo stay — airport to hotel, hotel to a cafe, hotel back to the airport. It is a small itinerary, and it is the one most travelers get wrong.",
+    imageTone: "giza",
+    // Cairo traffic, shot in Cairo by a Cairo-based photographer — verified
+    // through the Unsplash API rather than recalled, because a credit that
+    // names the wrong photographer is worse than no image.
+    image: unsplashUrl("photo-1713559528444-c52d007022fe"),
+    imageCredit: unsplashCredit(
+      "Abdelrahman Ismail",
+      "https://unsplash.com/photos/a-city-street-filled-with-lots-of-traffic-next-to-tall-buildings-3u-csJAppd4"
+    ),
+    publishedAt: "2026-09-29T00:00:00.000Z",
+    seoTitle: "Getting Around Cairo by Private Transfer — A Real Three-Leg Trip",
+    seoDescription:
+      "What booking private transfers across a Cairo stay actually looks like: airport to hotel, an evening out, and the return run. A real routing, and what to copy from it.",
+    body: [
+      p(
+        "Kai's Cairo booking was not a tour. It was three car movements: Cairo International to his hotel when he landed, the hotel to a cafe during his stay, and the hotel back to the airport when he left. That is the whole thing."
+      ),
+      p(
+        "It is worth writing about precisely because it is unglamorous. Most travelers book the airport pickup, then improvise everything after it — and the improvising is where Cairo costs people time, money and temper."
+      ),
+
+      h2("The arrival leg is the one people book"),
+      p(
+        "Almost everyone books this one, and for the obvious reason: landing in an unfamiliar city at an unknown hour with luggage is the moment you most want someone holding a sign. The part that actually matters is less obvious — the flight is tracked, so the driver's arrival time follows the plane rather than the schedule you booked against."
+      ),
+      p(
+        "That single detail is what separates a booked transfer from a taxi rank. A delayed landing does not strand you, and an early one does not mean waiting."
+      ),
+
+      h2("The middle leg is the one people skip"),
+      p(
+        "Kai's second movement was the hotel to a cafe. This is the leg travelers almost never pre-book, and the one where Cairo is least forgiving. Evening traffic is heavy and unpredictable, ride-hailing pickup points at hotels are often a walk away rather than at the door, and the return trip late at night is the part you are least equipped to negotiate."
+      ),
+      p(
+        "Booking it in advance turns an evening out from a logistics problem into an evening out. The car is at the door at the time you said, and it is the same operator who knows where you are staying."
+      ),
+      callout(
+        "If you are going out in the evening, book the leg back at the same time as the leg there. The trip home at 11pm is the one that goes wrong, not the trip out at 8pm.",
+        { title: "The practical takeaway", tone: "Highlight" }
+      ),
+
+      h2("The departure leg is the one people underestimate"),
+      p(
+        "Getting to Cairo International is not the same problem as getting away from it. Departure timing has to absorb traffic that varies by hours depending on the time of day, plus airport security queues before check-in. A pre-booked departure transfer fixes the pickup time against the flight rather than against a guess."
+      ),
+
+      h2("What to copy from this"),
+      ...bullets([
+        "Book the shape of the stay, not just the airport run. Three known movements booked once beats three separate negotiations.",
+        "Pre-book the evening legs in both directions — the return is the one that strands people.",
+        "Give the flight number, not just the time, so arrival tracking can do its job.",
+        "Match the vehicle to the luggage, not the headcount. A sedan takes three people and two bags; four people with four bags is an SUV.",
+      ]),
+
+      faq(
+        [
+          {
+            question: "Can you book several transfers across one stay?",
+            answer:
+              "Yes — that is exactly what this was. Airport arrival, a movement during the stay, and the departure run, arranged together rather than as three unrelated bookings.",
+          },
+          {
+            question: "Is a private transfer worth it for a short hop like a cafe?",
+            answer:
+              "For the outbound leg it is a convenience. For the late return it is the real value, because that is the trip where you are tired, it is dark, and you are least placed to sort out a car.",
+          },
+          {
+            question: "What happens if a flight is delayed?",
+            answer:
+              "Airport transfers are booked against a flight number and the arrival is tracked, so the pickup follows the aircraft rather than the original timetable.",
+          },
+        ],
+        "Booking transfers across a stay"
+      ),
+
+      cta({
+        title: "Planning your own movements",
+        body: "Tell us the legs — arrival, anything in between, departure — and we will price the whole shape of the stay rather than one airport run.",
+        buttonLabel: "See transfer options",
+        buttonHref: "/transfers",
+      }),
+    ],
+  },
 ];
