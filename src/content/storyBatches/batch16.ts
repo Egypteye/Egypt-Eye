@@ -135,20 +135,17 @@ export const stories: Story[] = [
   },
   // Kai's transfer story.
   //
-  // DRAFT, deliberately. Everything below is either a fact the operator gave
-  // us directly — Cairo airport to the hotel, the hotel to a cafe, the hotel
-  // back to the airport — or a service fact taken from src/content/transfers.ts.
-  // Nothing about Kai himself is invented: no date, no quote, no hotel name,
-  // no cafe name, no nationality, no reaction, because none of that was
-  // supplied.
+  // Everything below is either a fact the operator gave us directly — Cairo
+  // airport to the hotel, the hotel to a cafe, the hotel back to the airport —
+  // or a service fact taken from src/content/transfers.ts. Nothing about Kai
+  // himself is invented: no date, no quote, no hotel name, no cafe name, no
+  // nationality, no reaction, because none of that was supplied.
   //
-  // Before flipping status to "published", confirm: (1) Kai has agreed to be
-  // named, (2) the month, (3) the vehicle class, and (4) whether the hotel and
-  // cafe can be named. Any of those turns this from a good explainer into a
-  // genuinely specific story — and the cafe run is the part no competitor
-  // writes about, so it is worth getting.
+  // Published on the operator's instruction. Still worth adding when known:
+  // the month, the vehicle class, and whether the hotel and cafe can be named.
+  // The cafe run is the part no competitor writes about.
   {
-    status: "draft",
+    status: "published",
     featured: false,
     slug: "kai-cairo-transfers-airport-hotel-cafe",
     title: "Three Movements, One Booking: How Kai Got Around Cairo",
@@ -249,15 +246,16 @@ export const stories: Story[] = [
   // transfers.ts. No quote, review, opinion or reaction is invented, and where
   // an itinerary was not supplied (Zekra) no location is named at all.
   //
-  // Status stays "draft" until, per story: the client agrees to be named,
-  // their review is confirmed publishable, and their photos are cleared. The
-  // cover images below are verified Unsplash placeholders of the locations —
-  // they should be swapped for the client's own Egypt Eye photographs before
-  // publishing, since a stock photo on a personal story reads as the client
-  // when it is not.
+  // Published on the operator's explicit instruction — they own the client
+  // relationships and confirmed the names may run.
+  //
+  // The covers are verified Unsplash photographs of the LOCATIONS, not of the
+  // clients, and every one is deliberately free of people: a stock portrait on
+  // a named person's story reads as that person. Swap each for the client's
+  // own Egypt Eye photographs as they are cleared.
   // ---------------------------------------------------------------------
   {
-    status: "draft",
+    status: "published",
     featured: false,
     slug: "abby-zoobi-midnight-flying-dress-booking",
     title: "The Message Came at Midnight",
@@ -322,7 +320,7 @@ export const stories: Story[] = [
     ],
   },
   {
-    status: "draft",
+    status: "published",
     featured: false,
     slug: "zekra-mahmoud-planning-a-trip-for-someone-else",
     title: "The Person Who Is Not in Any of the Photos",
@@ -386,7 +384,7 @@ export const stories: Story[] = [
     ],
   },
   {
-    status: "draft",
+    status: "published",
     featured: false,
     slug: "dalia-varde-aziz-giza-gem-saqqara-memphis",
     title: "Four Thousand Years in One Day: Dalia and Aziz in Giza, Saqqara and Memphis",
@@ -452,7 +450,7 @@ export const stories: Story[] = [
     ],
   },
   {
-    status: "draft",
+    status: "published",
     featured: false,
     slug: "alessandra-gianluca-travelling-wedding-dress-pyramids",
     title: "Some Wedding Dresses Are Worn Once. Alessandra's Keeps Travelling",
@@ -527,7 +525,7 @@ export const stories: Story[] = [
   // already published on this site among the 2,527. Deliberately the shortest
   // story here: the operator asked not to over-explain it, and they are right.
   {
-    status: "draft",
+    status: "published",
     featured: false,
     slug: "vasileia-the-shortest-review",
     title: "The Shortest Review We Have Ever Received",
@@ -537,10 +535,14 @@ export const stories: Story[] = [
     excerpt:
       "Vasileia took the Islamic and Coptic Cairo walking tour. Her review, in full, was two characters long.",
     imageTone: "nile",
-    image: unsplashUrl("photo-1572252009286-268acec5ca0a"),
+    // Coptic Cairo, which is half of the walk this review is about. The first
+    // choice here was a Sultan Hassan shot that best-travel-agencies-in-egypt
+    // already uses — check:stories caught the clash on publish, which is
+    // exactly what that gate is for.
+    image: unsplashUrl("photo-1680053550458-d048bbf8619b"),
     imageCredit: unsplashCredit(
-      "Omar Elsharawy",
-      "https://unsplash.com/photos/mosque-of-rifai-and-sultan-hassan-cairo-pwMbtwA9LRc"
+      "2H Media",
+      "https://unsplash.com/photos/a-large-building-with-a-cross-on-top-of-it-DEP7pQ3vHPE"
     ),
     publishedAt: "2026-09-29T00:00:00.000Z",
     seoTitle: "The Shortest Review Egypt Eye Has Received",
