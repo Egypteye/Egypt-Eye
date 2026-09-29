@@ -105,7 +105,7 @@ export function TestimonialCard({
         <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
           <p className="text-sm font-semibold text-ink">{testimonial.name}</p>
           {reviewedAt && (
-            <time dateTime={reviewedAt} className="text-xs text-ink-soft/50">
+            <time dateTime={reviewedAt} className="text-xs text-ink-soft/85">
               {new Date(`${reviewedAt}T12:00:00Z`).toLocaleDateString("en-GB", {
                 month: "short",
                 year: "numeric",
@@ -134,7 +134,7 @@ export function TestimonialCard({
             )}
           </p>
         ) : (
-          testimonial.context && <p className="mt-1 text-xs text-ink-soft/60">{testimonial.context}</p>
+          testimonial.context && <p className="mt-1 text-xs text-ink-soft/85">{testimonial.context}</p>
         )}
 
         {showSource && !d.firstParty && d.sourceUrl && !d.truncated && (
@@ -142,7 +142,7 @@ export function TestimonialCard({
             href={d.sourceUrl}
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="mt-2 inline-block text-xs text-ink-soft/60 underline underline-offset-2 transition hover:text-ink"
+            className="mt-2 inline-block text-xs text-ink-soft/85 underline underline-offset-2 transition hover:text-ink"
           >
             View on {d.platformLabel}
           </a>

@@ -28,7 +28,7 @@ export default async function AdminPharaohChallengePage() {
     return (
       <div>
         <h1 className="font-display text-2xl font-semibold text-ink">Pharaoh&rsquo;s Challenge</h1>
-        <p className="mt-3 text-sm text-ink-soft/60">
+        <p className="mt-3 text-sm text-ink-soft/85">
           The campaign hasn&rsquo;t been seeded yet — run migration 0014_pharaoh_challenge.sql.
         </p>
       </div>
@@ -55,7 +55,7 @@ export default async function AdminPharaohChallengePage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-display text-2xl font-semibold text-ink">Pharaoh&rsquo;s Challenge</h1>
-          <p className="mt-1 text-sm text-ink-soft/60">
+          <p className="mt-1 text-sm text-ink-soft/85">
             Rewards are edited from{" "}
             <Link href="/admin/discounts" className="font-semibold text-gold-dark hover:underline">
               Discount Campaigns
@@ -67,7 +67,7 @@ export default async function AdminPharaohChallengePage() {
           <button
             type="submit"
             className={`rounded-full px-4 py-1.5 text-xs font-semibold ${
-              campaign.active ? "bg-nile/10 text-nile" : "bg-black/5 text-ink-soft/60"
+              campaign.active ? "bg-nile/10 text-nile" : "bg-black/5 text-ink-soft/85"
             }`}
           >
             {campaign.active ? "Active — click to pause" : "Paused — click to activate"}
@@ -85,7 +85,7 @@ export default async function AdminPharaohChallengePage() {
         </dl>
         <div className="mt-6 overflow-x-auto">
           <table className="w-full min-w-[480px] text-left text-sm">
-            <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
+            <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
               <tr>
                 <th className="py-2 pr-4">Chamber</th>
                 <th className="py-2 pr-4">Cleared</th>
@@ -98,8 +98,8 @@ export default async function AdminPharaohChallengePage() {
                   <td className="py-2 pr-4 font-medium text-ink">
                     {t.tierNumber}. {t.name}
                   </td>
-                  <td className="py-2 pr-4 text-ink-soft/70">{t.completions}</td>
-                  <td className="py-2 pr-4 text-ink-soft/70">{t.dropOffFromPrevious}</td>
+                  <td className="py-2 pr-4 text-ink-soft">{t.completions}</td>
+                  <td className="py-2 pr-4 text-ink-soft">{t.dropOffFromPrevious}</td>
                 </tr>
               ))}
             </tbody>
@@ -167,7 +167,7 @@ const inputClass = "rounded-lg border border-black/10 bg-sand px-3 py-2 text-sm 
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft/70">
+    <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
       {label}
       {children}
     </label>
@@ -178,7 +178,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
       <p className="text-lg font-bold text-ink">{value}</p>
-      <p className="text-xs text-ink-soft/50">{label}</p>
+      <p className="text-xs text-ink-soft/85">{label}</p>
     </div>
   );
 }

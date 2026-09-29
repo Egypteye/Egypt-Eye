@@ -93,7 +93,7 @@ export function LanguageSwitcher({ tone = "light" }: { tone?: "light" | "dark" }
                 }`}
               >
                 <span>{l.nativeName}</span>
-                <span className="text-xs uppercase tracking-wide text-ink-soft/50">{l.code}</span>
+                <span className="text-xs uppercase tracking-wide text-ink-soft/85">{l.code}</span>
               </a>
             );
           })}

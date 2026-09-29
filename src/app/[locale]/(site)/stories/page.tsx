@@ -39,7 +39,7 @@ export default async function StoriesPage() {
   ]);
 
   if (stories.length === 0) {
-    return <Container className="py-24 text-center text-ink-soft/60">{page.emptyStateText}</Container>;
+    return <Container className="py-24 text-center text-ink-soft/85">{page.emptyStateText}</Container>;
   }
 
   const featured = stories.find((s) => s.featured) ?? stories[0];
@@ -53,7 +53,7 @@ export default async function StoriesPage() {
           <h1 className="mt-3 max-w-2xl text-balance font-display text-4xl font-semibold text-ink sm:text-5xl">
             {page.heroTitle}
           </h1>
-          <p className="mt-4 max-w-xl text-ink-soft/75">{page.heroDescription}</p>
+          <p className="mt-4 max-w-xl text-ink-soft">{page.heroDescription}</p>
         </Container>
       </section>
 

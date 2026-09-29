@@ -72,7 +72,7 @@ export default async function TransfersPage() {
               invalid markup and steal the click that selects the category. */}
           <div className="mx-auto mt-8 flex max-w-4xl flex-wrap items-center gap-x-6 gap-y-2">
             {categories.map((c) => (
-              <span key={c.id} className="inline-flex items-center gap-2 text-sm text-ink-soft/70">
+              <span key={c.id} className="inline-flex items-center gap-2 text-sm text-ink-soft">
                 {c.label}
                 <ExperienceRatingLink type="service" slug={c.id} />
               </span>
@@ -90,7 +90,7 @@ export default async function TransfersPage() {
           <SectionHeading eyebrow={ui["Every Transfer Includes"]} title={ui["What's Taken Care Of"]} align="center" />
           <ul className="mx-auto mt-10 grid max-w-xl gap-3 sm:grid-cols-2">
             {page.included.map((item) => (
-              <li key={item} className="flex items-start gap-2.5 text-sm text-ink-soft/80">
+              <li key={item} className="flex items-start gap-2.5 text-sm text-ink-soft">
                 <span aria-hidden="true" className="mt-1 text-gold-dark">
                   ✓
                 </span>

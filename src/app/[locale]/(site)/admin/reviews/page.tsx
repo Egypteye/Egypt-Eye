@@ -66,7 +66,7 @@ export default async function AdminReviewsPage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-ink">Review Attribution</h1>
-      <p className="mt-2 max-w-2xl text-sm text-ink-soft/70">
+      <p className="mt-2 max-w-2xl text-sm text-ink-soft">
         Reviews whose <strong>Context</strong> names a product show as that product&rsquo;s own rating.
         The rest still count toward the Egypt Eye total shown everywhere else — they&rsquo;re real
         reviews, just not evidence about one tour.
@@ -84,7 +84,7 @@ export default async function AdminReviewsPage() {
           <h2 className="font-display text-lg font-semibold text-ink">
             Needs attention ({flagged.length})
           </h2>
-          <p className="mt-1.5 max-w-2xl text-sm text-ink-soft/75">
+          <p className="mt-1.5 max-w-2xl text-sm text-ink-soft">
             These are live on the site. A third-party review with no link back can&rsquo;t be verified by a
             reader, which is the thing consumer-review rules actually care about.
           </p>
@@ -93,7 +93,7 @@ export default async function AdminReviewsPage() {
               <li key={`${review.name}-${i}`} className="rounded-xl bg-white/70 px-4 py-2.5">
                 <p className="text-sm font-semibold text-ink">
                   {review.name}{" "}
-                  <span className="font-normal text-ink-soft/60">· {PLATFORM_LABELS[platformOf(review)]}</span>
+                  <span className="font-normal text-ink-soft/85">· {PLATFORM_LABELS[platformOf(review)]}</span>
                 </p>
                 {issues.map((issue) => (
                   <p key={issue} className="text-xs text-amber-900">
@@ -114,7 +114,7 @@ export default async function AdminReviewsPage() {
             .map(([p, n]) => (
               <div key={p} className="rounded-2xl border border-black/5 bg-cream p-4">
                 <p className="font-display text-xl font-semibold text-ink">{n.toLocaleString()}</p>
-                <p className="text-xs text-ink-soft/60">{PLATFORM_LABELS[p]}</p>
+                <p className="text-xs text-ink-soft/85">{PLATFORM_LABELS[p]}</p>
               </div>
             ))}
         </div>
@@ -122,12 +122,12 @@ export default async function AdminReviewsPage() {
 
       <section className="mt-10">
         <h2 className="font-display text-lg font-semibold text-ink">What travellers mention</h2>
-        <p className="mt-2 max-w-2xl text-sm text-ink-soft/70">
+        <p className="mt-2 max-w-2xl text-sm text-ink-soft">
           Read from each review&rsquo;s own words. This is what decides which reviews appear on which product
           page — a review with no themes is counted in the total but will never be selected for a page.
         </p>
         {untagged > 0 && (
-          <p className="mt-2 text-sm text-ink-soft/70">
+          <p className="mt-2 text-sm text-ink-soft">
             <strong>{untagged}</strong> review{untagged === 1 ? "" : "s"} mention nothing specific enough to
             place. Usually short ones like &ldquo;great experience&rdquo; — nothing to fix, they just carry
             less weight.
@@ -153,7 +153,7 @@ export default async function AdminReviewsPage() {
           Products showing their own rating ({withOwnReviews.length})
         </h2>
         {withOwnReviews.length === 0 ? (
-          <p className="mt-3 text-sm text-ink-soft/60">
+          <p className="mt-3 text-sm text-ink-soft/85">
             None yet — no review Context exactly matches a product title.
           </p>
         ) : (
@@ -175,19 +175,19 @@ export default async function AdminReviewsPage() {
         <h2 className="font-display text-lg font-semibold text-ink">
           Unmatched contexts ({coverage.topUnmatched.length})
         </h2>
-        <p className="mt-2 max-w-2xl text-sm text-ink-soft/70">
+        <p className="mt-2 max-w-2xl text-sm text-ink-soft">
           Biggest first. To move a group onto a product, either edit its Context in Studio to the
           product&rsquo;s exact title, or set that review&rsquo;s product reference — the reference
           always wins over the text.
         </p>
         {coverage.topUnmatched.length === 0 ? (
-          <p className="mt-3 text-sm text-ink-soft/60">Every review is matched to a product.</p>
+          <p className="mt-3 text-sm text-ink-soft/85">Every review is matched to a product.</p>
         ) : (
           <ul className="mt-4 divide-y divide-black/5 rounded-2xl border border-black/5 bg-cream">
             {coverage.topUnmatched.slice(0, 60).map((row) => (
               <li key={row.context} className="flex items-center justify-between gap-4 px-5 py-3">
                 <span className="min-w-0 truncate text-sm text-ink-soft">{row.context}</span>
-                <span className="shrink-0 text-sm font-semibold tabular-nums text-ink-soft/70">
+                <span className="shrink-0 text-sm font-semibold tabular-nums text-ink-soft">
                   {row.count.toLocaleString()}
                 </span>
               </li>
@@ -203,7 +203,7 @@ function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-cream p-5">
       <p className="font-display text-2xl font-semibold text-ink">{value}</p>
-      <p className="mt-1 text-xs uppercase tracking-wide text-ink-soft/60">{label}</p>
+      <p className="mt-1 text-xs uppercase tracking-wide text-ink-soft/85">{label}</p>
     </div>
   );
 }

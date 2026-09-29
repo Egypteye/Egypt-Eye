@@ -53,7 +53,7 @@ export async function TrustBar({
           </span>
           <div className="min-w-0">
             <p className="font-semibold text-ink">{b.title}</p>
-            <p className="mt-1 text-sm text-ink-soft/70">{b.body}</p>
+            <p className="mt-1 text-sm text-ink-soft">{b.body}</p>
           </div>
         </div>
       ))}

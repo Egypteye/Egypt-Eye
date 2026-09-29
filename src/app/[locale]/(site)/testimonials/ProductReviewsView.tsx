@@ -67,7 +67,7 @@ async function Pagination({
 
       {pageWindow(page, lastPage).map((slot, i) =>
         slot === "gap" ? (
-          <span key={`gap-${i}`} className="px-1 text-ink-soft/40" aria-hidden="true">
+          <span key={`gap-${i}`} className="px-1 text-ink-soft/85" aria-hidden="true">
             …
           </span>
         ) : slot === page ? (
@@ -119,7 +119,7 @@ export async function ProductReviewsView({ group, page }: { group: ProductReview
 
           {/* The count is the claim, so it is stated plainly — and it is the
               real one: every review of this product is on these pages. */}
-          <p className="mt-3 text-ink-soft/75">
+          <p className="mt-3 text-ink-soft">
             {t(s["{count} reviews from travellers who did this"], { count: n(total) })}
             {sources.length > 0 && <> · {sources.join(" · ")}</>}
           </p>
@@ -132,7 +132,7 @@ export async function ProductReviewsView({ group, page }: { group: ProductReview
 
           {/* Ordering is stated rather than assumed: a visitor expecting
               newest-first should be told what they are looking at instead. */}
-          <p className="mt-6 max-w-2xl text-xs text-ink-soft/55">
+          <p className="mt-6 max-w-2xl text-xs text-ink-soft/85">
             <T>Ordered by how much each review says rather than by date, so the most detailed come first. Reviews written on another platform are quoted in part, never rewritten, and linked to the original so you can read them in full there. The names of our guides, hosts and photographers have been removed for their privacy — nothing else about a review has been changed.</T>
           </p>
         </Container>
@@ -140,7 +140,7 @@ export async function ProductReviewsView({ group, page }: { group: ProductReview
 
       <section className="pb-20">
         <Container>
-          <p className="mb-6 text-sm text-ink-soft/60">
+          <p className="mb-6 text-sm text-ink-soft/85">
             {t(s["Showing {from}–{to} of {total}"], {
               from: n(from),
               to: n(from + shown.length - 1),

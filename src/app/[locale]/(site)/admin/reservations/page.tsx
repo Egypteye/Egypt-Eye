@@ -22,7 +22,7 @@ const STATUS_STYLE: Record<string, string> = {
   requested: "bg-gold/15 text-gold-dark",
   confirmed: "bg-nile/10 text-nile",
   in_trip: "bg-nile/20 text-nile",
-  completed: "bg-black/5 text-ink-soft/60",
+  completed: "bg-black/5 text-ink-soft/85",
   cancelled: "bg-terracotta/10 text-terracotta",
 };
 
@@ -44,7 +44,7 @@ export default async function AdminReservationsPage() {
       <h1 className="font-display text-2xl font-semibold text-ink">Reservations</h1>
       <div className="mt-6 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
+          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Reference</th>
               <th className="px-4 py-3">Guest</th>
@@ -64,19 +64,19 @@ export default async function AdminReservationsPage() {
                 </td>
                 <td className="px-4 py-3 text-ink">
                   {r.guest_name}
-                  <span className="block text-xs text-ink-soft/50">{r.guest_email}</span>
+                  <span className="block text-xs text-ink-soft/85">{r.guest_email}</span>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/60">{r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : "—"}</td>
-                <td className="px-4 py-3 text-ink-soft/70">{r.total_estimate !== null ? `$${r.total_estimate.toLocaleString()}` : "Quote"}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : "—"}</td>
+                <td className="px-4 py-3 text-ink-soft">{r.total_estimate !== null ? `$${r.total_estimate.toLocaleString()}` : "Quote"}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${STATUS_STYLE[r.status] ?? ""}`}>{r.status}</span>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/50">{new Date(r.created_at).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{new Date(r.created_at).toLocaleDateString()}</td>
               </tr>
             ))}
             {reservations.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-ink-soft/50">
+                <td colSpan={6} className="px-4 py-8 text-center text-ink-soft/85">
                   No reservations yet.
                 </td>
               </tr>

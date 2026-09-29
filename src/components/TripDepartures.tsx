@@ -109,7 +109,7 @@ export function TripDepartures({
     return (
       <div className="rounded-2xl border border-black/5 bg-cream p-6 text-center">
         <p className="font-display text-lg font-semibold text-ink">{tr("No dates scheduled yet")}</p>
-        <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft/70">
+        <p className="mx-auto mt-2 max-w-md text-sm text-ink-soft">
           {tr("This trip runs seasonally and the next dates aren't up yet. Message us and we'll tell you as soon as they are — or run it privately on a date that suits you.")}
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
@@ -138,29 +138,29 @@ export function TripDepartures({
         <p className="font-display text-xl font-semibold text-ink">
           {result.waitlisted ? tr("You're on the waitlist") : tr("Your seat is held")}
         </p>
-        <p className="mt-2 text-sm text-ink-soft/80">
+        <p className="mt-2 text-sm text-ink-soft">
           {result.waitlisted
             ? tr("This departure is full, so we've added you to the waitlist. No seat is held yet and nothing is owed — we'll be in touch if one opens.")
             : tr("We've emailed your confirmation. One of the team will be in touch shortly to confirm your pickup and take payment — nothing is charged through this website.")}
         </p>
         <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-ink-soft/60">{tr("Reference")}</dt>
+            <dt className="text-ink-soft/85">{tr("Reference")}</dt>
             <dd className="font-semibold text-ink">{result.reference}</dd>
           </div>
           <div>
-            <dt className="text-ink-soft/60">{tr("Seats")}</dt>
+            <dt className="text-ink-soft/85">{tr("Seats")}</dt>
             <dd className="font-semibold text-ink">{result.seats}</dd>
           </div>
           {result.total !== null && (
             <div>
-              <dt className="text-ink-soft/60">{tr("Total")}</dt>
+              <dt className="text-ink-soft/85">{tr("Total")}</dt>
               <dd className="font-semibold text-ink">${result.total.toFixed(2)} USD</dd>
             </div>
           )}
         </dl>
         {!result.waitlisted && !result.guaranteed && (
-          <p className="mt-4 rounded-lg bg-white/70 px-3 py-2 text-xs text-ink-soft/80">
+          <p className="mt-4 rounded-lg bg-white/70 px-3 py-2 text-xs text-ink-soft">
             {tr("This departure needs {n} more to go ahead. We'll confirm as soon as it does — and if it doesn't run, you pay nothing.").replace(
               "{n}",
               String(result.seatsToGuarantee)
@@ -187,7 +187,7 @@ export function TripDepartures({
         <div className="mt-4 space-y-5">
           {months.map(({ month, departures: group }) => (
             <div key={month}>
-              <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft/50">{month}</p>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">{month}</p>
               <ul className="space-y-2">
                 {group.map((d) => {
                   const choosable = d.bookable || d.waitlistable;
@@ -220,7 +220,7 @@ export function TripDepartures({
                           <SeatPill departure={d} />
                         </div>
                         <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
-                          <span className="text-sm text-ink-soft/70">
+                          <span className="text-sm text-ink-soft">
                             ${d.priceUsd} {tr("per seat")}
                             {d.departureTime ? ` · ${d.departureTime}` : ""}
                           </span>
@@ -233,7 +233,7 @@ export function TripDepartures({
                           <p className="mt-2 text-xs text-rose-800">{d.cancellationReason}</p>
                         )}
                         {d.note && d.state !== "cancelled" && (
-                          <p className="mt-2 text-xs text-ink-soft/70">{d.note}</p>
+                          <p className="mt-2 text-xs text-ink-soft">{d.note}</p>
                         )}
                       </button>
                     </li>
@@ -252,13 +252,13 @@ export function TripDepartures({
             onSubmit={(e) => submit(e, false)}
             className="rounded-2xl border border-black/5 bg-cream p-5 shadow-sm"
           >
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft/50">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
               {selected.waitlistable ? tr("Join the waitlist") : tr("Reserve your seats")}
             </p>
             <p className="mt-1 font-display text-lg font-semibold text-ink">
               {formatDateRange(selected.departsOn, selected.returnsOn, locale)}
             </p>
-            <p className="mt-0.5 text-sm text-ink-soft/70">{tripTitle}</p>
+            <p className="mt-0.5 text-sm text-ink-soft">{tripTitle}</p>
 
             <div className="mt-4 space-y-3">
               <div>
@@ -321,7 +321,7 @@ export function TripDepartures({
 
             {!selected.waitlistable && (
               <div className="mt-4 flex items-baseline justify-between border-t border-black/5 pt-3">
-                <span className="text-sm text-ink-soft/70">{tr("Total")}</span>
+                <span className="text-sm text-ink-soft">{tr("Total")}</span>
                 <span className="font-display text-xl font-semibold text-ink">
                   ${(selected.priceUsd * seats).toFixed(2)}
                 </span>
@@ -357,7 +357,7 @@ export function TripDepartures({
 
             {/* Said before the button is pressed, not after — this is the one
                 expectation that would otherwise be a nasty surprise. */}
-            <p className="mt-3 text-center text-xs text-ink-soft/60">
+            <p className="mt-3 text-center text-xs text-ink-soft/85">
               {selected.waitlistable
                 ? tr("No seat is held and nothing is owed until one opens.")
                 : tr("No payment is taken on this site. We'll confirm your seat and arrange payment directly.")}
@@ -366,7 +366,7 @@ export function TripDepartures({
         ) : (
           <div className="rounded-2xl border border-black/5 bg-cream p-6 text-center">
             <p className="font-display text-lg font-semibold text-ink">{tr("No seats available right now")}</p>
-            <p className="mt-2 text-sm text-ink-soft/70">
+            <p className="mt-2 text-sm text-ink-soft">
               {tr("Every listed date is full, closed or cancelled. Message us and we'll tell you when the next one opens.")}
             </p>
             <a

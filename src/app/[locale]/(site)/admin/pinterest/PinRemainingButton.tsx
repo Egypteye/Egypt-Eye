@@ -19,14 +19,14 @@ export function PinRemainingButton({ remainingCount }: { remainingCount: number 
       >
         {isPending ? "Pinning…" : `Pin Remaining Stories (${Math.min(remainingCount, 25)} this click)`}
       </button>
-      <p className="mt-2 text-xs text-ink-soft/50">
+      <p className="mt-2 text-xs text-ink-soft/85">
         Pins up to 25 at a time to stay well under Pinterest&rsquo;s rate limits — click again if {remainingCount} is
         more than that.
       </p>
 
       {result && (
         <div className="mt-3 text-sm">
-          <p className="text-ink-soft/70">
+          <p className="text-ink-soft">
             Pinned {result.pinned}. {result.remaining} still remaining.
           </p>
           {result.errors.length > 0 && (

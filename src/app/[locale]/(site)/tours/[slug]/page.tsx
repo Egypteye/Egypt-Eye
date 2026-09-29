@@ -160,7 +160,7 @@ export default async function TourDetailPage({
       <section className="py-14">
         <Container className="grid gap-12 lg:grid-cols-[1.6fr_1fr]">
           <div>
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-black/5 pb-6 text-sm text-ink-soft/70">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-b border-black/5 pb-6 text-sm text-ink-soft">
               <span>📍 {tour.destinations.map((d) => destinationLabels[d] ?? d).join(", ")}</span>
             </div>
 
@@ -172,7 +172,7 @@ export default async function TourDetailPage({
 
             <div id="details" className="mt-8 scroll-mt-24">
               <h2 className="font-display text-2xl font-semibold text-ink"><T>About this tour</T></h2>
-              <p className="mt-4 leading-relaxed text-ink-soft/80">
+              <p className="mt-4 leading-relaxed text-ink-soft">
                 {tour.description}
               </p>
             </div>
@@ -181,7 +181,7 @@ export default async function TourDetailPage({
               <h2 className="font-display text-2xl font-semibold text-ink"><T>Highlights</T></h2>
               <ul className="mt-4 grid gap-2.5 sm:grid-cols-2">
                 {tour.highlights.map((h) => (
-                  <li key={h} className="flex items-start gap-2 text-sm text-ink-soft/80">
+                  <li key={h} className="flex items-start gap-2 text-sm text-ink-soft">
                     <span className="mt-1 text-gold-dark">✦</span>
                     {h}
                   </li>
@@ -199,7 +199,7 @@ export default async function TourDetailPage({
                         {day.day}
                       </span>
                       <p className="font-semibold text-ink">{day.title}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-ink-soft/75">
+                      <p className="mt-1 text-sm leading-relaxed text-ink-soft">
                         {day.description}
                       </p>
                     </li>
@@ -211,7 +211,7 @@ export default async function TourDetailPage({
             {mapStops.length > 0 && (
               <div className="mt-10">
                 <h2 className="font-display text-2xl font-semibold text-ink"><T>Where You’ll Go</T></h2>
-                <p className="mt-2 text-sm text-ink-soft/70">
+                <p className="mt-2 text-sm text-ink-soft">
                   {mapStops.length === 1
                     ? "The single base for this tour."
                     : "The main stops, in the order you'll visit them."}
@@ -223,7 +223,7 @@ export default async function TourDetailPage({
             <div className="mt-10 grid gap-8 sm:grid-cols-2">
               <div>
                 <h3 className="font-display text-lg font-semibold text-ink"><T>Included</T></h3>
-                <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
+                <ul className="mt-3 space-y-2 text-sm text-ink-soft">
                   {tour.included.map((i) => (
                     <li key={i} className="flex gap-2">
                       <span className="text-nile">✓</span>
@@ -234,7 +234,7 @@ export default async function TourDetailPage({
               </div>
               <div>
                 <h3 className="font-display text-lg font-semibold text-ink"><T>Not Included</T></h3>
-                <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
+                <ul className="mt-3 space-y-2 text-sm text-ink-soft">
                   {tour.excluded.map((i) => (
                     <li key={i} className="flex gap-2">
                       <span className="text-terracotta">✕</span>
@@ -248,7 +248,7 @@ export default async function TourDetailPage({
             {tour.relatedExperiences && tour.relatedExperiences.length > 0 && (
               <div className="mt-10">
                 <h2 className="font-display text-2xl font-semibold text-ink"><T>Make It Yours</T></h2>
-                <p className="mt-2 text-sm text-ink-soft/70"><T>Experiences travelers often add to this itinerary.</T></p>
+                <p className="mt-2 text-sm text-ink-soft"><T>Experiences travelers often add to this itinerary.</T></p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   {tour.relatedExperiences.map((e) => (
                     <Link
@@ -267,7 +267,7 @@ export default async function TourDetailPage({
           {/* Booking sidebar */}
           <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
             <PriceTag price={tour.price} />
-            <p className="mt-1 text-xs text-ink-soft/60"><T>per person, private tour</T></p>
+            <p className="mt-1 text-xs text-ink-soft/85"><T>per person, private tour</T></p>
             <WhatsAppBookButton
               whatsappLink={site.contact.whatsappLink}
               context={{ page: "this tour's page", item: tour.title }}
@@ -290,7 +290,7 @@ export default async function TourDetailPage({
               />
             </div>
 
-            <div className="mt-6 space-y-3 border-t border-black/5 pt-6 text-xs text-ink-soft/60">
+            <div className="mt-6 space-y-3 border-t border-black/5 pt-6 text-xs text-ink-soft/85">
               <p>{site.policies.deposit}</p>
               <p>{site.policies.currency}</p>
               <p>

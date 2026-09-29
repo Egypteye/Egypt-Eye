@@ -40,7 +40,7 @@ export function PuzzleFrame({
 
       <div className="relative mt-8 flex flex-col items-center">{children}</div>
 
-      {hint && <p className="relative mt-6 text-center text-sm text-cream/40">{hint}</p>}
+      {hint && <p className="relative mt-6 text-center text-sm text-cream/60">{hint}</p>}
     </div>
   );
 }

@@ -71,7 +71,7 @@ export default async function HotelDealsPage() {
             ))}
           </div>
           {hotels.length === 0 && (
-            <p className="mt-10 text-center text-sm text-ink-soft/60"><T>No hotel deals are published yet — check back soon.</T></p>
+            <p className="mt-10 text-center text-sm text-ink-soft/85"><T>No hotel deals are published yet — check back soon.</T></p>
           )}
         </Container>
       </section>

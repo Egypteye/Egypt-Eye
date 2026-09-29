@@ -56,7 +56,7 @@ export default async function CustomizePage() {
                   </span>
                   <div>
                     <p className="font-semibold text-ink">{step.title}</p>
-                    <p className="text-sm text-ink-soft/70">{step.body}</p>
+                    <p className="text-sm text-ink-soft">{step.body}</p>
                   </div>
                 </li>
               ))}

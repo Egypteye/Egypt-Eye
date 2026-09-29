@@ -135,7 +135,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
         <Container>
           {isEmpty ? (
             <div className="mx-auto flex max-w-md flex-col items-center gap-5 rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-sm">
-              <p className="text-sm text-ink-soft/70">{tr("Nothing added yet.")}</p>
+              <p className="text-sm text-ink-soft">{tr("Nothing added yet.")}</p>
               <Link
                 href="/explore-egypt"
                 className="rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Start Exploring Egypt")}</Link>
@@ -151,24 +151,24 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                 <div className="rounded-2xl border border-gold/15 bg-cream p-5 shadow-sm">
                   <dl className="flex flex-col gap-3 text-sm">
                     <div className="flex items-center justify-between">
-                      <dt className="text-ink-soft/60">{tr("Destinations")}</dt>
+                      <dt className="text-ink-soft/85">{tr("Destinations")}</dt>
                       <dd className="font-semibold text-ink">{visitedHubs.length || "—"}</dd>
                     </div>
                     <div className="flex items-center justify-between">
-                      <dt className="text-ink-soft/60">{tr("Tours selected")}</dt>
+                      <dt className="text-ink-soft/85">{tr("Tours selected")}</dt>
                       <dd className="font-semibold text-ink">{details?.tours.length ?? 0}</dd>
                     </div>
                     <div className="flex items-center justify-between">
-                      <dt className="text-ink-soft/60">{tr("Experiences selected")}</dt>
+                      <dt className="text-ink-soft/85">{tr("Experiences selected")}</dt>
                       <dd className="font-semibold text-ink">{details?.experiences.length ?? 0}</dd>
                     </div>
                     <div className="flex items-center justify-between">
-                      <dt className="text-ink-soft/60">{tr("Photoshoots selected")}</dt>
+                      <dt className="text-ink-soft/85">{tr("Photoshoots selected")}</dt>
                       <dd className="font-semibold text-ink">{details?.photoshoots.length ?? 0}</dd>
                     </div>
                     {tripDays > 0 && (
                       <div className="flex items-center justify-between border-t border-black/5 pt-3">
-                        <dt className="text-ink-soft/60">{tr("Estimated trip length")}</dt>
+                        <dt className="text-ink-soft/85">{tr("Estimated trip length")}</dt>
                         <dd className="font-semibold text-gold-dark">{tr("{n}+ days").replace("{n}", String(tripDays))}</dd>
                       </div>
                     )}
@@ -187,7 +187,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                 <div className="flex justify-center">
                   {confirmingClear ? (
                     <div className="flex items-center gap-3 text-xs">
-                      <span className="text-ink-soft/60">{tr("Clear everything?")}</span>
+                      <span className="text-ink-soft/85">{tr("Clear everything?")}</span>
                       <button
                         type="button"
                         onClick={() => {
@@ -198,20 +198,20 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                       <button
                         type="button"
                         onClick={() => setConfirmingClear(false)}
-                        className="font-semibold text-ink-soft/60 hover:text-ink">{tr("Cancel")}</button>
+                        className="font-semibold text-ink-soft/85 hover:text-ink">{tr("Cancel")}</button>
                     </div>
                   ) : (
                     <button
                       type="button"
                       onClick={() => setConfirmingClear(true)}
-                      className="text-xs font-semibold text-ink-soft/50 transition hover:text-terracotta">{tr("Clear all selections")}</button>
+                      className="text-xs font-semibold text-ink-soft/85 transition hover:text-terracotta">{tr("Clear all selections")}</button>
                   )}
                 </div>
               </div>
 
               <div className="flex flex-col gap-10">
                 {items.length > 0 && status === "idle" && (
-                  <p className="text-sm text-ink-soft/60">{tr("Loading your journey…")}</p>
+                  <p className="text-sm text-ink-soft/85">{tr("Loading your journey…")}</p>
                 )}
                 {status === "error" && (
                   <p className="text-sm text-terracotta">{tr("Couldn’t load the latest details for your journey — your selections are still saved.")}</p>
@@ -219,7 +219,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {visitedHubs.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Destinations")}<span className="text-sm font-sans font-normal text-ink-soft/50">({visitedHubs.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Destinations")}<span className="text-sm font-sans font-normal text-ink-soft/85">({visitedHubs.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {visitedHubs.map((hub) => (
@@ -232,19 +232,19 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
                             <Link href={`/explore-egypt/${hub.slug}`} className="font-display text-sm font-semibold text-ink hover:text-gold-dark">
                               {hub.name}
                             </Link>
-                            <p className="truncate text-xs text-ink-soft/60">{hub.tagline}</p>
+                            <p className="truncate text-xs text-ink-soft/85">{hub.tagline}</p>
                           </div>
                           {details?.destinations.some((d) => d.slug === hub.slug) ? (
                             <button
                               type="button"
                               onClick={() => removeJourneyItem("destination", hub.slug)}
                               aria-label={tr("Remove {name}").replace("{name}", hub.name)}
-                              className="shrink-0 text-ink-soft/40 hover:text-terracotta"
+                              className="shrink-0 text-ink-soft/85 hover:text-terracotta"
                             >
                               ×
                             </button>
                           ) : (
-                            <span className="shrink-0 text-[10px] uppercase tracking-wide text-ink-soft/40">{tr("via selection")}</span>
+                            <span className="shrink-0 text-xs uppercase tracking-wide text-ink-soft/85">{tr("via selection")}</span>
                           )}
                         </div>
                       ))}
@@ -254,7 +254,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {details && details.tours.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Tours")}<span className="text-sm font-sans font-normal text-ink-soft/50">({details.tours.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Tours")}<span className="text-sm font-sans font-normal text-ink-soft/85">({details.tours.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.tours.map((tour) => (
@@ -276,7 +276,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {details && details.experiences.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Experiences")}<span className="text-sm font-sans font-normal text-ink-soft/50">({details.experiences.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Experiences")}<span className="text-sm font-sans font-normal text-ink-soft/85">({details.experiences.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.experiences.map((experience) => (
@@ -298,7 +298,7 @@ export function MyJourneyClient({ allHubs }: { allHubs: DestinationHub[] }) {
 
                 {details && details.photoshoots.length > 0 && (
                   <div>
-                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Photoshoots")}<span className="text-sm font-sans font-normal text-ink-soft/50">({details.photoshoots.length})</span>
+                    <h3 className="mb-4 font-display text-lg font-semibold text-ink">{tr("Photoshoots")}<span className="text-sm font-sans font-normal text-ink-soft/85">({details.photoshoots.length})</span>
                     </h3>
                     <div className="grid gap-5 sm:grid-cols-2">
                       {details.photoshoots.map((photoshoot) => (

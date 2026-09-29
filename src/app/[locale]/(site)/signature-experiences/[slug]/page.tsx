@@ -123,7 +123,7 @@ export default async function SignatureExperienceDetailPage({
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/60 to-ink/20" />
         <Container className="relative flex min-h-[74vh] flex-col justify-end gap-5 pb-20 pt-32">
           {isComingSoon && (
-            <span className="w-fit rounded-full bg-cream/95 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink"><T>Coming Soon</T></span>
+            <span className="w-fit rounded-full bg-cream/95 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-ink"><T>Coming Soon</T></span>
           )}
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
             {experience.forWhom}
@@ -156,7 +156,7 @@ export default async function SignatureExperienceDetailPage({
         <Container className="mx-auto max-w-3xl">
           <Reveal>
             <SectionHeading title={experience.whoIsThisForTitle} align="center" />
-            <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-relaxed text-ink-soft/80">
+            <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-relaxed text-ink-soft">
               {experience.whoIsThisForBody}
             </p>
           </Reveal>
@@ -168,7 +168,7 @@ export default async function SignatureExperienceDetailPage({
         <Container className="mx-auto max-w-3xl">
           <Reveal>
             <SectionHeading title={experience.whyWeCreatedThisTitle} align="center" />
-            <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-relaxed text-ink-soft/80">
+            <p className="mx-auto mt-6 max-w-2xl text-center text-lg leading-relaxed text-ink-soft">
               {experience.whyWeCreatedThisBody}
             </p>
           </Reveal>
@@ -198,7 +198,7 @@ export default async function SignatureExperienceDetailPage({
                     />
                     <div className="p-6">
                       <h3 className="font-display text-lg font-semibold text-ink">{h.title}</h3>
-                      <p className="mt-2 text-sm leading-relaxed text-ink-soft/75">
+                      <p className="mt-2 text-sm leading-relaxed text-ink-soft">
                         {h.description}
                       </p>
                     </div>

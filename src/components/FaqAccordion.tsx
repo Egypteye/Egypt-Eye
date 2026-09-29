@@ -31,7 +31,7 @@ export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
               }`}
             >
               <div className="overflow-hidden">
-                <p className="px-6 pb-5 text-sm leading-relaxed text-ink-soft/75">
+                <p className="px-6 pb-5 text-sm leading-relaxed text-ink-soft">
                   {faq.answer}
                 </p>
               </div>

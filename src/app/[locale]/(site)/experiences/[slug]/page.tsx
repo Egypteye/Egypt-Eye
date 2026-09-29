@@ -93,7 +93,7 @@ export default async function ExperienceDetailPage({
               require attribution, but crediting the photographer is both
               decent and the only way the source stays traceable later. */}
           {experience.imageCredit?.creator && (
-            <p className="mt-2 text-right text-xs text-ink-soft/45">
+            <p className="mt-2 text-right text-xs text-ink-soft/85">
               Photo:{" "}
               {experience.imageCredit.sourceUrl ? (
                 <a
@@ -118,7 +118,7 @@ export default async function ExperienceDetailPage({
               slug={experience.slug}
             />
             {experience.location && (
-              <span className="inline-flex items-center gap-1.5 text-sm text-ink-soft/70">
+              <span className="inline-flex items-center gap-1.5 text-sm text-ink-soft">
                 <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-gold-dark" fill="currentColor" aria-hidden="true">
                   <path d="M10 2a5.5 5.5 0 0 0-5.5 5.5c0 3.9 4.7 9.7 5 10.05a.65.65 0 0 0 1 0c.3-.35 5-6.15 5-10.05A5.5 5.5 0 0 0 10 2Zm0 7.6a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2Z" />
                 </svg>
@@ -126,7 +126,7 @@ export default async function ExperienceDetailPage({
               </span>
             )}
           </div>
-          <p className="mt-5 leading-relaxed text-ink-soft/80">
+          <p className="mt-5 leading-relaxed text-ink-soft">
             {experience.description}
           </p>
 
@@ -162,7 +162,7 @@ export default async function ExperienceDetailPage({
                     </span>
                     <div className="min-w-0">
                       <p className="font-display text-base font-semibold text-ink">{step.title}</p>
-                      <p className="mt-1.5 text-sm leading-relaxed text-ink-soft/80">{step.description}</p>
+                      <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{step.description}</p>
                     </div>
                   </li>
                 ))}
@@ -172,7 +172,7 @@ export default async function ExperienceDetailPage({
 
           <div className="mt-10">
             <h2 className="font-display text-xl font-semibold text-ink"><T>Included</T></h2>
-            <ul className="mt-3 space-y-2 text-sm text-ink-soft/80">
+            <ul className="mt-3 space-y-2 text-sm text-ink-soft">
               {experience.included.map((i) => (
                 <li key={i} className="flex gap-2">
                   <span className="text-nile">✓</span>
@@ -185,8 +185,8 @@ export default async function ExperienceDetailPage({
           {experience.goodToKnow && experience.goodToKnow.length > 0 && (
             <div className="mt-10 rounded-2xl border border-black/5 bg-sand-dim p-6">
               <h2 className="font-display text-xl font-semibold text-ink"><T>Good to Know</T></h2>
-              <p className="mt-1.5 text-sm text-ink-soft/60"><T>The practical truth about this one — timings, conditions, and what we can’t promise.</T></p>
-              <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-ink-soft/80">
+              <p className="mt-1.5 text-sm text-ink-soft/85"><T>The practical truth about this one — timings, conditions, and what we can’t promise.</T></p>
+              <ul className="mt-4 space-y-2.5 text-sm leading-relaxed text-ink-soft">
                 {experience.goodToKnow.map((item) => (
                   <li key={item} className="flex gap-2.5">
                     <span aria-hidden="true" className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
@@ -209,7 +209,7 @@ export default async function ExperienceDetailPage({
           {experience.relatedTours && experience.relatedTours.length > 0 && (
             <div className="mt-10">
               <h2 className="font-display text-xl font-semibold text-ink"><T>Available On</T></h2>
-              <p className="mt-2 text-sm text-ink-soft/70"><T>Tours this experience pairs naturally with.</T></p>
+              <p className="mt-2 text-sm text-ink-soft"><T>Tours this experience pairs naturally with.</T></p>
               <div className="mt-4 flex flex-wrap gap-3">
                 {experience.relatedTours.map((t) => (
                   <Link
@@ -228,7 +228,7 @@ export default async function ExperienceDetailPage({
 
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
           <PriceTag price={experience.price} />
-          <p className="mt-1 text-xs text-ink-soft/60"><T>per person</T></p>
+          <p className="mt-1 text-xs text-ink-soft/85"><T>per person</T></p>
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}

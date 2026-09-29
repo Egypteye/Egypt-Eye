@@ -169,7 +169,7 @@ export function TransferBookingForm({
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
         <p className="font-display text-2xl font-semibold text-ink">{tr("Request sent")}</p>
-        <p className="mt-3 text-sm text-ink-soft/70">{tr("We’ve received your transfer request for")}<strong>{routeSummary()}</strong>. We&rsquo;ll confirm by email
+        <p className="mt-3 text-sm text-ink-soft">{tr("We’ve received your transfer request for")}<strong>{routeSummary()}</strong>. We&rsquo;ll confirm by email
           shortly{quote.kind === "quote" ? " with your quote" : ""}.
         </p>
       </div>
@@ -207,7 +207,7 @@ export function TransferBookingForm({
               }`}
             >
               <p className="text-sm font-semibold text-ink">{c.label}</p>
-              <p className="mt-1.5 text-xs leading-relaxed text-ink-soft/70">{c.description}</p>
+              <p className="mt-1.5 text-xs leading-relaxed text-ink-soft">{c.description}</p>
             </button>
           ))}
         </div>
@@ -357,8 +357,8 @@ export function TransferBookingForm({
               }`}
             >
               <p className="text-sm font-semibold text-ink">{v.name}</p>
-              <p className="mt-1 text-xs text-ink-soft/60">{v.tagline}</p>
-              <p className="mt-2 text-[11px] uppercase tracking-wide text-ink-soft/50">
+              <p className="mt-1 text-xs text-ink-soft/85">{v.tagline}</p>
+              <p className="mt-2 text-xs uppercase tracking-wide text-ink-soft/85">
                 Up to {v.passengers} pax · {v.luggage} bags
               </p>
             </button>
@@ -418,7 +418,7 @@ export function TransferBookingForm({
         {status === "sending" ? tr("Sending…") : tr("Request This Transfer")}
       </button>
 
-      <p className="mt-3 text-center text-xs text-ink-soft/60">
+      <p className="mt-3 text-center text-xs text-ink-soft/85">
         {tr("Free to ask, no obligation. Deposits become non-refundable once a booking is confirmed —")}{" "}
         <Link href="/cancellation-policy" className="underline underline-offset-2 hover:text-ink">
           {tr("see our Cancellation Policy")}

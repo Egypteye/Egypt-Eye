@@ -103,7 +103,7 @@ export function CollaborateForm() {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
         <p className="font-display text-2xl font-semibold text-ink">{tr("Application received")}</p>
-        <p className="mt-3 text-sm text-ink-soft/70">{tr("Thanks for reaching out — our team reviews every application and will follow up if it’s a fit.")}</p>
+        <p className="mt-3 text-sm text-ink-soft">{tr("Thanks for reaching out — our team reviews every application and will follow up if it’s a fit.")}</p>
       </div>
     );
   }
@@ -163,7 +163,7 @@ export function CollaborateForm() {
                 onClick={() => removeSocialRow(i)}
                 disabled={socials.length === 1}
                 aria-label={tr("Remove this account")}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft/50 transition hover:bg-sand-dim hover:text-terracotta disabled:opacity-30"
+                className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft/85 transition hover:bg-sand-dim hover:text-terracotta disabled:opacity-30"
               >
                 ×
               </button>

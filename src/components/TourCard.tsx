@@ -39,10 +39,10 @@ export function TourCard({
         <h3 className="font-display text-lg font-semibold leading-snug text-ink">
           {tour.title}
         </h3>
-        <p className="line-clamp-2 text-sm text-ink-soft/70">{tour.tagline}</p>
+        <p className="line-clamp-2 text-sm text-ink-soft">{tour.tagline}</p>
         {/* Duration and, where reviews exist, the star that opens them. */}
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 pt-2">
-          <span className="text-sm text-ink-soft/70">{tour.duration}</span>
+          <span className="text-sm text-ink-soft">{tour.duration}</span>
           <ExperienceRatingLink type="tour" slug={tour.slug} />
         </div>
         {tour.physicalLevel && <PhysicalLevelChip level={tour.physicalLevel} />}

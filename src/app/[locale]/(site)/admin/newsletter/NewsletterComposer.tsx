@@ -34,7 +34,7 @@ export function NewsletterComposer({ recipientCount }: { recipientCount: number 
         />
       </label>
       <div className="flex items-center justify-between gap-4">
-        <p className="text-xs text-ink-soft/50">Sends to {recipientCount} verified, subscribed address{recipientCount === 1 ? "" : "es"}.</p>
+        <p className="text-xs text-ink-soft/85">Sends to {recipientCount} verified, subscribed address{recipientCount === 1 ? "" : "es"}.</p>
         <button
           type="submit"
           disabled={pending || recipientCount === 0}

@@ -272,7 +272,7 @@ export function ShareAchievement({
       >
         {busy === "download" ? tr("Preparing image…") : tr("Download my achievement card")}
       </button>
-      <p className="max-w-xs text-center text-sm text-cream/40">
+      <p className="max-w-xs text-center text-sm text-cream/60">
         {tr("For Instagram: tap Share My Achievement (or download the card) and post it to your Story.")}
       </p>
     </div>

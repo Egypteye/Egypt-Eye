@@ -58,13 +58,13 @@ export function PackingChecklist({ reservationId }: { reservationId: string }) {
 
   return (
     <div>
-      <p className="mb-3 text-xs font-semibold text-ink-soft/50">
+      <p className="mb-3 text-xs font-semibold text-ink-soft/85">
         {checkedCount} of {CHECKLIST_ITEMS.length} packed
       </p>
       <ul className="flex flex-col gap-2">
         {CHECKLIST_ITEMS.map((item) => (
           <li key={item}>
-            <label className="flex cursor-pointer items-start gap-2.5 text-sm text-ink-soft/80">
+            <label className="flex cursor-pointer items-start gap-2.5 text-sm text-ink-soft">
               <input
                 type="checkbox"
                 checked={Boolean(checked[item])}

@@ -92,7 +92,7 @@ export default async function PartnersPage() {
               >
                 <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-dark">{p.eyebrow}</p>
                 <p className="mt-3 font-display text-xl font-semibold text-ink">{p.title}</p>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-soft/70">{p.description}</p>
+                <p className="mt-3 flex-1 text-sm leading-relaxed text-ink-soft">{p.description}</p>
                 <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-ink transition group-hover:text-gold-dark">
                   {p.cta}
                   <span aria-hidden="true" className="transition group-hover:translate-x-0.5">

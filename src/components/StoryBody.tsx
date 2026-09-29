@@ -33,7 +33,7 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={src} alt={value.caption || ui["Photo from this story"]} loading="lazy" className="w-full rounded-2xl" />
           {value.caption && (
-            <figcaption className="mt-2 text-center text-sm text-ink-soft/55">{value.caption}</figcaption>
+            <figcaption className="mt-2 text-center text-sm text-ink-soft/85">{value.caption}</figcaption>
           )}
         </figure>
       );
@@ -42,14 +42,14 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
       <blockquote className="my-10 border-l-2 border-gold pl-6">
         <p className="font-display text-2xl leading-snug text-ink sm:text-3xl">&ldquo;{value.quote}&rdquo;</p>
         {value.attribution && (
-          <cite className="mt-3 block text-sm not-italic text-ink-soft/60">— {value.attribution}</cite>
+          <cite className="mt-3 block text-sm not-italic text-ink-soft/85">— {value.attribution}</cite>
         )}
       </blockquote>
     ),
     calloutBlock: ({ value }) => (
       <div className={`my-8 rounded-2xl border p-6 ${CALLOUT_STYLES[value.tone] ?? CALLOUT_STYLES.Info}`}>
         {value.title && <p className="font-display text-lg font-semibold text-ink">{value.title}</p>}
-        <p className="mt-2 text-[15px] leading-relaxed text-ink-soft/80">{value.body}</p>
+        <p className="mt-2 text-[15px] leading-relaxed text-ink-soft">{value.body}</p>
       </div>
     ),
     photoBlock: ({ value }) => (
@@ -57,7 +57,7 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={value.url} alt={value.alt || value.caption || ui["Photo from this story"]} loading="lazy" className="w-full rounded-2xl" />
         {value.caption && (
-          <figcaption className="mt-2 text-center text-sm text-ink-soft/55">{value.caption}</figcaption>
+          <figcaption className="mt-2 text-center text-sm text-ink-soft/85">{value.caption}</figcaption>
         )}
       </figure>
     ),
@@ -83,7 +83,7 @@ function portableTextComponents(ui: Record<string, string>): PortableTextCompone
             />
           </div>
           {value.caption && (
-            <figcaption className="mt-2 text-center text-sm text-ink-soft/55">{value.caption}</figcaption>
+            <figcaption className="mt-2 text-center text-sm text-ink-soft/85">{value.caption}</figcaption>
           )}
         </figure>
       );

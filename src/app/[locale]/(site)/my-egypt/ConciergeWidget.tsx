@@ -83,7 +83,7 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
               {m.suggestedRequest && (
                 <div className="rounded-xl border border-gold/30 bg-gold/10 p-3 text-xs text-ink-soft">
                   <p className="font-medium text-ink">{tr("Would you like me to send this request to the Egypt Eye team?")}</p>
-                  <p className="mt-1 text-ink-soft/70">&ldquo;{m.suggestedRequest}&rdquo;</p>
+                  <p className="mt-1 text-ink-soft">&ldquo;{m.suggestedRequest}&rdquo;</p>
                   {m.requestStatus === "sent" ? (
                     <p className="mt-2 font-semibold text-nile">Sent to Egypt Eye ✓</p>
                   ) : (
@@ -102,7 +102,7 @@ export function ConciergeWidget({ reservationId, whatsappLink }: { reservationId
           </div>
         ))}
         {status === "sending" && (
-          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-sand-dim px-4 py-2.5 text-sm text-ink-soft/50">Thinking…</div>
+          <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-sand-dim px-4 py-2.5 text-sm text-ink-soft/85">Thinking…</div>
         )}
         {status === "error" && (
           <div className="max-w-[90%] rounded-2xl rounded-tl-sm bg-terracotta/10 px-4 py-2.5 text-sm text-terracotta">

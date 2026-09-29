@@ -366,7 +366,7 @@ export function EgyptMap({
                 }`}
               />
               <span
-                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink px-1.5 py-0.5 text-[8.5px] font-medium tracking-wide text-cream/90 backdrop-blur-sm transition sm:text-[9px] ${
+                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink px-2 py-0.5 text-[10px] font-semibold tracking-wide text-cream backdrop-blur-sm transition sm:text-[11px] ${
                   open ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -405,7 +405,7 @@ export function EgyptMap({
                 />
               </span>
               <span
-                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-gold-dark px-2.5 py-1 text-[10px] font-semibold tracking-wide text-cream shadow-md transition sm:text-[11px] ${
+                className={`pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 whitespace-nowrap rounded-full bg-gold-dark px-2.5 py-1 text-[11px] font-semibold tracking-wide text-cream shadow-md transition sm:text-xs ${
                   active ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -456,7 +456,7 @@ export function EgyptMap({
       </div>
 
       {/* Compass */}
-      <div className="pointer-events-none absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full border border-ink/15 bg-cream/85 text-[9px] font-bold text-ink-soft/70 backdrop-blur-sm">
+      <div className="pointer-events-none absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full border border-ink/15 bg-cream/85 text-[11px] font-bold text-ink-soft backdrop-blur-sm">
         N
         <svg viewBox="0 0 24 24" className="absolute h-3.5 w-3.5 -translate-y-[9px]" fill="currentColor" aria-hidden="true">
           <path d="M12 2l4 12-4-3-4 3z" />
@@ -515,14 +515,14 @@ export function EgyptMap({
         <div className="absolute inset-x-0 bottom-0 z-10 animate-fade-up rounded-t-2xl border-t border-ink/10 bg-cream/95 p-4 shadow-[0_-8px_24px_rgba(0,0,0,0.12)] backdrop-blur-sm sm:p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-ink-soft/50">{openCity.region}</p>
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">{openCity.region}</p>
               <p className="mt-0.5 font-display text-base font-semibold text-ink sm:text-lg">{openCity.name}</p>
             </div>
             <button
               type="button"
               aria-label={tr("Close")}
               onClick={() => setOpenCitySlug(null)}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-ink-soft/60 transition hover:bg-sand-dim hover:text-ink"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-ink-soft/85 transition hover:bg-sand-dim hover:text-ink"
             >
               <svg viewBox="0 0 20 20" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth={2}>
                 <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
@@ -531,7 +531,7 @@ export function EgyptMap({
           </div>
           {openCityHub ? (
             <>
-              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">
+              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft">
                 {tr("We do visit here — it’s part of what we run from this destination:")}
               </p>
               <Link
@@ -546,7 +546,7 @@ export function EgyptMap({
             </>
           ) : (
             <>
-              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft/75">
+              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-ink-soft">
                 {tr("We don’t run tours here yet — but we’re always adding new destinations. Tell us you’re interested and we’ll see what we can arrange.")}
               </p>
               <Link

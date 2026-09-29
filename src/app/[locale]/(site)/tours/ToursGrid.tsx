@@ -55,7 +55,7 @@ function inDurationBucket(days: number, bucket: string) {
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="border-b border-black/5 py-6 first:pt-0 last:border-0 last:pb-0">
-      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-soft/60">{title}</p>
+      <p className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-soft/85">{title}</p>
       <div className="mt-3">{children}</div>
     </div>
   );
@@ -173,7 +173,7 @@ export function ToursGrid({
           <svg
             viewBox="0 0 20 20"
             fill="none"
-            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft/40"
+            className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-ink-soft/85"
             aria-hidden="true"
           >
             <circle cx="9" cy="9" r="6.5" stroke="currentColor" strokeWidth="1.5" />
@@ -184,7 +184,7 @@ export function ToursGrid({
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder={dict.tours.searchPlaceholder}
-            className="w-full rounded-full border border-black/10 bg-white py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-ink-soft/40 focus:border-gold focus:outline-none"
+            className="w-full rounded-full border border-black/10 bg-white py-2.5 pl-10 pr-4 text-sm text-ink placeholder:text-ink-soft/85 focus:border-gold focus:outline-none"
           />
         </div>
 
@@ -247,7 +247,7 @@ export function ToursGrid({
                 className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
                   style === s
                     ? "border-gold-dark bg-gold/15 text-gold-dark"
-                    : "border-black/10 text-ink-soft/70 hover:border-gold/40"
+                    : "border-black/10 text-ink-soft hover:border-gold/40"
                 }`}
               >
                 {styleLabels[s] ?? s}
@@ -259,11 +259,11 @@ export function ToursGrid({
 
       {/* Results */}
       <div>
-        <p className="text-sm text-ink-soft/60">
+        <p className="text-sm text-ink-soft/85">
           {t(dict.tours.matchCount, { count: filtered.length })}
         </p>
         {filtered.length === 0 ? (
-          <p className="mt-10 text-sm text-ink-soft/60">
+          <p className="mt-10 text-sm text-ink-soft/85">
             {dict.tours.noMatches}
           </p>
         ) : (

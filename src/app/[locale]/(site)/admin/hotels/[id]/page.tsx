@@ -87,7 +87,7 @@ export default async function AdminHotelEditPage({ params }: { params: Promise<{
     <div className="mx-auto max-w-4xl">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <Link href="/admin/hotels" className="text-xs font-semibold text-ink-soft/50 hover:text-ink">
+          <Link href="/admin/hotels" className="text-xs font-semibold text-ink-soft/85 hover:text-ink">
             ← All hotels
           </Link>
           <h1 className="mt-2 font-display text-2xl font-semibold text-ink">{typedHotel.name}</h1>
@@ -97,7 +97,7 @@ export default async function AdminHotelEditPage({ params }: { params: Promise<{
             <button
               type="submit"
               className={`rounded-full px-4 py-2 text-xs font-semibold transition ${
-                typedHotel.enabled ? "bg-nile/10 text-nile hover:bg-nile/20" : "bg-black/5 text-ink-soft/60 hover:bg-black/10"
+                typedHotel.enabled ? "bg-nile/10 text-nile hover:bg-nile/20" : "bg-black/5 text-ink-soft/85 hover:bg-black/10"
               }`}
             >
               {typedHotel.enabled ? "Live — click to disable" : "Disabled — click to enable"}
@@ -280,7 +280,7 @@ function RoomEditor({ hotelId, room, rates }: { hotelId: string; room: Room; rat
       </form>
 
       <div className="mt-5 border-t border-black/5 pt-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Rates</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Rates</p>
         <div className="mt-3 flex flex-col gap-3">
           {rates.map((rate) => (
             <RateEditor key={rate.id} hotelId={hotelId} rate={rate} />

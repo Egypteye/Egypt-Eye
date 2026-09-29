@@ -46,7 +46,7 @@ export function AddToJourneyButton({
         className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
           added
             ? "border-gold-dark bg-gold/15 text-gold-dark"
-            : "border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink"
+            : "border-black/10 text-ink-soft hover:border-gold/40 hover:text-ink"
         } ${className}`}
       >
         <span aria-hidden="true">{added ? "✓" : "+"}</span>

@@ -43,7 +43,7 @@ export function ExploreMapPanel({
   return (
     <div className="lg:sticky lg:top-24 lg:self-start">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/50">{tr("Not sure where to start? Pick a mood")}</p>
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">{tr("Not sure where to start? Pick a mood")}</p>
         <div className="mt-2.5 flex flex-wrap gap-2">
           {MOODS.map((m) => (
             <button
@@ -52,7 +52,7 @@ export function ExploreMapPanel({
               onClick={() => setMood((cur) => (cur === m.value ? null : m.value))}
               aria-pressed={mood === m.value}
               className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition ${
-                mood === m.value ? m.active : "border-black/10 text-ink-soft/70 hover:border-black/25 hover:text-ink"
+                mood === m.value ? m.active : "border-black/10 text-ink-soft hover:border-black/25 hover:text-ink"
               }`}
             >
               <span aria-hidden="true" className={`h-1.5 w-1.5 rounded-full ${mood === m.value ? "bg-white" : m.dot}`} />
@@ -80,7 +80,7 @@ export function ExploreMapPanel({
                   ? "border-gold-dark bg-gold/15 text-gold-dark"
                   : matchesMood && mood
                     ? MOOD_COLORS[mood].active
-                    : `border-black/10 text-ink-soft/70 hover:border-gold/40 hover:text-ink ${mood ? "opacity-40" : ""}`
+                    : `border-black/10 text-ink-soft hover:border-gold/40 hover:text-ink ${mood ? "opacity-40" : ""}`
               }`}
             >
               {hub.name}

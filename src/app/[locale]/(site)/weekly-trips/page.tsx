@@ -230,7 +230,7 @@ export default async function WeeklyTripsPage() {
               <li key={step.title} className="rounded-2xl border border-black/5 bg-cream p-5 shadow-sm">
                 <span className="font-display text-2xl font-semibold text-gold-dark">{i + 1}</span>
                 <h3 className="mt-2 font-display text-lg font-semibold text-ink">{step.title}</h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-ink-soft/75">{step.body}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{step.body}</p>
               </li>
             ))}
           </ol>

@@ -92,7 +92,7 @@ export function ScarabPath({ config, onSolved }: PuzzleProps) {
                     : "border-gold/20 bg-black/20"
               }`}
             >
-              <Glyph index={i} className={`h-8 w-8 ${isLit ? "text-gold" : "text-cream/40"}`} />
+              <Glyph index={i} className={`h-8 w-8 ${isLit ? "text-gold" : "text-cream/60"}`} />
             </button>
           );
         })}

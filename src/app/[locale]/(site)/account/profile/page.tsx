@@ -38,7 +38,7 @@ export default async function ProfilePage() {
   return (
     <section className="bg-sand py-14 sm:py-20">
       <Container className="mx-auto max-w-lg">
-        <Link href="/account" className="text-sm font-semibold text-ink-soft/60 hover:text-ink">
+        <Link href="/account" className="text-sm font-semibold text-ink-soft/85 hover:text-ink">
           {ui["← Back to My Account"]}
         </Link>
         <h1 className="mt-3 font-display text-3xl font-semibold text-ink"><T>Edit Profile</T></h1>

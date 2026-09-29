@@ -45,7 +45,7 @@ export default async function AdminNewsletterPage() {
 
       <div className="mt-10 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-ink">Send a Newsletter</h2>
-        <p className="mt-1 text-sm text-ink-soft/60">
+        <p className="mt-1 text-sm text-ink-soft/85">
           Goes out to every verified, still-subscribed address below. Each subscriber gets their own unsubscribe link.
         </p>
         <div className="mt-5">
@@ -55,7 +55,7 @@ export default async function AdminNewsletterPage() {
 
       <div className="mt-8 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-ink">Add a Subscriber</h2>
-        <p className="mt-1 text-sm text-ink-soft/60">Adds directly as verified — no confirmation email sent, no discount code minted.</p>
+        <p className="mt-1 text-sm text-ink-soft/85">Adds directly as verified — no confirmation email sent, no discount code minted.</p>
         <form action={addSubscriberManually} className="mt-4 flex flex-wrap items-end gap-3">
           <label className="flex flex-1 min-w-[200px] flex-col gap-1.5 text-sm font-medium text-ink-soft">
             Email
@@ -84,7 +84,7 @@ export default async function AdminNewsletterPage() {
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[720px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
+          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Name</th>
@@ -98,7 +98,7 @@ export default async function AdminNewsletterPage() {
             {subscribers.map((s) => (
               <tr key={s.id} className="border-b border-black/5 last:border-0">
                 <td className="px-4 py-3 text-ink">{s.email}</td>
-                <td className="px-4 py-3 text-ink-soft/70">{s.first_name ?? "—"}</td>
+                <td className="px-4 py-3 text-ink-soft">{s.first_name ?? "—"}</td>
                 <td className="px-4 py-3">
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
@@ -108,11 +108,11 @@ export default async function AdminNewsletterPage() {
                     {s.unsubscribed ? "Unsubscribed" : s.verified ? "Verified" : "Pending Verification"}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/60">{s.source}</td>
-                <td className="px-4 py-3 text-ink-soft/60">{new Date(s.created_at).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{s.source}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{new Date(s.created_at).toLocaleDateString()}</td>
                 <td className="px-4 py-3 text-right">
                   <form action={setSubscriberUnsubscribed.bind(null, s.id, !s.unsubscribed)}>
-                    <button type="submit" className="text-xs font-semibold text-ink-soft/60 underline hover:text-ink">
+                    <button type="submit" className="text-xs font-semibold text-ink-soft/85 underline hover:text-ink">
                       {s.unsubscribed ? "Resubscribe" : "Unsubscribe"}
                     </button>
                   </form>
@@ -121,7 +121,7 @@ export default async function AdminNewsletterPage() {
             ))}
             {subscribers.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-ink-soft/50">
+                <td colSpan={6} className="px-4 py-8 text-center text-ink-soft/85">
                   No subscribers yet.
                 </td>
               </tr>
@@ -137,7 +137,7 @@ function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-cream p-5 text-center shadow-sm">
       <p className="text-2xl font-bold text-ink">{value}</p>
-      <p className="text-xs text-ink-soft/50">{label}</p>
+      <p className="text-xs text-ink-soft/85">{label}</p>
     </div>
   );
 }

@@ -38,16 +38,16 @@ export default async function AdminAffiliateDetailPage({ params }: { params: Pro
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link href="/admin/affiliates" className="text-xs font-semibold text-ink-soft/50 hover:text-ink">
+      <Link href="/admin/affiliates" className="text-xs font-semibold text-ink-soft/85 hover:text-ink">
         ← All applications
       </Link>
       <h1 className="mt-2 font-display text-2xl font-semibold text-ink">{application.full_name}</h1>
-      <p className="mt-1 text-sm text-ink-soft/60">
+      <p className="mt-1 text-sm text-ink-soft/85">
         Applied {new Date(application.created_at).toLocaleString()} — {application.website_or_platform}
       </p>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Status</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Status</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {STATUSES.map((s) => (
             <form key={s} action={updateAffiliateStatus.bind(null, application.id, s)}>
@@ -63,7 +63,7 @@ export default async function AdminAffiliateDetailPage({ params }: { params: Pro
           ))}
         </div>
         {application.status === "approved" && (
-          <p className="mt-3 text-xs text-ink-soft/50">
+          <p className="mt-3 text-xs text-ink-soft/85">
             Marking approved doesn&rsquo;t send anything automatically — email {application.email} their referral
             code and commission rate directly.
           </p>
@@ -81,13 +81,13 @@ export default async function AdminAffiliateDetailPage({ params }: { params: Pro
 
       {application.message && (
         <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Message</p>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-ink-soft/80">{application.message}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Message</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-ink-soft">{application.message}</p>
         </div>
       )}
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Internal Notes</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Internal Notes</p>
         <form action={updateNotes} className="mt-3 flex flex-col gap-3">
           <textarea
             name="adminNotes"
@@ -111,7 +111,7 @@ export default async function AdminAffiliateDetailPage({ params }: { params: Pro
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{label}</p>
       <p className="mt-1 text-sm text-ink">{value}</p>
     </div>
   );

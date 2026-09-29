@@ -57,7 +57,7 @@ export default async function AdminTravelAgentsPage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-ink">Travel Agent Partner Program</h1>
-      <p className="mt-2 text-sm text-ink-soft/60">
+      <p className="mt-2 text-sm text-ink-soft/85">
         Applications from{" "}
         <Link href="/travel-agents" className="underline">
           /travel-agents
@@ -70,14 +70,14 @@ export default async function AdminTravelAgentsPage() {
         {APPLICATION_STATUSES.map((s) => (
           <div key={s} className="rounded-2xl border border-black/5 bg-cream p-3 text-center shadow-sm">
             <p className="text-lg font-bold text-ink">{applications.filter((a) => a.status === s).length}</p>
-            <p className="text-[10px] uppercase tracking-wide text-ink-soft/50">{s}</p>
+            <p className="text-xs uppercase tracking-wide text-ink-soft/85">{s}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[680px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
+          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Contact</th>
@@ -94,21 +94,21 @@ export default async function AdminTravelAgentsPage() {
                     {a.company_name}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/70">
+                <td className="px-4 py-3 text-ink-soft">
                   {a.contact_name} · {a.email}
                 </td>
-                <td className="px-4 py-3 text-ink-soft/60">{a.country}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{a.country}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${STATUS_STYLES[a.status]}`}>
                     {a.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/60">{new Date(a.created_at).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{new Date(a.created_at).toLocaleDateString()}</td>
               </tr>
             ))}
             {applications.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-ink-soft/50">
+                <td colSpan={5} className="px-4 py-8 text-center text-ink-soft/85">
                   No applications yet.
                 </td>
               </tr>
@@ -118,10 +118,10 @@ export default async function AdminTravelAgentsPage() {
       </div>
 
       <h2 className="mt-10 font-display text-lg font-semibold text-ink">Active Partner Accounts</h2>
-      <p className="mt-1 text-sm text-ink-soft/60">Approved agencies, their partner rate, and whether they&rsquo;ve signed in yet.</p>
+      <p className="mt-1 text-sm text-ink-soft/85">Approved agencies, their partner rate, and whether they&rsquo;ve signed in yet.</p>
       <div className="mt-4 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[560px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
+          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Company</th>
               <th className="px-4 py-3">Partner Rate</th>
@@ -141,8 +141,8 @@ export default async function AdminTravelAgentsPage() {
                     <span className="font-medium text-ink">{agent.company_name}</span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-ink-soft/70">{agent.partner_discount_percent}%</td>
-                <td className="px-4 py-3 text-ink-soft/60">
+                <td className="px-4 py-3 text-ink-soft">{agent.partner_discount_percent}%</td>
+                <td className="px-4 py-3 text-ink-soft/85">
                   {agent.user_id ? "Linked" : "Awaiting sign-up"}
                 </td>
                 <td className="px-4 py-3">
@@ -158,7 +158,7 @@ export default async function AdminTravelAgentsPage() {
             ))}
             {agents.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-ink-soft/50">
+                <td colSpan={4} className="px-4 py-8 text-center text-ink-soft/85">
                   No approved partners yet.
                 </td>
               </tr>

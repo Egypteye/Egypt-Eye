@@ -34,7 +34,7 @@ export default async function AdminDiscountsPage() {
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <p className="font-display text-lg font-semibold text-ink">{s.campaign.name}</p>
-                <p className="text-sm text-ink-soft/60">
+                <p className="text-sm text-ink-soft/85">
                   {s.campaign.discount_type === "percentage" ? `${s.campaign.value}%` : `$${s.campaign.value}`} off
                   {s.campaign.min_booking_value ? ` · min $${s.campaign.min_booking_value}` : ""}
                 </p>
@@ -43,7 +43,7 @@ export default async function AdminDiscountsPage() {
                 <button
                   type="submit"
                   className={`rounded-full px-4 py-1.5 text-xs font-semibold ${
-                    s.campaign.active ? "bg-nile/10 text-nile" : "bg-black/5 text-ink-soft/60"
+                    s.campaign.active ? "bg-nile/10 text-nile" : "bg-black/5 text-ink-soft/85"
                   }`}
                 >
                   {s.campaign.active ? "Active — click to pause" : "Paused — click to activate"}
@@ -95,11 +95,11 @@ export default async function AdminDiscountsPage() {
                 <Field label="Excluded experience slugs">
                   <input name="excludedExperiences" type="text" defaultValue={s.campaign.excluded_experience_slugs?.join(", ") ?? ""} className={inputClass} />
                 </Field>
-                <label className="flex items-center gap-2 text-sm text-ink-soft/70">
+                <label className="flex items-center gap-2 text-sm text-ink-soft">
                   <input type="checkbox" name="oneTimeUse" defaultChecked={s.campaign.one_time_use} className="h-4 w-4 accent-gold-dark" />
                   One-time use per customer
                 </label>
-                <label className="flex items-center gap-2 text-sm text-ink-soft/70">
+                <label className="flex items-center gap-2 text-sm text-ink-soft">
                   <input type="checkbox" name="newCustomersOnly" defaultChecked={s.campaign.new_customers_only} className="h-4 w-4 accent-gold-dark" />
                   New customers only
                 </label>
@@ -136,11 +136,11 @@ export default async function AdminDiscountsPage() {
           <Field label="Code validity (days)">
             <input name="codeValidityDays" type="number" className={inputClass} />
           </Field>
-          <label className="flex items-center gap-2 text-sm text-ink-soft/70">
+          <label className="flex items-center gap-2 text-sm text-ink-soft">
             <input type="checkbox" name="oneTimeUse" defaultChecked className="h-4 w-4 accent-gold-dark" />
             One-time use
           </label>
-          <label className="flex items-center gap-2 text-sm text-ink-soft/70">
+          <label className="flex items-center gap-2 text-sm text-ink-soft">
             <input type="checkbox" name="active" defaultChecked className="h-4 w-4 accent-gold-dark" />
             Active immediately
           </label>
@@ -157,7 +157,7 @@ const inputClass = "rounded-lg border border-black/10 bg-sand px-3 py-2 text-sm 
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft/70">
+    <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
       {label}
       {children}
     </label>
@@ -168,7 +168,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
       <p className="text-lg font-bold text-ink">{value}</p>
-      <p className="text-xs text-ink-soft/50">{label}</p>
+      <p className="text-xs text-ink-soft/85">{label}</p>
     </div>
   );
 }

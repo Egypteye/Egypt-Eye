@@ -43,7 +43,7 @@ export default async function AdminCollaborationsPage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-ink">Collaboration Applications</h1>
-      <p className="mt-2 text-sm text-ink-soft/60">
+      <p className="mt-2 text-sm text-ink-soft/85">
         Creator &amp; influencer applications from{" "}
         <Link href="/collaborate" className="underline">
           /collaborate
@@ -56,14 +56,14 @@ export default async function AdminCollaborationsPage() {
         {STATUSES.map((s) => (
           <div key={s} className="rounded-2xl border border-black/5 bg-cream p-3 text-center shadow-sm">
             <p className="text-lg font-bold text-ink">{applications.filter((a) => a.status === s).length}</p>
-            <p className="text-[10px] uppercase tracking-wide text-ink-soft/50">{s}</p>
+            <p className="text-xs uppercase tracking-wide text-ink-soft/85">{s}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[680px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
+          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Email</th>
@@ -80,19 +80,19 @@ export default async function AdminCollaborationsPage() {
                     {a.full_name}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/70">{a.email}</td>
-                <td className="px-4 py-3 text-ink-soft/60">{a.collaboration_type}</td>
+                <td className="px-4 py-3 text-ink-soft">{a.email}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{a.collaboration_type}</td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-2.5 py-1 text-xs font-semibold capitalize ${STATUS_STYLES[a.status]}`}>
                     {a.status}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/60">{new Date(a.created_at).toLocaleDateString()}</td>
+                <td className="px-4 py-3 text-ink-soft/85">{new Date(a.created_at).toLocaleDateString()}</td>
               </tr>
             ))}
             {applications.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-ink-soft/50">
+                <td colSpan={5} className="px-4 py-8 text-center text-ink-soft/85">
                   No applications yet.
                 </td>
               </tr>

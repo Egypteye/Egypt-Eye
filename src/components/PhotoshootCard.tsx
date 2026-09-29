@@ -24,12 +24,12 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
         <h3 className="font-display text-xl font-semibold text-ink">
           {photoshoot.title}
         </h3>
-        <p className="text-sm text-ink-soft/70">{photoshoot.description}</p>
+        <p className="text-sm text-ink-soft">{photoshoot.description}</p>
         <div className="flex flex-wrap gap-1.5">
           {photoshoot.goodFor.slice(0, 3).map((g) => (
             <span
               key={g}
-              className="rounded-full bg-sand-dim px-2.5 py-1 text-xs font-medium text-ink-soft/70"
+              className="rounded-full bg-sand-dim px-2.5 py-1 text-xs font-medium text-ink-soft"
             >
               {g}
             </span>

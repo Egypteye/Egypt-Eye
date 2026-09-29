@@ -65,7 +65,7 @@ export function SignupForm() {
 
   if (status === "sent") {
     return (
-      <div className="rounded-2xl border border-gold/20 bg-sand-dim p-5 text-sm text-ink-soft/80">
+      <div className="rounded-2xl border border-gold/20 bg-sand-dim p-5 text-sm text-ink-soft">
         <p className="font-semibold text-ink">{tr("Check your inbox")}</p>
         <p className="mt-1.5">{tr("We’ve sent a verification link to confirm your email. Click it to finish creating your account.")}</p>
       </div>
@@ -84,9 +84,9 @@ export function SignupForm() {
         minLength={8}
         autoComplete="new-password"
       />
-      <p className="-mt-2 text-xs text-ink-soft/50">{tr("At least 8 characters.")}</p>
+      <p className="-mt-2 text-xs text-ink-soft/85">{tr("At least 8 characters.")}</p>
 
-      <label className="flex items-start gap-2.5 text-sm text-ink-soft/80">
+      <label className="flex items-start gap-2.5 text-sm text-ink-soft">
         <input type="checkbox" name="marketingConsent" className="mt-0.5 h-4 w-4 shrink-0 accent-gold-dark" />{tr("Yes, I’d like to receive Egypt Eye travel inspiration, new experiences and special offers by email.")}</label>
 
       {status === "error" && <p className="text-sm text-terracotta">{errorMessage}</p>}
@@ -99,7 +99,7 @@ export function SignupForm() {
         {status === "sending" ? tr("Creating your account…") : tr("Create My Account")}
       </button>
 
-      <p className="text-center text-xs text-ink-soft/60">
+      <p className="text-center text-xs text-ink-soft/85">
         {tr("Already have an account?")}{" "}
         <Link href={`/account/login?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">{tr("Log in")}</Link>
       </p>

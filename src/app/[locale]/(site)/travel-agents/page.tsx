@@ -83,7 +83,7 @@ export default async function TravelAgentsPage() {
             {BENEFITS.map((b) => (
               <div key={b.title} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
                 <p className="font-display text-base font-semibold text-ink">{b.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{b.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{b.description}</p>
               </div>
             ))}
           </div>
@@ -100,7 +100,7 @@ export default async function TravelAgentsPage() {
                   {i + 1}
                 </span>
                 <p className="mt-4 font-display text-base font-semibold text-ink">{s.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{s.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{s.description}</p>
               </div>
             ))}
           </div>

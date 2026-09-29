@@ -62,7 +62,7 @@ export function LoginForm() {
         {status === "sending" ? tr("Logging in…") : tr("Log In")}
       </button>
 
-      <p className="text-center text-xs text-ink-soft/60">
+      <p className="text-center text-xs text-ink-soft/85">
         {tr("New to Egypt Eye?")}{" "}
         <Link href={`/account/signup?next=${encodeURIComponent(next)}`} className="font-semibold text-gold-dark underline">{tr("Create an account")}</Link>
       </p>

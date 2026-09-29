@@ -11,7 +11,7 @@ const MEAL_PLANS = ["Room Only", "Bed & Breakfast", "Half Board", "Full Board", 
 function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: React.ReactNode }) {
   return (
     <label htmlFor={htmlFor} className="flex flex-col gap-1.5">
-      <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft/60">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{label}</span>
       {children}
     </label>
   );
@@ -124,7 +124,7 @@ function RateRequestModal({
       >
         <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-black/5 bg-cream/95 p-6 backdrop-blur-sm">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-dark">{tr("Check Latest Rates")}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">{tr("Check Latest Rates")}</p>
             <p id="rate-request-modal-title" className="mt-1 font-display text-lg font-semibold leading-snug text-ink">
               {hotelName}
             </p>
@@ -133,7 +133,7 @@ function RateRequestModal({
             type="button"
             aria-label={tr("Close")}
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-soft/60 transition hover:bg-sand-dim hover:text-ink"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-soft/85 transition hover:bg-sand-dim hover:text-ink"
           >
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
@@ -149,7 +149,7 @@ function RateRequestModal({
               </svg>
             </span>
             <p className="font-display text-lg font-semibold text-ink">{tr("Request sent")}</p>
-            <p className="text-sm text-ink-soft/70">
+            <p className="text-sm text-ink-soft">
               Our reservations team will confirm the latest rate, availability, and any current discount for{" "}
               {hotelName} and get back to you by email.
             </p>
@@ -164,7 +164,7 @@ function RateRequestModal({
               <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
               </label>
             </div>
-            <p className="text-sm text-ink-soft/70">{tr("The rates shown are our current Egypt Eye deal rates, not live availability. Tell us your dates and we’ll confirm the latest price, availability, and any current discount by email.")}</p>
+            <p className="text-sm text-ink-soft">{tr("The rates shown are our current Egypt Eye deal rates, not live availability. Tell us your dates and we’ll confirm the latest price, availability, and any current discount by email.")}</p>
 
             {rooms.length > 0 && (
               <Field label={tr("Room Type")} htmlFor="rate-room">

@@ -15,11 +15,11 @@ export async function HostCard({ host }: { host: Host }) {
       <div className="flex flex-1 flex-col gap-2 p-6">
         <h3 className="font-display text-xl font-semibold text-ink">{host.name}</h3>
         {host.role && <p className="text-sm font-medium text-gold-dark">{host.role}</p>}
-        <p className="mt-2 text-sm leading-relaxed text-ink-soft/75">{host.bio}</p>
+        <p className="mt-2 text-sm leading-relaxed text-ink-soft">{host.bio}</p>
         {host.personality && (
-          <p className="text-sm leading-relaxed text-ink-soft/75">{host.personality}</p>
+          <p className="text-sm leading-relaxed text-ink-soft">{host.personality}</p>
         )}
-        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-black/5 pt-3 text-xs text-ink-soft/60">
+        <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-black/5 pt-3 text-xs text-ink-soft/85">
           {host.experience && <span>{host.experience}</span>}
           {host.languages && host.languages.length > 0 && (
             <span>{speaksLabel.replace("{languages}", host.languages.join(", "))}</span>

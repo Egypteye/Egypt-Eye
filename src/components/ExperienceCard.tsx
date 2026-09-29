@@ -25,7 +25,7 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
         <h3 className="font-display text-lg font-semibold leading-snug text-ink">
           {experience.title}
         </h3>
-        <p className="line-clamp-2 text-sm text-ink-soft/70">
+        <p className="line-clamp-2 text-sm text-ink-soft">
           {experience.description}
         </p>
         {experience.physicalLevel && (

@@ -143,7 +143,7 @@ export default async function AboutPage() {
                 { t: ui["In-house"], d: ui["Tours, photography, concierge"] },
               ].map((item) => (
                 <div key={item.t}>
-                  <dt className="text-[11px] font-semibold uppercase tracking-[0.18em] text-cream/55">
+                  <dt className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/55">
                     {item.t}
                   </dt>
                   <dd className="mt-1.5 text-sm font-semibold text-cream/85">{item.d}</dd>
@@ -281,7 +281,7 @@ export default async function AboutPage() {
               <Rule />
               <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Celebrity & VIP Experiences</T></p>
               <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>People who could book anywhere in the world booked here</T></h2>
-              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80"><T>Bollywood actors, Olympic athletes, journalists and some of the most-followed travel creators working today have all put their Egypt trip in our hands — usually with a schedule, a camera crew, and no room for a day going wrong.</T></p>
+              <p className="mt-5 text-lg leading-relaxed text-ink-soft"><T>Bollywood actors, Olympic athletes, journalists and some of the most-followed travel creators working today have all put their Egypt trip in our hands — usually with a schedule, a camera crew, and no room for a day going wrong.</T></p>
             </div>
           </Reveal>
 
@@ -293,7 +293,7 @@ export default async function AboutPage() {
                   image of someone else. */}
               <article className="flex h-full flex-col rounded-[2rem] bg-ink p-1.5 ring-1 ring-black/5">
                 <div className="flex h-full flex-col rounded-[1.625rem] px-7 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:px-9 sm:py-10">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-light"><T>Handled by Egypt Eye</T></p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-light"><T>Handled by Egypt Eye</T></p>
                   <h3 className="mt-5 font-display text-4xl font-semibold leading-none text-cream sm:text-5xl">
                     {localizedVipGuest.name}
                   </h3>
@@ -346,7 +346,7 @@ export default async function AboutPage() {
               <Rule />
               <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Trusted by Travel Agencies</T></p>
               <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>Other travel professionals hand us their own clients</T></h2>
-              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80"><T>It’s one thing for a traveler to take a chance on you. It’s another for a travel agency to put their own name on your work and send you the people who pay them. Here is every group that has, with the month they came.</T></p>
+              <p className="mt-5 text-lg leading-relaxed text-ink-soft"><T>It’s one thing for a traveler to take a chance on you. It’s another for a travel agency to put their own name on your work and send you the people who pay them. Here is every group that has, with the month they came.</T></p>
             </div>
           </Reveal>
 
@@ -355,11 +355,11 @@ export default async function AboutPage() {
               {/* Sourced from Egypt Eye directly rather than the partner deck. */}
               <article className="rounded-[2rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06] lg:sticky lg:top-28">
                 <div className="rounded-[1.625rem] bg-cream px-7 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-9 sm:py-10">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>Longest-running agency partner</T></p>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>Longest-running agency partner</T></p>
                   <h3 className="mt-5 font-display text-3xl font-semibold leading-tight text-ink sm:text-4xl">
                     {localizedAgencyPartner.name}
                   </h3>
-                  <p className="mt-2.5 text-sm font-semibold uppercase tracking-[0.14em] text-ink-soft/55">
+                  <p className="mt-2.5 text-sm font-semibold uppercase tracking-[0.14em] text-ink-soft/85">
                     {localizedAgencyPartner.role}
                   </p>
                   <div className="my-7 h-px w-full bg-gradient-to-r from-gold/60 via-gold/20 to-transparent" />
@@ -367,7 +367,7 @@ export default async function AboutPage() {
                     100+
                   </p>
                   <p className="mt-2 text-sm font-semibold text-ink"><T>travelers a year, through us</T></p>
-                  <p className="mt-5 text-[15px] leading-relaxed text-ink-soft/80">
+                  <p className="mt-5 text-[15px] leading-relaxed text-ink-soft">
                     {localizedAgencyPartner.fact}
                   </p>
                   <Link
@@ -395,7 +395,7 @@ export default async function AboutPage() {
                     />
                   ))}
                 </ul>
-                <p className="mt-4 border-t border-black/[0.07] pt-4 text-xs leading-relaxed text-ink-soft/55"><T>Where a group travelled with us more than once, the extra dates are listed alongside. A few of the earliest trips are recorded without a month — those are shown without one rather than given a guessed date.</T></p>
+                <p className="mt-4 border-t border-black/[0.07] pt-4 text-xs leading-relaxed text-ink-soft/85"><T>Where a group travelled with us more than once, the extra dates are listed alongside. A few of the earliest trips are recorded without a month — those are shown without one rather than given a guessed date.</T></p>
 
                 <h3 className="mt-12 text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Collaborators & business partners</T></h3>
                 <div className="mt-5 flex flex-wrap gap-2.5">
@@ -448,7 +448,7 @@ export default async function AboutPage() {
               <Rule />
               <p className="mt-6 text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Behind the Experience</T></p>
               <h2 className="mt-4 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl"><T>What we actually own, and what that changes</T></h2>
-              <p className="mt-5 text-lg leading-relaxed text-ink-soft/80"><T>Most of what goes wrong on a trip to Egypt goes wrong in the gaps between companies — the operator, the driver, the photographer, the person you message when something changes. There are no gaps here, because all of it is us.</T></p>
+              <p className="mt-5 text-lg leading-relaxed text-ink-soft"><T>Most of what goes wrong on a trip to Egypt goes wrong in the gaps between companies — the operator, the driver, the photographer, the person you message when something changes. There are no gaps here, because all of it is us.</T></p>
             </div>
           </Reveal>
 
@@ -459,7 +459,7 @@ export default async function AboutPage() {
                   <div className="flex h-full flex-col rounded-[1.375rem] bg-cream px-6 py-7 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                     <Rule />
                     <p className="mt-5 font-display text-lg font-semibold text-ink">{item.title}</p>
-                    <p className="mt-2.5 text-sm leading-relaxed text-ink-soft/75">{item.body}</p>
+                    <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{item.body}</p>
                   </div>
                 </div>
               </Reveal>
@@ -490,7 +490,7 @@ export default async function AboutPage() {
                     <Wordmark key={h}>{h}</Wordmark>
                   ))}
                 </div>
-                <p className="mt-5 text-sm leading-relaxed text-ink-soft/70">
+                <p className="mt-5 text-sm leading-relaxed text-ink-soft">
                   From international properties on the Nile to the small pyramid-view guesthouses in
                   Giza — we book what suits the trip, and we&rsquo;re the ones who fix it if the room
                   is wrong.
@@ -528,7 +528,7 @@ export default async function AboutPage() {
                 <div className="h-full rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                   <div className="flex h-full flex-col rounded-[1.375rem] bg-cream px-6 py-7 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                     <p className="font-display text-lg font-semibold text-ink">{p.title}</p>
-                    <p className="mt-2.5 text-sm leading-relaxed text-ink-soft/75">{p.description}</p>
+                    <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{p.description}</p>
                   </div>
                 </div>
               </Reveal>
@@ -544,7 +544,7 @@ export default async function AboutPage() {
                 <div className="h-full rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                   <div className="flex h-full flex-col rounded-[1.375rem] bg-cream px-6 py-7 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                     <p className="font-display text-lg font-semibold text-ink">{b.title}</p>
-                    <p className="mt-2.5 text-sm leading-relaxed text-ink-soft/75">{b.body}</p>
+                    <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{b.body}</p>
                   </div>
                 </div>
               </Reveal>
@@ -594,11 +594,11 @@ export default async function AboutPage() {
               className="group min-w-0 rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-gold/40"
             >
               <div className="h-full rounded-[1.375rem] bg-cream px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-7">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>WhatsApp</T></p>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>WhatsApp</T></p>
                 <p className="mt-3 font-display text-xl font-semibold text-ink">
                   {site.contact.whatsapp}
                 </p>
-                <p className="mt-1.5 text-sm text-ink-soft/70">{contact.whatsappCardDescription}</p>
+                <p className="mt-1.5 text-sm text-ink-soft">{contact.whatsappCardDescription}</p>
               </div>
             </WhatsAppBookButton>
 
@@ -607,11 +607,11 @@ export default async function AboutPage() {
               className="group min-w-0 rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:ring-gold/40"
             >
               <div className="h-full rounded-[1.375rem] bg-cream px-6 py-8 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)] sm:px-7">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>Email</T></p>
+                <p className="text-xs font-semibold uppercase tracking-[0.24em] text-gold-dark"><T>Email</T></p>
                 <p className="mt-3 break-words font-display text-lg font-semibold text-ink sm:text-xl">
                   {site.contact.email}
                 </p>
-                <p className="mt-1.5 text-sm text-ink-soft/70">{contact.emailCardDescription}</p>
+                <p className="mt-1.5 text-sm text-ink-soft">{contact.emailCardDescription}</p>
               </div>
             </a>
           </div>
@@ -627,33 +627,33 @@ export default async function AboutPage() {
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                   <p className="font-display text-lg font-semibold text-ink"><T>Deposit & Payment</T></p>
-                  <p className="mt-2 text-sm text-ink-soft/75">{site.policies.deposit}</p>
-                  <p className="mt-2 text-sm text-ink-soft/75">{site.policies.currency}</p>
+                  <p className="mt-2 text-sm text-ink-soft">{site.policies.deposit}</p>
+                  <p className="mt-2 text-sm text-ink-soft">{site.policies.currency}</p>
                 </div>
               </div>
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                   <p className="font-display text-lg font-semibold text-ink"><T>Children’s Pricing</T></p>
-                  <ul className="mt-2 space-y-1 text-sm text-ink-soft/75">
+                  <ul className="mt-2 space-y-1 text-sm text-ink-soft">
                     {site.policies.children.map((c) => (
                       <li key={c.age}>
                         <span className="font-medium text-ink">{c.age}:</span> {c.price}
                       </li>
                     ))}
                   </ul>
-                  <p className="mt-2 text-xs text-ink-soft/60">{site.policies.childrenNote}</p>
+                  <p className="mt-2 text-xs text-ink-soft/85">{site.policies.childrenNote}</p>
                 </div>
               </div>
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                   <p className="font-display text-lg font-semibold text-ink"><T>Your Voucher</T></p>
-                  <p className="mt-2 text-sm text-ink-soft/75">{site.policies.voucher}</p>
+                  <p className="mt-2 text-sm text-ink-soft">{site.policies.voucher}</p>
                 </div>
               </div>
               <div className="rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
                 <div className="h-full rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
                   <p className="font-display text-lg font-semibold text-ink"><T>Cancellation Policy</T></p>
-                  <p className="mt-2 text-sm text-ink-soft/75">{site.policies.cancellation}</p>
+                  <p className="mt-2 text-sm text-ink-soft">{site.policies.cancellation}</p>
                   <Link
                     href="/cancellation-policy"
                     className="mt-3 inline-block text-sm font-medium text-gold-dark underline underline-offset-2 hover:text-ink"

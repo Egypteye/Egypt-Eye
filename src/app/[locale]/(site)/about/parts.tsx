@@ -62,7 +62,7 @@ export function Photo({
       <div className="relative w-full" style={{ aspectRatio: ratio }}>
         <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className="object-cover" />
         {caption && (
-          <span className="absolute bottom-3 left-3 rounded-full bg-ink/65 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-cream/90 backdrop-blur-sm">
+          <span className="absolute bottom-3 left-3 rounded-full bg-ink/65 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-cream/90 backdrop-blur-sm">
             {caption}
           </span>
         )}
@@ -122,7 +122,7 @@ export function Numeral({
           {value}
         </p>
         <p className={`mt-3 text-sm font-semibold ${isDark ? "text-cream" : "text-ink"}`}>{label}</p>
-        <p className={`mt-auto pt-3 text-xs leading-relaxed ${isDark ? "text-cream/55" : "text-ink-soft/65"}`}>
+        <p className={`mt-auto pt-3 text-xs leading-relaxed ${isDark ? "text-cream/55" : "text-ink-soft"}`}>
           {source}
         </p>
       </div>
@@ -160,7 +160,7 @@ export function IndexRow({
       {tertiary && (
         <span
           className={`ml-auto text-xs font-semibold uppercase tracking-[0.14em] tabular-nums ${
-            isDark ? "text-cream/40" : "text-ink-soft/55"
+            isDark ? "text-cream/60" : "text-ink-soft/85"
           }`}
         >
           {tertiary}

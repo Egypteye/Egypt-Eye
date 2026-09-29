@@ -71,7 +71,7 @@ export default async function AdminTravelAgentDetailPage({ params }: { params: P
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link href="/admin/travel-agents" className="text-xs font-semibold text-ink-soft/50 hover:text-ink">
+      <Link href="/admin/travel-agents" className="text-xs font-semibold text-ink-soft/85 hover:text-ink">
         ← All applications
       </Link>
       <div className="mt-2 flex flex-wrap items-center gap-3">
@@ -80,12 +80,12 @@ export default async function AdminTravelAgentDetailPage({ params }: { params: P
           {application.status}
         </span>
       </div>
-      <p className="mt-1 text-sm text-ink-soft/60">
+      <p className="mt-1 text-sm text-ink-soft/85">
         Applied {new Date(application.created_at).toLocaleString()} — {application.estimated_bookings}
       </p>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Review</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Review</p>
         <div className="mt-3 flex flex-wrap items-end gap-3">
           {application.status !== "approved" && (
             <form action={approve} className="flex items-end gap-2">
@@ -124,7 +124,7 @@ export default async function AdminTravelAgentDetailPage({ params }: { params: P
 
       {agent && (
         <div className="mt-6 rounded-2xl border border-gold/20 bg-cream p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Partner Account</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Partner Account</p>
           <p className="mt-2 text-sm text-ink">
             Approved {new Date(agent.approved_at).toLocaleDateString()} ·{" "}
             {agent.user_id ? (
@@ -195,13 +195,13 @@ export default async function AdminTravelAgentDetailPage({ params }: { params: P
 
       {application.message && (
         <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Message</p>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-ink-soft/80">{application.message}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Message</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-ink-soft">{application.message}</p>
         </div>
       )}
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Internal Notes</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Internal Notes</p>
         <form action={updateNotes} className="mt-3 flex flex-col gap-3">
           <textarea
             name="adminNotes"
@@ -225,7 +225,7 @@ export default async function AdminTravelAgentDetailPage({ params }: { params: P
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{label}</p>
       <p className="mt-1 text-sm text-ink">{value}</p>
     </div>
   );

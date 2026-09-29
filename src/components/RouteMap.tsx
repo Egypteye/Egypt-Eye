@@ -226,7 +226,7 @@ export function RouteMap({
       {!isSingle && (
         <figcaption className="flex flex-wrap gap-x-4 gap-y-1.5 border-t border-black/5 bg-cream/50 px-4 py-3">
           {placed.map((p, i) => (
-            <span key={`${p.name}-legend-${i}`} className="flex items-center gap-1.5 text-xs text-ink-soft/75">
+            <span key={`${p.name}-legend-${i}`} className="flex items-center gap-1.5 text-xs text-ink-soft">
               <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold text-[10px] font-bold text-ink">
                 {i + 1}
               </span>

@@ -42,16 +42,16 @@ export default async function AdminCollaborationDetailPage({ params }: { params:
 
   return (
     <div className="mx-auto max-w-3xl">
-      <Link href="/admin/collaborations" className="text-xs font-semibold text-ink-soft/50 hover:text-ink">
+      <Link href="/admin/collaborations" className="text-xs font-semibold text-ink-soft/85 hover:text-ink">
         ← All applications
       </Link>
       <h1 className="mt-2 font-display text-2xl font-semibold text-ink">{application.full_name}</h1>
-      <p className="mt-1 text-sm text-ink-soft/60">
+      <p className="mt-1 text-sm text-ink-soft/85">
         Applied {new Date(application.created_at).toLocaleString()} — {application.collaboration_type}
       </p>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Status</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Status</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {STATUSES.map((s) => (
             <form key={s} action={updateCollaborationStatus.bind(null, application.id, s)}>
@@ -89,13 +89,13 @@ export default async function AdminCollaborationDetailPage({ params }: { params:
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Social Accounts</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Social Accounts</p>
         <ul className="mt-3 flex flex-col gap-2">
           {application.social_accounts.map((s, i) => (
             <li key={i} className="flex items-center justify-between rounded-xl bg-sand px-4 py-2.5 text-sm">
               <span className="font-medium text-ink">{s.platform}</span>
-              <span className="text-ink-soft/70">{s.handle}</span>
-              <span className="text-ink-soft/50">{s.followers || "—"} followers</span>
+              <span className="text-ink-soft">{s.handle}</span>
+              <span className="text-ink-soft/85">{s.followers || "—"} followers</span>
             </li>
           ))}
         </ul>
@@ -103,13 +103,13 @@ export default async function AdminCollaborationDetailPage({ params }: { params:
 
       {application.message && (
         <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Message</p>
-          <p className="mt-2 whitespace-pre-wrap text-sm text-ink-soft/80">{application.message}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Message</p>
+          <p className="mt-2 whitespace-pre-wrap text-sm text-ink-soft">{application.message}</p>
         </div>
       )}
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Internal Notes</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Internal Notes</p>
         <form action={updateNotes} className="mt-3 flex flex-col gap-3">
           <textarea
             name="adminNotes"
@@ -133,7 +133,7 @@ export default async function AdminCollaborationDetailPage({ params }: { params:
 function Field({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{label}</p>
       <p className="mt-1 text-sm text-ink">{value}</p>
     </div>
   );

@@ -87,7 +87,7 @@ export default async function TestimonialsPage() {
 
           {data.total > 0 ? (
             <>
-              <p className="mt-4 max-w-2xl text-lg text-ink-soft/80">
+              <p className="mt-4 max-w-2xl text-lg text-ink-soft">
                 {t(s["{count} reviews, from travellers on {platforms}"], {
                   count: n(data.total),
                   platforms: data.platforms.map(([p]) => PLATFORM_LABELS[p]).join(" & "),
@@ -97,7 +97,7 @@ export default async function TestimonialsPage() {
               {/* Said once, at the top, rather than repeated on every card:
                   how reviews from other platforms are handled. It is the
                   claim the whole wall rests on. */}
-              <p className="mt-5 max-w-2xl text-xs text-ink-soft/55">
+              <p className="mt-5 max-w-2xl text-xs text-ink-soft/85">
                 <T>Every review here comes from a real Egypt Eye trip. Reviews written on another platform are quoted in part, never rewritten, and linked to the original so you can read them in full there. The names of our guides, hosts and photographers have been removed for their privacy — nothing else about a review has been changed.</T>
               </p>
 
@@ -113,7 +113,7 @@ export default async function TestimonialsPage() {
                     {data.themes.slice(0, 8).map(([theme, count]) => (
                       <li
                         key={theme}
-                        className="rounded-full bg-sand-dim px-3.5 py-1.5 text-sm text-ink-soft/80"
+                        className="rounded-full bg-sand-dim px-3.5 py-1.5 text-sm text-ink-soft"
                       >
                         {THEME_LABELS[theme]}{" "}
                         <span className="font-semibold text-ink">{n(count)}</span>
@@ -124,7 +124,7 @@ export default async function TestimonialsPage() {
               )}
             </>
           ) : (
-            <p className="mt-10 rounded-2xl bg-sand-dim px-5 py-4 text-sm text-ink-soft/75">
+            <p className="mt-10 rounded-2xl bg-sand-dim px-5 py-4 text-sm text-ink-soft">
               {dict.reviews.onTheWay}{" "}
               <Link href={to("/customize")} className="font-semibold text-gold-dark underline">
                 {dict.reviews.startPlanning}
@@ -145,7 +145,7 @@ export default async function TestimonialsPage() {
                     {group.subject.title}
                   </Link>
                 </h2>
-                <p className="mt-1 text-sm text-ink-soft/70">
+                <p className="mt-1 text-sm text-ink-soft">
                   {t(s["{count} reviews"], { count: n(group.entries.length) })}
                 </p>
               </div>
@@ -185,7 +185,7 @@ export default async function TestimonialsPage() {
               ))}
             </div>
             {data.unattributed.length > HUB_UNATTRIBUTED_LIMIT && (
-              <p className="mt-5 text-sm text-ink-soft/60">
+              <p className="mt-5 text-sm text-ink-soft/85">
                 {t(s["and {count} more"], {
                   count: n(data.unattributed.length - HUB_UNATTRIBUTED_LIMIT),
                 })}

@@ -89,7 +89,7 @@ export function TravelAgentForm() {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
         <p className="font-display text-2xl font-semibold text-ink">{tr("Application received")}</p>
-        <p className="mt-3 text-sm text-ink-soft/70">{tr("Thanks for applying to the Egypt Eye Travel Agent Program. A specialist will review your application and reach out to schedule a quick video call.")}</p>
+        <p className="mt-3 text-sm text-ink-soft">{tr("Thanks for applying to the Egypt Eye Travel Agent Program. A specialist will review your application and reach out to schedule a quick video call.")}</p>
       </div>
     );
   }

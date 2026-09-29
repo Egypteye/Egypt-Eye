@@ -107,7 +107,7 @@ export function PharaohChallengeClient({
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light/80">{campaign.theme}</p>
           <h1 className="font-display text-4xl font-semibold text-cream sm:text-5xl">{campaign.name}</h1>
           <p className="max-w-md text-lg text-cream/70">{campaign.story_intro}</p>
-          <p className="text-sm text-cream/40">{tr("One attempt per account. Sign in to begin — your progress is saved as you go.")}</p>
+          <p className="text-sm text-cream/60">{tr("One attempt per account. Sign in to begin — your progress is saved as you go.")}</p>
           <button
             type="button"
             onClick={handleBegin}

@@ -178,7 +178,7 @@ export function CustomizeForm({
       {journeyItems.length > 0 && (
         <div className="mb-8 rounded-2xl border border-gold/20 bg-sand-dim p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.15em] text-gold-dark">{tr("From Your Journey")}</p>
-          <p className="mt-1 text-xs text-ink-soft/60">{tr("These will be included with your request. Remove anything that doesn’t belong.")}</p>
+          <p className="mt-1 text-xs text-ink-soft/85">{tr("These will be included with your request. Remove anything that doesn’t belong.")}</p>
           <div className="mt-3 flex flex-wrap gap-2">
             {journeyItems.map((item) => (
               <span
@@ -190,7 +190,7 @@ export function CustomizeForm({
                   type="button"
                   onClick={() => removeJourneyItem(item.type, item.slug)}
                   aria-label={`${tr("Remove")} ${item.title}`}
-                  className="text-ink-soft/50 hover:text-terracotta"
+                  className="text-ink-soft/85 hover:text-terracotta"
                 >
                   ×
                 </button>
@@ -235,7 +235,7 @@ export function CustomizeForm({
       {/* Requesting a quote is free and non-binding — payment happens later,
           off-site — so this points at the policy rather than implying that
           sending the form accepts it. */}
-      <p className="mt-3 text-center text-xs text-ink-soft/60">
+      <p className="mt-3 text-center text-xs text-ink-soft/85">
         {tr("Free to ask, no obligation. Deposits become non-refundable once a booking is confirmed —")}{" "}
         <Link href="/cancellation-policy" className="underline underline-offset-2 hover:text-ink">
           {tr("see our Cancellation Policy")}
@@ -244,7 +244,7 @@ export function CustomizeForm({
       </p>
 
       {status === "sent" && (
-        <p className="mt-3 text-center text-xs text-ink-soft/60">
+        <p className="mt-3 text-center text-xs text-ink-soft/85">
           {tr("Thanks — your request has been sent. We'll reply by email soon. Prefer to chat now? Message us on")}{" "}
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}

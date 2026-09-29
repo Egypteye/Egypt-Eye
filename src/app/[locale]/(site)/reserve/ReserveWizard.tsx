@@ -150,7 +150,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
       <section className="bg-sand py-24">
         <Container className="mx-auto max-w-lg text-center">
           <h1 className="font-display text-3xl font-semibold text-ink">{tr("Your journey is empty")}</h1>
-          <p className="mt-4 text-ink-soft/70">{tr("Add a tour, experience, or destination before requesting a reservation.")}</p>
+          <p className="mt-4 text-ink-soft">{tr("Add a tour, experience, or destination before requesting a reservation.")}</p>
           <Link href="/explore-egypt" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark">{tr("Start Exploring Egypt")}</Link>
         </Container>
       </section>
@@ -173,7 +173,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
               </div>
             ))}
           </div>
-          <p className="mt-2 text-xs font-medium text-ink-soft/60">
+          <p className="mt-2 text-xs font-medium text-ink-soft/85">
             Step {step + 1} of {STEPS.length} — {STEPS[step]}
           </p>
         </div>
@@ -182,7 +182,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
           {step === 0 && (
             <div className="flex flex-col gap-4">
               {!currentUser && (
-                <div className="rounded-2xl border border-gold/20 bg-sand-dim p-4 text-sm text-ink-soft/70">
+                <div className="rounded-2xl border border-gold/20 bg-sand-dim p-4 text-sm text-ink-soft">
                   Booking as a guest.{" "}
                   <Link href="/account/login?next=/reserve" className="font-semibold text-gold-dark underline">{tr("Log in")}</Link>{" "}
                   or{" "}
@@ -222,7 +222,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                   className={inputClass}
                 />
               </Field>
-              <p className="text-xs text-ink-soft/50">{tr("Not sure yet? Leave these blank — we can finalize dates together.")}</p>
+              <p className="text-xs text-ink-soft/85">{tr("Not sure yet? Leave these blank — we can finalize dates together.")}</p>
             </div>
           )}
 
@@ -287,7 +287,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                 <p className="text-sm font-semibold text-nile">✓ Code applied — your discount will be included in your quote</p>
               )}
               {discountState.checked && !discountState.valid && <p className="text-sm text-terracotta">{discountState.reason}</p>}
-              <p className="text-xs text-ink-soft/50">{tr("Have a 4% off code from our newsletter? Enter it here.")}</p>
+              <p className="text-xs text-ink-soft/85">{tr("Have a 4% off code from our newsletter? Enter it here.")}</p>
             </div>
           )}
 
@@ -299,7 +299,7 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
             <button
               type="button"
               onClick={() => setStep((s) => Math.max(0, s - 1))}
-              className={`text-sm font-semibold text-ink-soft/60 hover:text-ink ${step === 0 ? "invisible" : ""}`}
+              className={`text-sm font-semibold text-ink-soft/85 hover:text-ink ${step === 0 ? "invisible" : ""}`}
             >
               ← Back
             </button>
@@ -357,11 +357,11 @@ function ReviewStep({
   return (
     <div className="flex flex-col gap-5 text-sm">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Traveler")}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{tr("Traveler")}</p>
         <p className="mt-1 text-ink">{form.guestName} · {form.guestEmail}{form.guestPhone ? ` · ${form.guestPhone}` : ""}</p>
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Dates & Travelers")}</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{tr("Dates & Travelers")}</p>
         <p className="mt-1 text-ink">
           {form.tripStartDate ? new Date(form.tripStartDate).toLocaleDateString() : tr("Dates to be confirmed")}
           {form.tripEndDate ? ` – ${new Date(form.tripEndDate).toLocaleDateString()}` : ""} · {form.travelersAdults}{" "}
@@ -370,7 +370,7 @@ function ReviewStep({
         </p>
       </div>
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Your Journey")} ({titles.length})</p>
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{tr("Your Journey")} ({titles.length})</p>
         <ul className="mt-1 flex flex-col gap-1 text-ink">
           {titles.map((t) => (
             <li key={t}>{t}</li>
@@ -379,13 +379,13 @@ function ReviewStep({
       </div>
       {form.preferences && (
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Preferences")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{tr("Preferences")}</p>
           <p className="mt-1 text-ink">{form.preferences}</p>
         </div>
       )}
 
       <div className="rounded-2xl border border-gold/20 bg-sand-dim p-4">
-        <p className="text-xs text-ink-soft/70">
+        <p className="text-xs text-ink-soft">
           We&rsquo;ll confirm your exact pricing directly once we&rsquo;ve reviewed your journey
           {hasDiscount ? " — your discount code will be applied to that quote." : "."}
         </p>
@@ -393,7 +393,7 @@ function ReviewStep({
             request, and payment happens later, offline. So this deliberately
             says the policy applies "once you pay a deposit" rather than
             implying that sending the request accepts it. */}
-        <p className="mt-2 text-xs text-ink-soft/70">
+        <p className="mt-2 text-xs text-ink-soft">
           {tr("Sending this request is free and commits you to nothing. Once you pay a deposit, our Cancellation Policy applies — deposits and payments are non-refundable.")}{" "}
           <Link href="/cancellation-policy" className="font-medium text-ink underline underline-offset-2">
             {tr("Read it before you pay")}
@@ -422,13 +422,13 @@ function Confirmation({
       <Container className="mx-auto max-w-lg text-center">
         <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">{tr("Reservation Requested")}</p>
         <h1 className="mt-3 text-balance font-display text-3xl font-semibold text-ink sm:text-4xl">{tr("Your Egypt journey is on its way.")}</h1>
-        <p className="mt-4 text-ink-soft/80">{tr("Your request has been received. Our Egypt Eye team will review your journey and contact you with the next steps.")}</p>
+        <p className="mt-4 text-ink-soft">{tr("Your request has been received. Our Egypt Eye team will review your journey and contact you with the next steps.")}</p>
 
         <div className="mt-8 rounded-3xl border border-gold/15 bg-cream p-6 text-left shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{tr("Reference")}</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{tr("Reference")}</p>
           <p className="mt-1 font-mono text-lg font-bold text-ink">{confirmation.reference}</p>
 
-          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-ink-soft/50">Journey ({titles.length})</p>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Journey ({titles.length})</p>
           <ul className="mt-1 flex flex-col gap-1 text-sm text-ink">
             {titles.map((t) => (
               <li key={t}>{t}</li>
@@ -436,15 +436,15 @@ function Confirmation({
           </ul>
 
           {form.tripStartDate && (
-            <p className="mt-4 text-sm text-ink-soft/70">
+            <p className="mt-4 text-sm text-ink-soft">
               Trip start: <span className="font-medium text-ink">{new Date(form.tripStartDate).toLocaleDateString()}</span>
             </p>
           )}
-          <p className="mt-1 text-sm text-ink-soft/70">
+          <p className="mt-1 text-sm text-ink-soft">
             Travelers: <span className="font-medium text-ink">{form.travelersAdults} adult{form.travelersAdults === 1 ? "" : "s"}{form.travelersChildren > 0 ? `, ${form.travelersChildren} child${form.travelersChildren === 1 ? "" : "ren"}` : ""}</span>
           </p>
 
-          <p className="mt-4 border-t border-black/5 pt-4 text-sm text-ink-soft/70">
+          <p className="mt-4 border-t border-black/5 pt-4 text-sm text-ink-soft">
             We&rsquo;ll follow up with your confirmed pricing
             {confirmation.discountAmount > 0 ? ", with your discount code applied." : "."}
           </p>

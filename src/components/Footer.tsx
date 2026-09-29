@@ -114,7 +114,7 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
       </div>
 
       <div className="border-t border-white/10 py-6">
-        <Container className="flex flex-col items-center justify-between gap-3 text-xs text-cream/40 sm:flex-row">
+        <Container className="flex flex-col items-center justify-between gap-3 text-xs text-cream/60 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. {dict.footer.rightsReserved}</p>
           <div className="flex items-center gap-4">
             <Link href={to("/privacy")} className="hover:text-cream/70">

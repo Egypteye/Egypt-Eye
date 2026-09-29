@@ -118,7 +118,7 @@ export default async function AccountPage() {
             </h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/account/profile" className="text-sm font-semibold text-ink-soft/70 hover:text-ink"><T>Edit Profile</T></Link>
+            <Link href="/account/profile" className="text-sm font-semibold text-ink-soft hover:text-ink"><T>Edit Profile</T></Link>
             <LogoutButton className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
           </div>
         </div>
@@ -155,7 +155,7 @@ export default async function AccountPage() {
               </Link>
             </div>
             {typedJourneys.length === 0 ? (
-              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
+              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/85">
                 {ui["No saved journeys yet."]}{" "}
                 <Link href="/explore-egypt" className="font-semibold text-gold-dark underline"><T>Start exploring Egypt</T></Link>{" "}
                 {ui["to build one."]}
@@ -168,7 +168,7 @@ export default async function AccountPage() {
           <div>
             <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Your Reservations</T></h2>
             {typedReservations.length === 0 ? (
-              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
+              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/85">
                 {ui["No reservations yet."]}{" "}
                 <Link href="/my-journey" className="font-semibold text-gold-dark underline"><T>Request your journey</T></Link>{" "}
                 {ui["when you're ready."]}
@@ -179,7 +179,7 @@ export default async function AccountPage() {
                   <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-black/5 bg-cream p-5 shadow-sm">
                     <div>
                       <p className="font-mono text-sm font-semibold text-ink">{r.reference}</p>
-                      <p className="mt-0.5 text-xs text-ink-soft/60">
+                      <p className="mt-0.5 text-xs text-ink-soft/85">
                         {r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : ui["Dates to be confirmed"]} ·{" "}
                         {r.travelers_adults} {r.travelers_adults === 1 ? ui["adult"] : ui["adults"]}
                         {r.travelers_children > 0 ? `, ${r.travelers_children} ${r.travelers_children === 1 ? ui["child"] : ui["children"]}` : ""}

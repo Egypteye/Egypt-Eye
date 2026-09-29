@@ -36,7 +36,7 @@ export default async function AdminPinterestPage({
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="font-display text-2xl font-semibold text-ink">Pinterest</h1>
-        <p className="mt-1 text-sm text-ink-soft/60">
+        <p className="mt-1 text-sm text-ink-soft/85">
           Every published Story gets pinned automatically, once — a photo, an SEO-friendly caption, and a link
           straight back to the article. New stories are picked up on their own within about an hour of publishing;
           nothing ever gets pinned twice.
@@ -56,7 +56,7 @@ export default async function AdminPinterestPage({
 
       {!status.connected ? (
         <div className="rounded-2xl border border-dashed border-black/15 bg-cream p-8 text-center">
-          <p className="text-sm text-ink-soft/70">
+          <p className="text-sm text-ink-soft">
             Not connected yet. This is a one-time step — click below, sign in to Pinterest, and authorize Egypt Eye
             to pin on your account&rsquo;s behalf.
           </p>
@@ -73,9 +73,9 @@ export default async function AdminPinterestPage({
       ) : !status.boardId ? (
         <div className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
           <p className="font-display text-lg font-semibold text-ink">Choose a board</p>
-          <p className="mt-1 text-sm text-ink-soft/60">Every auto-pinned Story will be added to this board.</p>
+          <p className="mt-1 text-sm text-ink-soft/85">Every auto-pinned Story will be added to this board.</p>
           {status.boards.length === 0 ? (
-            <p className="mt-4 text-sm text-ink-soft/60">
+            <p className="mt-4 text-sm text-ink-soft/85">
               No boards found on this Pinterest account — create a board on Pinterest first, then refresh this page.
             </p>
           ) : (
@@ -102,7 +102,7 @@ export default async function AdminPinterestPage({
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="font-display text-lg font-semibold text-ink">Connected — pinning to “{status.boardName}”</p>
-              <p className="mt-1 text-sm text-ink-soft/60">
+              <p className="mt-1 text-sm text-ink-soft/85">
                 Auto-pinning runs on its own every hour. Use the button below to work through the initial backfill of
                 existing stories.
               </p>
@@ -111,7 +111,7 @@ export default async function AdminPinterestPage({
                 same OAuth Route Handler as above; needs a real navigation. */}
             <a
               href="/api/pinterest/oauth/start"
-              className="whitespace-nowrap text-sm font-medium text-ink-soft/60 underline decoration-dotted underline-offset-4 transition hover:text-ink"
+              className="whitespace-nowrap text-sm font-medium text-ink-soft/85 underline decoration-dotted underline-offset-4 transition hover:text-ink"
             >
               Reconnect Pinterest
             </a>
@@ -138,7 +138,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
   return (
     <div>
       <p className="text-lg font-bold text-ink">{value}</p>
-      <p className="text-xs text-ink-soft/50">{label}</p>
+      <p className="text-xs text-ink-soft/85">{label}</p>
     </div>
   );
 }

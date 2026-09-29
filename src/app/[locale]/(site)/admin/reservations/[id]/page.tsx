@@ -51,7 +51,7 @@ export default async function AdminReservationDetailPage({ params }: { params: P
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <Link href="/admin/reservations" className="text-sm font-semibold text-ink-soft/60 hover:text-ink">
+        <Link href="/admin/reservations" className="text-sm font-semibold text-ink-soft/85 hover:text-ink">
           ← All Reservations
         </Link>
         <div className="mt-2 flex flex-wrap items-center justify-between gap-4">
@@ -75,16 +75,16 @@ export default async function AdminReservationDetailPage({ params }: { params: P
         <div className="rounded-2xl border border-black/5 bg-cream p-5 text-sm shadow-sm">
           <h2 className="mb-3 font-display text-base font-semibold text-ink">Guest</h2>
           <p className="text-ink">{reservation.guest_name}</p>
-          <p className="text-ink-soft/60">{reservation.guest_email}</p>
-          {reservation.guest_phone && <p className="text-ink-soft/60">{reservation.guest_phone}</p>}
-          <p className="mt-2 text-ink-soft/60">
+          <p className="text-ink-soft/85">{reservation.guest_email}</p>
+          {reservation.guest_phone && <p className="text-ink-soft/85">{reservation.guest_phone}</p>}
+          <p className="mt-2 text-ink-soft/85">
             {reservation.travelers_adults} adults, {reservation.travelers_children} children
           </p>
-          <p className="text-ink-soft/60">
+          <p className="text-ink-soft/85">
             {reservation.trip_start_date ? new Date(reservation.trip_start_date).toLocaleDateString() : "Dates TBD"}
             {reservation.trip_end_date ? ` – ${new Date(reservation.trip_end_date).toLocaleDateString()}` : ""}
           </p>
-          {reservation.preferences && <p className="mt-2 text-ink-soft/60">&ldquo;{reservation.preferences}&rdquo;</p>}
+          {reservation.preferences && <p className="mt-2 text-ink-soft/85">&ldquo;{reservation.preferences}&rdquo;</p>}
         </div>
 
         <div className="rounded-2xl border border-black/5 bg-cream p-5 text-sm shadow-sm">
@@ -95,7 +95,7 @@ export default async function AdminReservationDetailPage({ params }: { params: P
             ))}
           </ul>
           {reservation.subtotal_estimate !== null && (
-            <div className="mt-3 border-t border-black/5 pt-3 text-ink-soft/70">
+            <div className="mt-3 border-t border-black/5 pt-3 text-ink-soft">
               <p>Subtotal: ${reservation.subtotal_estimate.toLocaleString()}</p>
               {reservation.discount_amount > 0 && <p>Discount: -${reservation.discount_amount.toLocaleString()}</p>}
               <p className="font-semibold text-ink">Total: ${reservation.total_estimate?.toLocaleString()}</p>
@@ -112,8 +112,8 @@ export default async function AdminReservationDetailPage({ params }: { params: P
               <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-xl bg-sand-dim p-3 text-sm">
                 <div>
                   <p className="text-ink">{r.payload?.title ?? r.request_type}</p>
-                  {r.payload?.note && <p className="text-ink-soft/60">{r.payload.note}</p>}
-                  <p className="text-xs text-ink-soft/40">{new Date(r.created_at).toLocaleString()}</p>
+                  {r.payload?.note && <p className="text-ink-soft/85">{r.payload.note}</p>}
+                  <p className="text-xs text-ink-soft/85">{new Date(r.created_at).toLocaleString()}</p>
                 </div>
                 {r.status === "pending" ? (
                   <div className="flex gap-2">
@@ -129,7 +129,7 @@ export default async function AdminReservationDetailPage({ params }: { params: P
                     </form>
                   </div>
                 ) : (
-                  <span className="rounded-full bg-black/5 px-3 py-1.5 text-xs font-semibold text-ink-soft/60">{r.status}</span>
+                  <span className="rounded-full bg-black/5 px-3 py-1.5 text-xs font-semibold text-ink-soft/85">{r.status}</span>
                 )}
               </div>
             ))}
@@ -203,9 +203,9 @@ export default async function AdminReservationDetailPage({ params }: { params: P
           {itinerary.map((day, dayIndex) => (
             <div key={dayIndex} className="rounded-2xl border border-black/5 bg-cream p-5 shadow-sm">
               <p className="font-semibold text-ink">
-                Day {day.day}: {day.title} {day.date && <span className="text-ink-soft/50">({day.date})</span>}
+                Day {day.day}: {day.title} {day.date && <span className="text-ink-soft/85">({day.date})</span>}
               </p>
-              <ul className="mt-2 flex flex-col gap-1 text-sm text-ink-soft/70">
+              <ul className="mt-2 flex flex-col gap-1 text-sm text-ink-soft">
                 {day.items.map((item, i) => (
                   <li key={i}>
                     {item.time && <span className="font-semibold text-gold-dark">{item.time} — </span>}

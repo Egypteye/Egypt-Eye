@@ -11,7 +11,7 @@ const inputClass =
 function Field({ label, htmlFor, children }: { label: string; htmlFor: string; children: React.ReactNode }) {
   return (
     <label htmlFor={htmlFor} className="flex flex-col gap-1.5">
-      <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft/60">{label}</span>
+      <span className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{label}</span>
       {children}
     </label>
   );
@@ -113,7 +113,7 @@ export function EnquiryModal({
       >
         <div className="sticky top-0 flex items-start justify-between gap-4 border-b border-black/5 bg-cream/95 p-6 backdrop-blur-sm">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-dark">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
               {tr("Enquire About This {item}").replace("{item}", ITEM_LABELS[itemType])}
             </p>
             <p id="enquiry-modal-title" className="mt-1 font-display text-lg font-semibold leading-snug text-ink">
@@ -124,7 +124,7 @@ export function EnquiryModal({
             type="button"
             aria-label={tr("Close")}
             onClick={onClose}
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-soft/60 transition hover:bg-sand-dim hover:text-ink"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink-soft/85 transition hover:bg-sand-dim hover:text-ink"
           >
             <svg viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M5 5l10 10M15 5L5 15" strokeLinecap="round" />
@@ -140,7 +140,7 @@ export function EnquiryModal({
               </svg>
             </span>
             <p className="font-display text-lg font-semibold text-ink">{tr("Enquiry sent")}</p>
-            <p className="text-sm text-ink-soft/70">{tr("Thanks — our reservations team has everything they need and will get back to you shortly.")}</p>
+            <p className="text-sm text-ink-soft">{tr("Thanks — our reservations team has everything they need and will get back to you shortly.")}</p>
             <button
               type="button"
               onClick={onClose}
@@ -205,7 +205,7 @@ export function EnquiryModal({
                 />
               </Field>
             </div>
-            <label className="-mt-2 flex items-center gap-2 text-xs text-ink-soft/60">
+            <label className="-mt-2 flex items-center gap-2 text-xs text-ink-soft/85">
               <input
                 type="checkbox"
                 checked={flexibleDates}

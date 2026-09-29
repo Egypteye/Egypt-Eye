@@ -46,7 +46,7 @@ export async function Rating({ rating }: { rating?: RatingType }) {
   ]);
 
   if (!rating || !rating.count) {
-    return <span className="text-sm text-ink-soft/60"><T>New experience</T></span>;
+    return <span className="text-sm text-ink-soft/85"><T>New experience</T></span>;
   }
 
   const count = rating.count.toLocaleString();
@@ -71,7 +71,7 @@ export async function Rating({ rating }: { rating?: RatingType }) {
       {typeof rating.score === "number" ? (
         <>
           <span className="font-semibold text-ink">{rating.score.toFixed(1)}</span>
-          <span className="text-ink-soft/60">({reviews})</span>
+          <span className="text-ink-soft/85">({reviews})</span>
         </>
       ) : (
         <span className="font-semibold text-ink">{reviews}</span>

@@ -45,6 +45,19 @@
   --font-serif: var(--font-display);
 }
 
+/* The bottom of the type scale, raised.
+   Tailwind's text-xs is 12px/1.33. That is a UI-font size on a UI line
+   height, and the body face here is a serif — at 12px its small x-height and
+   thin strokes make eyebrow labels, dates and captions read as texture rather
+   than words. 13px on a 1.5 line height is the smallest size this face stays
+   a sentence at, and it lifts ~290 call sites without touching one of them.
+   Nothing else in the scale moves: text-sm at 14px is real body copy, and
+   changing it would reflow every page. */
+@theme {
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.5;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

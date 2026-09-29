@@ -34,7 +34,7 @@ export function SectionHeading({
       </h2>
       {description && (
         <p
-          className={`mt-4 text-lg ${isDark ? "text-cream/70" : "text-ink-soft/80"} ${
+          className={`mt-4 text-lg ${isDark ? "text-cream/70" : "text-ink-soft"} ${
             align === "center" ? "mx-auto max-w-2xl" : "max-w-2xl"
           }`}
         >

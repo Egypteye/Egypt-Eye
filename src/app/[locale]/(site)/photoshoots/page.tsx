@@ -88,7 +88,7 @@ export default async function PhotoshootsPage() {
             <div className="mt-10">
               <FaqAccordion faqs={[...page.faqs]} />
             </div>
-            <p className="mt-10 text-center text-sm text-ink-soft/70">
+            <p className="mt-10 text-center text-sm text-ink-soft">
               <T>Still deciding? Tell us the date and we will confirm what is possible.</T>
             </p>
           </Container>

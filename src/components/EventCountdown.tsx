@@ -43,7 +43,7 @@ function TimeUnit({ value, label }: { value: number; label: string }) {
       >
         {String(value).padStart(2, "0")}
       </span>
-      <span className="mt-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-cream/60">
+      <span className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-cream/60">
         {label}
       </span>
     </div>
@@ -120,7 +120,7 @@ export function EventCountdown({ event }: { event: EventCountdownData }) {
           <p className="max-w-lg text-sm leading-relaxed text-cream/70">{event.supportingText}</p>
         )}
         {event.timezoneLabel && (
-          <p className="text-xs uppercase tracking-[0.15em] text-cream/40">{event.timezoneLabel}</p>
+          <p className="text-xs uppercase tracking-[0.15em] text-cream/60">{event.timezoneLabel}</p>
         )}
       </div>
     </div>

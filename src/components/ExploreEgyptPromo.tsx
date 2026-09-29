@@ -21,7 +21,7 @@ export async function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
 
         <div className="relative grid gap-10 p-8 sm:p-12 lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-14 lg:p-16">
           <div>
-            <span className="inline-flex items-center rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-gold-light"><T>Explore Egypt</T></span>
+            <span className="inline-flex items-center rounded-full border border-gold/30 bg-gold/10 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-gold-light"><T>Explore Egypt</T></span>
             <h2 className="mt-5 text-balance font-display text-3xl font-semibold leading-[1.1] text-cream sm:text-4xl lg:text-[2.75rem]"><T>Your Egypt Adventure Starts Here</T></h2>
             <p className="mt-4 max-w-md text-[15px] leading-relaxed text-cream/70"><T>Tap through Cairo, Luxor, the Red Sea coast and beyond on our interactive map — see the real tours, experiences and photoshoots waiting at each stop, then build your own journey in minutes.</T></p>
 
@@ -34,7 +34,7 @@ export async function ExploreEgyptPromo({ hubs }: { hubs: DestinationHub[] }) {
                   </svg>
                 </span>
               </Link>
-              <p className="text-xs font-medium uppercase tracking-[0.15em] text-cream/40">
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-cream/60">
                 {ui["{n} destinations · one live map"].replace("{n}", String(hubs.length))}
               </p>
             </div>

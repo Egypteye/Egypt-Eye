@@ -67,7 +67,7 @@ export async function ProductReviews({
         <div>
           <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">{heading}</h2>
           {!aboutThisProduct && (
-            <p className="mt-1.5 text-sm text-ink-soft/70">
+            <p className="mt-1.5 text-sm text-ink-soft">
               Reviews of Egypt Eye from travellers who did something similar.
             </p>
           )}

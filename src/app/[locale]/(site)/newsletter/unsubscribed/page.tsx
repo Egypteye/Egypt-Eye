@@ -30,7 +30,7 @@ export default async function NewsletterUnsubscribedPage({
         <h1 className="font-display text-3xl font-semibold text-ink">
           {status === "ok" ? ui["You've been unsubscribed"] : ui["That link isn't valid"]}
         </h1>
-        <p className="mt-4 text-ink-soft/80">
+        <p className="mt-4 text-ink-soft">
           {status === "ok"
             ? ui["You won't receive any more Egypt Eye marketing emails. You can still log in to your account any time — this only affects marketing emails, not your account or reservation details."]
             : ui["This unsubscribe link is invalid or has already been used."]}

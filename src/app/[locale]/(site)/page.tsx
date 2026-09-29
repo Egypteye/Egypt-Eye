@@ -355,7 +355,7 @@ export default async function Home() {
           <Reveal>
             <div className="flex flex-col items-center gap-5 rounded-3xl bg-gold/15 px-8 py-16 text-center">
               <h2 className="font-display text-3xl font-semibold text-ink sm:text-4xl">{home.finalCta.title}</h2>
-              <p className="max-w-xl text-ink-soft/80">{home.finalCta.body}</p>
+              <p className="max-w-xl text-ink-soft">{home.finalCta.body}</p>
               <WhatsAppBookButton
                 whatsappLink={site.contact.whatsappLink}
                 context={{ page: "the homepage" }}

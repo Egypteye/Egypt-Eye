@@ -32,7 +32,7 @@ export default async function AdminHotelsPage() {
   return (
     <div>
       <h1 className="font-display text-2xl font-semibold text-ink">Hotels</h1>
-      <p className="mt-2 text-sm text-ink-soft/60">
+      <p className="mt-2 text-sm text-ink-soft/85">
         Manage the{" "}
         <Link href="/hotel-deals" className="underline">
           Hotel Deals
@@ -42,7 +42,7 @@ export default async function AdminHotelsPage() {
 
       <div className="mt-8 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
         <h2 className="font-display text-lg font-semibold text-ink">Add a Hotel</h2>
-        <p className="mt-1 text-sm text-ink-soft/60">
+        <p className="mt-1 text-sm text-ink-soft/85">
           Starts disabled — add rooms, rates, and photos, then enable it from the editor.
         </p>
         <form action={createHotel} className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -83,7 +83,7 @@ export default async function AdminHotelsPage() {
 
       <div className="mt-8 overflow-x-auto rounded-2xl border border-black/5 bg-cream shadow-sm">
         <table className="w-full min-w-[560px] text-left text-sm">
-          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/50">
+          <thead className="border-b border-black/5 text-xs uppercase tracking-wide text-ink-soft/85">
             <tr>
               <th className="px-4 py-3">Name</th>
               <th className="px-4 py-3">Type</th>
@@ -100,14 +100,14 @@ export default async function AdminHotelsPage() {
                     {h.name}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-ink-soft/70">
+                <td className="px-4 py-3 text-ink-soft">
                   {h.property_type === "apartment" ? "Apartment" : "Hotel"}
                 </td>
-                <td className="px-4 py-3 text-ink-soft/70">{h.location}</td>
+                <td className="px-4 py-3 text-ink-soft">{h.location}</td>
                 <td className="px-4 py-3">
                   <span
                     className={`rounded-full px-2.5 py-1 text-xs font-semibold ${
-                      h.enabled ? "bg-nile/10 text-nile" : "bg-black/5 text-ink-soft/60"
+                      h.enabled ? "bg-nile/10 text-nile" : "bg-black/5 text-ink-soft/85"
                     }`}
                   >
                     {h.enabled ? "Live" : "Disabled"}
@@ -122,7 +122,7 @@ export default async function AdminHotelsPage() {
             ))}
             {hotels.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-ink-soft/50">
+                <td colSpan={4} className="px-4 py-8 text-center text-ink-soft/85">
                   No hotels yet.
                 </td>
               </tr>

@@ -54,45 +54,45 @@ export function TripCard({
         </div>
 
         <h3 className="font-display text-lg font-semibold leading-snug text-ink">{trip.title}</h3>
-        <p className="line-clamp-2 text-sm text-ink-soft/70">{trip.tagline}</p>
+        <p className="line-clamp-2 text-sm text-ink-soft">{trip.tagline}</p>
 
         {/* The whole point of the card: when the next one goes. */}
         <div className="mt-auto rounded-xl bg-sand/70 px-3 py-2.5">
           {nextDeparture ? (
             <>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-soft/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft/85">
                 {tr("Next departure")}
               </p>
               <p className="mt-0.5 text-sm font-semibold text-ink">
                 {formatDateRange(nextDeparture.departsOn, nextDeparture.returnsOn, locale)}
               </p>
               {departureCount !== undefined && departureCount > 1 && (
-                <p className="mt-0.5 text-xs text-ink-soft/70">
+                <p className="mt-0.5 text-xs text-ink-soft">
                   {tr("+{n} more dates").replace("{n}", String(departureCount - 1))}
                 </p>
               )}
             </>
           ) : (
             <>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-soft/60">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft/85">
                 {tr("Dates")}
               </p>
               {/* No invented date and no invented price — this is the truthful
                   state of a trip nobody has scheduled yet. */}
               <p className="mt-0.5 text-sm font-semibold text-ink">{tr("Coming soon")}</p>
-              <p className="mt-0.5 text-xs text-ink-soft/70">{tr("Ask us to be told first")}</p>
+              <p className="mt-0.5 text-xs text-ink-soft">{tr("Ask us to be told first")}</p>
             </>
           )}
         </div>
 
         <div className="flex items-center justify-between border-t border-black/5 pt-3">
           {fromPrice !== undefined ? (
-            <span className="text-sm text-ink-soft/70">
+            <span className="text-sm text-ink-soft">
               <span className="text-base font-semibold text-ink">${fromPrice}</span>{" "}
               {tr("per seat")}
             </span>
           ) : (
-            <span className="text-sm text-ink-soft/70">{trip.typicalGroupSize ?? ""}</span>
+            <span className="text-sm text-ink-soft">{trip.typicalGroupSize ?? ""}</span>
           )}
           <span className="text-sm font-semibold text-gold-dark transition group-hover:translate-x-1">
             {tr("View trip →")}

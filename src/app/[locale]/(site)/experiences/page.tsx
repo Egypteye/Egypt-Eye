@@ -123,7 +123,7 @@ export default async function ExperiencesPage() {
                   className="rounded-full border border-black/10 bg-cream px-4 py-2 text-sm font-semibold text-ink-soft transition-colors duration-200 hover:border-gold/50 hover:bg-gold/10 hover:text-gold-dark"
                 >
                   {g.name}
-                  <span className="ml-2 text-xs font-normal text-ink-soft/50">{g.items.length}</span>
+                  <span className="ml-2 text-xs font-normal text-ink-soft/85">{g.items.length}</span>
                 </a>
               ))}
             </nav>
@@ -141,7 +141,7 @@ export default async function ExperiencesPage() {
             <Reveal>
               <div className="max-w-2xl">
                 <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">{group.name}</h2>
-                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft/75">{group.blurb}</p>
+                <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">{group.blurb}</p>
               </div>
             </Reveal>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

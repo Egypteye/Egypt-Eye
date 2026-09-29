@@ -21,7 +21,7 @@ export function StoryCard({ story }: { story: StoryCardData }) {
           </p>
         )}
         <h3 className="font-display text-lg font-semibold leading-snug text-ink">{story.title}</h3>
-        <p className="line-clamp-2 text-sm text-ink-soft/70">{story.excerpt}</p>
+        <p className="line-clamp-2 text-sm text-ink-soft">{story.excerpt}</p>
       </div>
     </Link>
   );

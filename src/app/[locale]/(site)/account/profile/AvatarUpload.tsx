@@ -88,7 +88,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
 
   return (
     <div className="flex items-center gap-5">
-      <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-sand-dim text-2xl font-semibold text-ink-soft/50">
+      <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full border border-black/10 bg-sand-dim text-2xl font-semibold text-ink-soft/85">
         {preview ? (
           <Image src={preview} alt="" width={80} height={80} className="h-full w-full object-cover" />
         ) : (
@@ -116,7 +116,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
               type="button"
               onClick={handleRemove}
               disabled={status === "saving"}
-              className="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft/60 transition hover:text-terracotta disabled:opacity-60">{tr("Remove")}</button>
+              className="rounded-full px-4 py-2 text-xs font-semibold text-ink-soft/85 transition hover:text-terracotta disabled:opacity-60">{tr("Remove")}</button>
           )}
         </div>
         <input
@@ -129,7 +129,7 @@ export function AvatarUpload({ userId, avatarUrl, firstName }: { userId: string;
         {status === "error" ? (
           <p className="text-xs text-terracotta">{error}</p>
         ) : (
-          <p className="text-xs text-ink-soft/50">{tr("JPG, PNG, or WebP. Up to 5MB.")}</p>
+          <p className="text-xs text-ink-soft/85">{tr("JPG, PNG, or WebP. Up to 5MB.")}</p>
         )}
       </div>
     </div>

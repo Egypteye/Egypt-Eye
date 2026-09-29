@@ -22,8 +22,8 @@ const STATE_STYLES: Record<string, string> = {
   open: "bg-emerald-50 text-emerald-800",
   almost_full: "bg-amber-50 text-amber-900",
   sold_out: "bg-rose-50 text-rose-800",
-  closed: "bg-black/5 text-ink-soft/70",
-  departed: "bg-black/5 text-ink-soft/70",
+  closed: "bg-black/5 text-ink-soft",
+  departed: "bg-black/5 text-ink-soft",
   cancelled: "bg-rose-50 text-rose-800",
 };
 
@@ -71,7 +71,7 @@ export default async function AdminDeparturesPage() {
         {stats.map((s) => (
           <div key={s.label} className="rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
             <p className="text-2xl font-bold text-ink">{s.value}</p>
-            <p className="mt-0.5 text-sm text-ink-soft/70">{s.label}</p>
+            <p className="mt-0.5 text-sm text-ink-soft">{s.label}</p>
           </div>
         ))}
       </div>
@@ -84,7 +84,7 @@ export default async function AdminDeparturesPage() {
 
       <h2 className="mt-10 font-display text-xl font-semibold text-ink">Upcoming</h2>
       {upcoming.length === 0 ? (
-        <p className="mt-3 rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/70">
+        <p className="mt-3 rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft">
           Nothing scheduled yet. Add the first date above and it appears on the site straight away.
         </p>
       ) : (
@@ -104,19 +104,19 @@ export default async function AdminDeparturesPage() {
                       </span>
                     )}
                   </div>
-                  <p className="mt-1 text-sm text-ink-soft/80">
+                  <p className="mt-1 text-sm text-ink-soft">
                     {formatDateRange(d.departsOn, d.returnsOn, "en-GB")}
                     {d.departureTime ? ` · ${d.departureTime}` : ""}
                   </p>
                   {d.cancellationReason && <p className="mt-1 text-sm text-rose-800">{d.cancellationReason}</p>}
-                  {d.note && <p className="mt-1 text-sm text-ink-soft/60">{d.note}</p>}
+                  {d.note && <p className="mt-1 text-sm text-ink-soft/85">{d.note}</p>}
                 </div>
                 <div className="text-right">
                   <p className="font-display text-lg font-semibold text-ink">
                     {d.seatsTaken}/{d.capacity}
                   </p>
-                  <p className="text-xs text-ink-soft/60">seats · ${d.priceUsd} each</p>
-                  <p className="mt-0.5 text-xs font-medium text-ink-soft/70">
+                  <p className="text-xs text-ink-soft/85">seats · ${d.priceUsd} each</p>
+                  <p className="mt-0.5 text-xs font-medium text-ink-soft">
                     ${(d.seatsTaken * d.priceUsd).toFixed(0)} booked
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export default async function AdminDeparturesPage() {
       {needsClosing.length > 0 && (
         <>
           <h2 className="mt-10 font-display text-xl font-semibold text-ink">Waiting to be closed off</h2>
-          <p className="mt-1 text-sm text-ink-soft/70">
+          <p className="mt-1 text-sm text-ink-soft">
             These dates have passed. Marking one completed removes it from the public calendar.
           </p>
           <ul className="mt-3 space-y-3">
@@ -139,7 +139,7 @@ export default async function AdminDeparturesPage() {
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <span className="font-semibold text-ink">{d.trip.title}</span>
-                    <p className="text-sm text-ink-soft/70">
+                    <p className="text-sm text-ink-soft">
                       {formatDateRange(d.departsOn, d.returnsOn, "en-GB")} · {d.seatsTaken} travelled
                     </p>
                   </div>

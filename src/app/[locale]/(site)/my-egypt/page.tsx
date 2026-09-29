@@ -56,7 +56,7 @@ export default async function MyEgyptPage() {
         <Container className="mx-auto max-w-lg text-center">
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark"><T>My Egypt</T></p>
           <h1 className="mt-3 font-display text-3xl font-semibold text-ink"><T>Your private travel dashboard</T></h1>
-          <p className="mt-4 text-ink-soft/70"><T>My Egypt unlocks once one of your reservations is confirmed by our team — your countdown, itinerary, hotels, and everything else will live here.</T></p>
+          <p className="mt-4 text-ink-soft"><T>My Egypt unlocks once one of your reservations is confirmed by our team — your countdown, itinerary, hotels, and everything else will live here.</T></p>
           <Link href="/account" className="mt-8 inline-block rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>View My Account</T></Link>
         </Container>
       </section>
@@ -118,8 +118,8 @@ export default async function MyEgyptPage() {
                   <li key={i} className="rounded-xl bg-sand-dim p-4 text-sm">
                     {item.time && <p className="font-semibold text-gold-dark">{item.time}</p>}
                     <p className="font-medium text-ink">{item.title}</p>
-                    {item.location && <p className="text-ink-soft/60">{item.location}</p>}
-                    {item.notes && <p className="mt-1 text-ink-soft/60">{item.notes}</p>}
+                    {item.location && <p className="text-ink-soft/85">{item.location}</p>}
+                    {item.notes && <p className="mt-1 text-ink-soft/85">{item.notes}</p>}
                   </li>
                 ))}
               </ul>
@@ -140,7 +140,7 @@ export default async function MyEgyptPage() {
           <div>
             <h2 className="mb-4 font-display text-lg font-semibold text-ink"><T>Your Itinerary</T></h2>
             {itinerary.length === 0 ? (
-              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60"><T>Your day-by-day itinerary will appear here once our team finalizes it.</T></p>
+              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/85"><T>Your day-by-day itinerary will appear here once our team finalizes it.</T></p>
             ) : (
               <div className="flex flex-col gap-4">
                 {itinerary.map((day) => (
@@ -149,14 +149,14 @@ export default async function MyEgyptPage() {
                       <span>
                         Day {day.day}: {day.title}
                       </span>
-                      <span className="text-ink-soft/40 transition group-open:rotate-180">▾</span>
+                      <span className="text-ink-soft/85 transition group-open:rotate-180">▾</span>
                     </summary>
                     <ul className="mt-4 flex flex-col gap-3 border-t border-black/5 pt-4">
                       {day.items.map((item, i) => (
                         <li key={i} className="text-sm">
                           {item.time && <span className="font-semibold text-gold-dark">{item.time} — </span>}
                           <span className="text-ink">{item.title}</span>
-                          {item.location && <span className="text-ink-soft/60"> · {item.location}</span>}
+                          {item.location && <span className="text-ink-soft/85"> · {item.location}</span>}
                         </li>
                       ))}
                     </ul>
@@ -175,13 +175,13 @@ export default async function MyEgyptPage() {
                   <div key={i} className="text-sm">
                     <p className="font-semibold text-ink">{h.name}</p>
                     {(h.checkIn || h.checkOut) && (
-                      <p className="text-ink-soft/60">
+                      <p className="text-ink-soft/85">
                         {h.checkIn && new Date(h.checkIn).toLocaleDateString()}
                         {h.checkOut && ` – ${new Date(h.checkOut).toLocaleDateString()}`}
                       </p>
                     )}
-                    {h.address && <p className="text-ink-soft/60">{h.address}</p>}
-                    {h.confirmationNumber && <p className="text-ink-soft/50">Confirmation: {h.confirmationNumber}</p>}
+                    {h.address && <p className="text-ink-soft/85">{h.address}</p>}
+                    {h.confirmationNumber && <p className="text-ink-soft/85">Confirmation: {h.confirmationNumber}</p>}
                   </div>
                 ))
               )}
@@ -196,10 +196,10 @@ export default async function MyEgyptPage() {
                     <p className="font-semibold text-ink">
                       {t.from} → {t.to}
                     </p>
-                    <p className="text-ink-soft/60">
+                    <p className="text-ink-soft/85">
                       {t.date && new Date(t.date).toLocaleDateString()} {t.time}
                     </p>
-                    {t.driverName && <p className="text-ink-soft/50">Driver: {t.driverName}{t.driverPhone ? ` · ${t.driverPhone}` : ""}</p>}
+                    {t.driverName && <p className="text-ink-soft/85">Driver: {t.driverName}{t.driverPhone ? ` · ${t.driverPhone}` : ""}</p>}
                   </div>
                 ))
               )}
@@ -212,8 +212,8 @@ export default async function MyEgyptPage() {
                 guides.map((g, i) => (
                   <div key={i} className="text-sm">
                     <p className="font-semibold text-ink">{g.name}</p>
-                    {g.phone && <p className="text-ink-soft/60">{g.phone}</p>}
-                    {g.languages && <p className="text-ink-soft/50">{g.languages}</p>}
+                    {g.phone && <p className="text-ink-soft/85">{g.phone}</p>}
+                    {g.languages && <p className="text-ink-soft/85">{g.languages}</p>}
                   </div>
                 ))
               )}
@@ -243,13 +243,13 @@ export default async function MyEgyptPage() {
           {(suggestedExperiences.length > 0 || suggestedPhotoshoots.length > 0) && (
             <div>
               <h2 className="mb-1 font-display text-lg font-semibold text-ink"><T>Make Your Journey Even More Yours</T></h2>
-              <p className="mb-4 text-sm text-ink-soft/60"><T>Based on your destinations — request an addition and we’ll follow up.</T></p>
+              <p className="mb-4 text-sm text-ink-soft/85"><T>Based on your destinations — request an addition and we’ll follow up.</T></p>
               <div className="grid gap-4 sm:grid-cols-2">
                 {[...suggestedExperiences, ...suggestedPhotoshoots].map((item) => (
                   <div key={item.slug} className="flex items-center justify-between gap-3 rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
                     <div className="min-w-0">
                       <p className="truncate font-medium text-ink">{item.title}</p>
-                      <p className="text-xs text-ink-soft/50">{item.duration}</p>
+                      <p className="text-xs text-ink-soft/85">{item.duration}</p>
                     </div>
                     <AddExperienceButton reservationId={reservation.id} slug={item.slug} title={item.title} />
                   </div>
@@ -260,7 +260,7 @@ export default async function MyEgyptPage() {
 
           <div>
             <h2 className="mb-1 font-display text-lg font-semibold text-ink"><T>Ask Egypt Eye</T></h2>
-            <p className="mb-4 text-sm text-ink-soft/60"><T>Your private concierge — grounded in your actual trip details.</T></p>
+            <p className="mb-4 text-sm text-ink-soft/85"><T>Your private concierge — grounded in your actual trip details.</T></p>
             <ConciergeWidget reservationId={reservation.id} whatsappLink={site.contact.whatsappLink} />
           </div>
 
@@ -273,7 +273,7 @@ export default async function MyEgyptPage() {
               >
                 WhatsApp Egypt Eye — {site.contact.whatsapp}
               </WhatsAppBookButton>
-              <a href={`mailto:${site.contact.email}`} className="text-ink-soft/70 hover:text-ink">
+              <a href={`mailto:${site.contact.email}`} className="text-ink-soft hover:text-ink">
                 {site.contact.email}
               </a>
             </div>
@@ -294,5 +294,5 @@ function InfoCard({ title, children }: { title: string; children: React.ReactNod
 }
 
 function EmptyNote({ text }: { text: string }) {
-  return <p className="text-sm text-ink-soft/50">{text}</p>;
+  return <p className="text-sm text-ink-soft/85">{text}</p>;
 }

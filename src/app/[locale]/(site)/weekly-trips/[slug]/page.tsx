@@ -157,13 +157,13 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
         <Container>
           <dl className="grid gap-4 py-6 sm:grid-cols-3">
             <div>
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft/50">
+              <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
                 {ui["Departs from"]}
               </dt>
               <dd className="mt-1 font-medium text-ink">{trip.departsFrom}</dd>
             </div>
             <div>
-              <dt className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft/50">
+              <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
                 {ui["Group size"]}
               </dt>
               <dd className="mt-1 font-medium text-ink">
@@ -172,7 +172,7 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
             </div>
             {trip.season && (
               <div>
-                <dt className="text-[11px] font-semibold uppercase tracking-[0.2em] text-ink-soft/50">
+                <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
                   {ui["Season"]}
                 </dt>
                 <dd className="mt-1 font-medium text-ink">{trip.season}</dd>
@@ -207,7 +207,7 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
               <h2 className="mt-10 font-display text-2xl font-semibold text-ink">{ui["Highlights"]}</h2>
               <ul className="mt-4 space-y-2.5">
                 {trip.highlights.map((h) => (
-                  <li key={h} className="flex gap-3 text-ink-soft/80">
+                  <li key={h} className="flex gap-3 text-ink-soft">
                     <span aria-hidden className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
                     <span>{h}</span>
                   </li>
@@ -225,7 +225,7 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
                           className="absolute -left-[26px] top-1.5 h-2.5 w-2.5 rounded-full border-2 border-cream bg-gold"
                         />
                         <h3 className="font-semibold text-ink">{step.title}</h3>
-                        <p className="mt-1 text-sm leading-relaxed text-ink-soft/75">{step.description}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-ink-soft">{step.description}</p>
                       </li>
                     ))}
                   </ol>
@@ -244,7 +244,7 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
                 <h3 className="font-display text-lg font-semibold text-ink">{ui["What's included"]}</h3>
                 <ul className="mt-3 space-y-2">
                   {trip.included.map((item) => (
-                    <li key={item} className="flex gap-2.5 text-sm text-ink-soft/80">
+                    <li key={item} className="flex gap-2.5 text-sm text-ink-soft">
                       <span aria-hidden className="mt-0.5 text-emerald-700">✓</span>
                       <span>{item}</span>
                     </li>
@@ -255,7 +255,7 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
                     <h3 className="mt-5 font-display text-base font-semibold text-ink">{ui["Not included"]}</h3>
                     <ul className="mt-2 space-y-1.5">
                       {trip.excluded.map((item) => (
-                        <li key={item} className="flex gap-2.5 text-sm text-ink-soft/60">
+                        <li key={item} className="flex gap-2.5 text-sm text-ink-soft/85">
                           <span aria-hidden className="mt-0.5">—</span>
                           <span>{item}</span>
                         </li>
@@ -270,7 +270,7 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
                   <h3 className="font-display text-lg font-semibold text-ink">{ui["Bring with you"]}</h3>
                   <ul className="mt-3 space-y-2">
                     {trip.bringWithYou.map((item) => (
-                      <li key={item} className="text-sm leading-relaxed text-ink-soft/80">
+                      <li key={item} className="text-sm leading-relaxed text-ink-soft">
                         {item}
                       </li>
                     ))}

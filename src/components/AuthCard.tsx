@@ -21,7 +21,7 @@ export function AuthCard({
           <div className="animate-fade-up w-full max-w-md rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-9">
             <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">{eyebrow}</p>
             <h1 className="mt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">{title}</h1>
-            {subtitle && <p className="mt-2 text-sm text-ink-soft/70">{subtitle}</p>}
+            {subtitle && <p className="mt-2 text-sm text-ink-soft">{subtitle}</p>}
             <div className="mt-6">{children}</div>
           </div>
           {aside && <div className="w-full max-w-md lg:w-72">{aside}</div>}

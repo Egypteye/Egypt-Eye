@@ -123,7 +123,7 @@ export default async function AgentPortalPage() {
           <h1 className="mt-3 font-display text-3xl font-semibold text-ink">
             {agent?.status === "suspended" ? ui["Partner access paused"] : ui["Not a partner account yet"]}
           </h1>
-          <p className="mt-4 text-ink-soft/70">
+          <p className="mt-4 text-ink-soft">
             {agent?.status === "suspended"
               ? ui["Your Travel Agent Partner access is currently paused. Contact us if you believe this is a mistake."]
               : ui["This account isn't linked to an approved Travel Agent Partner application yet. Apply below, or sign in with the email address your application used once it's approved."]}
@@ -153,7 +153,7 @@ export default async function AgentPortalPage() {
             <h1 className="mt-2 font-display text-3xl font-semibold text-ink">{agent.company_name}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <Link href="/account" className="text-sm font-semibold text-ink-soft/70 hover:text-ink"><T>My Account</T></Link>
+            <Link href="/account" className="text-sm font-semibold text-ink-soft hover:text-ink"><T>My Account</T></Link>
             <LogoutButton className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
           </div>
         </div>
@@ -175,7 +175,7 @@ export default async function AgentPortalPage() {
                   className="rounded-2xl border border-black/5 bg-cream p-5 shadow-sm transition hover:border-gold/40 hover:shadow-md"
                 >
                   <p className="font-display text-base font-semibold text-ink">{s.title}</p>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink-soft/70">{s.description}</p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{s.description}</p>
                 </Link>
               ))}
             </div>
@@ -189,7 +189,7 @@ export default async function AgentPortalPage() {
               </Link>
             </div>
             {typedReservations.length === 0 ? (
-              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/60">
+              <p className="rounded-2xl border border-black/5 bg-cream p-6 text-sm text-ink-soft/85">
                 {ui["No bookings yet."]}{" "}
                 <Link href="/customize" className="font-semibold text-gold-dark underline"><T>Request an itinerary</T></Link>{" "}
                 {ui["for your first client."]}
@@ -200,7 +200,7 @@ export default async function AgentPortalPage() {
                   <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-black/5 bg-cream p-5 shadow-sm">
                     <div>
                       <p className="font-mono text-sm font-semibold text-ink">{r.reference}</p>
-                      <p className="mt-0.5 text-xs text-ink-soft/60">
+                      <p className="mt-0.5 text-xs text-ink-soft/85">
                         {r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : ui["Dates to be confirmed"]} ·{" "}
                         {r.travelers_adults} {r.travelers_adults === 1 ? ui["adult"] : ui["adults"]}
                         {r.travelers_children > 0 ? `, ${r.travelers_children} ${r.travelers_children === 1 ? ui["child"] : ui["children"]}` : ""}
@@ -254,7 +254,7 @@ export default async function AgentPortalPage() {
 function InfoField({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-cream p-4 shadow-sm">
-      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/50">{label}</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{label}</p>
       <p className="mt-1 text-sm text-ink">{value}</p>
     </div>
   );

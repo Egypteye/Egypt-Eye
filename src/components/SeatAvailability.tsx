@@ -14,8 +14,8 @@ const TONE: Record<DepartureState, string> = {
   open: "bg-emerald-50 text-emerald-800 ring-emerald-600/20",
   almost_full: "bg-amber-50 text-amber-900 ring-amber-600/25",
   sold_out: "bg-rose-50 text-rose-800 ring-rose-600/20",
-  closed: "bg-black/5 text-ink-soft/70 ring-black/10",
-  departed: "bg-black/5 text-ink-soft/70 ring-black/10",
+  closed: "bg-black/5 text-ink-soft ring-black/10",
+  departed: "bg-black/5 text-ink-soft ring-black/10",
   cancelled: "bg-rose-50 text-rose-800 ring-rose-600/20",
 };
 
@@ -82,7 +82,7 @@ export function GuaranteeNote({ departure, className = "" }: { departure: Depart
 
   const n = departure.seatsToGuarantee;
   return (
-    <span className={`text-xs font-medium text-ink-soft/70 ${className}`}>
+    <span className={`text-xs font-medium text-ink-soft ${className}`}>
       {n === 1
         ? tr("Needs 1 more traveller to run")
         : tr("Needs {n} more travellers to run").replace("{n}", String(n))}

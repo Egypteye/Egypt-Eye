@@ -193,7 +193,7 @@ export default async function StoryDetailPage({
           <Reveal>{story.body && story.body.length > 0 && <StoryBody body={story.body} />}</Reveal>
 
           {(!story.body || story.body.length === 0) && (
-            <p className="text-sm text-ink-soft/50"><T>Full article coming soon.</T></p>
+            <p className="text-sm text-ink-soft/85"><T>Full article coming soon.</T></p>
           )}
 
           {/* Related experience — dedicated section, in addition to anything

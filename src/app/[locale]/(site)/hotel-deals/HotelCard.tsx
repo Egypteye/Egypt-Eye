@@ -21,21 +21,21 @@ export async function HotelCard({ hotel }: { hotel: Hotel }) {
       />
       <div className="flex flex-1 flex-col gap-3 p-5">
         {isApartment ? (
-          <span className="w-fit rounded-full bg-ink px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-cream"><T>Luxury Long-Stay Apartment</T></span>
+          <span className="w-fit rounded-full bg-ink px-3 py-1 text-xs font-semibold uppercase tracking-wide text-cream"><T>Luxury Long-Stay Apartment</T></span>
         ) : (
           hotel.deal_headline && (
-            <span className="w-fit rounded-full bg-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-dark">
+            <span className="w-fit rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold-dark">
               {hotel.deal_headline}
             </span>
           )
         )}
         <h3 className="font-display text-lg font-semibold leading-snug text-ink">{hotel.name}</h3>
-        <p className="text-sm text-ink-soft/60">{hotel.location}</p>
-        <p className="line-clamp-2 text-sm text-ink-soft/70">{hotel.short_description}</p>
+        <p className="text-sm text-ink-soft/85">{hotel.location}</p>
+        <p className="line-clamp-2 text-sm text-ink-soft">{hotel.short_description}</p>
         {hotel.highlights.length > 0 && (
           <ul className="flex flex-wrap gap-1.5">
             {hotel.highlights.slice(0, 3).map((h) => (
-              <li key={h} className="rounded-full bg-sand-dim px-2.5 py-1 text-[11px] text-ink-soft/70">
+              <li key={h} className="rounded-full bg-sand-dim px-2.5 py-1 text-xs text-ink-soft">
                 {h}
               </li>
             ))}

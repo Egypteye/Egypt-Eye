@@ -59,14 +59,14 @@ export function WeeklyTripsCalendar({
 
   const chip = (active: boolean) =>
     `rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
-      active ? "bg-ink text-cream" : "bg-sand text-ink-soft/80 hover:bg-sand-dim"
+      active ? "bg-ink text-cream" : "bg-sand text-ink-soft hover:bg-sand-dim"
     }`;
 
   if (departures.length === 0) {
     return (
       <div className="rounded-2xl border border-black/5 bg-cream p-8 text-center">
         <p className="font-display text-xl font-semibold text-ink">{tr("The next dates are being finalised")}</p>
-        <p className="mx-auto mt-2 max-w-lg text-sm text-ink-soft/70">
+        <p className="mx-auto mt-2 max-w-lg text-sm text-ink-soft">
           {tr("Weekly Trips run seasonally, and the upcoming calendar is being set. Browse the trips below and ask us about a date — or have us run any of them privately whenever suits you.")}
         </p>
       </div>
@@ -98,14 +98,14 @@ export function WeeklyTripsCalendar({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="mt-8 rounded-2xl border border-black/5 bg-cream p-6 text-center text-sm text-ink-soft/70">
+        <p className="mt-8 rounded-2xl border border-black/5 bg-cream p-6 text-center text-sm text-ink-soft">
           {tr("No upcoming departures match that. Try another filter.")}
         </p>
       ) : (
         <div className="mt-8 space-y-10">
           {months.map(({ month, departures: group }) => (
             <section key={month}>
-              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-ink-soft/50">{month}</h3>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-[0.2em] text-ink-soft/85">{month}</h3>
               <ul className="space-y-3">
                 {group.map((d) => {
                   const href = localePath(`/weekly-trips/${d.trip.slug}`, locale);
@@ -132,7 +132,7 @@ export function WeeklyTripsCalendar({
                             <SeatPill departure={d} />
                           </div>
                           <p className="mt-1 truncate font-medium text-ink">{d.trip.title}</p>
-                          <p className="mt-0.5 text-sm text-ink-soft/70">
+                          <p className="mt-0.5 text-sm text-ink-soft">
                             {d.trip.duration} · {tr("from")} {d.trip.departsFrom}
                           </p>
                           {d.state === "cancelled" ? (
@@ -147,7 +147,7 @@ export function WeeklyTripsCalendar({
                         </div>
                         <div className="flex shrink-0 flex-col items-end justify-between text-right">
                           <span className="font-display text-lg font-semibold text-ink">${d.priceUsd}</span>
-                          <span className="text-xs text-ink-soft/60">{tr("per seat")}</span>
+                          <span className="text-xs text-ink-soft/85">{tr("per seat")}</span>
                           <span className="mt-2 hidden text-sm font-semibold text-gold-dark transition group-hover:translate-x-0.5 sm:inline">
                             {d.bookable ? tr("Reserve →") : tr("View →")}
                           </span>

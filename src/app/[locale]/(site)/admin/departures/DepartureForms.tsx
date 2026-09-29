@@ -18,7 +18,7 @@ import type { Departure } from "@/lib/departureModel";
 
 const input =
   "w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-gold";
-const label = "mb-1 block text-xs font-medium text-ink-soft/70";
+const label = "mb-1 block text-xs font-medium text-ink-soft";
 
 function Message({ result }: { result: ActionResult | null }) {
   if (!result) return null;
@@ -49,7 +49,7 @@ export function CreateDepartureForm({ trips }: { trips: { slug: string; title: s
       className="rounded-2xl border border-black/5 bg-cream p-5 shadow-sm"
     >
       <h2 className="font-display text-lg font-semibold text-ink">Schedule a departure</h2>
-      <p className="mt-1 text-sm text-ink-soft/70">
+      <p className="mt-1 text-sm text-ink-soft">
         Goes live on the site immediately. Seats sold are tracked automatically — you never set them here.
       </p>
 
@@ -239,7 +239,7 @@ export function DepartureActions({ departure }: { departure: Departure }) {
           <button type="submit" disabled={pending} className="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-cream">
             Move it
           </button>
-          <p className="w-full text-xs text-ink-soft/60">
+          <p className="w-full text-xs text-ink-soft/85">
             Bookings stay attached — tell the travellers yourself, this doesn&apos;t email them.
           </p>
         </form>
@@ -261,7 +261,7 @@ export function DepartureActions({ departure }: { departure: Departure }) {
           <button type="submit" disabled={pending} className="rounded-full bg-ink px-4 py-2 text-xs font-semibold text-cream">
             Update
           </button>
-          <p className="w-full text-xs text-ink-soft/60">
+          <p className="w-full text-xs text-ink-soft/85">
             {departure.seatsTaken} seat{departure.seatsTaken === 1 ? "" : "s"} already booked — you can&apos;t go below that.
           </p>
         </form>

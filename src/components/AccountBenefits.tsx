@@ -18,7 +18,7 @@ export async function AccountBenefits({ compact = false }: { compact?: boolean }
       )}
       <ul className="mt-3 flex flex-col gap-2">
         {benefits.map((b) => (
-          <li key={b} className="flex items-start gap-2 text-sm text-ink-soft/80">
+          <li key={b} className="flex items-start gap-2 text-sm text-ink-soft">
             <span aria-hidden="true" className="mt-0.5 text-gold-dark">✓</span>
             {b}
           </li>

@@ -30,10 +30,10 @@ export function SignatureExperienceCard({
           className={`${imageAspectClassName} w-full transition duration-700 ease-out group-hover:scale-[1.03]`}
         />
         {isComingSoon && (
-          <span className="absolute left-5 top-5 rounded-full bg-cream/95 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-ink"><T>Coming Soon</T></span>
+          <span className="absolute left-5 top-5 rounded-full bg-cream/95 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-ink"><T>Coming Soon</T></span>
         )}
         {experience.luxuryLevel && (
-          <span className="absolute right-5 top-5 rounded-full bg-ink/70 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-cream backdrop-blur-sm">
+          <span className="absolute right-5 top-5 rounded-full bg-ink/70 px-3.5 py-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-cream backdrop-blur-sm">
             {experience.luxuryLevel}
           </span>
         )}
@@ -46,11 +46,11 @@ export function SignatureExperienceCard({
         <h3 className="font-display text-2xl font-semibold leading-tight text-ink">
           {experience.name}
         </h3>
-        <p className="text-[15px] leading-relaxed text-ink-soft/75">
+        <p className="text-[15px] leading-relaxed text-ink-soft">
           {experience.shortDescription}
         </p>
 
-        <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-soft/60">
+        <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-soft/85">
           {experience.duration && <span>{experience.duration}</span>}
           {experience.groupSize && <span>{experience.groupSize}</span>}
           <ExperienceRatingLink type="experience" slug={experience.slug} />

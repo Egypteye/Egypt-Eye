@@ -62,7 +62,7 @@ export default async function TermsPage() {
       <Container className="mx-auto max-w-3xl">
         <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-dark"><T>Legal</T></p>
         <h1 className="mt-3 font-display text-4xl font-semibold text-ink sm:text-5xl"><T>Terms of Service</T></h1>
-        <div className="mt-6 rounded-2xl border border-terracotta/30 bg-terracotta/5 p-5 text-sm text-ink-soft/80">
+        <div className="mt-6 rounded-2xl border border-terracotta/30 bg-terracotta/5 p-5 text-sm text-ink-soft">
           <p className="font-semibold text-terracotta"><T>Draft structure — not yet published.</T></p>
           <p className="mt-1">
             <T>This page lists the sections a Terms of Service page needs. Each one below is a placeholder, not legal language — replace it with reviewed, accurate text (ideally checked by a legal professional) before this page is indexed or linked as final.</T>
@@ -76,20 +76,20 @@ export default async function TermsPage() {
                 {i + 1}. {s.title}
               </h2>
               {"href" in s && s.href ? (
-                <p className="mt-2 text-sm text-ink-soft/75">
+                <p className="mt-2 text-sm text-ink-soft">
                   {s.note}{" "}
                   <Link href={s.href} className="font-medium text-gold-dark underline underline-offset-2 hover:text-ink">
                     <T>Read the Cancellation Policy</T>
                   </Link>
                 </p>
               ) : (
-                <p className="mt-2 text-sm italic text-ink-soft/60">{s.note}</p>
+                <p className="mt-2 text-sm italic text-ink-soft/85">{s.note}</p>
               )}
             </div>
           ))}
         </div>
 
-        <p className="mt-12 text-sm text-ink-soft/60">
+        <p className="mt-12 text-sm text-ink-soft/85">
           {ui["Questions in the meantime? Contact us at"]}{" "}
           <a href={`mailto:${site.contact.email}`} className="underline">
             {site.contact.email}

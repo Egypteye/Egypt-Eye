@@ -38,7 +38,7 @@ export default async function AdminOverviewPage() {
           const content = (
             <div className="rounded-2xl border border-black/5 bg-cream p-5 shadow-sm transition hover:shadow-md">
               <p className="text-3xl font-bold text-ink">{c.value}</p>
-              <p className="mt-1 text-sm text-ink-soft/60">{c.label}</p>
+              <p className="mt-1 text-sm text-ink-soft/85">{c.label}</p>
             </div>
           );
           return c.href ? (

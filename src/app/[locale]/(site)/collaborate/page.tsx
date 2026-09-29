@@ -102,7 +102,7 @@ export default async function CollaboratePage() {
             {WHAT_YOU_GET.map((item) => (
               <div key={item.title} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
                 <p className="font-display text-base font-semibold text-ink">{item.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{item.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{item.description}</p>
               </div>
             ))}
           </div>
@@ -119,7 +119,7 @@ export default async function CollaboratePage() {
                   {i + 1}
                 </span>
                 <p className="mt-4 font-display text-base font-semibold text-ink">{s.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{s.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{s.description}</p>
               </div>
             ))}
           </div>
@@ -133,13 +133,13 @@ export default async function CollaboratePage() {
             {WHAT_WE_LOOK_FOR.map((item) => (
               <div key={item.title} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
                 <p className="font-display text-base font-semibold text-ink">{item.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{item.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{item.description}</p>
               </div>
             ))}
           </div>
 
           <div className="mt-12 flex flex-col items-center gap-3 text-center">
-            <p className="text-sm text-ink-soft/70">
+            <p className="text-sm text-ink-soft">
               {ui["Have a look at what we're already making before you apply:"]}
             </p>
             <SocialLinks site={site} tone="light" />

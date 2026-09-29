@@ -98,7 +98,7 @@ export default async function AffiliatePage() {
             {BENEFITS.map((b) => (
               <div key={b.title} className="rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
                 <p className="font-display text-base font-semibold text-ink">{b.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{b.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{b.description}</p>
               </div>
             ))}
           </div>
@@ -115,7 +115,7 @@ export default async function AffiliatePage() {
                   {i + 1}
                 </span>
                 <p className="mt-4 font-display text-base font-semibold text-ink">{s.title}</p>
-                <p className="mt-2 text-sm leading-relaxed text-ink-soft/70">{s.description}</p>
+                <p className="mt-2 text-sm leading-relaxed text-ink-soft">{s.description}</p>
               </div>
             ))}
           </div>
@@ -129,14 +129,14 @@ export default async function AffiliatePage() {
             {GOOD_FIT.map((item) => (
               <li
                 key={item}
-                className="flex items-start gap-3 rounded-2xl border border-black/5 bg-cream p-4 text-sm leading-relaxed text-ink-soft/80 shadow-sm"
+                className="flex items-start gap-3 rounded-2xl border border-black/5 bg-cream p-4 text-sm leading-relaxed text-ink-soft shadow-sm"
               >
                 <span className="mt-1 h-1.5 w-1.5 shrink-0 rounded-full bg-gold-dark" />
                 {item}
               </li>
             ))}
           </ul>
-          <p className="mx-auto mt-6 max-w-3xl text-center text-xs text-ink-soft/50">
+          <p className="mx-auto mt-6 max-w-3xl text-center text-xs text-ink-soft/85">
             {ui["Note: this program is for ongoing referral partnerships. Looking for a sponsored trip or content collaboration instead?"]}{" "}
             <Link href="/collaborate" className="underline hover:text-ink"><T>See our Creators & Influencers program</T></Link>
             .

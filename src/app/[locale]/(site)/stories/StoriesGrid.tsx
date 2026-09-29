@@ -55,7 +55,7 @@ export function StoriesGrid({ stories }: { stories: Story[] }) {
       )}
 
       {filtered.length === 0 ? (
-        <p className="mt-10 text-sm text-ink-soft/60">{tr("No stories in this category yet.")}</p>
+        <p className="mt-10 text-sm text-ink-soft/85">{tr("No stories in this category yet.")}</p>
       ) : (
         <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((s) => (

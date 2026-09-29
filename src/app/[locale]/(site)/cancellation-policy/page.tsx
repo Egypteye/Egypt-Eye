@@ -56,9 +56,9 @@ export default async function CancellationPolicyPage() {
           <T>Cancellation Policy</T>
         </h1>
 
-        <p className="mt-6 text-base leading-relaxed text-ink-soft/80">{intro}</p>
+        <p className="mt-6 text-base leading-relaxed text-ink-soft">{intro}</p>
 
-        <p className="mt-4 text-xs uppercase tracking-[0.2em] text-ink-soft/50">
+        <p className="mt-4 text-xs uppercase tracking-[0.2em] text-ink-soft/85">
           {ui["Last updated"]}{" "}
           <time dateTime={cancellationLastUpdated}>{cancellationLastUpdated}</time>
         </p>
@@ -72,11 +72,11 @@ export default async function CancellationPolicyPage() {
               <div className="mt-3 space-y-3">
                 {section.blocks.map((block, bi) =>
                   block.kind === "p" ? (
-                    <p key={bi} className="text-sm leading-relaxed text-ink-soft/80">
+                    <p key={bi} className="text-sm leading-relaxed text-ink-soft">
                       {block.text}
                     </p>
                   ) : (
-                    <ul key={bi} className="ml-5 list-disc space-y-1.5 text-sm leading-relaxed text-ink-soft/80 marker:text-gold-dark">
+                    <ul key={bi} className="ml-5 list-disc space-y-1.5 text-sm leading-relaxed text-ink-soft marker:text-gold-dark">
                       {block.items.map((item) => (
                         <li key={item}>{item}</li>
                       ))}
@@ -90,14 +90,14 @@ export default async function CancellationPolicyPage() {
 
         <div className="mt-14 rounded-[1.75rem] bg-sand-deep/45 p-1.5 ring-1 ring-black/[0.06]">
           <div className="rounded-[1.375rem] bg-cream px-6 py-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.9)]">
-            <p className="text-sm text-ink-soft/75">
+            <p className="text-sm text-ink-soft">
               {ui["Questions about a booking? Contact us at"]}{" "}
               <a href={`mailto:${site.contact.email}`} className="font-medium text-ink underline underline-offset-2">
                 {site.contact.email}
               </a>
               .
             </p>
-            <p className="mt-3 text-sm text-ink-soft/60">
+            <p className="mt-3 text-sm text-ink-soft/85">
               <Link href={to("/terms")} className="underline underline-offset-2 hover:text-ink">
                 <T>Terms of Service</T>
               </Link>

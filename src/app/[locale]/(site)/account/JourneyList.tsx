@@ -63,11 +63,11 @@ function JourneyRow({ journey }: { journey: Journey }) {
             />
           ) : (
             <button type="button" onClick={() => setEditing(true)} className="truncate text-left font-display text-base font-semibold text-ink hover:text-gold-dark">
-              {journey.name} <span aria-hidden="true" className="text-xs text-ink-soft/40">✎</span>
+              {journey.name} <span aria-hidden="true" className="text-xs text-ink-soft/85">✎</span>
             </button>
           )}
         </div>
-        <button type="button" onClick={() => setExpanded((v) => !v)} className="shrink-0 text-xs font-semibold text-ink-soft/60 hover:text-ink">
+        <button type="button" onClick={() => setExpanded((v) => !v)} className="shrink-0 text-xs font-semibold text-ink-soft/85 hover:text-ink">
           {(journey.journey_items.length === 1 ? tr("{n} item") : tr("{n} items")).replace("{n}", String(journey.journey_items.length))} {expanded ? "▲" : "▼"}
         </button>
       </div>
@@ -75,15 +75,15 @@ function JourneyRow({ journey }: { journey: Journey }) {
       {expanded && (
         <ul className="mt-4 flex flex-col gap-2 border-t border-black/5 pt-4">
           {journey.journey_items.length === 0 ? (
-            <li className="text-sm text-ink-soft/50">{tr("No items in this journey yet.")}</li>
+            <li className="text-sm text-ink-soft/85">{tr("No items in this journey yet.")}</li>
           ) : (
             journey.journey_items.map((item) => (
               <li key={item.id} className="flex items-center justify-between gap-3 text-sm">
                 <span className="text-ink">
                   {item.title}
-                  {item.subtitle && <span className="text-ink-soft/50"> — {item.subtitle}</span>}
+                  {item.subtitle && <span className="text-ink-soft/85"> — {item.subtitle}</span>}
                 </span>
-                <button type="button" onClick={() => removeItem(item.id)} aria-label={tr("Remove {name}").replace("{name}", item.title)} className="shrink-0 text-ink-soft/40 hover:text-terracotta">
+                <button type="button" onClick={() => removeItem(item.id)} aria-label={tr("Remove {name}").replace("{name}", item.title)} className="shrink-0 text-ink-soft/85 hover:text-terracotta">
                   ×
                 </button>
               </li>

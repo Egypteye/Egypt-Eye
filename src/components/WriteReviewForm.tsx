@@ -85,7 +85,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
         <h3 className="mt-5 font-display text-2xl font-semibold text-ink">
           {tr("Your review is under review")}
         </h3>
-        <p className="mx-auto mt-3 max-w-md text-[15px] text-ink-soft/80">
+        <p className="mx-auto mt-3 max-w-md text-[15px] text-ink-soft">
           {tr(
             "It is with our team now. Every review is checked against a real Egypt Eye booking before it appears on this page, so yours will not show up straight away — and when it does, it will be exactly as you wrote it."
           )}
@@ -110,7 +110,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
       <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">
         {tr("Been on a trip with us? Write a review")}
       </h2>
-      <p className="mt-3 max-w-xl text-[15px] text-ink-soft/80">
+      <p className="mt-3 max-w-xl text-[15px] text-ink-soft">
         {tr(
           "We publish reviews as they are written. We do not edit them to sound better, and we do not write them ourselves."
         )}
@@ -153,7 +153,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
               placeholder={tr("So we can match it to your booking")}
               className={fieldClass}
             />
-            <p className="mt-1.5 text-xs text-ink-soft/60">{tr("Never published.")}</p>
+            <p className="mt-1.5 text-xs text-ink-soft/85">{tr("Never published.")}</p>
           </div>
         </div>
 
@@ -246,7 +246,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
           >
             {status === "sending" ? tr("Sending…") : tr("Submit my review")}
           </button>
-          <p className="text-xs text-ink-soft/60">
+          <p className="text-xs text-ink-soft/85">
             {tr("We check every review before it goes on the site.")}
           </p>
         </div>

@@ -55,7 +55,7 @@ export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
           <h3 className="mt-2 font-display text-2xl font-semibold text-ink sm:text-3xl">
             {day.title}
           </h3>
-          {day.description && <p className="mt-3 text-ink-soft/75">{day.description}</p>}
+          {day.description && <p className="mt-3 text-ink-soft">{day.description}</p>}
 
           <ol className="mt-8 border-l border-gold/25 pl-6">
             {day.items.map((item, i) => {
@@ -73,9 +73,9 @@ export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
                     <div>
                       <div className="flex flex-wrap items-center gap-x-2 text-xs font-semibold uppercase tracking-wide text-gold-dark">
                         {item.time && <span>{item.time}</span>}
-                        {item.category && item.time && <span className="text-ink-soft/30">·</span>}
+                        {item.category && item.time && <span className="text-ink-soft/85">·</span>}
                         {item.category && (
-                          <span className="normal-case tracking-normal text-ink-soft/55">{item.category}</span>
+                          <span className="normal-case tracking-normal text-ink-soft/85">{item.category}</span>
                         )}
                       </div>
                       <p className="mt-1 font-display text-lg font-semibold text-ink">{item.title}</p>
@@ -94,16 +94,16 @@ export function Itinerary({ days }: { days: SignatureItineraryDay[] }) {
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <div className="mt-3 space-y-2 text-sm leading-relaxed text-ink-soft/75">
+                      <div className="mt-3 space-y-2 text-sm leading-relaxed text-ink-soft">
                         {item.description && <p>{item.description}</p>}
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft/55">
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-soft/85">
                           {item.duration && <span>⏱ {item.duration}</span>}
                           {item.location && <span>📍 {item.location}</span>}
                           {item.includedOrOptional === "optional" && (
                             <span className="font-semibold text-terracotta">{tr("Optional add-on")}</span>
                           )}
                         </div>
-                        {item.notes && <p className="italic text-ink-soft/60">{item.notes}</p>}
+                        {item.notes && <p className="italic text-ink-soft/85">{item.notes}</p>}
                       </div>
                     </div>
                   </div>

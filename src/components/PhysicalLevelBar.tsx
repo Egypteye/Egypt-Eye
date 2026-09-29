@@ -30,7 +30,7 @@ export function PhysicalLevelBar({ level }: { level: PhysicalLevel }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-sand-dim/60 px-5 py-4">
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft/55">
+        <span className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft/85">
           {dict.physical.label}
         </span>
         <div className="flex items-center gap-2">
@@ -45,7 +45,7 @@ export function PhysicalLevelBar({ level }: { level: PhysicalLevel }) {
           <span className={`text-sm font-semibold ${meta.text}`}>{dict.physical[level.tier]}</span>
         </div>
       </div>
-      <p className="mt-2.5 text-sm leading-relaxed text-ink-soft/75">{level.note}</p>
+      <p className="mt-2.5 text-sm leading-relaxed text-ink-soft">{level.note}</p>
     </div>
   );
 }
@@ -64,7 +64,7 @@ export function PhysicalLevelChip({ level }: { level: PhysicalLevel }) {
 
   return (
     <span className="inline-flex items-center gap-2 text-xs" title={level.note}>
-      <span className="font-semibold uppercase tracking-[0.12em] text-ink-soft/50">
+      <span className="font-semibold uppercase tracking-[0.12em] text-ink-soft/85">
         {dict.physical.label}
       </span>
       <span aria-hidden="true" className="flex gap-[3px]">

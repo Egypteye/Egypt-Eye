@@ -23,7 +23,7 @@ function PanelSection({
   return (
     <div className="border-t border-black/5 pt-6">
       <h3 className="font-display text-lg font-semibold text-ink">
-        {title} <span className="text-sm font-sans font-normal text-ink-soft/50">({count})</span>
+        {title} <span className="text-sm font-sans font-normal text-ink-soft/85">({count})</span>
       </h3>
       <div className="mt-4 grid gap-5 sm:grid-cols-2">{children}</div>
     </div>
@@ -70,15 +70,15 @@ export async function DestinationPanel({
               <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">{hub.region}</p>
             )}
             <h2 className="mt-1 font-display text-2xl font-semibold text-ink sm:text-3xl">{hub.name}</h2>
-            <p className="mt-1 text-sm text-ink-soft/70">{hub.tagline}</p>
+            <p className="mt-1 text-sm text-ink-soft">{hub.tagline}</p>
           </div>
           <AddToJourneyButton type="destination" slug={hub.slug} title={hub.name} subtitle={hub.region} />
         </div>
 
-        <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-ink-soft/80">{hub.intro}</p>
+        <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-ink-soft">{hub.intro}</p>
 
         {isEmpty ? (
-          <p className="mt-8 border-t border-black/5 pt-6 text-sm text-ink-soft/60">
+          <p className="mt-8 border-t border-black/5 pt-6 text-sm text-ink-soft/85">
             {ui["More tours and experiences for {name} are on the way — in the meantime,"].replace("{name}", hub.name)}{" "}
             <Link href="/customize" className="font-semibold text-gold-dark underline"><T>tell us what you have in mind</T></Link>{" "}
             {ui["and we'll build it for you."]}
