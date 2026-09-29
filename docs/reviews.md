@@ -116,6 +116,34 @@ starts looking like it is manufacturing testimonials.
 
 ---
 
+## Reviews travellers write on the site
+
+At the foot of `/testimonials` there is a form: name, email, which trip,
+a rating out of five, and the review itself. The dropdown lists every tour,
+shoot and service in the catalogue, not only the ones that already have
+reviews.
+
+**It emails you. It publishes nothing.** `POST /api/review-submission`
+resolves the product from the catalogue (never from the form, so a crafted
+request can't put an invented tour name in front of you), renders the review
+into an email and sends it to Site Settings → Contact → Email via Resend,
+with the traveller's address as reply-to. Nothing is written to Sanity or to
+Supabase, and nothing appears on the wall.
+
+That is deliberate. The page tells readers every review comes from a real
+Egypt Eye trip; an open form that published itself would make that untrue the
+first time someone filled it in. So a submitted review becomes a normal
+review only when you have checked it against a real booking and added it in
+Studio — **as written**, under the same rules as the rest of this document.
+The traveller is told the same thing on the page: their review is under
+review, and when it appears it will be exactly as they wrote it.
+
+Practicalities: five submissions per IP per hour, a honeypot field, a
+thirty-character minimum, and a failed send leaves the form filled in so a
+long review is never lost to a dropped request. If `RESEND_API_KEY` is
+missing the endpoint returns 502 and the traveller is asked to try again —
+so check that it is set before pointing anyone at the form.
+
 ## Importing
 
 **Studio → Bulk Add Reviews.** Two formats, detected automatically.

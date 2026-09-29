@@ -7,20 +7,12 @@ import { MEGA_CATEGORIES, type MegaCategory } from "@/lib/reviewSubjects";
 // The form at the foot of /testimonials, where a traveler who has been on a
 // trip writes their own review.
 //
-// NOTHING IS SENT ANYWHERE YET. There is deliberately no fetch in this file:
-// the submit handler swaps the form for the "under review" panel and the
-// traveler's words are discarded. That is the agreed shape for now — the
-// page collects nothing and publishes nothing, so no unverified review can
-// reach the wall by accident.
-//
-// When it is wired up, one `await fetch(...)` in handleSubmit is the whole
-// change: the field names below are already the payload, the honeypot and
-// the disabled-while-sending state are already here, and the panel already
-// has a "sending" case to show. See the marked spot in handleSubmit.
-//
-// The copy is the part to re-read before wiring: the panel tells the
-// traveler their review is being checked, which only becomes true once
-// something is actually storing it.
+// It emails the team and stops there. /api/review-submission writes nothing
+// to the site and nothing to the database: a review reaches the wall only
+// when a person has checked it against a real booking and added it in
+// Studio. That is what the "under review" panel below is telling the
+// traveler, and it is what keeps the page's own claim — every review here
+// comes from a real Egypt Eye trip — true of an open form.
 
 export type ReviewProductOption = { key: string; mega: MegaCategory; title: string };
 
@@ -35,6 +27,7 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
   const tr = useTr();
   const uid = useId();
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const [rating, setRating] = useState(0);
   const [hovered, setHovered] = useState(0);
 
@@ -45,14 +38,34 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
     items: products.filter((p) => p.mega === mega.mega),
   })).filter((group) => group.items.length > 0);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    // Where the request goes when this is wired up:
-    //   setStatus("sending");
-    //   await fetch("/api/review-submission", { method: "POST", body: ... });
-    // Until then there is no round trip, so "sending" never renders and the
-    // panel appears on the click.
-    setStatus("submitted");
+    const form = new FormData(event.currentTarget);
+
+    setStatus("sending");
+    setErrorMessage("");
+    try {
+      const res = await fetch("/api/review-submission", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.get("name"),
+          email: form.get("email"),
+          product: form.get("product"),
+          rating: Number(form.get("rating")),
+          body: form.get("body"),
+          company: form.get("company"),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || tr("Something went wrong."));
+      setStatus("submitted");
+    } catch (err) {
+      // Back to the form with everything still typed in it — a review is
+      // too much writing to lose to a failed request.
+      setErrorMessage(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));
+      setStatus("idle");
+    }
   }
 
   if (status === "submitted") {
@@ -74,13 +87,14 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
         </h3>
         <p className="mx-auto mt-3 max-w-md text-[15px] text-ink-soft/80">
           {tr(
-            "Thank you for taking the time to write it. Every review is checked against a real Egypt Eye booking before it appears on this page, so yours will not show up straight away."
+            "It is with our team now. Every review is checked against a real Egypt Eye booking before it appears on this page, so yours will not show up straight away — and when it does, it will be exactly as you wrote it."
           )}
         </p>
         <button
           type="button"
           onClick={() => {
             setStatus("idle");
+            setErrorMessage("");
             setRating(0);
           }}
           className="mt-6 text-sm font-semibold text-gold-dark underline underline-offset-4 transition hover:text-ink"
@@ -236,6 +250,12 @@ export function WriteReviewForm({ products }: { products: ReviewProductOption[] 
             {tr("We check every review before it goes on the site.")}
           </p>
         </div>
+
+        {errorMessage && (
+          <p role="alert" className="text-sm text-terracotta">
+            {errorMessage}
+          </p>
+        )}
       </form>
     </div>
   );

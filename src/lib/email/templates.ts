@@ -736,3 +736,66 @@ export function tripSeatTeamEmail({
     text,
   };
 }
+
+/**
+ * A review written by a traveller on /testimonials, sent to the team.
+ *
+ * Deliberately NOT a publish step. Nothing on the site changes when this
+ * lands: the review reaches a human, who checks it against a real booking
+ * and adds it in Studio if it stands up. The footer says so, because the
+ * traveller has been told the same thing on the page.
+ */
+export function reviewSubmissionEmail({
+  name,
+  email,
+  rating,
+  productTitle,
+  productUrl,
+  body,
+  pageUrl,
+}: {
+  name: string;
+  email: string;
+  rating: number;
+  productTitle: string;
+  productUrl?: string;
+  body: string;
+  pageUrl: string;
+}) {
+  const stars = `${"★".repeat(rating)}${"☆".repeat(5 - rating)}`;
+  const rows: [string, string][] = [
+    ["Name", name],
+    ["Email", email],
+    ["Rating", `${stars}  (${rating} of 5)`],
+    ["About", productTitle],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const html = baseLayout({
+    preheader: `${name} left a ${rating}-star review of ${productTitle}.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Review — Awaiting Check</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${
+        productUrl
+          ? `<a href="${productUrl}" style="color:#1b2a20;text-decoration:none;">${escapeHtml(productTitle)}</a>`
+          : escapeHtml(productTitle)
+      }</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      <p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">In their words</p>
+      <p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(body)}</p>
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Check this against a real booking before it goes on the site, and publish it as written — reply to this email to reach ${escapeHtml(name)}.</p>
+    `,
+    footerHtml: `Sent from the review form on ${escapeHtml(pageUrl)}. Nothing has been published; reviews are only added by hand in Studio.`,
+  });
+
+  const text = `New Review — Awaiting Check\n${productTitle}${productUrl ? `\n${productUrl}` : ""}\n\n${rows
+    .map(([l, v]) => `${l}: ${v}`)
+    .join("\n")}\n\nIn their words:\n${body}\n\nCheck this against a real booking before it goes on the site, and publish it as written. Reply to this email to reach ${name}.\nSent from the review form on ${pageUrl}.`;
+
+  return { subject: `New review: ${rating}★ from ${name} — ${productTitle}`, html, text };
+}
