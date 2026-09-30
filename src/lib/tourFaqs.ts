@@ -53,6 +53,21 @@ const LOWERCASABLE = new Set([
   "entry", "guide", "parking", "breakfast", "dinner", "accommodation",
 ]);
 
+/**
+ * Orders an exclusion list so the concrete costs lead and the catch-alls
+ * trail. The catalogue lists these in no particular order, which put "extras
+ * not mentioned" at the head of the Giza tour's sentence — the least useful
+ * item first, reading like evasion in the one answer whose whole job is to
+ * sound straight. Relative order within each half is left alone.
+ */
+const VAGUE = /^extras\b|not mentioned|^personal\b|^optional\b|^shopping\b/i;
+
+function concreteFirst(items: readonly string[]): string[] {
+  const concrete = items.filter((i) => !VAGUE.test(i));
+  const vague = items.filter((i) => VAGUE.test(i));
+  return [...concrete, ...vague];
+}
+
 /** Sentence-cases a fragment that was built for mid-sentence use. */
 function capitalise(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
@@ -92,7 +107,8 @@ export function faqsForTour(tour: Tour): Faq[] {
       answer:
         `Yes — ${midSentence(entranceIncluded)} for the sites on this itinerary are in the price, so there is nothing to buy at the gate. ` +
         (tour.excluded.length > 0
-          ? `What you would still pay for separately is ${sentenceList(tour.excluded.map(midSentence))}.`
+          ? `What you would still pay for separately ${tour.excluded.length === 1 ? "is" : "are"} ` +
+            `${sentenceList(concreteFirst(tour.excluded).map(midSentence))}.`
           : ""),
     });
   } else if (entranceExcluded) {
@@ -173,7 +189,8 @@ export function faqsForTour(tour: Tour): Faq[] {
     derived.push({
       question: "What should I budget for on top of the price?",
       answer:
-        `${capitalise(sentenceList(tour.excluded.map(midSentence)))} sit outside the price. ` +
+        `${capitalise(sentenceList(concreteFirst(tour.excluded).map(midSentence)))} ` +
+        `${tour.excluded.length === 1 ? "sits" : "sit"} outside the price. ` +
         `Tipping is customary in Egypt but entirely yours to judge, and nothing on the day is compulsory — you will not be taken to a shop you did not ask for.`,
     });
   }
