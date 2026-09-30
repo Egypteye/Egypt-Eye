@@ -151,6 +151,15 @@ const lower = (s: string) => s.toLowerCase();
 
 /** The cluster an article belongs to, or undefined when none fits. */
 export function clusterFor(story: Pick<Story, "slug" | "tags" | "category">): Cluster | undefined {
+  // Naming an article as a cluster's pillar IS a statement that it belongs to
+  // that cluster, and it outranks anything derived. Without this, a pillar
+  // whose own tags read as something else lands in another cluster and the
+  // head of a cluster ends up advertising a different head: "best day trips
+  // from Cairo" is tagged Trip Planning, so it scored into planning and sent
+  // its readers to /customize instead of the trips it is the pillar for.
+  const asPillar = CLUSTERS.find((c) => c.pillarSlug === story.slug);
+  if (asPillar) return asPillar;
+
   // Category is the strongest single signal where it is specific enough.
   if (story.category === "Traveler Stories") {
     return CLUSTERS.find((c) => c.id === "traveler-stories");

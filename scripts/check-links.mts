@@ -68,6 +68,21 @@ for (const story of all) {
   if (pillar) ok(`${story.slug} points at an unpublished pillar`, bySlug.has(pillar.slug));
 }
 
+// A pillar that scores into someone else's cluster is the subtlest failure
+// here: every page still renders, and the head of a cluster quietly sends its
+// readers to a different head and a different service. Two pillars did exactly
+// that before this was asserted.
+for (const cluster of CLUSTERS) {
+  const pillar = bySlug.get(cluster.pillarSlug);
+  if (!pillar) continue;
+  const own = clusterFor(pillar);
+  ok(
+    `${cluster.pillarSlug} is the pillar of "${cluster.id}" but classifies as "${own?.id ?? "none"}", ` +
+      `so it routes its readers to another cluster's service`,
+    own?.id === cluster.id
+  );
+}
+
 // ---------------------------------------------------------------------------
 // The related row, through the derivation the site actually uses. The call
 // shape mirrors withDerivedRelatedStories: ring rotation, grouped by
