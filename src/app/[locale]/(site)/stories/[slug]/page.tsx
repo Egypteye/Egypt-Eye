@@ -17,6 +17,8 @@ import { site } from "@/content/site";
 import type { StoryCountdownBlock, StoryFaqBlock } from "@/content/types";
 import { T, trAll } from "@/i18n/T";
 import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
+import { pillarFor, relatedStoriesFor, serviceFor } from "@/lib/storyLinking";
+import { localePath } from "@/i18n/locales";
 
 export async function generateStaticParams() {
   const stories = await getStories();
@@ -71,6 +73,16 @@ export default async function StoryDetailPage({
     await contentDictionary(await getLocale()),
     (story.relatedTours ?? []).flatMap((t) => t.destinations)
   );
+
+  // Where this article sits in the library, derived rather than hand-set —
+  // see lib/storyLinking. An explicit relatedStories array still wins; this
+  // is what the other 116 articles get instead of nothing.
+  const allStories = await getStories();
+  const relatedStories = relatedStoriesFor(story, allStories);
+  const pillar = pillarFor(story, allStories);
+  const service = serviceFor(story);
+  const locale = await getLocale();
+  const to = (href: string) => localePath(href, locale);
 
   const readingTime = estimateReadingTime(story.body);
   const publishedDate = story.publishedAt
@@ -220,19 +232,44 @@ export default async function StoryDetailPage({
             </Reveal>
           )}
 
-          <Link href="/stories" className="mt-12 inline-block text-sm font-semibold text-gold-dark hover:underline">
+          {/* The two links every article should have and most did not: the
+              pillar it supports, and the thing Egypt Eye actually does about
+              it. Both are derived from the article's own cluster, so a new
+              article arrives with them already in place. */}
+          {(pillar || service) && (
+            <div className="not-prose mt-16 flex flex-wrap items-center gap-x-8 gap-y-3 border-t border-black/5 pt-8">
+              {pillar && (
+                <Link
+                  href={to(`/stories/${pillar.slug}`)}
+                  className="text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
+                >
+                  <T>Start here:</T> {pillar.title}
+                </Link>
+              )}
+              {service && (
+                <Link
+                  href={to(service.href)}
+                  className="text-sm font-semibold text-ink underline-offset-4 hover:text-gold-dark hover:underline"
+                >
+                  {service.label} →
+                </Link>
+              )}
+            </div>
+          )}
+
+          <Link href={to("/stories")} className="mt-12 inline-block text-sm font-semibold text-gold-dark hover:underline">
             ← Back to all stories
           </Link>
         </Container>
       </section>
 
       {/* Related stories */}
-      {story.relatedStories && story.relatedStories.length > 0 && (
+      {relatedStories.length > 0 && (
         <section className="bg-sand-dim py-20">
           <Container>
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-gold-dark"><T>Continue Exploring</T></p>
             <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {story.relatedStories.map((s) => (
+              {relatedStories.map((s) => (
                 <StoryCard key={s.slug} story={s} />
               ))}
             </div>
