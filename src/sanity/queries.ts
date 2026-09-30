@@ -38,6 +38,7 @@ const tourDetailFields = groq`
   "slug": slug.current, title, tagline, category, duration, lengthDays, cities,
   destinations, travelStyle, featured, ${ratingFields}, badge, image, imageTone, description,
   highlights, included, excluded, itinerary, physicalLevel, mapStops,
+  faqs[]{question, answer},
   relatedExperiences[]->{${relatedExtraExperienceFields}},
   ${priceFields}, seo
 `;

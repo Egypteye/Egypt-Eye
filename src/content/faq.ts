@@ -1,32 +1,32 @@
-export const faqs = [
-  {
-    question: "How far in advance should I book?",
-    answer:
-      "For custom or multi-day itineraries, 2–4 weeks ahead gives us room to build the right plan around your dates. One-day tours and photoshoots can often be arranged with just a few days' notice — message us on WhatsApp and we'll tell you what's possible.",
-  },
-  {
-    question: "What's actually included in the price?",
-    answer:
-      "Every tour lists exactly what's included and excluded on its own page — typically private transportation, an English-speaking guide, entrance fees, and lunch. Tips, flights, hotels, and your Egypt visa are generally not included unless stated.",
-  },
-  {
-    question: "Can I customize any tour, or combine experiences?",
-    answer:
-      "Yes. Any tour, extra experience, or photoshoot in our catalog can be combined into a single private itinerary. Use the Customize Your Tour page and tell us what you'd like — we'll build the schedule around you.",
-  },
-  {
-    question: "How does payment work?",
-    answer:
-      "A 20% deposit secures your booking and is non-refundable. The remaining balance is paid in cash or via PayPal at the end of your tour. Prices are quoted in USD, and we also accept Euro and British Pound — once confirmed, your price won't change.",
-  },
-  {
-    question: "Is it just my group, or will I be grouped with strangers?",
-    answer:
-      "All of our tours are private. You'll have your own vehicle, guide, and pace — we don't merge bookings into larger group tours.",
-  },
-  {
-    question: "What if my plans change or I need to cancel?",
-    answer:
-      "Deposits and payments are non-refundable, because we commit costs to guides, drivers, hotels and permits as soon as a booking is confirmed. If you cancel, we may be able to hold the recoverable value as travel credit or move it to another date, at our discretion and subject to what our suppliers release. For force majeure we charge no cancellation fee of our own, though supplier terms still apply. The full terms are on our Cancellation Policy page.",
-  },
-] as const;
+import { allHubFaqs } from "./faqHub";
+import type { Faq } from "./types";
+
+// The homepage teaser: six of the hub's answers, not six copies of them.
+//
+// These used to be written out here in full, which meant the homepage and
+// /faq drifted the moment either was edited — by the time this was noticed
+// they disagreed on the wording of two questions. Selecting by question text
+// makes the subset structural: the homepage cannot answer something /faq
+// does not, and an edit to an answer lands in both places at once.
+//
+// The homepage deliberately emits no FAQPage markup from these (see the
+// comment beside the block on the homepage): /faq is the canonical entity.
+const TEASER_QUESTIONS = [
+  "How far in advance should I book?",
+  "What's actually included in the price?",
+  "Can I customize a tour, or combine experiences?",
+  "How does the deposit work?",
+  "Is it just my group, or will I be grouped with strangers?",
+  "What if my plans change or I need to cancel?",
+];
+
+export const faqs: Faq[] = TEASER_QUESTIONS.map((question) => {
+  const found = allHubFaqs.find((f) => f.question === question);
+  if (!found) {
+    // A build-time throw rather than a silent gap: a teaser that quietly
+    // renders five items because someone reworded a hub question is exactly
+    // the kind of thing nobody sees on a homepage they have stopped reading.
+    throw new Error(`faq.ts: no hub answer for teaser question "${question}"`);
+  }
+  return found;
+});

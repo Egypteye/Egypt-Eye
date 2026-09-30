@@ -109,6 +109,24 @@ export const tour = defineType({
       type: "physicalLevel",
     }),
     defineField({
+      name: "faqs",
+      title: "FAQs (optional override)",
+      description:
+        "Leave empty for almost every tour. The tour page already answers the seven questions travellers ask — entrance fees, pickup, private vs group, how much walking, how long the day is, what to budget on top, and whether it can be changed — and it builds those answers from Included, Not Included, Physical activity level and Duration above, so they stay correct when those change. Add something here only for a concern peculiar to this one tour that no field can express. A question you add replaces the generated one with the same wording. Do not restate deposits, payment or cancellation: those live on /faq and a build check will reject them here.",
+      type: "array",
+      of: [
+        {
+          type: "object",
+          name: "faq",
+          fields: [
+            defineField({ name: "question", title: "Question", type: "string" }),
+            defineField({ name: "answer", title: "Answer", type: "text", rows: 4 }),
+          ],
+          preview: { select: { title: "question" } },
+        },
+      ],
+    }),
+    defineField({
       name: "mapStops",
       title: "Map stops (optional override)",
       description:

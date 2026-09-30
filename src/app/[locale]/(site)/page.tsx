@@ -344,7 +344,15 @@ export default async function Home() {
             <SectionHeading eyebrow={home.faqSection.eyebrow} title={home.faqSection.title} align="center" />
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <FaqAccordion faqs={faqs} />
+            <FaqAccordion faqs={faqs} idPrefix="home-faq" />
+          </Reveal>
+          {/* The homepage shows a teaser and emits no FAQPage markup — /faq
+              is the canonical entity for these answers, and two pages
+              claiming it competes with itself. */}
+          <Reveal delay={150} className="mt-6 text-center">
+            <Link href="/faq" className="text-sm font-semibold text-gold-dark underline-offset-4 hover:underline">
+              <T>See all frequently asked questions</T> →
+            </Link>
           </Reveal>
         </Container>
       </section>

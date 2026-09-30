@@ -18,7 +18,9 @@ import { getAllTourSlugs, getSiteSettings, getTestimonials, getTourBySlug, getTo
 import { ProductReviews } from "@/components/ProductReviews";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
-import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { breadcrumbJsonLd, faqJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { FaqAccordion } from "@/components/FaqAccordion";
+import { faqsForTour } from "@/lib/tourFaqs";
 import { isHiddenTour } from "@/content/hiddenTours";
 import { T, trAll } from "@/i18n/T";
 
@@ -96,6 +98,11 @@ export default async function TourDetailPage({
     { name: "Tours", path: "/tours" },
     { name: tour.title, path: `/tours/${tour.slug}` },
   ]);
+  // Derived from the tour's own included/excluded/physicalLevel/duration, so
+  // the accordion and the FAQPage markup cannot drift from the lists further
+  // up the same page. See lib/tourFaqs.ts.
+  const tourFaqs = faqsForTour(tour);
+
   const touristTrip = touristTripJsonLd({
     name: tour.title,
     description: tour.tagline,
@@ -109,6 +116,12 @@ export default async function TourDetailPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
+      {tourFaqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(tourFaqs)) }}
+        />
+      )}
       <section className="relative">
         <SmartImage image={tour.image} tone={tour.imageTone} alt={tour.title} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20" />
@@ -260,6 +273,29 @@ export default async function TourDetailPage({
                     </Link>
                   ))}
                 </div>
+              </div>
+            )}
+
+            {/* The questions that decide a booking, answered on the page the
+                booking happens on. Site-wide policy — deposits, cancellation,
+                children's pricing, visas — is deliberately not repeated here;
+                it lives once on /faq and is linked below, so changing the
+                deposit does not mean editing thirty-one tour pages. */}
+            {tourFaqs.length > 0 && (
+              <div id="faq" className="mt-12 scroll-mt-24">
+                <h2 className="font-display text-2xl font-semibold text-ink"><T>Before You Book</T></h2>
+                <p className="mt-2 text-sm text-ink-soft">
+                  <T>The things travelers ask us most about this tour.</T>
+                </p>
+                <div className="mt-6">
+                  <FaqAccordion faqs={tourFaqs} idPrefix={`tour-${tour.slug}`} />
+                </div>
+                <Link
+                  href="/faq"
+                  className="mt-4 inline-block text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
+                >
+                  <T>Booking, payment and cancellation questions</T> →
+                </Link>
               </div>
             )}
           </div>

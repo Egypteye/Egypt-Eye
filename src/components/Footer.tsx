@@ -7,6 +7,7 @@ import { WhatsAppBookButton } from "./WhatsAppBookButton";
 import { LanguageLinks } from "./LanguageLinks";
 import { getDictionary, getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
+import { T } from "@/i18n/T";
 
 export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   const dict = await getDictionary();
@@ -117,6 +118,9 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
         <Container className="flex flex-col items-center justify-between gap-3 text-xs text-cream/60 sm:flex-row">
           <p>© {new Date().getFullYear()} {site.name}. {dict.footer.rightsReserved}</p>
           <div className="flex items-center gap-4">
+            <Link href={to("/faq")} className="hover:text-cream/70">
+              <T>FAQ</T>
+            </Link>
             <Link href={to("/privacy")} className="hover:text-cream/70">
               {dict.footer.privacy}
             </Link>

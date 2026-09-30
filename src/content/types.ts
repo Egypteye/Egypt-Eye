@@ -111,6 +111,18 @@ export type Tour = {
    * differs from how the destinations happen to be listed.
    */
   mapStops?: string[];
+  /**
+   * Hand-written questions for this tour only. Left unset on almost every
+   * tour: the buying questions a tour page has to answer are the same seven
+   * every time, and their answers are already sitting in `included`,
+   * `excluded`, `physicalLevel`, `duration` and `price` — so they are derived
+   * from those fields (see lib/tourFaqs.ts) rather than retyped 31 times and
+   * left to rot the first time an inclusion changes.
+   *
+   * Set this only for a concern that is genuinely peculiar to one tour and
+   * that no field can express. Anything here is shown before the derived set.
+   */
+  faqs?: Faq[];
   seo?: PageSeo;
 };
 
@@ -173,6 +185,18 @@ export type Experience = {
   physicalLevel?: PhysicalLevel;
   /** See Tour.mapStops. Usually one place for an experience. */
   mapStops?: string[];
+  /**
+   * Hand-written questions for this tour only. Left unset on almost every
+   * tour: the buying questions a tour page has to answer are the same seven
+   * every time, and their answers are already sitting in `included`,
+   * `excluded`, `physicalLevel`, `duration` and `price` — so they are derived
+   * from those fields (see lib/tourFaqs.ts) rather than retyped 31 times and
+   * left to rot the first time an inclusion changes.
+   *
+   * Set this only for a concern that is genuinely peculiar to one tour and
+   * that no field can express. Anything here is shown before the derived set.
+   */
+  faqs?: Faq[];
   seo?: PageSeo;
 };
 
@@ -537,6 +561,19 @@ export type Story = {
 export type Faq = {
   question: string;
   answer: string;
+  /**
+   * One optional "and here's where to go next" link, rendered under the
+   * answer. It exists because the useful reply to a buying question is often
+   * a route rather than a paragraph — "can I add a photoshoot?" wants the
+   * photoshoot page, not a longer sentence about photoshoots.
+   *
+   * Deliberately one link, not a list: an accordion panel that ends in a row
+   * of five links is a navigation menu wearing an answer's clothes. It is
+   * also kept out of the FAQPage structured data, which carries `answer`
+   * alone — the markup has to match the prose Google can see, and a label
+   * like "See photoshoot packages" is not part of the answer.
+   */
+  link?: { label: string; href: string };
 };
 
 export type SiteSettings = {

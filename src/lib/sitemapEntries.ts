@@ -87,6 +87,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     { url: `${siteUrl}/stories`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${siteUrl}/customize`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.5 },
+    { url: `${siteUrl}/faq`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/testimonials`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.2 },

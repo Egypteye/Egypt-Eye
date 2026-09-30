@@ -8,6 +8,7 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { TransferBookingForm } from "./TransferBookingForm";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { transfersPage } from "@/content/transfers";
+import { faqJsonLd } from "@/content/seo";
 import { localizedTransferCategories } from "@/content/productTranslations";
 import { localizeContent } from "@/i18n/localizeDeep";
 import { trAll } from "@/i18n/T";
@@ -41,6 +42,13 @@ export default async function TransfersPage() {
 
   return (
     <>
+      {/* The accordion below has always been here; the markup describing it
+          was not. Built from the same array the accordion renders, so the two
+          cannot disagree. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd([...page.faqs])) }}
+      />
       <section className="relative">
         <SmartImage
           image="/photos/pexels-31133003.jpg"

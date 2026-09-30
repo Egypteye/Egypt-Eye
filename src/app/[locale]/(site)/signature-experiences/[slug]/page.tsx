@@ -20,7 +20,7 @@ import {
   getSiteSettings,
 } from "@/sanity/fetchers";
 import { getLocale } from "@/i18n/dictionary";
-import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
+import { breadcrumbJsonLd, faqJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T, trAll } from "@/i18n/T";
 
 export async function generateStaticParams() {
@@ -110,6 +110,12 @@ export default async function SignatureExperienceDetailPage({
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
+      {experience.faqs && experience.faqs.length > 0 && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(experience.faqs)) }}
+        />
+      )}
       {/* Hero */}
       <section className="relative">
         <SmartImage

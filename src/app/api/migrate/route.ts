@@ -274,6 +274,7 @@ export async function GET(request: NextRequest) {
         itinerary: t.itinerary?.map((d) => ({ ...d, _type: "itineraryDay", _key: key() })),
         physicalLevel: t.physicalLevel ? { _type: "physicalLevel", ...t.physicalLevel } : undefined,
         mapStops: t.mapStops,
+        faqs: t.faqs?.map((f) => ({ _type: "faq", _key: key(), question: f.question, answer: f.answer })),
         relatedExperiences: t.relatedExperiences?.map((e) => ({
           _type: "reference",
           _ref: `experience-${e.slug}`,
