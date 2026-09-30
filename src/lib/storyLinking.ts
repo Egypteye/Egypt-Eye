@@ -1,24 +1,24 @@
-import type { Story, StoryCardData } from "@/content/types";
+import type { Story } from "@/content/types";
 
-// Topical authority, derived rather than hand-maintained.
+// What an article is ABOUT, and where its reader should go next.
 //
-// The library is 182 published articles. Only 66 of them carried a
-// `relatedStories` array, which meant 116 were orphans: a reader arriving from
-// search read one page and left, and a crawler found no path onward. Nothing
-// was wrong with the articles. There was simply no shape to the set.
+// This is deliberately not a related-articles system. That already exists and
+// predates this file: `withDerivedRelatedStories` in sanity/fetchers.ts gives
+// every article a "keep reading" row at request time using the same ring
+// rotation the tour catalogue uses, so links spread evenly rather than piling
+// onto whichever articles sort first. Nothing here duplicates it.
 //
-// Hand-linking 182 articles is a job that is wrong the moment the 183rd is
-// published, so this derives the shape instead. Two pieces:
+// What was missing is the other half of internal linking. An article had
+// siblings but no sense of hierarchy: no page it supported, and no route to
+// the thing Egypt Eye actually does about its subject. A reader finishing
+// "what to wear for a pyramids photoshoot" could reach three more articles
+// and not the photoshoot.
 //
-//   1. CLUSTERS — eight declared topic areas, each with a pillar article and
-//      the Egypt Eye service its readers should end up at. This is the only
-//      hand-maintained part, and it is one line per cluster.
-//   2. relatedStoriesFor — scores every other article against this one and
-//      returns the closest few, so a new article is linked from the day it
-//      ships without anyone editing a list.
-//
-// A manual `relatedStories` array still wins. Deriving is the default, not a
-// replacement for judgement.
+// So this declares ten clusters — a topic area, the pillar article it
+// concentrates on, and the service its readers should be able to reach — and
+// derives which cluster an article belongs to from its own tags, slug and
+// category. One line per cluster is the whole maintenance cost, and a new
+// article joins the right one on the day it ships.
 
 export type Cluster = {
   id: string;
@@ -36,7 +36,7 @@ export type Cluster = {
 };
 
 /**
- * The eight clusters from docs/content-strategy.md.
+ * The ten clusters from docs/content-strategy.md.
  *
  * Pillars were chosen as the article that already ranks broadest for the
  * cluster's head term, not the newest one — the point is to concentrate
@@ -178,111 +178,6 @@ export function pillarFor(story: Pick<Story, "slug" | "tags" | "category">, all:
   const cluster = clusterFor(story);
   if (!cluster || cluster.pillarSlug === story.slug) return undefined;
   return all.find((s) => s.slug === cluster.pillarSlug && s.status === "published");
-}
-
-function toCard(story: Story): StoryCardData {
-  return {
-    slug: story.slug,
-    title: story.title,
-    excerpt: story.excerpt,
-    image: story.image,
-    imageTone: story.imageTone,
-    category: story.category,
-  };
-}
-
-/**
- * The articles closest to this one.
- *
- * Shared tags carry the most weight because they are the most specific signal
- * the library has — 351 distinct tags across 182 articles means a shared tag
- * usually means a genuinely shared subject, where a shared category can mean
- * only that both are travel guides. Cluster agreement is next, then category,
- * then a shared bookable tour, which catches pairs that use different
- * vocabulary for the same place.
- *
- * Returns fewer than `limit` rather than padding with weak matches: three
- * relevant links beat six that send a reader somewhere unrelated.
- */
-function candidatesFor(story: Story, all: Story[]) {
-  const tags = new Set((story.tags ?? []).map(lower));
-  const cluster = clusterFor(story);
-  const tourSlugs = new Set((story.relatedTours ?? []).map((t) => t.slug));
-
-  return all
-    .filter((other) => other.slug !== story.slug && other.status === "published")
-    .map((other) => {
-      let score = 0;
-      for (const tag of other.tags ?? []) if (tags.has(lower(tag))) score += 12;
-      if (cluster && clusterFor(other)?.id === cluster.id) score += 8;
-      if (other.category && other.category === story.category) score += 4;
-      for (const tour of other.relatedTours ?? []) if (tourSlugs.has(tour.slug)) score += 6;
-      return { other, score };
-    })
-    // The floor is one shared tag (12), or agreement on the cluster (8),
-    // which is a real relationship even when the vocabulary differs — two
-    // photography articles that never use the same tag are still about
-    // photography. Category alone (4) is not enough and never qualifies.
-    .filter((entry) => entry.score >= 8)
-    .sort((a, b) => b.score - a.score || a.other.slug.localeCompare(b.other.slug));
-}
-
-/**
- * Related links for the whole library at once, balanced so the links spread.
- *
- * Scoring each article independently produces a rich-get-richer graph: the few
- * broad articles win every tie and a long tail receives no inbound link at
- * all, which is precisely the orphan problem this is meant to solve. So the
- * index is built in one pass that tracks how many inbound links each article
- * has already collected and breaks ties towards the ones that have fewest.
- *
- * Relevance still decides. The balancing only chooses between articles that
- * scored equally, which is common — a shared tag is a shared tag.
- */
-export function buildRelatedIndex(all: Story[], limit = 3): Map<string, StoryCardData[]> {
-  const published = all.filter((s) => s.status === "published");
-  const inbound = new Map<string, number>();
-  const index = new Map<string, StoryCardData[]>();
-
-  // Manual lists are decisions someone made, so they are honoured first and
-  // their inbound links counted before anything is derived around them.
-  for (const story of published) {
-    if (story.relatedStories?.length) {
-      index.set(story.slug, story.relatedStories);
-      for (const r of story.relatedStories) inbound.set(r.slug, (inbound.get(r.slug) ?? 0) + 1);
-    }
-  }
-
-  for (const story of published) {
-    if (index.has(story.slug)) continue;
-    const picked: StoryCardData[] = [];
-    const pool = candidatesFor(story, published);
-    while (picked.length < limit && pool.length > 0) {
-      const topScore = pool[0].score;
-      // Among everything comparably relevant, take whichever is least linked
-      // to. The window is deliberately a band rather than an exact tie: a gap
-      // of a few points is one category match, not a difference of subject,
-      // and treating it as a tie is what stops a dense cluster leaving its
-      // own long tail with no inbound link at all.
-      let bestAt = 0;
-      for (let i = 1; i < pool.length && pool[i].score >= topScore - 6; i++) {
-        if ((inbound.get(pool[i].other.slug) ?? 0) < (inbound.get(pool[bestAt].other.slug) ?? 0)) bestAt = i;
-      }
-      const [chosen] = pool.splice(bestAt, 1);
-      picked.push(toCard(chosen.other));
-      inbound.set(chosen.other.slug, (inbound.get(chosen.other.slug) ?? 0) + 1);
-    }
-    index.set(story.slug, picked);
-  }
-
-  return index;
-}
-
-/** One article's related links. Prefer buildRelatedIndex when rendering many. */
-export function relatedStoriesFor(story: Story, all: Story[], limit = 3): StoryCardData[] {
-  // An explicit list is a decision someone made. Respect it.
-  if (story.relatedStories?.length) return story.relatedStories;
-  return buildRelatedIndex(all, limit).get(story.slug) ?? [];
 }
 
 /** The Egypt Eye service a reader of this article should be able to reach. */

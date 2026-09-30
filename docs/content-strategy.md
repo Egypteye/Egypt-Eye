@@ -60,9 +60,20 @@ transfers, private tours, desert, celebrations.
 2. Finding and killing the remaining cannibalisation pairs.
 3. Making every article link to the Egypt Eye service it should convert to —
    the chain the brief describes (question → article → experience → service)
-   is currently broken in most of the 168.
+   was broken on every one of them.
 
 One well-linked cluster of 15 existing articles will outrank 15 new orphans.
+
+**Correction, recorded because the first version of this section was wrong.**
+It claimed most articles had no related links at all. They did:
+`withDerivedRelatedStories` in `sanity/fetchers.ts` has filled a "keep
+reading" row for every article since September, using ring rotation so the
+links spread evenly. Counting the content files showed 55 of 182 with a
+`relatedStories` array and I concluded the rest were dead ends, without
+checking the layer that fills them at request time. Articles were never
+orphaned sideways. What they lacked was hierarchy — a pillar above them and
+a service beyond them — which is what `lib/storyLinking` now supplies and
+`check:links` guards.
 
 ---
 

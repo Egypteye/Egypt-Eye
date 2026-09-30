@@ -17,7 +17,7 @@ import { site } from "@/content/site";
 import type { StoryCountdownBlock, StoryFaqBlock } from "@/content/types";
 import { T, trAll } from "@/i18n/T";
 import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
-import { pillarFor, relatedStoriesFor, serviceFor } from "@/lib/storyLinking";
+import { pillarFor, serviceFor } from "@/lib/storyLinking";
 import { localePath } from "@/i18n/locales";
 
 export async function generateStaticParams() {
@@ -74,11 +74,12 @@ export default async function StoryDetailPage({
     (story.relatedTours ?? []).flatMap((t) => t.destinations)
   );
 
-  // Where this article sits in the library, derived rather than hand-set —
-  // see lib/storyLinking. An explicit relatedStories array still wins; this
-  // is what the other 116 articles get instead of nothing.
+  // The related-articles row comes from the fetcher, which already fills
+  // relatedStories for every article (see withDerivedRelatedStories). What is
+  // added here is the hierarchy it has no opinion about: the pillar this
+  // article supports and the service its reader should be able to reach.
   const allStories = await getStories();
-  const relatedStories = relatedStoriesFor(story, allStories);
+  const relatedStories = story.relatedStories ?? [];
   const pillar = pillarFor(story, allStories);
   const service = serviceFor(story);
   const locale = await getLocale();
