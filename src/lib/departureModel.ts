@@ -69,8 +69,25 @@ export type Departure = {
   note: string | null;
 };
 
-/** Below this many seats left we say so out loud. */
+/** Below this many seats left we say so out loud, whatever the vehicle. */
 export const ALMOST_FULL_THRESHOLD = 3;
+
+/**
+ * Whether to show the exact seat count rather than "Seats available".
+ *
+ * A flat threshold of 3 was written for a 12-to-14 seat coach and does not
+ * survive a smaller vehicle: an 8-seat departure with 4 left is half sold and
+ * genuinely scarce, but scored "open" and told visitors nothing. Meanwhile 4
+ * of 14 is nearly full and was also silent.
+ *
+ * So the count appears once at least half the seats are gone, or once very few
+ * remain in absolute terms. That keeps the original reasoning intact — the
+ * number is hidden precisely while it would read as "nobody has booked this"
+ * — and makes it scale to whatever is actually being driven.
+ */
+export function showsSeatCount(seatsLeft: number, capacity: number): boolean {
+  return seatsLeft <= ALMOST_FULL_THRESHOLD || seatsLeft * 2 <= capacity;
+}
 
 /**
  * Today's date in Egypt.
@@ -98,7 +115,7 @@ export function deriveDeparture(row: DepartureRow, trip: WeeklyTrip): Departure 
           ? "closed"
           : seatsLeft === 0
             ? "sold_out"
-            : seatsLeft <= ALMOST_FULL_THRESHOLD
+            : showsSeatCount(seatsLeft, row.capacity)
               ? "almost_full"
               : "open";
 

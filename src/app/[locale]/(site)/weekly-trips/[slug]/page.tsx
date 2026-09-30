@@ -13,7 +13,8 @@ import { TripDepartures } from "@/components/TripDepartures";
 import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
 import { weeklyTrips, weeklyTripBySlug, weeklyTripCategoryLabels } from "@/content/weeklyTrips";
 import { getDeparturesForTrip } from "@/lib/departures";
-import { getTours } from "@/sanity/fetchers";
+import { getStories, getTours } from "@/sanity/fetchers";
+import { StoryCard } from "@/components/StoryCard";
 import {
   breadcrumbJsonLd,
   faqJsonLd,
@@ -69,17 +70,31 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
     "Questions",
     "Dates & Seats",
     "Pair it with",
+    "Read before you go",
     "Prefer this privately?",
     "We run every Weekly Trip as a private trip too — your own vehicle, your own date.",
     "Plan a private version",
   ]);
 
   const locale = await getLocale();
-  const [departures, allTours] = await Promise.all([getDeparturesForTrip(trip.slug), getTours()]);
+  const [departures, allTours, allStories] = await Promise.all([
+    getDeparturesForTrip(trip.slug),
+    getTours(),
+    getStories(),
+  ]);
 
   const relatedTours = (trip.relatedTourSlugs ?? [])
     .map((s) => allTours.find((t) => t.slug === s))
     .filter((t): t is NonNullable<typeof t> => Boolean(t));
+
+  // relatedStorySlugs has been on the trip type, and validated by
+  // check-weekly-trips, since Weekly Trips shipped — but nothing ever rendered
+  // it, so a trip could declare its best reading and the link went nowhere.
+  // Every existing trip declares an empty list, so filling the gap changes
+  // none of them.
+  const relatedStories = (trip.relatedStorySlugs ?? [])
+    .map((s) => allStories.find((story) => story.slug === s))
+    .filter((story): story is NonNullable<typeof story> => Boolean(story));
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Weekly Trips", path: "/weekly-trips" },
@@ -300,6 +315,19 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {relatedTours.map((tour) => (
                 <TourCard key={tour.slug} tour={tour} />
+              ))}
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {relatedStories.length > 0 && (
+        <section className="bg-sand/40 py-14">
+          <Container>
+            <h2 className="font-display text-2xl font-semibold text-ink sm:text-3xl">{ui["Read before you go"]}</h2>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {relatedStories.map((story) => (
+                <StoryCard key={story.slug} story={story} />
               ))}
             </div>
           </Container>

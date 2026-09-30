@@ -23,6 +23,7 @@ import { stories } from "../src/content/stories";
 // first, then updating this line.
 const PUBLISHED_SLUGS = new Set([
   "white-desert-overnight-camp",
+  "wadi-el-hitan-moonless-night-camp",
   "wadi-el-hitan-fayoum-day-trip",
   "dahshur-saqqara-memphis-day-trip",
   "siwa-oasis-long-weekend",

@@ -136,6 +136,181 @@ export const weeklyTrips: WeeklyTrip[] = [
   },
 
   {
+    // The dated half of this trip — 10-11 October 2026, eight seats, four sold,
+    // and the price — is a departure row, not content. See the note at the top
+    // of this file: it changes without a deploy, so it lives in Supabase and is
+    // created in /admin/departures. Everything here is the repeatable half.
+    //
+    // It deliberately does not cannibalise wadi-el-hitan-fayoum-day-trip below.
+    // That one is the lakes-and-waterfalls day, back in Cairo by evening; this
+    // one is the overnight, and the night is the product. They cross-link.
+    slug: "wadi-el-hitan-moonless-night-camp",
+    title: "Moonless Night in Wadi El Hitan",
+    tagline: "Forty million years of whale bone by day, and a sky with no moon in it by night",
+    category: "desert",
+    duration: "2 days, 1 night",
+    nights: 1,
+    departsFrom: "Cairo",
+    destinations: ["Fayoum", "Wadi El Hitan"],
+    imageLabel: "The desert after dark",
+    // Departs from the reuse-a-hub-photo convention above, deliberately: no
+    // destination hub has a night photograph, and a daytime lake shot would
+    // sell the wrong half of this trip. Verified through the Unsplash API
+    // rather than recalled, and credited below.
+    image:
+      "https://images.unsplash.com/photo-1654330352875-1f86a5b011cf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    imageTone: "desert",
+    imageCredit: {
+      source: "Unsplash",
+      creator: "Yuheng Mei",
+      sourceUrl:
+        "https://unsplash.com/photos/the-night-sky-with-stars-above-a-desert-landscape-cCtH0EZhoXA",
+      license: "Unsplash License",
+    },
+    season:
+      "October to April, and this departure is dated to the new moon. Wadi El Hitan is open year-round but the desert is too hot to camp in comfortably from June to August.",
+    typicalGroupSize: "Maximum 8 travellers",
+    description:
+      "Wadi El Hitan was inscribed by UNESCO in 2005 as Egypt's first natural World Heritage site, for the whale skeletons lying exposed in it. They are roughly forty million years old, from the point in the story where whales still had back legs, and this desert was the floor of a sea. They have not been moved: the fossils sit on the surface where they were found, and the valley is closed to vehicles, so you walk to them along a set trail. Then the day turns. A 4x4 takes the group out into the open desert beyond the protected area, there are dunes to sandboard if you want them, and a camp for the night. The night is the reason for the date — the new moon falls on 10-11 October, which means no moonlight at all between dusk and dawn. This is the darkest the sky gets, 150 kilometres from Cairo.",
+    highlights: [
+      "Whale skeletons lying where they were found, walked rather than driven past",
+      "Egypt's first natural UNESCO World Heritage site, inscribed in 2005",
+      "The open-air fossil museum at the heart of the protected area",
+      "4x4 into the desert beyond the fossil valley, where vehicles are allowed",
+      "Sandboarding on the dunes",
+      "A night at a desert camp, timed to the new moon — no moonlight until dawn",
+      "Sunrise over the desert before the drive back",
+      "Eight seats in the vehicle, and a content creator travelling with the group",
+    ],
+    included: [
+      "Return transport from Cairo in a luxury 8-seat vehicle",
+      "4x4 desert transport where the route calls for it",
+      "A guide for both days",
+      "A content creator travelling with the group",
+      "The Wadi El Hitan visit, including the open-air museum",
+      "Desert safari beyond the protected area",
+      "Sandboarding",
+      "Lunch, a barbecue dinner and breakfast — vegan options on request",
+      "One night at a desert camp",
+      "The stargazing session after dark",
+    ],
+    // Deliberately empty until Egypt Eye confirms what sits outside the price
+    // for THIS departure. The page hides the block rather than showing a guess,
+    // and a guess here is the one that costs a traveller money at a gate.
+    excluded: [],
+    bringWithYou: [
+      "A warm layer. October days are mild and the desert drops sharply once the sun is down.",
+      "A head torch, ideally one with a red setting — white light ruins everyone's night vision, including yours.",
+      "Closed shoes for the fossil trail and the dunes.",
+      "Sun cover. There is very little shade anywhere on the site.",
+    ],
+    plan: [
+      {
+        title: "07:00 — pickup in Cairo",
+        description:
+          "The one fixed time in the itinerary. Everything after it moves with the group and the light.",
+      },
+      {
+        title: "Morning — south-west into Fayoum",
+        description:
+          "Out of the city and into farmland, then the road narrows towards the protected area and the green stops.",
+      },
+      {
+        title: "Wadi El Hitan",
+        description:
+          "The fossil valley on foot, along the marked trail, with the skeletons and the open-air museum. Vehicles are not permitted here — this part is walked, which is also the only way to see it properly.",
+      },
+      {
+        title: "Afternoon — desert and dunes",
+        description:
+          "By 4x4 out past the boundary of the protected area, where driving is allowed, and onto the dunes for sandboarding.",
+      },
+      {
+        title: "Evening — camp",
+        description:
+          "Into camp with enough of the day left for the light to go. Dinner is a barbecue; vegan plates are made to order if you tell us in advance.",
+      },
+      {
+        title: "After dark — the sky",
+        description:
+          "The reason the date was chosen. No moon rises, so the sky stays as dark as it gets all night, and there is nothing to do but look at it.",
+      },
+      {
+        title: "Sunrise",
+        description:
+          "Worth the alarm. The desert changes colour twice in about twenty minutes and then the day is ordinary again.",
+      },
+      {
+        title: "Breakfast, then Cairo",
+        description: "Back on the road after breakfast, into Cairo in the morning.",
+      },
+    ],
+    physicalLevel: {
+      tier: "moderate",
+      note: "The fossil trail is a flat loop on open ground with no climbing. What makes this a moderate rather than an easy trip is the shape of it: an early start, hours in a vehicle, soft sand if you sandboard, and a night spent outdoors rather than in a hotel.",
+    },
+    faqs: [
+      {
+        question: "Where exactly is Wadi El Hitan, and how far is it from Cairo?",
+        answer:
+          "About 150 kilometres south-west of Cairo, past Fayoum, inside the Wadi El Rayan protected area. The drive is the long part of the morning, which is why the pickup is at 07:00 — it puts the group at the fossil valley with the day still ahead of them rather than half gone.",
+      },
+      {
+        question: "What does a moonless night actually mean?",
+        answer:
+          "The new moon falls on 10-11 October 2026, so the moon is between us and the sun and effectively no moonlight reaches the ground. A full moon is bright enough to read by and washes all but the brightest stars out of the sky; a new moon removes that entirely. It is the single biggest thing you can control about a night sky, and it is why this departure sits on this date rather than a more convenient one.",
+      },
+      {
+        question: "Will we see the Milky Way?",
+        answer:
+          "We do not promise specific objects, and you should be sceptical of anyone who does. What we can say is that a moonless sky away from city light is the condition that makes the Milky Way visible at all — beyond that it comes down to cloud and haze on the night, which nobody can book in advance.",
+      },
+      {
+        question: "How is this different from your Wadi El Hitan day trip?",
+        answer:
+          "The day trip pairs the fossil valley with Wadi El Rayan's waterfalls and the Magic Lake and has you back in Cairo the same evening. This one gives up the lakes and spends the time on the desert instead — 4x4, dunes, a camp and the night sky. If the fossils and the landscape are what you want, take the day trip. If the night is what you want, take this.",
+      },
+      {
+        question: "Is the 4x4 and the sandboarding included, or extra?",
+        answer:
+          "Both are included. The 4x4 is how the group reaches the open desert past the boundary of the protected area, since vehicles are not permitted in the fossil valley itself, and the boards come with it. Sandboarding is optional on the day — nobody is counted down a dune.",
+      },
+      {
+        question: "How many people will be on the trip?",
+        answer:
+          "Eight at the absolute most, because that is the size of the vehicle. It is not a coach trip and it is not sold as one. The seats left on this departure are shown on this page and update as they go.",
+      },
+      {
+        question: "Can a solo traveller join?",
+        answer:
+          "Yes — that is much of the point of Weekly Trips. Seats are sold individually rather than by the vehicle, so you are not paying a private rate to travel alone, and on an eight-seat departure you will know everyone by the end of the first day.",
+      },
+      {
+        question: "Is food included, and can you cater for vegans?",
+        answer:
+          "Lunch, a barbecue dinner and breakfast the next morning are included. Vegan plates are made to order — tell us when you book rather than on the day, because the food travels out to the camp with the group.",
+      },
+      {
+        question: "Is October a good time for this?",
+        answer:
+          "It is one of the better months. The camping season in this part of the desert runs roughly October to April; before that it is too hot to enjoy a night outdoors, and this particular date was chosen for the moon rather than the temperature. Days are mild and nights are cold enough that a warm layer matters.",
+      },
+      {
+        question: "What happens if the weather spoils the stargazing?",
+        answer:
+          "Cloud is the one part of this nobody controls, and we would rather say so here than in the desert. The trip runs regardless — the fossils, the 4x4, the dunes and the camp are unaffected by an overcast sky. What we cannot do is guarantee the stars, and we do not price the trip as though we could.",
+      },
+    ],
+    relatedTourSlugs: ["fayoum-nature-tour", "fayoum-wadi-el-rayan-waterfalls-tour"],
+    relatedStorySlugs: ["wadi-el-hitan-whale-valley-guide", "fayoum-photoshoot-guide"],
+    seo: {
+      seoTitle: "Moonless Night in Wadi El Hitan — Stargazing Camp, 10-11 Oct 2026",
+      seoDescription:
+        "A two-day small-group trip from Cairo to Wadi El Hitan's whale fossils, with 4x4 desert safari, sandboarding and a night at a desert camp timed to the new moon. Eight seats only.",
+    },
+  },
+
+  {
     slug: "wadi-el-hitan-fayoum-day-trip",
     title: "Wadi El Hitan & the Fayoum Lakes",
     tagline: "Whale skeletons in a desert, and waterfalls two hours from Cairo",
