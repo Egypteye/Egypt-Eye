@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { LogoutButton } from "@/components/LogoutButton";
 import { getCurrentUser } from "@/lib/auth/session";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { claimGuestReservations } from "@/lib/reservations/claimGuestReservations";
 import { DiscountOfferCard } from "./DiscountOfferCard";
 import { JourneyList } from "./JourneyList";
 import { T, trAll } from "@/i18n/T";
@@ -82,6 +83,14 @@ export default async function AccountPage() {
 
   const user = await getCurrentUser();
   if (!user) redirect("/account/login?next=/account");
+
+  // Before reading them: pick up any reservation this customer made as a guest
+  // under the same verified address. Runs here rather than at sign-in because
+  // this is the only page the result is visible on, and password logins never
+  // pass through /auth/callback — doing it here covers every route into an
+  // account, including people who signed up before this existed. It is
+  // idempotent and only touches rows that belong to nobody.
+  await claimGuestReservations();
 
   const supabase = await createServerSupabaseClient();
   const [{ data: journeys }, { data: reservations }, { data: discountCodes }, { data: agent }] = await Promise.all([
