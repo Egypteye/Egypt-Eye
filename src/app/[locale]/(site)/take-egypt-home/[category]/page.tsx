@@ -9,14 +9,12 @@ import { TreasureRequestForm } from "@/components/TreasureRequestForm";
 import { TourCard } from "@/components/TourCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
-import {
-  treasureCategories,
-  treasureCategoryBySlug,
-  treasureProductsFor,
-  TREASURES_PATH,
-} from "@/content/treasures";
+import { treasureCategories, TREASURES_PATH } from "@/content/treasures";
+import { getTreasureCategories, getTreasureProducts } from "@/sanity/fetchers";
+import { availabilityLabel, cardPrice, ctaForStatus, isOrderable, statusLabel } from "@/lib/treasureDisplay";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata } from "@/content/seo";
 import { getPhotoshoots, getStories, getTours } from "@/sanity/fetchers";
+import { SmartImage as ProductImage } from "@/components/SmartImage";
 import { alternatesFor } from "@/i18n/alternates";
 import { getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
@@ -44,7 +42,7 @@ export async function generateMetadata({
   params: Promise<{ category: string }>;
 }): Promise<Metadata> {
   const { category: slug } = await params;
-  const category = treasureCategoryBySlug(slug);
+  const category = (await getTreasureCategories()).find((c) => c.slug === slug);
   if (!category) return {};
   const locale = await getLocale();
   const path = `${TREASURES_PATH}/${category.slug}`;
@@ -66,14 +64,20 @@ export default async function TreasureCategoryPage({
   params: Promise<{ category: string }>;
 }) {
   const { category: slug } = await params;
-  const raw = treasureCategoryBySlug(slug);
-  if (!raw) notFound();
-
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
+
+  // Everything comes through the fetchers, so the Studio is the source of
+  // truth and the content files are only the fallback. `raw` is the
+  // untranslated record — related-slug lookups have to run against it, since
+  // localizeContent leaves slugs opaque but the objects are copies.
+  const [categories, allProducts] = await Promise.all([getTreasureCategories(), getTreasureProducts()]);
+  const raw = categories.find((c) => c.slug === slug);
+  if (!raw) notFound();
+
   const [category, products] = await Promise.all([
     localizeContent(raw, locale),
-    localizeContent(treasureProductsFor(raw.slug), locale),
+    localizeContent(allProducts.filter((p) => p.category === raw.slug), locale),
   ]);
 
   const [allTours, allPhotoshoots, allStories] = await Promise.all([
@@ -164,34 +168,105 @@ export default async function TreasureCategoryPage({
               </p>
             </Reveal>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {products.map((product, i) => (
-                <Reveal key={product.slug} delay={i * 60}>
-                  <article className="flex h-full flex-col rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
-                    <div className="flex items-start justify-between gap-3">
-                      <h3 className="font-display text-lg font-semibold text-ink">{product.name}</h3>
-                      {product.placeholder && (
-                        <span className="shrink-0 rounded-full bg-black/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-ink-soft">
-                          {ui["Sample listing"]}
-                        </span>
+              {products.map((product, i) => {
+                const price = cardPrice(product);
+                const availability = availabilityLabel(product.availability);
+                const badge = statusLabel(product.status);
+                return (
+                  <Reveal key={product.slug} delay={i * 60}>
+                    <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm">
+                      {product.image && (
+                        <div className="relative aspect-[4/3] overflow-hidden">
+                          <ProductImage
+                            image={product.image}
+                            tone={product.imageTone ?? "desert"}
+                            alt={product.imageAlt ?? product.name}
+                            className="h-full w-full"
+                            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                          />
+                        </div>
                       )}
-                    </div>
-                    <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">{product.blurb}</p>
-                    {product.specs && product.specs.length > 0 && (
-                      <dl className="mt-4 space-y-1.5 border-t border-black/5 pt-4">
-                        {product.specs.map((spec) => (
-                          <div key={spec.label} className="flex justify-between gap-4 text-sm">
-                            <dt className="text-ink-soft/85">{spec.label}</dt>
-                            <dd className="font-semibold text-ink">{spec.value}</dd>
+                      <div className="flex flex-1 flex-col p-6">
+                        <div className="flex items-start justify-between gap-3">
+                          <h3 className="font-display text-lg font-semibold text-ink">{product.name}</h3>
+                          <div className="flex shrink-0 flex-col items-end gap-1">
+                            {product.placeholder && (
+                              <span className="rounded-full bg-black/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-ink-soft">
+                                {ui["Sample listing"]}
+                              </span>
+                            )}
+                            {badge && (
+                              <span className="rounded-full bg-gold/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-gold-dark">
+                                {badge}
+                              </span>
+                            )}
                           </div>
-                        ))}
-                      </dl>
-                    )}
-                    <p className="mt-4 text-xs text-ink-soft/80">
-                      {product.placeholder ? ui["Photography and final details to come"] : ""}
-                    </p>
-                  </article>
-                </Reveal>
-              ))}
+                        </div>
+
+                        <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">{product.blurb}</p>
+
+                        {product.specs && product.specs.length > 0 && (
+                          <dl className="mt-4 space-y-1.5 border-t border-black/5 pt-4">
+                            {product.specs.map((spec) => (
+                              <div key={spec.label} className="flex justify-between gap-4 text-sm">
+                                <dt className="text-ink-soft/85">{spec.label}</dt>
+                                <dd className="font-semibold text-ink">{spec.value}</dd>
+                              </div>
+                            ))}
+                          </dl>
+                        )}
+
+                        {product.variants && product.variants.length > 0 && (
+                          <ul className="mt-4 flex flex-wrap gap-2">
+                            {product.variants.map((variant) => (
+                              <li
+                                key={variant.label}
+                                className="rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-ink-soft"
+                              >
+                                {variant.label}
+                                {typeof variant.price?.amount === "number" && (
+                                  <span className="text-ink"> · ${variant.price.amount}</span>
+                                )}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+
+                        <div className="mt-5 flex items-end justify-between gap-4 border-t border-black/5 pt-4">
+                          <div>
+                            {price.amount ? (
+                              <p className="font-display text-lg font-semibold text-ink">
+                                {price.from && <span className="text-sm font-normal text-ink-soft">from </span>}
+                                {price.amount}
+                                {price.was && (
+                                  <span className="ml-2 text-sm font-normal text-ink-soft/70 line-through">
+                                    {price.was}
+                                  </span>
+                                )}
+                              </p>
+                            ) : (
+                              <p className="text-sm font-semibold text-ink-soft">{price.note}</p>
+                            )}
+                            {availability && <p className="mt-0.5 text-xs text-ink-soft/80">{availability}</p>}
+                          </div>
+                          {isOrderable(product.status) ? (
+                            <Link
+                              href="#request"
+                              className="shrink-0 rounded-full bg-gold px-4 py-2 text-xs font-semibold text-ink transition hover:bg-gold-light"
+                            >
+                              {ctaForStatus(product.status)}
+                            </Link>
+                          ) : (
+                            <span className="shrink-0 rounded-full bg-black/5 px-4 py-2 text-xs font-semibold text-ink-soft">
+                              {ctaForStatus(product.status)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </article>
+                  </Reveal>
+                );
+              })}
             </div>
           </Container>
         </section>

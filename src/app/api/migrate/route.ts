@@ -8,6 +8,7 @@ import { photoshoots } from "@/content/photoshoots";
 import { photoshootTranslations, tourTranslations } from "@/content/productTranslations";
 import { testimonials } from "@/content/testimonials";
 import { stories } from "@/content/stories";
+import { treasureCategories, treasureProducts } from "@/content/treasures";
 import { faqs } from "@/content/faq";
 import { site } from "@/content/site";
 import { customizePage } from "@/content/customizePage";
@@ -61,7 +62,7 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 // To migrate only specific document types (leaving everything else
 // untouched), add `&only=` with a comma-separated list of: tours,
 // experiences, photoshoots, nav, destinationHubs, testimonials,
-// stories, faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
+// stories, treasures, faqs, siteSettings, customizePage, aboutPage, contactPage, hosts,
 // signatureExperiences, authors, events, homepage, listingPages. IMPORTANT:
 // stories reference tours (relatedTours) and signatureExperiences reference
 // hosts/authors/events — always include every type a document you're
@@ -752,6 +753,69 @@ export async function GET(request: NextRequest) {
       });
       results.push(`story: ${s.slug}`);
     }
+  }
+
+  // Take Egypt Home.
+  //
+  // createIfNotExists, NOT createOrReplace — the only block in this file that
+  // works that way, and deliberately. Everything else here is code-authored
+  // content that is supposed to be overwritten from the repo. These documents
+  // are the opposite: Egypt Eye edits them in the Studio, uploads photographs
+  // to them and sets their prices. Re-running a full migration must never
+  // reach in and undo that. So this seeds the shape once and then leaves it
+  // alone for good.
+  if (shouldRun("treasures")) {
+    for (const c of treasureCategories) {
+      tx.createIfNotExists({
+        _id: `treasureCategory-${c.slug}`,
+        _type: "treasureCategory",
+        title: c.title,
+        slug: { _type: "slug", current: c.slug },
+        active: c.active ?? true,
+        order: c.order ?? 100,
+        eyebrow: c.eyebrow,
+        heroHeadline: c.heroHeadline,
+        heroSub: c.heroSub,
+        imageTone: c.imageTone ?? "desert",
+        cardHook: c.cardHook,
+        cardBlurb: c.cardBlurb,
+        story: c.story?.map((b) => ({ ...b, _type: "storyBlock", _key: key() })),
+        beforeYouArrive: c.beforeYouArrive?.map((b) => ({ ...b, _type: "treasureStep", _key: key() })),
+        inEgypt: c.inEgypt
+          ? {
+              _type: "object",
+              title: c.inEgypt.title,
+              body: c.inEgypt.body,
+              steps: c.inEgypt.steps.map((b) => ({ ...b, _type: "treasureStep", _key: key() })),
+            }
+          : undefined,
+        trust: c.trust,
+        faqs: c.faqs?.map((f) => ({ ...f, _type: "faq", _key: key() })),
+        seo: c.seo ? { _type: "object", ...c.seo } : undefined,
+      });
+      results.push(`treasureCategory: ${c.slug}`);
+    }
+    for (const p of treasureProducts) {
+      tx.createIfNotExists({
+        _id: `treasureProduct-${p.slug}`,
+        _type: "treasureProduct",
+        name: p.name,
+        slug: { _type: "slug", current: p.slug },
+        category: { _type: "reference", _ref: `treasureCategory-${p.category}` },
+        status: p.status,
+        placeholder: p.placeholder,
+        featured: p.featured ?? false,
+        order: p.order,
+        blurb: p.blurb,
+        description: p.description,
+        imageTone: p.imageTone ?? "desert",
+        specs: p.specs?.map((spec) => ({ ...spec, _type: "treasureSpec", _key: key() })),
+        tags: p.tags,
+      });
+      results.push(`treasureProduct: ${p.slug}`);
+    }
+    tx.createIfNotExists({ _id: "takeEgyptHomePage", _type: "takeEgyptHomePage" });
+    results.push("takeEgyptHomePage");
   }
 
   try {

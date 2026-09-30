@@ -1,3 +1,7 @@
+import {
+  treasureCategories as localTreasureCategories,
+  treasureProducts as localTreasureProducts,
+} from "@/content/treasures";
 import { client } from "./client";
 import {
   aboutPageQuery,
@@ -20,6 +24,9 @@ import {
   signatureExperiencesQuery,
   siteSettingsQuery,
   storiesQuery,
+  treasureCategoriesQuery,
+  treasureProductsQuery,
+  takeEgyptHomePageQuery,
   storyBySlugQuery,
   testimonialsQuery,
   tourBySlugQuery,
@@ -72,6 +79,9 @@ import type {
   Story,
   Testimonial,
   Tour,
+  TreasureCategory,
+  TreasureProduct,
+  TakeEgyptHomePage,
 } from "@/content/types";
 
 // Governs every Sanity fetch site-wide (all tours, stories, experiences,
@@ -842,3 +852,42 @@ export const getSignatureExperiences = translated(getSignatureExperiencesInner);
 export const getSignatureExperienceBySlug = translated(getSignatureExperienceBySlugInner);
 export const getHomepage = translated(getHomepageInner);
 export const getListingPages = translated(getListingPagesInner);
+
+// ---------------------------------------------------------------------------
+// Take Egypt Home.
+//
+// Same precedence as everything else here: Sanity wins once it has content,
+// and the content files are the fallback so the section still renders on a
+// deployment with no CMS and during a Sanity outage. Merging the two would be
+// worse than either — an editor deleting a product in the Studio would watch
+// it come straight back from the repo.
+//
+// `status: "hidden"` is filtered in GROQ, so a hidden product never reaches
+// the page, the sitemap or an API response.
+// ---------------------------------------------------------------------------
+
+async function getTreasureCategoriesInner(): Promise<TreasureCategory[]> {
+  const result = await safeFetch<TreasureCategory[]>(treasureCategoriesQuery);
+  return result && result.length > 0
+    ? withValidSlugs(withLocalImageFallback(result, localTreasureCategories))
+    : localTreasureCategories.filter((c) => c.active !== false);
+}
+
+async function getTreasureProductsInner(): Promise<TreasureProduct[]> {
+  const result = await safeFetch<TreasureProduct[]>(treasureProductsQuery);
+  const rows =
+    result && result.length > 0
+      ? withValidSlugs(withLocalImageFallback(result, localTreasureProducts))
+      : localTreasureProducts.filter((p) => p.status !== "hidden");
+  // A product whose category reference was deleted has no page to sit on.
+  const slugs = new Set((await getTreasureCategoriesInner()).map((c) => c.slug));
+  return rows.filter((p) => slugs.has(p.category)).sort((a, b) => a.order - b.order);
+}
+
+async function getTakeEgyptHomePageInner(): Promise<TakeEgyptHomePage | null> {
+  return (await safeFetch<TakeEgyptHomePage>(takeEgyptHomePageQuery)) ?? null;
+}
+
+export const getTreasureCategories = translated(getTreasureCategoriesInner);
+export const getTreasureProducts = translated(getTreasureProductsInner);
+export const getTakeEgyptHomePage = translated(getTakeEgyptHomePageInner);

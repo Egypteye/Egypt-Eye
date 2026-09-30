@@ -1182,20 +1182,49 @@ export type TreasureField =
   | { kind: "choice"; name: string; label: string; options: string[]; help?: string; required?: boolean }
   | { kind: "photo"; name: string; label: string; help?: string; required?: boolean };
 
+/** What the customer is offered, which decides the button they see. */
+export type TreasureStatus = "available" | "preorder" | "onRequest" | "soldOut" | "hidden";
+
+/** A stock signal, shown as a badge. Separate from status on purpose: a piece
+ *  can be "available" to order and still be "limited" in the shop. */
+export type TreasureAvailability = "inStock" | "limited" | "outOfStock" | "checkAvailability";
+
+/** The same piece at a different price — a metal, a bottle, a size. */
+export type TreasureVariant = {
+  label: string;
+  price?: Price;
+  availability?: TreasureAvailability;
+};
+
+/** A paid addition on top of the price. */
+export type TreasureOption = {
+  label: string;
+  price?: Price;
+  note?: string;
+};
+
 export type TreasureProduct = {
   slug: string;
+  /** Resolved to the category slug at fetch time, whether it came from a
+   *  Sanity reference or a local content file. */
   category: TreasureCategorySlug;
   name: string;
   blurb: string;
+  description?: string;
   /**
    * A sample listing standing in for a real one. Marked on the card, kept out
    * of structured data, and checked by scripts/check-treasures.mts — see the
    * placeholder section of docs/take-egypt-home.md.
    */
   placeholder: boolean;
-  image?: string;
+  status: TreasureStatus;
+  availability?: TreasureAvailability;
+  featured?: boolean;
+  image?: SanityImage;
   imageAlt?: string;
+  imageTone?: ImageTone;
   imageCredit?: ImageCredit;
+  gallery?: SanityImage[];
   /**
    * Label/value rows: metal, karat, weight, dimensions, bottle size. Empty
    * until Egypt Eye supplies them — the card shows the rows it has and says
@@ -1204,6 +1233,11 @@ export type TreasureProduct = {
   specs?: { label: string; value: string }[];
   /** Omitted entirely while the price is genuinely not set. */
   price?: Price;
+  variants?: TreasureVariant[];
+  options?: TreasureOption[];
+  tags?: string[];
+  faqs?: Faq[];
+  seo?: PageSeo;
   order: number;
 };
 
@@ -1211,13 +1245,17 @@ export type TreasureStep = { title: string; description: string };
 
 export type TreasureCategory = {
   slug: TreasureCategorySlug;
+  /** Unticking this removes the category from the site without deleting it. */
+  active?: boolean;
+  order?: number;
   /** Route segment and nav label. */
   title: string;
   eyebrow: string;
   heroHeadline: string;
   heroSub: string;
-  image?: string;
+  image?: SanityImage;
   imageAlt?: string;
+  imageTone?: ImageTone;
   imageCredit?: ImageCredit;
   /** The gateway card on the landing page. */
   cardBlurb: string;
@@ -1240,5 +1278,25 @@ export type TreasureCategory = {
   relatedTourSlugs?: string[];
   relatedPhotoshootSlugs?: string[];
   relatedStorySlugs?: string[];
+  seo?: PageSeo;
+};
+
+/** The Take Egypt Home landing page, edited in the Studio. Every field is
+ *  optional: the page falls back to its built-in copy for anything unset, so
+ *  an empty document renders exactly what ships in the repo. */
+export type TakeEgyptHomePage = {
+  heroEyebrow?: string;
+  heroTitle?: string;
+  heroSubtitle?: string;
+  heroImage?: SanityImage;
+  intro?: string;
+  categoriesTitle?: string;
+  categoriesEyebrow?: string;
+  journeysTitle?: string;
+  giftsTitle?: string;
+  giftsBody?: string;
+  giftsCtaLabel?: string;
+  featuredProductSlugs?: string[];
+  faqs?: Faq[];
   seo?: PageSeo;
 };

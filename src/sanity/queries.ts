@@ -228,3 +228,36 @@ export const signatureExperienceBySlugQuery = groq`*[_type == "signatureExperien
 }`;
 
 export const allSignatureExperienceSlugsQuery = groq`*[_type == "signatureExperience" && status in ["published", "comingSoon"]].slug.current`;
+
+// ---------------------------------------------------------------------------
+// Take Egypt Home. Hidden products are filtered in GROQ rather than in the
+// page, so a hidden piece cannot leak through a surface that forgot to check.
+// ---------------------------------------------------------------------------
+const treasureImageFields = groq`image{..., "alt": alt, "caption": caption}`;
+
+export const treasureCategoriesQuery = groq`*[_type == "treasureCategory" && active != false] | order(order asc) {
+  "slug": slug.current, title, titleTranslations, eyebrow, heroHeadline, heroSub,
+  active, order, ${treasureImageFields}, imageTone, cardHook, cardBlurb,
+  story[]{title, body},
+  beforeYouArrive[]{title, description},
+  inEgypt{title, body, steps[]{title, description}},
+  trust, faqs[]{question, answer}, seo
+}`;
+
+export const treasureProductsQuery = groq`*[_type == "treasureProduct" && status != "hidden"] | order(order asc) {
+  "slug": slug.current, "category": category->slug.current, name, nameTranslations,
+  blurb, blurbTranslations, description, placeholder, status, availability, featured, order,
+  ${treasureImageFields}, imageTone, gallery[]{..., "alt": alt, "caption": caption},
+  price{amount, originalAmount, note},
+  variants[]{label, price{amount, originalAmount, note}, availability},
+  options[]{label, price{amount, originalAmount, note}, note},
+  specs[]{label, value}, tags, faqs[]{question, answer}, seo
+}`;
+
+export const takeEgyptHomePageQuery = groq`*[_type == "takeEgyptHomePage"][0] {
+  heroEyebrow, heroTitle, heroSubtitle, heroImage{..., "alt": alt}, intro,
+  categoriesTitle, categoriesEyebrow, journeysTitle,
+  giftsTitle, giftsBody, giftsCtaLabel,
+  "featuredProductSlugs": featuredProducts[]->slug.current,
+  faqs[]{question, answer}, seo
+}`;

@@ -20,6 +20,8 @@ export const treasureCategories: TreasureCategory[] = [
   // -------------------------------------------------------------------------
   {
     slug: "cartouches",
+    active: true,
+    order: 1,
     title: "Cartouches",
     eyebrow: "Gold & Silver",
     heroHeadline: "Your name, written the way a pharaoh's was",
@@ -132,14 +134,22 @@ export const treasureCategories: TreasureCategory[] = [
   // -------------------------------------------------------------------------
   {
     slug: "papyrus",
+    active: true,
+    order: 2,
     title: "Papyrus",
     eyebrow: "Personalised",
     heroHeadline: "Not a picture of ancient Egypt. A place in it.",
     heroSub:
       "Choose a scene, send us a photograph, and the faces in the painting become yours — hand-finished on papyrus made the way it has been made for five thousand years.",
     image:
-      "https://images.unsplash.com/photo-1708106365487-a6d706760712?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
-    imageAlt: "Painted figures and hieroglyphic columns on a temple wall in Luxor",
+      "https://images.unsplash.com/photo-1608546043931-6c9678ea9feb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
+    imageAlt: "An Egyptian papyrus scroll painted with figures and hieroglyphs",
+    imageCredit: {
+      source: "Unsplash",
+      creator: "Lea Kobal",
+      sourceUrl: "https://unsplash.com/photos/egyptian-papyrus-scroll-with-painted-figures-UlHxDEtBDM0",
+      license: "Unsplash License",
+    },
     cardBlurb:
       "Choose an Egyptian scene and send a photograph. The figures in it are painted with your faces.",
     cardHook: "Become part of the story",
@@ -234,6 +244,8 @@ export const treasureCategories: TreasureCategory[] = [
   // -------------------------------------------------------------------------
   {
     slug: "clothing",
+    active: true,
+    order: 3,
     title: "Clothing",
     eyebrow: "Curated & fitted",
     heroHeadline: "Egyptian cotton, cut the way Egypt cuts it",
@@ -336,6 +348,8 @@ export const treasureCategories: TreasureCategory[] = [
   // -------------------------------------------------------------------------
   {
     slug: "essence-oils",
+    active: true,
+    order: 4,
     title: "Essence Oils",
     eyebrow: "Fragrance",
     heroHeadline: "The one souvenir that brings the place back without being looked at",
@@ -441,7 +455,17 @@ export const treasureProducts: TreasureProduct[] = [
     category: "cartouches",
     name: "Classic cartouche pendant",
     blurb: "The traditional upright oval, one name, worn on a chain.",
+    image:
+      "https://images.unsplash.com/photo-1601121141461-920cb1993441?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    imageAlt: "A gold and silver pendant necklace resting against fabric",
+    imageCredit: {
+      source: "Unsplash",
+      creator: "Vaibhav Nagare",
+      sourceUrl: "https://unsplash.com/photos/person-wearing-gold-and-silver-necklace-vv2vIFeNEMg",
+      license: "Unsplash License",
+    },
     placeholder: true,
+    status: "onRequest",
     order: 1,
   },
   {
@@ -450,6 +474,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "Two-name cartouche",
     blurb: "Two names in one oval, or a matching pair — the usual choice for couples.",
     placeholder: true,
+    status: "onRequest",
     order: 2,
   },
   {
@@ -458,6 +483,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "Open-back cartouche",
     blurb: "Pierced so the signs read from either side.",
     placeholder: true,
+    status: "onRequest",
     order: 3,
   },
   {
@@ -466,6 +492,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "Royal portrait",
     blurb: "Seated in the posture the New Kingdom reserved for royalty, with your own face.",
     placeholder: true,
+    status: "onRequest",
     order: 1,
   },
   {
@@ -474,6 +501,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "The offering scene",
     blurb: "Two figures facing each other across a table — the oldest way Egypt painted a couple.",
     placeholder: true,
+    status: "onRequest",
     order: 2,
   },
   {
@@ -482,6 +510,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "The Nile boat",
     blurb: "A family crossing the river, which is how tomb painting showed a household together.",
     placeholder: true,
+    status: "onRequest",
     order: 3,
   },
   {
@@ -490,6 +519,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "Cotton galabeya",
     blurb: "The everyday long robe, in Egyptian cotton.",
     placeholder: true,
+    status: "onRequest",
     order: 1,
   },
   {
@@ -498,6 +528,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "Embroidered kaftan",
     blurb: "Hand-worked detail at the neck and cuffs.",
     placeholder: true,
+    status: "onRequest",
     order: 2,
   },
   {
@@ -506,6 +537,7 @@ export const treasureProducts: TreasureProduct[] = [
     name: "Three-oil sampler",
     blurb: "A way to take three home and decide later which one is yours.",
     placeholder: true,
+    status: "onRequest",
     order: 1,
   },
   {
@@ -513,7 +545,17 @@ export const treasureProducts: TreasureProduct[] = [
     category: "essence-oils",
     name: "Single bottle",
     blurb: "One oil, chosen by smelling it.",
+    image:
+      "https://images.unsplash.com/photo-1671493229066-f36e86b35841?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
+    imageAlt: "A hand holding a small amber glass bottle of fragrance oil",
+    imageCredit: {
+      source: "Unsplash",
+      creator: "Denise Chan",
+      sourceUrl: "https://unsplash.com/photos/a-person-holding-a-bottle-of-essential-oils-d8X84PjlfiY",
+      license: "Unsplash License",
+    },
     placeholder: true,
+    status: "onRequest",
     order: 2,
   },
 ];

@@ -84,6 +84,13 @@ for (const category of treasureCategories) {
   }
 
   ok(`${where}: no products at all, so the page has nothing to show`, treasureProductsFor(category.slug).length > 0);
+
+  // A hot-linked photo with no credit is a licence problem, not a style one.
+  // Local /photos files and Sanity uploads are Egypt Eye's own and need none.
+  if (typeof category.image === "string" && category.image.startsWith("http") && !category.imageCredit) {
+    errors.push(`${where}: hot-links ${new URL(category.image).hostname} with no imageCredit`);
+  }
+  if (category.image) ok(`${where}: image has no alt text`, Boolean(category.imageAlt));
 }
 
 // ---------------------------------------------------------------------------
@@ -99,6 +106,11 @@ for (const product of treasureProducts) {
 
   ok(`${where}: category "${product.category}" does not exist`, categorySlugs.has(product.category));
   scan(where, `${product.name} ${product.blurb}`);
+
+  if (typeof product.image === "string" && product.image.startsWith("http") && !product.imageCredit) {
+    errors.push(`${where}: hot-links ${new URL(product.image).hostname} with no imageCredit`);
+  }
+  if (product.image) ok(`${where}: image has no alt text`, Boolean(product.imageAlt));
 
   // The core rule. A sample listing is an idea, and an idea with a price on it
   // is a quote nobody authorised.

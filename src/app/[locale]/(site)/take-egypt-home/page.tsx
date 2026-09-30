@@ -5,7 +5,8 @@ import { SmartImage } from "@/components/SmartImage";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { FaqAccordion } from "@/components/FaqAccordion";
-import { treasureCategories, TREASURES_PATH } from "@/content/treasures";
+import { TREASURES_PATH } from "@/content/treasures";
+import { getTakeEgyptHomePage, getTreasureCategories } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata } from "@/content/seo";
 import { alternatesFor } from "@/i18n/alternates";
 import { getLocale } from "@/i18n/dictionary";
@@ -75,8 +76,34 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TakeEgyptHomePage() {
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
-  const categories = await localizeContent(treasureCategories, locale);
-  const faqs = await localizeContent(LANDING_FAQS, locale);
+
+  // Every field falls back to the copy that ships in this file, so an empty
+  // Studio document renders exactly what the repo does and editing one field
+  // does not require filling in the other twelve.
+  const [page, rawCategories] = await Promise.all([getTakeEgyptHomePage(), getTreasureCategories()]);
+  const categories = await localizeContent(rawCategories, locale);
+  const faqs = await localizeContent(page?.faqs?.length ? page.faqs : LANDING_FAQS, locale);
+  const copy = await localizeContent(
+    {
+      heroEyebrow: page?.heroEyebrow ?? "Take Egypt Home",
+      heroTitle: page?.heroTitle ?? "The best thing you bring back shouldn't be bought at the airport",
+      heroSubtitle:
+        page?.heroSubtitle ??
+        "Four things Egypt makes properly, arranged before you arrive and ready during your trip — with your name, your face or your fitting in them.",
+      intro:
+        page?.intro ??
+        "Most Egypt souvenirs are bought in the last hour of a trip, from whatever happens to be near the hotel. The good ones are made to order and take time — which is exactly the thing a traveller never has and a travel company always does. We know your dates. That is the whole idea.",
+      categoriesEyebrow: page?.categoriesEyebrow ?? "Explore",
+      categoriesTitle: page?.categoriesTitle ?? "Four collections",
+      journeysTitle: page?.journeysTitle ?? "Two ways in, depending on where you are",
+      giftsTitle: page?.giftsTitle ?? "The ones you bring back for other people",
+      giftsBody:
+        page?.giftsBody ??
+        "A cartouche carries a name, so it is the rare gift that cannot be bought for the wrong person. A papyrus can hold a family that never came on the trip. An oil is small enough to bring six of. If you tell us who they are for, we will tell you which of the four actually suits them.",
+      giftsCtaLabel: page?.giftsCtaLabel ?? "Start with a name",
+    },
+    locale
+  );
   const ui = await trAll(["Explore", "Souvenirs worth bringing home"]);
 
   const breadcrumbs = breadcrumbJsonLd([{ name: TITLE, path: TREASURES_PATH }]);
@@ -89,7 +116,10 @@ export default async function TakeEgyptHomePage() {
       {/* Hero */}
       <section className="relative">
         <SmartImage
-          image="https://images.unsplash.com/photo-1783713335436-d4fc69a6d8c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600"
+          image={
+            page?.heroImage ??
+            "https://images.unsplash.com/photo-1783713335436-d4fc69a6d8c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600"
+          }
           tone="desert"
           alt="Egyptian souvenirs and crafts laid out on a market stall"
           className="absolute inset-0"
@@ -98,31 +128,16 @@ export default async function TakeEgyptHomePage() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20" />
         <Container className="relative flex min-h-[52vh] flex-col justify-end gap-4 pb-16 pt-32">
-          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">
-            <T>Take Egypt Home</T>
-          </p>
-          <h1 className="max-w-3xl font-display text-4xl font-semibold text-cream sm:text-5xl">
-            <T>The best thing you bring back shouldn&rsquo;t be bought at the airport</T>
-          </h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-cream/85">
-            <T>
-              Four things Egypt makes properly, arranged before you arrive and ready during your trip — with your
-              name, your face or your fitting in them.
-            </T>
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{copy.heroEyebrow}</p>
+          <h1 className="max-w-3xl font-display text-4xl font-semibold text-cream sm:text-5xl">{copy.heroTitle}</h1>
+          <p className="max-w-2xl text-lg leading-relaxed text-cream/85">{copy.heroSubtitle}</p>
         </Container>
       </section>
 
       {/* Why this exists */}
       <section className="border-b border-black/5 bg-sand/40 py-16">
         <Container className="mx-auto max-w-3xl text-center">
-          <p className="text-lg leading-relaxed text-ink-soft">
-            <T>
-              Most Egypt souvenirs are bought in the last hour of a trip, from whatever happens to be near the hotel.
-              The good ones are made to order and take time — which is exactly the thing a traveller never has and a
-              travel company always does. We know your dates. That is the whole idea.
-            </T>
-          </p>
+          <p className="text-lg leading-relaxed text-ink-soft">{copy.intro}</p>
         </Container>
       </section>
 
@@ -130,11 +145,7 @@ export default async function TakeEgyptHomePage() {
       <section className="py-16">
         <Container>
           <Reveal>
-            <SectionHeading
-              eyebrow={ui["Explore"]}
-              title="Four collections"
-              align="center"
-            />
+            <SectionHeading eyebrow={copy.categoriesEyebrow} title={copy.categoriesTitle} align="center" />
           </Reveal>
           <div className="mt-12 grid gap-8 md:grid-cols-2">
             {categories.map((category, i) => (
@@ -177,7 +188,7 @@ export default async function TakeEgyptHomePage() {
       <section className="bg-sand-dim py-16">
         <Container>
           <Reveal>
-            <SectionHeading eyebrow="How it works" title="Two ways in, depending on where you are" align="center" />
+            <SectionHeading eyebrow="How it works" title={copy.journeysTitle} align="center" />
           </Reveal>
           <div className="mt-12 grid gap-8 lg:grid-cols-2">
             <Reveal>
@@ -246,21 +257,13 @@ export default async function TakeEgyptHomePage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
                   <T>Gifts</T>
                 </p>
-                <h2 className="mt-2 font-display text-3xl font-semibold text-ink">
-                  <T>The ones you bring back for other people</T>
-                </h2>
-                <p className="mt-4 leading-relaxed text-ink-soft">
-                  <T>
-                    A cartouche carries a name, so it is the rare gift that cannot be bought for the wrong person. A
-                    papyrus can hold a family that never came on the trip. An oil is small enough to bring six of. If
-                    you tell us who they are for, we will tell you which of the four actually suits them.
-                  </T>
-                </p>
+                <h2 className="mt-2 font-display text-3xl font-semibold text-ink">{copy.giftsTitle}</h2>
+                <p className="mt-4 leading-relaxed text-ink-soft">{copy.giftsBody}</p>
                 <Link
                   href={to("/take-egypt-home/cartouches")}
                   className="mt-6 inline-block rounded-full bg-gold px-7 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
                 >
-                  <T>Start with a name</T>
+                  {copy.giftsCtaLabel}
                 </Link>
               </div>
             </Reveal>

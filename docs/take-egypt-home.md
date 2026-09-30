@@ -147,3 +147,82 @@ Written down because they are the ones a shopping page reaches for by default:
 - "Certified", "hallmarked", "authentic" for metals, until the assay
   information above is supplied.
 - Any production time or collection promise.
+
+---
+
+# Managing it
+
+Everything below is edited in the Studio at `/studio`. No deploy, no developer.
+
+## Where each thing lives
+
+| What | Where |
+|---|---|
+| Products — add, edit, hide, reorder, delete | **Take Egypt Home — Product** |
+| Prices, sale prices, "on request" | Each product's **Price**, plus per-variant prices |
+| Product photos, gallery, alt text, captions | Each product's **Main photo** and **Gallery** |
+| Categories — name, hero, intro, FAQs, order, active | **Take Egypt Home — Category** |
+| Landing page — hero, copy, featured products, FAQs | **Take Egypt Home — Landing Page** |
+
+Reordering is the `Display order` number on products and categories: lower
+comes first. Gallery images reorder by dragging.
+
+## Why Sanity and not a new admin screen
+
+The site already has a CMS with image upload, replace, delete, reordering,
+hotspot cropping, alt text and references built in and already used for tours,
+photoshoots and stories. Building a second admin on Supabase would have meant
+reimplementing all of that, and leaving the team with two places to learn.
+
+## The pricing model
+
+One model, not four. The four categories look like they need different price
+shapes — karat and weight, base plus personalisation, size, bottle — but what
+they actually share is three ideas:
+
+- **Variants** — the same piece at a different price. 18k or silver, 50ml or
+  15ml, S/M/L. Each carries its own price and stock signal.
+- **Paid extras** — an addition on top: photo personalisation, a chain, a box.
+- **Specifications** — label/value facts that describe but do not price: karat,
+  weight, dimensions, scent, fabric.
+
+Every category's pricing falls out of those, so there is one product form and a
+fifth category needs no schema work.
+
+Cards quote the **cheapest** variant as a "from" price, not the first in the
+list — the first is an editing accident, the cheapest is a promise the
+catalogue can keep. A leftover `originalAmount` lower than the real price
+renders no strikethrough, so a mistyped figure cannot become a fake discount.
+
+## Status drives the button
+
+| Status | Button | Card badge |
+|---|---|---|
+| Available | Reserve this piece | — |
+| Pre-order | Pre-order for my trip | Pre-order |
+| On request | Request availability | On request |
+| Sold out | Currently unavailable (not clickable) | Sold out |
+| Hidden | — | filtered out in GROQ, never reaches a page |
+
+**Availability** is separate and optional: In stock / Limited / Out of stock /
+Check availability. It is a stock badge, mostly for clothing and oils. A piece
+can be `available` to order and `limited` in the shop at the same time.
+
+## Seeding and the one rule about re-running
+
+`?only=treasures` on the migrate endpoint seeds the four categories, the ten
+sample listings and the landing document. It uses `createIfNotExists`, which is
+**the only block in that route that does** — everything else is code-authored
+and meant to be overwritten from the repo, while these are documents Egypt Eye
+edits, photographs and prices. Re-running a full migration will never undo that
+work.
+
+## Customer photographs
+
+Unchanged and deliberately so. Papyrus uploads go to a **private** bucket
+through the service role. There is no public read, no anon or authenticated
+storage policy, and the only way to see one is a signed link that expires in 30
+days, sent to the team inbox. `photoUrl` is passed to the team email and
+appears in no API response — the route only ever answers `{ok:true}` or an
+error string. Customer photographs are never mixed with website imagery, which
+lives in Sanity.

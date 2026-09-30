@@ -16,6 +16,15 @@ import { signatureExperience } from "./signatureExperience";
 import { host } from "./host";
 import { author } from "./author";
 import { event } from "./event";
+import {
+  takeEgyptHomePage,
+  treasureCategory,
+  treasureOption,
+  treasureProduct,
+  treasureSpec,
+  treasureStep,
+  treasureVariant,
+} from "./treasure";
 
 export const schemaTypes = [
   // Reusable object types first.
@@ -23,6 +32,10 @@ export const schemaTypes = [
   priceObject,
   itineraryDayObject,
   physicalLevelObject,
+  treasureSpec,
+  treasureVariant,
+  treasureOption,
+  treasureStep,
   // Document types shown in the Studio's content list.
   tour,
   experience,
@@ -34,6 +47,9 @@ export const schemaTypes = [
   story,
   author,
   event,
+  treasureCategory,
+  treasureProduct,
+  takeEgyptHomePage,
   faqItem,
   siteSettings,
   homepage,
