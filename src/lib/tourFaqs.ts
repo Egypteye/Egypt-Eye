@@ -51,6 +51,9 @@ const LOWERCASABLE = new Set([
   "bottled", "lunch", "meals", "optional", "all", "professional", "local",
   "flights", "shopping", "extras", "water", "diving", "transport", "camel",
   "entry", "guide", "parking", "breakfast", "dinner", "accommodation",
+  // Generic qualifiers on a flight line. "Cairo hotels" deliberately is NOT
+  // here: that capital is a place, not a sentence start.
+  "domestic", "international",
 ]);
 
 /**
@@ -74,8 +77,44 @@ function capitalise(text: string): string {
 }
 
 function midSentence(label: string): string {
-  const first = label.split(/[\s(]/)[0].toLowerCase();
-  return LOWERCASABLE.has(first) ? label.charAt(0).toLowerCase() + label.slice(1) : label;
+  // Split on the slash too, so "International/regional flights" is recognised
+  // by its first word rather than treated as one long unknown token.
+  const first = label.split(/[\s(/]/)[0].toLowerCase();
+  const cased = LOWERCASABLE.has(first) ? label.charAt(0).toLowerCase() + label.slice(1) : label;
+  return withDeterminer(cased);
+}
+
+/**
+ * Adds the article or possessive a singular label needs mid-sentence.
+ *
+ * Almost every exclusion in the catalogue is a plural or a mass noun — tips,
+ * flights, hotels, personal spending — and reads correctly bare. Two are
+ * singular and do not: "are Egypt visa, flights and tips" is the sentence
+ * that gave this away.
+ *
+ * Matched by name rather than inferred. Whether an English noun phrase is
+ * singular and countable is not reliably derivable from the string — "water
+ * sports equipment rental" and "hot-air balloon" look alike to any rule
+ * simple enough to trust — so guessing would mean sometimes writing "a
+ * shopping". The full exclusion vocabulary across every live tour is 25
+ * labels; these are the two that need help, and a new one announces itself
+ * the first time anyone reads the sentence.
+ */
+const DETERMINERS: [RegExp, string][] = [
+  // A document the traveller obtains for themselves, so it takes a possessive.
+  [/^Egypt( and Jordan)? visas?\b/i, "your "],
+  // A single thing they might buy on the day, so it takes an article — and
+  // the article puts it mid-sentence, so the label loses its leading capital.
+  [/^Hot-air balloon\b/i, "a "],
+];
+
+function withDeterminer(label: string): string {
+  for (const [pattern, determiner] of DETERMINERS) {
+    if (!pattern.test(label)) continue;
+    const body = determiner === "a " ? label.charAt(0).toLowerCase() + label.slice(1) : label;
+    return `${determiner}${body}`;
+  }
+  return label;
 }
 
 const PHYSICAL_LEAD: Record<string, string> = {
