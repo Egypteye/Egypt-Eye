@@ -7,8 +7,10 @@ import { hydrateJourneyRefs, type JourneyRef } from "@/lib/journeyHydrate";
 import { validateDiscountCode } from "@/lib/discounts/validate";
 import { redeemDiscountCode } from "@/lib/discounts/redeem";
 import { sendIdempotentEmail } from "@/lib/email/idempotent";
-import { reservationConfirmationEmail } from "@/lib/email/templates";
+import { sendEmail } from "@/lib/email/resend";
+import { reservationConfirmationEmail, reservationTeamEmail } from "@/lib/email/templates";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
+import { site } from "@/content/site";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -166,6 +168,40 @@ export async function POST(request: NextRequest) {
     customerId: user?.id,
     reservationId: reservation.id,
   });
+
+  // And the desk, which until now was told nothing — a reservation appeared in
+  // the database and in /admin/reservations and the only way to find out was
+  // to go and look. Mirrors the Weekly Trips seat booking: sent after the
+  // traveller's confirmation, and wrapped so that failing to reach the team
+  // cannot fail a reservation the traveller has already made.
+  try {
+    const team = reservationTeamEmail({
+      reference,
+      guestName,
+      guestEmail,
+      guestPhone,
+      items: journeySnapshot.map((i) => ({ type: i.type, title: i.title })),
+      tripStartDate,
+      tripEndDate,
+      travelersAdults,
+      travelersChildren,
+      subtotal,
+      discountAmount: finalDiscountAmount,
+      total: subtotal > 0 ? Math.round((subtotal - finalDiscountAmount) * 100) / 100 : null,
+      preferences,
+      accountState: user ? "signed-in" : "guest",
+      reviewUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com"}/admin/reservations/${reservation.id}`,
+    });
+    await sendEmail({
+      to: site.contact.email,
+      subject: team.subject,
+      html: team.html,
+      text: team.text,
+      replyTo: guestEmail,
+    });
+  } catch (err) {
+    console.error("reservation team notification failed:", err);
+  }
 
   return NextResponse.json({
     ok: true,

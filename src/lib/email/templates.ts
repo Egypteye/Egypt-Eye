@@ -125,6 +125,131 @@ export function reservationConfirmationEmail({
   return { subject: `Your Egypt journey is on its way — ${reference}`, html, text };
 }
 
+/**
+ * A new reservation request, sent to the desk.
+ *
+ * The traveller already got reservationConfirmationEmail above; this is the
+ * other half, and it was missing — a reservation landed in the database and
+ * in /admin/reservations and nobody was told, so the only way to find out was
+ * to go looking. The Weekly Trips seat booking has had a team email since it
+ * shipped; this brings an ordinary reservation in line with it.
+ *
+ * `accountState` is here because it changes what the desk does next. A
+ * request from a signed-in customer can be answered against their history; a
+ * guest request cannot, and a reply to it is also the moment to invite them
+ * to create an account so the booking appears in it.
+ */
+export function reservationTeamEmail({
+  reference,
+  guestName,
+  guestEmail,
+  guestPhone,
+  items,
+  tripStartDate,
+  tripEndDate,
+  travelersAdults,
+  travelersChildren,
+  subtotal,
+  discountAmount,
+  total,
+  preferences,
+  accountState,
+  reviewUrl,
+}: {
+  reference: string;
+  guestName: string;
+  guestEmail: string;
+  guestPhone?: string | null;
+  items: { type: string; title: string }[];
+  tripStartDate: string | null;
+  tripEndDate: string | null;
+  travelersAdults: number;
+  travelersChildren: number;
+  subtotal: number;
+  discountAmount: number;
+  total: number | null;
+  preferences?: string | null;
+  accountState: "signed-in" | "guest";
+  reviewUrl: string;
+}) {
+  const date = (value: string | null) =>
+    value ? new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : null;
+
+  const travellers =
+    travelersChildren > 0
+      ? `${travelersAdults} ${travelersAdults === 1 ? "adult" : "adults"}, ${travelersChildren} ${travelersChildren === 1 ? "child" : "children"}`
+      : `${travelersAdults} ${travelersAdults === 1 ? "adult" : "adults"}`;
+
+  const dates =
+    date(tripStartDate) && date(tripEndDate)
+      ? `${date(tripStartDate)} → ${date(tripEndDate)}`
+      : date(tripStartDate) ?? "Not given";
+
+  // Money is only shown when the journey actually priced. A reservation of
+  // destinations alone has no subtotal, and "$0" would read as free.
+  const money = (n: number) => `$${n.toFixed(2)}`;
+  const rows: [string, string][] = [
+    ["Dates", dates],
+    ["Travellers", travellers],
+    ...(subtotal > 0
+      ? ([
+          ["Subtotal", money(subtotal)],
+          ...(discountAmount > 0 ? ([["Discount", `-${money(discountAmount)}`]] as [string, string][]) : []),
+          ["Estimate", total === null ? "—" : money(total)],
+        ] as [string, string][])
+      : ([["Estimate", "No priced items — quote required"]] as [string, string][])),
+    ["Name", guestName],
+    ["Email", guestEmail],
+    ["Phone", guestPhone || "Not provided"],
+    ["Account", accountState === "signed-in" ? "Signed in — shows in their account" : "Guest — no account yet"],
+    ["Reference", reference],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const itemsHtml = items.length
+    ? `<ul style="margin:0 0 20px;padding-left:20px;">${items
+        .map((i) => `<li>${escapeHtml(i.title)} <span style="color:#889;font-size:12px;">(${escapeHtml(i.type)})</span></li>`)
+        .join("")}</ul>`
+    : "";
+
+  const html = baseLayout({
+    preheader: `${guestName} — ${items.length} ${items.length === 1 ? "item" : "items"}, ${travellers}${
+      date(tripStartDate) ? `, from ${date(tripStartDate)}` : ""
+    }.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Reservation Request</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(guestName)} — ${escapeHtml(reference)}</p>
+      ${itemsHtml}
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${
+        preferences
+          ? `<p style="margin:0 0 4px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#8c6d1f;">Notes from the traveller</p><p style="margin:0 0 20px;white-space:pre-wrap;">${escapeHtml(preferences)}</p>`
+          : ""
+      }
+      ${ctaButton("Open in Admin", reviewUrl)}
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to reach the traveller directly.</p>
+    `,
+    footerHtml: `Sent from the reservation form.`,
+  });
+
+  const text = `New Reservation Request\n${guestName} — ${reference}\n\n${items
+    .map((i) => `- ${i.title} (${i.type})`)
+    .join("\n")}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}${
+    preferences ? `\n\nNotes:\n${preferences}` : ""
+  }\n\nAdmin: ${reviewUrl}`;
+
+  return {
+    subject: `New reservation: ${guestName} — ${reference}`,
+    html,
+    text,
+  };
+}
+
 // Team-facing (not customer-facing) — sent to Site Settings > Contact >
 // Email whenever a visitor submits the "Email an Enquiry" popup on a tour,
 // experience, or photoshoot page. Every field the reservations team needs
