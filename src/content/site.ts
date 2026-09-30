@@ -93,6 +93,7 @@ export const site = {
     { label: "Unique Photoshoots", href: "/photoshoots" },
     { label: "Transfers", href: "/transfers" },
     { label: "Customize Your Tour", href: "/customize" },
+    { label: "Take Egypt Home", href: "/take-egypt-home" },
     { label: "Stories", href: "/stories" },
     { label: "Partner With Us", href: "/partners" },
     { label: "Traveler Reviews", href: "/testimonials" },

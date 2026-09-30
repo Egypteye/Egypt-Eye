@@ -19,7 +19,8 @@
     "check:trips": "tsx scripts/check-weekly-trips.mts",
     "check:reviews": "tsx scripts/check-reviews.mts",
     "check:links": "tsx scripts/check-links.mts",
-    "check:faqs": "tsx scripts/check-faqs.mts"
+    "check:faqs": "tsx scripts/check-faqs.mts",
+    "check:treasures": "tsx scripts/check-treasures.mts"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.0",

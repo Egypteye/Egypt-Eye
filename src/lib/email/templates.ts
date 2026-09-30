@@ -924,3 +924,124 @@ export function reviewSubmissionEmail({
 
   return { subject: `New review: ${rating}★ from ${name} — ${productTitle}`, html, text };
 }
+
+/**
+ * A Take Egypt Home request, sent to the desk.
+ *
+ * Deliberately says "request" and not "order" throughout: nothing here has a
+ * settled price, and the reply is where the specification is agreed. The
+ * placeholder flag is carried into the mail because a request against a
+ * sample listing means the customer liked an idea rather than a product that
+ * exists yet, and the desk should know which conversation it is having.
+ */
+export function treasureRequestTeamEmail({
+  categoryTitle,
+  productName,
+  productIsPlaceholder,
+  journey,
+  arrival,
+  departure,
+  name,
+  email,
+  phone,
+  answers,
+  photoUrl,
+  photoNote,
+  pageUrl,
+}: {
+  categoryTitle: string;
+  productName: string | null;
+  productIsPlaceholder: boolean;
+  journey: "before-arrival" | "in-egypt";
+  arrival: string;
+  departure: string;
+  name: string;
+  email: string;
+  phone: string;
+  answers: { label: string; value: string }[];
+  photoUrl: string | null;
+  photoNote: string | null;
+  pageUrl: string;
+}) {
+  const rows: [string, string][] = [
+    ["Category", categoryTitle],
+    ["Piece", productName ? `${productName}${productIsPlaceholder ? " (sample listing)" : ""}` : "Not specified"],
+    ["Situation", journey === "in-egypt" ? "Already in Egypt" : "Before arrival"],
+    ...(arrival ? ([["Arrives", arrival]] as [string, string][]) : []),
+    ...(departure ? ([["Leaves", departure]] as [string, string][]) : []),
+    ...answers.map(({ label, value }) => [label, value] as [string, string]),
+    ["Name", name],
+    ["Email", email],
+    ["Phone", phone || "Not provided"],
+  ];
+  const rowsHtml = rows
+    .map(
+      ([label, value]) =>
+        `<tr><td style="padding:6px 16px 6px 0;color:#6b7d70;font-size:13px;white-space:nowrap;vertical-align:top;">${escapeHtml(label)}</td><td style="padding:6px 0;font-weight:600;">${escapeHtml(value)}</td></tr>`
+    )
+    .join("");
+
+  const photoHtml = photoUrl
+    ? `<p style="margin:0 0 20px;"><a href="${escapeHtml(photoUrl)}" style="color:#8c6d1f;font-weight:600;">Open the customer's photograph</a> <span style="color:#889;font-size:12px;">(private link, expires in 30 days)</span></p>`
+    : photoNote
+      ? `<p style="margin:0 0 20px;color:#a33;font-weight:600;">${escapeHtml(photoNote)}</p>`
+      : "";
+
+  const html = baseLayout({
+    preheader: `${name} — ${categoryTitle}${productName ? `, ${productName}` : ""}.`,
+    bodyHtml: `
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">Take Egypt Home — Request</p>
+      <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(name)} — ${escapeHtml(categoryTitle)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${photoHtml}
+      <p style="margin:0 0 16px;font-size:13px;color:#556;">Nothing has been priced or promised. The reply is where the specification, the price and the collection date are agreed.</p>
+      ${ctaButton("Open the category page", pageUrl)}
+      <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to reach the traveller directly.</p>
+    `,
+    footerHtml: `Sent from Take Egypt Home.`,
+  });
+
+  const text = `Take Egypt Home — Request\n${name} — ${categoryTitle}\n\n${rows
+    .map(([l, v]) => `${l}: ${v}`)
+    .join("\n")}${photoUrl ? `\n\nPhoto: ${photoUrl}` : photoNote ? `\n\n${photoNote}` : ""}\n\nNothing has been priced or promised.\n${pageUrl}`;
+
+  return { subject: `Take Egypt Home: ${categoryTitle} — ${name}`, html, text };
+}
+
+/**
+ * The traveller's receipt. Its job is to set the expectation that a human
+ * replies with a specification and a price, because that is the part a
+ * shopping page trains people not to expect.
+ */
+export function treasureRequestConfirmationEmail({
+  name,
+  categoryTitle,
+  productName,
+  journey,
+}: {
+  name: string;
+  categoryTitle: string;
+  productName: string | null;
+  journey: "before-arrival" | "in-egypt";
+}) {
+  const next =
+    journey === "in-egypt"
+      ? "We'll come back to you with what's available while you're here, and a time you can come and see it."
+      : "We'll come back to you with the specification, the price, and the date it can be ready — before anything is made and before you're asked to commit to anything.";
+
+  const html = baseLayout({
+    preheader: `We have your ${categoryTitle.toLowerCase()} request.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(name)},</p>
+      <p style="margin:0 0 16px;">Thank you — we have your request${productName ? ` for the <strong>${escapeHtml(productName)}</strong>` : ""} in ${escapeHtml(categoryTitle)}.</p>
+      <p style="margin:0 0 16px;">${escapeHtml(next)}</p>
+      <p style="margin:0 0 16px;font-size:13px;color:#556;">Nothing has been charged, and nothing is confirmed yet.</p>
+      ${ctaButton("See the other collections", `${SITE_URL}/take-egypt-home`)}
+    `,
+    footerHtml: `Questions? Just reply to this email — Egypt Eye Travel and Tours.`,
+  });
+
+  const text = `Hi ${name},\n\nThank you — we have your request${productName ? ` for the ${productName}` : ""} in ${categoryTitle}.\n\n${next}\n\nNothing has been charged, and nothing is confirmed yet.\n\n${SITE_URL}/take-egypt-home`;
+
+  return { subject: `We have your ${categoryTitle.toLowerCase()} request`, html, text };
+}

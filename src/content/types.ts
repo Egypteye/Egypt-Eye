@@ -1159,3 +1159,86 @@ export type TransfersPageContent = {
   included: readonly string[];
   faqs: readonly Faq[];
 };
+
+// ---------------------------------------------------------------------------
+// Take Egypt Home — the shopping section (see docs/take-egypt-home.md).
+//
+// Modelled as a concierge catalogue rather than a store: there is no cart and
+// no price field that has to be filled, because the thing being sold is a
+// piece prepared against a traveller's arrival date. A product whose price is
+// not yet set says so, which is true today and stays true for commissioned
+// work.
+// ---------------------------------------------------------------------------
+
+export type TreasureCategorySlug = "cartouches" | "papyrus" | "clothing" | "essence-oils";
+
+/**
+ * One question on the personalisation step. Rendered by a single form, so a
+ * new category asks its own questions without a new component.
+ */
+export type TreasureField =
+  | { kind: "text"; name: string; label: string; help?: string; maxLength: number; required?: boolean }
+  | { kind: "longtext"; name: string; label: string; help?: string; maxLength: number; required?: boolean }
+  | { kind: "choice"; name: string; label: string; options: string[]; help?: string; required?: boolean }
+  | { kind: "photo"; name: string; label: string; help?: string; required?: boolean };
+
+export type TreasureProduct = {
+  slug: string;
+  category: TreasureCategorySlug;
+  name: string;
+  blurb: string;
+  /**
+   * A sample listing standing in for a real one. Marked on the card, kept out
+   * of structured data, and checked by scripts/check-treasures.mts — see the
+   * placeholder section of docs/take-egypt-home.md.
+   */
+  placeholder: boolean;
+  image?: string;
+  imageAlt?: string;
+  imageCredit?: ImageCredit;
+  /**
+   * Label/value rows: metal, karat, weight, dimensions, bottle size. Empty
+   * until Egypt Eye supplies them — the card shows the rows it has and says
+   * nothing about the ones it doesn't.
+   */
+  specs?: { label: string; value: string }[];
+  /** Omitted entirely while the price is genuinely not set. */
+  price?: Price;
+  order: number;
+};
+
+export type TreasureStep = { title: string; description: string };
+
+export type TreasureCategory = {
+  slug: TreasureCategorySlug;
+  /** Route segment and nav label. */
+  title: string;
+  eyebrow: string;
+  heroHeadline: string;
+  heroSub: string;
+  image?: string;
+  imageAlt?: string;
+  imageCredit?: ImageCredit;
+  /** The gateway card on the landing page. */
+  cardBlurb: string;
+  cardHook: string;
+  /** Cultural context. Why this object means anything. */
+  story: { title: string; body: string }[];
+  /** The before-you-arrive path, in order. */
+  beforeYouArrive: TreasureStep[];
+  /**
+   * The in-Egypt path. Optional because it is not equally real for every
+   * category: clothing and fragrance genuinely need a fitting or a nose,
+   * while a cartouche can be commissioned sight-unseen.
+   */
+  inEgypt?: { title: string; body: string; steps: TreasureStep[] };
+  personalization: TreasureField[];
+  /** Plain statements of what is and isn't settled before anyone commits. */
+  trust: string[];
+  faqs: Faq[];
+  /** Internal links into the existing catalogue, by slug. */
+  relatedTourSlugs?: string[];
+  relatedPhotoshootSlugs?: string[];
+  relatedStorySlugs?: string[];
+  seo?: PageSeo;
+};

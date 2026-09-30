@@ -10,6 +10,7 @@ import {
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
 import { weeklyTrips } from "@/content/weeklyTrips";
+import { treasureCategories } from "@/content/treasures";
 import { isWithdrawnPath } from "@/content/withdrawnSections";
 // Slugs that 301-redirect elsewhere (see next.config.ts, which builds its
 // redirects from the same map) — keep them out of the sitemap even where the
@@ -88,6 +89,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     { url: `${siteUrl}/customize`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${siteUrl}/faq`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${siteUrl}/take-egypt-home`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/testimonials`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.2 },
@@ -97,6 +99,12 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     { url: `${siteUrl}/affiliate`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/collaborate`, changeFrequency: "monthly", priority: 0.5 },
   ];
+
+  const treasureRoutes: MetadataRoute.Sitemap = treasureCategories.map((c) => ({
+    url: `${siteUrl}/take-egypt-home/${c.slug}`,
+    changeFrequency: "monthly" as const,
+    priority: 0.7,
+  }));
 
   const hotelRoutes: MetadataRoute.Sitemap = hotels.map((h) => ({
     url: `${siteUrl}/hotel-deals/${h.slug}`,
@@ -187,6 +195,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     ...storyRoutes,
     ...destinationRoutes,
     ...weeklyTripRoutes,
+    ...treasureRoutes,
     ...productReviewRoutes,
   ].filter((entry) => !isWithdrawnPath(entry.url.slice(siteUrl.length) || "/"));
 
