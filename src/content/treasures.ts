@@ -450,41 +450,71 @@ export const treasureCategories: TreasureCategory[] = [
 // -----------------------------------------------------------------------------
 
 export const treasureProducts: TreasureProduct[] = [
+  // The real catalogue, from Egypt Eye's Cartouches Collection sheet. Names,
+  // metals and photographs are theirs; the product images were lifted from
+  // that PDF, so they are genuine product shots rather than stock.
+  //
+  // NOT placeholders any more — these are pieces Egypt Eye actually sells, so
+  // `specs` carries what the catalogue states and nothing else. What it does
+  // not state, and what therefore appears nowhere: price, karat, silver
+  // purity, weight, dimensions, whether a chain is included, and how many
+  // characters a cartouche can hold. Those are in the ask list in
+  // docs/take-egypt-home.md.
   {
-    slug: "cartouche-classic-pendant",
+    slug: "khufu-cartouche",
     category: "cartouches",
-    name: "Classic cartouche pendant",
-    blurb: "The traditional upright oval, one name, worn on a chain.",
-    image:
-      "https://images.unsplash.com/photo-1601121141461-920cb1993441?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1200",
-    imageAlt: "A gold and silver pendant necklace resting against fabric",
-    imageCredit: {
-      source: "Unsplash",
-      creator: "Vaibhav Nagare",
-      sourceUrl: "https://unsplash.com/photos/person-wearing-gold-and-silver-necklace-vv2vIFeNEMg",
-      license: "Unsplash License",
-    },
-    placeholder: true,
+    name: "Khufu Cartouche",
+    blurb:
+      "The deepest of the four: hieroglyphs raised in silver against a black field, so the name reads at a glance.",
+    placeholder: false,
     status: "onRequest",
+    featured: true,
+    image: "/photos/treasures/khufu-cartouche.png",
+    imageAlt: "Two silver Khufu cartouche pendants with hieroglyphs raised against a black inlay",
+    imageTone: "desert",
+    specs: [{ label: "Metal", value: "Silver, with silver-plated letters" }],
     order: 1,
   },
   {
-    slug: "cartouche-double-name",
+    slug: "ramsis-cartouche",
     category: "cartouches",
-    name: "Two-name cartouche",
-    blurb: "Two names in one oval, or a matching pair — the usual choice for couples.",
-    placeholder: true,
+    name: "Ramsis Cartouche",
+    blurb: "Silver, with the letters picked out in gold — the two metals in one piece.",
+    placeholder: false,
     status: "onRequest",
+    featured: true,
+    image: "/photos/treasures/ramsis-cartouche.png",
+    imageAlt: "A silver cartouche pendant with gold-plated hieroglyphs on a textured ground",
+    imageTone: "desert",
+    specs: [{ label: "Metal", value: "Silver, with gold-plated letters" }],
     order: 2,
   },
   {
-    slug: "cartouche-open-back",
+    slug: "nefertiti-cartouche",
     category: "cartouches",
-    name: "Open-back cartouche",
-    blurb: "Pierced so the signs read from either side.",
-    placeholder: true,
+    name: "Nefertiti Cartouche",
+    blurb: "Gold throughout, worked edge to edge. The one people buy when it is the only thing they buy.",
+    placeholder: false,
     status: "onRequest",
+    featured: true,
+    image: "/photos/treasures/nefertiti-cartouche.png",
+    imageAlt: "A gold cartouche pendant with gold hieroglyphs and a decorated border",
+    imageTone: "desert",
+    specs: [{ label: "Metal", value: "Gold, with gold letters" }],
     order: 3,
+  },
+  {
+    slug: "tutankhamun-bracelet",
+    category: "cartouches",
+    name: "Tutankhamun Bracelet",
+    blurb: "The same idea worn on the wrist rather than at the throat — a silver plaque on a dark strap.",
+    placeholder: false,
+    status: "onRequest",
+    image: "/photos/treasures/tutankhamun-bracelet.png",
+    imageAlt: "A bracelet with a dark strap and a silver plaque carrying hieroglyphs",
+    imageTone: "desert",
+    specs: [{ label: "Metal", value: "Silver bracelet, with silver-plated letters" }],
+    order: 4,
   },
   {
     slug: "papyrus-royal-portrait",

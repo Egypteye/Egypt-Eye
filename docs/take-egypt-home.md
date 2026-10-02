@@ -94,13 +94,23 @@ Nothing below is guessable, and none of it is invented anywhere in the code.
 - production time
 - what is included
 
-**Cartouches specifically** — the trust questions for a higher-value purchase:
+**Cartouches** — four real designs are now in, from the Cartouches Collection
+sheet: Khufu, Ramsis, Nefertiti and the Tutankhamun bracelet, with their
+photographs and the metal each is made in. What that sheet does not state, and
+what therefore appears nowhere on the site:
 
-- metal and karat for each design
+- price for each of the four
+- karat of the gold, and the silver purity (925?)
 - weight and dimensions
 - hallmark / assay information, if any
 - chain included or sold separately
 - how many characters a cartouche can carry
+- production time
+- whether the two pendants shown in the Khufu photograph are one product or two
+
+Also worth having: **the original product photographs.** The four on the site
+were lifted out of the catalogue PDF at 300×400 and upscaled, which is fine on
+a card and will not hold up on a larger layout.
 
 **Papyrus**
 
