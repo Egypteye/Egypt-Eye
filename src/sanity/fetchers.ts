@@ -28,7 +28,8 @@ import {
   treasureProductsQuery,
   takeEgyptHomePageQuery,
   storyBySlugQuery,
-  testimonialsQuery,
+  testimonialsCountQuery,
+  testimonialsPageQuery,
   tourBySlugQuery,
   toursBySlugsQuery,
   toursQuery,
@@ -424,9 +425,64 @@ async function getPhotoshootsBySlugsInner(slugs: string[]): Promise<Photoshoot[]
   return withTranslations(withLocalTranslations(found, photoshootTranslations));
 }
 
+// Reviews are the one content type Egypt Eye has thousands of, and every page
+// that shows any of them needs the whole pool: relevance ranking scores every
+// review against the page before picking three (see lib/reviewThemes), so
+// there is no narrower query that would pick the same three.
+//
+// Asking for all of them in one request returned ~2.1MB, just over Next.js's
+// 2MB per-entry data-cache ceiling. The cache refused the entry and logged
+// "items over 2MB can not be cached" — so every render of the homepage, every
+// tour, every photoshoot went to Sanity live instead of reading the hour-old
+// cached copy. Fetching the same rows in slices puts each cache entry well
+// inside the limit, which is the difference between one read an hour and one
+// read per page.
+//
+// 500 leaves a lot of headroom: a slice only reaches 2MB if the average
+// review runs past 4KB of text.
+//
+// The cost of splitting is that the count and the slices are now separate
+// cache entries that can expire at slightly different moments, so for up to
+// one revalidate window a brand-new review can be counted before its slice
+// has it. That shows up as the review appearing an hour late, which is
+// already how every other Studio edit reaches the site — it cannot duplicate
+// or drop a review, which is the failure that would have mattered.
+const TESTIMONIALS_PAGE_SIZE = 500;
+
+// A bound on how far a bad count can go, rather than a limit on the pool.
+// It is deliberately far above the real number, and hitting it is logged
+// rather than absorbed — a silently truncated pool would understate the
+// published review count.
+const TESTIMONIALS_MAX_PAGES = 40;
+
 async function getTestimonialsInner(): Promise<Testimonial[]> {
-  const result = await safeFetch<Testimonial[]>(testimonialsQuery);
-  return result && result.length > 0 ? result : localTestimonials;
+  const total = await safeFetch<number>(testimonialsCountQuery);
+  if (typeof total !== "number" || total <= 0) return localTestimonials;
+
+  const wanted = Math.ceil(total / TESTIMONIALS_PAGE_SIZE);
+  if (wanted > TESTIMONIALS_MAX_PAGES) {
+    console.warn(
+      `Sanity holds ${total} testimonials, more than TESTIMONIALS_MAX_PAGES covers — ` +
+        `raise it in sanity/fetchers.ts, or the review count shown on the site will be short.`
+    );
+  }
+
+  const pages = await Promise.all(
+    Array.from({ length: Math.min(wanted, TESTIMONIALS_MAX_PAGES) }, (_, i) =>
+      safeFetch<Testimonial[]>(
+        testimonialsPageQuery(i * TESTIMONIALS_PAGE_SIZE, (i + 1) * TESTIMONIALS_PAGE_SIZE)
+      )
+    )
+  );
+
+  // All or nothing, because this count is published. getCompanyRating turns
+  // the length of this list into "2,527 traveler reviews" on the homepage and
+  // into the AggregateRating in structured data; one failed slice would
+  // quietly understate that figure instead of failing visibly.
+  if (pages.some((page) => page === null)) return localTestimonials;
+
+  const all = (pages as Testimonial[][]).flat();
+  return all.length > 0 ? all : localTestimonials;
 }
 
 

@@ -35,6 +35,7 @@ import {
   sortByPull,
 } from "../src/lib/reviewPages";
 import { subjectAnchor, type ReviewEntry, type ReviewSubject } from "../src/lib/reviewSubjects";
+import { testimonialsPageQuery } from "../src/sanity/queries";
 import { normalizeReviewDate, parseCsv, parseReviewInput } from "../src/lib/testimonials/importParse";
 
 const errors: string[] = [];
@@ -264,6 +265,91 @@ for (const total of [0, 1, REVIEWS_PER_PAGE - 1, REVIEWS_PER_PAGE, REVIEWS_PER_P
 }
 
 // ---------------------------------------------------------------------------
+// Fetch slicing: the same partition property, one layer down.
+//
+// The pool is read from Sanity in slices rather than one request, because all
+// of it in one response is ~2.1MB and Next.js refuses to cache a data entry
+// over 2MB (see getTestimonialsInner). That makes the fetch a partition too,
+// and it has a failure mode the display paging does not: the slices are
+// separate requests, so if the ordering is not *total* the server may settle
+// a tie differently for each one — handing back the same review twice and
+// missing another, with the count still looking right.
+//
+// Which is why the query orders by `_id` after `order`. These assertions
+// exist to stop anyone simplifying that tie-break away.
+// ---------------------------------------------------------------------------
+const SLICE = 500;
+
+type Row = { _id: string; order: number | null };
+
+// Ties everywhere: a block sharing one `order`, a block with none at all, and
+// _ids that deliberately do not sort in insertion order.
+const rows: Row[] = Array.from({ length: 2527 }, (_, i) => ({
+  _id: `t-${String((i * 7919) % 2527).padStart(5, "0")}`,
+  order: i >= 400 && i < 1300 ? 50 : i >= 2000 && i < 2100 ? null : i,
+}));
+
+// Stands in for Sanity, and models the one thing that matters: a server given
+// a non-total ordering may return ties in a different sequence per request.
+// Array.sort is stable, so the input is scrambled before each sort or the
+// hazard would be invisible here exactly as it is in production.
+function serve(query: string, seed: number, dropTieBreak = false): Row[] {
+  const bounds = query.match(/\[(\d+)\.\.\.(\d+)\]/);
+  if (!bounds) throw new Error(`testimonialsPageQuery no longer emits a literal slice:\n${query}`);
+  // Read out of the query rather than passed in, so deleting `_id asc` from
+  // the real query is what fails this check.
+  const tieBreak = !dropTieBreak && /\|\s*order\([^)]*\b_id\s+asc\b/.test(query);
+  const scrambled = [...rows];
+  let s = seed;
+  for (let i = scrambled.length - 1; i > 0; i--) {
+    s = (s * 1103515245 + 12345) & 0x7fffffff;
+    const j = s % (i + 1);
+    [scrambled[i], scrambled[j]] = [scrambled[j], scrambled[i]];
+  }
+  scrambled.sort((a, b) => {
+    // GROQ sorts null before numbers ascending.
+    const ao = a.order ?? -Infinity;
+    const bo = b.order ?? -Infinity;
+    if (ao !== bo) return ao - bo;
+    return tieBreak ? a._id.localeCompare(b._id) : 0;
+  });
+  return scrambled.slice(Number(bounds[1]), Number(bounds[2]));
+}
+
+function fetchPool(total: number, dropTieBreak = false): Row[] {
+  const slices = Math.ceil(total / SLICE);
+  // seed = i + 1, so every slice is served from its own independent sort.
+  return Array.from({ length: slices }, (_, i) =>
+    serve(testimonialsPageQuery(i * SLICE, (i + 1) * SLICE), i + 1, dropTieBreak)
+  ).flat();
+}
+
+const pool = fetchPool(rows.length);
+ok("the sliced pool holds every review", pool.length === rows.length);
+ok("the sliced pool holds no review twice", new Set(pool.map((r) => r._id)).size === rows.length);
+
+// The guard itself: drop the tie-break and the pool must visibly corrupt. If
+// this ever passes, the hazard has stopped being modelled and the assertion
+// above has stopped meaning anything.
+const naive = fetchPool(rows.length, true);
+ok(
+  "ordering by `order` alone corrupts the pool, which is why `_id` is in the query",
+  new Set(naive.map((r) => r._id)).size < rows.length
+);
+
+// Boundaries, including the sizes either side of a slice edge.
+for (const total of [1, SLICE - 1, SLICE, SLICE + 1, 2 * SLICE, 2527]) {
+  const got = fetchPool(total).slice(0, total);
+  ok(`slicing ${total} review(s) yields ${total} distinct`, new Set(got.map((r) => r._id)).size === total);
+}
+
+// And the reason for the slice size: one slice has to stay inside the 2MB
+// ceiling at the size reviews actually are (2,527 of them measured 2,147,624
+// bytes), with room to grow.
+const BYTES_PER_REVIEW = 2147624 / 2527;
+ok("a slice stays well inside the 2MB data-cache ceiling", SLICE * BYTES_PER_REVIEW * 4 < 2 * 1024 * 1024);
+
+// ---------------------------------------------------------------------------
 // Grouping: a review reaches the page for the product it is about, and the
 // ordering puts the reviews that say something first.
 // ---------------------------------------------------------------------------
@@ -307,4 +393,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, theme matching, paging and importing all hold.");
+console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, theme matching, display paging, fetch slicing and importing all hold.");

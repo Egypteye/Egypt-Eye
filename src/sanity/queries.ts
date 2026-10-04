@@ -112,10 +112,32 @@ export const destinationHubsBySlugsQuery = groq`*[_type == "destinationHub" && s
   ${destinationHubFields}
 }`;
 
-export const testimonialsQuery = groq`*[_type == "testimonial"] | order(order asc) {
+const testimonialFields = groq`
   name, quote, title, context, score, featured, themes, photos,
   "subjectSlug": subject->slug.current,
   source{platform, url, reviewedAt}
+`;
+
+export const testimonialsCountQuery = groq`count(*[_type == "testimonial"])`;
+
+/**
+ * One slice of the review pool, fetched a page at a time — see
+ * getTestimonialsInner in sanity/fetchers.ts for why it is sliced at all.
+ *
+ * The bounds are interpolated rather than passed as `$params` on purpose:
+ * they are integers this file's own caller computes, and a literal slice is
+ * the form GROQ has always accepted. A dynamic review count is not worth
+ * betting the whole reviews section on a parameterised slice behaving.
+ *
+ * `order(order asc, _id asc)` matters more than it looks. Reviews imported in
+ * a batch can share an `order`, and without a unique tie-break the sequence
+ * within a tie is undefined — so two slices of one pool could return the same
+ * review twice and miss another entirely. `_id` makes the ordering total,
+ * which is what lets the slices partition the pool exactly.
+ */
+export const testimonialsPageQuery = (from: number, to: number) =>
+  groq`*[_type == "testimonial"] | order(order asc, _id asc) [${Math.trunc(from)}...${Math.trunc(to)}] {
+  ${testimonialFields}
 }`;
 
 // Lightweight experience summary used wherever a Story links to a
