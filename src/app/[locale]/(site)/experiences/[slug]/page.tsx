@@ -81,7 +81,14 @@ export default async function ExperienceDetailPage({
   // The deposit door, shown only for an experience somebody switched on.
   const deposit = resolveDeposit(experience, site.defaultDepositUsd);
   const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd, experience.price).deposit : "";
-  const canTakeDeposit = depositsEnabled();
+  // A link counts as a live deposit just as much as the API does.
+  const paymentMode = !deposit.bookable
+    ? ("none" as const)
+    : deposit.paymentLink
+      ? ("link" as const)
+      : depositsEnabled()
+        ? ("hold" as const)
+        : ("none" as const);
 
   return (
     <>
@@ -244,7 +251,7 @@ export default async function ExperienceDetailPage({
               productSlug={experience.slug}
               productTitle={experience.title}
               depositLabel={depositLabel}
-              canTakeDeposit={canTakeDeposit}
+              paymentMode={paymentMode}
               cancellationSummary={cancellationSummary}
               cancellationHref="/cancellation-policy"
               className="mt-5 block w-full rounded-full bg-gold py-3 text-center text-sm font-semibold text-ink transition hover:bg-gold-light"

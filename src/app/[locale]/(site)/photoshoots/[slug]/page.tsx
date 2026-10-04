@@ -87,7 +87,14 @@ export default async function PhotoshootDetailPage({
   // The deposit door, shown only for a product somebody switched on.
   const deposit = resolveDeposit(photoshoot, site.defaultDepositUsd);
   const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd, photoshoot.price).deposit : "";
-  const canTakeDeposit = depositsEnabled();
+  // A link counts as a live deposit just as much as the API does.
+  const paymentMode = !deposit.bookable
+    ? ("none" as const)
+    : deposit.paymentLink
+      ? ("link" as const)
+      : depositsEnabled()
+        ? ("hold" as const)
+        : ("none" as const);
 
   return (
     <>
@@ -206,7 +213,7 @@ export default async function PhotoshootDetailPage({
               productSlug={photoshoot.slug}
               productTitle={photoshoot.title}
               depositLabel={depositLabel}
-              canTakeDeposit={canTakeDeposit}
+              paymentMode={paymentMode}
               cancellationSummary={cancellationSummary}
               cancellationHref="/cancellation-policy"
               className="mt-5 block w-full rounded-full bg-gold py-3 text-center text-sm font-semibold text-ink transition hover:bg-gold-light"

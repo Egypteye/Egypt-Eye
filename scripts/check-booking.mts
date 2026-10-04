@@ -360,6 +360,43 @@ for (const experience of experiences) {
 }
 
 // ---------------------------------------------------------------------------
+// 10. A configured payment link must make the deposit live.
+//
+// This is a bug that already happened. The surfaces asked `depositsEnabled()`,
+// which reports only whether the PayPal API provider is configured — so a
+// product with a perfectly good payment link rendered "online deposits are not
+// switched on yet", and the button said "Send my request". The deposit was
+// configured, paid for, and invisible.
+//
+// The root cause was a boolean standing in for three states. These assertions
+// are on the rule that replaced it.
+// ---------------------------------------------------------------------------
+const LINK = "https://www.paypal.com/ncp/payment/ABC123";
+const modeFor = (d: ReturnType<typeof resolveDeposit>, providerEnabled: boolean) =>
+  !d.bookable ? "none" : d.paymentLink ? "link" : providerEnabled ? "hold" : "none";
+
+const linked = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: LINK });
+ok("a product with a payment link resolves one", linked.bookable && linked.paymentLink === LINK);
+ok(
+  "a payment link makes the deposit live even with no API provider",
+  modeFor(linked, false) === "link"
+);
+ok(
+  "a link is preferred over the API when both are available",
+  modeFor(linked, true) === "link"
+);
+
+const noLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25 });
+ok("with no link and no provider there is no deposit", modeFor(noLink, false) === "none");
+ok("with no link but a live provider the deposit is a hold", modeFor(noLink, true) === "hold");
+
+const badLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" });
+ok(
+  "a rejected link does not leave the deposit looking live",
+  modeFor(badLink, false) === "none"
+);
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

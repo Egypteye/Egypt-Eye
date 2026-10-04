@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { PaymentMode } from "@/lib/booking/wording";
 
 // "Request your date" — the fast path, opened as a dialog from the product page.
 //
@@ -36,8 +37,13 @@ type Props = {
   productSlug: string;
   productTitle: string;
   depositLabel: string;
-  /** Whether a deposit can actually be taken right now. */
-  canTakeDeposit: boolean;
+  /**
+   * How the deposit is taken: "link" (a PayPal payment link), "hold" (the
+   * API, holding funds) or "none" (no deposit at all). A boolean here was the
+   * original bug — it could not tell "no deposit" from "pay by link", so a
+   * configured link rendered as "deposits are not switched on".
+   */
+  paymentMode: PaymentMode;
   /** The site's real cancellation summary — never written here. */
   cancellationSummary: string;
   cancellationHref: string;
@@ -56,7 +62,7 @@ export function SecureDateButton({
   productSlug,
   productTitle,
   depositLabel,
-  canTakeDeposit,
+  paymentMode,
   cancellationSummary,
   cancellationHref,
   className,
@@ -325,7 +331,7 @@ export function SecureDateButton({
                     it. This block is the reason the dialog is allowed to be
                     this short everywhere else. */}
                 <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm leading-relaxed text-ink-soft">
-                  {canTakeDeposit ? (
+                  {paymentMode !== "none" ? (
                     <>
                       <p className="font-semibold text-ink">
                         {depositLabel} deposit starts your booking

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { PaymentMode } from "@/lib/booking/wording";
 
 // The form. Four questions, which is the whole point of this path existing.
 //
@@ -14,10 +15,12 @@ type Props = {
   productSlug: string;
   productTitle: string;
   depositLabel: string;
-  canTakeDeposit: boolean;
+  /** How the deposit is taken — see the same prop on SecureDateButton. */
+  paymentMode: PaymentMode;
 };
 
 type Result =
+  | { kind: "payLink"; reference: string; paymentLink: string; amountUsd: number }
   | { kind: "payDeposit"; reference: string; approvalUrl: string }
   | { kind: "awaitingTeam"; reference: string; notice?: string };
 
@@ -26,7 +29,7 @@ export function SecureBookingForm({
   productSlug,
   productTitle,
   depositLabel,
-  canTakeDeposit,
+  paymentMode,
 }: Props) {
   const [form, setForm] = useState({
     startsAt: "",
@@ -65,6 +68,15 @@ export function SecureBookingForm({
         setError(data?.error ?? "Something went wrong. Please try again, or message us on WhatsApp.");
         return;
       }
+      if (data.next === "payLink" && data.deposit?.paymentLink) {
+        setResult({
+          kind: "payLink",
+          reference: data.reference,
+          paymentLink: data.deposit.paymentLink,
+          amountUsd: data.deposit.amountUsd,
+        });
+        return;
+      }
       if (data.next === "payDeposit" && data.deposit?.approvalUrl) {
         setResult({ kind: "payDeposit", reference: data.reference, approvalUrl: data.deposit.approvalUrl });
       } else {
@@ -101,7 +113,7 @@ export function SecureBookingForm({
         ) : (
           <>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-              {result.notice ??
+              {(result.kind === "awaitingTeam" && result.notice) ||
                 `We have your request for ${productTitle}, saved as ${result.reference}. Nothing has been charged.`}
             </p>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
@@ -201,15 +213,15 @@ export function SecureBookingForm({
         disabled={!ready || submitting}
         className="w-full rounded-full bg-gold px-6 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
       >
-        {submitting ? "Sending…" : canTakeDeposit ? `Continue to hold my date` : "Send my request"}
+        {submitting ? "Sending…" : "Continue"}
       </button>
 
       {/* Restated at the button, because this is the moment of commitment and
           it is the last thing read before pressing it. */}
       <p className="text-xs leading-relaxed text-ink-soft">
-        {canTakeDeposit
-          ? `Pressing this does not charge you. The next step places a hold for ${depositLabel}, and we only take it once your date is confirmed.`
-          : "Pressing this does not charge you. It sends your request to our team."}
+        {paymentMode === "none"
+          ? "Pressing this does not charge you. It sends your request to our team."
+          : `Pressing this does not charge you. The next step takes you to PayPal for the ${depositLabel} deposit.`}
       </p>
     </form>
   );

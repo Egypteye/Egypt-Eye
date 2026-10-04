@@ -46,7 +46,12 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
   const price = presentDeposit(deposit.amountUsd, product.price);
-  const canTakeDeposit = depositsEnabled();
+  // Same rule as the product pages: a payment link is a live deposit.
+  const paymentMode = deposit.paymentLink
+    ? ("link" as const)
+    : depositsEnabled()
+      ? ("hold" as const)
+      : ("none" as const);
   const productPath = type === "photoshoot" ? `/photoshoots/${slug}` : `/experiences/${slug}`;
 
   return (
@@ -70,7 +75,7 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
           A member of our team checks availability for your date and confirms it personally — usually within 48
           hours. We would rather confirm properly than confirm quickly.
         </p>
-        {canTakeDeposit ? (
+        {paymentMode !== "none" ? (
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
             <strong className="text-ink">Paying the deposit does not confirm your date.</strong> If we cannot
             confirm the date you asked for, we refund your {price.deposit} deposit in full, or move it to a date
@@ -119,7 +124,7 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
         productSlug={slug}
         productTitle={product.title}
         depositLabel={price.deposit}
-        canTakeDeposit={canTakeDeposit}
+        paymentMode={paymentMode}
       />
 
       {/* The other door stays visible the whole way through. Someone who gets
