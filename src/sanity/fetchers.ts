@@ -3,6 +3,7 @@ import {
   treasureProducts as localTreasureProducts,
 } from "@/content/treasures";
 import { client } from "./client";
+import { mergeTreasureCategoryWithLocal, sanityImageAlt } from "@/lib/treasureMerge";
 import {
   aboutPageQuery,
   allSignatureExperienceSlugsQuery,
@@ -925,7 +926,9 @@ export const getListingPages = translated(getListingPagesInner);
 async function getTreasureCategoriesInner(): Promise<TreasureCategory[]> {
   const result = await safeFetch<TreasureCategory[]>(treasureCategoriesQuery);
   return result && result.length > 0
-    ? withValidSlugs(withLocalImageFallback(result, localTreasureCategories))
+    ? withValidSlugs(withLocalImageFallback(result, localTreasureCategories)).map(
+        mergeTreasureCategoryWithLocal
+      )
     : localTreasureCategories.filter((c) => c.active !== false);
 }
 
@@ -937,7 +940,13 @@ async function getTreasureProductsInner(): Promise<TreasureProduct[]> {
       : localTreasureProducts.filter((p) => p.status !== "hidden");
   // A product whose category reference was deleted has no page to sit on.
   const slugs = new Set((await getTreasureCategoriesInner()).map((c) => c.slug));
-  return rows.filter((p) => slugs.has(p.category)).sort((a, b) => a.order - b.order);
+  return rows
+    .filter((p) => slugs.has(p.category))
+    // `order` is required by the type but optional in the Studio, and
+    // `undefined - undefined` is NaN, which sorts a list arbitrarily rather
+    // than visibly wrongly. Unordered products go last, in catalogue order.
+    .map((p) => ({ ...p, imageAlt: p.imageAlt ?? sanityImageAlt(p.image) }))
+    .sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER));
 }
 
 async function getTakeEgyptHomePageInner(): Promise<TakeEgyptHomePage | null> {

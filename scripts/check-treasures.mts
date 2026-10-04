@@ -15,7 +15,11 @@
  *   - every internal link resolves,
  *   - and the four categories stay wired to real routes.
  */
+import { readFileSync } from "node:fs";
 import { treasureCategories, treasureProducts, treasureProductsFor } from "../src/content/treasures";
+import type { TreasureCategory } from "../src/content/types";
+import { mergeTreasureCategoryWithLocal } from "../src/lib/treasureMerge";
+import { treasureCategoriesQuery } from "../src/sanity/queries";
 import { tours } from "../src/content/tours";
 import { hiddenTourSlugs } from "../src/content/hiddenTours";
 import { photoshoots } from "../src/content/photoshoots";
@@ -123,6 +127,127 @@ for (const product of treasureProducts) {
       `${where}: is a placeholder but carries specs. Those are business facts — drop placeholder first.`,
       !product.specs || product.specs.length === 0
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// What the Studio sends back.
+//
+// Every check above reads the local content files, which is exactly why they
+// all passed while production was down: `personalization` was missing from
+// the GROQ projection, so the moment a treasureCategory document existed in
+// Sanity the renderer got `undefined` and every build died prerendering
+// /take-egypt-home/cartouches. No check that only reads local content can see
+// that, and no build without a live Sanity connection can reproduce it.
+//
+// So this section asserts against the shape Sanity actually returns.
+// ---------------------------------------------------------------------------
+
+// The fields the renderer walks without checking first. Each one is a crash,
+// not a blank section, if it arrives undefined.
+const WALKED_UNGUARDED = ["story", "beforeYouArrive", "trust", "faqs", "personalization"] as const;
+
+// GROQ returns null for a field the document never set, and omits nothing —
+// so this is what a freshly-migrated category looks like before an editor has
+// typed anything, with `personalization` absent because no such field exists
+// in the schema at all.
+const fromSanity = {
+  slug: "cartouches",
+  title: "Cartouches",
+  eyebrow: null,
+  heroHeadline: null,
+  heroSub: null,
+  cardHook: null,
+  cardBlurb: null,
+  story: null,
+  beforeYouArrive: null,
+  inEgypt: null,
+  trust: null,
+  faqs: null,
+} as unknown as TreasureCategory;
+
+const merged = mergeTreasureCategoryWithLocal(fromSanity);
+for (const field of WALKED_UNGUARDED) {
+  ok(
+    `a category straight out of Sanity has ${field} as an array, not undefined`,
+    Array.isArray(merged[field])
+  );
+}
+
+// A category nobody has a local copy of — an editor created it in the Studio.
+// There is nothing to fall back to, so the lists must be empty, not missing.
+const inventedInStudio = mergeTreasureCategoryWithLocal({
+  slug: "scarabs",
+  title: "Scarabs",
+} as unknown as TreasureCategory);
+for (const field of WALKED_UNGUARDED) {
+  ok(`a Studio-only category has ${field} as an array`, Array.isArray(inventedInStudio[field]));
+}
+
+// A section an editor deliberately emptied stays empty — clearing a block is
+// a real edit, and silently restoring the repo's copy would overrule it.
+const cleared = mergeTreasureCategoryWithLocal({
+  slug: "cartouches",
+  title: "Cartouches",
+  story: [],
+  trust: [],
+} as unknown as TreasureCategory);
+ok("an emptied story block stays empty rather than reverting", cleared.story.length === 0);
+ok("an emptied trust list stays empty rather than reverting", cleared.trust.length === 0);
+
+// inEgypt is rendered behind a null check, but its steps are then walked
+// unguarded — a half-filled block must not be fatal.
+const halfInEgypt = mergeTreasureCategoryWithLocal({
+  slug: "clothing",
+  title: "Clothing",
+  inEgypt: { title: "In Egypt", body: "Come to the shop.", steps: null },
+} as unknown as TreasureCategory);
+ok("a half-filled inEgypt block has steps as an array", Array.isArray(halfInEgypt.inEgypt?.steps));
+
+// The request form's field names are a wire contract with
+// /api/treasure-request and the private uploads bucket, so they come from the
+// code and never from the Studio, whatever a document happens to carry.
+const withStudioFields = mergeTreasureCategoryWithLocal({
+  slug: "cartouches",
+  title: "Cartouches",
+  personalization: [{ kind: "text", name: "renamed_by_an_editor", label: "x", maxLength: 10 }],
+} as unknown as TreasureCategory);
+const localCartouches = treasureCategories.find((c) => c.slug === "cartouches");
+ok(
+  "personalization comes from the code, not from Sanity",
+  withStudioFields.personalization.every((f, i) => f.name === localCartouches?.personalization[i]?.name)
+);
+
+// ---------------------------------------------------------------------------
+// And the static half: a required field that the query does not select is the
+// bug that caused the outage, so adding one to the type without adding it to
+// the projection fails here rather than in production.
+// ---------------------------------------------------------------------------
+const typesSrc = readFileSync(new URL("../src/content/types.ts", import.meta.url), "utf8");
+const typeBlock = typesSrc.match(/export type TreasureCategory = \{([\s\S]*?)\n\};/)?.[1];
+if (!typeBlock) {
+  errors.push("check-treasures can no longer find the TreasureCategory type — this check is now blind");
+} else {
+  // Fields the code owns on purpose. Anything else required must be queried.
+  const CODE_OWNED = new Set(["personalization", "relatedTourSlugs", "relatedPhotoshootSlugs", "relatedStorySlugs", "imageAlt", "imageCredit"]);
+  const required = [...typeBlock.matchAll(/^\s{2}(\w+)(\??):/gm)]
+    .filter(([, , optional]) => optional !== "?")
+    .map(([, name]) => name);
+
+  ok("the TreasureCategory type is still parseable, with required fields found", required.length > 0);
+  for (const field of required) {
+    if (CODE_OWNED.has(field)) continue;
+    ok(
+      `TreasureCategory.${field} is required but treasureCategoriesQuery does not select it — ` +
+        `Sanity would return undefined and the page would throw`,
+      new RegExp(`\\b${field}\\b`).test(treasureCategoriesQuery)
+    );
+  }
+  // Every code-owned field must actually be filled in by the merge, or it is
+  // simply missing rather than deliberately owned.
+  for (const field of CODE_OWNED) {
+    if (!required.includes(field)) continue;
+    ok(`${field} is listed as code-owned but the merge does not supply it`, merged[field as keyof TreasureCategory] !== undefined);
   }
 }
 
