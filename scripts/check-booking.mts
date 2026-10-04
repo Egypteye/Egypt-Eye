@@ -12,6 +12,8 @@
  *      would be a broken promise rather than a free one.
  */
 import { payPalLink, presentDeposit, resolveDeposit, type BookableProduct } from "../src/lib/booking/deposit";
+import { photoshoots } from "../src/content/photoshoots";
+import { experiences } from "../src/content/experiences";
 import { disabledProvider, depositsEnabled } from "../src/lib/booking/paymentProvider";
 import { NOT_INSTANT, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import {
@@ -324,6 +326,38 @@ ok(
   "a declined booking whose hold could not be released still reads as declined",
   bookingStateFromRow({ status: "declined", deposit_status: "failed" }) === "declined"
 );
+
+// ---------------------------------------------------------------------------
+// 9. A product sold in two places must not be bookable in both.
+//
+// Pyramids Proposal Romance Setup is listed as a photoshoot and as an
+// experience, deliberately, so either browsing path finds it — with the
+// photoshoot named as the canonical page. That is fine for reading, but it is
+// not fine for booking: two deposit buttons for one thing means two product
+// records, two references, and a desk trying to work out whether a customer
+// booked the same hour twice.
+//
+// The rule that falls out of it: the copy that points somewhere else as its
+// canonical is not the place to take money.
+// ---------------------------------------------------------------------------
+const photoSlugs = new Map(photoshoots.map((p) => [p.slug, p]));
+for (const experience of experiences) {
+  const twin = photoSlugs.get(experience.slug);
+  if (!twin) continue;
+
+  ok(
+    `"${experience.slug}" is listed as both a photoshoot and an experience, so one of them must name the ` +
+      `other as canonical — otherwise two identical pages compete and Google picks the winner`,
+    Boolean(experience.seo?.canonicalUrl) || Boolean(twin.seo?.canonicalUrl)
+  );
+
+  const duplicate = experience.seo?.canonicalUrl ? experience : twin;
+  ok(
+    `"${experience.slug}" takes deposits on the copy that points elsewhere as canonical — ` +
+      `book it on the canonical page only, or one experience can be booked twice`,
+    duplicate.bookable !== true
+  );
+}
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

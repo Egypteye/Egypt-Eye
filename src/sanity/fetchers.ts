@@ -138,6 +138,28 @@ function withLocalImageFallback<T extends { slug: string; image?: unknown }>(ite
   );
 }
 
+/**
+ * Keeps an SEO override that lives in the content files but not in Sanity.
+ *
+ * Sanity wins wholesale, so a `seo` block set in code simply vanishes once a
+ * document exists — which is how the Pyramids Proposal duplicate ended up with
+ * two live pages each declaring itself canonical. The content file named the
+ * photoshoot as the real page; the migration never pushed `seo`, so the live
+ * site never heard about it.
+ *
+ * Fills the gap rather than overriding: a `seo` block set in the Studio always
+ * wins, exactly like the image fallback above. A canonical is the one SEO
+ * field where silence is not neutral — with no answer, Google picks a winner
+ * between duplicates itself, often the weaker page.
+ */
+function withLocalSeoFallback<T extends { slug: string; seo?: unknown }>(
+  items: T[],
+  local: readonly T[]
+): T[] {
+  const localBySlug = new Map(local.map((item) => [item.slug, item]));
+  return items.map((item) => (item.seo ? item : { ...item, seo: localBySlug.get(item.slug)?.seo }));
+}
+
 function withLocalHeroImageFallback<T extends { slug: string; heroImage?: unknown }>(
   items: T[],
   local: readonly T[]
@@ -384,7 +406,10 @@ async function getExperiencesInner(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
   return withValidSlugs(
     result && result.length > 0
-      ? hardenExperiences(withLocalImageFallback(result, localExperiences), localExperiences)
+      ? hardenExperiences(
+          withLocalSeoFallback(withLocalImageFallback(result, localExperiences), localExperiences),
+          localExperiences
+        )
       : mergeExperienceRelations(localExperiences)
   );
 }
@@ -392,7 +417,8 @@ async function getExperiencesInner(): Promise<Experience[]> {
 function mergeExperienceWithLocal(result: Experience | null, slug: string): Experience | undefined {
   const local = localExperiences.find((e) => e.slug === slug);
   if (!result) return local && mergeExperienceRelations([local])[0];
-  const merged = hardenExperience(result.image ? result : { ...result, image: local?.image }, local);
+  const withImage = result.image ? result : { ...result, image: local?.image };
+  const merged = hardenExperience(withImage.seo ? withImage : { ...withImage, seo: local?.seo }, local);
   return mergeExperienceRelations([merged])[0];
 }
 
