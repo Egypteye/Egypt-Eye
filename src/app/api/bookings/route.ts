@@ -151,6 +151,14 @@ export async function POST(request: NextRequest) {
   }
 
   const provider = paymentProvider();
+  // A PayPal payment link is the simple path: Egypt Eye creates the links in
+  // PayPal, one per deposit amount, and pastes them into the Studio. The money
+  // moves when the customer pays rather than being held, so the wording and
+  // the refund promise differ — see PaymentMode in lib/booking/wording.ts.
+  //
+  // Taken from the product server-side and already host-checked, so a link can
+  // only ever point at PayPal however the field was edited.
+  const paymentLink = deposit.paymentLink;
   const user = await getCurrentUser();
   const reference = generateReference();
   const supabase = createAdminSupabaseClient();
@@ -176,9 +184,9 @@ export async function POST(request: NextRequest) {
       // The booking is a request until a person says otherwise, whether or not
       // a deposit is ever paid.
       status: "requested",
-      deposit_amount: provider.enabled ? deposit.amountUsd : null,
-      deposit_status: provider.enabled ? "awaiting" : "not_required",
-      payment_provider: provider.enabled ? provider.name : null,
+      deposit_amount: provider.enabled || paymentLink ? deposit.amountUsd : null,
+      deposit_status: provider.enabled || paymentLink ? "awaiting" : "not_required",
+      payment_provider: provider.enabled ? provider.name : paymentLink ? "paypal-link" : null,
     })
     .select("id, reference")
     .single();
@@ -205,7 +213,8 @@ export async function POST(request: NextRequest) {
       startsAt: when.iso,
       slotLabel,
       people,
-      depositUsd: provider.enabled ? deposit.amountUsd : null,
+      depositUsd: provider.enabled || paymentLink ? deposit.amountUsd : null,
+      paymentLink,
     });
     await sendIdempotentEmail({
       idempotencyKey: `booking-request:${data.id}`,
@@ -248,8 +257,19 @@ export async function POST(request: NextRequest) {
     console.error("booking team email failed (booking was saved):", err);
   }
 
-  // No payment rail yet: the honest answer is that we have the request, not
-  // that a date is held.
+  // The payment-link path. Nothing to call: the customer is handed the link
+  // and pays in PayPal, and the desk matches the payment to the reference.
+  if (paymentLink) {
+    return NextResponse.json({
+      ok: true,
+      reference: data.reference,
+      deposit: { amountUsd: deposit.amountUsd, paymentLink },
+      next: "payLink" as const,
+    });
+  }
+
+  // No payment rail at all: the honest answer is that we have the request, not
+  // that a date is secured.
   if (!provider.enabled) {
     return NextResponse.json({
       ok: true,

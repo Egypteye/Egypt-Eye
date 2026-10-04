@@ -16,10 +16,30 @@ export const NOT_INSTANT =
   REPLY_WINDOW +
   ". We would rather confirm properly than confirm quickly.";
 
-/** What the money is doing, which differs by whether a deposit is live. */
-export function moneyState(depositLabel: string | null): string {
-  if (!depositLabel) {
+/**
+ * How the deposit is taken, which changes what is true about the money.
+ *
+ * - "none": no deposit is being collected at all.
+ * - "link": a PayPal payment link. The money moves when the customer pays, so
+ *   nothing may describe it as held, and a date we cannot do means a refund.
+ * - "hold": an authorization. Nothing moves until a person confirms.
+ *
+ * The distinction is not pedantry. Telling a customer their money is "held"
+ * when PayPal has actually taken it is the kind of sentence that produces a
+ * dispute, and the refund promise has to match whichever is true.
+ */
+export type PaymentMode = "none" | "link" | "hold";
+
+/** What the money is doing. */
+export function moneyState(depositLabel: string | null, mode: PaymentMode = "hold"): string {
+  if (!depositLabel || mode === "none") {
     return "Nothing has been charged. Our team will come back to you with the details and what happens next.";
+  }
+  if (mode === "link") {
+    return (
+      `Your ${depositLabel} deposit secures this date and is credited toward your final price. ` +
+      "If we cannot confirm the date you asked for, we refund it in full."
+    );
   }
   return (
     `Your deposit of ${depositLabel} is held, not charged. We only take it once your date is confirmed, ` +

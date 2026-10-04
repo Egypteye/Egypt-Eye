@@ -169,6 +169,16 @@ export type Experience = {
    */
   bookable?: boolean;
   /**
+   * The PayPal payment link for this product's deposit, created in PayPal and
+   * pasted here. Egypt Eye keeps several, one per deposit amount, so it lives
+   * on the product rather than in one site-wide setting.
+   *
+   * Must point at PayPal — see assertPayPalLink in lib/booking/deposit.ts. A
+   * mistyped host here would send a paying customer somewhere else entirely.
+   */
+  paypalLink?: string;
+
+  /**
    * The flat sum that holds this date, in USD. Falls back to the site-wide
    * default; with neither set the product shows no button rather than a
    * guessed figure.
@@ -226,6 +236,16 @@ export type Photoshoot = {
    * saves. See docs/booking-deposits.md.
    */
   bookable?: boolean;
+  /**
+   * The PayPal payment link for this product's deposit, created in PayPal and
+   * pasted here. Egypt Eye keeps several, one per deposit amount, so it lives
+   * on the product rather than in one site-wide setting.
+   *
+   * Must point at PayPal — see assertPayPalLink in lib/booking/deposit.ts. A
+   * mistyped host here would send a paying customer somewhere else entirely.
+   */
+  paypalLink?: string;
+
   /**
    * The flat sum that holds this date, in USD. Falls back to the site-wide
    * default; with neither set the product shows no button rather than a

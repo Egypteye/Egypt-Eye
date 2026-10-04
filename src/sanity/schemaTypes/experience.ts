@@ -42,6 +42,19 @@ export const experience = defineType({
       validation: (r) => r.min(1),
     }),
     defineField({
+      name: "paypalLink",
+      title: "PayPal payment link for the deposit",
+      description:
+        "Paste the PayPal link for this deposit amount, e.g. https://www.paypal.com/ncp/payment/XXXX or a paypal.me link. Must be a PayPal address — anything else is ignored and no pay button appears.",
+      type: "url",
+      validation: (r) =>
+        r.uri({ scheme: ["https"] }).custom((value) =>
+          !value || /(^|\.)paypal\.(com|me)$/i.test(new URL(value).hostname)
+            ? true
+            : "This must be a PayPal link (paypal.com or paypal.me)."
+        ),
+    }),
+    defineField({
       name: "image",
       title: "Photo",
       type: "image",

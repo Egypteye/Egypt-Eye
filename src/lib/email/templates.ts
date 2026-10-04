@@ -1078,6 +1078,7 @@ export function bookingRequestCustomerEmail({
   slotLabel,
   people,
   depositUsd,
+  paymentLink,
 }: {
   reference: string;
   guestName: string;
@@ -1086,14 +1087,24 @@ export function bookingRequestCustomerEmail({
   slotLabel?: string | null;
   people: number;
   depositUsd: number | null;
+  /** Set when the deposit is paid through a PayPal link rather than held. */
+  paymentLink?: string | null;
 }) {
   const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
   const when = formatSlot(startsAt, slotLabel);
   const who = `${people} ${people === 1 ? "person" : "people"}`;
 
   // Two genuinely different situations, and conflating them would mislead.
-  const money = moneyState(depositUsd ? `$${depositUsd}` : null);
-  const moneyLine = `<p style="margin:0 0 16px;">${escapeHtml(money)}</p>`;
+  const mode = !depositUsd ? "none" : paymentLink ? "link" : "hold";
+  const money = moneyState(depositUsd ? `$${depositUsd}` : null, mode);
+  // The link is repeated in the email because the dialog closes and people
+  // come back to this later — and because a deposit nobody can find the link
+  // for is a booking that quietly dies.
+  const payLine =
+    paymentLink && depositUsd
+      ? `<p style="margin:0 0 16px;">If you have not paid yet, you can do it here:<br/>${ctaButton(`Pay the $${depositUsd} deposit`, paymentLink)}<strong>Please put ${escapeHtml(reference)} in the PayPal note</strong> so we can match your payment to your booking.</p>`
+      : "";
+  const moneyLine = `<p style="margin:0 0 16px;">${escapeHtml(money)}</p>${payLine}`;
 
   const html = baseLayout({
     preheader: `We have your request for ${productTitle} on ${when}.`,
@@ -1124,6 +1135,7 @@ export function bookingRequestCustomerEmail({
     `Reference: ${reference}`,
     "",
     money,
+    paymentLink && depositUsd ? `\nPay the $${depositUsd} deposit: ${paymentLink}\nPlease put ${reference} in the PayPal note so we can match it to your booking.` : "",
     "",
     replyPromise(),
   ].join("\n");

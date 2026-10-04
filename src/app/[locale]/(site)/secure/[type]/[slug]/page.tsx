@@ -55,7 +55,7 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
         ← {product.title}
       </Link>
 
-      <h1 className="mt-5 font-display text-3xl font-semibold text-ink sm:text-4xl">Secure your date</h1>
+      <h1 className="mt-5 font-display text-3xl font-semibold text-ink sm:text-4xl">Request your date</h1>
       <p className="mt-3 leading-relaxed text-ink-soft">
         {product.title}
         {product.duration ? ` · ${product.duration}` : ""}
@@ -72,9 +72,9 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
         </p>
         {canTakeDeposit ? (
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-            Your card or PayPal account will show a <strong className="text-ink">hold</strong> for{" "}
-            <strong className="text-ink">{price.deposit}</strong>. Nothing is charged until we confirm your date. If
-            we cannot confirm it, the hold is released and you are not charged at all.
+            <strong className="text-ink">Paying the deposit does not confirm your date.</strong> If we cannot
+            confirm the date you asked for, we refund your {price.deposit} deposit in full, or move it to a date
+            that works.
           </p>
         ) : (
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">

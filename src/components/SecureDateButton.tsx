@@ -2,7 +2,19 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
-// "Secure your date" — the fast path, opened as a dialog from the product page.
+// "Request your date" — the fast path, opened as a dialog from the product page.
+//
+// Named "request" rather than "secure" on purpose, and it is the most
+// important decision in this component. A deposit here does not secure
+// anything: a person still has to check availability, and until they do, the
+// date is not the customer's. A button that says "secure" sells a certainty
+// the business cannot deliver, and the customer only discovers that after
+// paying — which is exactly when it costs the most trust.
+//
+// What "secure" was really doing was removing the fear of losing the date.
+// The refund guarantee does that job honestly: pay a deposit, and if we cannot
+// confirm your date you get all of it back. That is a promise Egypt Eye can
+// keep every time.
 //
 // A dialog rather than a page jump because the whole point is speed: someone
 // who already knows what they want should not lose the page they are reading
@@ -35,6 +47,7 @@ type Props = {
 
 type Stage =
   | { kind: "form" }
+  | { kind: "payLink"; reference: string; paymentLink: string; amountUsd: number }
   | { kind: "payDeposit"; reference: string; approvalUrl: string }
   | { kind: "awaitingTeam"; reference: string; notice?: string };
 
@@ -47,7 +60,7 @@ export function SecureDateButton({
   cancellationSummary,
   cancellationHref,
   className,
-  label = "Secure your date",
+  label = "Request your date",
 }: Props) {
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState<Stage>({ kind: "form" });
@@ -111,6 +124,18 @@ export function SecureDateButton({
         setError(data?.error ?? "Something went wrong. Please try again, or message us on WhatsApp.");
         return;
       }
+      if (data.next === "payLink" && data.deposit?.paymentLink) {
+        // The booking is already saved, so the customer can pay now, pay from
+        // the email later, or not pay at all — and in every case Egypt Eye has
+        // the request rather than nothing.
+        setStage({
+          kind: "payLink",
+          reference: data.reference,
+          paymentLink: data.deposit.paymentLink,
+          amountUsd: data.deposit.amountUsd,
+        });
+        return;
+      }
       if (data.next === "payDeposit" && data.deposit?.approvalUrl) {
         // Straight on to the payment — the fewer screens between deciding and
         // paying, the better, which is the entire reason this is a dialog.
@@ -148,7 +173,11 @@ export function SecureDateButton({
           >
             <div className="flex items-start justify-between gap-4">
               <h2 id="secure-date-title" className="font-display text-xl font-semibold text-ink">
-                {stage.kind === "awaitingTeam" ? "Your request is with our team" : "Secure your date"}
+                {stage.kind === "awaitingTeam"
+                  ? "Your request is with our team"
+                  : stage.kind === "payLink"
+                    ? "One step left"
+                    : "Request your date"}
               </h2>
               <button
                 type="button"
@@ -160,7 +189,50 @@ export function SecureDateButton({
               </button>
             </div>
 
-            {stage.kind === "awaitingTeam" ? (
+            {stage.kind === "payLink" ? (
+              <div className="mt-4 space-y-4">
+                <p className="text-sm leading-relaxed text-ink-soft">
+                  Your request is saved as{" "}
+                  <strong className="font-mono text-ink">{stage.reference}</strong>. To secure{" "}
+                  {new Date(form.startsAt).toLocaleDateString(undefined, {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                  , pay the deposit now.
+                </p>
+
+                <a
+                  href={stage.paymentLink}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="block w-full rounded-full bg-gold px-6 py-3.5 text-center text-sm font-semibold text-ink transition hover:bg-gold-light"
+                >
+                  Pay ${stage.amountUsd} deposit with PayPal
+                </a>
+
+                {/* The reference is how a payment gets matched to a booking.
+                    PayPal will not tell us which booking paid, so the customer
+                    has to carry it across — and it has to be easy to copy. */}
+                <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm text-ink-soft">
+                  <p>
+                    <strong className="text-ink">Please add this reference in the PayPal note:</strong>
+                  </p>
+                  <p className="mt-2 select-all rounded-lg bg-cream px-3 py-2 text-center font-mono text-base font-semibold text-ink">
+                    {stage.reference}
+                  </p>
+                  <p className="mt-2 text-xs">
+                    It is how we match your payment to your booking. We have emailed you this link and reference
+                    too, so you can pay later if you prefer.
+                  </p>
+                </div>
+
+                <p className="text-sm leading-relaxed text-ink-soft">
+                  Once we have your deposit, our team confirms your date — usually within 48 hours. Your deposit is
+                  credited toward your final price, and if we cannot confirm the date we refund it in full.
+                </p>
+              </div>
+            ) : stage.kind === "awaitingTeam" ? (
               <div className="mt-4 space-y-3 text-sm leading-relaxed text-ink-soft">
                 <p>
                   {stage.notice ??
@@ -256,13 +328,15 @@ export function SecureDateButton({
                   {canTakeDeposit ? (
                     <>
                       <p className="font-semibold text-ink">
-                        {depositLabel} deposit — held, not charged
+                        {depositLabel} deposit starts your booking
                       </p>
                       <p className="mt-1.5">
-                        This is not an instant booking. Our team confirms your date personally, usually within 48
-                        hours. We only take the deposit once it is confirmed — if we cannot confirm it, the hold is
-                        released and you are not charged.
+                        <strong className="text-ink">Paying does not confirm your date.</strong> A member of our
+                        team checks availability and confirms it personally, usually within 48 hours. If we cannot
+                        confirm the date you asked for, we refund your deposit in full — or move it to a date that
+                        works.
                       </p>
+                      <p className="mt-1.5">Your deposit is credited toward your final price.</p>
                     </>
                   ) : (
                     <>
@@ -292,11 +366,7 @@ export function SecureDateButton({
                   disabled={!ready || submitting}
                   className="w-full rounded-full bg-gold px-6 py-3.5 text-sm font-semibold text-ink transition hover:bg-gold-light disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  {submitting
-                    ? "Sending…"
-                    : canTakeDeposit
-                      ? `Hold my date — ${depositLabel}`
-                      : "Send my request"}
+                  {submitting ? "Sending…" : "Continue"}
                 </button>
               </form>
             )}

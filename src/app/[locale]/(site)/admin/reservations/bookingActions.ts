@@ -22,6 +22,7 @@ type Row = {
   id: string;
   reference: string;
   status: string;
+  deposit_held_at: string | null;
   guest_name: string;
   guest_email: string;
   deposit_amount: number | null;
@@ -43,7 +44,7 @@ async function load(id: string): Promise<Row | null> {
   const { data } = await supabase
     .from("reservations")
     .select(
-      "id, reference, status, guest_name, guest_email, deposit_amount, deposit_status, payment_authorization_id, journey_snapshot, starts_at, slot_label"
+      "id, reference, status, guest_name, guest_email, deposit_amount, deposit_status, deposit_held_at, payment_authorization_id, journey_snapshot, starts_at, slot_label"
     )
     .eq("id", id)
     .maybeSingle();
@@ -210,7 +211,15 @@ export async function declineBooking(reservationId: string, reason?: string): Pr
   }
 
   refresh(reservationId);
-  return { ok: true, message: `Declined, and the customer has been told.${releaseNote}` };
+  // A captured deposit is money Egypt Eye is holding for a date it cannot do,
+  // and the customer has just been emailed a promise of a full refund. The
+  // refund itself happens in PayPal — this says so rather than letting the
+  // booking look finished while someone is still owed.
+  const owesRefund =
+    row.deposit_status === "captured" && row.deposit_amount !== null
+      ? ` Refund the $${row.deposit_amount} deposit in PayPal, then press "Refund recorded" — the customer has been promised it in full.`
+      : "";
+  return { ok: true, message: `Declined, and the customer has been told.${releaseNote}${owesRefund}` };
 }
 
 /** Marks that somebody has picked this up, so two people do not both chase it. */
@@ -227,4 +236,70 @@ export async function markBookingChecking(reservationId: string): Promise<Bookin
     .eq("id", reservationId);
   refresh(reservationId);
   return { ok: true, message: "Marked as being checked." };
+}
+
+/**
+ * Records that a PayPal payment link deposit arrived.
+ *
+ * Needed because a payment link tells the site nothing: PayPal takes the money
+ * and the only connection back to a booking is the reference the customer was
+ * asked to type into the note. So a person checks PayPal, finds the payment,
+ * and records it here. That is the honest cost of the simple approach, and it
+ * is one click per booking.
+ *
+ * Deliberately separate from confirming. Money arriving is not a decision
+ * about whether the date can be done, and collapsing the two would put the
+ * site back to confirming bookings nobody checked.
+ */
+export async function markDepositPaid(reservationId: string, note?: string): Promise<BookingActionResult> {
+  await requireReservationsStaff();
+  const row = await load(reservationId);
+  if (!row) return { ok: false, message: "That booking no longer exists." };
+
+  if (row.deposit_status === "captured") {
+    return { ok: false, message: "This deposit is already recorded as paid." };
+  }
+  if (row.deposit_status !== "awaiting") {
+    return { ok: false, message: `A deposit that is "${row.deposit_status}" cannot be marked paid.` };
+  }
+
+  const now = new Date().toISOString();
+  await createAdminSupabaseClient()
+    .from("reservations")
+    .update({
+      deposit_status: "captured",
+      deposit_paid_at: now,
+      deposit_held_at: row.deposit_held_at ?? now,
+      // Whatever identifies the payment in PayPal, so the booking and the
+      // payment can be tied together later without trusting memory.
+      payment_capture_id: note?.trim() || null,
+      updated_at: now,
+    })
+    .eq("id", reservationId);
+
+  refresh(reservationId);
+  return { ok: true, message: "Deposit recorded as paid. The date still needs confirming." };
+}
+
+/**
+ * Records that a refund has actually been made in PayPal.
+ *
+ * The refund happens in PayPal, not here — but a booking that owes one must
+ * not look settled until it is done. This is the difference between "we told
+ * the customer we would refund" and "we did", and only the second is worth
+ * anything to them.
+ */
+export async function markDepositRefunded(reservationId: string): Promise<BookingActionResult> {
+  await requireReservationsStaff();
+  const row = await load(reservationId);
+  if (!row) return { ok: false, message: "That booking no longer exists." };
+  if (row.deposit_status !== "captured") {
+    return { ok: false, message: `A deposit that is "${row.deposit_status}" has nothing to refund.` };
+  }
+  await createAdminSupabaseClient()
+    .from("reservations")
+    .update({ deposit_status: "refunded", updated_at: new Date().toISOString() })
+    .eq("id", reservationId);
+  refresh(reservationId);
+  return { ok: true, message: "Refund recorded." };
 }

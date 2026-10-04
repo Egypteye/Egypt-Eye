@@ -11,7 +11,7 @@
  *      would be inventing a business fact, and charging $0 to "secure" a date
  *      would be a broken promise rather than a free one.
  */
-import { presentDeposit, resolveDeposit, type BookableProduct } from "../src/lib/booking/deposit";
+import { payPalLink, presentDeposit, resolveDeposit, type BookableProduct } from "../src/lib/booking/deposit";
 import { disabledProvider, depositsEnabled } from "../src/lib/booking/paymentProvider";
 import { NOT_INSTANT, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import {
@@ -120,6 +120,36 @@ const fallback = resolveDeposit({ ...base, bookable: true }, 25);
 ok("the site default applies when the product has none", fallback.bookable && fallback.amountUsd === 25);
 const rounded = resolveDeposit({ ...base, bookable: true, depositUsd: 49.4 });
 ok("a deposit is whole dollars", rounded.bookable && rounded.amountUsd === 49);
+
+// ---------------------------------------------------------------------------
+// 3b. The PayPal link.
+//
+// This value comes from the CMS and becomes a link a paying customer clicks,
+// so the host is checked in code and not merely in Studio validation — a
+// document migrated in or edited before that rule existed would sail past it.
+// The lookalike hosts are the cases that matter: each one would send someone
+// to a convincing page to pay somebody else.
+// ---------------------------------------------------------------------------
+const LINKS: [string, boolean][] = [
+  ["https://www.paypal.com/ncp/payment/ABC123", true],
+  ["https://paypal.me/egypteye/25", true],
+  ["https://www.paypal.me/egypteye", true],
+  ["http://www.paypal.com/ncp/payment/ABC", false],   // not https
+  ["https://notpaypal.com/pay", false],               // lookalike prefix
+  ["https://paypal.com.evil.net/pay", false],         // lookalike suffix
+  ["https://evil.net/?x=paypal.com", false],          // in the query string
+  ["", false],
+  ["not a url", false],
+];
+for (const [value, allowed] of LINKS) {
+  ok(
+    `payPalLink should ${allowed ? "allow" : "block"} ${JSON.stringify(value)}`,
+    (payPalLink(value) !== null) === allowed
+  );
+}
+ok("a non-PayPal link leaves the product with no pay button",
+  resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" }).bookable &&
+  (resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" }) as { paymentLink: string | null }).paymentLink === null);
 
 // ---------------------------------------------------------------------------
 // 4. How it reads, in both price cases.
@@ -263,6 +293,9 @@ ok("a confirmed booking can be cancelled", canTransition("confirmed", "cancelled
 const ROWS: [{ status: string; deposit_status?: string | null }, BookingState][] = [
   [{ status: "requested", deposit_status: "awaiting" }, "awaitingDeposit"],
   [{ status: "requested", deposit_status: "authorized" }, "held"],
+  // A paid payment-link deposit means the same thing to the customer as a
+  // hold: the money side is done, the date is not.
+  [{ status: "requested", deposit_status: "captured" }, "held"],
   [{ status: "checking", deposit_status: "authorized" }, "checking"],
   [{ status: "confirmed", deposit_status: "captured" }, "confirmed"],
   [{ status: "declined", deposit_status: "voided" }, "declined"],

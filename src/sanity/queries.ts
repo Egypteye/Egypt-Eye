@@ -20,7 +20,7 @@ const relatedTourFields = groq`
 // Lightweight Extra Experience card used wherever a Tour links to one.
 const relatedExtraExperienceFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, included, physicalLevel, bookable, depositUsd
+  image, imageTone, description, included, physicalLevel, bookable, depositUsd, paypalLink
 `;
 
 // hidden != true (rather than hidden == false) so tours from before the
@@ -57,14 +57,14 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, description, location, included, destinations, physicalLevel,
-  bookable, depositUsd
+  bookable, depositUsd, paypalLink
 }`;
 
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
-  physicalLevel, mapStops, bookable, depositUsd,
+  physicalLevel, mapStops, bookable, depositUsd, paypalLink,
   relatedTours[]->{${relatedTourFields}},
   seo
 `;
@@ -79,13 +79,13 @@ export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.curr
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd,
+  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, paypalLink,
   faqs[]{question, answer}
 }`;
 
 const photoshootDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, seo,
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, paypalLink, seo,
   faqs[]{question, answer}
 `;
 
