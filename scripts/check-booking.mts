@@ -226,6 +226,32 @@ for (const [text, expected] of DETECTOR_CASES) {
 }
 
 // ---------------------------------------------------------------------------
+// 7. The admin decision.
+//
+// Confirm and decline are the two moments a person decides, and the
+// transitions are what stop a second click, a stale tab or a replayed form
+// from charging someone twice or reviving a declined booking.
+// ---------------------------------------------------------------------------
+ok("a held booking can be marked as being checked", canTransition("held", "checking"));
+ok("an unpaid booking cannot be marked as being checked", !canTransition("awaitingDeposit", "checking"));
+ok("a booking being checked can still be confirmed", canTransition("checking", "confirmed"));
+ok("a booking being checked can still be declined", canTransition("checking", "declined"));
+
+// The double-click cases: every terminal state must refuse every decision.
+for (const terminal of ["confirmed", "declined", "cancelled"] as BookingState[]) {
+  for (const decision of ["confirmed", "declined", "checking"] as BookingState[]) {
+    ok(
+      `a ${terminal} booking must refuse a second "${decision}"`,
+      !canTransition(terminal, decision)
+    );
+  }
+}
+
+// Cancelling is the customer's withdrawal and stays available after
+// confirmation — a confirmed booking can still be called off.
+ok("a confirmed booking can be cancelled", canTransition("confirmed", "cancelled"));
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

@@ -1205,3 +1205,117 @@ export function bookingRequestTeamEmail({
 
   return { subject: `Booking · ${productTitle} · ${when} · ${reference}`, html, text };
 }
+
+export function bookingConfirmedEmail({
+  reference,
+  guestName,
+  productTitle,
+  startsAt,
+  slotLabel,
+  depositChargedUsd,
+}: {
+  reference: string;
+  guestName: string;
+  productTitle: string;
+  startsAt: string | null;
+  slotLabel?: string | null;
+  depositChargedUsd: number | null;
+}) {
+  const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
+  const when = startsAt ? formatSlot(startsAt, slotLabel) : "your requested date";
+
+  // The ONE email on this path allowed to say the booking is confirmed, sent
+  // only from the admin action a person pressed. And it only mentions a charge
+  // when the provider actually took one.
+  const moneyLine = depositChargedUsd
+    ? `<p style="margin:0 0 16px;">Your deposit of <strong>$${depositChargedUsd}</strong> has now been charged, and is credited toward your final price.</p>`
+    : `<p style="margin:0 0 16px;">Nothing has been charged. We will go through the details and what is owed with you directly.</p>`;
+
+  const html = baseLayout({
+    preheader: `Confirmed — ${productTitle} on ${when}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">${greeting}</p>
+      <p style="margin:0 0 16px;"><strong>Your date is confirmed.</strong> We have ${escapeHtml(productTitle)} down for ${escapeHtml(when)}, and it is in the diary.</p>
+      ${moneyLine}
+      <p style="margin:0 0 16px;">We will be in touch with the practical details — where to meet, what to bring, and anything else worth knowing before the day.</p>
+      ${ctaButton("See your booking", `${SITE_URL}/account`)}
+    `,
+    footerHtml: `Reference ${escapeHtml(reference)}. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${guestName.split(" ")[0] || guestName},`,
+    "",
+    `Your date is confirmed. We have ${productTitle} down for ${when}.`,
+    "",
+    depositChargedUsd
+      ? `Your deposit of $${depositChargedUsd} has now been charged, and is credited toward your final price.`
+      : "Nothing has been charged. We will go through the details and what is owed with you directly.",
+    "",
+    "We will be in touch with the practical details.",
+    "",
+    `Reference ${reference}`,
+  ].join("\n");
+
+  return { subject: `Confirmed — ${productTitle} (${reference})`, html, text };
+}
+
+export function bookingDeclinedEmail({
+  reference,
+  guestName,
+  productTitle,
+  startsAt,
+  slotLabel,
+  hadDeposit,
+  reason,
+}: {
+  reference: string;
+  guestName: string;
+  productTitle: string;
+  startsAt: string | null;
+  slotLabel?: string | null;
+  hadDeposit: boolean;
+  reason: string | null;
+}) {
+  const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
+  const when = startsAt ? formatSlot(startsAt, slotLabel) : "the date you asked for";
+
+  // True whether or not the release call succeeded: an authorization that is
+  // never captured does not charge the customer. So this promise holds even
+  // when the void has to be cleared by hand.
+  const moneyLine = hadDeposit
+    ? `<p style="margin:0 0 16px;">The hold on your deposit is being released and <strong>you have not been charged</strong>. If you can still see it pending, it clears on its own.</p>`
+    : `<p style="margin:0 0 16px;">Nothing was charged.</p>`;
+
+  const html = baseLayout({
+    preheader: `We could not confirm ${when}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">${greeting}</p>
+      <p style="margin:0 0 16px;">We are sorry — <strong>we could not confirm ${escapeHtml(when)}</strong> for ${escapeHtml(productTitle)}.</p>
+      ${reason ? `<p style="margin:0 0 16px;">${escapeHtml(reason)}</p>` : ""}
+      ${moneyLine}
+      <p style="margin:0 0 16px;">We would still love to make this happen. Reply to this email with any other dates that could work, or message us on WhatsApp and we will find the nearest one we can do.</p>
+      ${ctaButton("Message us on WhatsApp", `${SITE_URL}/contact`)}
+    `,
+    footerHtml: `Reference ${escapeHtml(reference)}. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${guestName.split(" ")[0] || guestName},`,
+    "",
+    `We are sorry — we could not confirm ${when} for ${productTitle}.`,
+    reason ? `\n${reason}` : "",
+    "",
+    hadDeposit
+      ? "The hold on your deposit is being released and you have not been charged. If you can still see it pending, it clears on its own."
+      : "Nothing was charged.",
+    "",
+    "Reply with any other dates that could work and we will find the nearest one we can do.",
+    "",
+    `Reference ${reference}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `We could not confirm ${when} — ${productTitle}`, html, text };
+}

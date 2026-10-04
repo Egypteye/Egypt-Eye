@@ -4,6 +4,7 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { getCurrentUser } from "@/lib/auth/session";
 import { NotConfiguredNotice } from "../../NotConfiguredNotice";
+import { DepositPanel } from "./DepositPanel";
 import {
   addDocument,
   addGuide,
@@ -70,6 +71,19 @@ export default async function AdminReservationDetailPage({ params }: { params: P
           </form>
         </div>
       </div>
+
+      {/* Only shown for bookings that came through the deposit flow — an
+          ordinary reservation has no deposit to decide about. */}
+      {reservation.product_type && (
+        <DepositPanel
+          reservationId={id}
+          reference={reservation.reference}
+          status={reservation.status}
+          depositAmount={reservation.deposit_amount ?? null}
+          depositStatus={reservation.deposit_status ?? "not_required"}
+          heldAt={reservation.deposit_held_at ?? null}
+        />
+      )}
 
       <div className="grid gap-6 sm:grid-cols-2">
         <div className="rounded-2xl border border-black/5 bg-cream p-5 text-sm shadow-sm">
