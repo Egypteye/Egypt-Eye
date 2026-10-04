@@ -15,6 +15,7 @@ import { presentDeposit, resolveDeposit, type BookableProduct } from "../src/lib
 import { disabledProvider, depositsEnabled } from "../src/lib/booking/paymentProvider";
 import { NOT_INSTANT, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import {
+  bookingStateFromRow,
   canTransition,
   holdsFunds,
   stateAfterPaymentHeld,
@@ -250,6 +251,46 @@ for (const terminal of ["confirmed", "declined", "cancelled"] as BookingState[])
 // Cancelling is the customer's withdrawal and stays available after
 // confirmation — a confirmed booking can still be called off.
 ok("a confirmed booking can be cancelled", canTransition("confirmed", "cancelled"));
+
+// ---------------------------------------------------------------------------
+// 8. Reading a database row.
+//
+// The admin panel, the account page and the return page all read the same two
+// columns and must agree about what they mean. A disagreement here shows a
+// customer one thing while the desk sees another, which is worse than either
+// being wrong on its own.
+// ---------------------------------------------------------------------------
+const ROWS: [{ status: string; deposit_status?: string | null }, BookingState][] = [
+  [{ status: "requested", deposit_status: "awaiting" }, "awaitingDeposit"],
+  [{ status: "requested", deposit_status: "authorized" }, "held"],
+  [{ status: "checking", deposit_status: "authorized" }, "checking"],
+  [{ status: "confirmed", deposit_status: "captured" }, "confirmed"],
+  [{ status: "declined", deposit_status: "voided" }, "declined"],
+  [{ status: "cancelled", deposit_status: "voided" }, "cancelled"],
+  // A booking with no payment at all — the flow with deposits switched off.
+  [{ status: "requested", deposit_status: "not_required" }, "awaitingDeposit"],
+  [{ status: "confirmed", deposit_status: "not_required" }, "confirmed"],
+  [{ status: "requested", deposit_status: null }, "awaitingDeposit"],
+  [{ status: "requested" }, "awaitingDeposit"],
+];
+for (const [row, expected] of ROWS) {
+  ok(
+    `a row ${JSON.stringify(row)} should read as "${expected}"`,
+    bookingStateFromRow(row) === expected
+  );
+}
+
+// The decisive one: a captured payment on a booking nobody confirmed is still
+// not a confirmation. If this ever flips, the return page and the account page
+// both start congratulating customers on bookings that were never checked.
+ok(
+  "a captured deposit on an unconfirmed booking does not read as confirmed",
+  bookingStateFromRow({ status: "requested", deposit_status: "captured" }) !== "confirmed"
+);
+ok(
+  "a declined booking whose hold could not be released still reads as declined",
+  bookingStateFromRow({ status: "declined", deposit_status: "failed" }) === "declined"
+);
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

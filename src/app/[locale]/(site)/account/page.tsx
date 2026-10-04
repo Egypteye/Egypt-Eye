@@ -8,6 +8,8 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { claimGuestReservations } from "@/lib/reservations/claimGuestReservations";
 import { DiscountOfferCard } from "./DiscountOfferCard";
 import { JourneyList } from "./JourneyList";
+import { BookingCard } from "./BookingCard";
+import { bookingStateFromRow } from "@/lib/booking/states";
 import { T, trAll } from "@/i18n/T";
 
 // Auth-gated: this segment reads the signed-in user server-side, so it must
@@ -15,6 +17,13 @@ import { T, trAll } from "@/i18n/T";
 // from cookie access, so a build missing the Supabase env vars fails loudly
 // instead of silently shipping a cached logged-out page.
 export const dynamic = "force-dynamic";
+
+/** The product a deposit booking is for, from the snapshot written at booking time. */
+function bookingTitle(row: { journey_snapshot: unknown }): string {
+  const snapshot = Array.isArray(row.journey_snapshot) ? row.journey_snapshot : [];
+  const first = snapshot[0] as { title?: unknown } | undefined;
+  return typeof first?.title === "string" ? first.title : "Your booking";
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   const ui = await trAll(["My Account"]);
@@ -36,6 +45,13 @@ type ReservationRow = {
   id: string;
   reference: string;
   status: string;
+  product_type: string | null;
+  product_slug: string | null;
+  starts_at: string | null;
+  slot_label: string | null;
+  deposit_amount: number | null;
+  deposit_status: string | null;
+  journey_snapshot: unknown;
   trip_start_date: string | null;
   travelers_adults: number;
   travelers_children: number;
@@ -101,7 +117,7 @@ export default async function AccountPage() {
     supabase
       .from("reservations")
       .select(
-        "id, reference, status, trip_start_date, travelers_adults, travelers_children, subtotal_estimate, discount_amount, total_estimate, created_at"
+        "id, reference, status, trip_start_date, travelers_adults, travelers_children, subtotal_estimate, discount_amount, total_estimate, created_at, product_type, product_slug, starts_at, slot_label, deposit_amount, deposit_status, journey_snapshot"
       )
       .order("created_at", { ascending: false }),
     supabase
@@ -184,7 +200,21 @@ export default async function AccountPage() {
               </p>
             ) : (
               <div className="flex flex-col gap-3">
-                {typedReservations.map((r) => (
+                {typedReservations.map((r) =>
+                  // A deposit booking has states an ordinary reservation does
+                  // not, and the difference between "held" and "confirmed" is
+                  // the whole point — so it gets a card that says which.
+                  r.product_type ? (
+                    <BookingCard
+                      key={r.id}
+                      reference={r.reference}
+                      state={bookingStateFromRow(r)}
+                      title={bookingTitle(r)}
+                      startsAt={r.starts_at}
+                      slotLabel={r.slot_label}
+                      depositAmount={r.deposit_amount}
+                    />
+                  ) : (
                   <div key={r.id} className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-black/5 bg-cream p-5 shadow-sm">
                     <div>
                       <p className="font-mono text-sm font-semibold text-ink">{r.reference}</p>
@@ -198,7 +228,8 @@ export default async function AccountPage() {
                       {STATUS_LABEL[r.status] ?? r.status}
                     </span>
                   </div>
-                ))}
+                  )
+                )}
               </div>
             )}
           </div>

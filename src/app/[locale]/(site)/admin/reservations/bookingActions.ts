@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireReservationsStaff } from "@/lib/auth/session";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { paymentProvider } from "@/lib/booking/paymentProvider";
-import { canTransition, type BookingState } from "@/lib/booking/states";
+import { bookingStateFromRow, canTransition } from "@/lib/booking/states";
 import { sendIdempotentEmail } from "@/lib/email/idempotent";
 import { bookingConfirmedEmail, bookingDeclinedEmail } from "@/lib/email/templates";
 
@@ -31,15 +31,6 @@ type Row = {
   starts_at: string | null;
   slot_label: string | null;
 };
-
-/** The booking's state in the vocabulary the rules are written in. */
-function toBookingState(row: Pick<Row, "status" | "deposit_status">): BookingState {
-  if (row.status === "confirmed") return "confirmed";
-  if (row.status === "declined") return "declined";
-  if (row.status === "cancelled") return "cancelled";
-  if (row.status === "checking") return "checking";
-  return row.deposit_status === "authorized" ? "held" : "awaitingDeposit";
-}
 
 function productTitle(row: Row): string {
   const snapshot = Array.isArray(row.journey_snapshot) ? row.journey_snapshot : [];
@@ -80,7 +71,7 @@ export async function confirmBooking(reservationId: string): Promise<BookingActi
   const row = await load(reservationId);
   if (!row) return { ok: false, message: "That booking no longer exists." };
 
-  const from = toBookingState(row);
+  const from = bookingStateFromRow(row);
   if (!canTransition(from, "confirmed")) {
     return { ok: false, message: `A booking that is "${from}" cannot be confirmed.` };
   }
@@ -164,7 +155,7 @@ export async function declineBooking(reservationId: string, reason?: string): Pr
   const row = await load(reservationId);
   if (!row) return { ok: false, message: "That booking no longer exists." };
 
-  const from = toBookingState(row);
+  const from = bookingStateFromRow(row);
   if (!canTransition(from, "declined")) {
     return { ok: false, message: `A booking that is "${from}" cannot be declined.` };
   }
@@ -227,7 +218,7 @@ export async function markBookingChecking(reservationId: string): Promise<Bookin
   await requireReservationsStaff();
   const row = await load(reservationId);
   if (!row) return { ok: false, message: "That booking no longer exists." };
-  if (!canTransition(toBookingState(row), "checking")) {
+  if (!canTransition(bookingStateFromRow(row), "checking")) {
     return { ok: false, message: "Only a booking with a held deposit can be marked as being checked." };
   }
   await createAdminSupabaseClient()

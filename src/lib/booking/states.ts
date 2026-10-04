@@ -111,3 +111,20 @@ export function canTransition(from: BookingState, to: BookingState): boolean {
 export function holdsFunds(state: BookingState): boolean {
   return state === "held" || state === "checking";
 }
+
+/**
+ * The state of a reservation row, in the vocabulary these rules are written
+ * in.
+ *
+ * Lives here rather than beside either caller because the admin panel and the
+ * customer's account page must agree about what a booking is. Two copies of
+ * this mapping would be two chances for a customer to be told one thing while
+ * the desk sees another.
+ */
+export function bookingStateFromRow(row: { status: string; deposit_status?: string | null }): BookingState {
+  if (row.status === "confirmed") return "confirmed";
+  if (row.status === "declined") return "declined";
+  if (row.status === "cancelled") return "cancelled";
+  if (row.status === "checking") return "checking";
+  return row.deposit_status === "authorized" ? "held" : "awaitingDeposit";
+}
