@@ -2,6 +2,15 @@ import type { NextConfig } from "next";
 import { storyRedirectRules } from "./src/content/redirectedStories";
 
 const nextConfig: NextConfig = {
+  // The dev server only trusts the hostname it was started with, and blocks
+  // cross-origin requests to dev assets — so opening http://127.0.0.1:3000
+  // when it started on localhost returns 403 for every JS chunk, and the page
+  // renders without ever hydrating. Listing both spellings means either
+  // address works. Add a LAN IP here too if you test on a phone.
+  //
+  // Development only; `next build` ignores it.
+  allowedDevOrigins: ["localhost", "127.0.0.1"],
+
   // Full Next.js server mode (Vercel) — needed for the embedded Sanity
   // Studio at /studio and for content to update without a manual rebuild.
   // If the site ever moves back to static shared hosting with no CMS,
@@ -51,13 +60,31 @@ const nextConfig: NextConfig = {
     // bootstrap and this site's inline JSON-LD <script> tags — a stricter,
     // nonce-based policy is possible but needs middleware + per-page nonce
     // plumbing this pass doesn't attempt.
+    // `next dev` cannot run under this policy, and the failure is silent in a
+    // way that wastes real time: React's development build uses eval() for
+    // its debugging features, so with no 'unsafe-eval' React never hydrates
+    // and every interactive component on the site is inert locally — buttons
+    // that do nothing, forms that never submit, and no error that names the
+    // cause. Hot reload needs a WebSocket that connect-src also blocks.
+    //
+    // Both are relaxed for development ONLY. The check is `=== "development"`
+    // rather than `!== "production"` deliberately: an unset or unexpected
+    // NODE_ENV must fall through to the strict policy, because the failure
+    // mode of guessing wrong here is shipping eval() to real visitors.
+    //
+    // `next build` and `next start` both set NODE_ENV=production, so a
+    // deployed site never sees these. scripts/check-csp.mts asserts that.
+    const isDev = process.env.NODE_ENV === "development";
+    const devScript = isDev ? " 'unsafe-eval'" : "";
+    const devConnect = isDev ? " ws: http://localhost:* http://127.0.0.1:*" : "";
+
     const publicCsp = [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'",
+      `script-src 'self' 'unsafe-inline'${devScript}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: https://cdn.sanity.io https://images.pexels.com https://*.supabase.co",
       "font-src 'self' data:",
-      "connect-src 'self' https://*.supabase.co",
+      `connect-src 'self' https://*.supabase.co${devConnect}`,
       "frame-src 'self' https://www.youtube.com https://player.vimeo.com",
       "frame-ancestors 'self'",
       "base-uri 'self'",
