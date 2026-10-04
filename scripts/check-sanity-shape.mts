@@ -18,7 +18,7 @@
  *
  * So this file asserts against the shape Sanity actually returns.
  */
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import type { DestinationHub, Experience, Photoshoot, SignatureExperience, Tour } from "../src/content/types";
 import {
   hardenDestinationHub,
@@ -111,6 +111,35 @@ const nestedTour = hardenExperience({
   relatedTours: [{ slug: "t", destinations: null }],
 } as unknown as Experience);
 ok("a nested related tour is hardened too", Array.isArray(nestedTour.relatedTours?.[0]?.destinations));
+
+// ---------------------------------------------------------------------------
+// Every document type needs a way into it in the Studio.
+//
+// src/sanity/structure.ts is an explicit list with no fallback to
+// documentTypeListItems(), so a schema type that is not named there simply
+// has no entry in the sidebar. That is how Take Egypt Home shipped: schemas,
+// documents and migration all in place, and no way to reach any of it without
+// a developer, which was the one thing the section was asked to avoid.
+// ---------------------------------------------------------------------------
+const structure = readFileSync(new URL("../src/sanity/structure.ts", import.meta.url), "utf8");
+const schemaDir = new URL("../src/sanity/schemaTypes/", import.meta.url);
+
+const documentTypes = new Set<string>();
+for (const file of readdirSync(schemaDir)) {
+  if (!file.endsWith(".ts") || file === "index.ts") continue;
+  const src = readFileSync(new URL(file, schemaDir), "utf8");
+  for (const m of src.matchAll(/name:\s*"(\w+)",[\s\S]{0,120}?type:\s*"document"/g)) {
+    documentTypes.add(m[1]);
+  }
+}
+
+ok("no document types found, so this check is asserting nothing", documentTypes.size > 0);
+for (const type of documentTypes) {
+  ok(
+    `the "${type}" document type has no entry in the Studio sidebar — it cannot be reached in structure.ts`,
+    new RegExp(`"${type}"`).test(structure)
+  );
+}
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

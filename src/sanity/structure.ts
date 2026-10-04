@@ -48,6 +48,16 @@ export const structure: StructureResolver = (S) =>
       S.divider(),
       S.documentTypeListItem("destinationHub").title("✦ Explore Egypt Destinations"),
       S.divider(),
+      // Take Egypt Home. These were missing from this list entirely until
+      // now: the schemas and the documents existed, but with no entry here
+      // there was no way to reach them in the Studio, which made the whole
+      // section unmanageable without a developer — the opposite of the point.
+      S.listItem()
+        .title("✦ Take Egypt Home — Landing Page")
+        .child(S.document().schemaType("takeEgyptHomePage").documentId("takeEgyptHomePage")),
+      S.documentTypeListItem("treasureCategory").title("✦ Take Egypt Home — Categories"),
+      S.documentTypeListItem("treasureProduct").title("✦ Take Egypt Home — Products"),
+      S.divider(),
       S.documentTypeListItem("tour").title("Tours"),
       S.documentTypeListItem("experience").title("Extra Experiences"),
       S.documentTypeListItem("photoshoot").title("Photoshoot Packages"),
