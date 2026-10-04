@@ -5,9 +5,12 @@ inquiry that already works.
 
 ## Status
 
-**A design, not shipped code.** Nothing in this document exists yet. It is
-written to be argued with before anything is built — the open questions at the
-end are real, and two of them change the shape of the whole thing.
+**A design, not shipped code.** Nothing here exists yet.
+
+Revised after a research pass into PayPal's current APIs, how tour and activity
+platforms actually handle manually-confirmed bookings, and UK/EU consumer law
+on deposits. That research **changed two recommendations in the first draft** —
+both are called out below under *What the research changed*.
 
 ## This is not a new system
 
@@ -30,95 +33,224 @@ Designing it as a separate "bookings" feature would fork the status machine,
 the account page, the admin list and the emails, and the two would drift. They
 always do.
 
-## The conflict to resolve first
+## What the research changed
 
-The site already publishes a deposit policy, in `content/site.ts`,
-`content/faqHub.ts` and `content/customizePage.ts`:
+Two positions from the first draft did not survive contact with the evidence.
+
+### 1. Flat beats proportional — for a reason neither of us raised
+
+The first draft argued for a proportional 20% deposit. That was wrong, and the
+reason is legal rather than commercial.
+
+Under the **Consumer Rights Act 2015**, a non-refundable sum must be a *genuine
+pre-estimate of loss*, proportionate and transparent, or it risks being an
+unenforceable penalty. The CMA's position is that keeping a substantial
+prepayment in full, regardless of what the cancellation actually cost, is
+likely to be unfair. And the **revised EU Package Travel Directive** moves
+toward capping prepayments at **25% unless a higher one is justified**.
+
+The asymmetry matters: 20% of a $3,000 journey is $600 held against a
+cancellation that may have cost Egypt Eye nothing yet. A **flat $50** is
+trivially defensible as the real cost of holding a date and doing the
+admin — and it is the same number whether the trip is $200 or $5,000.
+
+So the instinct in the brief was better than the first draft's advice. **Flat,
+per-product, modest.** The proportional rule is dropped.
+
+### 2. Do not take the money — hold it
+
+This is the larger change, and it dissolves most of the brief's worries at
+once rather than managing them with wording.
+
+PayPal's Orders API supports `intent: "AUTHORIZE"`, which **places a hold on
+the funds without moving them**. The authorization is valid for 29 days, with a
+3-day "honor period" in which capture has the highest success rate. Capture
+happens later, with the Payments API; an authorization that is never captured
+is simply **voided** and the hold disappears.
+
+This is what the platforms already do. Hipcamp holds funds when a request is
+submitted and only captures when the host accepts. Viator, TourRadar and
+Bookaway all distinguish instant-confirmation products from ones where *"your
+payment method will show a pending charge, and the payment is only completed
+once the operator confirms your spot"* — with manual confirmation typically
+quoted as 1–3 business days.
+
+Applied here:
+
+| Worry in the brief | What authorize-don't-capture does to it |
+|---|---|
+| "I don't want to promise an instant refund we can't support" | There is nothing to refund. Voiding a hold is instant and reliable; refunds are slow and messy |
+| "A payment succeeds but the booking cannot be confirmed" | The money never left the customer. The hold lapses |
+| "Never tell the customer it is confirmed just because PayPal succeeded" | The customer's own statement says *pending*. The payment rail tells the truth for you |
+| "Be transparent that a human confirms it" | A pending charge is the most honest possible signal that something is still being decided |
+
+The transparency the brief asks for stops being a wording exercise and becomes
+a property of the system.
+
+**And it sets the SLA.** Capture is most reliable inside PayPal's 3-day honor
+period, so the operational rule writes itself: *confirm or void within 72
+hours, and promise 48.* That is a real number derived from the payment rail,
+not a guess about how fast one person can work.
+
+The cost is that this needs the Orders API and the PayPal JS SDK rather than a
+hosted payment link — because a payment link is a "pay me now" instrument and
+captures immediately. That is the trade: a somewhat larger build in exchange
+for never owing anyone a refund for a date you could not confirm.
+
+## The three paths, honestly compared
+
+| | A. Manual PayPal links | B. Payment Links API | C. Authorize, capture on confirm |
+|---|---|---|---|
+| Build | none | small | moderate |
+| Reconciliation | by hand, against name/email | `return_url` + webhook | `custom_id` + webhook |
+| Money on an unconfirmable date | captured, must refund | captured, must refund | never moved, just voided |
+| Customer's statement says | charged | charged | **pending** |
+| "Confirmed" risk | high — payment looks final | high | low — the rail says pending |
+| Dispute exposure | highest | high | lowest |
+
+**Recommendation: C.** Not because it is more sophisticated, but because A and
+B both require building a refund process, a refund policy and careful wording
+to compensate for taking money too early — and C removes the need for all
+three. The extra build in C is roughly the refund handling that A and B need
+anyway.
+
+There is a fourth path worth naming to dismiss it: **request first, pay after
+confirmation.** It is the most honest of all and the simplest to build, but it
+collapses into the WhatsApp inquiry you already have — Egypt Eye does the
+availability work before anyone has committed to anything, which is the exact
+cost the deposit exists to avoid. A free request is not a commitment signal.
+
+## Payment verification: the rule that matters
+
+**A customer landing back on your `return_url` is not proof of payment.** It is
+a browser redirect. It can be replayed, bookmarked, interrupted by a dropped
+connection, or simply never reached by someone who paid and closed the tab.
+
+Payment state must come from one of two places:
+
+1. a **verified webhook** — `PAYMENT.CAPTURE.COMPLETED`, `PAYMENT.CAPTURE.DENIED`,
+   and the authorization events — with the signature verified, either by the
+   CRC32 method or by posting the payload and headers back to PayPal's
+   verify-signature endpoint; or
+2. a **server-side lookup** of the order or authorization at the moment you
+   need to trust it.
+
+The `return_url` is only ever used to show the customer a friendly page. It
+never writes payment state.
+
+`custom_id` is the reconciliation key: a caller-provided value that comes back
+on the webhook and appears in settlement reports, and is not shown to the
+payer. It carries the reservation `reference`, which already exists and is
+already unique.
+
+*(One thing I could not verify: whether the Payment Links API
+(`POST /v1/checkout/payment-resources`) accepts `custom_id`. It is documented
+on Orders API `purchase_units`, and PayPal's own developer site is unreachable
+from this environment for a direct read. If path B is ever chosen, confirm that
+field before relying on it — without it, reconciliation falls back to manual
+matching.)*
+
+## The published policy has to change
+
+The site currently says, in `content/site.ts`, `content/faqHub.ts` and
+`content/customizePage.ts`:
 
 > A 20% down payment secures your reservation and is non-refundable. The
 > remaining balance can be paid in cash or via PayPal at the end of the day or
 > tour.
 
-A flat $50 contradicts that in every one of those places:
+The first draft tried to preserve that line by making the deposit
+proportional. The research says the opposite: a flat, modest deposit is the
+*more* defensible instrument, so the published line is the thing that should
+move.
 
-- the 1 Day Giza Tour is $89, so 20% is **$17.80** — a flat $50 is nearly three
-  times the published rate;
-- a $3,000 custom journey would be held on **1.7%**, which is not a commitment.
+It needs to change anyway, for a reason independent of the amount: it says
+*non-refundable* without distinguishing the customer cancelling from Egypt Eye
+being unable to confirm, and under the hold model nothing is charged until a
+date is confirmed at all. The sentence describes a system that will no longer
+exist.
 
-This is not a checkout detail. It is a published promise, quoted on tour pages,
-in the FAQ and on the Customize page, and the FAQ system has a build check
-(`check:faqs`) specifically to stop policy text drifting between surfaces.
+This is a content change in three files plus `content/cancellationPolicy.ts`,
+with `check:faqs` already watching for drift between the surfaces that quote
+it. It is not a large job, but it has to land **before** the first deposit is
+taken, not after.
 
-Two honest ways out, and only two:
+## Price is a presentation problem, not a deposit problem
 
-1. **Keep the published policy and make the deposit proportional.** 20% where a
-   price exists; a flat holding fee only where one genuinely does not. Same
-   mechanism, honest in every case, nothing to rewrite.
-2. **Move to a flat deposit everywhere** — a legitimate business decision, but
-   then it is a *policy change made in those three content files first*, and
-   the FAQ, the Customize page and every tour sidebar change with it.
+The deposit is a fixed amount per product and does not depend on the price.
+What the price changes is how the deposit is *explained* — and the brief is
+right that the second case is the more interesting one.
 
-This document assumes (1), because it needs no promise to be withdrawn.
-
-## Which products actually lack a price
-
-The concept assumes *"a large part of the website does not show a final price"*.
-Measured against the content files, that is true of one category and not the
-others:
+Measured against the content files:
 
 | | Priced | Where the price lives |
 |---|---|---|
 | Tours (visible) | **31 / 31** | `content/tours.ts` |
 | Photoshoots | **6 / 6** | `content/photoshoots.ts` |
-| Weekly Trips | **7 / 7** | `trip_departures` in Supabase, per departure — not the content file |
+| Weekly Trips | **7 / 7** | `trip_departures` in Supabase, per departure |
 | Extra Experiences | **5 / 23** | `content/experiences.ts` |
 
-So the unpriced population is **18 Extra Experiences** — the camel ride, the
+So "no public price" is true of **18 Extra Experiences** — the camel ride, the
 Fayoum and Siwa experiences, the Luxor balloon, Abu Simbel, the Hurghada and
-Marsa Alam boat trips — plus custom journeys built through `/customize` and the
-reserve wizard, which have no fixed price by definition.
+Marsa Alam boat trips — plus custom journeys. Tours and photoshoots are fully
+priced, and Weekly Trips are priced per departure rather than per trip.
 
-That matters, because it means the proportional rule covers **44 of the 60
-bookable products** without needing a flat fee at all, and the flat holding fee
-is the exception rather than the norm. A design built the other way round —
-flat fee first, proportional as a special case — would be solving for the
-smaller half.
+Two presentations, chosen by whether a price exists:
 
-Weekly Trips are the subtle one: they are priced, but the price is a property of
-the *departure*, not the trip, so a deposit for them is 20% of
-`trip_departures.price_usd` for the date chosen, and it changes with the date.
+**When the total is known:**
+
+> Total — $199
+> Deposit to secure your date — $50
+> Remaining balance — $149, payable after your experience
+
+**When it is not:**
+
+> Deposit to secure your booking — $50
+> Your final itinerary and price are confirmed with you separately.
+> This $50 is credited toward your final price.
+
+The second is the more valuable pattern for Egypt Eye, and it is honest in a
+way a fake "from" price would not be: it says plainly that the price is still
+to be agreed, while giving the customer one exact number they are committing
+to now. The thing that makes it work is that **the one number shown is the
+only number being charged** — which is precisely what the hold model
+guarantees.
+
+Both presentations must state that the deposit is credited, because an
+uncredited deposit is a fee, and a fee needs saying out loud.
 
 ## The amount is data, not a constant
 
-Hardcoding any number is the mistake. The deposit belongs on the product, as
-`depositUsd`, editable in the Studio, with a site-wide default in Site Settings
-and a rule applied when the field is unset:
+A fixed deposit per product, editable in the Studio as `depositUsd`, with a
+site-wide default in Site Settings for anything unset. The brief's tiers —
+$25, $50, $100 — are business numbers and belong where business numbers are
+edited, not in a constant in the codebase.
 
-- product has a price → 20% of it, rounded to whole dollars (for a Weekly
-  Trip, 20% of the chosen departure's price, which varies by date);
-- product has no price → the site-wide flat holding fee, which today means the
-  18 unpriced Extra Experiences and custom journeys;
-- product is not bookable this way → no deposit, no button (see below).
+Weekly Trips are the one case that may want the deposit per *departure* rather
+than per trip, since a longer or more expensive departure may justify a larger
+hold. `trip_departures` is where that would live, alongside `price_usd`.
 
-That keeps a $89 day tour asking $18, a weekly trip asking 20% of its real
-price, and a custom journey asking the flat fee to hold a date — from one rule,
-with no per-product arithmetic for anyone to get wrong.
+A product with no deposit set and no default gets no button, which is the
+correct failure: silence rather than a guess at what someone should be charged.
 
 ## Three things the idea gets wrong
 
-### Taking money before confirming needs a refund rule the policy does not have
+### The published "non-refundable" policy needs narrowing
 
-If someone pays to secure 14 November and the photographer turns out to be
-booked, keeping that money is indefensible, and PayPal will side with the
-customer. The current policy — *deposits are non-refundable* — does not
-distinguish the two cases that matter:
+The site currently says, flatly, *"Deposits and payments are non-refundable."*
+Three problems:
 
-- **the customer changes their mind** → non-refundable, as published, and
-  defensible: costs are committed on their behalf;
-- **Egypt Eye cannot confirm the date** → refunded in full, always.
+- it is the kind of blanket term the CRA treats as vulnerable, because it keeps
+  the money regardless of what the cancellation actually cost;
+- it does not distinguish the customer cancelling from **Egypt Eye being unable
+  to confirm**, and keeping money in the second case is indefensible under any
+  reading;
+- under path C it is largely moot, because nothing is captured until a date is
+  confirmed — but the words still need to match the system.
 
-That second line is what makes taking money before confirming honest, and it
-has to appear at the payment step, not only on `/cancellation-policy`.
+The replacement is narrower and stronger: *the deposit is non-refundable if you
+cancel, because the date was held for you and costs were committed; it is never
+taken at all if we cannot confirm your date.*
 
 ### A deposit is a hold, not a confirmation
 
@@ -168,21 +300,33 @@ Extend `reservations` rather than adding a table:
 
 ```sql
 alter table public.reservations
-  add column if not exists deposit_amount  numeric check (deposit_amount >= 0),
-  add column if not exists deposit_status  text not null default 'not_required'
-    check (deposit_status in ('not_required','awaiting','paid','refunded')),
-  add column if not exists deposit_paid_at timestamptz,
-  add column if not exists deposit_txn     text;  -- PayPal transaction, entered by the desk
+  add column if not exists deposit_amount   numeric check (deposit_amount >= 0),
+  add column if not exists deposit_status   text not null default 'not_required'
+    check (deposit_status in
+      ('not_required','awaiting','authorized','captured','voided','refunded','failed')),
+  add column if not exists deposit_held_at  timestamptz,  -- authorization created
+  add column if not exists deposit_paid_at  timestamptz,  -- capture completed
+  add column if not exists paypal_order_id  text,
+  add column if not exists paypal_auth_id   text,         -- void or capture this
+  add column if not exists paypal_capture_id text;        -- refund this, if ever
 ```
 
-and extend the existing `status` check with `'held'`.
+and extend the `status` check with `'checking'` and `'declined'`.
 
-`reference` is already unique and already human-readable; it becomes the
-booking reference the customer quotes and the desk matches against. Nothing new
-needs generating.
+`deposit_status` carries the money; `status` carries the booking. They are
+deliberately separate, because the whole point is that a held deposit does not
+imply a confirmed booking.
 
-Writes stay service-role only, exactly as the existing comment in `0001_init`
-requires — a deposit amount must never be writable from a browser.
+`paypal_auth_id` is the operationally important one: it is what gets captured
+on confirmation and voided on decline, and it expires. A booking whose
+authorization is older than 72 hours with no decision needs to appear at the
+top of the admin list, not quietly rot.
+
+`reference` already exists, is already unique and already human-readable. It
+becomes `custom_id` on the PayPal order, so the webhook can find the booking.
+
+Writes stay service-role only, as `0001_init` already requires — a deposit
+amount or a payment state must never be writable from a browser.
 
 ## The order of operations
 
@@ -190,40 +334,38 @@ requires — a deposit amount must never be writable from a browser.
 most important decision in the design.
 
     1. customer picks date / people / name / email
-    2. review: what is charged now, what is not, what happens next
+    2. review: what is held, what is not charged, what happens next
     3. POST /api/reservations  →  row created, deposit_status 'awaiting'
-    4. reference shown, PayPal link opened
-    5. customer returns to a page that knows what they just did
+    4. PayPal buttons render; the order carries custom_id = reference
+    5. approval → authorization held → 'authorized', nothing charged
+    6. a human confirms (capture) or declines (void)
 
 If the row were created after payment, every abandoned checkout would be
 invisible, and anyone who paid and then closed the tab would have paid for a
 booking that does not exist. Creating it first means an unpaid booking is a
 *lead the desk can follow up*, rather than nothing at all.
 
-## Reconciling PayPal
+## The integration, concretely
 
-This is the real constraint, and it deserves to be stated plainly: **a static
-PayPal link does not say which booking paid.** Twenty $50 payments arrive and
-nothing maps them to twenty reservations.
+1. **Create the booking first.** `POST /api/reservations` writes the row with
+   `deposit_status: 'awaiting'` before PayPal is involved at all. An abandoned
+   payment is then a lead to follow up, not a void.
+2. **Create the order server-side** with `intent: "AUTHORIZE"`, the deposit
+   amount, and `custom_id` set to the reservation `reference`.
+3. **PayPal JS SDK buttons** on the secure page. On approval, the server
+   authorizes and stores `paypal_auth_id`, moving `deposit_status` to
+   `authorized`.
+4. **The webhook is the source of truth.** A verified
+   `PAYMENT.AUTHORIZATION.CREATED` / `.VOIDED` / `PAYMENT.CAPTURE.COMPLETED` /
+   `.DENIED` writes the state. The `return_url` only renders a page.
+5. **Admin confirms** → capture the authorization → `captured` + `confirmed`,
+   confirmation email sent. **Admin declines** → void → `voided` + `declined`,
+   alternatives email sent.
 
-| Approach | How | When |
-|---|---|---|
-| **Manual, by reference** | the reference is shown prominently and the customer is asked to put it in the PayPal note; the desk matches and marks it paid in `/admin/reservations` | **Start here** |
-| PayPal Smart Buttons | the JS SDK with `custom_id` set to the reference, so payment and booking arrive linked | the right second step |
-| Webhooks | payment confirms the booking without anyone looking | only once volume justifies it |
-
-Manual is genuinely adequate at current volume, and it keeps a human at the one
-moment a human should be there: deciding whether the trip can actually run. The
-work is one click per booking, and the alternative is an integration that has
-to be maintained before it is needed.
-
-Nothing above paints the later steps into a corner: the reference is in the
-payment either way, so moving to `custom_id` later changes how it gets there,
-not what it means.
-
-**No card data ever touches the site.** PayPal-only keeps this entirely out of
-PCI scope, and that should be treated as a design constraint rather than an
-accident.
+The webhook handler must be **idempotent** — PayPal retries, and the same event
+will arrive twice. Keying on the PayPal event id and ignoring repeats is the
+whole of it, and `lib/email/idempotent.ts` already establishes that pattern in
+this codebase.
 
 ## A page, not a popup
 
@@ -237,21 +379,64 @@ A light page at `/secure/[type]/[slug]` keeps every one of those and loses
 nothing that matters — the speed comes from asking three things, not from
 rendering in a layer above the page.
 
-## What the customer sees
+## Five states, never collapsed into two
 
-Four fields at most: date, how many people, name, email. A signed-in customer
-sees name and email already filled.
+The brief asks for these to stay distinct, and it is right — most of the
+confusion in the industry complaints comes from collapsing 1 and 4.
 
-Then a review step that states, in plain words and before any commitment:
+| # | State | `status` / `deposit_status` | What the customer is told |
+|---|---|---|---|
+| 1 | Booking request received | `requested` / `not_required` | "We have your request." |
+| 2 | Payment held | `requested` / `authorized` | "Your deposit is held — not yet charged." |
+| 3 | Availability being checked | `checking` / `authorized` | "Our team is confirming your date." |
+| 4 | Booking confirmed | `confirmed` / `captured` | "Confirmed. Your deposit has now been charged." |
+| 5 | Cannot be confirmed | `declined` / `voided` | "We could not confirm that date. The hold has been released; here are alternatives." |
 
-- the exact amount charged now, and that it is credited against the final price;
-- that the final price is not set yet, where that is true;
-- that the date is **held**, not confirmed, and when they will hear;
-- that the deposit is refunded in full if Egypt Eye cannot confirm;
-- that it is not refunded if they cancel.
+**State 4 is the only one that may use the word "confirmed", and only a human
+moves a booking into it.** PayPal reporting a successful payment moves a
+booking from 1 to 2. Never further.
 
-Afterwards the booking is in their account immediately — including when they
-never pay, where it reads *awaiting deposit* with the link to finish.
+## The wording
+
+Drawn from how the platforms that do this well phrase it, adapted to Egypt
+Eye's voice — plain, calm, no exclamation marks, no false urgency.
+
+**Before paying**, on the secure page:
+
+> **This is not an instant booking.** A member of our team checks availability
+> for your date and confirms it personally — usually within 48 hours.
+>
+> Your card or PayPal account will show a **hold** for $50. Nothing is charged
+> until we confirm your date. If we cannot confirm it, the hold is released and
+> you are not charged at all.
+
+**Immediately after paying:**
+
+> **Your deposit is held and your request is with our team.**
+> We are confirming your date now. You will have an answer within 48 hours.
+> Nothing has been charged yet.
+
+**On confirmation:**
+
+> **Your date is confirmed.** Your $50 deposit has now been charged and is
+> credited against your final price.
+
+**When it cannot be confirmed:**
+
+> **We could not confirm 14 November.** The hold on your deposit has been
+> released — you have not been charged. Here are the nearest dates we can
+> offer.
+
+Three rules behind the wording: say *hold* rather than *payment* until capture;
+never use "confirmed" before state 4; and always state the time to the next
+human response, because the complaints in the research are almost all about
+silence rather than delay.
+
+## What the customer sees in their account
+
+The booking appears immediately — including when they abandon payment, where
+it reads *awaiting deposit* with a link to finish. Each state above has its own
+line, so the account page answers "what is happening" without an email.
 
 ## What the team sees
 
@@ -267,8 +452,7 @@ deposit amount and status added to it.
 
 **Weekly Trips.** Every departure already carries a real price
 (`trip_departures.price_usd`), a real capacity, an atomic seat booking and a
-fixed date, so the deposit is 20% of a number that already exists and nothing
-has to be invented. If the flow is wrong, that is
+fixed date, so the only new decision is the deposit figure itself. If the flow is wrong, that is
 discovered on seven trips rather than fifty-four products.
 
 Then one photoshoot, which is the other shape — a time slot rather than a seat.
@@ -278,34 +462,104 @@ Then decide whether it goes further.
 
 - **Live availability.** Not a code problem: it is a calendar somebody has to
   maintain daily. Until that is true, "held, we will confirm" is the honest
-  interface.
-- **Automated payment confirmation.** See the reconciliation table.
-- **Balance tracking, reminders, refund automation.** All real work whose value
-  depends on volume that does not exist yet.
-- **Card payments.** Out of PCI scope is a feature.
+  interface — and the research suggests customers accept it readily when the
+  wait is stated. Weekly Trips are the exception, since `trip_departures`
+  already knows its seat count, so those could confirm instantly later.
+- **Automatic booking confirmation.** The webhook is built, because payment
+  state must never be read from a browser redirect — but it only ever moves a
+  booking to *held*. A human moves it to *confirmed*. That is the whole point,
+  and it is a product decision rather than a missing feature.
+- **Balance tracking, reminders, refund automation.** Real work whose value
+  depends on volume that does not exist yet. Note that refund automation is
+  largely moot under the hold model: the common case is a void, not a refund.
+- **Taking card details ourselves.** PayPal Checkout already offers cards to
+  eligible customers, and no card data touching this site keeps it entirely out
+  of PCI scope. That is a constraint to defend, not an omission to fix.
 - **A deposit button on every product.** Per-product flag, off by default.
+
+## The policy, scenario by scenario
+
+The brief asked for seven situations. Under path C most of them stop being
+refund questions, which is the point.
+
+| Situation | What happens to the money | Why |
+|---|---|---|
+| **We cannot confirm the date** | Authorization voided. Never charged. | The customer gets nothing worse than a hold that lapses. Alternatives offered in the same message |
+| **The experience becomes unavailable** after confirmation | Full refund of the captured deposit, or transfer to a new date at the customer's choice | Egypt Eye caused this; the customer should be whole |
+| **We need to move the booking** | Customer chooses: new date, or full refund | Same reasoning |
+| **Customer cancels** before confirmation | Authorization voided, nothing charged | Nothing has been committed yet on either side |
+| **Customer cancels** after confirmation | Deposit retained | The date was held and costs committed. This is the one genuinely non-refundable case, and it is defensible precisely because the amount is small and fixed |
+| **Customer changes the date** | Deposit transfers once, free, if asked more than N days ahead | Transferable beats non-refundable for goodwill, and costs almost nothing. A repeat change is a cancellation |
+| **Customer does not respond** | Hold expires on its own; booking lapses to `declined` | No action needed, which is the right amount of work for silence |
+| **Payment succeeds but booking cannot be confirmed** | Cannot occur in the normal path — nothing is captured until confirmation. If a capture ever happens in error, it is refunded in full, immediately, as a bug | The structural fix for the brief's hardest case |
+
+Two principles underneath: **Egypt Eye's problem is never the customer's cost**,
+and **the customer's change of mind is their own cost** — but only to the
+extent of a small, disclosed, fixed amount.
+
+The abuse protection the brief asks for comes from the deposit existing at all.
+A fixed $25–$100 filters tyre-kickers without being worth gaming, and one free
+date change is cheap generosity that removes most of the reasons someone would
+argue.
 
 ## Legal, and the limit of this advice
 
-Taking deposits for multi-day trips that combine accommodation and transport
-may make them *packages* under EU and UK travel regulations, which carry real
-obligations — mandatory pre-contract information and insolvency protection
-among them. Egypt Eye's customers are international, so this is not
-hypothetical.
+Three findings from the research, none of which is a substitute for actual
+advice:
 
-This document cannot tell you where that line falls, and should not pretend to.
-It is worth proper advice before deposits go on multi-day journeys. It does not
-affect a photoshoot or a day tour.
+- **Non-refundable terms must be proportionate.** Under the Consumer Rights
+  Act 2015 a non-refundable sum must reflect genuine loss, be transparent and
+  be disclosed before payment, or it risks being an unenforceable penalty. The
+  CMA treats keeping a substantial prepayment regardless of actual cost as
+  likely unfair. A small fixed deposit sits comfortably inside this; a large
+  percentage does not.
+- **Prepayment caps are coming.** The revised EU Package Travel Directive moves
+  toward limiting prepayments to 25% unless a higher figure is justified. A
+  flat deposit well under that is aligned with where the rules are heading.
+- **Packages carry obligations beyond refunds.** Combining accommodation and
+  transport may make a trip a *package*, triggering pre-contract information
+  duties and insolvency protection. This is not hypothetical for an operator
+  selling to European travellers.
 
-## Open questions for Egypt Eye
+What that means practically: the deposit flow is low-risk for photoshoots, day
+tours and single experiences, and needs proper advice before it goes on
+multi-day journeys. That boundary happens to match the product scope
+recommended above, which is convenient but not a coincidence — the simple
+products are simple legally for the same reason they are simple operationally.
 
-1. **Proportional or flat?** If flat, the published 20% policy changes in three
-   content files first, and every surface quoting it changes with it.
-2. **What is N?** How many hours, truthfully, before a held date is confirmed
-   or refunded.
-3. **Which products get the button?** The recommendation is Weekly Trips,
-   photoshoots and fixed-price day tours only.
-4. **Is the deposit credited against the final price?** Assumed yes throughout;
-   it must be stated at the payment step either way.
-5. **Who refunds, and how fast,** when a date cannot be confirmed? The promise
-   is only as good as the operational answer.
+This document cannot tell you where the package line falls for Egypt Eye, and
+does not try to.
+
+## What is still open
+
+The first draft's five questions are now mostly settled by the brief and the
+research. What remains:
+
+1. **Confirm that `intent: "AUTHORIZE"` behaves as expected for the payment
+   methods Egypt Eye's customers actually use**, in the PayPal sandbox, before
+   anything is built on it. Card-funded holds through PayPal Checkout are the
+   case to test specifically. If holds turn out not to work for a meaningful
+   share of customers, path B plus a refund process is the fallback — and that
+   decision should be made on a sandbox test, not on this document.
+2. **The deposit per product.** The brief suggests $25 / $50 / $100 tiers.
+   These are business numbers, not technical ones, and they belong in the
+   Studio.
+3. **N, for the free date change.** "More than 14 days ahead" is a reasonable
+   default but it is Egypt Eye's call.
+4. **Rewriting the published policy.** The current "20% down payment,
+   non-refundable" line in `content/site.ts`, `content/faqHub.ts` and
+   `content/customizePage.ts` has to change to match whatever is built, and
+   `content/cancellationPolicy.ts` with it. That is a content change with a
+   `check:faqs` guard already watching it.
+
+## Sources
+
+- PayPal, [Payment Links and Buttons API](https://developer.paypal.com/payment-links-buttons/create-payment-link) — `POST /v1/checkout/payment-resources`, reusable links, `return_url`
+- PayPal, [Authorize and delay capture](https://developer.paypal.com/checkout/delay-capture) — `intent: "AUTHORIZE"`, 29-day validity, 3-day honor period, reauthorization
+- PayPal, [Webhooks](https://developer.paypal.com/api/rest/webhooks/rest) and [event names](https://developer.paypal.com/api/rest/webhooks/event-names) — signature verification, `PAYMENT.CAPTURE.COMPLETED` / `.DENIED`
+- PayPal, [Orders API use cases](https://developer.paypal.com/api/rest/integration/orders-api/api-use-cases/other-use-cases/) — `custom_id` / `invoice_id` reconciliation
+- Hipcamp, [instant book vs request to book](https://support.hipcamp.com/hc/en-us/articles/360024822412-What-s-the-difference-between-instant-book-and-request-to-book-sites) — funds held on request, captured on acceptance
+- TourRadar, [has my pending booking been confirmed](https://support.tourradar.com/en/customers/has-my-pending-booking-been-confirmed) and Bookaway, [what does pending mean](https://support.bookaway.com/hc/en-us/articles/4886079583645-What-does-it-mean-that-my-booking-is-pending) — pending-charge language, 1–3 business day manual confirmation
+- Guesty, [request to book vs instant booking](https://help.guesty.com/hc/en-gb/articles/17298869126429-Setting-a-listing-s-booking-options-instant-booking-or-request-to-book) — approval windows and auto-expiry
+- [Are non-refundable deposits legal in the UK](https://go-legal.ai/are-non-refundable-deposits-legal-in-the-uk-rights-guidance/) — CRA 2015, genuine pre-estimate of loss, CMA position
+- Council of the EU, [revised package travel directive](https://www.consilium.europa.eu/en/press/press-releases/2025/12/02/consumer-protection-council-and-parliament-strike-a-deal-on-revising-rules-on-package-travel/) — 25% prepayment limit, insolvency protection
