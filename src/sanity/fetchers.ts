@@ -5,6 +5,18 @@ import {
 import { client } from "./client";
 import { mergeTreasureCategoryWithLocal, sanityImageAlt } from "@/lib/treasureMerge";
 import {
+  hardenDestinationHub,
+  hardenDestinationHubs,
+  hardenExperience,
+  hardenExperiences,
+  hardenPhotoshoot,
+  hardenPhotoshoots,
+  hardenSignatureExperience,
+  hardenSignatureExperiences,
+  hardenTour,
+  hardenTours,
+} from "@/lib/sanityShape";
+import {
   aboutPageQuery,
   allSignatureExperienceSlugsQuery,
   contactPageQuery,
@@ -289,7 +301,9 @@ async function allToursInner(): Promise<Tour[]> {
   const result = await safeFetch<Tour[]>(toursQuery);
   return withTranslations(
     withLocalTranslations(
-      withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localTours) : localTours),
+      withValidSlugs(
+        result && result.length > 0 ? hardenTours(withLocalImageFallback(result, localTours), localTours) : localTours
+      ),
       tourTranslations
     )
   );
@@ -304,7 +318,7 @@ async function getToursInner(): Promise<Tour[]> {
 function mergeTourWithLocal(result: Tour | null, slug: string): Tour | undefined {
   const local = localTours.find((t) => t.slug === slug);
   if (!result) return local;
-  return result.image ? result : { ...result, image: local?.image };
+  return hardenTour(result.image ? result : { ...result, image: local?.image }, local);
 }
 
 async function getTourBySlugInner(slug: string): Promise<Tour | undefined> {
@@ -370,7 +384,7 @@ async function getExperiencesInner(): Promise<Experience[]> {
   const result = await safeFetch<Experience[]>(experiencesQuery);
   return withValidSlugs(
     result && result.length > 0
-      ? withLocalImageFallback(result, localExperiences)
+      ? hardenExperiences(withLocalImageFallback(result, localExperiences), localExperiences)
       : mergeExperienceRelations(localExperiences)
   );
 }
@@ -378,7 +392,7 @@ async function getExperiencesInner(): Promise<Experience[]> {
 function mergeExperienceWithLocal(result: Experience | null, slug: string): Experience | undefined {
   const local = localExperiences.find((e) => e.slug === slug);
   if (!result) return local && mergeExperienceRelations([local])[0];
-  const merged = result.image ? result : { ...result, image: local?.image };
+  const merged = hardenExperience(result.image ? result : { ...result, image: local?.image }, local);
   return mergeExperienceRelations([merged])[0];
 }
 
@@ -399,7 +413,11 @@ async function getPhotoshootsInner(): Promise<Photoshoot[]> {
   const result = await safeFetch<Photoshoot[]>(photoshootsQuery);
   return withTranslations(
     withLocalTranslations(
-      withValidSlugs(result && result.length > 0 ? withLocalImageFallback(result, localPhotoshoots) : localPhotoshoots),
+      withValidSlugs(
+        result && result.length > 0
+          ? hardenPhotoshoots(withLocalImageFallback(result, localPhotoshoots), localPhotoshoots)
+          : localPhotoshoots
+      ),
       photoshootTranslations
     )
   );
@@ -408,7 +426,7 @@ async function getPhotoshootsInner(): Promise<Photoshoot[]> {
 function mergePhotoshootWithLocal(result: Photoshoot | null, slug: string): Photoshoot | undefined {
   const local = localPhotoshoots.find((p) => p.slug === slug);
   if (!result) return local;
-  return result.image ? result : { ...result, image: local?.image };
+  return hardenPhotoshoot(result.image ? result : { ...result, image: local?.image }, local);
 }
 
 async function getPhotoshootBySlugInner(slug: string): Promise<Photoshoot | undefined> {
@@ -584,14 +602,16 @@ function withDerivedRelatedStories(story: Story): Story {
 async function getDestinationHubsInner(): Promise<DestinationHub[]> {
   const result = await safeFetch<DestinationHub[]>(destinationHubsQuery);
   return withValidSlugs(
-    result && result.length > 0 ? withLocalImageFallback(result, localDestinationHubs) : localDestinationHubs
+    result && result.length > 0
+      ? hardenDestinationHubs(withLocalImageFallback(result, localDestinationHubs), localDestinationHubs)
+      : localDestinationHubs
   );
 }
 
 function mergeDestinationHubWithLocal(result: DestinationHub | null, slug: string): DestinationHub | undefined {
   const local = localDestinationHubs.find((d) => d.slug === slug);
   if (!result) return local;
-  return result.image ? result : { ...result, image: local?.image };
+  return hardenDestinationHub(result.image ? result : { ...result, image: local?.image }, local);
 }
 
 async function getDestinationHubBySlugInner(slug: string): Promise<DestinationHub | undefined> {
@@ -801,7 +821,10 @@ async function getSignatureExperiencesInner(): Promise<SignatureExperience[]> {
   const result = await safeFetch<SignatureExperience[]>(signatureExperiencesQuery);
   return withValidSlugs(
     result && result.length > 0
-      ? withLocalHeroImageFallback(result, localSignatureExperiences)
+      ? hardenSignatureExperiences(
+          withLocalHeroImageFallback(result, localSignatureExperiences),
+          localSignatureExperiences
+        )
       : localSignatureExperiences
   );
 }
@@ -810,7 +833,10 @@ async function getSignatureExperienceBySlugInner(slug: string): Promise<Signatur
   const result = await safeFetch<SignatureExperience | null>(signatureExperienceBySlugQuery, { slug });
   const local = localSignatureExperiences.find((e) => e.slug === slug);
   if (!result) return local;
-  return result.heroImage ? result : { ...result, heroImage: local?.heroImage };
+  return hardenSignatureExperience(
+    result.heroImage ? result : { ...result, heroImage: local?.heroImage },
+    local
+  );
 }
 
 export async function getAllSignatureExperienceSlugs(): Promise<string[]> {

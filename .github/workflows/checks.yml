@@ -54,6 +54,15 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:stories
 
+      # A required field that Sanity returns as null, or that the projection
+      # never selected, crashes a page the moment a Studio document exists —
+      # which is how production lost two days. Every other check here reads
+      # the local content files, which are complete by construction, so this
+      # is the only one that sees it.
+      - name: Sanity content shape
+        if: ${{ !cancelled() }}
+        run: npm run check:shape
+
       # Weekly Trip slugs are referenced by trip_departures rows in Supabase,
       # which no typecheck can see. Renaming one silently orphans every
       # scheduled departure, so the slugs are pinned and this is what notices.
