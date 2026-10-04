@@ -1,5 +1,6 @@
 import "server-only";
 import { escapeHtml } from "./resend";
+import { REPLY_WINDOW, moneyState, replyPromise } from "@/lib/booking/wording";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 
@@ -1044,4 +1045,163 @@ export function treasureRequestConfirmationEmail({
   const text = `Hi ${name},\n\nThank you — we have your request${productName ? ` for the ${productName}` : ""} in ${categoryTitle}.\n\n${next}\n\nNothing has been charged, and nothing is confirmed yet.\n\n${SITE_URL}/take-egypt-home`;
 
   return { subject: `We have your ${categoryTitle.toLowerCase()} request`, html, text };
+}
+
+// ---------------------------------------------------------------------------
+// Deposit bookings — "Secure your date".
+//
+// The wording here is the same wording the site shows, and for the same
+// reason: the one failure mode that matters is a customer believing a date is
+// confirmed when a person has not yet looked at it. So neither of these emails
+// uses the word "confirmed" about the booking, both say what has and has not
+// been charged, and both give the time to the next human reply.
+//
+// See docs/booking-deposits.md and src/lib/booking/states.ts, which holds the
+// same rules for the on-site copy and has a check asserting them.
+// ---------------------------------------------------------------------------
+
+function formatSlot(startsAt: string, slotLabel?: string | null): string {
+  const date = new Date(startsAt).toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  return slotLabel ? `${date} · ${slotLabel}` : date;
+}
+
+export function bookingRequestCustomerEmail({
+  reference,
+  guestName,
+  productTitle,
+  startsAt,
+  slotLabel,
+  people,
+  depositUsd,
+}: {
+  reference: string;
+  guestName: string;
+  productTitle: string;
+  startsAt: string;
+  slotLabel?: string | null;
+  people: number;
+  depositUsd: number | null;
+}) {
+  const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
+  const when = formatSlot(startsAt, slotLabel);
+  const who = `${people} ${people === 1 ? "person" : "people"}`;
+
+  // Two genuinely different situations, and conflating them would mislead.
+  const money = moneyState(depositUsd ? `$${depositUsd}` : null);
+  const moneyLine = `<p style="margin:0 0 16px;">${escapeHtml(money)}</p>`;
+
+  const html = baseLayout({
+    preheader: `We have your request for ${productTitle} on ${when}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">${greeting}</p>
+      <p style="margin:0 0 16px;">We have your request — <strong>and a real person is now checking that date.</strong> This is not an instant booking, which is deliberate: we would rather confirm properly than confirm quickly.</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">What</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(productTitle)}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">When</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(when)}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">For</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(who)}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Reference</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(reference)}</strong></td></tr>
+      </table>
+      ${moneyLine}
+      <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
+      ${ctaButton("See your booking", `${SITE_URL}/account`)}
+    `,
+    footerHtml: `Quote ${escapeHtml(reference)} if you reply to this email. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${guestName.split(" ")[0] || guestName},`,
+    "",
+    "We have your request, and a real person is now checking that date. This is not an instant booking.",
+    "",
+    `What: ${productTitle}`,
+    `When: ${when}`,
+    `For: ${who}`,
+    `Reference: ${reference}`,
+    "",
+    money,
+    "",
+    replyPromise(),
+  ].join("\n");
+
+  return { subject: `We have your request — ${productTitle} (${reference})`, html, text };
+}
+
+export function bookingRequestTeamEmail({
+  reference,
+  productTitle,
+  productType,
+  startsAt,
+  slotLabel,
+  people,
+  guestName,
+  guestEmail,
+  guestPhone,
+  notes,
+  depositUsd,
+  accountState,
+}: {
+  reference: string;
+  productTitle: string;
+  productType: string;
+  startsAt: string;
+  slotLabel?: string | null;
+  people: number;
+  guestName: string;
+  guestEmail: string;
+  guestPhone?: string | null;
+  notes?: string | null;
+  depositUsd: number | null;
+  accountState: "signed-in" | "guest";
+}) {
+  const when = formatSlot(startsAt, slotLabel);
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(label)}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  const html = baseLayout({
+    preheader: `${productTitle} — ${when} — ${reference}`,
+    bodyHtml: `
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Deposit booking — needs a decision</p>
+      <p style="margin:0 0 16px;">${depositUsd ? `<strong>$${depositUsd} is held</strong>, not charged. Confirm to take it, or decline to release it.` : "<strong>No deposit</strong> — online deposits are not switched on, so this is a request only."}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("What", `${productTitle} (${productType})`)}
+        ${row("When", when)}
+        ${row("People", String(people))}
+        ${row("Name", guestName)}
+        ${row("Email", guestEmail)}
+        ${guestPhone ? row("Phone", guestPhone) : ""}
+        ${row("Account", accountState === "signed-in" ? "Signed in" : "Guest")}
+        ${row("Reference", reference)}
+      </table>
+      ${notes ? `<p style="margin:0 0 16px;"><em>${escapeHtml(notes)}</em></p>` : ""}
+      <p style="margin:0 0 16px;"><strong>The customer has been told they will hear within ${REPLY_WINDOW}.</strong>${depositUsd ? " A hold does not last indefinitely — decide well inside that window." : ""}</p>
+      ${ctaButton("Open in admin", `${SITE_URL}/admin/reservations`)}
+    `,
+    footerHtml: "Sent automatically when a deposit booking is created.",
+  });
+
+  const text = [
+    `Deposit booking — needs a decision`,
+    depositUsd ? `$${depositUsd} held, not charged.` : "No deposit (online deposits off).",
+    "",
+    `What: ${productTitle} (${productType})`,
+    `When: ${when}`,
+    `People: ${people}`,
+    `Name: ${guestName}`,
+    `Email: ${guestEmail}`,
+    guestPhone ? `Phone: ${guestPhone}` : "",
+    `Account: ${accountState}`,
+    `Reference: ${reference}`,
+    notes ? `\nNotes: ${notes}` : "",
+    "",
+    `The customer has been told they will hear within ${REPLY_WINDOW}.`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Booking · ${productTitle} · ${when} · ${reference}`, html, text };
 }

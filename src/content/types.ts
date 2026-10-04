@@ -810,6 +810,8 @@ export type ResolvedSiteSettings = {
   pillars: readonly { title: string; description: string }[];
   /** Manual override for the review figure shown on every product. */
   reviewsOverride?: { count?: number; score?: number };
+  /** Mirrors SiteSettings.defaultDepositUsd — see the note there. */
+  defaultDepositUsd?: number;
   trustStats?: {
     yearsInEgypt?: number;
     happyGuestsLabel?: string;

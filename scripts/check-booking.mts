@@ -12,6 +12,8 @@
  *      would be a broken promise rather than a free one.
  */
 import { presentDeposit, resolveDeposit, type BookableProduct } from "../src/lib/booking/deposit";
+import { disabledProvider, depositsEnabled } from "../src/lib/booking/paymentProvider";
+import { NOT_INSTANT, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import {
   canTransition,
   holdsFunds,
@@ -146,6 +148,82 @@ ok(
   "a null amount with a note still falls back to deposit-only",
   presentDeposit(50, { amount: null, note: "On request" }).kind === "depositOnly"
 );
+
+// ---------------------------------------------------------------------------
+// 5. The payment adapter.
+//
+// The default provider must fail honestly. A stub that pretended to succeed
+// would put "deposit held" in front of someone who has paid nothing, which is
+// the exact lie the design exists to prevent.
+// ---------------------------------------------------------------------------
+ok("the default provider is not enabled", disabledProvider.enabled === false);
+
+const hold = await disabledProvider.createHold({
+  reference: "EE-TEST",
+  amountUsd: 50,
+  description: "test",
+  returnUrl: "https://example.com/r",
+  cancelUrl: "https://example.com/c",
+});
+ok("the disabled provider refuses to create a hold", hold.ok === false);
+ok("a capture with no provider fails", (await disabledProvider.capture("auth")).ok === false);
+ok("a release with no provider fails", (await disabledProvider.release("auth")).ok === false);
+
+// The important one: with no configured secret there is no way to tell a real
+// event from a forged one, so an unverified webhook must be refused. Accepting
+// it would let anyone mark any booking as paid.
+ok(
+  "an unconfigured provider refuses every webhook",
+  (await disabledProvider.verifyWebhook(new Headers(), "{}")) === false
+);
+ok("depositsEnabled() is false until a provider is configured", depositsEnabled() === false);
+
+// ---------------------------------------------------------------------------
+// 6. The customer-facing sentences.
+//
+// Shared by the secure page, the acknowledgement email and the account page,
+// so they are asserted once, here, against the real strings. The email module
+// itself cannot be imported from a script — it is `server-only` — which is
+// exactly why the sentences live in their own module rather than inline.
+// ---------------------------------------------------------------------------
+ok("the not-instant notice says so plainly", /not an instant booking/i.test(NOT_INSTANT));
+ok("the not-instant notice names the reply window", /48 hours/.test(NOT_INSTANT));
+ok("the not-instant notice does not claim a confirmation", !claimsConfirmation(NOT_INSTANT));
+
+const withDeposit = moneyState("$50");
+ok("a held deposit is described as held, not charged", /held, not charged/i.test(withDeposit));
+ok("a held deposit says what happens if we cannot confirm", /released|not charged at all/i.test(withDeposit));
+ok("a held deposit sentence does not claim a confirmation", !claimsConfirmation(withDeposit));
+
+const withoutDeposit = moneyState(null);
+ok("with no deposit the customer is told nothing was charged", /nothing has been charged/i.test(withoutDeposit));
+ok("with no deposit no hold is mentioned", !/hold/i.test(withoutDeposit));
+
+ok("the reply promise names the window", /48 hours/.test(replyPromise()));
+ok("the reply promise offers alternatives", /nearest dates/i.test(replyPromise()));
+
+// The detector itself has to work, or every assertion above is vacuous. The
+// line it draws is between an assertion ("your booking is confirmed") and a
+// condition ("once your date is confirmed") — the second is a sentence the
+// customer needs, and a blunt search for the word would ban it.
+const DETECTOR_CASES: [string, boolean][] = [
+  ["Your booking is confirmed.", true],
+  ["Your date is confirmed.", true],
+  ["Your dates are confirmed.", true],
+  ["This booking has been confirmed.", true],
+  ["We only take it once your date is confirmed.", false],
+  ["Nothing is charged until your date is confirmed.", false],
+  ["We will email you when your booking is confirmed.", false],
+  ["If your date is confirmed we will charge the deposit.", false],
+  ["We are confirming your date.", false],
+  ["Our team confirms it personally.", false],
+];
+for (const [text, expected] of DETECTOR_CASES) {
+  ok(
+    `claimsConfirmation(${JSON.stringify(text)}) should be ${expected}`,
+    claimsConfirmation(text) === expected
+  );
+}
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
