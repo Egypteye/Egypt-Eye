@@ -1155,6 +1155,7 @@ export function bookingRequestTeamEmail({
   guestPhone,
   notes,
   depositUsd,
+  paymentLink,
   accountState,
 }: {
   reference: string;
@@ -1168,6 +1169,8 @@ export function bookingRequestTeamEmail({
   guestPhone?: string | null;
   notes?: string | null;
   depositUsd: number | null;
+  /** Set when the deposit is paid by PayPal link, so nothing is held here. */
+  paymentLink?: string | null;
   accountState: "signed-in" | "guest";
 }) {
   const when = formatSlot(startsAt, slotLabel);
@@ -1178,7 +1181,13 @@ export function bookingRequestTeamEmail({
     preheader: `${productTitle} — ${when} — ${reference}`,
     bodyHtml: `
       <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Deposit booking — needs a decision</p>
-      <p style="margin:0 0 16px;">${depositUsd ? `<strong>$${depositUsd} is held</strong>, not charged. Confirm to take it, or decline to release it.` : "<strong>No deposit</strong> — online deposits are not switched on, so this is a request only."}</p>
+      <p style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:${depositUsd && paymentLink ? "#fff4d6" : "#f1f4f2"};">${
+        depositUsd && paymentLink
+          ? `<strong>Payment status: NOT YET RECEIVED.</strong><br/>This email is sent when the request is made, before the customer has paid. Check PayPal for <strong>$${depositUsd}</strong> quoted against <strong>${escapeHtml(reference)}</strong>, then press "Deposit received" in admin.`
+          : depositUsd
+            ? `<strong>$${depositUsd} is held</strong>, not charged. Confirm to take it, or decline to release it.`
+            : "<strong>No deposit</strong> — online deposits are not switched on, so this is a request only."
+      }</p>
       <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
         ${row("What", `${productTitle} (${productType})`)}
         ${row("When", when)}
@@ -1198,7 +1207,11 @@ export function bookingRequestTeamEmail({
 
   const text = [
     `Deposit booking — needs a decision`,
-    depositUsd ? `$${depositUsd} held, not charged.` : "No deposit (online deposits off).",
+    depositUsd && paymentLink
+      ? `PAYMENT STATUS: NOT YET RECEIVED. Sent when the request was made, before paying. Check PayPal for $${depositUsd} against ${reference}.`
+      : depositUsd
+        ? `$${depositUsd} held, not charged.`
+        : "No deposit (online deposits off).",
     "",
     `What: ${productTitle} (${productType})`,
     `When: ${when}`,

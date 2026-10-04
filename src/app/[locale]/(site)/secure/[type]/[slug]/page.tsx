@@ -45,7 +45,7 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
 
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
-  const price = presentDeposit(deposit.amountUsd, product.price);
+  const price = presentDeposit(deposit.amountUsd);
   // Same rule as the product pages: a payment link is a live deposit.
   const paymentMode = deposit.paymentLink
     ? ("link" as const)
@@ -90,33 +90,14 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
       </div>
 
       <dl className="mt-6 space-y-2 rounded-2xl border border-black/5 bg-cream p-5 text-sm">
-        {price.kind === "withTotal" ? (
-          <>
-            <div className="flex justify-between">
-              <dt className="text-ink-soft">Total</dt>
-              <dd className="font-semibold text-ink">{price.total}</dd>
-            </div>
-            <div className="flex justify-between">
-              <dt className="text-ink-soft">Deposit to secure your date</dt>
-              <dd className="font-semibold text-ink">{price.deposit}</dd>
-            </div>
-            <div className="flex justify-between border-t border-black/5 pt-2">
-              <dt className="text-ink-soft">Remaining balance</dt>
-              <dd className="font-semibold text-ink">{price.balance}</dd>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="flex justify-between">
-              <dt className="text-ink-soft">Deposit to secure your booking</dt>
-              <dd className="font-semibold text-ink">{price.deposit}</dd>
-            </div>
-            <p className="pt-1 text-ink-soft">
-              Your final itinerary and price are confirmed with you separately. This {price.deposit} is credited
-              toward your final price.
-            </p>
-          </>
-        )}
+        <div className="flex justify-between">
+          <dt className="text-ink-soft">Deposit to book this date</dt>
+          <dd className="font-semibold text-ink">{price.deposit}</dd>
+        </div>
+        <p className="pt-1 text-ink-soft">
+          Credited toward your final price. We confirm the full details and price with you directly — this is the
+          only amount you pay now.
+        </p>
       </dl>
 
       <SecureBookingForm

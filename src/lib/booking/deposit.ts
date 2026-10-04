@@ -1,4 +1,4 @@
-import type { Experience, Photoshoot, Price } from "@/content/types";
+import type { Experience, Photoshoot } from "@/content/types";
 
 // What a deposit is, and when the "Secure your date" door appears.
 //
@@ -70,29 +70,25 @@ export type DepositPresentation =
   | { kind: "depositOnly"; deposit: string };
 
 /**
- * How the deposit is explained, which depends on whether a total exists.
+ * How the deposit is explained.
  *
- * Both forms state the deposit as one exact number, because that is the only
- * number being charged. The second form says plainly that the price is still
- * to be agreed — which is honest in a way a "from" price would not be, and is
- * the case that covers most Extra Experiences.
+ * Only ever the deposit — never a total, never a remaining balance. Egypt Eye
+ * does not publish prices: components/PriceTag.tsx renders "Enquire for
+ * Pricing" on every card and every product page, deliberately, even though
+ * every product carries a real `price` used for admin, reservations and
+ * discount maths.
+ *
+ * An earlier version of this showed "Total $75 · Deposit $25 · Remaining $50"
+ * on the booking page, which published the exact figures the rest of the site
+ * withholds — and did it at the one moment a customer is deciding. The deposit
+ * is a number Egypt Eye is genuinely asking for, so it is shown; the total is
+ * not ours to reveal here.
+ *
+ * It deliberately does not take the product's price. A parameter this function
+ * ignores is an invitation to start using it again.
  */
-export function presentDeposit(amountUsd: number, price?: Price): DepositPresentation {
-  const deposit = money(amountUsd);
-  const total = price?.amount;
-
-  // A total lower than the deposit is an editing mistake, not a product. Fall
-  // back to the deposit-only form rather than rendering a negative balance.
-  if (typeof total !== "number" || !Number.isFinite(total) || total <= amountUsd) {
-    return { kind: "depositOnly", deposit };
-  }
-
-  return {
-    kind: "withTotal",
-    total: money(total),
-    deposit,
-    balance: money(total - amountUsd),
-  };
+export function presentDeposit(amountUsd: number): DepositPresentation {
+  return { kind: "depositOnly", deposit: money(amountUsd) };
 }
 
 function money(amount: number): string {

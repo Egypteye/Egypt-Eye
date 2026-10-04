@@ -86,7 +86,7 @@ export default async function PhotoshootDetailPage({
 
   // The deposit door, shown only for a product somebody switched on.
   const deposit = resolveDeposit(photoshoot, site.defaultDepositUsd);
-  const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd, photoshoot.price).deposit : "";
+  const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd).deposit : "";
   // A link counts as a live deposit just as much as the API does.
   const paymentMode = !deposit.bookable
     ? ("none" as const)
@@ -205,20 +205,30 @@ export default async function PhotoshootDetailPage({
         </div>
 
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
+          {deposit.bookable && (
+            <div className="mb-5">
+              <SecureDateButton
+                productType="photoshoot"
+                productSlug={photoshoot.slug}
+                productTitle={photoshoot.title}
+                depositLabel={depositLabel}
+                paymentMode={paymentMode}
+                cancellationSummary={cancellationSummary}
+                cancellationHref="/cancellation-policy"
+                className="block w-full rounded-full bg-gold px-5 py-4 text-center text-base font-semibold text-ink shadow-md shadow-gold/25 transition hover:bg-gold-light hover:shadow-lg"
+              />
+              {/* The reason to press it, in one line. The refund promise is
+                  what removes the risk of paying before a date is confirmed,
+                  so it belongs next to the button rather than inside it. */}
+              <p className="mt-2 text-center text-xs leading-relaxed text-ink-soft">
+                {paymentMode === "none"
+                  ? "Our team confirms your date, usually within 48 hours."
+                  : `Pay ${depositLabel} now · fully refunded if we cannot confirm your date`}
+              </p>
+            </div>
+          )}
           <PriceTag price={photoshoot.price} />
           <p className="mt-1 text-xs text-ink-soft/85"><T>per session</T></p>
-          {deposit.bookable && (
-            <SecureDateButton
-              productType="photoshoot"
-              productSlug={photoshoot.slug}
-              productTitle={photoshoot.title}
-              depositLabel={depositLabel}
-              paymentMode={paymentMode}
-              cancellationSummary={cancellationSummary}
-              cancellationHref="/cancellation-policy"
-              className="mt-5 block w-full rounded-full bg-gold py-3 text-center text-sm font-semibold text-ink transition hover:bg-gold-light"
-            />
-          )}
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this photoshoot's page", item: photoshoot.title }}

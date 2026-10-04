@@ -154,32 +154,25 @@ ok("a non-PayPal link leaves the product with no pay button",
   (resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" }) as { paymentLink: string | null }).paymentLink === null);
 
 // ---------------------------------------------------------------------------
-// 4. How it reads, in both price cases.
+// 4. The deposit flow never publishes a price.
+//
+// Egypt Eye does not show prices on the public site — PriceTag renders
+// "Enquire for Pricing" everywhere, deliberately, while every product still
+// carries a real `price` for admin and reservations. The booking page once
+// showed "Total $75 · Deposit $25 · Remaining $50", which published exactly
+// the figures the rest of the site withholds, at the moment a customer is
+// deciding.
+//
+// The deposit is a figure Egypt Eye is genuinely asking for, so it is shown.
+// Nothing else is.
 // ---------------------------------------------------------------------------
-const withTotal = presentDeposit(50, { amount: 199 });
-ok("a priced product shows total, deposit and balance", withTotal.kind === "withTotal");
-if (withTotal.kind === "withTotal") {
-  ok("the balance is the total less the deposit", withTotal.balance === "$149");
-  ok("the total is shown", withTotal.total === "$199");
-}
-
-const noPrice = presentDeposit(50);
-ok("an unpriced product shows the deposit alone", noPrice.kind === "depositOnly");
-ok("an unpriced product still shows an exact deposit", noPrice.kind === "depositOnly" && noPrice.deposit === "$50");
-
-// A total at or below the deposit is an editing mistake — it must never render
-// a zero or negative balance to a customer.
-ok("a total equal to the deposit falls back to deposit-only", presentDeposit(50, { amount: 50 }).kind === "depositOnly");
-ok("a total below the deposit falls back to deposit-only", presentDeposit(50, { amount: 20 }).kind === "depositOnly");
-// `amount: null` is how the 18 unpriced Extra Experiences are actually
-// stored — "contact for pricing" — so this is the real case, not an edge one.
+const shown = presentDeposit(50);
+ok("presentDeposit leaks a total — the public site does not publish prices", shown.kind === "depositOnly");
+ok("the deposit itself is still shown", shown.deposit === "$50");
+// The signature itself is the guard: it cannot be handed a price to leak.
 ok(
-  "a null amount (contact for pricing) falls back to deposit-only",
-  presentDeposit(50, { amount: null }).kind === "depositOnly"
-);
-ok(
-  "a null amount with a note still falls back to deposit-only",
-  presentDeposit(50, { amount: null, note: "On request" }).kind === "depositOnly"
+  "presentDeposit takes a price again — that is how the total got published before",
+  presentDeposit.length === 1
 );
 
 // ---------------------------------------------------------------------------

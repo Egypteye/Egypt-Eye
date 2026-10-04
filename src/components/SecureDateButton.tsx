@@ -48,6 +48,7 @@ type Props = {
   cancellationSummary: string;
   cancellationHref: string;
   className?: string;
+  /** Overrides the default, which names the deposit so the price is on the button. */
   label?: string;
 };
 
@@ -66,7 +67,7 @@ export function SecureDateButton({
   cancellationSummary,
   cancellationHref,
   className,
-  label = "Request your date",
+  label,
 }: Props) {
   const [open, setOpen] = useState(false);
   const [stage, setStage] = useState<Stage>({ kind: "form" });
@@ -80,6 +81,14 @@ export function SecureDateButton({
     guestEmail: "",
     guestPhone: "",
   });
+
+  // Naming the amount on the button is the payment signal: a customer sees
+  // what they are about to pay before they open anything. "Checkout" and
+  // "Book now" were rejected for the opposite reason to the old "Secure your
+  // date" — all three announce a completed booking, and this one is not
+  // complete until a person has confirmed it.
+  const buttonLabel =
+    label ?? (paymentMode === "none" ? "Request your date" : `Book with a ${depositLabel} deposit`);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
@@ -160,7 +169,7 @@ export function SecureDateButton({
   return (
     <>
       <button ref={openerRef} type="button" onClick={() => setOpen(true)} className={className}>
-        {label}
+        {buttonLabel}
       </button>
 
       {open && (
@@ -183,7 +192,7 @@ export function SecureDateButton({
                   ? "Your request is with our team"
                   : stage.kind === "payLink"
                     ? "One step left"
-                    : "Request your date"}
+                    : "Book your date"}
               </h2>
               <button
                 type="button"
