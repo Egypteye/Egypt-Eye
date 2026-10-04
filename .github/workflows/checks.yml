@@ -69,6 +69,12 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:migration
 
+      # The deposit flow's promises — no payment event may confirm a booking,
+      # and a product with no deposit figure shows no button.
+      - name: Booking rules
+        if: ${{ !cancelled() }}
+        run: npm run check:booking
+
       # Weekly Trip slugs are referenced by trip_departures rows in Supabase,
       # which no typecheck can see. Renaming one silently orphans every
       # scheduled departure, so the slugs are pinned and this is what notices.

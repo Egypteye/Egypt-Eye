@@ -159,6 +159,22 @@ export type PhysicalLevel = {
 };
 
 export type Experience = {
+  /**
+   * Whether this product offers the "Secure your date" deposit flow.
+   *
+   * Off by default and per-product on purpose: the flow suits things a
+   * traveller can decide without talking to anyone, and a deposit on a product
+   * that genuinely needs a conversation would cost more enquiries than it
+   * saves. See docs/booking-deposits.md.
+   */
+  bookable?: boolean;
+  /**
+   * The flat sum that holds this date, in USD. Falls back to the site-wide
+   * default; with neither set the product shows no button rather than a
+   * guessed figure.
+   */
+  depositUsd?: number;
+
   slug: string;
   title: string;
   duration: string;
@@ -201,6 +217,22 @@ export type Experience = {
 };
 
 export type Photoshoot = {
+  /**
+   * Whether this product offers the "Secure your date" deposit flow.
+   *
+   * Off by default and per-product on purpose: the flow suits things a
+   * traveller can decide without talking to anyone, and a deposit on a product
+   * that genuinely needs a conversation would cost more enquiries than it
+   * saves. See docs/booking-deposits.md.
+   */
+  bookable?: boolean;
+  /**
+   * The flat sum that holds this date, in USD. Falls back to the site-wide
+   * default; with neither set the product shows no button rather than a
+   * guessed figure.
+   */
+  depositUsd?: number;
+
   slug: string;
   title: string;
   duration: string;
@@ -577,6 +609,12 @@ export type Faq = {
 };
 
 export type SiteSettings = {
+  /**
+   * The flat deposit used for a bookable product that has no figure of its
+   * own, in USD. Unset means products must each carry their own, which is the
+   * safe default — see docs/booking-deposits.md.
+   */
+  defaultDepositUsd?: number;
   name?: string;
   shortName?: string;
   tagline?: string;

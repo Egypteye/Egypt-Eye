@@ -25,6 +25,23 @@ export const photoshoot = defineType({
       type: "rating",
     }),
     defineField({ name: "price", title: "Price", type: "price" }),
+    defineField({
+      name: "bookable",
+      title: "Offer \"Secure your date\" (deposit booking)",
+      description:
+        "Shows the deposit button on this product. Leave off for anything that really needs a conversation first.",
+      type: "boolean",
+      initialValue: false,
+    }),
+    defineField({
+      name: "depositUsd",
+      title: "Deposit to secure a date (USD)",
+      description:
+        "A flat amount, e.g. 25, 50 or 100. Leave empty to use the site-wide default. With neither set, no button appears.",
+      type: "number",
+      validation: (r) => r.min(1),
+    }),
+
     defineField({ name: "locations", title: "Locations", type: "array", of: [{ type: "string" }] }),
     defineField({
       name: "image",

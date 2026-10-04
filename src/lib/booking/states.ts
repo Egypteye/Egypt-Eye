@@ -1,0 +1,113 @@
+// The five states a deposit booking moves through, and the only words the site
+// is allowed to use for each.
+//
+// This exists because of one failure mode that the research into tour
+// platforms turns up again and again: a customer pays, the site says
+// "confirmed", and the operator has not actually checked anything yet. The
+// complaint that follows is never about the wait — it is about having been
+// told something that was not true.
+//
+// So the mapping from state to wording is code, not a set of strings typed
+// into a template. `confirmed` is reachable from exactly one place: a human
+// pressing confirm in the admin. No payment event can reach it.
+
+export type BookingState =
+  /** The request exists; no money involved yet (abandoned payment lands here). */
+  | "awaitingDeposit"
+  /** PayPal is holding the deposit. Nothing has been charged. */
+  | "held"
+  /** A person is checking the date. */
+  | "checking"
+  /** A person confirmed it. The deposit is captured at this moment. */
+  | "confirmed"
+  /** The date could not be done. The hold is released, nothing charged. */
+  | "declined"
+  /** The customer called it off. */
+  | "cancelled";
+
+export type StateCopy = {
+  /** Short label for the account page and the admin list. */
+  label: string;
+  /** What the customer is told, in full. */
+  message: string;
+  /** True only where the booking is actually secured. */
+  isConfirmed: boolean;
+  /** Whether the customer's money has actually moved. */
+  charged: boolean;
+};
+
+const COPY: Record<BookingState, StateCopy> = {
+  awaitingDeposit: {
+    label: "Awaiting deposit",
+    message:
+      "Your request is saved. It is not held yet — the deposit secures your date, and nothing has been charged.",
+    isConfirmed: false,
+    charged: false,
+  },
+  held: {
+    label: "Deposit held",
+    message:
+      "Your deposit is held and your request is with our team. We are confirming your date now, and you will have an answer within 48 hours. Nothing has been charged yet.",
+    isConfirmed: false,
+    charged: false,
+  },
+  checking: {
+    label: "Confirming your date",
+    message:
+      "Our team is confirming your date. Your deposit is still only held — it has not been charged.",
+    isConfirmed: false,
+    charged: false,
+  },
+  confirmed: {
+    label: "Confirmed",
+    message:
+      "Your date is confirmed. Your deposit has now been charged and is credited against your final price.",
+    isConfirmed: true,
+    charged: true,
+  },
+  declined: {
+    label: "Date unavailable",
+    message:
+      "We could not confirm this date. The hold on your deposit has been released, so you have not been charged. We have sent you the nearest dates we can offer.",
+    isConfirmed: false,
+    charged: false,
+  },
+  cancelled: {
+    label: "Cancelled",
+    message: "This booking was cancelled.",
+    isConfirmed: false,
+    charged: false,
+  },
+};
+
+export function stateCopy(state: BookingState): StateCopy {
+  return COPY[state];
+}
+
+/**
+ * What a payment event is allowed to do.
+ *
+ * A verified PayPal authorization moves a booking to `held` and no further.
+ * Capture only ever happens because a person pressed confirm, so the capture
+ * event confirms a decision that was already made rather than making one.
+ */
+export function stateAfterPaymentHeld(current: BookingState): BookingState {
+  return current === "awaitingDeposit" ? "held" : current;
+}
+
+/** The states a human is allowed to move a booking into, and from where. */
+export const HUMAN_TRANSITIONS: Record<string, BookingState[]> = {
+  checking: ["held"],
+  confirmed: ["held", "checking"],
+  declined: ["awaitingDeposit", "held", "checking"],
+  cancelled: ["awaitingDeposit", "held", "checking", "confirmed"],
+};
+
+export function canTransition(from: BookingState, to: BookingState): boolean {
+  return HUMAN_TRANSITIONS[to]?.includes(from) ?? false;
+}
+
+/** Whether this state still has a PayPal authorization that must be resolved. */
+export function holdsFunds(state: BookingState): boolean {
+  return state === "held" || state === "checking";
+}

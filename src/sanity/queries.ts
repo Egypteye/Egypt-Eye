@@ -20,7 +20,7 @@ const relatedTourFields = groq`
 // Lightweight Extra Experience card used wherever a Tour links to one.
 const relatedExtraExperienceFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, included, physicalLevel
+  image, imageTone, description, included, physicalLevel, bookable, depositUsd
 `;
 
 // hidden != true (rather than hidden == false) so tours from before the
@@ -56,14 +56,15 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, location, included, destinations, physicalLevel
+  image, imageTone, description, location, included, destinations, physicalLevel,
+  bookable, depositUsd
 }`;
 
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
-  physicalLevel, mapStops,
+  physicalLevel, mapStops, bookable, depositUsd,
   relatedTours[]->{${relatedTourFields}},
   seo
 `;
@@ -78,13 +79,13 @@ export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.curr
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations,
+  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd,
   faqs[]{question, answer}
 }`;
 
 const photoshootDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, seo,
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, seo,
   faqs[]{question, answer}
 `;
 
@@ -178,6 +179,7 @@ export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {
 }`;
 
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
+  defaultDepositUsd,
   name, shortName, tagline, heroHeadline, heroSubheadline, description, positioning,
   contact, socials, pillars, policies, trustStats, reviewsOverride,
   heroImages[]{image, tone, headline, subtext, linkLabel, linkHref},

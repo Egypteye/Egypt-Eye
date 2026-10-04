@@ -29,6 +29,14 @@ export const siteSettings = defineType({
   title: "Site Settings",
   type: "document",
   fields: [
+    defineField({
+      name: "defaultDepositUsd",
+      title: "Default deposit to secure a date (USD)",
+      description:
+        "Used for a bookable product that has no deposit of its own. Leave empty to require each product to set one — with neither, no deposit button appears anywhere.",
+      type: "number",
+      validation: (r) => r.min(1),
+    }),
     defineField({ name: "name", title: "Full brand name", type: "string" }),
     defineField({ name: "shortName", title: "Short brand name (navbar/footer)", type: "string" }),
     defineField({ name: "tagline", title: "Tagline", type: "string" }),
