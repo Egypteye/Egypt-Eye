@@ -907,13 +907,19 @@ export async function GET(request: NextRequest) {
       treasurePlan.unchanged.push(...plan.unchanged);
       treasurePlan.orphans.push(...plan.orphans);
 
-      for (const doc of plan.create) tx.createIfNotExists(doc);
-      for (const { id, changed } of plan.update) tx.patch(id, (patch) => patch.set(changed));
-
-      results.push(
-        `treasures: ${treasurePlan.create.length} to create, ${treasurePlan.update.length} to update, ` +
-          `${treasurePlan.unchanged.length} unchanged, ${treasurePlan.orphans.length} orphaned`
-      );
+      // One result line per document actually written, matching every other
+      // block in this route — `migrated` below counts those lines, so a
+      // summary line here would report "2" for a run that created four
+      // documents. Unchanged documents are not written and so are not
+      // counted; they are listed in `treasures.unchanged` instead.
+      for (const doc of plan.create) {
+        tx.createIfNotExists(doc);
+        results.push(`${doc._type}: ${doc.slug.current} (created)`);
+      }
+      for (const { id, changed, document, fields } of plan.update) {
+        tx.patch(id, (patch) => patch.set(changed));
+        results.push(`${document} (updated: ${fields.join(", ")})`);
+      }
     }
 
     tx.createIfNotExists({ _id: "takeEgyptHomePage", _type: "takeEgyptHomePage" });
