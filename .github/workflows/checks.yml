@@ -63,6 +63,12 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:shape
 
+      # The migration writes to the live Sanity dataset and cannot be run
+      # outside production, so what it would overwrite is asserted here.
+      - name: Migration plan
+        if: ${{ !cancelled() }}
+        run: npm run check:migration
+
       # Weekly Trip slugs are referenced by trip_departures rows in Supabase,
       # which no typecheck can see. Renaming one silently orphans every
       # scheduled departure, so the slugs are pinned and this is what notices.

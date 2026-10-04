@@ -19,6 +19,7 @@
     "check:trips": "tsx scripts/check-weekly-trips.mts",
     "check:reviews": "tsx scripts/check-reviews.mts",
     "check:shape": "tsx scripts/check-sanity-shape.mts",
+    "check:migration": "tsx scripts/check-migration-plan.mts",
     "check:links": "tsx scripts/check-links.mts",
     "check:faqs": "tsx scripts/check-faqs.mts",
     "check:treasures": "tsx scripts/check-treasures.mts"

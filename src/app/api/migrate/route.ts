@@ -22,6 +22,7 @@ import { homepage } from "@/content/homepage";
 import { listingPages } from "@/content/listingPages";
 import { destinationHubs } from "@/content/destinationHubs";
 import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } from "@/content/types";
+import { planTreasureUpdate } from "@/lib/migrationPlan";
 
 // One-time (safely re-runnable) migration: pushes all the existing tour/
 // experience/photoshoot/testimonial/blog/FAQ/site-settings content into
@@ -83,6 +84,34 @@ import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } fr
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=nav
 //
+// Take Egypt Home's documents are the exception to all of the above: they
+// are seeded with createIfNotExists and then left alone, because Egypt Eye
+// edits them in the Studio and a resync must never undo that.
+//
+// To push a content-file change into treasure documents that already exist —
+// a real catalogue replacing the samples, say — add `&update=1`. It patches
+// instead of replacing: only fields the content file actually defines are
+// written, so a price, a photograph, a variant, an availability or an SEO
+// override that exists only in the Studio is left exactly as it is. A field
+// the content file does not define is never unset. The trade, and the thing
+// to understand before running it: for a field the content file DOES define,
+// the content file wins, and a Studio edit to that same field is overwritten.
+//
+// It is a DRY RUN until `&apply=1` joins it, and the dry run abandons the
+// whole transaction, so nothing of any type is written. Read the diff first:
+//
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=treasures&update=1
+//   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=treasures&update=1&apply=1
+//
+// The dry run also lists `orphans`: treasure documents in Sanity that the
+// content files no longer describe. They are reported and never deleted —
+// removing a document is destructive, it may be an editor's own work, and it
+// is two clicks in the Studio. What the plan does is make sure you know they
+// are there, instead of finding stale listings on the live site.
+//
+// Keep `&only=treasures` on an update run unless you also want every other
+// type's full createOrReplace to commit in the same request.
+//
 // Add `&reset=media` to DISCARD the Studio-uploaded photo on every
 // tour/experience/photoshoot the run covers, handing each back to the
 // Unsplash/Pexels photo in the local content files. This is destructive and
@@ -131,6 +160,23 @@ export async function GET(request: NextRequest) {
   // under any combination of parameters — they are preserved unconditionally
   // below, and there is no local content to reset them to anyway.
   const resetMedia = request.nextUrl.searchParams.get("reset") === "media";
+
+  // `&update=1` lets the Take Egypt Home block patch documents that already
+  // exist, instead of only seeding ones that don't. It is a dry run until
+  // `&apply=1` joins it — the same two-step shape as the story purge, and the
+  // reason is the same: this writes to the live dataset, and the diff is
+  // worth reading first. The dry run abandons the whole transaction, so no
+  // other type in the same run is written either.
+  const updateExisting = request.nextUrl.searchParams.get("update") === "1";
+  const apply = request.nextUrl.searchParams.get("apply") === "1";
+  const dryRun = updateExisting && !apply;
+
+  const treasurePlan = {
+    create: [] as string[],
+    update: [] as { document: string; fields: string[] }[],
+    unchanged: [] as string[],
+    orphans: [] as string[],
+  };
 
   const client = createClient({ projectId, dataset, apiVersion, token, useCdn: false });
   const tx = client.transaction();
@@ -761,61 +807,130 @@ export async function GET(request: NextRequest) {
   // works that way, and deliberately. Everything else here is code-authored
   // content that is supposed to be overwritten from the repo. These documents
   // are the opposite: Egypt Eye edits them in the Studio, uploads photographs
-  // to them and sets their prices. Re-running a full migration must never
-  // reach in and undo that. So this seeds the shape once and then leaves it
-  // alone for good.
+  // to them and sets their prices. A full replace would reach in and undo
+  // that, so the default seeds the shape once and then leaves it alone.
+  //
+  // `&update=1` is the way to push a content-file change into documents that
+  // already exist — a catalogue of real products replacing the samples, say.
+  // It patches rather than replaces: only the fields the content file
+  // actually defines are set, so a price, a photograph, a variant or an SEO
+  // override that exists only in the Studio is untouched. The flip side, and
+  // the thing to understand before using it, is that for a field the content
+  // file DOES define, the content file wins — an edit made in the Studio to
+  // that same field is overwritten.
+  //
+  // It is a dry run unless `&apply=1` is also passed, so the diff can be read
+  // before anything is written. That is the same shape as the story purge.
   if (shouldRun("treasures")) {
-    for (const c of treasureCategories) {
-      tx.createIfNotExists({
-        _id: `treasureCategory-${c.slug}`,
-        _type: "treasureCategory",
-        title: c.title,
-        slug: { _type: "slug", current: c.slug },
-        active: c.active ?? true,
-        order: c.order ?? 100,
-        eyebrow: c.eyebrow,
-        heroHeadline: c.heroHeadline,
-        heroSub: c.heroSub,
-        imageTone: c.imageTone ?? "desert",
-        cardHook: c.cardHook,
-        cardBlurb: c.cardBlurb,
-        story: c.story?.map((b) => ({ ...b, _type: "storyBlock", _key: key() })),
-        beforeYouArrive: c.beforeYouArrive?.map((b) => ({ ...b, _type: "treasureStep", _key: key() })),
-        inEgypt: c.inEgypt
-          ? {
-              _type: "object",
-              title: c.inEgypt.title,
-              body: c.inEgypt.body,
-              steps: c.inEgypt.steps.map((b) => ({ ...b, _type: "treasureStep", _key: key() })),
-            }
-          : undefined,
-        trust: c.trust,
-        faqs: c.faqs?.map((f) => ({ ...f, _type: "faq", _key: key() })),
-        seo: c.seo ? { _type: "object", ...c.seo } : undefined,
-      });
-      results.push(`treasureCategory: ${c.slug}`);
+    // Deterministic, so re-running produces identical arrays instead of
+    // churning every _key and making every document look changed.
+    const itemKey = (slug: string, field: string, i: number) => `${slug}-${field}-${i}`;
+
+    const categoryDoc = (c: (typeof treasureCategories)[number]) => ({
+      _id: `treasureCategory-${c.slug}`,
+      _type: "treasureCategory",
+      title: c.title,
+      slug: { _type: "slug", current: c.slug },
+      active: c.active ?? true,
+      order: c.order ?? 100,
+      eyebrow: c.eyebrow,
+      heroHeadline: c.heroHeadline,
+      heroSub: c.heroSub,
+      imageTone: c.imageTone ?? "desert",
+      cardHook: c.cardHook,
+      cardBlurb: c.cardBlurb,
+      story: c.story?.map((b, i) => ({ ...b, _type: "storyBlock", _key: itemKey(c.slug, "story", i) })),
+      beforeYouArrive: c.beforeYouArrive?.map((b, i) => ({
+        ...b,
+        _type: "treasureStep",
+        _key: itemKey(c.slug, "step", i),
+      })),
+      inEgypt: c.inEgypt
+        ? {
+            _type: "object",
+            title: c.inEgypt.title,
+            body: c.inEgypt.body,
+            steps: c.inEgypt.steps.map((b, i) => ({
+              ...b,
+              _type: "treasureStep",
+              _key: itemKey(c.slug, "inEgypt", i),
+            })),
+          }
+        : undefined,
+      trust: c.trust,
+      faqs: c.faqs?.map((f, i) => ({ ...f, _type: "faq", _key: itemKey(c.slug, "faq", i) })),
+      seo: c.seo ? { _type: "object", ...c.seo } : undefined,
+    });
+
+    const productDoc = (p: (typeof treasureProducts)[number]) => ({
+      _id: `treasureProduct-${p.slug}`,
+      _type: "treasureProduct",
+      name: p.name,
+      slug: { _type: "slug", current: p.slug },
+      category: { _type: "reference", _ref: `treasureCategory-${p.category}` },
+      status: p.status,
+      placeholder: p.placeholder,
+      featured: p.featured ?? false,
+      order: p.order,
+      blurb: p.blurb,
+      description: p.description,
+      imageTone: p.imageTone ?? "desert",
+      specs: p.specs?.map((spec, i) => ({ ...spec, _type: "treasureSpec", _key: itemKey(p.slug, "spec", i) })),
+      tags: p.tags,
+    });
+
+    // Both shapes share only their identity, so the list is typed by what
+    // the loops below actually use.
+    type TreasureDoc = {
+      _id: string;
+      _type: string;
+      slug: { _type: string; current: string };
+    } & Record<string, unknown>;
+
+    const docs: TreasureDoc[] = [
+      ...treasureCategories.map(categoryDoc),
+      ...treasureProducts.map(productDoc),
+    ];
+
+    if (!updateExisting) {
+      for (const doc of docs) {
+        tx.createIfNotExists(doc);
+        results.push(`${doc._type}: ${doc.slug.current}`);
+      }
+    } else {
+      const live = await client.fetch<Record<string, unknown>[]>(
+        `*[_type in ["treasureCategory","treasureProduct"]]`
+      );
+      const plan = planTreasureUpdate(docs, live);
+      treasurePlan.create.push(...plan.create.map((d) => `${d._type}: ${d.slug.current}`));
+      treasurePlan.update.push(...plan.update.map(({ document, fields }) => ({ document, fields })));
+      treasurePlan.unchanged.push(...plan.unchanged);
+      treasurePlan.orphans.push(...plan.orphans);
+
+      for (const doc of plan.create) tx.createIfNotExists(doc);
+      for (const { id, changed } of plan.update) tx.patch(id, (patch) => patch.set(changed));
+
+      results.push(
+        `treasures: ${treasurePlan.create.length} to create, ${treasurePlan.update.length} to update, ` +
+          `${treasurePlan.unchanged.length} unchanged, ${treasurePlan.orphans.length} orphaned`
+      );
     }
-    for (const p of treasureProducts) {
-      tx.createIfNotExists({
-        _id: `treasureProduct-${p.slug}`,
-        _type: "treasureProduct",
-        name: p.name,
-        slug: { _type: "slug", current: p.slug },
-        category: { _type: "reference", _ref: `treasureCategory-${p.category}` },
-        status: p.status,
-        placeholder: p.placeholder,
-        featured: p.featured ?? false,
-        order: p.order,
-        blurb: p.blurb,
-        description: p.description,
-        imageTone: p.imageTone ?? "desert",
-        specs: p.specs?.map((spec) => ({ ...spec, _type: "treasureSpec", _key: key() })),
-        tags: p.tags,
-      });
-      results.push(`treasureProduct: ${p.slug}`);
-    }
+
     tx.createIfNotExists({ _id: "takeEgyptHomePage", _type: "takeEgyptHomePage" });
     results.push("takeEgyptHomePage");
+  }
+
+  // A dry run reports and writes nothing. Returning before commit() is what
+  // makes that true — the transaction is simply abandoned.
+  if (dryRun) {
+    return NextResponse.json({
+      ok: true,
+      dryRun: true,
+      message:
+        "Nothing was written. Add &apply=1 to the same URL to commit exactly this plan.",
+      treasures: treasurePlan,
+      results,
+    });
   }
 
   try {

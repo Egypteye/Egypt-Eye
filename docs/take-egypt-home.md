@@ -227,6 +227,44 @@ and meant to be overwritten from the repo, while these are documents Egypt Eye
 edits, photographs and prices. Re-running a full migration will never undo that
 work.
 
+### Pushing a content change into documents that already exist
+
+`createIfNotExists` protects Studio work, but it also means a change to the
+content files never reaches a document that already exists. That is how the
+three invented sample cartouches stayed on the live site after the real
+catalogue replaced them in the repo: Sanity still held the originals, and
+Sanity wins wholesale.
+
+`&update=1` is the way through. It patches rather than replaces:
+
+- only fields the content file **defines** are written, so a price, a
+  photograph, a gallery, a variant, an availability or an SEO override that
+  exists only in the Studio is untouched;
+- a field the content file does not define is **never unset**, so deleting a
+  line from a content file cannot blank the document;
+- for a field the content file **does** define, the content file wins. A Studio
+  edit to that same field is overwritten. That is the whole trade, and it is
+  the reason this is opt-in rather than the default.
+
+It is a dry run until `&apply=1` joins it, and the dry run abandons the entire
+transaction — nothing of any type is written. Read the diff, then commit it:
+
+    /api/migrate?secret=…&only=treasures&update=1
+    /api/migrate?secret=…&only=treasures&update=1&apply=1
+
+Keep `&only=treasures` on an update run, or every other type's full
+createOrReplace commits in the same request.
+
+The dry run also lists **orphans** — treasure documents in Sanity that the
+content files no longer describe. They are reported and never deleted:
+removing a document is destructive, it may be an editor's own work, and it is
+two clicks in the Studio. The point is that you know they are there rather than
+finding stale listings on the live site.
+
+Array keys are derived from the slug and index rather than generated randomly,
+so a re-run produces identical arrays and an unchanged document reports as
+unchanged instead of rewriting every block.
+
 ## Customer photographs
 
 Unchanged and deliberately so. Papyrus uploads go to a **private** bucket
