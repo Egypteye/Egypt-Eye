@@ -8,6 +8,10 @@ import { resolveStops } from "@/lib/placeCoords";
 import { pickRelated } from "@/lib/relatedPicker";
 import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
+import { SecureDateButton } from "@/components/SecureDateButton";
+import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
+import { depositsEnabled } from "@/lib/booking/paymentProvider";
+import { cancellationSummary } from "@/content/cancellationPolicy";
 import { Gallery } from "@/components/Gallery";
 import { ExperienceCard } from "@/components/ExperienceCard";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
@@ -73,6 +77,11 @@ export default async function ExperienceDetailPage({
     path: `/experiences/${experience.slug}`,
     // See the tour page: no visible rating, so no aggregateRating markup.
   });
+
+  // The deposit door, shown only for an experience somebody switched on.
+  const deposit = resolveDeposit(experience, site.defaultDepositUsd);
+  const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd, experience.price).deposit : "";
+  const canTakeDeposit = depositsEnabled();
 
   return (
     <>
@@ -229,6 +238,18 @@ export default async function ExperienceDetailPage({
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
           <PriceTag price={experience.price} />
           <p className="mt-1 text-xs text-ink-soft/85"><T>per person</T></p>
+          {deposit.bookable && (
+            <SecureDateButton
+              productType="experience"
+              productSlug={experience.slug}
+              productTitle={experience.title}
+              depositLabel={depositLabel}
+              canTakeDeposit={canTakeDeposit}
+              cancellationSummary={cancellationSummary}
+              cancellationHref="/cancellation-policy"
+              className="mt-5 block w-full rounded-full bg-gold py-3 text-center text-sm font-semibold text-ink transition hover:bg-gold-light"
+            />
+          )}
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}

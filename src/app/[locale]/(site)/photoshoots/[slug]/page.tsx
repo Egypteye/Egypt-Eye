@@ -4,6 +4,10 @@ import { notFound } from "next/navigation";
 import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
+import { SecureDateButton } from "@/components/SecureDateButton";
+import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
+import { depositsEnabled } from "@/lib/booking/paymentProvider";
+import { cancellationSummary } from "@/content/cancellationPolicy";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { Gallery } from "@/components/Gallery";
 import { FaqAccordion } from "@/components/FaqAccordion";
@@ -79,6 +83,11 @@ export default async function PhotoshootDetailPage({
     path: `/photoshoots/${photoshoot.slug}`,
     // See the tour page: no visible rating, so no aggregateRating markup.
   });
+
+  // The deposit door, shown only for a product somebody switched on.
+  const deposit = resolveDeposit(photoshoot, site.defaultDepositUsd);
+  const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd, photoshoot.price).deposit : "";
+  const canTakeDeposit = depositsEnabled();
 
   return (
     <>
@@ -191,6 +200,18 @@ export default async function PhotoshootDetailPage({
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
           <PriceTag price={photoshoot.price} />
           <p className="mt-1 text-xs text-ink-soft/85"><T>per session</T></p>
+          {deposit.bookable && (
+            <SecureDateButton
+              productType="photoshoot"
+              productSlug={photoshoot.slug}
+              productTitle={photoshoot.title}
+              depositLabel={depositLabel}
+              canTakeDeposit={canTakeDeposit}
+              cancellationSummary={cancellationSummary}
+              cancellationHref="/cancellation-policy"
+              className="mt-5 block w-full rounded-full bg-gold py-3 text-center text-sm font-semibold text-ink transition hover:bg-gold-light"
+            />
+          )}
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this photoshoot's page", item: photoshoot.title }}

@@ -367,17 +367,42 @@ will arrive twice. Keying on the PayPal event id and ignoring repeats is the
 whole of it, and `lib/email/idempotent.ts` already establishes that pattern in
 this codebase.
 
-## A page, not a popup
+## A dialog in, a page back
 
-The concept suggests a popup. A modal is the wrong container for this:
+The first draft argued for a page instead of a popup. That was half right, and
+the half it got wrong was the half that matters to a customer.
 
-- it has no URL, so nobody can be sent back to it or emailed a link to resume;
-- it cannot survive the round trip to PayPal and back;
-- it cannot be the page the customer lands on when they return.
+The objection to a modal was never about speed — it was that a modal has no
+URL, cannot survive the round trip to a payment provider, and cannot be the
+page somebody lands on when they come back. All of that is true, and none of it
+is an argument against opening the flow in a dialog. It is an argument that
+**a dialog needs a page behind it**, which it does regardless.
 
-A light page at `/secure/[type]/[slug]` keeps every one of those and loses
-nothing that matters — the speed comes from asking three things, not from
-rendering in a layer above the page.
+So both exist, and they are not alternatives:
+
+- **The dialog** opens from the product page. Someone reading about a
+  photoshoot who already knows they want it should not lose the page they are
+  reading in order to hold a date. Four fields, the deposit, the cancellation
+  terms, done.
+- **The page** at `/secure/[type]/[slug]` is the deep link, the no-JS
+  fallback, and — the part that cannot be a dialog — the destination the
+  payment provider redirects back to.
+
+The booking the dialog produces is byte-identical to the one the page produces.
+It is a second front door, not a second system.
+
+### The cancellation terms belong in the dialog
+
+Putting them in the dialog, above the button, is not a nicety. The research
+into UK consumer law is specific: a non-refundable term is enforceable only if
+it was **transparent and disclosed before payment**. A policy page the customer
+never opened does not meet that; a paragraph they had to scroll past to reach
+the button does.
+
+So the dialog shows the real `cancellationSummary` from
+`content/cancellationPolicy.ts` — never a paraphrase written for the dialog —
+and links to the full policy. One source, as with every other surface that
+quotes it.
 
 ## Five states, never collapsed into two
 
