@@ -193,12 +193,38 @@ export async function GET(request: NextRequest) {
   // `rating` is read back and folded in because it's Studio-owned: an
   // optional manual override with no counterpart in the content files.
   // Without this, any resync would wipe whatever an editor set by hand.
-  let existingMedia = new Map<string, { image?: unknown; gallery?: unknown; rating?: unknown }>();
+  // `bookable`, `depositUsd` and `paypalLink` are read back for the same
+  // reason as `rating`: they are Studio-owned settings with no counterpart in
+  // the content files, so a createOrReplace that left them out would erase
+  // them. That failure would be silent and expensive — the deposit button
+  // would simply stop appearing, and the PayPal link Egypt Eye pasted in would
+  // be gone, with nothing to say why.
+  type StudioOwned = {
+    image?: unknown;
+    gallery?: unknown;
+    rating?: unknown;
+    bookable?: unknown;
+    depositUsd?: unknown;
+    paypalLink?: unknown;
+  };
+  let existingMedia = new Map<string, StudioOwned>();
   if (shouldRun("tours") || shouldRun("experiences") || shouldRun("photoshoots")) {
-    const rows = await client.fetch<{ _id: string; image?: unknown; gallery?: unknown; rating?: unknown }[]>(
-      `*[_type in ["tour","experience","photoshoot"]]{_id, image, gallery, rating}`
+    const rows = await client.fetch<({ _id: string } & StudioOwned)[]>(
+      `*[_type in ["tour","experience","photoshoot"]]{_id, image, gallery, rating, bookable, depositUsd, paypalLink}`
     );
-    existingMedia = new Map(rows.map((r) => [r._id, { image: r.image, gallery: r.gallery, rating: r.rating }]));
+    existingMedia = new Map(
+      rows.map((r) => [
+        r._id,
+        {
+          image: r.image,
+          gallery: r.gallery,
+          rating: r.rating,
+          bookable: r.bookable,
+          depositUsd: r.depositUsd,
+          paypalLink: r.paypalLink,
+        },
+      ])
+    );
   }
 
   // Same reasoning as `existingMedia` above, for the three other document
@@ -354,6 +380,10 @@ export async function GET(request: NextRequest) {
         imageTone: e.imageTone,
         image: resetMedia ? undefined : existingMedia.get(id)?.image,
         gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
+        // Studio-owned booking settings, preserved on every re-run.
+        bookable: existingMedia.get(id)?.bookable,
+        depositUsd: existingMedia.get(id)?.depositUsd,
+        paypalLink: existingMedia.get(id)?.paypalLink,
         description: e.description,
         location: e.location,
         // Array items need their own _key or Sanity rejects the document.
@@ -392,6 +422,10 @@ export async function GET(request: NextRequest) {
         imageTone: p.imageTone,
         image: resetMedia ? undefined : existingMedia.get(id)?.image,
         gallery: resetMedia ? undefined : existingMedia.get(id)?.gallery,
+        // Studio-owned booking settings, preserved on every re-run.
+        bookable: existingMedia.get(id)?.bookable,
+        depositUsd: existingMedia.get(id)?.depositUsd,
+        paypalLink: existingMedia.get(id)?.paypalLink,
         description: p.description,
         goodFor: p.goodFor,
         included: p.included,

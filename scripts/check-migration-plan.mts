@@ -11,6 +11,7 @@
  * Studio. Those fields have no counterpart in the content files, and the
  * whole point of Take Egypt Home being Studio-editable is that they survive.
  */
+import { readFileSync } from "node:fs";
 import { planTreasureUpdate, sameValue } from "../src/lib/migrationPlan";
 import type { PlannedDoc } from "../src/lib/migrationPlan";
 
@@ -139,6 +140,34 @@ ok("an empty dataset has nothing to update or orphan", fromEmpty.update.length =
 const idempotent = planTreasureUpdate(realDocs, realDocs as unknown as Record<string, unknown>[]);
 ok("re-running against an identical dataset changes nothing", idempotent.update.length === 0);
 ok("re-running against an identical dataset creates nothing", idempotent.create.length === 0);
+
+// ---------------------------------------------------------------------------
+// Studio-owned fields must survive a re-run of the tour/experience/photoshoot
+// migration.
+//
+// Those blocks use createOrReplace, which drops any field absent from the
+// payload. `bookable`, `depositUsd` and `paypalLink` have no counterpart in
+// the content files, so leaving them out would erase them on the next resync —
+// the deposit button would stop appearing and the pasted PayPal link would be
+// gone, silently, with nothing on screen to say why.
+//
+// Read as source rather than executed, because the route needs production
+// credentials to run at all.
+// ---------------------------------------------------------------------------
+const routeSrc = readFileSync(new URL("../src/app/api/migrate/route.ts", import.meta.url), "utf8");
+
+ok(
+  "the migration no longer reads Studio-owned booking fields back",
+  /\{_id, image, gallery, rating, bookable, depositUsd, paypalLink\}/.test(routeSrc)
+);
+for (const field of ["bookable", "depositUsd", "paypalLink"]) {
+  const preserved = routeSrc.split(`${field}: existingMedia.get(id)?.${field},`).length - 1;
+  ok(
+    `${field} is preserved in ${preserved} payload(s) — it must be in both the experience and photoshoot blocks, ` +
+      `or a resync erases it`,
+    preserved === 2
+  );
+}
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
