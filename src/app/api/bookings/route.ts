@@ -5,14 +5,12 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
-import { resolveDeposit } from "@/lib/booking/deposit";
 import { extrasTotal, normaliseExtras, selectExtras } from "@/lib/booking/extras";
-import { depositOffer, quoteDeposit } from "@/lib/booking/quote";
+import { quoteDeposit } from "@/lib/booking/quote";
 import { createAttempt } from "@/lib/booking/attempts";
 import { composePhone } from "@/lib/booking/phone";
-import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import type { PaymentMode } from "@/lib/booking/wording";
-import { resolveRail } from "@/lib/booking/rail";
+import { productRail } from "@/lib/booking/productRail";
 import { siteUrl } from "@/content/seo";
 
 // Creates a deposit booking — the "Secure your date" path.
@@ -205,11 +203,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "That experience could not be found." }, { status: 404 });
   }
 
-  // Whether a deposit can be taken at all comes from the quote, which is the
-  // one authority on it. resolveDeposit is left with its single remaining job,
-  // the per-product PayPal link.
-  const offer = depositOffer(product, productType, settings.defaultDepositUsd);
-  const deposit = resolveDeposit(product, settings.defaultDepositUsd);
+  // Whether a deposit can be taken at all, and which rail would move the
+  // money, both from the one function every surface reads — including the
+  // product pages, which is the point of it.
+  //
+  // Sandbox on the real site is offered to admins only, so a customer can
+  // never complete a test payment and believe they have booked. See
+  // paymentProviderFor in activeProvider.ts.
+  const { offer, rail, provider } = productRail(product, productType, settings.defaultDepositUsd, {
+    isAdmin: user?.role === "admin",
+  });
   if (!offer.available) {
     return NextResponse.json(
       { error: "This experience isn't available for online booking. Please message us and we'll arrange it." },
@@ -240,10 +243,6 @@ export async function POST(request: NextRequest) {
   }
   const depositUsd = quoted.quote.totalCents / 100;
 
-  // Sandbox on the real site is offered to admins only, so a customer can
-  // never complete a test payment and believe they have booked. See
-  // paymentProviderFor in activeProvider.ts.
-  const provider = paymentProviderFor({ isAdmin: user?.role === "admin" });
   // A PayPal payment link is the fallback path: Egypt Eye creates the links in
   // PayPal, one per deposit amount, and pastes them into the Studio.
   //
@@ -256,10 +255,9 @@ export async function POST(request: NextRequest) {
   // that the customer may have forgotten to type, while an API order carries
   // the reference in `custom_id` and reconciles itself.
   //
-  // Resolved by the same function the product pages read, so what a customer
-  // was told about their money and what actually happens to it cannot come
-  // apart. They used to be derived separately and did.
-  const rail = resolveRail({ available: offer.available, paymentLink: deposit.bookable ? deposit.paymentLink : null }, provider);
+  // Resolved above by the same function the product pages read, so what a
+  // customer was told about their money and what actually happens to it cannot
+  // come apart. They used to be derived separately and did.
   const paymentLink = rail.paymentLink;
   const takingMoney = rail.canTakeMoney;
   const moneyMode: PaymentMode = rail.moneyMode;

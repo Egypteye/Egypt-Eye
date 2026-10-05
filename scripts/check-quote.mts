@@ -28,6 +28,7 @@ import {
   type QuotableProduct,
 } from "../src/lib/booking/quote";
 import { resolveDeposit } from "../src/lib/booking/deposit";
+import { readFile } from "node:fs/promises";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -465,6 +466,61 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// 12. One place assembles the rail, because four places used to.
+//
+// The page, the secure page and the booking route each built the same answer
+// out of depositOffer + payPalLink + paymentProviderFor, in their own order.
+// Three of them hardcoded `{ isAdmin: false }` while the route passed the real
+// viewer, so an admin testing the sandbox was told "No payment now" by a page
+// and then handed PayPal buttons by the route. That is the fourth time a page
+// and the route have disagreed about money in this codebase; this check is
+// here so there is no fifth.
+//
+// Only productRail.ts may assemble it. Everything else reads the answer.
+const sources = await Promise.all(
+  [
+    "src/app/[locale]/(site)/photoshoots/[slug]/page.tsx",
+    "src/app/[locale]/(site)/experiences/[slug]/page.tsx",
+    "src/app/[locale]/(site)/secure/[type]/[slug]/page.tsx",
+    "src/app/api/bookings/route.ts",
+  ].map(async (file) => ({ file, text: await readFile(file, "utf8") }))
+);
+for (const { file, text } of sources) {
+  ok(`${file} reads the rail from productRail`, text.includes("productRail("));
+  ok(`${file} does not assemble one of its own`, !text.includes("resolveRail("));
+  ok(
+    `${file} does not pick a provider for itself`,
+    !text.includes("paymentProviderFor(")
+  );
+}
+
+// 13. Wherever a deposit can be quoted, the customer is shown the figure.
+//
+// Both symptoms the popup showed were this: a $25-per-person deposit for two
+// people is $50, the quote said so, and nothing on screen said it. The footer
+// hid the figure behind the rail, and the breakdown asked for two lines when
+// a per-person deposit for a group produces exactly one.
+const dialog = await readFile("src/components/SecureDateButton.tsx", "utf8");
+ok(
+  "the dialog resolves the viewer's own payment mode rather than trusting a static page",
+  dialog.includes("/api/bookings/rail") && dialog.includes("const mode = viewerMode ?? paymentMode")
+);
+ok(
+  "and no money sentence still reads the page's mode directly",
+  !/\bpaymentMode (===|!==) "/.test(dialog)
+);
+const forTwo = quoteDeposit(FROM_GROQ, "photoshoot", { people: 2, extraLabels: [] });
+ok("a $25 per-person deposit for two people is $50", forTwo.ok && forTwo.quote.totalCents === 5000);
+ok(
+  "and it arrives as one line charged twice, which is why a two-line test missed it",
+  forTwo.ok && forTwo.quote.lines.length === 1 && forTwo.quote.lines[0].quantity === 2
+);
+ok(
+  "so the breakdown opens on quantity, not on the number of lines",
+  dialog.includes("lines.length > 1 || lines.some((line) => line.quantity > 1)")
+);
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-quote: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -474,5 +530,6 @@ if (errors.length > 0) {
 console.log(
   "check-quote: ok — deposits are computed in whole cents from product configuration only, a selection " +
     "cannot carry its own price, broken rules produce no deposit, legacy flat amounts are unchanged, and " +
-    "a quote records the rates that produced it."
+    "a quote records the rates that produced it, one function assembles the rail, and a deposit that can be " +
+    "quoted is a deposit the customer can see."
 );

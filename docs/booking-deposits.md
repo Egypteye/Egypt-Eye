@@ -754,6 +754,57 @@ The same mistake was still in two pieces of copy — the product-page caption an
 the dialog's terms both promised a refund under a hold, where the honest word
 is *released*. Both now follow the mode.
 
+#### The fourth time, and the part a static page cannot answer
+
+It then happened once more, in the one place `resolveRail()` could not fix.
+Three surfaces called it with `{ isAdmin: false }` hardcoded, because they are
+statically rendered and a page built at deploy time cannot know who is reading
+it. The booking route called it with the real viewer. For a customer the two
+agree exactly. For the one person they don't — an admin testing PayPal's
+sandbox on the live site, who is deliberately the only visitor offered the
+sandbox at all — the page said **"No payment now"** and then the route handed
+them PayPal buttons.
+
+The visible symptom was two symptoms, and they had one cause. `"No payment
+now"` is the same branch that suppresses `Pay now $50`, so the per-person total
+was being computed correctly and never shown. Underneath it, the breakdown that
+would have shown the arithmetic asked for two quote lines, and a per-person
+deposit for a group produces exactly one line charged twice — so the one case a
+customer most wants to check was the one case nothing explained.
+
+The fix is in two halves, because the problem has two halves:
+
+* `productRail()` assembles the offer, the rail and the provider in one place,
+  and the pages, the secure page and the booking route all read it. No surface
+  may call `resolveRail` or `paymentProviderFor` for itself; `check-quote`
+  greps for it and fails if one does.
+* `GET /api/bookings/rail` answers the viewer-dependent half. The popup asks it
+  on open — not on page load, so a visitor who never opens it costs nothing —
+  and keeps the page's answer if the request fails. The static page stays
+  static and stays correct for customers; the one visitor it cannot see asks
+  for themselves.
+
+What this still cannot guarantee: a customer whose page was cached before a
+deposit changed sees the old figure until it revalidates. That is survivable
+only because the figure on screen is never the figure charged — the route
+recomputes from the product and its own copy of the rules, and a mismatch
+between the two is caught at capture, not after. The popup's number is a
+courtesy; the route's number is the contract.
+
+Two things surfaced while fixing it, both on the secure page, both because it
+writes its own copy instead of reading the shared sentences:
+
+* The promised **"usually within 48 hours"** was still there. It had been
+  removed from `wording.ts` and pinned by a check — but that check guards the
+  module, and a page with a hardcoded string is not the module. `check-booking`
+  now reads the booking surfaces themselves and fails on a duration standing
+  next to a reply, while leaving durations that are facts about a product ("a
+  3-hour session") alone.
+* The page asks for a headcount and the route charges per person, yet it showed
+  a bare figure and called it *"the only amount you pay now"*. It was asking
+  `resolveDeposit`, which knows nothing about per-person rules. It now reads
+  `offer.perPerson` and says *per person* out loud.
+
 ### What was proven, and what was not
 
 `check-paypal.mts` runs everywhere and covers the reasoning: money compared in

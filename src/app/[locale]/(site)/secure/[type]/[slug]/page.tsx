@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
-import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
-import { paymentProviderFor } from "@/lib/booking/activeProvider";
-import { resolveRail } from "@/lib/booking/rail";
+import { presentDeposit } from "@/lib/booking/deposit";
+import { productRail } from "@/lib/booking/productRail";
+import { HUMAN_CONFIRMS } from "@/lib/booking/wording";
 import { SecureBookingForm } from "./SecureBookingForm";
 import { getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
@@ -38,22 +38,25 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
   const [product, settings] = await Promise.all([load(type, slug), getSiteSettings()]);
   if (!product) notFound();
 
-  const deposit = resolveDeposit(product, settings.defaultDepositUsd);
+  // Statically resolved for a customer, like the product pages: the deposit
+  // and the rail come from productRail, so this page, the product page and the
+  // booking route cannot disagree. It used to ask resolveDeposit here, which
+  // knows nothing about per-person rules, and so quoted a one-person figure to
+  // a group.
+  const { offer, rail } = productRail(product, type, settings.defaultDepositUsd, { isAdmin: false });
   // A product nobody has switched on has no booking page. Reaching this URL by
   // hand should look like what it is — a page that does not exist — rather
   // than an empty form that cannot do anything.
-  if (!deposit.bookable) notFound();
+  if (!offer.available) notFound();
 
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
-  const price = presentDeposit(deposit.amountUsd);
-  // Asked once, in lib/booking/rail.ts, and read here — the same answer the
-  // booking route acts on. Deriving it separately is how a page came to say
-  // "held, not charged" about money the route captures.
-  const paymentMode = resolveRail(
-    { available: deposit.bookable, paymentLink: deposit.bookable ? deposit.paymentLink : null },
-    paymentProviderFor({ isAdmin: false })
-  ).moneyMode;
+  const price = presentDeposit(offer.oneCents / 100);
+  // This page asks for a headcount and the route charges per person, so a
+  // bare figure here would be the rate presented as the total — the same way
+  // a group arrives at a surprise. offer.perPerson is why it is said out loud.
+  const each = offer.available && offer.perPerson ? " per person" : "";
+  const paymentMode = rail.moneyMode;
   const productPath = type === "photoshoot" ? `/photoshoots/${slug}` : `/experiences/${slug}`;
 
   return (
@@ -72,15 +75,18 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
           the button. Someone who reads only one thing on this page should read
           this one. */}
       <div className="mt-8 rounded-2xl border border-gold/30 bg-sand/40 p-5">
-        <p className="font-semibold text-ink">This is not an instant booking.</p>
-        <p className="mt-2 text-sm leading-relaxed text-ink-soft">
-          A member of our team checks availability for your date and confirms it personally — usually within 48
-          hours. We would rather confirm properly than confirm quickly.
-        </p>
+        {/* The sentence itself, not a second copy of it. This page used to
+            write its own — which is how it kept "This is not an instant
+            booking", false now that a customer really can finish in one step,
+            and a promised "usually within 48 hours" that had been removed from
+            every other surface. Reading HUMAN_CONFIRMS means the next edit to
+            it lands here too. See the note in lib/booking/wording.ts. */}
+        <p className="font-semibold text-ink">Confirming your date is the one part a person does.</p>
+        <p className="mt-2 text-sm leading-relaxed text-ink-soft">{HUMAN_CONFIRMS}</p>
         {paymentMode !== "none" ? (
           <p className="mt-3 text-sm leading-relaxed text-ink-soft">
             <strong className="text-ink">Paying the deposit does not confirm your date.</strong> If we cannot
-            confirm the date you asked for, we refund your {price.deposit} deposit in full, or move it to a date
+            confirm the date you asked for, we refund your {price.deposit}{each} deposit in full, or move it to a date
             that works.
           </p>
         ) : (
@@ -94,11 +100,14 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
       <dl className="mt-6 space-y-2 rounded-2xl border border-black/5 bg-cream p-5 text-sm">
         <div className="flex justify-between">
           <dt className="text-ink-soft">Deposit to book this date</dt>
-          <dd className="font-semibold text-ink">{price.deposit}</dd>
+          <dd className="font-semibold text-ink">
+            {price.deposit}
+            {each}
+          </dd>
         </div>
         <p className="pt-1 text-ink-soft">
-          Credited toward your final price. We confirm the full details and price with you directly — this is the
-          only amount you pay now.
+          Credited toward your final price. We confirm the full details and price with you directly — the
+          deposit{each ? " for everyone in your group" : ""} is the only amount you pay now.
         </p>
       </dl>
 

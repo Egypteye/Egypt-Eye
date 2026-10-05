@@ -73,6 +73,17 @@ type Props = {
   label?: string;
 };
 
+/**
+ * Whether a deposit needs its arithmetic spelled out.
+ *
+ * More than one line always does. So does a single line charged more than
+ * once — a per-person deposit for a group — which is the case that was
+ * silently hidden while this asked only about the count.
+ */
+function showBreakdown(lines: readonly { quantity: number }[]): boolean {
+  return lines.length > 1 || lines.some((line) => line.quantity > 1);
+}
+
 const OTHER_TIME = "__other__";
 
 type Stage =
@@ -140,11 +151,48 @@ export function SecureDateButton({
   });
   const [chosen, setChosen] = useState<string[]>([]);
 
+  // What happens to THIS visitor's money.
+  //
+  // `paymentMode` arrives from a statically rendered page, which is built once
+  // for everybody and therefore renders the customer's answer. That is right
+  // for every visitor but one: an admin testing PayPal's sandbox on the real
+  // site, whom the page cannot see (paymentProviderFor in activeProvider.ts),
+  // and who was shown "No payment now" and then handed PayPal buttons by the
+  // booking route that could see them. The page said one thing about the
+  // money, the route did another — the same class of bug as the rail, the
+  // amount and the bookability before it, surviving in the one place a static
+  // page genuinely cannot answer.
+  //
+  // So the dialog asks when it opens, and only then: no request is made for a
+  // visitor who never opens it, and if the request fails or is slow the page's
+  // answer stands, which is the correct one for everyone it is wrong for
+  // nobody.
+  const [viewerMode, setViewerMode] = useState<PaymentMode | null>(null);
+  const mode = viewerMode ?? paymentMode;
+
+  useEffect(() => {
+    if (!open || viewerMode !== null) return;
+    const abort = new AbortController();
+    fetch(`/api/bookings/rail?type=${productType}&slug=${encodeURIComponent(productSlug)}`, {
+      signal: abort.signal,
+      cache: "no-store",
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        const next = data?.moneyMode;
+        if (next === "paid" || next === "hold" || next === "none") setViewerMode(next);
+      })
+      // Nothing to tell the customer: they keep the page's answer, and the
+      // booking route is still the only thing that decides what is charged.
+      .catch(() => {});
+    return () => abort.abort();
+  }, [open, viewerMode, productType, productSlug]);
+
   // Naming the amount is the payment signal, but the label itself leads on
   // what the customer gets to do: finish it now. The deposit figure sits
   // directly under the button on the product page and again in the dialog
   // before anything is paid, so nothing about the cost is hidden by it.
-  const buttonLabel = label ?? (paymentMode === "none" ? "Request your date" : "Instant Booking");
+  const buttonLabel = label ?? (mode === "none" ? "Request your date" : "Instant Booking");
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const firstFieldRef = useRef<HTMLInputElement>(null);
@@ -437,7 +485,7 @@ export function SecureDateButton({
                   {/* How the figure was reached. A deposit that scales with
                       the headcount and the extras has to show its working, or
                       it reads as a number somebody picked. */}
-                  {stage.lines && stage.lines.length > 1 && (
+                  {stage.lines && showBreakdown(stage.lines) && (
                     <div className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm text-ink-soft">
                       <ul className="space-y-1">
                         {stage.lines.map((line) => (
@@ -699,7 +747,12 @@ export function SecureDateButton({
                         </div>
                       </div>
 
-                      {liveQuote && liveQuote.lines.length > 1 && (
+                      {/* Shown as soon as there is arithmetic to show. It used
+                          to require two lines, which hid the one case a
+                          customer most wants to check: a per-person deposit
+                          multiplied by the headcount, where "$25 each" and
+                          "$50" are both on screen but nothing says why. */}
+                      {liveQuote && showBreakdown(liveQuote.lines) && (
                         <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm text-ink-soft">
                           <ul className="space-y-1">
                             {liveQuote.lines.map((line) => (
@@ -832,7 +885,7 @@ export function SecureDateButton({
                           paid, not linked from a policy page they never
                           opened. */}
                       <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm leading-relaxed text-ink-soft">
-                        {paymentMode !== "none" ? (
+                        {mode !== "none" ? (
                           <>
                             <p className="font-semibold text-ink">What happens when you pay</p>
                             <p className="mt-1.5">
@@ -843,7 +896,7 @@ export function SecureDateButton({
                                   hold nothing is charged, so the honest word is
                                   released — and a refund promise the business keeps a
                                   different way is still a promise read the wrong way. */}
-                              {paymentMode === "hold"
+                              {mode === "hold"
                                 ? "Nothing is taken until they confirm it, and if we cannot do the date the hold is released and you are not charged at all."
                                 : "If we cannot confirm the date you asked for, we refund your deposit in full, or move it to a date that works."}
                             </p>
@@ -896,7 +949,7 @@ export function SecureDateButton({
                 <div className="shrink-0 border-t border-black/10 bg-cream/95 px-6 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] backdrop-blur">
                   <div className="flex items-end justify-between gap-4">
                     <div className="min-w-0">
-                      {paymentMode === "none" ? (
+                      {mode === "none" ? (
                         <p className="text-sm font-semibold text-ink">No payment now</p>
                       ) : (
                         <p className="text-sm text-ink-soft">
@@ -921,7 +974,7 @@ export function SecureDateButton({
                         ? "Continue"
                         : submitting
                           ? "Booking…"
-                          : paymentMode === "none"
+                          : mode === "none"
                             ? "Send my request"
                             : `Book and pay ${liveDepositLabel}`}
                     </button>

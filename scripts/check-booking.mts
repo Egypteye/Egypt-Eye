@@ -21,6 +21,7 @@ import { isTerminal } from "../src/lib/booking/attemptStates";
 import { HUMAN_CONFIRMS, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import { extrasTotal, normaliseExtras, selectExtras, formatUsd } from "../src/lib/booking/extras";
 import { composePhone } from "../src/lib/booking/phone";
+import { readFile } from "node:fs/promises";
 import { DIAL_CODES, dialCodeFor, flagFor } from "../src/lib/booking/countryCodes";
 import {
   bookingStateFromRow,
@@ -682,6 +683,45 @@ for (const state of ["created", "approved", "pending"]) {
 ok("an unknown state is not treated as settled", !isTerminal("something-new"));
 
 // ---------------------------------------------------------------------------
+// The reply window, asserted against the SOURCE and not just the sentence.
+//
+// The promised "48 hours" was removed from wording.ts and the check above
+// pinned it there — and it then sat untouched for weeks in the secure page,
+// which writes its own copy inline instead of reading HUMAN_CONFIRMS. A check
+// that guards one module does not guard a hardcoded string in a page, so this
+// one reads the files a customer actually sees.
+//
+// It looks for a duration next to a reply or confirmation, not for every
+// number: "within 48 hours" is a promise, "a 3-hour session" is a fact about
+// the product.
+const copySurfaces = [
+  "src/app/[locale]/(site)/secure/[type]/[slug]/page.tsx",
+  "src/app/[locale]/(site)/secure/[type]/[slug]/SecureBookingForm.tsx",
+  "src/components/SecureDateButton.tsx",
+  "src/lib/booking/wording.ts",
+  "src/lib/booking/states.ts",
+];
+for (const file of copySurfaces) {
+  const text = await readFile(file, "utf8").catch(() => "");
+  if (text === "") {
+    ok(`${file} could not be read, so its copy is unchecked`, false);
+    continue;
+  }
+  // Comments explain why the promise was removed and must be allowed to name
+  // it; only what a customer can read is in scope.
+  const visible = text
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+  const promise = visible.match(
+    /\b(?:within|in|under|takes?|usually)\s+(?:about\s+)?\d+\s*(?:-|\s)?\s*(?:hours?|hrs?|days?|minutes?|mins?)\b/i
+  );
+  ok(
+    `${file} promises a reply window a customer can hold us to${promise ? `: "${promise[0]}"` : ""}`,
+    promise === null
+  );
+}
+
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
@@ -691,5 +731,5 @@ if (errors.length > 0) {
 }
 console.log(
   "check-booking: ok — no payment event can confirm a booking, every pre-capture state says nothing is charged, " +
-    "and a product with no deposit figure shows no button."
+    "a product with no deposit figure shows no button, and no booking surface promises a reply window."
 );

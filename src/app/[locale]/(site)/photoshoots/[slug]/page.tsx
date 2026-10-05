@@ -5,10 +5,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
-import { payPalLink } from "@/lib/booking/deposit";
-import { depositOffer } from "@/lib/booking/quote";
-import { paymentProviderFor } from "@/lib/booking/activeProvider";
-import { resolveRail } from "@/lib/booking/rail";
+import { productRail } from "@/lib/booking/productRail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { Gallery } from "@/components/Gallery";
@@ -92,16 +89,17 @@ export default async function PhotoshootDetailPage({
   // whether the door appears at all. Asking two functions is how this page
   // came to show a figure the checkout could not charge, and then to hide a
   // button for a product the checkout could quote perfectly well.
-  const offer = depositOffer(photoshoot, "photoshoot", site.defaultDepositUsd);
+  // Statically rendered, so this page is built once for everybody and shows
+  // the CUSTOMER's answer. Correct for every visitor but one: an admin testing
+  // PayPal's sandbox on the real site, whom the page cannot see. The booking
+  // popup re-asks /api/bookings/rail when it opens and takes the viewer's own
+  // answer if it arrives. See productRail().
+  const { offer, rail } = productRail(photoshoot, "photoshoot", site.defaultDepositUsd, { isAdmin: false });
   const depositLabel = offer.available ? offer.headline : "";
   const perPerson = offer.available && offer.perPerson;
-  // Asked once, in lib/booking/rail.ts, and read here — the same answer the
-  // booking route acts on. Deriving it separately is how a page came to say
-  // "held, not charged" about money the route captures.
-  const paymentMode = resolveRail(
-    { available: offer.available, paymentLink: payPalLink(photoshoot.paypalLink) },
-    paymentProviderFor({ isAdmin: false })
-  ).moneyMode;
+  // The same rail the booking route acts on. Deriving it separately is how a
+  // page came to say "held, not charged" about money the route captures.
+  const paymentMode = rail.moneyMode;
 
   return (
     <>
