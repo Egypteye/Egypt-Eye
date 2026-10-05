@@ -23,6 +23,7 @@
     "check:booking": "tsx scripts/check-booking.mts",
     "check:csp": "tsx scripts/check-csp.mts",
     "check:paypal": "tsx scripts/check-paypal.mts",
+    "check:quote": "tsx scripts/check-quote.mts",
     "paypal:smoke": "tsx scripts/paypal-smoke.mts",
     "check:links": "tsx scripts/check-links.mts",
     "check:faqs": "tsx scripts/check-faqs.mts",

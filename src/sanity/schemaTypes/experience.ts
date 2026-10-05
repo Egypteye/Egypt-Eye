@@ -42,6 +42,29 @@ export const experience = defineType({
       validation: (r) => r.min(1),
     }),
     defineField({
+      name: "depositBasis",
+      title: "Deposit is charged",
+      description:
+        "A flat amount for the whole booking, or that amount for every person in the session. Leave as flat unless the deposit should scale with the group.",
+      type: "string",
+      options: {
+        list: [
+          { title: "A flat amount per booking", value: "fixed" },
+          { title: "Per person", value: "perPerson" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "fixed",
+    }),
+    defineField({
+      name: "depositMaxUsd",
+      title: "Most the deposit can reach (USD)",
+      description:
+        "Optional ceiling on the per-person part, so a large group does not owe a deposit nobody would pay. Extras are added on top of it.",
+      type: "number",
+      validation: (r) => r.min(1),
+    }),
+    defineField({
       name: "paypalLink",
       title: "PayPal payment link for the deposit",
       description:

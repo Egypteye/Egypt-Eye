@@ -186,6 +186,21 @@ export type Experience = {
   depositUsd?: number;
 
   /**
+   * Whether `depositUsd` is a flat amount or a per-person rate.
+   *
+   * Absent means "fixed", which is what every product configured before this
+   * existed means, so nothing changes until a rule is deliberately set.
+   */
+  depositBasis?: "fixed" | "perPerson";
+
+  /**
+   * An optional ceiling on the per-person portion, so a large group does not
+   * owe a deposit nobody would pay. It caps the service lines only — an extra
+   * somebody deliberately chose is not the thing to discount silently.
+   */
+  depositMaxUsd?: number;
+
+  /**
    * The start times this product is actually run at, offered as a dropdown in
    * the booking popup. Free text rather than a time type because "Sunrise" and
    * "9:00 AM" are both real answers and the second is not more precise than
@@ -259,7 +274,23 @@ export type Experience = {
  */
 export type BookingExtra = {
   label: string;
+  /** The full price of the extra, settled with the balance. */
   priceUsd: number;
+  /**
+   * How much of this extra's price is taken as deposit, if any.
+   *
+   * Separate from `priceUsd` because they answer different questions: the
+   * price is what the extra costs, the deposit is what is taken now to hold
+   * it. An extra with no deposit is free to add and settled with the balance,
+   * which is how every extra behaved before deposits could vary — so an
+   * unedited product keeps its current behaviour.
+   */
+  depositUsd?: number;
+  /**
+   * Whether that deposit is charged once per booking or once per person. A
+   * camel ride is usually per person; a video reel is usually per booking.
+   */
+  depositBasis?: "booking" | "person";
 };
 
 export type Photoshoot = {
@@ -288,6 +319,21 @@ export type Photoshoot = {
    * guessed figure.
    */
   depositUsd?: number;
+
+  /**
+   * Whether `depositUsd` is a flat amount or a per-person rate.
+   *
+   * Absent means "fixed", which is what every product configured before this
+   * existed means, so nothing changes until a rule is deliberately set.
+   */
+  depositBasis?: "fixed" | "perPerson";
+
+  /**
+   * An optional ceiling on the per-person portion, so a large group does not
+   * owe a deposit nobody would pay. It caps the service lines only — an extra
+   * somebody deliberately chose is not the thing to discount silently.
+   */
+  depositMaxUsd?: number;
 
   /**
    * The start times this product is actually run at, offered as a dropdown in
