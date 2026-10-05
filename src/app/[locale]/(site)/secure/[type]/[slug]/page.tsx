@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
 import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
-import { depositsEnabled } from "@/lib/booking/paymentProvider";
+import { paymentProvider } from "@/lib/booking/activeProvider";
+import { resolveRail } from "@/lib/booking/rail";
 import { SecureBookingForm } from "./SecureBookingForm";
 import { getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
@@ -46,12 +47,10 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
   const price = presentDeposit(deposit.amountUsd);
-  // Same rule as the product pages: a payment link is a live deposit.
-  const paymentMode = deposit.paymentLink
-    ? ("link" as const)
-    : depositsEnabled()
-      ? ("hold" as const)
-      : ("none" as const);
+  // Asked once, in lib/booking/rail.ts, and read here — the same answer the
+  // booking route acts on. Deriving it separately is how a page came to say
+  // "held, not charged" about money the route captures.
+  const paymentMode = resolveRail(deposit, paymentProvider()).moneyMode;
   const productPath = type === "photoshoot" ? `/photoshoots/${slug}` : `/experiences/${slug}`;
 
   return (

@@ -7,6 +7,7 @@ import { extrasTotal, formatUsd, normaliseExtras } from "@/lib/booking/extras";
 import { DEFAULT_DIAL_ISO, DIAL_CODES, flagFor } from "@/lib/booking/countryCodes";
 import { composePhone } from "@/lib/booking/phone";
 import { lockModals } from "@/lib/ui/modalLock";
+import { PayPalDepositButtons } from "./PayPalDepositButtons";
 
 // "Instant Booking" — the fast path, opened as a dialog from the product page.
 //
@@ -37,10 +38,11 @@ type Props = {
   productTitle: string;
   depositLabel: string;
   /**
-   * How the deposit is taken: "link" (a PayPal payment link), "hold" (the
-   * API, holding funds) or "none" (no deposit at all). A boolean here was the
-   * original bug — it could not tell "no deposit" from "pay by link", so a
-   * configured link rendered as "deposits are not switched on".
+   * What happens to the money: "paid" (it moves when the customer pays),
+   * "hold" (it is authorized and moves only when a person confirms) or "none"
+   * (no deposit at all). A boolean here was the original bug — it could not
+   * tell "no deposit" from "pay by link", so a configured link rendered as
+   * "deposits are not switched on".
    */
   paymentMode: PaymentMode;
   /** The site's real cancellation summary — never written here. */
@@ -60,6 +62,22 @@ const OTHER_TIME = "__other__";
 type Stage =
   | { kind: "form" }
   | { kind: "payLink"; reference: string; paymentLink: string; amountUsd: number; emailed: boolean }
+  // The PayPal API rail: an order already created against the saved booking,
+  // paid for with the buttons without leaving this dialog.
+  | {
+      kind: "payPal";
+      reference: string;
+      orderId: string;
+      clientId: string;
+      amountUsd: number;
+      moneyMode: PaymentMode;
+      approvalUrl?: string;
+      emailed: boolean;
+    }
+  // What the customer sees once the money side is done. Never a confirmation:
+  // the message comes from stateCopy on the server, which cannot say a date is
+  // confirmed unless a person has said so.
+  | { kind: "settled"; reference: string; message: string; pending: boolean; emailed: boolean }
   | { kind: "payDeposit"; reference: string; approvalUrl: string }
   | { kind: "awaitingTeam"; reference: string; notice?: string; emailed: boolean };
 
@@ -227,6 +245,21 @@ export function SecureDateButton({
         });
         return;
       }
+      if (data.next === "payPal" && data.deposit?.orderId && data.deposit?.clientId) {
+        // Straight to the buttons, in this dialog. The order already exists
+        // server-side with the amount and the reference on it.
+        setStage({
+          kind: "payPal",
+          reference: data.reference,
+          orderId: data.deposit.orderId,
+          clientId: data.deposit.clientId,
+          amountUsd: data.deposit.amountUsd,
+          moneyMode: data.deposit.moneyMode ?? "paid",
+          approvalUrl: data.deposit.approvalUrl || undefined,
+          emailed: Boolean(data.emailed),
+        });
+        return;
+      }
       if (data.next === "payDeposit" && data.deposit?.approvalUrl) {
         window.location.href = data.deposit.approvalUrl;
         setStage({ kind: "payDeposit", reference: data.reference, approvalUrl: data.deposit.approvalUrl });
@@ -248,11 +281,13 @@ export function SecureDateButton({
   const title =
     stage.kind === "awaitingTeam"
       ? "Your request is with our team"
-      : stage.kind === "payLink"
-        ? "One step left — pay your deposit"
-        : step === 1
-          ? "Instant Booking"
-          : "Where we reach you";
+      : stage.kind === "settled"
+        ? "Thank you — we have your deposit"
+        : stage.kind === "payPal" || stage.kind === "payLink"
+          ? "One step left — pay your deposit"
+          : step === 1
+            ? "Instant Booking"
+            : "Where we reach you";
 
   return (
     <>
@@ -311,7 +346,86 @@ export function SecureDateButton({
               )}
             </header>
 
-            {stage.kind === "payLink" ? (
+            {stage.kind === "payPal" ? (
+              <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">
+                <div className="space-y-4">
+                  <p className="text-sm leading-relaxed text-ink-soft">
+                    Your booking is saved as <strong className="font-mono text-ink">{stage.reference}</strong> for{" "}
+                    {new Date(form.startsAt).toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "long",
+                      year: "numeric",
+                    })}
+                    {slotLabel ? `, ${slotLabel}` : ""}.
+                  </p>
+
+                  {/* The terms again, immediately above the buttons. They were
+                      shown before Continue too — this is the screen where the
+                      money actually moves, and that is the one that has to
+                      carry them. */}
+                  <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm leading-relaxed text-ink-soft">
+                    <p className="font-semibold text-ink">
+                      {stage.moneyMode === "hold"
+                        ? `${depositLabel} held, not charged`
+                        : `${depositLabel} deposit`}
+                    </p>
+                    <p className="mt-1.5">
+                      <strong className="text-ink">Paying does not confirm your date.</strong> A member of our team
+                      checks availability and comes back to you personally.{" "}
+                      {stage.moneyMode === "hold"
+                        ? "Nothing is taken until they confirm it, and if we cannot do the date the hold is released."
+                        : "If we cannot confirm the date you asked for, we refund it in full."}
+                    </p>
+                  </div>
+
+                  <PayPalDepositButtons
+                    orderId={stage.orderId}
+                    clientId={stage.clientId}
+                    reference={stage.reference}
+                    amountUsd={stage.amountUsd}
+                    fallbackUrl={stage.approvalUrl}
+                    onSettled={(result) =>
+                      setStage({
+                        kind: "settled",
+                        reference: stage.reference,
+                        message: result.message,
+                        pending: Boolean(result.pending),
+                        emailed: stage.emailed,
+                      })
+                    }
+                  />
+
+                  {selected.length > 0 && (
+                    <p className="text-xs leading-relaxed text-ink-soft">
+                      Your {formatUsd(extrasSum)} of extras is on the booking and settled with the balance — the
+                      payment above is the {depositLabel} deposit only.
+                    </p>
+                  )}
+                </div>
+              </div>
+            ) : stage.kind === "settled" ? (
+              <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-6 pb-6 text-sm leading-relaxed text-ink-soft">
+                {/* Whatever the server said, which can never be a confirmation
+                    of the date — stateCopy only says "confirmed" for a booking
+                    a person has confirmed. */}
+                <p>{stage.message}</p>
+                <p className="select-all rounded-lg bg-sand/40 px-3 py-2 text-center font-mono text-base font-semibold text-ink">
+                  {stage.reference}
+                </p>
+                <p className="text-xs">
+                  {stage.emailed
+                    ? `We have emailed you a copy. Quote ${stage.reference} if you reply.`
+                    : "You booked without an email address, so please keep this reference — quote it when we speak."}
+                </p>
+                <button
+                  type="button"
+                  onClick={close}
+                  className="mt-2 w-full rounded-full bg-ink px-6 py-3 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+                >
+                  Done
+                </button>
+              </div>
+            ) : stage.kind === "payLink" ? (
               <div className="min-h-0 flex-1 overflow-y-auto px-6 pb-6">
                 <div className="space-y-4">
                   <p className="text-sm leading-relaxed text-ink-soft">
@@ -619,9 +733,14 @@ export function SecureDateButton({
                             <p className="mt-1.5">
                               Your {depositLabel} deposit holds this date while we check it.{" "}
                               <strong className="text-ink">Paying does not confirm your date</strong> — a member
-                              of our team checks availability and comes back to you personally. If we cannot
-                              confirm the date you asked for, we refund your deposit in full, or move it to a
-                              date that works.
+                              of our team checks availability and comes back to you personally.{" "}
+                              {/* "Refunded" is only true where the money moved. Under a
+                                  hold nothing is charged, so the honest word is
+                                  released — and a refund promise the business keeps a
+                                  different way is still a promise read the wrong way. */}
+                              {paymentMode === "hold"
+                                ? "Nothing is taken until they confirm it, and if we cannot do the date the hold is released and you are not charged at all."
+                                : "If we cannot confirm the date you asked for, we refund your deposit in full, or move it to a date that works."}
                             </p>
                             <p className="mt-1.5">Your deposit is credited toward your final price.</p>
                           </>

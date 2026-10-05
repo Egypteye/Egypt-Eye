@@ -91,13 +91,13 @@ const COPY: Record<BookingState, StateCopy> = {
  */
 export function stateCopy(state: BookingState, mode: PaymentMode = "hold"): StateCopy {
   const base = COPY[state];
-  if (mode !== "link") return base;
-  const forLink = LINK_COPY[state];
-  return forLink ? { ...base, ...forLink } : base;
+  if (mode !== "paid") return base;
+  const paidCopy = PAID_COPY[state];
+  return paidCopy ? { ...base, ...paidCopy } : base;
 }
 
-/** Overrides for payment-link mode, where the deposit is paid rather than held. */
-const LINK_COPY: Partial<Record<BookingState, Partial<StateCopy>>> = {
+/** Overrides for the modes where the deposit is actually paid rather than held. */
+const PAID_COPY: Partial<Record<BookingState, Partial<StateCopy>>> = {
   awaitingDeposit: {
     label: "Deposit not paid yet",
     message:

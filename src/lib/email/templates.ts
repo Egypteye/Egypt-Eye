@@ -1,6 +1,6 @@
 import "server-only";
 import { escapeHtml } from "./resend";
-import { HUMAN_CONFIRMS, moneyState, replyPromise } from "@/lib/booking/wording";
+import { HUMAN_CONFIRMS, moneyState, replyPromise, type PaymentMode } from "@/lib/booking/wording";
 import { extrasTotal, formatUsd, type BookingExtra } from "@/lib/booking/extras";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
@@ -1080,6 +1080,7 @@ export function bookingRequestCustomerEmail({
   people,
   depositUsd,
   paymentLink,
+  moneyMode,
   extras,
 }: {
   reference: string;
@@ -1091,6 +1092,13 @@ export function bookingRequestCustomerEmail({
   depositUsd: number | null;
   /** Set when the deposit is paid through a PayPal link rather than held. */
   paymentLink?: string | null;
+  /**
+   * What happens to the money, decided by the route rather than guessed here.
+   * It used to be inferred from whether a payment link was present, which
+   * silently became wrong the moment a PayPal API order could capture: no
+   * link, money taken, and the email would have said "held, not charged".
+   */
+  moneyMode?: PaymentMode;
   /** Chosen priced extras, settled with the balance rather than the deposit. */
   extras?: readonly BookingExtra[];
 }) {
@@ -1099,7 +1107,9 @@ export function bookingRequestCustomerEmail({
   const who = `${people} ${people === 1 ? "person" : "people"}`;
 
   // Two genuinely different situations, and conflating them would mislead.
-  const mode = !depositUsd ? "none" : paymentLink ? "link" : "hold";
+  // The route's answer wins; the link is only a fallback for callers that
+  // predate the explicit mode.
+  const mode: PaymentMode = !depositUsd ? "none" : moneyMode ?? (paymentLink ? "paid" : "hold");
   const money = moneyState(depositUsd ? `$${depositUsd}` : null, mode);
   // The link is repeated in the email because the dialog closes and people
   // come back to this later — and because a deposit nobody can find the link
@@ -1185,6 +1195,7 @@ export function bookingRequestTeamEmail({
   notes,
   depositUsd,
   paymentLink,
+  moneyMode,
   extras,
   emailedCustomer = true,
   accountState,
@@ -1203,6 +1214,8 @@ export function bookingRequestTeamEmail({
   depositUsd: number | null;
   /** Set when the deposit is paid by PayPal link, so nothing is held here. */
   paymentLink?: string | null;
+  /** What happens to the money — decided by the route, never guessed. */
+  moneyMode?: PaymentMode;
   extras?: readonly BookingExtra[];
   /** False when there was no address to send the customer a copy to. */
   emailedCustomer?: boolean;
@@ -1215,6 +1228,11 @@ export function bookingRequestTeamEmail({
   // The desk has to build time into the session for these, so they belong in
   // the booking row list rather than in a footnote. Kept separate from the
   // deposit figure on purpose: the deposit is what was paid, these are not.
+  // The banner describes the money, so it has to be told what the money is
+  // doing. Inferring it from "is there a payment link?" was right only while a
+  // link was the only way money moved.
+  const teamMode: PaymentMode = moneyMode ?? (paymentLink ? "paid" : "hold");
+
   const chosen = extras ?? [];
   const extrasRows =
     chosen.length > 0
@@ -1226,12 +1244,14 @@ export function bookingRequestTeamEmail({
     preheader: `${productTitle} — ${when} — ${reference}`,
     bodyHtml: `
       <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Deposit booking — needs a decision</p>
-      <p style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:${depositUsd && paymentLink ? "#fff4d6" : "#f1f4f2"};">${
-        depositUsd && paymentLink
-          ? `<strong>Payment status: NOT YET RECEIVED.</strong><br/>This email is sent when the request is made, before the customer has paid. Check PayPal for <strong>$${depositUsd}</strong> quoted against <strong>${escapeHtml(reference)}</strong>, then press "Deposit received" in admin.`
-          : depositUsd
+      <p style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:${depositUsd && teamMode !== "hold" ? "#fff4d6" : "#f1f4f2"};">${
+        !depositUsd
+          ? "<strong>No deposit</strong> — online deposits are not switched on, so this is a request only."
+          : teamMode === "hold"
             ? `<strong>$${depositUsd} is held</strong>, not charged. Confirm to take it, or decline to release it.`
-            : "<strong>No deposit</strong> — online deposits are not switched on, so this is a request only."
+            : paymentLink
+              ? `<strong>Payment status: NOT YET RECEIVED.</strong><br/>This email is sent when the request is made, before the customer has paid. Check PayPal for <strong>$${depositUsd}</strong> quoted against <strong>${escapeHtml(reference)}</strong>, then press "Deposit received" in admin.`
+              : `<strong>Payment status: NOT YET RECEIVED.</strong><br/>This email is sent the moment the request is made, before the customer has finished paying. The <strong>$${depositUsd}</strong> deposit reconciles itself through PayPal — open the booking in admin to see whether it completed rather than reading anything into this email.`
       }</p>
       <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
         ${row("What", `${productTitle} (${productType})`)}
@@ -1258,11 +1278,13 @@ export function bookingRequestTeamEmail({
 
   const text = [
     `Deposit booking — needs a decision`,
-    depositUsd && paymentLink
-      ? `PAYMENT STATUS: NOT YET RECEIVED. Sent when the request was made, before paying. Check PayPal for $${depositUsd} against ${reference}.`
-      : depositUsd
+    !depositUsd
+      ? "No deposit (online deposits off)."
+      : teamMode === "hold"
         ? `$${depositUsd} held, not charged.`
-        : "No deposit (online deposits off).",
+        : paymentLink
+          ? `PAYMENT STATUS: NOT YET RECEIVED. Sent when the request was made, before paying. Check PayPal for $${depositUsd} against ${reference}.`
+          : `PAYMENT STATUS: NOT YET RECEIVED. Sent the moment the request was made, before the customer finished paying. The $${depositUsd} reconciles itself through PayPal — check admin, not this email.`,
     "",
     `What: ${productTitle} (${productType})`,
     `When: ${when}`,

@@ -22,6 +22,8 @@
     "check:migration": "tsx scripts/check-migration-plan.mts",
     "check:booking": "tsx scripts/check-booking.mts",
     "check:csp": "tsx scripts/check-csp.mts",
+    "check:paypal": "tsx scripts/check-paypal.mts",
+    "paypal:smoke": "tsx scripts/paypal-smoke.mts",
     "check:links": "tsx scripts/check-links.mts",
     "check:faqs": "tsx scripts/check-faqs.mts",
     "check:treasures": "tsx scripts/check-treasures.mts"

@@ -1,3 +1,5 @@
+import type { PaymentMode } from "./wording";
+
 // The payment boundary.
 //
 // Everything above this file talks about holds, captures and voids. Nothing
@@ -36,19 +38,76 @@ export type SettleResult =
   | { ok: true; id: string }
   | { ok: false; reason: "unavailable" | "expired" | "error"; message: string };
 
+export type RefundResult =
+  | { ok: true; id: string; /** True when PayPal said it had already refunded. */ alreadyDone: boolean }
+  | { ok: false; reason: "unavailable" | "error"; message: string };
+
+/** What the reservation says this payment is supposed to be. */
+export type ExpectedPayment = {
+  reference: string;
+  amountUsd: number;
+};
+
+export type ApprovalResult =
+  | {
+      ok: true;
+      /** Whether the money moved or was only held. */
+      state: "captured" | "authorized";
+      /** The capture or authorization id — what a later refund or void needs. */
+      id: string;
+      orderId: string;
+      amountUsd: number;
+    }
+  | {
+      ok: false;
+      reason:
+        | "unavailable"
+        | "rejected"
+        /** The payment is real but belongs to another booking, or is for another amount. */
+        | "mismatch"
+        /** PayPal has it but has not completed it — not money in the account. */
+        | "pending";
+      message: string;
+    };
+
 export type PaymentProvider = {
   readonly name: string;
   /** Whether a deposit can actually be taken right now. */
   readonly enabled: boolean;
+  /** The browser SDK's client id. Public by design; the secret never leaves the server. */
+  readonly clientId: string | null;
+  /** CAPTURE takes the money on approval; AUTHORIZE only holds it. */
+  readonly intent: "CAPTURE" | "AUTHORIZE";
+  /**
+   * What happens to the customer's money, which is what every sentence they
+   * read is chosen from. Derived from the intent rather than set separately,
+   * because two fields that can disagree eventually do.
+   */
+  readonly moneyMode: PaymentMode;
   /**
    * Places a hold. Does NOT move money — see the design doc. Returns the URL
    * the customer is sent to in order to approve it.
    */
   createHold(intent: DepositIntent): Promise<HoldResult>;
+  /**
+   * Turns a customer's approval into a known state, by asking the provider
+   * rather than the browser.
+   *
+   * `expected` is what the reservation says this payment should be. The
+   * provider compares it against what the provider itself reports and refuses
+   * on a mismatch — the browser supplies only an order id that we issued.
+   */
+  finalizeApproval(orderId: string, expected: ExpectedPayment): Promise<ApprovalResult>;
   /** Takes the held money. Called when a human confirms, never before. */
   capture(authorizationId: string): Promise<SettleResult>;
   /** Releases the hold. Called when Egypt Eye cannot do the date. */
   release(authorizationId: string): Promise<SettleResult>;
+  /**
+   * Gives captured money back. Needed because CAPTURE intent takes the money
+   * at approval, so "we refund it in full if we cannot confirm your date" is a
+   * promise with an API call behind it rather than a note to staff.
+   */
+  refund(captureId: string, amountUsd: number): Promise<RefundResult>;
   /** Verifies a webhook really came from the provider. */
   verifyWebhook(headers: Headers, rawBody: string): Promise<boolean>;
 };
@@ -64,6 +123,9 @@ export type PaymentProvider = {
 export const disabledProvider: PaymentProvider = {
   name: "disabled",
   enabled: false,
+  clientId: null,
+  intent: "CAPTURE",
+  moneyMode: "none",
   async createHold() {
     return {
       ok: false,
@@ -71,7 +133,13 @@ export const disabledProvider: PaymentProvider = {
       message: "Online deposits are not switched on yet.",
     };
   },
+  async finalizeApproval() {
+    return { ok: false, reason: "unavailable", message: "No payment provider is configured." };
+  },
   async capture() {
+    return { ok: false, reason: "unavailable", message: "No payment provider is configured." };
+  },
+  async refund() {
     return { ok: false, reason: "unavailable", message: "No payment provider is configured." };
   },
   async release() {
@@ -86,20 +154,19 @@ export const disabledProvider: PaymentProvider = {
 };
 
 /**
- * The provider for this deployment.
+ * Picks the provider for this deployment.
  *
- * Reads configuration at call time rather than at module load, so a route
- * cannot capture a stale answer from build time — the same reason
- * sanity/fetchers.ts checks its own configuration per request.
+ * Deliberately takes the candidate rather than finding it. This module must
+ * stay free of `server-only` so scripts/check-booking.mts can assert the rules
+ * against the real code — the same reason the deposit wording lives in its own
+ * pure module. Resolving the PayPal credentials is therefore the caller's job,
+ * and `activeProvider.ts` is the one caller that does it.
  */
-export function paymentProvider(): PaymentProvider {
-  // The PayPal implementation lands here once the sandbox test in
-  // docs/booking-deposits.md has actually been run. Until then this is the
-  // only provider, by design, and every surface already handles it.
-  return disabledProvider;
-}
-
-/** Whether the site should offer to take a deposit at all right now. */
-export function depositsEnabled(): boolean {
-  return paymentProvider().enabled;
+export function chooseProvider(candidate: PaymentProvider | null): PaymentProvider {
+  // Configuration decides, never a caller — so a route cannot reach a live
+  // payment rail in an environment that was not set up for one. With no
+  // credentials this is `disabledProvider`, and every surface already handles
+  // that: the booking degrades to a request with no payment rather than to a
+  // broken checkout.
+  return candidate ?? disabledProvider;
 }

@@ -40,22 +40,30 @@ export const HUMAN_CONFIRMS =
  * How the deposit is taken, which changes what is true about the money.
  *
  * - "none": no deposit is being collected at all.
- * - "link": a PayPal payment link. The money moves when the customer pays, so
- *   nothing may describe it as held, and a date we cannot do means a refund.
- * - "hold": an authorization. Nothing moves until a person confirms.
+ * - "paid": the money moves when the customer pays. A date we cannot do means
+ *   a refund, and nothing may describe the money as merely held.
+ * - "hold": an authorization. Nothing moves until a person confirms, and a
+ *   date we cannot do is a void rather than a refund.
  *
- * The distinction is not pedantry. Telling a customer their money is "held"
- * when PayPal has actually taken it is the kind of sentence that produces a
- * dispute, and the refund promise has to match whichever is true.
+ * This describes what happens to the MONEY, never which rail carried it. That
+ * distinction is the whole point and it was nearly lost: the mode used to be
+ * called "link", because a PayPal payment link was the only way money moved
+ * at payment time. The moment a PayPal API order with CAPTURE intent exists,
+ * "not a link" stops meaning "not charged" — and code picking the mode by
+ * asking "is there a link?" would have told a customer their money was held
+ * while PayPal had already taken it. That sentence is how disputes start.
+ *
+ * So the question is always "has the money moved?", and the refund promise
+ * follows from the answer rather than from the plumbing.
  */
-export type PaymentMode = "none" | "link" | "hold";
+export type PaymentMode = "none" | "paid" | "hold";
 
 /** What the money is doing. */
 export function moneyState(depositLabel: string | null, mode: PaymentMode = "hold"): string {
   if (!depositLabel || mode === "none") {
     return "Nothing has been charged. Our team will come back to you with the details and what happens next.";
   }
-  if (mode === "link") {
+  if (mode === "paid") {
     return (
       `Your ${depositLabel} deposit holds this date while we check it, and is credited toward your ` +
       "final price. " +

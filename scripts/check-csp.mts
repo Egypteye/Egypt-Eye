@@ -53,6 +53,32 @@ ok("PRODUCTION CSP CONTAINS 'unsafe-eval' — this must never ship", !production
 ok("production CSP allows a WebSocket origin it should not", !/\bws:/.test(production));
 ok("production CSP allows localhost", !production.includes("localhost"));
 
+// PayPal's buttons render inside the booking dialog, so the policy has to let
+// their SDK load, open its iframes, call home and draw its card art. If any of
+// these disappears the buttons fail with a console error nobody is watching
+// for, and the only visible symptom is that deposits quietly stop being paid —
+// which is why this is asserted rather than left to a code review.
+const PAYPAL_ORIGINS = [
+  "https://www.paypal.com",
+  "https://www.sandbox.paypal.com",
+  "https://www.paypalobjects.com",
+  "https://c.paypal.com",
+];
+for (const directive of ["script-src", "frame-src", "connect-src", "img-src"]) {
+  const value = production.split("; ").find((part) => part.startsWith(`${directive} `)) ?? "";
+  for (const origin of PAYPAL_ORIGINS) {
+    ok(`${directive} does not allow ${origin}, so PayPal's buttons cannot work`, value.includes(origin));
+  }
+}
+
+// The other half of that rule: allowing PayPal must not have been done with a
+// wildcard. `https://*.paypal.com` would admit every subdomain PayPal ever
+// creates, which is more trust than taking a payment needs.
+ok(
+  "the CSP allows PayPal by wildcard rather than by named host",
+  !/\*\.paypal(objects)?\.com/.test(production)
+);
+
 // An unset or unexpected NODE_ENV must fall through to the strict policy,
 // because guessing wrong in that direction ships eval() to real visitors.
 for (const env of ["", "test", "staging", "Production", "DEVELOPMENT"]) {

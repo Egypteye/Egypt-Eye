@@ -78,14 +78,34 @@ const nextConfig: NextConfig = {
     const devScript = isDev ? " 'unsafe-eval'" : "";
     const devConnect = isDev ? " ws: http://localhost:* http://127.0.0.1:*" : "";
 
+    // PayPal's checkout buttons run in the booking dialog, which means the
+    // SDK script, the iframes it opens, the calls it makes and the card-brand
+    // images it draws all have to be allowed through.
+    //
+    // Listed host by host rather than as https://*.paypal.com, deliberately.
+    // A wildcard would be shorter and would also admit every other subdomain
+    // PayPal has, now and in future, which is more trust than taking a payment
+    // requires. These are the four origins the v2 buttons actually use.
+    //
+    // The order is kept in one place because scripts/check-csp.mts asserts it:
+    // if PayPal's origins ever disappear from here the buttons stop rendering
+    // with a console error nobody is watching for, and the only visible
+    // symptom is that deposits quietly stop being paid.
+    const paypal = [
+      "https://www.paypal.com",
+      "https://www.sandbox.paypal.com",
+      "https://www.paypalobjects.com",
+      "https://c.paypal.com",
+    ].join(" ");
+
     const publicCsp = [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline'${devScript}`,
+      `script-src 'self' 'unsafe-inline' ${paypal}${devScript}`,
       "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https://cdn.sanity.io https://images.pexels.com https://*.supabase.co",
+      `img-src 'self' data: https://cdn.sanity.io https://images.pexels.com https://*.supabase.co ${paypal}`,
       "font-src 'self' data:",
-      `connect-src 'self' https://*.supabase.co${devConnect}`,
-      "frame-src 'self' https://www.youtube.com https://player.vimeo.com",
+      `connect-src 'self' https://*.supabase.co ${paypal}${devConnect}`,
+      `frame-src 'self' https://www.youtube.com https://player.vimeo.com ${paypal}`,
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",

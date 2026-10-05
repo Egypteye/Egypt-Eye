@@ -10,7 +10,8 @@ import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
 import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
-import { depositsEnabled } from "@/lib/booking/paymentProvider";
+import { paymentProvider } from "@/lib/booking/activeProvider";
+import { resolveRail } from "@/lib/booking/rail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
 import { Gallery } from "@/components/Gallery";
 import { ExperienceCard } from "@/components/ExperienceCard";
@@ -81,14 +82,10 @@ export default async function ExperienceDetailPage({
   // The deposit door, shown only for an experience somebody switched on.
   const deposit = resolveDeposit(experience, site.defaultDepositUsd);
   const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd).deposit : "";
-  // A link counts as a live deposit just as much as the API does.
-  const paymentMode = !deposit.bookable
-    ? ("none" as const)
-    : deposit.paymentLink
-      ? ("link" as const)
-      : depositsEnabled()
-        ? ("hold" as const)
-        : ("none" as const);
+  // Asked once, in lib/booking/rail.ts, and read here — the same answer the
+  // booking route acts on. Deriving it separately is how a page came to say
+  // "held, not charged" about money the route captures.
+  const paymentMode = resolveRail(deposit, paymentProvider()).moneyMode;
 
   return (
     <>
@@ -264,7 +261,9 @@ export default async function ExperienceDetailPage({
               <p className="mt-2 text-center text-xs leading-relaxed text-ink-soft">
                 {paymentMode === "none"
                   ? "Our team confirms your date personally."
-                  : `${depositLabel} deposit · no account needed · fully refunded if we cannot confirm your date`}
+                  : paymentMode === "hold"
+                    ? `${depositLabel} deposit held, not charged · no account needed · released if we cannot confirm your date`
+                    : `${depositLabel} deposit · no account needed · fully refunded if we cannot confirm your date`}
               </p>
             </div>
           )}

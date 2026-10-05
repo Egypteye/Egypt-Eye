@@ -661,6 +661,113 @@ alone would have fixed neither properly — stacking the newsletter behind the
 dialog leaves it waiting there, to be revealed the moment the customer
 finishes.
 
+## PayPal, for real
+
+The payment adapter was built to be filled in later. This is later.
+
+### What runs
+
+A REST app's client id and secret in the environment make `paymentProvider()`
+return a real PayPal provider instead of `disabledProvider`, and the booking
+popup renders PayPal's own buttons inline. The customer never leaves the page:
+they choose a date, add extras, enter a name and phone, and pay, in one dialog.
+
+The order is created **server side** when the booking is saved, with the amount
+read from the product and the booking reference in `custom_id`. That last
+detail is the one that pays for the whole integration: PayPal echoes `custom_id`
+back on the order and on every webhook, so a payment finds its own booking. The
+payment-link rail could not do that — it asked the customer to type a reference
+into a PayPal note and asked the desk to read it back out.
+
+### What the browser is allowed to say
+
+Nothing. It reports that the customer approved, and hands back an order id that
+we issued. `/api/bookings/paypal/capture` then asks PayPal, with our own
+credentials, and checks three things against the reservation:
+
+- the order id is the one stored on this booking when it was created;
+- PayPal's `custom_id` is still this reference;
+- the amount PayPal reports equals the deposit we recorded.
+
+A mismatch leaves the booking unpaid and tells a human. That is the right
+outcome even though it is the inconvenient one: a booking wrongly marked paid
+is money nobody will chase and a date held for free.
+
+A capture that comes back `PENDING` is not money in the account and is not
+reported as money in the account.
+
+### CAPTURE or AUTHORIZE
+
+`PAYPAL_INTENT` decides, and the customer-facing wording follows it
+automatically — that is the point of `PaymentMode` describing the money rather
+than the rail.
+
+**CAPTURE** (the default) takes the deposit when the customer approves. It is
+what "instant payment" means, and it is what the payment links already did, so
+switching rails does not silently change what happens to anyone's money. A date
+Egypt Eye cannot do means a refund, which `declineBooking` now issues through
+the API rather than leaving as a note for someone to action in the dashboard.
+PayPal keeps its fixed fee on a refund, so a declined booking costs a little.
+
+**AUTHORIZE** only holds the money, and a person captures it on confirming. On
+paper it fits this booking model better: an uncapturable date costs the
+customer nothing and needs no refund at all. In practice it is not free —
+PayPal honours an authorization for 3 days and allows capture up to 29, after
+which a capture can fail or come back short, and not every funding source
+supports it. It is one environment variable away if the refund fees ever
+justify the operational care.
+
+Either way the rule that has never moved: **a payment cannot confirm a
+booking.** `stateAfterPaymentHeld` enforces it, the webhook refuses to write
+rather than violate it, and `check-booking` asserts it against every state.
+
+### The webhook is the backstop, not the mechanism
+
+The capture route settles the common case while the customer is still looking
+at the screen. The webhook exists for everything that happens after they close
+the tab: a payment PayPal reviews for an hour, a refund issued from the
+dashboard, a dispute. Without `PAYPAL_WEBHOOK_ID` set, **every** delivery is
+refused — with no webhook id there is no way to tell PayPal from anyone else
+POSTing to a public URL, and accepting one would let a stranger mark any
+booking paid. Payments still work without it; late news does not arrive.
+
+Deliveries are idempotent by construction: each is inserted into
+`payment_events` keyed by PayPal's own event id under a unique index, so a
+duplicate insert fails and a repeat delivery becomes a no-op. PayPal retries for
+days, so this is not a hypothetical.
+
+### The bug this shipped with, and the guard that now catches it
+
+Three surfaces each worked out what happens to the customer's money — the
+product page, the secure page and the booking route — and all three asked "is
+there a payment link?". That question answered it only while a link was the
+only way money could move. With an API order capturing, the pages said *"your
+deposit is held, not charged"* about money PayPal had already taken.
+
+`resolveRail()` is now the single answer and all four read it. `check-booking`
+asserts the ordering, that the API rail drops the link rather than offering
+both, and the property underneath: a rail that takes money always says what
+happened to it, and a rail that takes none never claims anything did. Breaking
+each one in turn fails the check.
+
+The same mistake was still in two pieces of copy — the product-page caption and
+the dialog's terms both promised a refund under a hold, where the honest word
+is *released*. Both now follow the mode.
+
+### What was proven, and what was not
+
+`check-paypal.mts` runs everywhere and covers the reasoning: money compared in
+whole integer cents, `PAYPAL_ENV` falling back to sandbox rather than live,
+`PAYPAL_INTENT` falling back to CAPTURE rather than to holds nobody is watching,
+the money mode derived from the intent, and a webhook with any signature header
+missing refused before a network call.
+
+**The round trip was never executed here** — PayPal is not reachable from the
+environment this was written in. `npm run paypal:smoke` is what proves it, with
+real credentials: it authenticates, creates an order, reads it back, checks that
+`custom_id` and the amount survive, and verifies the webhook id exists on the
+account. It refuses to touch live without being asked twice.
+
 ## Sources
 
 - PayPal, [Payment Links and Buttons API](https://developer.paypal.com/payment-links-buttons/create-payment-link) — `POST /v1/checkout/payment-resources`, reusable links, `return_url`

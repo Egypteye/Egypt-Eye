@@ -8,7 +8,9 @@ import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/san
 import { resolveDeposit } from "@/lib/booking/deposit";
 import { extrasTotal, normaliseExtras, selectExtras } from "@/lib/booking/extras";
 import { composePhone } from "@/lib/booking/phone";
-import { paymentProvider } from "@/lib/booking/paymentProvider";
+import { paymentProvider } from "@/lib/booking/activeProvider";
+import type { PaymentMode } from "@/lib/booking/wording";
+import { resolveRail } from "@/lib/booking/rail";
 import { sendIdempotentEmail } from "@/lib/email/idempotent";
 import { sendEmail } from "@/lib/email/resend";
 import { bookingRequestTeamEmail, bookingRequestCustomerEmail } from "@/lib/email/templates";
@@ -212,14 +214,25 @@ export async function POST(request: NextRequest) {
   const extrasSum = extrasTotal(chosenExtras);
 
   const provider = paymentProvider();
-  // A PayPal payment link is the simple path: Egypt Eye creates the links in
-  // PayPal, one per deposit amount, and pastes them into the Studio. The money
-  // moves when the customer pays rather than being held, so the wording and
-  // the refund promise differ — see PaymentMode in lib/booking/wording.ts.
+  // A PayPal payment link is the fallback path: Egypt Eye creates the links in
+  // PayPal, one per deposit amount, and pastes them into the Studio.
   //
   // Taken from the product server-side and already host-checked, so a link can
   // only ever point at PayPal however the field was edited.
-  const paymentLink = deposit.paymentLink;
+  //
+  // The API rail wins wherever it is configured, and it is strictly better on
+  // the one thing that actually costs the desk time: a link payment has to be
+  // matched to a booking by a human reading a reference out of a PayPal note
+  // that the customer may have forgotten to type, while an API order carries
+  // the reference in `custom_id` and reconciles itself.
+  //
+  // Resolved by the same function the product pages read, so what a customer
+  // was told about their money and what actually happens to it cannot come
+  // apart. They used to be derived separately and did.
+  const rail = resolveRail(deposit, provider);
+  const paymentLink = rail.paymentLink;
+  const takingMoney = rail.canTakeMoney;
+  const moneyMode: PaymentMode = rail.moneyMode;
   const reference = generateReference();
   const supabase = createAdminSupabaseClient();
 
@@ -260,8 +273,8 @@ export async function POST(request: NextRequest) {
       // The booking is a request until a person says otherwise, whether or not
       // a deposit is ever paid.
       status: "requested",
-      deposit_amount: provider.enabled || paymentLink ? deposit.amountUsd : null,
-      deposit_status: provider.enabled || paymentLink ? "awaiting" : "not_required",
+      deposit_amount: takingMoney ? deposit.amountUsd : null,
+      deposit_status: takingMoney ? "awaiting" : "not_required",
       payment_provider: provider.enabled ? provider.name : paymentLink ? "paypal-link" : null,
     })
     .select("id, reference")
@@ -295,8 +308,9 @@ export async function POST(request: NextRequest) {
         startsAt: when.iso,
         slotLabel,
         people,
-        depositUsd: provider.enabled || paymentLink ? deposit.amountUsd : null,
+        depositUsd: takingMoney ? deposit.amountUsd : null,
         paymentLink,
+        moneyMode,
         extras: chosenExtras,
       });
       await sendIdempotentEmail({
@@ -331,8 +345,9 @@ export async function POST(request: NextRequest) {
       // desk was told "no deposit, online deposits are not switched on" for
       // every real booking, and the payment-status block added for exactly
       // this case could never render because the link was never passed.
-      depositUsd: provider.enabled || paymentLink ? deposit.amountUsd : null,
+      depositUsd: takingMoney ? deposit.amountUsd : null,
       paymentLink,
+      moneyMode,
       extras: chosenExtras,
       emailedCustomer: emailed,
       accountState: user ? "signed-in" : "guest",
@@ -397,6 +412,10 @@ export async function POST(request: NextRequest) {
     });
   }
 
+  // Stored before the customer is shown the buttons. The capture route reads
+  // this column to decide whether an order id it is handed actually belongs to
+  // this booking, so an order nobody recorded is an order nobody can settle —
+  // which is the correct failure.
   await supabase
     .from("reservations")
     .update({ payment_order_id: hold.orderId })
@@ -405,7 +424,21 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({
     ok: true,
     reference: data.reference,
-    deposit: { amountUsd: deposit.amountUsd, approvalUrl: hold.approvalUrl },
-    next: "payDeposit" as const,
+    deposit: {
+      amountUsd: deposit.amountUsd,
+      orderId: hold.orderId,
+      // The browser needs this to load the SDK. It is public by design — it
+      // identifies the merchant, it does not authorise anything, and the
+      // secret never leaves the server.
+      clientId: provider.clientId,
+      // Chooses the customer's wording: "held, not charged" against an
+      // authorization, "paid and refundable" against a capture.
+      moneyMode,
+      // Used only if the browser cannot render the buttons at all.
+      approvalUrl: hold.approvalUrl,
+    },
+    extras: chosenExtras,
+    emailed,
+    next: "payPal" as const,
   });
 }

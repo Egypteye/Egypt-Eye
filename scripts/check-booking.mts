@@ -14,7 +14,8 @@
 import { payPalLink, presentDeposit, resolveDeposit, type BookableProduct } from "../src/lib/booking/deposit";
 import { photoshoots } from "../src/content/photoshoots";
 import { experiences } from "../src/content/experiences";
-import { disabledProvider, depositsEnabled } from "../src/lib/booking/paymentProvider";
+import { disabledProvider, chooseProvider } from "../src/lib/booking/paymentProvider";
+import { resolveRail, type RailProvider } from "../src/lib/booking/rail";
 import { HUMAN_CONFIRMS, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import { extrasTotal, normaliseExtras, selectExtras, formatUsd } from "../src/lib/booking/extras";
 import { composePhone } from "../src/lib/booking/phone";
@@ -205,7 +206,11 @@ ok(
   "an unconfigured provider refuses every webhook",
   (await disabledProvider.verifyWebhook(new Headers(), "{}")) === false
 );
-ok("depositsEnabled() is false until a provider is configured", depositsEnabled() === false);
+// The selection rule, asserted on the pure function rather than on the live
+// one: with no configured provider, the booking flow must land on the
+// disabled one and degrade to a request, never on something that pretends.
+ok("with no configured provider the disabled one is chosen", chooseProvider(null) === disabledProvider);
+ok("a configured provider is used when there is one", chooseProvider({ ...disabledProvider, name: "x", enabled: true }).enabled === true);
 
 // ---------------------------------------------------------------------------
 // 6. The customer-facing sentences.
@@ -254,11 +259,11 @@ ok("the reply promise offers alternatives", /nearest dates/i.test(replyPromise()
 for (const [label, text] of [
   ["the human-step notice", HUMAN_CONFIRMS],
   ["the reply promise", replyPromise()],
-  ["the link-mode money sentence", moneyState("$25", "link")],
+  ["the paid-mode money sentence", moneyState("$25", "paid")],
   ["the hold-mode money sentence", moneyState("$25", "hold")],
   ["the no-deposit money sentence", moneyState(null)],
   ...ALL.map((state) => [`the ${state} message`, stateCopy(state).message] as [string, string]),
-  ...ALL.map((state) => [`the ${state} link-mode message`, stateCopy(state, "link").message] as [string, string]),
+  ...ALL.map((state) => [`the ${state} paid-mode message`, stateCopy(state, "paid").message] as [string, string]),
 ] as [string, string][]) {
   ok(`${label} promises a reply within a fixed time`, !/within \d+\s*(hours?|days?)/i.test(text));
 }
@@ -401,22 +406,76 @@ for (const experience of experiences) {
 // ---------------------------------------------------------------------------
 const LINK = "https://www.paypal.com/ncp/payment/ABC123";
 const modeFor = (d: ReturnType<typeof resolveDeposit>, providerEnabled: boolean) =>
-  !d.bookable ? "none" : d.paymentLink ? "link" : providerEnabled ? "hold" : "none";
+  !d.bookable ? "none" : d.paymentLink ? "paid" : providerEnabled ? "hold" : "none";
 
 const linked = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: LINK });
 ok("a product with a payment link resolves one", linked.bookable && linked.paymentLink === LINK);
 ok(
   "a payment link makes the deposit live even with no API provider",
-  modeFor(linked, false) === "link"
+  modeFor(linked, false) === "paid"
 );
 ok(
   "a link is preferred over the API when both are available",
-  modeFor(linked, true) === "link"
+  modeFor(linked, true) === "paid"
 );
 
 const noLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25 });
 ok("with no link and no provider there is no deposit", modeFor(noLink, false) === "none");
 ok("with no link but a live provider the deposit is a hold", modeFor(noLink, true) === "hold");
+
+// ---------------------------------------------------------------------------
+// 10b. The rail is decided once.
+//
+// A second bug of exactly the same shape as the one above, caught the same
+// way. Three surfaces each worked out what happens to the customer's money —
+// the product page, the secure page and the booking route — and all three
+// asked "is there a payment link?". That question answered it only while a
+// link was the only way money could move. The moment a PayPal API order with
+// CAPTURE intent existed, the pages said "your deposit is held, not charged"
+// about money the route had already taken.
+//
+// resolveRail is now the single answer. These assertions are on the ordering
+// and on the one property that matters: what the customer is told matches what
+// is done.
+// ---------------------------------------------------------------------------
+const CAPTURING: RailProvider = { enabled: true, moneyMode: "paid" };
+const HOLDING: RailProvider = { enabled: true, moneyMode: "hold" };
+const OFF: RailProvider = { enabled: false, moneyMode: "none" };
+
+const withLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: LINK });
+const withoutLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25 });
+const notBookable = resolveDeposit({ ...base });
+
+ok("a capturing API says the money moved", resolveRail(withoutLink, CAPTURING).moneyMode === "paid");
+ok("an authorizing API says the money is held", resolveRail(withoutLink, HOLDING).moneyMode === "hold");
+ok("a link with no API says the money moved", resolveRail(withLink, OFF).moneyMode === "paid");
+ok("no rail at all takes no money", resolveRail(withoutLink, OFF).canTakeMoney === false);
+ok("an unbookable product takes no money however the provider is set", resolveRail(notBookable, CAPTURING).canTakeMoney === false);
+
+// The API wins over a link, and the link is dropped rather than offered
+// alongside: two ways to pay one deposit is two payments to reconcile and a
+// customer who paid twice.
+ok("the API rail wins over a configured link", resolveRail(withLink, CAPTURING).paymentLink === null);
+ok("the API rail's own mode is used, not the link's", resolveRail(withLink, HOLDING).moneyMode === "hold");
+ok("the link survives when the API is off", resolveRail(withLink, OFF).paymentLink === LINK);
+ok("no link is offered when there is none", resolveRail(withoutLink, OFF).paymentLink === null);
+
+// The property the whole function exists for: a rail that takes money must
+// always say what happened to it, and a rail that takes none must never claim
+// anything did.
+for (const [label, dep, prov] of [
+  ["a capturing API", withoutLink, CAPTURING],
+  ["an authorizing API", withoutLink, HOLDING],
+  ["a payment link", withLink, OFF],
+  ["no rail", withoutLink, OFF],
+  ["an unbookable product", notBookable, CAPTURING],
+] as [string, ReturnType<typeof resolveDeposit>, RailProvider][]) {
+  const resolved = resolveRail(dep, prov);
+  ok(
+    `${label} takes money while telling the customer nothing happens to it`,
+    resolved.canTakeMoney === (resolved.moneyMode !== "none")
+  );
+}
 
 const badLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" });
 ok(

@@ -75,9 +75,20 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:booking
 
+      # PayPal cannot be reached from CI, which is the reason this exists: the
+      # rules that decide whether a customer's money moved have to be provable
+      # without a network. Money compared in whole cents, an unreadable setting
+      # falling back to sandbox and CAPTURE rather than to live and an unwatched
+      # hold, and an unverified webhook always refused.
+      - name: PayPal rules
+        if: ${{ !cancelled() }}
+        run: npm run check:paypal
+
       # A dev-only CSP relaxation that leaked into production would hand an
       # attacker the ability to execute injected strings. This evaluates the
-      # real next.config.ts under every NODE_ENV.
+      # real next.config.ts under every NODE_ENV. It also asserts PayPal's four
+      # origins are allowed by name — without them the checkout buttons fail
+      # silently and deposits simply stop being paid.
       - name: Content-Security-Policy
         if: ${{ !cancelled() }}
         run: npm run check:csp

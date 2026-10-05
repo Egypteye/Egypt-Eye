@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireReservationsStaff } from "@/lib/auth/session";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
-import { paymentProvider } from "@/lib/booking/paymentProvider";
+import { paymentProvider } from "@/lib/booking/activeProvider";
 import { bookingStateFromRow, canTransition } from "@/lib/booking/states";
 import { sendIdempotentEmail } from "@/lib/email/idempotent";
 import { bookingConfirmedEmail, bookingDeclinedEmail } from "@/lib/email/templates";
@@ -29,6 +29,7 @@ type Row = {
   deposit_amount: number | null;
   deposit_status: string;
   payment_authorization_id: string | null;
+  payment_capture_id: string | null;
   journey_snapshot: unknown;
   starts_at: string | null;
   slot_label: string | null;
@@ -45,7 +46,7 @@ async function load(id: string): Promise<Row | null> {
   const { data } = await supabase
     .from("reservations")
     .select(
-      "id, reference, status, guest_name, guest_email, deposit_amount, deposit_status, deposit_held_at, payment_authorization_id, journey_snapshot, starts_at, slot_label"
+      "id, reference, status, guest_name, guest_email, deposit_amount, deposit_status, deposit_held_at, payment_authorization_id, payment_capture_id, journey_snapshot, starts_at, slot_label"
     )
     .eq("id", id)
     .maybeSingle();
@@ -173,7 +174,39 @@ export async function declineBooking(reservationId: string, reason?: string): Pr
   const supabase = createAdminSupabaseClient();
   const now = new Date().toISOString();
   let releaseNote = "";
+  let owesRefund = "";
   let depositStatus = row.deposit_status;
+
+  // A captured deposit is money Egypt Eye is holding for a date it cannot do,
+  // and the customer has just been promised it back in full. With the API rail
+  // that promise is kept here rather than left as a note for somebody to act
+  // on in the PayPal dashboard — a refund that depends on a human remembering
+  // is a refund that sometimes does not happen.
+  //
+  // The manual instruction survives as the fallback, because a refund that
+  // could not be sent must never look like one that was.
+  if (row.deposit_status === "captured" && row.deposit_amount !== null) {
+    const provider = paymentProvider();
+    const result =
+      provider.enabled && row.payment_capture_id
+        ? await provider.refund(row.payment_capture_id, Number(row.deposit_amount))
+        : null;
+
+    if (result?.ok) {
+      depositStatus = "refunded";
+      await supabase
+        .from("reservations")
+        .update({ deposit_status: "refunded", updated_at: now })
+        .eq("id", reservationId);
+      owesRefund = result.alreadyDone
+        ? ` The $${row.deposit_amount} deposit was already refunded in PayPal.`
+        : ` The $${row.deposit_amount} deposit has been refunded in full, automatically.`;
+    } else {
+      owesRefund =
+        ` Refund the $${row.deposit_amount} deposit in PayPal, then press "Refund recorded" — the customer has been promised it in full.` +
+        (result ? ` (The automatic refund failed: ${result.message})` : "");
+    }
+  }
 
   if (row.deposit_status === "authorized" && row.payment_authorization_id) {
     const result = await paymentProvider().release(row.payment_authorization_id);
@@ -221,14 +254,6 @@ export async function declineBooking(reservationId: string, reason?: string): Pr
   }
 
   refresh(reservationId);
-  // A captured deposit is money Egypt Eye is holding for a date it cannot do,
-  // and the customer has just been emailed a promise of a full refund. The
-  // refund itself happens in PayPal — this says so rather than letting the
-  // booking look finished while someone is still owed.
-  const owesRefund =
-    row.deposit_status === "captured" && row.deposit_amount !== null
-      ? ` Refund the $${row.deposit_amount} deposit in PayPal, then press "Refund recorded" — the customer has been promised it in full.`
-      : "";
   return {
     ok: true,
     message: declineNoEmail
