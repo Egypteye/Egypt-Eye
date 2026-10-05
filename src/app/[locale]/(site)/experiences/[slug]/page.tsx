@@ -10,6 +10,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
 import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
+import { depositHeadline } from "@/lib/booking/quote";
 import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import { resolveRail } from "@/lib/booking/rail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
@@ -81,7 +82,13 @@ export default async function ExperienceDetailPage({
 
   // The deposit door, shown only for an experience somebody switched on.
   const deposit = resolveDeposit(experience, site.defaultDepositUsd);
-  const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd).deposit : "";
+  // The figure on the button comes from the same function that will do the
+  // charging. They were two functions once — the page fell back to the
+  // site-wide default and the checkout did not — and the result was a button
+  // showing an amount next to a PayPal window that never opened.
+  const headline = depositHeadline(experience, "experience", site.defaultDepositUsd);
+  const depositLabel = headline?.label ?? (deposit.bookable ? presentDeposit(deposit.amountUsd).deposit : "");
+  const perPerson = headline?.perPerson ?? false;
   // Asked once, in lib/booking/rail.ts, and read here — the same answer the
   // booking route acts on. Deriving it separately is how a page came to say
   // "held, not charged" about money the route captures.
@@ -252,6 +259,17 @@ export default async function ExperienceDetailPage({
                 cancellationHref="/cancellation-policy"
                 timeSlots={experience.timeSlots}
                 extras={experience.extras}
+                perPerson={perPerson}
+                quotable={{
+                  slug: experience.slug,
+                  title: experience.title,
+                  bookable: experience.bookable,
+                  depositUsd: experience.depositUsd ?? site.defaultDepositUsd,
+                  depositBasis: experience.depositBasis,
+                  depositMaxUsd: experience.depositMaxUsd,
+                  extras: experience.extras,
+                }}
+                productKind="experience"
                 className="block w-full rounded-full bg-gold px-5 py-4 text-center text-base font-semibold text-ink shadow-md shadow-gold/25 transition hover:bg-gold-light hover:shadow-lg"
               />
               {/* The button says what you get to do; this line says what it
@@ -262,8 +280,8 @@ export default async function ExperienceDetailPage({
                 {paymentMode === "none"
                   ? "Our team confirms your date personally."
                   : paymentMode === "hold"
-                    ? `${depositLabel} deposit held, not charged · no account needed · released if we cannot confirm your date`
-                    : `${depositLabel} deposit · no account needed · fully refunded if we cannot confirm your date`}
+                    ? `${depositLabel}${perPerson ? " per person" : ""} deposit held, not charged · no account needed · released if we cannot confirm your date`
+                    : `${depositLabel}${perPerson ? " per person" : ""} deposit · no account needed · fully refunded if we cannot confirm your date`}
               </p>
             </div>
           )}

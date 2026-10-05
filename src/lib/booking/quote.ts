@@ -134,10 +134,18 @@ export type QuotableProduct = {
  * safe to deploy before anybody edits the Studio: nothing changes until a rule
  * is deliberately set.
  */
-export function rulesFor(product: QuotableProduct): DepositRules {
+export function rulesFor(product: QuotableProduct, siteDefaultUsd?: number): DepositRules {
   return {
     basis: product.depositBasis === "perPerson" ? "perPerson" : "fixed",
-    amountUsd: product.depositUsd,
+    // The site-wide default, exactly as resolveDeposit has always used it.
+    //
+    // Leaving it out was a real bug and worth recording: the product page fell
+    // back to the default and showed a figure, while this function did not and
+    // produced no quote, so the route answered "we have your request" and the
+    // PayPal buttons never appeared. The page and the route disagreed about
+    // where the amount comes from — which is the same class of mistake
+    // resolveRail exists to prevent for the rail, reintroduced for the amount.
+    amountUsd: product.depositUsd ?? siteDefaultUsd,
     maxUsd: product.depositMaxUsd,
   };
 }
@@ -152,7 +160,8 @@ export function rulesFor(product: QuotableProduct): DepositRules {
 export function quoteDeposit(
   product: QuotableProduct,
   productType: string,
-  selection: { people: unknown; extraLabels: unknown }
+  selection: { people: unknown; extraLabels: unknown },
+  siteDefaultUsd?: number
 ): QuoteResult {
   if (product.bookable !== true) return { ok: false, reason: "notBookable" };
 
@@ -161,7 +170,7 @@ export function quoteDeposit(
     return { ok: false, reason: "badPeople" };
   }
 
-  const rules = rulesFor(product);
+  const rules = rulesFor(product, siteDefaultUsd);
   const serviceCents = usdToCents(rules.amountUsd);
   const maxCents = rules.maxUsd === undefined ? null : usdToCents(rules.maxUsd);
   // A cap that cannot be read is a cap nobody can rely on, so it is a
@@ -260,4 +269,27 @@ export function describeQuote(quote: Quote): { label: string; detail: string }[]
         : line.label,
     detail: formatCents(line.amountCents),
   }));
+}
+
+/**
+ * What to put on a button, before anybody has said how many people.
+ *
+ * The product page renders long before the dialog knows a headcount, so it
+ * cannot show a total. It shows the rate instead — and critically, it gets it
+ * from the same function that will do the charging, so the figure on the
+ * button and the figure in the checkout cannot come from different places.
+ * They did once, and the checkout silently stopped opening.
+ */
+export function depositHeadline(
+  product: QuotableProduct,
+  productType: string,
+  siteDefaultUsd?: number
+): { label: string; perPerson: boolean } | null {
+  const one = quoteDeposit(product, productType, { people: 1, extraLabels: [] }, siteDefaultUsd);
+  if (!one.ok) return null;
+  const perPerson = one.quote.rules.basis === "perPerson";
+  return {
+    label: formatCents(one.quote.rules.serviceCents),
+    perPerson,
+  };
 }

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PaymentMode } from "@/lib/booking/wording";
 import type { BookingExtra } from "@/content/types";
 import { extrasTotal, formatUsd, normaliseExtras } from "@/lib/booking/extras";
+import { quoteDeposit, type QuotableProduct } from "@/lib/booking/quote";
 import { DEFAULT_DIAL_ISO, DIAL_CODES, flagFor } from "@/lib/booking/countryCodes";
 import { composePhone } from "@/lib/booking/phone";
 import { lockModals } from "@/lib/ui/modalLock";
@@ -52,6 +53,21 @@ type Props = {
   timeSlots?: readonly string[];
   /** Priced extras. Settled with the balance, never charged by the deposit link. */
   extras?: readonly BookingExtra[];
+  /** True when the deposit scales with the headcount, so the label says so. */
+  perPerson?: boolean;
+  /**
+   * Everything the deposit calculation needs, so the dialog can show a live
+   * total as the headcount and the extras change.
+   *
+   * It runs the SAME function the server runs — lib/booking/quote.ts is pure
+   * and has no server-only import, deliberately. Nothing here is trusted: the
+   * server recomputes from the product and its own copy of the rules, and its
+   * answer is what gets charged. Sharing the function is what stops the figure
+   * on the screen and the figure on the invoice coming from different places,
+   * which has already happened once.
+   */
+  quotable?: QuotableProduct;
+  productKind?: string;
   className?: string;
   /** Overrides the default label. */
   label?: string;
@@ -95,6 +111,9 @@ export function SecureDateButton({
   cancellationHref,
   timeSlots,
   extras,
+  perPerson,
+  quotable,
+  productKind,
   className,
   label,
 }: Props) {
@@ -173,6 +192,21 @@ export function SecureDateButton({
     [available, chosen]
   );
   const extrasSum = extrasTotal(selected);
+
+  // What this selection will actually cost, by the same rules the server will
+  // apply. Shown, never sent: the request carries a headcount and labels.
+  const liveQuote = useMemo(() => {
+    if (!quotable) return null;
+    const result = quoteDeposit(quotable, productKind ?? productType, {
+      people: form.people,
+      extraLabels: chosen,
+    });
+    return result.ok ? result.quote : null;
+  }, [quotable, productKind, productType, form.people, chosen]);
+
+  // The dialog's own figure, which moves with the headcount. Falls back to the
+  // page's label for a product with no rules to compute from.
+  const liveDepositLabel = liveQuote ? money(liveQuote.totalCents) : depositLabel;
 
   const timeReady = slots.length === 0 || (form.timeChoice !== "" && (form.timeChoice !== OTHER_TIME || form.otherTime.trim() !== ""));
   const stepOneReady = form.startsAt.trim() !== "" && timeReady;
@@ -656,10 +690,35 @@ export function SecureDateButton({
                             +
                           </button>
                           <span className="ml-1 text-xs text-ink-soft">
-                            {form.people >= 20 ? "For a larger group, message us" : "in the session"}
+                            {form.people >= 20
+                              ? "For a larger group, message us"
+                              : perPerson
+                                ? `${depositLabel} deposit each`
+                                : "in the session"}
                           </span>
                         </div>
                       </div>
+
+                      {liveQuote && liveQuote.lines.length > 1 && (
+                        <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm text-ink-soft">
+                          <ul className="space-y-1">
+                            {liveQuote.lines.map((line) => (
+                              <li key={line.label} className="flex justify-between gap-4">
+                                <span>
+                                  {line.quantity > 1
+                                    ? `${line.label} — ${money(line.unitCents)} × ${line.quantity}`
+                                    : line.label}
+                                </span>
+                                <span className="tabular-nums">{money(line.amountCents)}</span>
+                              </li>
+                            ))}
+                          </ul>
+                          <p className="mt-2 flex justify-between gap-4 border-t border-black/10 pt-2 font-semibold text-ink">
+                            <span>Deposit now</span>
+                            <span className="tabular-nums">{money(liveQuote.totalCents)}</span>
+                          </p>
+                        </div>
+                      )}
 
                       {available.length > 0 && (
                         <fieldset>
@@ -689,8 +748,8 @@ export function SecureDateButton({
                             })}
                           </div>
                           <p className="mt-2 text-xs leading-relaxed text-ink-soft">
-                            Extras are added to your final price and settled with the balance. The deposit you pay
-                            now stays {depositLabel}.
+                            Extras are added to your final price and settled with the balance. Anything that
+                            changes the deposit is shown in the total below.
                           </p>
                         </fieldset>
                       )}
@@ -777,7 +836,7 @@ export function SecureDateButton({
                           <>
                             <p className="font-semibold text-ink">What happens when you pay</p>
                             <p className="mt-1.5">
-                              Your {depositLabel} deposit holds this date while we check it.{" "}
+                              Your {liveDepositLabel} deposit holds this date while we check it.{" "}
                               <strong className="text-ink">Paying does not confirm your date</strong> — a member
                               of our team checks availability and comes back to you personally.{" "}
                               {/* "Refunded" is only true where the money moved. Under a
@@ -842,7 +901,9 @@ export function SecureDateButton({
                       ) : (
                         <p className="text-sm text-ink-soft">
                           Pay now{" "}
-                          <strong className="font-display text-base text-ink tabular-nums">{depositLabel}</strong>
+                          <strong className="font-display text-base text-ink tabular-nums">
+                            {liveDepositLabel}
+                          </strong>
                         </p>
                       )}
                       {extrasSum > 0 && (
@@ -862,7 +923,7 @@ export function SecureDateButton({
                           ? "Booking…"
                           : paymentMode === "none"
                             ? "Send my request"
-                            : `Book and pay ${depositLabel}`}
+                            : `Book and pay ${liveDepositLabel}`}
                     </button>
                   </div>
                   {step === 2 && (

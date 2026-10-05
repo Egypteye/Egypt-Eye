@@ -348,7 +348,7 @@ export async function POST(request: NextRequest) {
   // A product that carries only the legacy flat `depositUsd` resolves to
   // exactly the figure it charges today, so this changes nothing until a rule
   // is set in the Studio.
-  const quoted = quoteDeposit(product, productType, { people, extraLabels: body.extras });
+  const quoted = quoteDeposit(product, productType, { people, extraLabels: body.extras }, settings.defaultDepositUsd);
   if (!quoted.ok) {
     console.error(`no deposit quote for ${productSlug}: ${quoted.reason}`);
     return NextResponse.json({

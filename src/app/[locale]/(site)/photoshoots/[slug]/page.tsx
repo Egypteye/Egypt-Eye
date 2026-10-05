@@ -6,6 +6,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
 import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
+import { depositHeadline } from "@/lib/booking/quote";
 import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import { resolveRail } from "@/lib/booking/rail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
@@ -87,7 +88,13 @@ export default async function PhotoshootDetailPage({
 
   // The deposit door, shown only for a product somebody switched on.
   const deposit = resolveDeposit(photoshoot, site.defaultDepositUsd);
-  const depositLabel = deposit.bookable ? presentDeposit(deposit.amountUsd).deposit : "";
+  // The figure on the button comes from the same function that will do the
+  // charging. They were two functions once — the page fell back to the
+  // site-wide default and the checkout did not — and the result was a button
+  // showing an amount next to a PayPal window that never opened.
+  const headline = depositHeadline(photoshoot, "photoshoot", site.defaultDepositUsd);
+  const depositLabel = headline?.label ?? (deposit.bookable ? presentDeposit(deposit.amountUsd).deposit : "");
+  const perPerson = headline?.perPerson ?? false;
   // Asked once, in lib/booking/rail.ts, and read here — the same answer the
   // booking route acts on. Deriving it separately is how a page came to say
   // "held, not charged" about money the route captures.
@@ -214,6 +221,17 @@ export default async function PhotoshootDetailPage({
                 cancellationHref="/cancellation-policy"
                 timeSlots={photoshoot.timeSlots}
                 extras={photoshoot.extras}
+                perPerson={perPerson}
+                quotable={{
+                  slug: photoshoot.slug,
+                  title: photoshoot.title,
+                  bookable: photoshoot.bookable,
+                  depositUsd: photoshoot.depositUsd ?? site.defaultDepositUsd,
+                  depositBasis: photoshoot.depositBasis,
+                  depositMaxUsd: photoshoot.depositMaxUsd,
+                  extras: photoshoot.extras,
+                }}
+                productKind="photoshoot"
                 className="block w-full rounded-full bg-gold px-5 py-4 text-center text-base font-semibold text-ink shadow-md shadow-gold/25 transition hover:bg-gold-light hover:shadow-lg"
               />
               {/* The button says what you get to do; this line says what it
@@ -224,8 +242,8 @@ export default async function PhotoshootDetailPage({
                 {paymentMode === "none"
                   ? "Our team confirms your date personally."
                   : paymentMode === "hold"
-                    ? `${depositLabel} deposit held, not charged · no account needed · released if we cannot confirm your date`
-                    : `${depositLabel} deposit · no account needed · fully refunded if we cannot confirm your date`}
+                    ? `${depositLabel}${perPerson ? " per person" : ""} deposit held, not charged · no account needed · released if we cannot confirm your date`
+                    : `${depositLabel}${perPerson ? " per person" : ""} deposit · no account needed · fully refunded if we cannot confirm your date`}
               </p>
             </div>
           )}

@@ -16,6 +16,7 @@
  *   4. Broken configuration produces no deposit, never a guess.
  */
 import {
+  depositHeadline,
   describeQuote,
   formatCents,
   quoteDeposit,
@@ -23,6 +24,7 @@ import {
   usdToCents,
   type QuotableProduct,
 } from "../src/lib/booking/quote";
+import { resolveDeposit } from "../src/lib/booking/deposit";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -211,6 +213,65 @@ if (snapshot.ok) {
     describeQuote(q)[0].label.includes("$25") && describeQuote(q)[0].label.includes("3")
   );
 }
+
+// ---------------------------------------------------------------------------
+// 9. The site-wide default, and the page agreeing with the checkout.
+//
+// This is a bug that shipped, and it is worth stating exactly because the
+// shape of it recurs. A product with no deposit of its own falls back to the
+// site-wide default. resolveDeposit — which the product page uses for the
+// button — honoured that fallback. quoteDeposit — which the booking route uses
+// to actually charge — did not. So the page showed "$20 deposit", the route
+// found no rule, answered "we have your request", and the PayPal window never
+// opened. Nothing errored. The customer simply could not pay.
+//
+// Two surfaces answering the same question from two functions is the defect.
+// These assertions pin the agreement rather than the symptom.
+// ---------------------------------------------------------------------------
+const NO_OWN_RATE: QuotableProduct = { slug: "inherits", title: "Inherits", bookable: true };
+const SITE_DEFAULT = 20;
+
+const inherited = quoteDeposit(NO_OWN_RATE, "photoshoot", { people: 2, extraLabels: [] }, SITE_DEFAULT);
+ok("a product with no rate of its own uses the site default", inherited.ok && inherited.quote.totalCents === 2000);
+ok(
+  "without the default that same product produces nothing — the bug",
+  !quoteDeposit(NO_OWN_RATE, "photoshoot", { people: 2, extraLabels: [] }).ok
+);
+ok("rulesFor applies the default too", rulesFor(NO_OWN_RATE, SITE_DEFAULT).amountUsd === SITE_DEFAULT);
+ok("a product's own rate still wins over the default", rulesFor(PRODUCT, SITE_DEFAULT).amountUsd === 25);
+
+// The agreement itself: wherever the page would show a figure, the checkout
+// must be able to charge one, and the two must match.
+const AGREEMENT: [string, QuotableProduct, number | undefined][] = [
+  ["a product with its own flat rate", { slug: "a", title: "A", bookable: true, depositUsd: 25 }, undefined],
+  ["a product inheriting the site default", NO_OWN_RATE, SITE_DEFAULT],
+  ["a product whose rate overrides the default", { slug: "c", title: "C", bookable: true, depositUsd: 50 }, SITE_DEFAULT],
+];
+for (const [label, product, fallback] of AGREEMENT) {
+  // resolveDeposit also carries the product's price, which the quote has no
+  // business knowing — the site publishes no prices. Supplied here only to
+  // satisfy its signature.
+  const page = resolveDeposit({ ...product, price: { amount: 199 } }, fallback);
+  const checkout = quoteDeposit(product, "photoshoot", { people: 1, extraLabels: [] }, fallback);
+  ok(
+    `${label}: the page shows a deposit the checkout cannot charge`,
+    page.bookable === checkout.ok
+  );
+  if (page.bookable && checkout.ok) {
+    ok(
+      `${label}: the page and the checkout disagree about the amount`,
+      Math.round(page.amountUsd * 100) === checkout.quote.totalCents
+    );
+  }
+}
+
+// And the headline the button actually renders comes from the same place.
+const headline = depositHeadline(NO_OWN_RATE, "photoshoot", SITE_DEFAULT);
+ok("the button's figure comes from the quote", headline?.label === "$20");
+ok("a flat rate is not labelled per person", headline?.perPerson === false);
+const perPersonHeadline = depositHeadline(PRODUCT, "photoshoot");
+ok("a per-person rate says so", perPersonHeadline?.perPerson === true && perPersonHeadline.label === "$25");
+ok("an unbookable product has no headline", depositHeadline({ slug: "x", title: "X" }, "photoshoot") === null);
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
