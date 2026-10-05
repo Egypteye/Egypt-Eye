@@ -142,24 +142,42 @@ export default async function AdminPayPalPage() {
                     ) : (
                       <p className="mt-1 text-sm text-ink-soft">{explainOffer(row.offer.reason)}</p>
                     )}
+                    {/* What was actually read, rather than a conclusion drawn
+                        from it. Four rounds of this went "I set it" / "it says
+                        not set" with no way to tell which was wrong. */}
+                    <p className="mt-2 font-mono text-xs text-ink-soft">
+                      read from Sanity: depositUsd={JSON.stringify(row.raw.depositUsd)} · depositBasis=
+                      {JSON.stringify(row.raw.depositBasis)} · depositMaxUsd=
+                      {JSON.stringify(row.raw.depositMaxUsd)} · bookable={JSON.stringify(row.raw.bookable)}
+                      {row.isDraft ? " · UNPUBLISHED DRAFT" : ""}
+                    </p>
                   </li>
                 ))}
               </ul>
             )}
             <div className="mt-4 rounded-xl border border-black/10 bg-white/60 p-4">
               <p className="text-sm text-ink-soft">
-                Read live from Sanity, bypassing the hour-long cache the rest of the site uses — so this is what
-                the Studio contains right now. The product pages still serve the cached copy; press below to
-                refresh them.
+                Read from Sanity&rsquo;s live API — past both the hour-long cache this site uses and
+                Sanity&rsquo;s own CDN. This is what the Studio contains right now. The product pages still
+                serve the cached copy; press below to refresh them.
               </p>
+              {!diagnostics.canSeeDrafts && (
+                <p className="mt-2 text-sm text-ink-soft">
+                  <strong className="text-ink">This can only see PUBLISHED documents.</strong> Sanity saves your
+                  typing as a draft automatically, and a draft is invisible here and to the website. If you set a
+                  deposit and this still says it is missing, the likeliest reason by far is that the document was
+                  never published — open it in the Studio and look for the{" "}
+                  <strong className="text-ink">Publish</strong> button at the bottom. It is only enabled when
+                  there are unpublished changes, so if it is greyed out, the document really is as shown above.
+                </p>
+              )}
               <div className="mt-3">
                 <RefreshContentButton />
               </div>
             </div>
             <p className="mt-4 text-xs text-ink-soft">
-              Site-wide default deposit:{" "}
-              {siteDefaultUsd ? `$${siteDefaultUsd}` : "not set"} — used by any product
-              with no amount of its own.
+              Site-wide default deposit: {siteDefaultUsd ? `$${siteDefaultUsd}` : "not set"} (read as{" "}
+              {JSON.stringify(diagnostics.rawSiteDefault)}) — used by any product with no amount of its own.
             </p>
           </div>
 

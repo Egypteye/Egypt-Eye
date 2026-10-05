@@ -1,6 +1,7 @@
 import "server-only";
 
-import { client } from "@/sanity/client";
+import { createClient } from "next-sanity";
+import { apiVersion, dataset, projectId } from "@/sanity/env";
 
 // Mirrors the private check in sanity/fetchers.ts rather than importing it,
 // because that module's own fetches are the cached ones this file exists to
@@ -30,6 +31,10 @@ export type DepositRow = {
   kind: "photoshoot" | "experience";
   title: string;
   slug: string;
+  /** Exactly what the query returned, so nothing has to be inferred. */
+  raw: { depositUsd: unknown; depositBasis: unknown; depositMaxUsd: unknown; bookable: unknown };
+  /** True when this row came from an unpublished draft. */
+  isDraft: boolean;
   offer: ReturnType<typeof depositOffer>;
   /** What three people would pay, so a per-person rule is visibly per person. */
   forThreeCents: number | null;
@@ -39,14 +44,40 @@ export type DepositRow = {
 export type DepositDiagnostics = {
   configured: boolean;
   siteDefaultUsd: number | undefined;
+  rawSiteDefault: unknown;
+  canSeeDrafts: boolean;
   rows: DepositRow[];
 };
+
+// Its own client, because the shared one sets useCdn: true.
+//
+// That matters twice over, and missing it cost an afternoon. `cache: no-store`
+// bypasses Next's data cache but not Sanity's CDN, which sits in front of it —
+// so a "fresh" read could still be answered from apicdn.sanity.io with a copy
+// from before the edit. And the CDN serves PUBLISHED documents only, so an
+// edit sitting in the Studio as an unpublished draft is invisible to it
+// entirely, which looks exactly like the field never having been filled in.
+//
+// A token lets this see drafts too. Without one it still reads the live API
+// rather than the CDN, which removes the staleness; the draft question is then
+// answered by saying so rather than by looking.
+const liveClient = createClient({
+  projectId,
+  dataset,
+  apiVersion,
+  useCdn: false,
+  token: process.env.SANITY_API_READ_TOKEN || process.env.SANITY_API_WRITE_TOKEN,
+  perspective: process.env.SANITY_API_READ_TOKEN || process.env.SANITY_API_WRITE_TOKEN ? "raw" : "published",
+});
+
+export const canSeeDrafts = Boolean(
+  process.env.SANITY_API_READ_TOKEN || process.env.SANITY_API_WRITE_TOKEN
+);
 
 async function fresh<T>(query: string): Promise<T | null> {
   if (!sanityConfigured) return null;
   try {
-    // no-store, deliberately. See the note above.
-    return await client.fetch<T>(query, {}, { cache: "no-store" });
+    return await liveClient.fetch<T>(query, {}, { cache: "no-store" });
   } catch (err) {
     console.error("fresh Sanity read failed:", err);
     return null;
@@ -54,16 +85,18 @@ async function fresh<T>(query: string): Promise<T | null> {
 }
 
 export async function depositDiagnostics(): Promise<DepositDiagnostics> {
-  if (!sanityConfigured) return { configured: false, siteDefaultUsd: undefined, rows: [] };
+  if (!sanityConfigured) {
+    return { configured: false, siteDefaultUsd: undefined, rawSiteDefault: undefined, canSeeDrafts, rows: [] };
+  }
 
   const [photoshoots, experiences, settings] = await Promise.all([
-    fresh<QuotableProduct[]>(photoshootsQuery),
-    fresh<QuotableProduct[]>(experiencesQuery),
+    fresh<(QuotableProduct & { _id?: string })[]>(photoshootsQuery),
+    fresh<(QuotableProduct & { _id?: string })[]>(experiencesQuery),
     fresh<{ defaultDepositUsd?: number }>(siteSettingsQuery),
   ]);
 
   const siteDefaultUsd = settings?.defaultDepositUsd;
-  const all: { kind: DepositRow["kind"]; product: QuotableProduct }[] = [
+  const all: { kind: DepositRow["kind"]; product: QuotableProduct & { _id?: string } }[] = [
     ...(photoshoots ?? []).map((product) => ({ kind: "photoshoot" as const, product })),
     ...(experiences ?? []).map((product) => ({ kind: "experience" as const, product })),
   ];
@@ -76,6 +109,13 @@ export async function depositDiagnostics(): Promise<DepositDiagnostics> {
         kind,
         title: product.title,
         slug: product.slug,
+        raw: {
+          depositUsd: product.depositUsd,
+          depositBasis: product.depositBasis,
+          depositMaxUsd: product.depositMaxUsd,
+          bookable: product.bookable,
+        },
+        isDraft: typeof (product as { _id?: string })._id === "string" && (product as { _id: string })._id.startsWith("drafts."),
         offer: depositOffer(product, kind, siteDefaultUsd),
         forThreeCents: three.ok ? three.quote.totalCents : null,
         extras: (product.extras ?? []).map((extra) => ({
@@ -86,5 +126,5 @@ export async function depositDiagnostics(): Promise<DepositDiagnostics> {
       };
     });
 
-  return { configured: true, siteDefaultUsd, rows };
+  return { configured: true, siteDefaultUsd, rawSiteDefault: settings?.defaultDepositUsd, canSeeDrafts, rows };
 }
