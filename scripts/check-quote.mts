@@ -336,6 +336,24 @@ ok(
   "and says so in words somebody can act on",
   !strandedOffer.available && explainOffer(strandedOffer.reason).includes("site-wide default")
 );
+
+// The instruction has to be in the unit the field is actually in.
+//
+// It said "a positive figure in whole cents", meaning a figure that resolves
+// to whole cents. Read plainly it says to enter cents — and somebody following
+// it types 2500 for a $25 deposit and charges two and a half thousand dollars.
+// The internals are in cents; nothing a human types ever is.
+for (const reason of ["notBookable", "noRule", "zero", "badPeople"] as const) {
+  const text = explainOffer(reason);
+  ok(
+    `the "${reason}" explanation tells somebody to enter cents`,
+    !/\bin (whole )?cents\b/i.test(text)
+  );
+}
+ok(
+  "the missing-amount explanation says dollars, with an example",
+  /DOLLARS/.test(explainOffer("noRule")) && explainOffer("noRule").includes("25")
+);
 ok(
   "while the same product with a default is bookable",
   depositOffer(stranded, "photoshoot", 20).available

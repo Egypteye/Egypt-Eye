@@ -321,7 +321,11 @@ export function explainOffer(reason: OfferProblem): string {
     case "notBookable":
       return 'The "Offer Secure your date (deposit booking)" switch is off on this product.';
     case "noRule":
-      return "No deposit amount is set on this product, and there is no usable site-wide default. Set one or the other, as a positive figure in whole cents.";
+      return (
+        "No deposit amount is set on this product, and there is no usable site-wide default. " +
+        'Set one or the other, in DOLLARS — type 25 for a $25 deposit, not 2500. ' +
+        'The field is "Deposit to secure a date (USD)" on the product, or "Default deposit" in Site Settings.'
+      );
     case "zero":
       return "The rules add up to nothing — usually a deposit of 0, or a cap of 0 cancelling the per-person amount.";
     case "badPeople":

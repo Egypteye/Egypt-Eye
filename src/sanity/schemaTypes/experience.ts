@@ -37,9 +37,21 @@ export const experience = defineType({
       name: "depositUsd",
       title: "Deposit to secure a date (USD)",
       description:
-        "A flat amount, e.g. 25, 50 or 100. Leave empty to use the site-wide default. With neither set, no button appears.",
+        "IN DOLLARS — type 25 for a $25 deposit, not 2500. With \"Deposit is charged\" set to per person, this is the rate for each person. Leave empty to use the site-wide default; with neither set, no booking button appears at all.",
       type: "number",
-      validation: (r) => r.min(1),
+      validation: (r) =>
+        r
+          .min(1)
+          // Advisory, not an error: a long private trip could carry a deposit
+          // this large, so it must not be blocked. But nobody setting a
+          // photoshoot deposit means 2500, and that is the typo — dollars
+          // entered as cents — that charges somebody a hundred times over.
+          .custom((value) =>
+            typeof value === "number" && value > 1000
+              ? "That is a very large deposit. Did you mean dollars? 25 is $25; 2500 is $2,500."
+              : true
+          )
+          .warning(),
     }),
     defineField({
       name: "depositBasis",
