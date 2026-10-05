@@ -186,9 +186,45 @@ export async function POST(request: NextRequest) {
       await markAttempt({ orderId }, "reversed", eventType);
       return NextResponse.json({ ok: true, handled: true });
 
+    // The order finished at PayPal. Usually redundant — a capture event will
+    // have said the same thing — but settling is idempotent, so hearing it
+    // twice costs nothing and hearing it ONLY this way costs nothing either.
+    case "CHECKOUT.ORDER.COMPLETED": {
+      const settled = await settleAttempt(orderId);
+      if (settled.ok && settled.attempt.status === "captured") {
+        await fulfilAttempt(settled.attempt);
+      }
+      return NextResponse.json({ ok: true, handled: true });
+    }
+
     // Approved and never captured, now void. Without this an abandoned
     // approval sits in 'approved' forever and the sweep keeps asking about it.
+    //
+    // Three event names for one outcome, and that is not over-engineering:
+    // CHECKOUT.PAYMENT-APPROVAL.REVERSED is in PayPal's documentation but is
+    // not offered in the dashboard's event picker, so subscribing to it is
+    // impossible and relying on it would be relying on nothing. The two that
+    // ARE offered are listed beside it.
     case "CHECKOUT.PAYMENT-APPROVAL.REVERSED":
+    case "CHECKOUT.ORDER.VOIDED":
+      await markAttempt({ orderId }, "expired", eventType);
+      return NextResponse.json({ ok: true, handled: true });
+
+    case "PAYMENT.ORDER.CANCELLED":
+    case "CHECKOUT.ORDER.DECLINED":
+      await markAttempt({ orderId }, "cancelled", eventType);
+      return NextResponse.json({ ok: true, handled: true });
+
+    // Only reached under AUTHORIZE intent, which this deployment is not using.
+    // Handled anyway because switching intent is one environment variable, and
+    // a rail that silently stops recording state the day somebody flips it is
+    // a trap rather than a setting.
+    case "PAYMENT.AUTHORIZATION.CREATED": {
+      const settled = await settleAttempt(orderId);
+      return NextResponse.json({ ok: true, handled: true, state: settled.ok ? settled.state : null });
+    }
+
+    case "PAYMENT.AUTHORIZATION.VOIDED":
       await markAttempt({ orderId }, "expired", eventType);
       return NextResponse.json({ ok: true, handled: true });
 
