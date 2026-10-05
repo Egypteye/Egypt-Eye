@@ -285,8 +285,22 @@ export async function POST(request: NextRequest) {
 
   if (error || !data) {
     console.error("booking insert failed:", error);
+    // A customer gets a sentence they can act on; an admin gets the reason.
+    //
+    // This cost an afternoon. A booking failed with "something went wrong",
+    // which is the right thing to show a customer and useless to everyone
+    // else — the actual cause was a database migration that had never been
+    // applied, and the only place that said so was a server log nobody was
+    // looking at. The person testing was signed in as an admin at the time.
+    const detail =
+      user?.role === "admin" && error
+        ? ` [admin] ${error.message}${error.hint ? ` — ${error.hint}` : ""}`
+        : "";
     return NextResponse.json(
-      { error: "Something went wrong saving your request. Please try again, or message us on WhatsApp." },
+      {
+        error:
+          "Something went wrong saving your request. Please try again, or message us on WhatsApp." + detail,
+      },
       { status: 500 }
     );
   }
