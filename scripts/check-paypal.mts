@@ -19,6 +19,7 @@ import {
   toPayPalAmount,
   WEBHOOK_SIGNATURE_HEADERS,
   liveReadiness,
+  describeReadiness,
   isPublicSite,
 } from "../src/lib/booking/paypalConfig";
 import { disabledProvider } from "../src/lib/booking/paymentProvider";
@@ -158,13 +159,24 @@ ok("the disabled provider is not enabled", disabledProvider.enabled === false);
 // ---------------------------------------------------------------------------
 ok("no configuration raises nothing", liveReadiness(null).length === 0);
 ok(
-  "sandbox on localhost is reported as sandbox and nothing else",
-  JSON.stringify(withEnv(CREDS, () => liveReadiness(payPalConfig(), "http://localhost:3000"))) ===
-    JSON.stringify(["sandbox"])
+  "sandbox on localhost with a webhook is reported as sandbox and nothing else",
+  JSON.stringify(
+    withEnv({ ...CREDS, PAYPAL_WEBHOOK_ID: "WH-1" }, () => liveReadiness(payPalConfig(), "http://localhost:3000"))
+  ) === JSON.stringify(["sandbox"])
+);
+// This assertion used to say the opposite, and it was right at the time: the
+// webhook was a backstop for refunds and late clearances, so a sandbox without
+// one moved no real money and was not worth warning about. The capture leg now
+// runs off CHECKOUT.ORDER.APPROVED, so a missing webhook means a customer who
+// closes the tab is not captured by anything until the daily sweep. That is
+// worth knowing while testing too.
+ok(
+  "a missing webhook is raised in sandbox as well — it is the capture leg now",
+  withEnv(CREDS, () => liveReadiness(payPalConfig(), "http://localhost:3000")).includes("no-webhook")
 );
 ok(
-  "sandbox without a webhook id is not an alarm — no real money moves",
-  !withEnv(CREDS, () => liveReadiness(payPalConfig(), "http://localhost:3000")).includes("live-without-webhook")
+  "and the explanation says what it actually costs",
+  describeReadiness("no-webhook").includes("captures the money")
 );
 
 // The dangerous direction, and the easy one to reach by accident: sandbox
@@ -202,14 +214,14 @@ ok(
 ok(
   "LIVE with no webhook id is called out",
   withEnv({ ...CREDS, PAYPAL_ENV: "live" }, () => liveReadiness(payPalConfig(), "https://egypteyetravel.com")).includes(
-    "live-without-webhook"
+    "no-webhook"
   )
 );
 ok(
   "LIVE with a webhook id is not called out for it",
   !withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
     liveReadiness(payPalConfig(), "https://egypteyetravel.com")
-  ).includes("live-without-webhook")
+  ).includes("no-webhook")
 );
 ok(
   "LIVE with AUTHORIZE is called out as a clock somebody has to watch",

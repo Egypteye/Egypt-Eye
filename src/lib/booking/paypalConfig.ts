@@ -84,7 +84,7 @@ export function payPalConfig(): PayPalConfig | null {
  * missing its webhook looks perfect until the first payment that needs it.
  */
 export type LiveReadinessWarning =
-  | "live-without-webhook"
+  | "no-webhook"
   | "live-with-authorize"
   | "sandbox-on-public-site"
   | "sandbox";
@@ -114,6 +114,17 @@ export function liveReadiness(
 ): LiveReadinessWarning[] {
   if (!config) return [];
   const warnings: LiveReadinessWarning[] = [];
+  // Raised in BOTH environments, which it did not used to be.
+  //
+  // When the webhook was a backstop — a way to hear about refunds and late
+  // clearances — a sandbox deployment without one was harmless, and this
+  // warning was skipped there. It is not a backstop any more. The capture leg
+  // now runs off CHECKOUT.ORDER.APPROVED, so with no webhook id a customer who
+  // approves and closes the tab is not captured by anything until the daily
+  // sweep finds them. That is worth knowing while testing, not only in
+  // production.
+  if (!config.webhookId) warnings.push("no-webhook");
+
   if (config.env !== "live") {
     // Not a fault — it is how PayPal gets set up, because the only site the
     // person doing it can reach is the real one. It is reported so nobody
@@ -124,12 +135,6 @@ export function liveReadiness(
     warnings.push("sandbox");
     return warnings;
   }
-  // The one that costs money. With no webhook id every delivery is refused,
-  // so anything that happens after the customer closes the tab — a reviewed
-  // payment clearing, a refund issued from the PayPal dashboard, a dispute —
-  // never reaches the site. Payments still work, which is what makes this
-  // invisible until it matters.
-  if (!config.webhookId) warnings.push("live-without-webhook");
   // Not wrong, but worth knowing on day one: a hold PayPal honours for three
   // days, on a booking nobody has confirmed yet, is a clock somebody has to
   // watch.
@@ -139,11 +144,13 @@ export function liveReadiness(
 
 export function describeReadiness(warning: LiveReadinessWarning): string {
   switch (warning) {
-    case "live-without-webhook":
+    case "no-webhook":
       return (
-        "PayPal is LIVE but PAYPAL_WEBHOOK_ID is not set, so every webhook delivery is refused. " +
-        "Payments still complete in the browser, but a payment that clears later, a refund issued " +
-        "from the PayPal dashboard, or a dispute will never reach this site."
+        "PAYPAL_WEBHOOK_ID is not set, so every webhook delivery is refused — and the webhook is what " +
+        "captures the money. A customer who approves and then closes the tab before the page finishes " +
+        "will NOT be charged until the daily sweep finds them, and refunds or late clearances from the " +
+        "PayPal dashboard never reach this site at all. Add a webhook pointed at /api/webhooks/paypal " +
+        "subscribed to the PAYMENT.CAPTURE.* and CHECKOUT.ORDER.* events, and put its id here."
       );
     case "live-with-authorize":
       return (
