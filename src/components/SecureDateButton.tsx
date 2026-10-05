@@ -70,6 +70,8 @@ type Stage =
       orderId: string;
       clientId: string;
       amountUsd: number;
+      /** How the deposit was reached, line by line. */
+      lines?: { label: string; unitCents: number; quantity: number; amountCents: number }[];
       moneyMode: PaymentMode;
       /** True against PayPal's sandbox, where no real money moves. */
       sandbox: boolean;
@@ -256,6 +258,7 @@ export function SecureDateButton({
           orderId: data.deposit.orderId,
           clientId: data.deposit.clientId,
           amountUsd: data.deposit.amountUsd,
+          lines: data.deposit.lines,
           moneyMode: data.deposit.moneyMode ?? "paid",
           sandbox: Boolean(data.deposit.sandbox),
           approvalUrl: data.deposit.approvalUrl || undefined,
@@ -396,6 +399,30 @@ export function SecureDateButton({
                         : "If we cannot confirm the date you asked for, we refund it in full."}
                     </p>
                   </div>
+
+                  {/* How the figure was reached. A deposit that scales with
+                      the headcount and the extras has to show its working, or
+                      it reads as a number somebody picked. */}
+                  {stage.lines && stage.lines.length > 1 && (
+                    <div className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm text-ink-soft">
+                      <ul className="space-y-1">
+                        {stage.lines.map((line) => (
+                          <li key={line.label} className="flex justify-between gap-4">
+                            <span>
+                              {line.quantity > 1
+                                ? `${line.label} — ${money(line.unitCents)} × ${line.quantity}`
+                                : line.label}
+                            </span>
+                            <span className="tabular-nums">{money(line.amountCents)}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      <p className="mt-2 flex justify-between gap-4 border-t border-black/10 pt-2 font-semibold text-ink">
+                        <span>Deposit now</span>
+                        <span className="tabular-nums">{money(stage.amountUsd * 100)}</span>
+                      </p>
+                    </div>
+                  )}
 
                   <PayPalDepositButtons
                     orderId={stage.orderId}
@@ -855,6 +882,13 @@ export function SecureDateButton({
       )}
     </>
   );
+}
+
+/** Cents to a readable figure, matching lib/booking/quote.ts exactly. */
+function money(cents: number): string {
+  const whole = Math.trunc(cents / 100);
+  const part = Math.abs(Math.round(cents) % 100);
+  return part === 0 ? `$${whole}` : `$${whole}.${String(part).padStart(2, "0")}`;
 }
 
 const labelText = "text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-soft";

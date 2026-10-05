@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { paymentProvider } from "@/lib/booking/activeProvider";
-import { stateAfterPaymentHeld, bookingStateFromRow } from "@/lib/booking/states";
+import { markAttempt, settleAttempt } from "@/lib/booking/attempts";
+import { fulfilAttempt } from "@/lib/booking/fulfilment";
 
 // What PayPal says happened, which is the authoritative record.
 //
@@ -113,79 +114,87 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "could not record" }, { status: 500 });
   }
 
-  if (!reservation) {
-    // Logged, not acted on. A payment with no booking is a real thing that
-    // happens (a stale link, a manual PayPal invoice) and the desk finds it in
-    // payment_events rather than in a silence.
-    console.error(`paypal webhook: ${eventType} for unknown reference ${reference || "(none)"}`);
-    return NextResponse.json({ ok: true, matched: false });
+  // The order id, which is what everything downstream is keyed on. A capture
+  // event carries it in supplementary_data; an order event is itself the
+  // order.
+  const orderId =
+    event.resource?.supplementary_data?.related_ids?.order_id ??
+    (eventType.startsWith("CHECKOUT.ORDER") ? event.resource?.id : undefined) ??
+    null;
+
+  if (!orderId) {
+    console.error(`paypal webhook: ${eventType} carried no order id`);
+    return NextResponse.json({ ok: true, handled: false, reason: "no order id" });
   }
 
-  const now = new Date().toISOString();
-  const resourceId = event.resource?.id ?? null;
-
-  // Only the event types that change what a customer's money is doing. Anything
-  // else is logged above and ignored here, deliberately — a handler that tries
-  // to interpret every PayPal event type is a handler that will one day
-  // mis-interpret one.
-  const patch: Record<string, unknown> = { updated_at: now };
   switch (eventType) {
-    case "PAYMENT.CAPTURE.COMPLETED":
-      patch.deposit_status = "captured";
-      patch.payment_capture_id = resourceId;
-      patch.deposit_paid_at = now;
-      break;
-    case "PAYMENT.AUTHORIZATION.CREATED":
-      patch.deposit_status = "authorized";
-      patch.payment_authorization_id = resourceId;
-      patch.deposit_held_at = now;
-      break;
-    case "PAYMENT.AUTHORIZATION.VOIDED":
-    case "PAYMENT.CAPTURE.REVERSED":
-      patch.deposit_status = "voided";
-      break;
-    case "PAYMENT.CAPTURE.REFUNDED":
-      patch.deposit_status = "refunded";
-      break;
+    // THE important one, and the reason this route stopped being a backstop.
+    //
+    // With CAPTURE intent the buyer approving authorises the charge; the
+    // capture call collects it. If that call only ever came from the
+    // customer's browser, somebody who approved and closed the tab would have
+    // agreed to pay and we would never take the money. So the capture leg runs
+    // here, and the browser's callback is an accelerator that happens to be
+    // faster when it is there.
+    case "CHECKOUT.ORDER.APPROVED": {
+      const settled = await settleAttempt(orderId);
+      if (!settled.ok) {
+        // 'terminal' means somebody already settled it — the browser got there
+        // first, which is the common case and not a problem.
+        const expected = settled.reason === "terminal" || settled.reason === "pending";
+        if (!expected) console.error(`paypal webhook: could not settle ${orderId}: ${settled.message}`);
+        return NextResponse.json({ ok: true, handled: true, settled: false, reason: settled.reason });
+      }
+      if (settled.state === "captured") {
+        const fulfilled = await fulfilAttempt(settled.attempt);
+        if (!fulfilled.ok) {
+          console.error(`paypal webhook: captured ${orderId} but fulfilment did not complete`);
+        }
+      }
+      return NextResponse.json({ ok: true, handled: true, state: settled.state });
+    }
+
+    // The money is in the account. Usually we already know — the approval
+    // event or the browser captured it — but this is the event PayPal
+    // considers authoritative for fulfilment, so it settles and fulfils too.
+    // Both are idempotent, so arriving second costs nothing.
+    case "PAYMENT.CAPTURE.COMPLETED": {
+      const settled = await settleAttempt(orderId);
+      const attempt = settled.ok ? settled.attempt : null;
+      if (attempt && attempt.status === "captured") {
+        await fulfilAttempt(attempt);
+      }
+      return NextResponse.json({ ok: true, handled: true });
+    }
+
+    // PayPal has it but has not credited it. Explicitly NOT a fulfilment: an
+    // email saying the deposit arrived would be wrong until it clears.
+    case "PAYMENT.CAPTURE.PENDING":
+      await markAttempt({ orderId }, "pending", "PayPal has not credited this yet");
+      return NextResponse.json({ ok: true, handled: true });
+
     case "PAYMENT.CAPTURE.DENIED":
     case "PAYMENT.CAPTURE.DECLINED":
-      patch.deposit_status = "failed";
-      break;
+      await markAttempt({ orderId }, "failed", eventType);
+      return NextResponse.json({ ok: true, handled: true });
+
+    case "PAYMENT.CAPTURE.REFUNDED":
+      await markAttempt({ orderId }, "refunded", eventType);
+      return NextResponse.json({ ok: true, handled: true });
+
+    case "PAYMENT.CAPTURE.REVERSED":
+      await markAttempt({ orderId }, "reversed", eventType);
+      return NextResponse.json({ ok: true, handled: true });
+
+    // Approved and never captured, now void. Without this an abandoned
+    // approval sits in 'approved' forever and the sweep keeps asking about it.
+    case "CHECKOUT.PAYMENT-APPROVAL.REVERSED":
+      await markAttempt({ orderId }, "expired", eventType);
+      return NextResponse.json({ ok: true, handled: true });
+
     default:
+      // Logged above and deliberately not interpreted. A handler that tries to
+      // understand every PayPal event type is one that will misunderstand one.
       return NextResponse.json({ ok: true, handled: false, eventType });
   }
-
-  // Note what is NOT here: nothing touches `status`. The two columns are
-  // separate on purpose — `deposit_status` carries the money and `status`
-  // carries the booking — and a payment event is only ever evidence about the
-  // money. The customer-facing state follows from both via
-  // bookingStateFromRow, so writing the deposit column is enough to move a
-  // booking from "awaiting deposit" to "deposit paid" without any part of this
-  // route being able to reach 'confirmed'.
-  //
-  // The assertion is kept rather than assumed: stateAfterPaymentHeld is the
-  // rule that a payment can never confirm a booking, and if it ever returns
-  // one, this refuses to write rather than quietly confirming a date nobody
-  // checked.
-  if (patch.deposit_status === "captured" || patch.deposit_status === "authorized") {
-    const before = bookingStateFromRow(reservation);
-    if (stateAfterPaymentHeld(before) === "confirmed" && before !== "confirmed") {
-      console.error(
-        `paypal webhook: refusing ${eventType} for ${reference} — it would have confirmed a booking nobody checked`
-      );
-      return NextResponse.json({ error: "refused" }, { status: 500 });
-    }
-  }
-
-  const { error: updateError } = await supabase
-    .from("reservations")
-    .update(patch)
-    .eq("id", reservation.id);
-
-  if (updateError) {
-    console.error(`paypal webhook: could not apply ${eventType} to ${reference}`, updateError);
-    return NextResponse.json({ error: "could not apply" }, { status: 500 });
-  }
-
-  return NextResponse.json({ ok: true, handled: true, eventType, reference });
 }

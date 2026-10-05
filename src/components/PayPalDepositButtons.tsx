@@ -122,10 +122,11 @@ export function PayPalDepositButtons({
               const response = await fetch("/api/bookings/paypal/capture", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                // The server learns nothing from this that it did not issue.
-                // It re-asks PayPal for the amount, the reference and the
-                // status, and compares them against the reservation.
-                body: JSON.stringify({ reference, orderId }),
+                // The only thing sent is an order id the server issued. It
+                // re-asks PayPal for the amount, the reference and the status
+                // and compares them against the attempt it opened — this
+                // request carries no claim about what happened.
+                body: JSON.stringify({ orderId }),
               });
               const data = await response.json();
               if (!response.ok) {

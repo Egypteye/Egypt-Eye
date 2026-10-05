@@ -62,9 +62,9 @@ export function payPalProvider(config: PayPalConfig): PaymentProvider {
     async createHold(deposit: DepositIntent): Promise<HoldResult> {
       const response = await payPalRequest<OrderResponse>(config, "/v2/checkout/orders", {
         method: "POST",
-        // Keyed by our reference, so a retried create cannot leave two live
-        // orders against one booking.
-        idempotencyKey: `order-${deposit.reference}`,
+        // Per attempt when the caller supplies one. The booking-scoped
+        // fallback is only for callers that predate payment attempts.
+        idempotencyKey: deposit.requestId ?? `order-${deposit.reference}`,
         body: {
           intent: config.intent,
           purchase_units: [
@@ -123,9 +123,10 @@ export function payPalProvider(config: PayPalConfig): PaymentProvider {
       let response = await payPalRequest<OrderResponse>(config, path, {
         method: "POST",
         body: {},
-        // The double-click guard. PayPal returns the original result for a
-        // repeated request id rather than taking the money twice.
-        idempotencyKey: `settle-${expected.reference}`,
+        // The double-click guard: PayPal returns the original result for a
+        // repeated request id rather than taking the money twice. Per attempt,
+        // so a retry after a failure is not answered with that failure.
+        idempotencyKey: expected.requestId ?? `settle-${expected.reference}`,
       });
 
       // ORDER_ALREADY_CAPTURED is a success that arrives as an error: the

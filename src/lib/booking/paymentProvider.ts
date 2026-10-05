@@ -28,6 +28,15 @@ export type DepositIntent = {
   description: string;
   returnUrl: string;
   cancelUrl: string;
+  /**
+   * The PayPal-Request-Id for this call, generated per attempt.
+   *
+   * PayPal stores the id and replays the result of the FIRST call made with
+   * it for up to 45 days, so this must never be derived from the booking: a
+   * genuine second attempt after a failure would be answered with the first
+   * attempt's failure.
+   */
+  requestId?: string;
 };
 
 export type HoldResult =
@@ -46,6 +55,8 @@ export type RefundResult =
 export type ExpectedPayment = {
   reference: string;
   amountUsd: number;
+  /** Per-attempt PayPal-Request-Id — see DepositIntent.requestId. */
+  requestId?: string;
 };
 
 export type ApprovalResult =

@@ -7,14 +7,12 @@ import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
 import { resolveDeposit } from "@/lib/booking/deposit";
 import { extrasTotal, normaliseExtras, selectExtras } from "@/lib/booking/extras";
+import { quoteDeposit } from "@/lib/booking/quote";
+import { createAttempt } from "@/lib/booking/attempts";
 import { composePhone } from "@/lib/booking/phone";
 import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import type { PaymentMode } from "@/lib/booking/wording";
 import { resolveRail } from "@/lib/booking/rail";
-import { sendIdempotentEmail } from "@/lib/email/idempotent";
-import { sendEmail } from "@/lib/email/resend";
-import { bookingRequestTeamEmail, bookingRequestCustomerEmail } from "@/lib/email/templates";
-import { site } from "@/content/site";
 import { siteUrl } from "@/content/seo";
 
 // Creates a deposit booking — the "Secure your date" path.
@@ -28,8 +26,17 @@ import { siteUrl } from "@/content/seo";
 // follow up, which is strictly better than nothing.
 //
 // Second: this route never confirms anything. It creates a request. A payment
-// later moves the money to 'authorized' and the booking to 'checking', and a
-// person moves it to 'confirmed'. Nothing here may shorten that.
+// later moves the money, and a person moves the booking to 'confirmed'.
+// Nothing here may shorten that.
+//
+// Fourth, and the newest: **this route sends no email at all.** It used to send
+// both the customer acknowledgement and the team notice at creation, before
+// anybody had paid. Nothing they said was false — the team one said PAYMENT
+// STATUS: NOT YET RECEIVED — but a message that arrives before the money does
+// is read as a confirmation, and the team got one for every abandoned
+// checkout. Emails now come from lib/booking/fulfilment.ts, after PayPal has
+// been asked and has said COMPLETED, and from nowhere else. An unpaid request
+// is visible in /admin/reservations instead.
 //
 // When no payment provider is configured the route still works: the booking is
 // recorded as a request with no deposit, and the response says so, so the page
@@ -305,81 +312,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // Emails are best-effort: a booking that was written must never be reported
-  // as failed because a mail provider was slow. Same posture as
-  // /api/reservations.
-  // Emails are best-effort: a booking that was written must never be reported
-  // as failed because a mail provider was slow. The desk also has the admin
-  // list regardless, and the customer has the reference in the response.
-  // Only when there is somewhere to send it. A guest booking with no email is
-  // a supported outcome, so this is skipped rather than treated as a failure —
-  // and `emailed` is reported back so the dialog can tell the customer to keep
-  // their reference instead of waiting for a copy that is not coming.
-  const emailed = guestEmail !== "";
-  if (emailed) {
-    try {
-      const customer = bookingRequestCustomerEmail({
-        reference,
-        guestName,
-        productTitle: product.title,
-        startsAt: when.iso,
-        slotLabel,
-        people,
-        depositUsd: takingMoney ? deposit.amountUsd : null,
-        paymentLink,
-        moneyMode,
-        extras: chosenExtras,
-      });
-      await sendIdempotentEmail({
-        idempotencyKey: `booking-request:${data.id}`,
-        notificationType: "booking_request",
-        to: guestEmail,
-        subject: customer.subject,
-        html: customer.html,
-        text: customer.text,
-        customerId: user?.id,
-        reservationId: data.id,
-      });
-    } catch (err) {
-      console.error("booking customer email failed (booking was saved):", err);
-    }
-  }
-
-  try {
-    const team = bookingRequestTeamEmail({
-      reference,
-      productTitle: product.title,
-      productType,
-      startsAt: when.iso,
-      slotLabel,
-      people,
-      guestName,
-      guestEmail,
-      guestPhone,
-      notes,
-      // Both of these were wrong. `provider.enabled ? amount : null` is false
-      // in payment-link mode — which is the only mode in production — so the
-      // desk was told "no deposit, online deposits are not switched on" for
-      // every real booking, and the payment-status block added for exactly
-      // this case could never render because the link was never passed.
-      depositUsd: takingMoney ? deposit.amountUsd : null,
-      paymentLink,
-      moneyMode,
-      extras: chosenExtras,
-      emailedCustomer: emailed,
-      accountState: user ? "signed-in" : "guest",
-    });
-    await sendEmail({
-      to: site.contact.email,
-      subject: team.subject,
-      html: team.html,
-      text: team.text,
-      // So a reply from the desk goes to the traveller, not into a void.
-      replyTo: guestEmail,
-    });
-  } catch (err) {
-    console.error("booking team email failed (booking was saved):", err);
-  }
+  // No email is sent here. See the note at the top of this file: a message
+  // that arrives before the money does is read as a confirmation, whatever it
+  // says. lib/booking/fulfilment.ts sends both emails once PayPal has
+  // confirmed the capture, and nothing else in the system may send one.
 
   // The payment-link path. Nothing to call: the customer is handed the link
   // and pays in PayPal, and the desk matches the payment to the reference.
@@ -389,7 +325,6 @@ export async function POST(request: NextRequest) {
       reference: data.reference,
       deposit: { amountUsd: deposit.amountUsd, paymentLink },
       extras: chosenExtras,
-      emailed,
       next: "payLink" as const,
     });
   }
@@ -402,62 +337,87 @@ export async function POST(request: NextRequest) {
       reference: data.reference,
       deposit: null,
       extras: chosenExtras,
-      emailed,
       next: "awaitingTeam" as const,
     });
   }
 
-  const hold = await provider.createHold({
+  // The amount, worked out from what this customer actually selected rather
+  // than from a flat per-product figure. The browser sent a headcount and a
+  // list of labels; every rate comes from the product.
+  //
+  // A product that carries only the legacy flat `depositUsd` resolves to
+  // exactly the figure it charges today, so this changes nothing until a rule
+  // is set in the Studio.
+  const quoted = quoteDeposit(product, productType, { people, extraLabels: body.extras });
+  if (!quoted.ok) {
+    console.error(`no deposit quote for ${productSlug}: ${quoted.reason}`);
+    return NextResponse.json({
+      ok: true,
+      reference: data.reference,
+      deposit: null,
+      extras: chosenExtras,
+      next: "awaitingTeam" as const,
+      notice: "We have your request. Our team will come back to you with the deposit for this booking.",
+    });
+  }
+
+  // The attempt row is written before PayPal is asked for anything, so an
+  // order we created but have no record of cannot happen. See
+  // lib/booking/attempts.ts for why that ordering is the one that matters.
+  const opened = await createAttempt({
+    reservationId: data.id,
     reference: data.reference,
-    amountUsd: deposit.amountUsd,
+    quote: quoted.quote,
     description: `Deposit to secure ${product.title} — ${data.reference}`,
     returnUrl: `${siteUrl}/secure/return?ref=${data.reference}`,
     cancelUrl: `${siteUrl}/secure/${productType}/${productSlug}?ref=${data.reference}`,
   });
 
-  if (!hold.ok) {
+  if (!opened.ok) {
     // The booking stands; only the payment could not be started. Saying so is
-    // better than losing the request, and the desk already has the email.
-    console.error("createHold failed:", hold.reason, hold.message);
+    // better than losing the request.
+    console.error("createAttempt failed:", opened.message);
     return NextResponse.json({
       ok: true,
       reference: data.reference,
       deposit: null,
-      emailed,
+      extras: chosenExtras,
       next: "awaitingTeam" as const,
       notice: "We have your request. We could not open the deposit page just now, so our team will follow up directly.",
     });
   }
 
-  // Stored before the customer is shown the buttons. The capture route reads
-  // this column to decide whether an order id it is handed actually belongs to
-  // this booking, so an order nobody recorded is an order nobody can settle —
-  // which is the correct failure.
+  // Snapshotted onto the booking too, so the admin list and the emails can
+  // read what was agreed without joining through the attempt.
   await supabase
     .from("reservations")
-    .update({ payment_order_id: hold.orderId })
+    .update({
+      payment_order_id: opened.orderId,
+      deposit_amount: quoted.quote.totalCents / 100,
+      deposit_quote: quoted.quote,
+    })
     .eq("id", data.id);
 
   return NextResponse.json({
     ok: true,
     reference: data.reference,
     deposit: {
-      amountUsd: deposit.amountUsd,
-      orderId: hold.orderId,
+      amountUsd: quoted.quote.totalCents / 100,
+      // The deposit, line by line, so the dialog can show how it was reached
+      // rather than asserting a figure.
+      lines: quoted.quote.lines,
+      orderId: opened.orderId,
       // The browser needs this to load the SDK. It is public by design — it
       // identifies the merchant, it does not authorise anything, and the
       // secret never leaves the server.
-      clientId: provider.clientId,
+      clientId: opened.clientId,
       // Chooses the customer's wording: "held, not charged" against an
       // authorization, "paid and refundable" against a capture.
       moneyMode,
       // So a test payment cannot be mistaken for a real one.
       sandbox: provider.env === "sandbox",
-      // Used only if the browser cannot render the buttons at all.
-      approvalUrl: hold.approvalUrl,
     },
     extras: chosenExtras,
-    emailed,
     next: "payPal" as const,
   });
 }

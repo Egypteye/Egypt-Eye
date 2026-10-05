@@ -1423,3 +1423,255 @@ export function bookingDeclinedEmail({
 
   return { subject: `We could not confirm ${when} — ${productTitle}`, html, text };
 }
+
+// ---------------------------------------------------------------------------
+// Payment received.
+//
+// The only emails in the system that may say a deposit has been paid, sent by
+// lib/booking/fulfilment.ts and by nothing else, only after PayPal has been
+// asked and has said COMPLETED.
+//
+// Everything in them comes from the snapshot taken when the customer agreed to
+// pay — not from the product as it stands today. If the team changes a rate
+// next month, a receipt sent for a booking taken this month must still show
+// what was actually charged and why, line by line. That is the difference
+// between a receipt and a guess.
+//
+// What they must still never say is that the date is confirmed. The money has
+// moved; a person has not yet checked the date. Those are different facts and
+// conflating them is the failure this whole system is built around.
+// ---------------------------------------------------------------------------
+
+export type PaymentFacts = {
+  reference: string;
+  orderId: string;
+  captureId: string;
+  amountCents: number;
+  currency: string;
+  status: string;
+  paidAt: string;
+};
+
+export type BookingFacts = {
+  guestName: string;
+  guestEmail: string | null;
+  guestPhone: string | null;
+  productTitle: string;
+  productType: string;
+  startsAt: string | null;
+  slotLabel: string | null;
+  people: number;
+  extras: { label: string; priceUsd: number }[];
+  extrasTotalUsd: number | null;
+};
+
+type QuoteFacts = {
+  lines: { label: string; unitCents: number; quantity: number; amountCents: number }[];
+  totalCents: number;
+};
+
+function cents(value: number): string {
+  const whole = Math.trunc(value / 100);
+  const part = Math.abs(value % 100);
+  return part === 0 ? `$${whole}` : `$${whole}.${String(part).padStart(2, "0")}`;
+}
+
+/** The deposit, line by line, exactly as it was calculated. */
+function breakdownRows(quote: QuoteFacts): string {
+  const lines = quote.lines
+    .map(
+      (line) =>
+        `<tr><td style="padding:4px 0;">${escapeHtml(
+          line.quantity > 1 ? `${line.label} — ${cents(line.unitCents)} × ${line.quantity}` : line.label
+        )}</td><td style="padding:4px 0;text-align:right;">${escapeHtml(cents(line.amountCents))}</td></tr>`
+    )
+    .join("");
+  return `${lines}<tr><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;"><strong>Deposit paid</strong></td><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;text-align:right;"><strong>${escapeHtml(
+    cents(quote.totalCents)
+  )}</strong></td></tr>`;
+}
+
+function breakdownText(quote: QuoteFacts): string {
+  return quote.lines
+    .map(
+      (line) =>
+        `  ${line.quantity > 1 ? `${line.label} — ${cents(line.unitCents)} x ${line.quantity}` : line.label}: ${cents(line.amountCents)}`
+    )
+    .concat(`  Deposit paid: ${cents(quote.totalCents)}`)
+    .join("\n");
+}
+
+function whenText(booking: BookingFacts): string {
+  return booking.startsAt ? formatSlot(booking.startsAt, booking.slotLabel) : "date to be set";
+}
+
+export function paymentReceivedCustomerEmail({
+  booking,
+  payment,
+  quote,
+}: {
+  booking: BookingFacts;
+  payment: PaymentFacts;
+  quote: QuoteFacts;
+}) {
+  const first = booking.guestName.split(" ")[0] || booking.guestName;
+  const when = whenText(booking);
+  const who = `${booking.people} ${booking.people === 1 ? "person" : "people"}`;
+
+  const extrasHtml =
+    booking.extras.length > 0
+      ? `<p style="margin:0 0 16px;"><strong>Extras on your booking:</strong> ${escapeHtml(
+          booking.extras.map((e) => e.label).join(", ")
+        )}. ${
+          booking.extrasTotalUsd
+            ? `$${booking.extrasTotalUsd} of extras is added to your final price and settled with the balance.`
+            : ""
+        }</p>`
+      : "";
+
+  const html = baseLayout({
+    preheader: `We have your ${cents(payment.amountCents)} deposit for ${booking.productTitle}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(first)},</p>
+      <p style="margin:0 0 16px;"><strong>We have your deposit — thank you.</strong> ${escapeHtml(
+        cents(payment.amountCents)
+      )} ${escapeHtml(payment.currency)} has been received against ${escapeHtml(booking.productTitle)}.</p>
+      <p style="margin:0 0 16px;">${escapeHtml(HUMAN_CONFIRMS)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">What</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(booking.productTitle)}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">When</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(when)}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">For</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(who)}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Reference</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(payment.reference)}</strong></td></tr>
+      </table>
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">How your deposit was worked out</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${breakdownRows(quote)}
+      </table>
+      ${extrasHtml}
+      <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
+      ${ctaButton("See your booking", `${SITE_URL}/account`)}
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:12px;color:#6b7d70;">PayPal order ${escapeHtml(
+        payment.orderId
+      )} · transaction ${escapeHtml(payment.captureId)}</p>
+    `,
+    footerHtml: `Quote ${escapeHtml(payment.reference)} if you reply to this email. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${first},`,
+    "",
+    `We have your deposit — thank you. ${cents(payment.amountCents)} ${payment.currency} received against ${booking.productTitle}.`,
+    "",
+    HUMAN_CONFIRMS,
+    "",
+    `What: ${booking.productTitle}`,
+    `When: ${when}`,
+    `For: ${who}`,
+    `Reference: ${payment.reference}`,
+    "",
+    "How your deposit was worked out:",
+    breakdownText(quote),
+    "",
+    booking.extras.length > 0 ? `Extras on your booking: ${booking.extras.map((e) => e.label).join(", ")}` : "",
+    booking.extrasTotalUsd ? `$${booking.extrasTotalUsd} of extras is settled with the balance.` : "",
+    "",
+    replyPromise(),
+    "",
+    `PayPal order ${payment.orderId} · transaction ${payment.captureId}`,
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
+
+  return {
+    subject: `Deposit received — ${booking.productTitle} (${payment.reference})`,
+    html,
+    text,
+  };
+}
+
+export function paymentReceivedTeamEmail({
+  booking,
+  payment,
+  quote,
+}: {
+  booking: BookingFacts;
+  payment: PaymentFacts;
+  quote: QuoteFacts;
+}) {
+  const when = whenText(booking);
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  const html = baseLayout({
+    preheader: `PAID ${cents(payment.amountCents)} — ${booking.productTitle} — ${when} — ${payment.reference}`,
+    bodyHtml: `
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Deposit received — needs a decision</p>
+      <p style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:#e7f5ec;"><strong>${escapeHtml(
+        cents(payment.amountCents)
+      )} ${escapeHtml(payment.currency)} is in the account.</strong><br/>Verified with PayPal before this email was sent — not assumed from the customer's browser. Confirm the date, or decline and the deposit is refunded.</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("What", `${booking.productTitle} (${booking.productType})`)}
+        ${row("When", when)}
+        ${row("People", String(booking.people))}
+        ${row("Name", booking.guestName)}
+        ${booking.guestPhone ? row("Phone", booking.guestPhone) : ""}
+        ${row("Email", booking.guestEmail || "None — guest booking, reply by phone")}
+        ${row("Reference", payment.reference)}
+      </table>
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Deposit breakdown</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${breakdownRows(quote)}
+      </table>
+      ${
+        booking.extras.length > 0
+          ? `<p style="margin:0 0 16px;"><strong>Extras booked:</strong> ${escapeHtml(
+              booking.extras.map((e) => `${e.label} ($${e.priceUsd})`).join(", ")
+            )}${booking.extrasTotalUsd ? ` — $${booking.extrasTotalUsd} settled with the balance` : ""}. Build the time in.</p>`
+          : ""
+      }
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("PayPal order", payment.orderId)}
+        ${row("Transaction", payment.captureId)}
+        ${row("Payment status", payment.status)}
+        ${row("Paid at", payment.paidAt)}
+      </table>
+      ${ctaButton("Open in admin", `${SITE_URL}/admin/reservations`)}
+    `,
+    footerHtml: "Sent once, after PayPal confirmed the money. Egypt Eye Travel and Tours.",
+  });
+
+  const text = [
+    "Deposit received — needs a decision",
+    `${cents(payment.amountCents)} ${payment.currency} is in the account, verified with PayPal.`,
+    "",
+    `What: ${booking.productTitle} (${booking.productType})`,
+    `When: ${when}`,
+    `People: ${booking.people}`,
+    `Name: ${booking.guestName}`,
+    booking.guestPhone ? `Phone: ${booking.guestPhone}` : "",
+    `Email: ${booking.guestEmail || "None — guest booking, reply by phone"}`,
+    `Reference: ${payment.reference}`,
+    "",
+    "Deposit breakdown:",
+    breakdownText(quote),
+    "",
+    booking.extras.length > 0
+      ? `Extras booked: ${booking.extras.map((e) => `${e.label} ($${e.priceUsd})`).join(", ")}`
+      : "",
+    "",
+    `PayPal order: ${payment.orderId}`,
+    `Transaction: ${payment.captureId}`,
+    `Payment status: ${payment.status}`,
+    `Paid at: ${payment.paidAt}`,
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
+
+  return {
+    subject: `PAID ${cents(payment.amountCents)} · ${booking.productTitle} · ${when} · ${payment.reference}`,
+    html,
+    text,
+  };
+}
