@@ -16,6 +16,7 @@ import { photoshoots } from "../src/content/photoshoots";
 import { experiences } from "../src/content/experiences";
 import { disabledProvider, chooseProvider } from "../src/lib/booking/paymentProvider";
 import { resolveRail, type RailProvider } from "../src/lib/booking/rail";
+import { depositOffer } from "../src/lib/booking/quote";
 import { isTerminal } from "../src/lib/booking/attemptStates";
 import { HUMAN_CONFIRMS, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import { extrasTotal, normaliseExtras, selectExtras, formatUsd } from "../src/lib/booking/extras";
@@ -443,9 +444,15 @@ const CAPTURING: RailProvider = { enabled: true, moneyMode: "paid" };
 const HOLDING: RailProvider = { enabled: true, moneyMode: "hold" };
 const OFF: RailProvider = { enabled: false, moneyMode: "none" };
 
-const withLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: LINK });
-const withoutLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25 });
-const notBookable = resolveDeposit({ ...base });
+// Availability comes from the quote now, not from resolveDeposit — that
+// split is what hid a bookable product behind a "Request your date" button.
+const avail = (product: { bookable?: boolean; depositUsd?: number }, paymentLink: string | null) => ({
+  available: depositOffer({ slug: "x", title: "X", ...product }, "photoshoot").available,
+  paymentLink,
+});
+const withLink = avail({ bookable: true, depositUsd: 25 }, LINK);
+const withoutLink = avail({ bookable: true, depositUsd: 25 }, null);
+const notBookable = avail({}, null);
 
 ok("a capturing API says the money moved", resolveRail(withoutLink, CAPTURING).moneyMode === "paid");
 ok("an authorizing API says the money is held", resolveRail(withoutLink, HOLDING).moneyMode === "hold");
@@ -470,7 +477,7 @@ for (const [label, dep, prov] of [
   ["a payment link", withLink, OFF],
   ["no rail", withoutLink, OFF],
   ["an unbookable product", notBookable, CAPTURING],
-] as [string, ReturnType<typeof resolveDeposit>, RailProvider][]) {
+] as [string, { available: boolean; paymentLink: string | null }, RailProvider][]) {
   const resolved = resolveRail(dep, prov);
   ok(
     `${label} takes money while telling the customer nothing happens to it`,

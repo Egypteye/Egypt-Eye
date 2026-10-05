@@ -7,7 +7,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
 import { resolveDeposit } from "@/lib/booking/deposit";
 import { extrasTotal, normaliseExtras, selectExtras } from "@/lib/booking/extras";
-import { quoteDeposit } from "@/lib/booking/quote";
+import { depositOffer, quoteDeposit } from "@/lib/booking/quote";
 import { createAttempt } from "@/lib/booking/attempts";
 import { composePhone } from "@/lib/booking/phone";
 import { paymentProviderFor } from "@/lib/booking/activeProvider";
@@ -205,8 +205,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "That experience could not be found." }, { status: 404 });
   }
 
+  // Whether a deposit can be taken at all comes from the quote, which is the
+  // one authority on it. resolveDeposit is left with its single remaining job,
+  // the per-product PayPal link.
+  const offer = depositOffer(product, productType, settings.defaultDepositUsd);
   const deposit = resolveDeposit(product, settings.defaultDepositUsd);
-  if (!deposit.bookable) {
+  if (!offer.available) {
     return NextResponse.json(
       { error: "This experience isn't available for online booking. Please message us and we'll arrange it." },
       { status: 400 }
@@ -219,6 +223,22 @@ export async function POST(request: NextRequest) {
   // missing is recoverable, an error the customer cannot act on is not.
   const chosenExtras = selectExtras(normaliseExtras(product.extras), body.extras);
   const extrasSum = extrasTotal(chosenExtras);
+
+  // The amount, worked out once from what this customer actually selected, and
+  // then used everywhere — the row, the link response and the payment attempt.
+  // Computing it more than once is how a figure on one surface stops matching
+  // a figure on another.
+  const quoted = quoteDeposit(product, productType, { people, extraLabels: body.extras }, settings.defaultDepositUsd);
+  if (!quoted.ok) {
+    // depositOffer already said a deposit was possible, so this is a real
+    // disagreement rather than an unconfigured product — worth a loud log.
+    console.error(`deposit quote failed for ${productSlug} after the offer said yes: ${quoted.reason}`);
+    return NextResponse.json(
+      { error: "We could not work out the deposit for that booking. Please message us and we'll sort it out." },
+      { status: 500 }
+    );
+  }
+  const depositUsd = quoted.quote.totalCents / 100;
 
   // Sandbox on the real site is offered to admins only, so a customer can
   // never complete a test payment and believe they have booked. See
@@ -239,7 +259,7 @@ export async function POST(request: NextRequest) {
   // Resolved by the same function the product pages read, so what a customer
   // was told about their money and what actually happens to it cannot come
   // apart. They used to be derived separately and did.
-  const rail = resolveRail(deposit, provider);
+  const rail = resolveRail({ available: offer.available, paymentLink: deposit.bookable ? deposit.paymentLink : null }, provider);
   const paymentLink = rail.paymentLink;
   const takingMoney = rail.canTakeMoney;
   const moneyMode: PaymentMode = rail.moneyMode;
@@ -283,7 +303,8 @@ export async function POST(request: NextRequest) {
       // The booking is a request until a person says otherwise, whether or not
       // a deposit is ever paid.
       status: "requested",
-      deposit_amount: takingMoney ? deposit.amountUsd : null,
+      deposit_quote: quoted.quote,
+      deposit_amount: takingMoney ? depositUsd : null,
       deposit_status: takingMoney ? "awaiting" : "not_required",
       payment_provider: provider.enabled ? provider.name : paymentLink ? "paypal-link" : null,
     })
@@ -323,7 +344,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ok: true,
       reference: data.reference,
-      deposit: { amountUsd: deposit.amountUsd, paymentLink },
+      deposit: { amountUsd: depositUsd, lines: quoted.quote.lines, paymentLink },
       extras: chosenExtras,
       next: "payLink" as const,
     });
@@ -338,26 +359,6 @@ export async function POST(request: NextRequest) {
       deposit: null,
       extras: chosenExtras,
       next: "awaitingTeam" as const,
-    });
-  }
-
-  // The amount, worked out from what this customer actually selected rather
-  // than from a flat per-product figure. The browser sent a headcount and a
-  // list of labels; every rate comes from the product.
-  //
-  // A product that carries only the legacy flat `depositUsd` resolves to
-  // exactly the figure it charges today, so this changes nothing until a rule
-  // is set in the Studio.
-  const quoted = quoteDeposit(product, productType, { people, extraLabels: body.extras }, settings.defaultDepositUsd);
-  if (!quoted.ok) {
-    console.error(`no deposit quote for ${productSlug}: ${quoted.reason}`);
-    return NextResponse.json({
-      ok: true,
-      reference: data.reference,
-      deposit: null,
-      extras: chosenExtras,
-      next: "awaitingTeam" as const,
-      notice: "We have your request. Our team will come back to you with the deposit for this booking.",
     });
   }
 
@@ -394,7 +395,6 @@ export async function POST(request: NextRequest) {
     .update({
       payment_order_id: opened.orderId,
       deposit_amount: quoted.quote.totalCents / 100,
-      deposit_quote: quoted.quote,
     })
     .eq("id", data.id);
 
@@ -402,7 +402,7 @@ export async function POST(request: NextRequest) {
     ok: true,
     reference: data.reference,
     deposit: {
-      amountUsd: quoted.quote.totalCents / 100,
+      amountUsd: depositUsd,
       // The deposit, line by line, so the dialog can show how it was reached
       // rather than asserting a figure.
       lines: quoted.quote.lines,

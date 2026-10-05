@@ -9,8 +9,8 @@ import { pickRelated } from "@/lib/relatedPicker";
 import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
-import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
-import { depositHeadline } from "@/lib/booking/quote";
+import { payPalLink } from "@/lib/booking/deposit";
+import { depositOffer } from "@/lib/booking/quote";
 import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import { resolveRail } from "@/lib/booking/rail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
@@ -81,18 +81,21 @@ export default async function ExperienceDetailPage({
   });
 
   // The deposit door, shown only for an experience somebody switched on.
-  const deposit = resolveDeposit(experience, site.defaultDepositUsd);
-  // The figure on the button comes from the same function that will do the
-  // charging. They were two functions once — the page fell back to the
-  // site-wide default and the checkout did not — and the result was a button
-  // showing an amount next to a PayPal window that never opened.
-  const headline = depositHeadline(experience, "experience", site.defaultDepositUsd);
-  const depositLabel = headline?.label ?? (deposit.bookable ? presentDeposit(deposit.amountUsd).deposit : "");
-  const perPerson = headline?.perPerson ?? false;
+  // One function decides whether a deposit can be taken and what it is, and
+  // everything on this page reads it — the button, the label, the mode and
+  // whether the door appears at all. Asking two functions is how this page
+  // came to show a figure the checkout could not charge, and then to hide a
+  // button for a product the checkout could quote perfectly well.
+  const offer = depositOffer(experience, "experience", site.defaultDepositUsd);
+  const depositLabel = offer.available ? offer.headline : "";
+  const perPerson = offer.available && offer.perPerson;
   // Asked once, in lib/booking/rail.ts, and read here — the same answer the
   // booking route acts on. Deriving it separately is how a page came to say
   // "held, not charged" about money the route captures.
-  const paymentMode = resolveRail(deposit, paymentProviderFor({ isAdmin: false })).moneyMode;
+  const paymentMode = resolveRail(
+    { available: offer.available, paymentLink: payPalLink(experience.paypalLink) },
+    paymentProviderFor({ isAdmin: false })
+  ).moneyMode;
 
   return (
     <>
@@ -247,7 +250,7 @@ export default async function ExperienceDetailPage({
         </div>
 
         <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
-          {deposit.bookable && (
+          {offer.available && (
             <div className="mb-5">
               <SecureDateButton
                 productType="experience"

@@ -271,25 +271,72 @@ export function describeQuote(quote: Quote): { label: string; detail: string }[]
   }));
 }
 
+export type OfferProblem = "notBookable" | "noRule" | "zero" | "badPeople";
+
+export type DepositOffer =
+  | { available: false; reason: OfferProblem }
+  | { available: true; headline: string; perPerson: boolean; oneCents: number };
+
 /**
- * What to put on a button, before anybody has said how many people.
+ * Whether a deposit can be taken for this product at all, and what to put on
+ * the button before anybody has said how many people.
  *
- * The product page renders long before the dialog knows a headcount, so it
- * cannot show a total. It shows the rate instead — and critically, it gets it
- * from the same function that will do the charging, so the figure on the
- * button and the figure in the checkout cannot come from different places.
- * They did once, and the checkout silently stopped opening.
+ * **This is the single authority on both questions,** and that is the whole
+ * point of it existing. The same mistake has now been made three times in this
+ * codebase: a page decides one way, the booking route decides another, and the
+ * disagreement is invisible until a customer meets it. First the rail — a page
+ * saying "held, not charged" about money the route captured. Then the amount —
+ * a page showing $20 next to a checkout that found no rule and never opened.
+ * Then bookability — a button saying "Request your date" because the page
+ * asked resolveDeposit while the route asked the quote.
+ *
+ * Each time the fix was to make one function answer and everything read it.
+ * So: if this says unavailable, no button appears anywhere; if it says
+ * available, the checkout can quote a real figure. The two cannot come apart,
+ * because there is no second opinion to come apart from.
+ *
+ * `resolveDeposit` keeps one job only — the per-product PayPal payment link.
  */
+export function depositOffer(
+  product: QuotableProduct,
+  productType: string,
+  siteDefaultUsd?: number
+): DepositOffer {
+  const one = quoteDeposit(product, productType, { people: 1, extraLabels: [] }, siteDefaultUsd);
+  if (!one.ok) return { available: false, reason: one.reason };
+  return {
+    available: true,
+    // The RATE, not the total — a per-person deposit has no total until
+    // somebody says how many people, and showing the one-person figure as
+    // though it were the price is how a group arrives at a surprise.
+    headline: formatCents(one.quote.rules.serviceCents || one.quote.totalCents),
+    perPerson: one.quote.rules.basis === "perPerson",
+    oneCents: one.quote.totalCents,
+  };
+}
+
+/** Why a product cannot take a deposit, in words somebody can act on. */
+export function explainOffer(reason: OfferProblem): string {
+  switch (reason) {
+    case "notBookable":
+      return 'The "Offer Secure your date (deposit booking)" switch is off on this product.';
+    case "noRule":
+      return "No deposit amount is set on this product, and there is no usable site-wide default. Set one or the other, as a positive figure in whole cents.";
+    case "zero":
+      return "The rules add up to nothing — usually a deposit of 0, or a cap of 0 cancelling the per-person amount.";
+    case "badPeople":
+      return "The headcount was outside 1–20.";
+    default:
+      return "No deposit could be calculated.";
+  }
+}
+
+/** @deprecated Use depositOffer — kept so nothing breaks mid-refactor. */
 export function depositHeadline(
   product: QuotableProduct,
   productType: string,
   siteDefaultUsd?: number
 ): { label: string; perPerson: boolean } | null {
-  const one = quoteDeposit(product, productType, { people: 1, extraLabels: [] }, siteDefaultUsd);
-  if (!one.ok) return null;
-  const perPerson = one.quote.rules.basis === "perPerson";
-  return {
-    label: formatCents(one.quote.rules.serviceCents),
-    perPerson,
-  };
+  const offer = depositOffer(product, productType, siteDefaultUsd);
+  return offer.available ? { label: offer.headline, perPerson: offer.perPerson } : null;
 }

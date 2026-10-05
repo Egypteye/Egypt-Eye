@@ -50,7 +50,10 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
   // Asked once, in lib/booking/rail.ts, and read here — the same answer the
   // booking route acts on. Deriving it separately is how a page came to say
   // "held, not charged" about money the route captures.
-  const paymentMode = resolveRail(deposit, paymentProviderFor({ isAdmin: false })).moneyMode;
+  const paymentMode = resolveRail(
+    { available: deposit.bookable, paymentLink: deposit.bookable ? deposit.paymentLink : null },
+    paymentProviderFor({ isAdmin: false })
+  ).moneyMode;
   const productPath = type === "photoshoot" ? `/photoshoots/${slug}` : `/experiences/${slug}`;
 
   return (

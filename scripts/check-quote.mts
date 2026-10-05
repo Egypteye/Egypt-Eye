@@ -17,6 +17,8 @@
  */
 import {
   depositHeadline,
+  depositOffer,
+  explainOffer,
   describeQuote,
   formatCents,
   quoteDeposit,
@@ -272,6 +274,72 @@ ok("a flat rate is not labelled per person", headline?.perPerson === false);
 const perPersonHeadline = depositHeadline(PRODUCT, "photoshoot");
 ok("a per-person rate says so", perPersonHeadline?.perPerson === true && perPersonHeadline.label === "$25");
 ok("an unbookable product has no headline", depositHeadline({ slug: "x", title: "X" }, "photoshoot") === null);
+
+// ---------------------------------------------------------------------------
+// 10. One authority on whether a deposit can be taken.
+//
+// The same mistake has been made three times in this codebase, and each time
+// it was invisible until a customer met it:
+//
+//   1. the rail — a page saying "held, not charged" about money the route had
+//      already captured;
+//   2. the amount — a page showing $20 next to a checkout that found no rule
+//      and never opened PayPal;
+//   3. bookability — a button saying "Request your date" because the page
+//      asked resolveDeposit while the route asked the quote.
+//
+// All three are one defect: two surfaces answering one question from two
+// functions. depositOffer is now the only answer, and this is the invariant
+// that keeps it that way — wherever a button appears, the checkout can quote,
+// and wherever it cannot quote, no button appears.
+// ---------------------------------------------------------------------------
+const CONFIGS: [string, QuotableProduct, number | undefined][] = [
+  ["its own flat rate", { slug: "a", title: "A", bookable: true, depositUsd: 25 }, undefined],
+  ["inheriting the site default", { slug: "b", title: "B", bookable: true }, 20],
+  ["a rate overriding the default", { slug: "c", title: "C", bookable: true, depositUsd: 50 }, 20],
+  ["a per-person rate", { slug: "d", title: "D", bookable: true, depositUsd: 25, depositBasis: "perPerson" }, undefined],
+  ["a per-person rate with a cap", { slug: "e", title: "E", bookable: true, depositUsd: 25, depositBasis: "perPerson", depositMaxUsd: 100 }, undefined],
+  ["the switch off", { slug: "f", title: "F", bookable: false, depositUsd: 25 }, 20],
+  ["no rate and no default", { slug: "g", title: "G", bookable: true }, undefined],
+  ["a zero rate", { slug: "h", title: "H", bookable: true, depositUsd: 0 }, undefined],
+  ["a zero site default", { slug: "i", title: "I", bookable: true }, 0],
+  ["a cap of zero", { slug: "j", title: "J", bookable: true, depositUsd: 25, depositMaxUsd: 0 }, undefined],
+];
+
+for (const [label, product, fallback] of CONFIGS) {
+  const offer = depositOffer(product, "photoshoot", fallback);
+  // The invariant, both ways round, for every configuration anybody can
+  // produce in the Studio.
+  for (const people of [1, 3, 20]) {
+    const charge = quoteDeposit(product, "photoshoot", { people, extraLabels: [] }, fallback);
+    ok(
+      `${label}: a button would show for ${people} people but the checkout cannot charge`,
+      offer.available === charge.ok
+    );
+  }
+  if (offer.available) {
+    ok(`${label}: the button would show an empty figure`, offer.headline.startsWith("$") && offer.headline.length > 1);
+  } else {
+    // Every refusal has to be explainable in the admin page, or somebody is
+    // reading code again to find out why a button vanished.
+    const why = explainOffer(offer.reason);
+    ok(`${label}: the refusal "${offer.reason}" has no explanation`, why.length > 20);
+  }
+}
+
+// The specific case that was reported: the switch on, no rate of its own, and
+// the site default removed. Both must agree there is nothing to charge.
+const stranded: QuotableProduct = { slug: "stranded", title: "Stranded", bookable: true };
+const strandedOffer = depositOffer(stranded, "photoshoot", undefined);
+ok("a product with no rate anywhere offers nothing", !strandedOffer.available);
+ok(
+  "and says so in words somebody can act on",
+  !strandedOffer.available && explainOffer(strandedOffer.reason).includes("site-wide default")
+);
+ok(
+  "while the same product with a default is bookable",
+  depositOffer(stranded, "photoshoot", 20).available
+);
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

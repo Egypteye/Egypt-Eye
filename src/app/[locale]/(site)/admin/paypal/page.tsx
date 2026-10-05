@@ -3,6 +3,8 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { paymentProvider, paymentProviderFor } from "@/lib/booking/activeProvider";
 import { describeReadiness, liveReadiness, payPalConfig } from "@/lib/booking/paypalConfig";
 import { TestButton } from "./TestButton";
+import { getExperiences, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
+import { depositOffer, explainOffer, quoteDeposit } from "@/lib/booking/quote";
 
 export const metadata = { title: "PayPal", robots: { index: false, follow: false } };
 
@@ -17,6 +19,34 @@ export const metadata = { title: "PayPal", robots: { index: false, follow: false
 export default async function AdminPayPalPage() {
   const user = await getCurrentUser();
   if (user?.role !== "admin") redirect("/admin/reservations");
+
+  // Every product somebody has switched on, and whether a deposit can
+  // actually be calculated for it.
+  //
+  // This exists because of a loop that cost an afternoon: a deposit was
+  // changed in the Studio, the button quietly became "Request your date", and
+  // the only way to find out why was to read the code. The rules now live in
+  // one function, so the one function can simply say what it decided.
+  const [photoshoots, experiences, settings] = await Promise.all([
+    getPhotoshoots(),
+    getExperiences(),
+    getSiteSettings(),
+  ]);
+  const products = [
+    ...photoshoots.map((p) => ({ kind: "photoshoot" as const, product: p })),
+    ...experiences.map((p) => ({ kind: "experience" as const, product: p })),
+  ]
+    .filter(({ product }) => product.bookable === true)
+    .map(({ kind, product }) => {
+      const offer = depositOffer(product, kind, settings.defaultDepositUsd);
+      const three = quoteDeposit(product, kind, { people: 3, extraLabels: [] }, settings.defaultDepositUsd);
+      return {
+        title: product.title,
+        slug: product.slug,
+        offer,
+        forThree: three.ok ? three.quote.totalCents : null,
+      };
+    });
 
   const config = payPalConfig();
   const provider = paymentProvider();
@@ -96,6 +126,51 @@ export default async function AdminPayPalPage() {
               value={customerProvider.enabled ? "Everyone" : "Admins only — customers get the payment links"}
             />
           </dl>
+
+          <div className="rounded-2xl border border-black/10 bg-cream p-6">
+            <p className="font-semibold text-ink">Deposits by product</p>
+            <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-soft">
+              Everything with the deposit switch turned on. A product that cannot be quoted shows no booking
+              button at all — the reason is below, and it is always something in the Studio.
+            </p>
+            {products.length === 0 ? (
+              <p className="mt-4 text-sm text-ink-soft">
+                No product has the deposit switch on yet. Turn on &ldquo;Offer Secure your date&rdquo; on a
+                photoshoot or experience in the Studio.
+              </p>
+            ) : (
+              <ul className="mt-4 space-y-3">
+                {products.map((row) => (
+                  <li
+                    key={`${row.slug}`}
+                    className={`rounded-xl border p-4 ${
+                      row.offer.available ? "border-black/10 bg-white/60" : "border-terracotta/40 bg-terracotta/10"
+                    }`}
+                  >
+                    <p className="text-sm font-semibold text-ink">
+                      {row.offer.available ? "✓" : "✗"} {row.title}
+                    </p>
+                    {row.offer.available ? (
+                      <p className="mt-1 text-sm text-ink-soft">
+                        {row.offer.headline}
+                        {row.offer.perPerson ? " per person" : " per booking"}
+                        {row.forThree !== null
+                          ? ` · three people would pay $${row.forThree / 100}`
+                          : ""}
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-sm text-ink-soft">{explainOffer(row.offer.reason)}</p>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+            <p className="mt-4 text-xs text-ink-soft">
+              Site-wide default deposit:{" "}
+              {settings.defaultDepositUsd ? `$${settings.defaultDepositUsd}` : "not set"} — used by any product
+              with no amount of its own.
+            </p>
+          </div>
 
           <div className="rounded-2xl border border-black/10 bg-cream p-6">
             <p className="font-semibold text-ink">Check it works</p>

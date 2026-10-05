@@ -1,4 +1,3 @@
-import type { DepositResolution } from "./deposit";
 import type { PaymentMode } from "./wording";
 
 // Which rail takes the deposit, and what that does to the money.
@@ -34,8 +33,22 @@ export type RailProvider = {
   moneyMode: PaymentMode;
 };
 
-export function resolveRail(deposit: DepositResolution, provider: RailProvider): PayRail {
-  if (!deposit.bookable) {
+/**
+ * What can be charged for this product, from the one function that decides it.
+ *
+ * `available` comes from depositOffer — the quote — and nothing else. It used
+ * to come from resolveDeposit, which does not know about per-person rules or
+ * priced extras, so a page could decide a product was unbookable while the
+ * route could quote it perfectly well. Same shape of bug as the two above.
+ */
+export type DepositAvailability = {
+  available: boolean;
+  /** The product's static PayPal link, if one is configured and valid. */
+  paymentLink: string | null;
+};
+
+export function resolveRail(deposit: DepositAvailability, provider: RailProvider): PayRail {
+  if (!deposit.available) {
     return { moneyMode: "none", paymentLink: null, canTakeMoney: false };
   }
   if (provider.enabled) {
