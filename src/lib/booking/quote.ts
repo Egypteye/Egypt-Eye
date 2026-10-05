@@ -84,10 +84,11 @@ export type QuoteResult =
       /**
        * - notBookable: the product is not switched on for deposits
        * - noRule: nothing usable is configured, so there is no figure to charge
+       * - badCap: a cap is set but is not a readable figure
        * - badPeople: the headcount is outside what we will take online
        * - zero: the rules produced nothing to charge
        */
-      reason: "notBookable" | "noRule" | "badPeople" | "zero";
+      reason: OfferProblem;
     };
 
 export const MAX_PEOPLE = 20;
@@ -100,6 +101,18 @@ export const MAX_PEOPLE = 20;
  * that resolves to "probably this" is how somebody gets charged a number
  * nobody chose.
  */
+/**
+ * Whether a value is simply not there.
+ *
+ * null and undefined both mean "not set", and conflating them with "set to
+ * something unreadable" is what took the deposits offline. GROQ returns null;
+ * an object literal in a test omits the key and yields undefined. Both arrive
+ * here and both must answer the same.
+ */
+export function isAbsent(value: unknown): value is null | undefined {
+  return value === null || value === undefined;
+}
+
 export function usdToCents(value: unknown): number | null {
   if (typeof value !== "number" || !Number.isFinite(value) || value < 0) return null;
   const cents = Math.round(value * 100);
@@ -172,10 +185,24 @@ export function quoteDeposit(
 
   const rules = rulesFor(product, siteDefaultUsd);
   const serviceCents = usdToCents(rules.amountUsd);
-  const maxCents = rules.maxUsd === undefined ? null : usdToCents(rules.maxUsd);
-  // A cap that cannot be read is a cap nobody can rely on, so it is a
-  // configuration error rather than something to ignore.
-  if (rules.maxUsd !== undefined && maxCents === null) return { ok: false, reason: "noRule" };
+
+  // An absent cap is null OR undefined, and the difference is not academic.
+  //
+  // This exact line took every deposit on the site offline. It read
+  // `rules.maxUsd === undefined` and GROQ returns **null** for a field nobody
+  // filled in — so an unset cap was read as a cap that could not be parsed,
+  // and every bookable product reported "no deposit is configured" from the
+  // moment depositMaxUsd was added to the query. The data was right the whole
+  // time; the reading of it was not.
+  //
+  // The lesson is already written down in lib/sanityShape.ts — "GROQ returns
+  // null for a field an editor cleared" — and I walked into it anyway, because
+  // every test fixture used an omitted key where real data has an explicit
+  // null. isAbsent() exists so the question is asked once, correctly.
+  const maxCents = isAbsent(rules.maxUsd) ? null : usdToCents(rules.maxUsd);
+  // A cap that IS set but cannot be read is a configuration error, and must
+  // not be silently ignored — a cap nobody can rely on is worse than none.
+  if (!isAbsent(rules.maxUsd) && maxCents === null) return { ok: false, reason: "badCap" };
   if (serviceCents === null) return { ok: false, reason: "noRule" };
 
   const lines: QuoteLine[] = [];
@@ -271,7 +298,7 @@ export function describeQuote(quote: Quote): { label: string; detail: string }[]
   }));
 }
 
-export type OfferProblem = "notBookable" | "noRule" | "zero" | "badPeople";
+export type OfferProblem = "notBookable" | "noRule" | "badCap" | "zero" | "badPeople";
 
 export type DepositOffer =
   | { available: false; reason: OfferProblem }
@@ -320,6 +347,11 @@ export function explainOffer(reason: OfferProblem): string {
   switch (reason) {
     case "notBookable":
       return 'The "Offer Secure your date (deposit booking)" switch is off on this product.';
+    case "badCap":
+      return (
+        'The "Most the deposit can reach" field is set to something that is not a usable amount. ' +
+        "Clear it to remove the cap, or set it to a positive figure in dollars."
+      );
     case "noRule":
       return (
         "No deposit amount is set on this product, and there is no usable site-wide default. " +

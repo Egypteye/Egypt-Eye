@@ -19,6 +19,7 @@ import {
   depositHeadline,
   depositOffer,
   explainOffer,
+  isAbsent,
   describeQuote,
   formatCents,
   quoteDeposit,
@@ -357,6 +358,110 @@ ok(
 ok(
   "while the same product with a default is bookable",
   depositOffer(stranded, "photoshoot", 20).available
+);
+
+// ---------------------------------------------------------------------------
+// 11. GROQ-shaped data: every optional field present and null.
+//
+// This section exists because of the bug it would have caught, and the reason
+// it did not exist is worth more than the assertions.
+//
+// Every fixture above builds a product as an object literal, so an optional
+// field that is "not set" is an OMITTED KEY, and reads as `undefined`. Real
+// data never looks like that. GROQ returns an explicit `null` for any field in
+// the projection that the document does not have. So the entire check suite
+// was testing a shape that does not occur in production, and passed happily
+// while the live site could not quote a single deposit.
+//
+// The specific failure: the cap check asked `maxUsd === undefined`. With a
+// real `depositMaxUsd: null` that is false, so an unset cap was treated as an
+// unreadable one and every bookable product reported "no deposit configured" —
+// from the moment depositMaxUsd was added to the query, with correct data in
+// Sanity the whole time.
+//
+// These fixtures are copied from an actual API response.
+// ---------------------------------------------------------------------------
+const FROM_GROQ = {
+  slug: "exclusive-pyramids-photoshoot",
+  title: "Exclusive Pyramids Photoshoot",
+  bookable: true,
+  depositUsd: 25,
+  depositBasis: "perPerson",
+  depositMaxUsd: null,
+  extras: null,
+} as unknown as QuotableProduct;
+
+const groqQuote = quoteDeposit(FROM_GROQ, "photoshoot", { people: 3, extraLabels: [] });
+ok("a real GROQ document can be quoted at all", groqQuote.ok);
+ok("and for the right amount", groqQuote.ok && groqQuote.quote.totalCents === 7500);
+ok("a null cap is no cap, not a broken one", depositOffer(FROM_GROQ, "photoshoot").available);
+ok("isAbsent treats null and undefined alike", isAbsent(null) && isAbsent(undefined));
+ok("isAbsent does not swallow a real value", !isAbsent(0) && !isAbsent(25) && !isAbsent(""));
+
+// Every optional field null at once — a document somebody switched on and
+// filled in nothing else.
+const ALL_NULL = {
+  slug: "bare",
+  title: "Bare",
+  bookable: true,
+  depositUsd: 25,
+  depositBasis: null,
+  depositMaxUsd: null,
+  extras: null,
+} as unknown as QuotableProduct;
+const bare = quoteDeposit(ALL_NULL, "photoshoot", { people: 4, extraLabels: ["Camel Ride"] });
+ok("a document with every optional field null still quotes", bare.ok);
+ok("a null basis means flat, not broken", bare.ok && bare.quote.totalCents === 2500);
+ok("null extras are no extras, not a crash", bare.ok && bare.quote.lines.length === 1);
+
+// Extras as GROQ returns them: present, with null deposit fields.
+const GROQ_EXTRAS = {
+  slug: "x",
+  title: "X",
+  bookable: true,
+  depositUsd: 25,
+  depositBasis: null,
+  depositMaxUsd: null,
+  extras: [
+    { label: "Camel Ride", priceUsd: 25, depositUsd: null, depositBasis: null },
+    { label: "Video Reels", priceUsd: 25, depositUsd: 10, depositBasis: null },
+  ],
+} as unknown as QuotableProduct;
+const withGroqExtras = quoteDeposit(GROQ_EXTRAS, "photoshoot", {
+  people: 2,
+  extraLabels: ["Camel Ride", "Video Reels"],
+});
+ok("an extra with a null deposit adds nothing", withGroqExtras.ok && withGroqExtras.quote.totalCents === 2500 + 1000);
+ok("an extra with a null basis is charged per booking", withGroqExtras.ok && withGroqExtras.quote.lines[1].quantity === 1);
+
+// A cap that IS set but is nonsense must still be refused — the fix must not
+// have turned the check off, only taught it what "absent" means.
+for (const badCap of [-5, Number.NaN, "100", {}]) {
+  const product = { ...FROM_GROQ, depositMaxUsd: badCap } as unknown as QuotableProduct;
+  const offer = depositOffer(product, "photoshoot");
+  ok(
+    `a cap of ${JSON.stringify(badCap)} must be refused, not ignored`,
+    !offer.available && offer.reason === "badCap"
+  );
+  ok(`and explained as a cap problem, not a missing amount`, explainOffer("badCap").includes("Most the deposit can reach"));
+}
+// A real cap still caps.
+const realCap = quoteDeposit(
+  { ...FROM_GROQ, depositMaxUsd: 50 } as unknown as QuotableProduct,
+  "photoshoot",
+  { people: 10, extraLabels: [] }
+);
+ok("a cap that is set still applies", realCap.ok && realCap.quote.totalCents === 5000);
+
+// The site default, null as siteSettings actually returns it.
+const INHERITS = { slug: "i", title: "I", bookable: true, depositUsd: null, depositMaxUsd: null } as unknown as QuotableProduct;
+ok(
+  "a null product amount falls through to the site default",
+  quoteDeposit(INHERITS, "photoshoot", { people: 1, extraLabels: [] }, 20).ok
+);
+ok(
+  "and with a null default too, there is honestly nothing to charge",
+  !quoteDeposit(INHERITS, "photoshoot", { people: 1, extraLabels: [] }, undefined).ok
 );
 
 // ---------------------------------------------------------------------------
