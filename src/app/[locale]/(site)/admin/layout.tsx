@@ -24,6 +24,7 @@ const FULL_NAV = [
   { href: "/admin/hotel-rate-requests", label: "Hotel Rate Requests" },
   { href: "/admin/pharaoh-challenge", label: "Pharaoh's Challenge" },
   { href: "/admin/pinterest", label: "Pinterest" },
+  { href: "/admin/paypal", label: "PayPal" },
 ];
 
 // The scoped "reservations" role only ever gets these two links — every
