@@ -6,6 +6,8 @@ import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
 import { resolveDeposit } from "@/lib/booking/deposit";
+import { extrasTotal, normaliseExtras, selectExtras } from "@/lib/booking/extras";
+import { composePhone } from "@/lib/booking/phone";
 import { paymentProvider } from "@/lib/booking/paymentProvider";
 import { sendIdempotentEmail } from "@/lib/email/idempotent";
 import { sendEmail } from "@/lib/email/resend";
@@ -30,6 +32,19 @@ import { siteUrl } from "@/content/seo";
 // When no payment provider is configured the route still works: the booking is
 // recorded as a request with no deposit, and the response says so, so the page
 // can show an honest "we have your request" instead of a broken checkout.
+//
+// Third, and newer: an email address is optional and a phone number is not.
+// Requiring an account or an email to hold a date loses bookings from people
+// who are ready to pay, and it buys nothing — an email address nobody verifies
+// is not identity. What the desk actually needs is one channel that reaches
+// the customer, so the phone number, with its country code, is the required
+// one. Everything downstream has to cope with having no address to write to:
+// the acknowledgement email is skipped rather than failed, and the response
+// says whether one was sent so the dialog can tell the customer to keep their
+// reference instead of promising them an email that will never arrive.
+//
+// Extras arrive as labels and are priced here, from the product. A request
+// that carried its own prices would be a customer setting them.
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +60,9 @@ type Body = {
   guestName?: unknown;
   guestEmail?: unknown;
   guestPhone?: unknown;
+  dialIso?: unknown;
+  phoneNational?: unknown;
+  extras?: unknown;
   notes?: unknown;
 };
 
@@ -111,7 +129,6 @@ export async function POST(request: NextRequest) {
   const productSlug = typeof body.productSlug === "string" ? body.productSlug.trim() : "";
   const guestName = typeof body.guestName === "string" ? body.guestName.trim().slice(0, 200) : "";
   const guestEmail = typeof body.guestEmail === "string" ? body.guestEmail.trim().toLowerCase() : "";
-  const guestPhone = typeof body.guestPhone === "string" ? body.guestPhone.trim().slice(0, 40) || null : null;
   const notes = typeof body.notes === "string" ? body.notes.trim().slice(0, 2000) || null : null;
   const slotLabel = typeof body.slotLabel === "string" ? body.slotLabel.trim().slice(0, 120) || null : null;
   const people = Number.isInteger(body.people) ? Number(body.people) : 1;
@@ -119,8 +136,45 @@ export async function POST(request: NextRequest) {
   if (!productType || !productSlug) {
     return NextResponse.json({ error: "That booking link is incomplete." }, { status: 400 });
   }
-  if (!guestName || !EMAIL_RE.test(guestEmail)) {
-    return NextResponse.json({ error: "A valid name and email are required." }, { status: 400 });
+  if (!guestName) {
+    return NextResponse.json({ error: "Please tell us your name." }, { status: 400 });
+  }
+  // Optional, but if one was typed it has to be usable — a typo in the only
+  // address we have is worse than no address, because nothing tells anyone.
+  if (guestEmail !== "" && !EMAIL_RE.test(guestEmail)) {
+    return NextResponse.json({ error: "That email address does not look right." }, { status: 400 });
+  }
+
+  // The phone number, composed here rather than trusted from the browser so a
+  // stored number is always a dial code plus digits whatever the form sent.
+  // The free-text `guestPhone` is still read, because /secure/[type]/[slug]
+  // posts to this same route with a single field and a page cached before this
+  // change would too.
+  const dialIsoGiven = typeof body.dialIso === "string" && body.dialIso.trim() !== "";
+  const nationalGiven = typeof body.phoneNational === "string" && body.phoneNational.trim() !== "";
+  const phone = dialIsoGiven || nationalGiven ? composePhone(body.dialIso, body.phoneNational) : null;
+  if (phone && !phone.ok) {
+    return NextResponse.json({ error: phone.message }, { status: 400 });
+  }
+  const legacyPhone = typeof body.guestPhone === "string" ? body.guestPhone.trim().slice(0, 40) : "";
+  const guestPhone = phone?.ok ? phone.display : legacyPhone;
+
+  // The rule is one usable channel, not one particular field — the same rule
+  // reservations_contact_present_check enforces in 0021, deliberately, because
+  // the two must not be able to disagree.
+  //
+  // It is stated this way rather than "phone required" because the two front
+  // doors trade off differently and both are legitimate: the popup lets
+  // someone book with no email at all, so it insists on a number; the /secure
+  // page requires an email, so a number there is a bonus. A booking nobody can
+  // reach is the only thing neither may produce — it would be a row holding
+  // somebody's money that no one can act on.
+  const user = await getCurrentUser();
+  if (guestEmail === "" && guestPhone === "" && !user) {
+    return NextResponse.json(
+      { error: "Please give us a phone number or an email address so we can reach you." },
+      { status: 400 }
+    );
   }
   if (people < 1 || people > MAX_PEOPLE) {
     return NextResponse.json(
@@ -150,6 +204,13 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Priced from the product, matched by label. Anything the browser sent that
+  // is not on the product's own list is dropped, including a stale selection
+  // from a page cached before an extra was removed: a booking with one extra
+  // missing is recoverable, an error the customer cannot act on is not.
+  const chosenExtras = selectExtras(normaliseExtras(product.extras), body.extras);
+  const extrasSum = extrasTotal(chosenExtras);
+
   const provider = paymentProvider();
   // A PayPal payment link is the simple path: Egypt Eye creates the links in
   // PayPal, one per deposit amount, and pastes them into the Studio. The money
@@ -159,7 +220,6 @@ export async function POST(request: NextRequest) {
   // Taken from the product server-side and already host-checked, so a link can
   // only ever point at PayPal however the field was edited.
   const paymentLink = deposit.paymentLink;
-  const user = await getCurrentUser();
   const reference = generateReference();
   const supabase = createAdminSupabaseClient();
 
@@ -169,7 +229,10 @@ export async function POST(request: NextRequest) {
       reference,
       customer_id: user?.id ?? null,
       guest_name: guestName,
-      guest_email: guestEmail,
+      // Null rather than "" when absent, so "booked as a guest with no email"
+      // is a state the database can be queried for instead of a blank string
+      // that looks like a bug.
+      guest_email: guestEmail === "" ? null : guestEmail,
       guest_phone: guestPhone,
       preferences: notes,
       product_type: productType,
@@ -179,8 +242,21 @@ export async function POST(request: NextRequest) {
       travelers_adults: people,
       trip_start_date: when.iso.slice(0, 10),
       journey_snapshot: [
-        { type: productType, slug: productSlug, title: product.title, startsAt: when.iso, slotLabel, people },
+        {
+          type: productType,
+          slug: productSlug,
+          title: product.title,
+          startsAt: when.iso,
+          slotLabel,
+          people,
+          extras: chosenExtras,
+        },
       ],
+      // Snapshotted, not referenced. The product's prices can change after a
+      // booking is taken, and what the customer was quoted must not change
+      // with them.
+      addons: chosenExtras,
+      addons_total: extrasSum > 0 ? extrasSum : null,
       // The booking is a request until a person says otherwise, whether or not
       // a deposit is ever paid.
       status: "requested",
@@ -205,29 +281,37 @@ export async function POST(request: NextRequest) {
   // Emails are best-effort: a booking that was written must never be reported
   // as failed because a mail provider was slow. The desk also has the admin
   // list regardless, and the customer has the reference in the response.
-  try {
-    const customer = bookingRequestCustomerEmail({
-      reference,
-      guestName,
-      productTitle: product.title,
-      startsAt: when.iso,
-      slotLabel,
-      people,
-      depositUsd: provider.enabled || paymentLink ? deposit.amountUsd : null,
-      paymentLink,
-    });
-    await sendIdempotentEmail({
-      idempotencyKey: `booking-request:${data.id}`,
-      notificationType: "booking_request",
-      to: guestEmail,
-      subject: customer.subject,
-      html: customer.html,
-      text: customer.text,
-      customerId: user?.id,
-      reservationId: data.id,
-    });
-  } catch (err) {
-    console.error("booking customer email failed (booking was saved):", err);
+  // Only when there is somewhere to send it. A guest booking with no email is
+  // a supported outcome, so this is skipped rather than treated as a failure —
+  // and `emailed` is reported back so the dialog can tell the customer to keep
+  // their reference instead of waiting for a copy that is not coming.
+  const emailed = guestEmail !== "";
+  if (emailed) {
+    try {
+      const customer = bookingRequestCustomerEmail({
+        reference,
+        guestName,
+        productTitle: product.title,
+        startsAt: when.iso,
+        slotLabel,
+        people,
+        depositUsd: provider.enabled || paymentLink ? deposit.amountUsd : null,
+        paymentLink,
+        extras: chosenExtras,
+      });
+      await sendIdempotentEmail({
+        idempotencyKey: `booking-request:${data.id}`,
+        notificationType: "booking_request",
+        to: guestEmail,
+        subject: customer.subject,
+        html: customer.html,
+        text: customer.text,
+        customerId: user?.id,
+        reservationId: data.id,
+      });
+    } catch (err) {
+      console.error("booking customer email failed (booking was saved):", err);
+    }
   }
 
   try {
@@ -242,7 +326,15 @@ export async function POST(request: NextRequest) {
       guestEmail,
       guestPhone,
       notes,
-      depositUsd: provider.enabled ? deposit.amountUsd : null,
+      // Both of these were wrong. `provider.enabled ? amount : null` is false
+      // in payment-link mode — which is the only mode in production — so the
+      // desk was told "no deposit, online deposits are not switched on" for
+      // every real booking, and the payment-status block added for exactly
+      // this case could never render because the link was never passed.
+      depositUsd: provider.enabled || paymentLink ? deposit.amountUsd : null,
+      paymentLink,
+      extras: chosenExtras,
+      emailedCustomer: emailed,
       accountState: user ? "signed-in" : "guest",
     });
     await sendEmail({
@@ -264,6 +356,8 @@ export async function POST(request: NextRequest) {
       ok: true,
       reference: data.reference,
       deposit: { amountUsd: deposit.amountUsd, paymentLink },
+      extras: chosenExtras,
+      emailed,
       next: "payLink" as const,
     });
   }
@@ -275,6 +369,8 @@ export async function POST(request: NextRequest) {
       ok: true,
       reference: data.reference,
       deposit: null,
+      extras: chosenExtras,
+      emailed,
       next: "awaitingTeam" as const,
     });
   }
@@ -295,6 +391,7 @@ export async function POST(request: NextRequest) {
       ok: true,
       reference: data.reference,
       deposit: null,
+      emailed,
       next: "awaitingTeam" as const,
       notice: "We have your request. We could not open the deposit page just now, so our team will follow up directly.",
     });

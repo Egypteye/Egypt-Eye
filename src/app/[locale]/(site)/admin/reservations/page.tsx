@@ -11,7 +11,7 @@ type Reservation = {
   id: string;
   reference: string;
   guest_name: string;
-  guest_email: string;
+  guest_email: string | null;
   status: string;
   trip_start_date: string | null;
   total_estimate: number | null;
@@ -64,7 +64,9 @@ export default async function AdminReservationsPage() {
                 </td>
                 <td className="px-4 py-3 text-ink">
                   {r.guest_name}
-                  <span className="block text-xs text-ink-soft/85">{r.guest_email}</span>
+                  <span className="block text-xs text-ink-soft/85">
+                    {r.guest_email ?? "Guest booking — no email"}
+                  </span>
                 </td>
                 <td className="px-4 py-3 text-ink-soft/85">{r.trip_start_date ? new Date(r.trip_start_date).toLocaleDateString() : "—"}</td>
                 <td className="px-4 py-3 text-ink-soft">{r.total_estimate !== null ? `$${r.total_estimate.toLocaleString()}` : "Quote"}</td>

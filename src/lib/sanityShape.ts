@@ -63,6 +63,8 @@ export function hardenExperience(experience: Experience, local?: Experience): Ex
   return {
     ...experience,
     included: arr(experience.included, local?.included),
+    timeSlots: arr(experience.timeSlots, local?.timeSlots),
+    extras: arr(experience.extras, local?.extras),
     relatedTours: experience.relatedTours?.map((t) => hardenTour(t)),
   };
 }
@@ -74,6 +76,14 @@ export function hardenPhotoshoot(photoshoot: Photoshoot, local?: Photoshoot): Ph
     goodFor: arr(photoshoot.goodFor, local?.goodFor),
     included: arr(photoshoot.included, local?.included),
     delivery: arr(photoshoot.delivery, local?.delivery),
+    // The booking popup's dropdown and its priced extras. These follow the
+    // same three-case rule as every other array here, which is what makes the
+    // content file a working default: a Studio document that has never had
+    // extras typed into it projects null and falls back to the repo's list, so
+    // the popup is complete before anyone edits the CMS — while an editor who
+    // empties the list in Studio gets an empty list, not the repo's copy back.
+    timeSlots: arr(photoshoot.timeSlots, local?.timeSlots),
+    extras: arr(photoshoot.extras, local?.extras),
   };
 }
 

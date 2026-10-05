@@ -57,14 +57,14 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, description, location, included, destinations, physicalLevel,
-  bookable, depositUsd, paypalLink
+  bookable, depositUsd, paypalLink, timeSlots, extras[]{label, priceUsd}
 }`;
 
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
-  physicalLevel, mapStops, bookable, depositUsd, paypalLink,
+  physicalLevel, mapStops, bookable, depositUsd, paypalLink, timeSlots, extras[]{label, priceUsd},
   relatedTours[]->{${relatedTourFields}},
   seo
 `;
@@ -79,13 +79,13 @@ export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.curr
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, paypalLink,
+  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, paypalLink, timeSlots, extras[]{label, priceUsd},
   faqs[]{question, answer}
 }`;
 
 const photoshootDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, paypalLink, seo,
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, bookable, depositUsd, paypalLink, timeSlots, extras[]{label, priceUsd}, seo,
   faqs[]{question, answer}
 `;
 

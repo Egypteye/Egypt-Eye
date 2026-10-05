@@ -215,15 +215,18 @@ export default async function PhotoshootDetailPage({
                 paymentMode={paymentMode}
                 cancellationSummary={cancellationSummary}
                 cancellationHref="/cancellation-policy"
+                timeSlots={photoshoot.timeSlots}
+                extras={photoshoot.extras}
                 className="block w-full rounded-full bg-gold px-5 py-4 text-center text-base font-semibold text-ink shadow-md shadow-gold/25 transition hover:bg-gold-light hover:shadow-lg"
               />
-              {/* The reason to press it, in one line. The refund promise is
-                  what removes the risk of paying before a date is confirmed,
-                  so it belongs next to the button rather than inside it. */}
+              {/* The button says what you get to do; this line says what it
+                  costs and what the risk is. The refund promise is what makes
+                  paying before a date is confirmed reasonable, and "no account
+                  needed" is the other reason people abandon a booking. */}
               <p className="mt-2 text-center text-xs leading-relaxed text-ink-soft">
                 {paymentMode === "none"
-                  ? "Our team confirms your date, usually within 48 hours."
-                  : `Pay ${depositLabel} now · fully refunded if we cannot confirm your date`}
+                  ? "Our team confirms your date personally."
+                  : `${depositLabel} deposit · no account needed · fully refunded if we cannot confirm your date`}
               </p>
             </div>
           )}

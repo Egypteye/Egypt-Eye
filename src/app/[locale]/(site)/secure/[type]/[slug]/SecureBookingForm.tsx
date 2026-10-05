@@ -118,8 +118,7 @@ export function SecureBookingForm({
             </p>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
               A member of our team is checking the date now and will come back to you{" "}
-              <strong className="text-ink">within 48 hours</strong> — with your confirmation, or with the nearest
-              dates we can offer.
+              <strong className="text-ink">with your confirmation</strong>, or with the nearest dates we can offer.
             </p>
           </>
         )}

@@ -185,6 +185,30 @@ export type Experience = {
    */
   depositUsd?: number;
 
+  /**
+   * The start times this product is actually run at, offered as a dropdown in
+   * the booking popup. Free text rather than a time type because "Sunrise" and
+   * "9:00 AM" are both real answers and the second is not more precise than
+   * the first for a shoot that follows the light.
+   *
+   * Empty means the popup asks for a preferred time in words instead. A
+   * customer can always pick "Request another time", so this is the shortlist,
+   * not the limit.
+   */
+  timeSlots?: string[];
+
+  /**
+   * Optional priced add-ons a customer can select while booking — a camel
+   * ride, a video reel. Distinct from `addOns`, which is the prose list shown
+   * on the page: these carry a price, can be selected, and are priced from
+   * here on the server rather than trusted from the request.
+   *
+   * Extras are settled with the balance, not taken with the deposit: the
+   * PayPal payment link is a fixed amount per deposit tier and cannot charge a
+   * variable total. See lib/booking/extras.ts.
+   */
+  extras?: BookingExtra[];
+
   slug: string;
   title: string;
   duration: string;
@@ -226,6 +250,18 @@ export type Experience = {
   seo?: PageSeo;
 };
 
+/**
+ * A priced add-on a customer can select while booking.
+ *
+ * Shared by Photoshoot and Experience because the booking popup is one
+ * component, and an extra that meant something different on each would be two
+ * code paths pretending to be one.
+ */
+export type BookingExtra = {
+  label: string;
+  priceUsd: number;
+};
+
 export type Photoshoot = {
   /**
    * Whether this product offers the "Secure your date" deposit flow.
@@ -252,6 +288,30 @@ export type Photoshoot = {
    * guessed figure.
    */
   depositUsd?: number;
+
+  /**
+   * The start times this product is actually run at, offered as a dropdown in
+   * the booking popup. Free text rather than a time type because "Sunrise" and
+   * "9:00 AM" are both real answers and the second is not more precise than
+   * the first for a shoot that follows the light.
+   *
+   * Empty means the popup asks for a preferred time in words instead. A
+   * customer can always pick "Request another time", so this is the shortlist,
+   * not the limit.
+   */
+  timeSlots?: string[];
+
+  /**
+   * Optional priced add-ons a customer can select while booking — a camel
+   * ride, a video reel. Distinct from `addOns`, which is the prose list shown
+   * on the page: these carry a price, can be selected, and are priced from
+   * here on the server rather than trusted from the request.
+   *
+   * Extras are settled with the balance, not taken with the deposit: the
+   * PayPal payment link is a fixed amount per deposit tier and cannot charge a
+   * variable total. See lib/booking/extras.ts.
+   */
+  extras?: BookingExtra[];
 
   slug: string;
   title: string;

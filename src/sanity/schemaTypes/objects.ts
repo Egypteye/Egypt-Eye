@@ -35,6 +35,47 @@ export const priceObject = defineType({
   ],
 });
 
+// A priced add-on a customer can tick in the booking popup — a camel ride, a
+// video reel. Separate from the prose "Optional Add-Ons" list, which is what
+// the page describes: these carry a price and a customer can select them.
+//
+// The price is read from here on the server when a booking arrives, never
+// taken from the browser, so editing a figure here changes what is quoted and
+// nothing a customer sends can change what they are charged.
+//
+// Extras are settled with the balance, not taken with the deposit: the PayPal
+// payment link is one fixed amount per tier and cannot charge a variable
+// total.
+export const bookingExtraObject = defineType({
+  name: "bookingExtra",
+  title: "Bookable extra",
+  type: "object",
+  fields: [
+    defineField({
+      name: "label",
+      title: "Extra",
+      description: "What the customer sees, e.g. 'Camel Ride'.",
+      type: "string",
+      validation: (r) => r.required().max(120),
+    }),
+    defineField({
+      name: "priceUsd",
+      title: "Price (USD)",
+      description:
+        "A real, positive figure. An extra with no price is hidden rather than offered free.",
+      type: "number",
+      validation: (r) => r.required().positive(),
+    }),
+  ],
+  preview: {
+    select: { label: "label", priceUsd: "priceUsd" },
+    prepare: ({ label, priceUsd }) => ({
+      title: label ?? "Untitled extra",
+      subtitle: typeof priceUsd === "number" ? `$${priceUsd}` : "No price — will not be offered",
+    }),
+  },
+});
+
 // How demanding a tour or experience actually is, shown as a four-segment
 // bar on its page. The note is the part travelers act on — say what the
 // effort consists of here specifically (stairs, deep sand, a boat ladder,

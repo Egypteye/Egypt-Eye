@@ -1,6 +1,7 @@
 import "server-only";
 import { escapeHtml } from "./resend";
-import { REPLY_WINDOW, moneyState, replyPromise } from "@/lib/booking/wording";
+import { HUMAN_CONFIRMS, moneyState, replyPromise } from "@/lib/booking/wording";
+import { extrasTotal, formatUsd, type BookingExtra } from "@/lib/booking/extras";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 
@@ -1079,6 +1080,7 @@ export function bookingRequestCustomerEmail({
   people,
   depositUsd,
   paymentLink,
+  extras,
 }: {
   reference: string;
   guestName: string;
@@ -1089,6 +1091,8 @@ export function bookingRequestCustomerEmail({
   depositUsd: number | null;
   /** Set when the deposit is paid through a PayPal link rather than held. */
   paymentLink?: string | null;
+  /** Chosen priced extras, settled with the balance rather than the deposit. */
+  extras?: readonly BookingExtra[];
 }) {
   const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
   const when = formatSlot(startsAt, slotLabel);
@@ -1106,17 +1110,38 @@ export function bookingRequestCustomerEmail({
       : "";
   const moneyLine = `<p style="margin:0 0 16px;">${escapeHtml(money)}</p>${payLine}`;
 
+  // Listed with their prices, and labelled as not part of the deposit. A
+  // customer who ticked $155 of extras and then paid $25 needs the email to
+  // account for the difference, or the next conversation starts with a
+  // misunderstanding about what they have already paid for.
+  const chosen = extras ?? [];
+  const extrasBlock =
+    chosen.length > 0
+      ? `<table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        <tr><td colspan="2" style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Extras you chose</td></tr>
+        ${chosen
+          .map(
+            (extra) =>
+              `<tr><td style="padding:4px 0;">${escapeHtml(extra.label)}</td><td style="padding:4px 0;text-align:right;"><strong>${escapeHtml(formatUsd(extra.priceUsd))}</strong></td></tr>`
+          )
+          .join("")}
+        <tr><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;font-family:Arial,sans-serif;font-size:13px;color:#6b7d70;">Added to your final price</td><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;text-align:right;"><strong>${escapeHtml(formatUsd(extrasTotal(chosen)))}</strong></td></tr>
+      </table>
+      <p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">Extras are settled with the balance, not with your deposit.</p>`
+      : "";
+
   const html = baseLayout({
     preheader: `We have your request for ${productTitle} on ${when}.`,
     bodyHtml: `
       <p style="margin:0 0 16px;">${greeting}</p>
-      <p style="margin:0 0 16px;">We have your request — <strong>and a real person is now checking that date.</strong> This is not an instant booking, which is deliberate: we would rather confirm properly than confirm quickly.</p>
+      <p style="margin:0 0 16px;">We have your request — <strong>and a real person is now checking that date.</strong> ${escapeHtml(HUMAN_CONFIRMS)}</p>
       <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">What</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(productTitle)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">When</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(when)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">For</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(who)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Reference</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(reference)}</strong></td></tr>
       </table>
+      ${extrasBlock}
       ${moneyLine}
       <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
       ${ctaButton("See your booking", `${SITE_URL}/account`)}
@@ -1127,13 +1152,17 @@ export function bookingRequestCustomerEmail({
   const text = [
     `${guestName.split(" ")[0] || guestName},`,
     "",
-    "We have your request, and a real person is now checking that date. This is not an instant booking.",
+    "We have your request, and a real person is now checking that date.",
+    HUMAN_CONFIRMS,
     "",
     `What: ${productTitle}`,
     `When: ${when}`,
     `For: ${who}`,
     `Reference: ${reference}`,
     "",
+    chosen.length > 0
+      ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")}\nAdded to your final price (${formatUsd(extrasTotal(chosen))}) and settled with the balance, not with your deposit.\n`
+      : "",
     money,
     paymentLink && depositUsd ? `\nPay the $${depositUsd} deposit: ${paymentLink}\nPlease put ${reference} in the PayPal note so we can match it to your booking.` : "",
     "",
@@ -1156,6 +1185,8 @@ export function bookingRequestTeamEmail({
   notes,
   depositUsd,
   paymentLink,
+  extras,
+  emailedCustomer = true,
   accountState,
 }: {
   reference: string;
@@ -1165,17 +1196,31 @@ export function bookingRequestTeamEmail({
   slotLabel?: string | null;
   people: number;
   guestName: string;
+  /** Empty when the customer booked as a guest without one. */
   guestEmail: string;
   guestPhone?: string | null;
   notes?: string | null;
   depositUsd: number | null;
   /** Set when the deposit is paid by PayPal link, so nothing is held here. */
   paymentLink?: string | null;
+  extras?: readonly BookingExtra[];
+  /** False when there was no address to send the customer a copy to. */
+  emailedCustomer?: boolean;
   accountState: "signed-in" | "guest";
 }) {
   const when = formatSlot(startsAt, slotLabel);
   const row = (label: string, value: string) =>
     `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(label)}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  // The desk has to build time into the session for these, so they belong in
+  // the booking row list rather than in a footnote. Kept separate from the
+  // deposit figure on purpose: the deposit is what was paid, these are not.
+  const chosen = extras ?? [];
+  const extrasRows =
+    chosen.length > 0
+      ? chosen.map((extra) => row("Extra", `${extra.label} — ${formatUsd(extra.priceUsd)}`)).join("") +
+        row("Extras total (with the balance)", formatUsd(extrasTotal(chosen)))
+      : "";
 
   const html = baseLayout({
     preheader: `${productTitle} — ${when} — ${reference}`,
@@ -1193,13 +1238,19 @@ export function bookingRequestTeamEmail({
         ${row("When", when)}
         ${row("People", String(people))}
         ${row("Name", guestName)}
-        ${row("Email", guestEmail)}
         ${guestPhone ? row("Phone", guestPhone) : ""}
+        ${row("Email", guestEmail || "None — guest booking, reply by phone")}
         ${row("Account", accountState === "signed-in" ? "Signed in" : "Guest")}
         ${row("Reference", reference)}
+        ${extrasRows}
       </table>
+      ${
+        emailedCustomer
+          ? ""
+          : `<p style="margin:0 0 16px;padding:12px 14px;border-radius:10px;background:#f1f4f2;"><strong>No email address.</strong> The customer booked as a guest, so they have had no written copy and no confirmation email will reach them. Contact them on the number above.</p>`
+      }
       ${notes ? `<p style="margin:0 0 16px;"><em>${escapeHtml(notes)}</em></p>` : ""}
-      <p style="margin:0 0 16px;"><strong>The customer has been told they will hear within ${REPLY_WINDOW}.</strong>${depositUsd ? " A hold does not last indefinitely — decide well inside that window." : ""}</p>
+      <p style="margin:0 0 16px;"><strong>The customer has been told a person will come back to them — no deadline was promised on your behalf.</strong>${depositUsd ? " Answer while the date is still worth having, and note that a hold does not last indefinitely." : ""}</p>
       ${ctaButton("Open in admin", `${SITE_URL}/admin/reservations`)}
     `,
     footerHtml: "Sent automatically when a deposit booking is created.",
@@ -1217,13 +1268,19 @@ export function bookingRequestTeamEmail({
     `When: ${when}`,
     `People: ${people}`,
     `Name: ${guestName}`,
-    `Email: ${guestEmail}`,
     guestPhone ? `Phone: ${guestPhone}` : "",
+    `Email: ${guestEmail || "None — guest booking, reply by phone"}`,
     `Account: ${accountState}`,
     `Reference: ${reference}`,
+    chosen.length > 0
+      ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")} (${formatUsd(extrasTotal(chosen))}, settled with the balance)`
+      : "",
+    emailedCustomer
+      ? ""
+      : "NO EMAIL ADDRESS. The customer booked as a guest and has had no written copy. Contact them by phone.",
     notes ? `\nNotes: ${notes}` : "",
     "",
-    `The customer has been told they will hear within ${REPLY_WINDOW}.`,
+    "The customer has been told a person will come back to them. No deadline was promised on your behalf.",
   ]
     .filter(Boolean)
     .join("\n");

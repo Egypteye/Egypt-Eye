@@ -15,7 +15,10 @@ import { payPalLink, presentDeposit, resolveDeposit, type BookableProduct } from
 import { photoshoots } from "../src/content/photoshoots";
 import { experiences } from "../src/content/experiences";
 import { disabledProvider, depositsEnabled } from "../src/lib/booking/paymentProvider";
-import { NOT_INSTANT, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
+import { HUMAN_CONFIRMS, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
+import { extrasTotal, normaliseExtras, selectExtras, formatUsd } from "../src/lib/booking/extras";
+import { composePhone } from "../src/lib/booking/phone";
+import { DIAL_CODES, dialCodeFor, flagFor } from "../src/lib/booking/countryCodes";
 import {
   bookingStateFromRow,
   canTransition,
@@ -212,9 +215,23 @@ ok("depositsEnabled() is false until a provider is configured", depositsEnabled(
 // itself cannot be imported from a script — it is `server-only` — which is
 // exactly why the sentences live in their own module rather than inline.
 // ---------------------------------------------------------------------------
-ok("the not-instant notice says so plainly", /not an instant booking/i.test(NOT_INSTANT));
-ok("the not-instant notice names the reply window", /48 hours/.test(NOT_INSTANT));
-ok("the not-instant notice does not claim a confirmation", !claimsConfirmation(NOT_INSTANT));
+// The sentence that carries the whole honesty requirement. What it must do is
+// name the human step; what it must not do is claim the date is confirmed.
+//
+// It used to be asserted to contain the words "not an instant booking" and to
+// name a 48-hour reply window. Both assertions are gone, for different
+// reasons. The window was a promise nobody at Egypt Eye had made, which the
+// site was making on their behalf on every booking — a deadline is only worth
+// printing if somebody is accountable for it. And "not an instant booking"
+// became false as a description of the flow: a customer really can finish in
+// one step now, with no account and no email. What is not instant is narrower,
+// so that is what is asserted.
+ok("the notice says a person confirms the date", /member of our team|a person does/i.test(HUMAN_CONFIRMS));
+ok("the notice does not claim a confirmation", !claimsConfirmation(HUMAN_CONFIRMS));
+ok(
+  "the notice promises a reply window again — nobody at Egypt Eye committed to one",
+  !/\b\d+\s*(hours?|days?)\b/i.test(HUMAN_CONFIRMS)
+);
 
 const withDeposit = moneyState("$50");
 ok("a held deposit is described as held, not charged", /held, not charged/i.test(withDeposit));
@@ -225,8 +242,26 @@ const withoutDeposit = moneyState(null);
 ok("with no deposit the customer is told nothing was charged", /nothing has been charged/i.test(withoutDeposit));
 ok("with no deposit no hold is mentioned", !/hold/i.test(withoutDeposit));
 
-ok("the reply promise names the window", /48 hours/.test(replyPromise()));
+ok(
+  "the reply promise names a deadline again — that promise was removed deliberately",
+  !/\b\d+\s*(hours?|days?)\b/i.test(replyPromise())
+);
 ok("the reply promise offers alternatives", /nearest dates/i.test(replyPromise()));
+
+// The whole customer-facing surface, swept for the window in any wording. The
+// number came back twice during this change in copy that had been edited by
+// hand, which is why it is asserted against the strings rather than trusted.
+for (const [label, text] of [
+  ["the human-step notice", HUMAN_CONFIRMS],
+  ["the reply promise", replyPromise()],
+  ["the link-mode money sentence", moneyState("$25", "link")],
+  ["the hold-mode money sentence", moneyState("$25", "hold")],
+  ["the no-deposit money sentence", moneyState(null)],
+  ...ALL.map((state) => [`the ${state} message`, stateCopy(state).message] as [string, string]),
+  ...ALL.map((state) => [`the ${state} link-mode message`, stateCopy(state, "link").message] as [string, string]),
+] as [string, string][]) {
+  ok(`${label} promises a reply within a fixed time`, !/within \d+\s*(hours?|days?)/i.test(text));
+}
 
 // The detector itself has to work, or every assertion above is vacuous. The
 // line it draws is between an assertion ("your booking is confirmed") and a
@@ -388,6 +423,176 @@ ok(
   "a rejected link does not leave the deposit looking live",
   modeFor(badLink, false) === "none"
 );
+
+// ---------------------------------------------------------------------------
+// 11. Extras are priced by the product, never by the request.
+//
+// This is the same rule the deposit amount already follows and it exists for
+// the same reason: a figure that arrives in a POST body is a price the
+// customer set themselves. The browser sends labels; the server looks them up.
+// If selectExtras ever starts trusting a price off the wire, a $60 horse ride
+// becomes a $0 one and nothing anywhere else would notice.
+// ---------------------------------------------------------------------------
+const CATALOGUE = normaliseExtras([
+  { label: "Camel Ride", priceUsd: 25 },
+  { label: "Running Horse Ride", priceUsd: 60 },
+  { label: "Jumping Horse", priceUsd: 25 },
+  { label: "Egyptian Scarf", priceUsd: 20 },
+  { label: "Video Reels", priceUsd: 25 },
+]);
+ok("the catalogue survives normalising", CATALOGUE.length === 5);
+
+// The attack, stated plainly: the customer sends a price and it buys nothing,
+// because selectExtras reads labels and nothing else. A priced object is not a
+// label, so it is not a selection at all.
+const forgedAlone = selectExtras(CATALOGUE, [
+  { label: "Running Horse Ride", priceUsd: 0 } as unknown as string,
+]);
+ok("a price sent from the browser is not a selection", forgedAlone.length === 0);
+ok("a forged selection costs nothing", extrasTotal(forgedAlone) === 0);
+
+// And when the same extra is named honestly alongside it, the product's price
+// is the one that applies.
+const forgedMixed = selectExtras(CATALOGUE, [
+  { label: "Running Horse Ride", priceUsd: 0 } as unknown as string,
+  "Running Horse Ride",
+]);
+ok(
+  "the product's price wins over one sent with the request",
+  forgedMixed.length === 1 && forgedMixed[0].priceUsd === 60 && extrasTotal(forgedMixed) === 60
+);
+ok(
+  "a forged label that is not on the product buys nothing",
+  selectExtras(CATALOGUE, [{ label: "Private Jet", priceUsd: 1 } as unknown as string]).length === 0
+);
+
+ok("an extra that is not on the product is ignored", selectExtras(CATALOGUE, ["Private Jet"]).length === 0);
+ok(
+  "selecting the same extra twice bills it once",
+  extrasTotal(selectExtras(CATALOGUE, ["Camel Ride", "Camel Ride"])) === 25
+);
+ok(
+  "matching is not case-sensitive, so a label typed differently still resolves",
+  extrasTotal(selectExtras(CATALOGUE, ["camel ride"])) === 25
+);
+ok("nothing chosen costs nothing", extrasTotal(selectExtras(CATALOGUE, [])) === 0);
+ok("a non-array selection costs nothing", extrasTotal(selectExtras(CATALOGUE, "Camel Ride")) === 0);
+ok(
+  "every extra selected adds up",
+  extrasTotal(selectExtras(CATALOGUE, CATALOGUE.map((e) => e.label))) === 155
+);
+
+// An extra with no usable price must not be offered. Showing it as free is the
+// failure mode: somebody selects it and then argues about the bill.
+const JUNK: [unknown, number][] = [
+  [{ label: "Free thing", priceUsd: 0 }, 0],
+  [{ label: "Negative", priceUsd: -10 }, 0],
+  [{ label: "Unpriced" }, 0],
+  [{ label: "", priceUsd: 25 }, 0],
+  [{ label: "   ", priceUsd: 25 }, 0],
+  [{ label: "NaN", priceUsd: Number.NaN }, 0],
+  [{ label: "Text price", priceUsd: "25" }, 0],
+  [{ label: "Good", priceUsd: 25 }, 1],
+];
+for (const [entry, kept] of JUNK) {
+  ok(
+    `normaliseExtras should ${kept ? "keep" : "drop"} ${JSON.stringify(entry)}`,
+    normaliseExtras([entry]).length === kept
+  );
+}
+ok("a duplicate label is kept once", normaliseExtras([
+  { label: "Camel Ride", priceUsd: 25 },
+  { label: "camel ride", priceUsd: 99 },
+]).length === 1);
+ok("extras from a null field are an empty list, not a crash", normaliseExtras(null).length === 0);
+
+// The rule that keeps the wording honest: the deposit is a fixed amount per
+// tier, so extras cannot be charged through the payment link. Nothing may add
+// them together into one figure a customer could mistake for what they paid.
+const deposit25 = presentDeposit(25);
+ok(
+  "the deposit presentation absorbed the extras total — the deposit link cannot charge it",
+  deposit25.kind === "depositOnly" && deposit25.deposit === "$25"
+);
+ok("formatUsd prints whole dollars without decimals", formatUsd(25) === "$25");
+ok("formatUsd keeps cents when there are any", formatUsd(25.5) === "$25.50");
+
+// ---------------------------------------------------------------------------
+// 12. The phone number.
+//
+// It carries more weight than it used to. An email address is optional now, so
+// for a guest booking this is the only way back to the customer — and a
+// booking nobody can reach is a row holding somebody's money that no one can
+// act on. The country code is mandatory for the same reason: a bare 010… is
+// undialable from outside Egypt, and a bare 1012… could be two countries.
+// ---------------------------------------------------------------------------
+ok("Egypt is the first country offered", DIAL_CODES[0].iso === "EG" && DIAL_CODES[0].dial === "+20");
+ok("every dial code is a + and digits", DIAL_CODES.every((c) => /^\+\d{1,4}$/.test(c.dial)));
+ok("every country has a two-letter code", DIAL_CODES.every((c) => /^[A-Z]{2}$/.test(c.iso)));
+ok(
+  "no country appears twice",
+  new Set(DIAL_CODES.map((c) => c.iso)).size === DIAL_CODES.length
+);
+ok("the flag is derived from the code", flagFor("EG") === "🇪🇬" && flagFor("GB") === "🇬🇧");
+ok("a bad code produces no flag rather than mojibake", flagFor("XYZ") === "");
+ok("an unknown country resolves to nothing", dialCodeFor("ZZ") === null);
+
+// An Egyptian mobile as Egyptians write it. The leading zero is national
+// notation and makes the number undialable once a country code is in front of
+// it, so it is dropped rather than rejected — this is the single most common
+// way a real number arrives broken.
+const egyptian = composePhone("EG", "010 1234 5678");
+ok("an Egyptian mobile composes", egyptian.ok && egyptian.e164 === "+201012345678");
+ok("the display keeps the code readable", egyptian.ok && egyptian.display === "+20 1012345678");
+
+const spaced = composePhone("US", "(555) 010-9999");
+ok("brackets, spaces and dashes are accepted", spaced.ok && spaced.e164 === "+15550109999");
+
+const PHONES: [unknown, unknown, boolean][] = [
+  ["EG", "01012345678", true],
+  ["GB", "7700 900123", true],
+  ["EG", "", false],          // nothing typed
+  ["EG", "0", false],         // only a leading zero
+  ["EG", "12345", false],     // too short to be anybody's number
+  ["EG", "1234567890123456", false], // past the E.164 ceiling
+  [null, "01012345678", false],      // no country code chosen
+  ["", "01012345678", false],
+  ["ZZ", "01012345678", false],      // a country we do not offer
+  ["EG", null, false],
+];
+for (const [iso, national, allowed] of PHONES) {
+  const result = composePhone(iso, national);
+  ok(
+    `composePhone(${JSON.stringify(iso)}, ${JSON.stringify(national)}) should ${allowed ? "pass" : "fail"}`,
+    result.ok === allowed
+  );
+  if (!allowed && !result.ok) {
+    ok(
+      `the rejection for ${JSON.stringify(national)} tells the customer what to do`,
+      result.message.trim().length > 10
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 13. The product the pilot actually runs on.
+//
+// Exclusive Pyramids Photoshoot is the one product live on this flow, and its
+// time slots and extras are defined in the content file so the popup is
+// complete before anybody edits the Studio. If the content ever stops carrying
+// them, the popup silently loses its dropdown and its extras list and nothing
+// else fails — which is the kind of regression that ships.
+// ---------------------------------------------------------------------------
+const pilot = photoshoots.find((p) => p.slug === "exclusive-pyramids-photoshoot");
+ok("the pilot photoshoot still exists", Boolean(pilot));
+if (pilot) {
+  ok("it offers start times", (pilot.timeSlots ?? []).length > 0);
+  ok(
+    "its extras all carry a usable price",
+    normaliseExtras(pilot.extras).length === (pilot.extras ?? []).length &&
+      (pilot.extras ?? []).length > 0
+  );
+}
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

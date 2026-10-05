@@ -8,13 +8,33 @@
 // Kept free of `server-only` imports on purpose, so scripts/check-booking.mts
 // can assert the rules against the real strings rather than a paraphrase.
 
-/** How long a customer is told they will wait. Said once, used everywhere. */
-export const REPLY_WINDOW = "48 hours";
-
-export const NOT_INSTANT =
-  "This is not an instant booking. A member of our team checks availability for your date and confirms it personally — usually within " +
-  REPLY_WINDOW +
-  ". We would rather confirm properly than confirm quickly.";
+/**
+ * What is instant, and what a person still does.
+ *
+ * This sentence replaced two things, and both changes are deliberate.
+ *
+ * It no longer names a reply window. There used to be a promised "48 hours"
+ * here, repeated into the emails, the account page and the admin panel — a
+ * number nobody at Egypt Eye had committed to, which the site was making on
+ * their behalf, on every booking. A promise with a clock on it is only worth
+ * making if somebody is accountable for the clock, and the honest version is
+ * to say what happens rather than when.
+ *
+ * It also no longer opens with "This is not an instant booking." Booking here
+ * IS instant in the sense a customer means: choose a date, pay the deposit,
+ * done, in one popup, with no account and no waiting for a reply before you
+ * can commit. The part that is not instant is narrower and worth stating
+ * exactly — the date becomes final when a person has checked it. Saying
+ * "not instant" about the whole thing undersold the product and, next to a
+ * button that says Instant Booking, read as a contradiction.
+ *
+ * What must never appear is a claim that the date IS confirmed. That rule is
+ * unchanged and is enforced by claimsConfirmation below.
+ */
+export const HUMAN_CONFIRMS =
+  "Booking here is instant: you choose your date, add any extras and pay your deposit in one step. " +
+  "Confirming the date is the one part a person does — a member of our team checks availability and " +
+  "comes back to you personally. We would rather confirm properly than confirm quickly.";
 
 /**
  * How the deposit is taken, which changes what is true about the money.
@@ -37,7 +57,8 @@ export function moneyState(depositLabel: string | null, mode: PaymentMode = "hol
   }
   if (mode === "link") {
     return (
-      `Your ${depositLabel} deposit secures this date and is credited toward your final price. ` +
+      `Your ${depositLabel} deposit holds this date while we check it, and is credited toward your ` +
+      "final price. " +
       "If we cannot confirm the date you asked for, we refund it in full."
     );
   }
@@ -47,10 +68,17 @@ export function moneyState(depositLabel: string | null, mode: PaymentMode = "hol
   );
 }
 
+/**
+ * What happens next, with no clock on it.
+ *
+ * The alternatives half matters as much as the first: a customer whose date is
+ * unavailable needs to hear the nearest dates in the same message, or the
+ * answer is just a no and the booking is lost.
+ */
 export function replyPromise(): string {
   return (
-    `You will hear from us within ${REPLY_WINDOW} with your confirmation, or with the nearest dates we can ` +
-    "offer if that one is not possible."
+    "We will come back to you with your confirmation, or with the nearest dates we can offer if that one " +
+    "is not possible."
   );
 }
 

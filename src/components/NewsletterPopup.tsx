@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { NewsletterSignup } from "./NewsletterSignup";
 import { useTr } from "@/i18n/LocaleProvider";
+import { modalsLocked } from "@/lib/ui/modalLock";
 
 const DISMISSED_KEY = "egypt-eye-newsletter-popup-dismissed-at";
 const SUBSCRIBED_KEY = "egypt-eye-newsletter-popup-subscribed";
@@ -28,8 +29,19 @@ export function NewsletterPopup() {
       // localStorage unavailable (private browsing, etc.) — just show it.
     }
 
-    const timer = setTimeout(() => setOpen(true), SHOW_AFTER_MS);
-    return () => clearTimeout(timer);
+    // Polled rather than a single timer, because of what the single timer did:
+    // nine seconds is well inside the time it takes to fill in the booking
+    // popup, so this used to open straight over a half-finished booking and
+    // interrupt it at the worst possible moment. Waiting for the screen to be
+    // free costs a few seconds of delay and saves the booking.
+    const since = Date.now();
+    const timer = setInterval(() => {
+      if (Date.now() - since < SHOW_AFTER_MS) return;
+      if (modalsLocked()) return;
+      setOpen(true);
+      clearInterval(timer);
+    }, 1000);
+    return () => clearInterval(timer);
   }, []);
 
   function dismiss() {

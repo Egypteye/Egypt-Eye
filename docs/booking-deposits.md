@@ -577,6 +577,90 @@ research. What remains:
    `content/cancellationPolicy.ts` with it. That is a content change with a
    `check:faqs` guard already watching it.
 
+## The popup, second pass
+
+The dialog was rebuilt after the pilot went live. Six changes, and the reasoning
+behind the two that look like they contradict earlier decisions in this
+document.
+
+**It is two steps, not one screen.** Step one is the session — date, time,
+headcount, extras. Step two is who you are — name, country code and phone,
+optional email, the terms, the pay button. The running total sits in a pinned
+bar across both so the figure never scrolls out of sight while the extras are
+being chosen. One screen holding all of it is a wall, and a wall on a phone is
+an abandoned booking.
+
+**The button says "Instant Booking".** This reverses the label, not the
+promise. Booking here really is instant in the sense a customer means: choose a
+date, pay, finished, in one popup, with no account and no waiting for a reply
+before you can commit. What is not instant is narrower — the date becomes final
+when a person has checked it — and that is stated in full, above the pay
+button, before any money moves. The old "This is not an instant booking" framed
+the whole flow by its slowest part, undersold a product that genuinely is fast,
+and would now read as a contradiction of the button. The rule that has not
+moved an inch: nothing may claim the date **is** confirmed until a person says
+so, and `claimsConfirmation()` still enforces it.
+
+**The 48-hour promise is gone everywhere.** It was a deadline the site was
+making on Egypt Eye's behalf, on every booking, repeated into the emails, the
+account page and the admin panel. Nobody had committed to it. A promise with a
+clock on it is only worth printing if someone is accountable for the clock, so
+the copy now says what happens rather than when. `check-booking.mts` sweeps
+every customer-facing sentence for a reply window and fails if one returns.
+
+**An email address is optional; a way to reach you is not.** Requiring an
+account or an address to hold a date loses bookings from people who are ready
+to pay, and buys nothing — an address nobody verifies is not identity. The
+required field is the phone number, with a mandatory country code, because a
+bare `010…` is undialable from outside Egypt. The underlying rule is "at least
+one usable channel", stated identically in `reservations_contact_present_check`
+and in the route, deliberately, so the two cannot disagree. The two front doors
+satisfy it differently: the popup allows no email so it insists on a number,
+the `/secure` page requires an email so a number there is a bonus.
+
+Everything downstream had to learn about it. The acknowledgement email is
+skipped rather than failed; the response reports whether one was sent, so the
+dialog tells a guest to keep their reference instead of promising a copy that
+will never arrive; the team email carries a **NO EMAIL ADDRESS** banner; and
+the admin confirm and decline actions say, in the same message that reports the
+decision, that nobody has been told and somebody has to call.
+
+**Extras are selected here and settled with the balance.** The PayPal payment
+link is a fixed amount per deposit tier, so a variable extras total cannot be
+charged through it. Nothing may add the two into a single figure a customer
+could mistake for what they paid, which is why the footer shows two numbers:
+what is taken now, and what is not. The prices live on the product and are
+resolved on the server from the labels the browser sends — a price arriving in
+a request body would be a price the customer set themselves, the same rule the
+deposit amount has always followed.
+
+**Extras and times are editable in the Studio with the repo as the default.**
+`timeSlots` and `extras` follow the same three-case rule as every other array
+in `lib/sanityShape.ts`: a Studio document that has never had them typed in
+projects null and falls back to the content file, so the popup is complete
+before anyone edits the CMS, while an editor who empties the list in Studio
+gets an empty list rather than the repo's copy back.
+
+### Two bugs a browser found and reading could not
+
+Both were invisible in the markup and would have shipped.
+
+The floating WhatsApp bubble is `fixed bottom-6 right-6 z-50`. The dialog was
+also `z-50` and the bubble comes later in the DOM, so on a phone the green
+circle sat directly on top of the dialog's primary button — Playwright reported
+that the WhatsApp link "intercepts pointer events", which is precisely what a
+thumb would have found.
+
+Worse: the newsletter popup opens nine seconds after page load, on a timer that
+fires once. Nine seconds is well inside the time it takes to fill in a date, a
+phone number and a few extras, so it would appear over a half-finished booking.
+
+`lib/ui/modalLock.ts` is the fix for both. While a dialog owns the screen,
+nothing else may open over it and the floating buttons step aside. A z-index
+alone would have fixed neither properly — stacking the newsletter behind the
+dialog leaves it waiting there, to be revealed the moment the customer
+finishes.
+
 ## Sources
 
 - PayPal, [Payment Links and Buttons API](https://developer.paypal.com/payment-links-buttons/create-payment-link) — `POST /v1/checkout/payment-resources`, reusable links, `return_url`

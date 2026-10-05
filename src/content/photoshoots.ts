@@ -29,6 +29,27 @@ export const photoshoots: Photoshoot[] = [
       "Camel experience",
       "Group photoshoot",
     ],
+
+    // The booking popup's dropdown. Giza is shot in the morning: the light is
+    // usable and the plateau is bearable to walk on, which is why there is no
+    // afternoon slot to offer. "Request another time" is always available in
+    // the popup itself, so this is the shortlist rather than the limit.
+    timeSlots: ["9:00 AM", "11:00 AM"],
+
+    // Priced extras, selectable while booking. These overlap the prose
+    // `addOns` list above on purpose: that list is what the page describes,
+    // this one is what a customer can actually tick and be quoted for.
+    //
+    // Settled with the balance, never taken with the deposit — the PayPal
+    // payment link is one fixed amount per tier and cannot charge a variable
+    // total. See lib/booking/extras.ts.
+    extras: [
+      { label: "Camel Ride", priceUsd: 25 },
+      { label: "Running Horse Ride", priceUsd: 60 },
+      { label: "Jumping Horse", priceUsd: 25 },
+      { label: "Egyptian Scarf", priceUsd: 20 },
+      { label: "Video Reels", priceUsd: 25 },
+    ],
     delivery: [
       "80+ edited pictures",
       "Raw, unedited photos the same day",

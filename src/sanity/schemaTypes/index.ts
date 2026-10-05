@@ -1,4 +1,10 @@
-import { ratingObject, priceObject, itineraryDayObject, physicalLevelObject } from "./objects";
+import {
+  ratingObject,
+  priceObject,
+  itineraryDayObject,
+  physicalLevelObject,
+  bookingExtraObject,
+} from "./objects";
 import { tour } from "./tour";
 import { experience } from "./experience";
 import { photoshoot } from "./photoshoot";
@@ -32,6 +38,7 @@ export const schemaTypes = [
   priceObject,
   itineraryDayObject,
   physicalLevelObject,
+  bookingExtraObject,
   treasureSpec,
   treasureVariant,
   treasureOption,

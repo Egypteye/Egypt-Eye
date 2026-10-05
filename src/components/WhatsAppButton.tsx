@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { whatsappHref } from "@/lib/whatsapp";
 import { useTr } from "@/i18n/LocaleProvider";
+import { onModalLockChange } from "@/lib/ui/modalLock";
 
 // The floating chat bubble lives in the shared site layout, so it has no
 // page-specific data to work with — just the URL. That's enough to tell the
@@ -53,10 +55,20 @@ function labelForPath(pathname: string): string {
 export function WhatsAppButton({ whatsappLink }: { whatsappLink: string }) {
   const tr = useTr();
   const pathname = usePathname();
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => onModalLockChange(setHidden), []);
   const href = whatsappHref(whatsappLink, {
     page: labelForPath(pathname ?? "/"),
     intro: "Hi, I have a question.",
   });
+
+  // Hidden while a dialog owns the screen. It is `fixed bottom-6 right-6`,
+  // which is exactly where the booking dialog puts its pay button on a phone —
+  // the bubble was sitting on top of it and swallowing the tap. Raising the
+  // dialog above it stops the interception, but a green circle glowing through
+  // a blurred backdrop beside "Book and pay $25" is still the wrong thing to
+  // show someone mid-payment, so it steps aside properly.
+  if (hidden) return null;
 
   return (
     <a

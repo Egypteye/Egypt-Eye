@@ -24,7 +24,8 @@ type Row = {
   status: string;
   deposit_held_at: string | null;
   guest_name: string;
-  guest_email: string;
+  /** Null when the customer booked as a guest without one. */
+  guest_email: string | null;
   deposit_amount: number | null;
   deposit_status: string;
   payment_authorization_id: string | null;
@@ -109,7 +110,12 @@ export async function confirmBooking(reservationId: string): Promise<BookingActi
     .update({ status: "confirmed", updated_at: now })
     .eq("id", reservationId);
 
-  try {
+  // A guest booking has no address to write to. The decision still stands —
+  // it is recorded either way — but the admin has to be told that nobody has
+  // been notified, in the same message that reports the decision, or a
+  // confirmed booking sits there with a customer who never heard.
+  const noEmail = !row.guest_email;
+  if (row.guest_email) try {
     const email = bookingConfirmedEmail({
       reference: row.reference,
       guestName: row.guest_name,
@@ -133,11 +139,14 @@ export async function confirmBooking(reservationId: string): Promise<BookingActi
   }
 
   refresh(reservationId);
+  const tellThemYourself = noEmail
+    ? " This booking has no email address — call or message the customer to tell them."
+    : "";
   return {
     ok: true,
     message: captured
-      ? `Confirmed, and the $${row.deposit_amount} deposit has been charged.`
-      : "Confirmed. No deposit was held, so nothing was charged.",
+      ? `Confirmed, and the $${row.deposit_amount} deposit has been charged.${tellThemYourself}`
+      : `Confirmed. No deposit was held, so nothing was charged.${tellThemYourself}`,
   };
 }
 
@@ -187,7 +196,8 @@ export async function declineBooking(reservationId: string, reason?: string): Pr
     .update({ status: "declined", updated_at: now })
     .eq("id", reservationId);
 
-  try {
+  const declineNoEmail = !row.guest_email;
+  if (row.guest_email) try {
     const email = bookingDeclinedEmail({
       reference: row.reference,
       guestName: row.guest_name,
@@ -219,7 +229,12 @@ export async function declineBooking(reservationId: string, reason?: string): Pr
     row.deposit_status === "captured" && row.deposit_amount !== null
       ? ` Refund the $${row.deposit_amount} deposit in PayPal, then press "Refund recorded" — the customer has been promised it in full.`
       : "";
-  return { ok: true, message: `Declined, and the customer has been told.${releaseNote}${owesRefund}` };
+  return {
+    ok: true,
+    message: declineNoEmail
+      ? `Declined. This booking has no email address, so nobody has been told — call or message the customer.${releaseNote}${owesRefund}`
+      : `Declined, and the customer has been told.${releaseNote}${owesRefund}`,
+  };
 }
 
 /** Marks that somebody has picked this up, so two people do not both chase it. */

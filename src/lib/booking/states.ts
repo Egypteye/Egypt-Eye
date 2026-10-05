@@ -49,7 +49,7 @@ const COPY: Record<BookingState, StateCopy> = {
   held: {
     label: "Deposit held",
     message:
-      "Your deposit is held and your request is with our team. We are confirming your date now, and you will have an answer within 48 hours. Nothing has been charged yet.",
+      "Your deposit is held and your request is with our team. We are confirming your date now and will come back to you. Nothing has been charged yet.",
     isConfirmed: false,
     charged: false,
   },
@@ -107,7 +107,7 @@ const LINK_COPY: Partial<Record<BookingState, Partial<StateCopy>>> = {
   held: {
     label: "Deposit paid",
     message:
-      "Thank you — we have your deposit, and your request is with our team. We are confirming your date now and you will hear from us within 48 hours. Your deposit is credited toward your final price.",
+      "Thank you — we have your deposit, and your request is with our team. We are confirming your date now and will come back to you. Your deposit is credited toward your final price.",
     charged: true,
   },
   checking: {

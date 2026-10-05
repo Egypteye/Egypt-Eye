@@ -54,6 +54,23 @@ export const experience = defineType({
             : "This must be a PayPal link (paypal.com or paypal.me)."
         ),
     }),
+
+    defineField({
+      name: "timeSlots",
+      title: "Start times offered in the booking popup",
+      description:
+        "e.g. '9:00 AM', '11:00 AM'. Shown as a dropdown. A customer can always pick \"Request another time\", so this is the shortlist rather than the limit. Leave empty and the popup asks for a preferred time in words.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
+      name: "extras",
+      title: "Bookable extras (priced)",
+      description:
+        "Optional add-ons a customer can tick while booking, each with its own price. Added to the final price and settled with the balance — the deposit payment link is a fixed amount and does not charge these.",
+      type: "array",
+      of: [{ type: "bookingExtra" }],
+    }),
     defineField({
       name: "image",
       title: "Photo",

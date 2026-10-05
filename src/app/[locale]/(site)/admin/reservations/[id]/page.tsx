@@ -47,6 +47,10 @@ export default async function AdminReservationDetailPage({ params }: { params: P
   const guides = (reservation.guides ?? []) as Guide[];
   const documents = (reservation.documents ?? []) as Document[];
   const journeySnapshot = (reservation.journey_snapshot ?? []) as JourneyItem[];
+  // Snapshotted at booking time, so this is what the customer was quoted even
+  // if the product's prices have moved since. Deliberately not added to
+  // deposit_amount anywhere: extras are settled with the balance.
+  const addons = (reservation.addons ?? []) as { label: string; priceUsd: number }[];
   const requests = (changeRequests ?? []) as ChangeRequest[];
 
   return (
@@ -89,11 +93,33 @@ export default async function AdminReservationDetailPage({ params }: { params: P
         <div className="rounded-2xl border border-black/5 bg-cream p-5 text-sm shadow-sm">
           <h2 className="mb-3 font-display text-base font-semibold text-ink">Guest</h2>
           <p className="text-ink">{reservation.guest_name}</p>
-          <p className="text-ink-soft/85">{reservation.guest_email}</p>
           {reservation.guest_phone && <p className="text-ink-soft/85">{reservation.guest_phone}</p>}
+          {reservation.guest_email ? (
+            <p className="text-ink-soft/85">{reservation.guest_email}</p>
+          ) : (
+            <p className="font-semibold text-terracotta">
+              No email — guest booking. Reply by phone; nothing in writing has reached them.
+            </p>
+          )}
           <p className="mt-2 text-ink-soft/85">
             {reservation.travelers_adults} adults, {reservation.travelers_children} children
           </p>
+          {addons.length > 0 && (
+            <div className="mt-3 border-t border-black/5 pt-3">
+              <p className="font-semibold text-ink">Extras booked</p>
+              <ul className="mt-1 space-y-0.5">
+                {addons.map((extra) => (
+                  <li key={extra.label} className="flex justify-between gap-4 text-ink-soft/85">
+                    <span>{extra.label}</span>
+                    <span className="tabular-nums">${extra.priceUsd}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-1 text-xs text-ink-soft/85">
+                ${reservation.addons_total ?? 0} with the balance — not part of the deposit.
+              </p>
+            </div>
+          )}
           <p className="text-ink-soft/85">
             {reservation.trip_start_date ? new Date(reservation.trip_start_date).toLocaleDateString() : "Dates TBD"}
             {reservation.trip_end_date ? ` – ${new Date(reservation.trip_end_date).toLocaleDateString()}` : ""}

@@ -74,7 +74,7 @@ export function DepositPanel({
       {heldHours !== null && !decided && (
         <p className={`mt-2 text-sm ${heldHours >= 48 ? "font-semibold text-terracotta" : "text-ink-soft"}`}>
           Held {heldHours} hour{heldHours === 1 ? "" : "s"} ago.
-          {heldHours >= 48 && " The customer was promised an answer within 48 hours."}
+          {heldHours >= 48 && " This has been waiting two days. The customer is holding a date and has had no answer."}
         </p>
       )}
 
