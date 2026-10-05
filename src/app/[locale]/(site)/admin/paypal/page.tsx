@@ -100,8 +100,11 @@ export default async function AdminPayPalPage() {
           <div className="rounded-2xl border border-black/10 bg-cream p-6">
             <p className="font-semibold text-ink">Check it works</p>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-soft">
-              This creates a $1 test order and reads it back. Nobody approves it, so no money moves and it
-              expires on its own. Safe to press at any time, including on live.
+              The first button creates a $1 test order at PayPal and reads it back — nobody approves it, so no
+              money moves and it expires on its own. The second proves the guarantees that stop a customer being
+              charged twice, using a throwaway booking it deletes afterwards; it never contacts PayPal and never
+              sends an email. The third looks for payments PayPal took that nobody told us about. All three are
+              safe to press at any time, including on live.
             </p>
             <div className="mt-4">
               <TestButton />
