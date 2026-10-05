@@ -3,8 +3,9 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { paymentProvider, paymentProviderFor } from "@/lib/booking/activeProvider";
 import { describeReadiness, liveReadiness, payPalConfig } from "@/lib/booking/paypalConfig";
 import { TestButton } from "./TestButton";
-import { getExperiences, getPhotoshoots, getSiteSettings } from "@/sanity/fetchers";
-import { depositOffer, explainOffer, quoteDeposit } from "@/lib/booking/quote";
+import { explainOffer } from "@/lib/booking/quote";
+import { depositDiagnostics } from "./deposits";
+import { RefreshContentButton } from "./TestButton";
 
 export const metadata = { title: "PayPal", robots: { index: false, follow: false } };
 
@@ -20,33 +21,13 @@ export default async function AdminPayPalPage() {
   const user = await getCurrentUser();
   if (user?.role !== "admin") redirect("/admin/reservations");
 
-  // Every product somebody has switched on, and whether a deposit can
-  // actually be calculated for it.
-  //
-  // This exists because of a loop that cost an afternoon: a deposit was
-  // changed in the Studio, the button quietly became "Request your date", and
-  // the only way to find out why was to read the code. The rules now live in
-  // one function, so the one function can simply say what it decided.
-  const [photoshoots, experiences, settings] = await Promise.all([
-    getPhotoshoots(),
-    getExperiences(),
-    getSiteSettings(),
-  ]);
-  const products = [
-    ...photoshoots.map((p) => ({ kind: "photoshoot" as const, product: p })),
-    ...experiences.map((p) => ({ kind: "experience" as const, product: p })),
-  ]
-    .filter(({ product }) => product.bookable === true)
-    .map(({ kind, product }) => {
-      const offer = depositOffer(product, kind, settings.defaultDepositUsd);
-      const three = quoteDeposit(product, kind, { people: 3, extraLabels: [] }, settings.defaultDepositUsd);
-      return {
-        title: product.title,
-        slug: product.slug,
-        offer,
-        forThree: three.ok ? three.quote.totalCents : null,
-      };
-    });
+  // Read fresh from Sanity, never through the hour-long cache every other
+  // page uses. A diagnostic that reports what the Studio contained an hour ago
+  // is worse than no diagnostic: it tells somebody who just fixed the problem
+  // that the problem is still there.
+  const diagnostics = await depositDiagnostics();
+  const products = diagnostics.rows;
+  const siteDefaultUsd = diagnostics.siteDefaultUsd;
 
   const config = payPalConfig();
   const provider = paymentProvider();
@@ -154,8 +135,8 @@ export default async function AdminPayPalPage() {
                       <p className="mt-1 text-sm text-ink-soft">
                         {row.offer.headline}
                         {row.offer.perPerson ? " per person" : " per booking"}
-                        {row.forThree !== null
-                          ? ` · three people would pay $${row.forThree / 100}`
+                        {row.forThreeCents !== null
+                          ? ` · three people would pay $${row.forThreeCents / 100}`
                           : ""}
                       </p>
                     ) : (
@@ -165,9 +146,19 @@ export default async function AdminPayPalPage() {
                 ))}
               </ul>
             )}
+            <div className="mt-4 rounded-xl border border-black/10 bg-white/60 p-4">
+              <p className="text-sm text-ink-soft">
+                Read live from Sanity, bypassing the hour-long cache the rest of the site uses — so this is what
+                the Studio contains right now. The product pages still serve the cached copy; press below to
+                refresh them.
+              </p>
+              <div className="mt-3">
+                <RefreshContentButton />
+              </div>
+            </div>
             <p className="mt-4 text-xs text-ink-soft">
               Site-wide default deposit:{" "}
-              {settings.defaultDepositUsd ? `$${settings.defaultDepositUsd}` : "not set"} — used by any product
+              {siteDefaultUsd ? `$${siteDefaultUsd}` : "not set"} — used by any product
               with no amount of its own.
             </p>
           </div>

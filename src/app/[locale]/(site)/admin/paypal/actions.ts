@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/session";
 import { payPalConfig, toPayPalAmount } from "@/lib/booking/paypalConfig";
 import { payPalRequest } from "@/lib/booking/paypalClient";
@@ -154,4 +155,37 @@ export async function runReconciliation(): Promise<{ summary: string; problems: 
     summary: parts.length > 1 ? parts.join(", ") + "." : "Nothing needed doing.",
     problems: report.problems,
   };
+}
+
+/**
+ * Drops the cached Sanity content for the whole site.
+ *
+ * Every Sanity read goes through a one-hour cache, and Next's data cache on
+ * Vercel survives a redeploy — so an edit published in the Studio can be
+ * invisible on the site for an hour, through any number of deployments. That
+ * is a sensible default for prose. It is not sensible for a deposit figure
+ * somebody has just corrected and is standing there waiting to see.
+ *
+ * There is a Sanity webhook that does this automatically on publish
+ * (/api/sanity/revalidate), which is the permanent answer; this is the button
+ * for when it is not configured yet, or for not waiting.
+ *
+ * The whole layout rather than one path, for the same reason the webhook does
+ * it: Sanity content reaches tours, stories, listings, the homepage and the
+ * nav, and guessing which route changed would silently leave a stale page up.
+ */
+export async function refreshSanityContent(): Promise<{ ok: boolean; message: string }> {
+  await requireAdmin();
+  try {
+    revalidatePath("/", "layout");
+    return {
+      ok: true,
+      message: "Cleared. Reload a product page — it will fetch the current Studio content.",
+    };
+  } catch (err) {
+    return {
+      ok: false,
+      message: err instanceof Error ? err.message : "Could not clear the cache.",
+    };
+  }
 }

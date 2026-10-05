@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { runReconciliation, testPayPalConnection, type PayPalTestResult } from "./actions";
+import { refreshSanityContent, runReconciliation, testPayPalConnection, type PayPalTestResult } from "./actions";
 import { runPaymentSelfTest, type SelfTestResult } from "./selftest";
 
 export function TestButton() {
@@ -116,6 +116,38 @@ export function TestButton() {
               : "Fix the red items above before taking any real payment."}
           </p>
         </div>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Makes a Studio edit visible now rather than within the hour.
+ *
+ * Separate from the other three because it is the one somebody reaches for
+ * while standing at the Studio wondering why nothing changed.
+ */
+export function RefreshContentButton() {
+  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null);
+  const [pending, start] = useTransition();
+
+  return (
+    <div>
+      <button
+        type="button"
+        disabled={pending}
+        onClick={() =>
+          start(async () => {
+            setResult(null);
+            setResult(await refreshSanityContent());
+          })
+        }
+        className="rounded-full border border-black/15 px-5 py-2.5 text-sm font-semibold text-ink transition hover:border-gold/60 hover:bg-sand/40 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {pending ? "Refreshing…" : "Refresh the site from Sanity"}
+      </button>
+      {result && (
+        <p className={`mt-2 text-sm ${result.ok ? "text-ink-soft" : "text-terracotta"}`}>{result.message}</p>
       )}
     </div>
   );
