@@ -16,6 +16,7 @@ import { photoshoots } from "../src/content/photoshoots";
 import { experiences } from "../src/content/experiences";
 import { disabledProvider, chooseProvider } from "../src/lib/booking/paymentProvider";
 import { resolveRail, type RailProvider } from "../src/lib/booking/rail";
+import { isTerminal } from "../src/lib/booking/attemptStates";
 import { HUMAN_CONFIRMS, claimsConfirmation, moneyState, replyPromise } from "../src/lib/booking/wording";
 import { extrasTotal, normaliseExtras, selectExtras, formatUsd } from "../src/lib/booking/extras";
 import { composePhone } from "../src/lib/booking/phone";
@@ -653,6 +654,27 @@ if (pilot) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// 14. Attempt states.
+//
+// An attempt's state decides whether anything may still act on it, and the
+// two directions fail differently. Treat a settled attempt as open and a late
+// webhook re-captures money or re-sends a receipt; treat an open attempt as
+// settled and a real payment is never collected.
+//
+// The subtle one is `mismatch`: it is terminal not because nothing more will
+// happen, but because what happens next must be a person. Marking it paid
+// would be wrong and marking it failed would hide real money.
+// ---------------------------------------------------------------------------
+for (const state of ["captured", "failed", "cancelled", "expired", "refunded", "reversed", "mismatch"]) {
+  ok(`"${state}" must be terminal — nothing may act on it automatically`, isTerminal(state));
+}
+for (const state of ["created", "approved", "pending"]) {
+  ok(`"${state}" must stay open, or a real payment is never collected`, !isTerminal(state));
+}
+ok("an unknown state is not treated as settled", !isTerminal("something-new"));
+
+// ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);

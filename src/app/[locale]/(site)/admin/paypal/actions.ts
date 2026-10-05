@@ -3,6 +3,7 @@
 import { requireAdmin } from "@/lib/auth/session";
 import { payPalConfig, toPayPalAmount } from "@/lib/booking/paypalConfig";
 import { payPalRequest } from "@/lib/booking/paypalClient";
+import { reconcilePayments } from "@/lib/booking/reconcile";
 
 // The connection test behind /admin/paypal.
 //
@@ -130,4 +131,27 @@ export async function testPayPalConnection(): Promise<PayPalTestResult> {
   }
 
   return { ok: steps.every((step) => step.ok), steps };
+}
+
+/**
+ * Runs the payment sweep by hand.
+ *
+ * The cron runs daily, which is the right cadence for something that mostly
+ * finds nothing. This is for the times somebody has a reason to think a
+ * payment went missing and does not want to wait until tomorrow to find out.
+ */
+export async function runReconciliation(): Promise<{ summary: string; problems: string[] }> {
+  await requireAdmin();
+  const report = await reconcilePayments();
+  const parts = [
+    `${report.checked} in-flight payment${report.checked === 1 ? "" : "s"} checked`,
+    report.captured > 0 ? `${report.captured} captured that nobody had told us about` : "",
+    report.fulfilled > 0 ? `${report.fulfilled} set of emails sent` : "",
+    report.expired > 0 ? `${report.expired} closed as abandoned` : "",
+    report.stillPending > 0 ? `${report.stillPending} still pending at PayPal` : "",
+  ].filter(Boolean);
+  return {
+    summary: parts.length > 1 ? parts.join(", ") + "." : "Nothing needed doing.",
+    problems: report.problems,
+  };
 }

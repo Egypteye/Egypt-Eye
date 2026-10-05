@@ -3,6 +3,9 @@ import "server-only";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { paymentProvider } from "./activeProvider";
 import type { Quote } from "./quote";
+import { isTerminal } from "./attemptStates";
+
+export { isTerminal };
 
 // The lifecycle of one attempt at paying for a booking.
 //
@@ -48,18 +51,7 @@ const SELECT =
   "id, reservation_id, provider_order_id, status, amount_cents, currency, quote, " +
   "create_request_id, capture_request_id, capture_id, authorization_id, fulfilled_at, captured_at";
 
-/**
- * States from which nothing further should be attempted.
- *
- * Deliberately not "anything that is not created/approved": a `mismatch` is
- * terminal because a person has to look at it, and a `refunded` attempt must
- * not be re-captured by a late webhook.
- */
-const TERMINAL = new Set(["captured", "failed", "cancelled", "expired", "refunded", "reversed", "mismatch"]);
 
-export function isTerminal(status: string): boolean {
-  return TERMINAL.has(status);
-}
 
 export type CreateAttemptInput = {
   reservationId: string;

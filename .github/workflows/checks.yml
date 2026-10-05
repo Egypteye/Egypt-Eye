@@ -75,6 +75,15 @@ jobs:
         if: ${{ !cancelled() }}
         run: npm run check:booking
 
+      # The deposit arithmetic: computed in whole cents from product
+      # configuration only, a selection that carries its own price buys
+      # nothing, broken rules produce no deposit rather than a guess, and a
+      # quote records the rates that produced it so a booking still reads the
+      # same after somebody edits the Studio.
+      - name: Deposit quoting
+        if: ${{ !cancelled() }}
+        run: npm run check:quote
+
       # PayPal cannot be reached from CI, which is the reason this exists: the
       # rules that decide whether a customer's money moved have to be provable
       # without a network. Money compared in whole cents, an unreadable setting
