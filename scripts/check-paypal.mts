@@ -157,33 +157,69 @@ ok("the disabled provider is not enabled", disabledProvider.enabled === false);
 // ---------------------------------------------------------------------------
 ok("no configuration raises nothing", liveReadiness(null).length === 0);
 ok(
-  "sandbox is reported as sandbox and nothing else",
-  JSON.stringify(withEnv(CREDS, () => liveReadiness(payPalConfig()))) === JSON.stringify(["sandbox"])
+  "sandbox on localhost is reported as sandbox and nothing else",
+  JSON.stringify(withEnv(CREDS, () => liveReadiness(payPalConfig(), "http://localhost:3000"))) ===
+    JSON.stringify(["sandbox"])
 );
 ok(
   "sandbox without a webhook id is not an alarm — no real money moves",
-  !withEnv(CREDS, () => liveReadiness(payPalConfig())).includes("live-without-webhook")
+  !withEnv(CREDS, () => liveReadiness(payPalConfig(), "http://localhost:3000")).includes("live-without-webhook")
+);
+
+// The dangerous direction, and the easy one to reach by accident: sandbox
+// credentials on the real domain mean a visitor completes a payment that moves
+// no money while the booking is recorded as paid. Nobody finds out until the
+// desk wonders where the deposit went.
+for (const url of [
+  "https://egypteyetravel.com",
+  "https://www.egypteyetravel.com",
+  "https://egypteye.com",
+]) {
+  ok(
+    `sandbox on ${url} is not called out — a visitor could "pay" nothing`,
+    withEnv(CREDS, () => liveReadiness(payPalConfig(), url)).includes("sandbox-on-public-site")
+  );
+}
+// Where sandbox belongs, and must stay quiet or the warning becomes noise.
+for (const url of [
+  "http://localhost:3000",
+  "http://127.0.0.1:3000",
+  "https://egypt-eye-git-branch-team.vercel.app",
+  undefined,
+]) {
+  ok(
+    `sandbox on ${url ?? "(no site url)"} should not warn — nobody books there`,
+    !withEnv(CREDS, () => liveReadiness(payPalConfig(), url)).includes("sandbox-on-public-site")
+  );
+}
+ok(
+  "a live site is never accused of being sandbox",
+  !withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
+    liveReadiness(payPalConfig(), "https://egypteyetravel.com")
+  ).includes("sandbox-on-public-site")
 );
 ok(
   "LIVE with no webhook id is called out",
-  withEnv({ ...CREDS, PAYPAL_ENV: "live" }, () => liveReadiness(payPalConfig())).includes("live-without-webhook")
+  withEnv({ ...CREDS, PAYPAL_ENV: "live" }, () => liveReadiness(payPalConfig(), "https://egypteyetravel.com")).includes(
+    "live-without-webhook"
+  )
 );
 ok(
   "LIVE with a webhook id is not called out for it",
   !withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
-    liveReadiness(payPalConfig())
+    liveReadiness(payPalConfig(), "https://egypteyetravel.com")
   ).includes("live-without-webhook")
 );
 ok(
   "LIVE with AUTHORIZE is called out as a clock somebody has to watch",
   withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_INTENT: "AUTHORIZE", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
-    liveReadiness(payPalConfig())
+    liveReadiness(payPalConfig(), "https://egypteyetravel.com")
   ).includes("live-with-authorize")
 );
 ok(
   "a fully configured live deployment raises nothing",
   withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
-    liveReadiness(payPalConfig())
+    liveReadiness(payPalConfig(), "https://egypteyetravel.com")
   ).length === 0
 );
 

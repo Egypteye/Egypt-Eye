@@ -86,12 +86,40 @@ export function payPalConfig(): PayPalConfig | null {
 export type LiveReadinessWarning =
   | "live-without-webhook"
   | "live-with-authorize"
+  | "sandbox-on-public-site"
   | "sandbox";
 
-export function liveReadiness(config: PayPalConfig | null): LiveReadinessWarning[] {
+/**
+ * Whether this URL is somewhere real customers arrive.
+ *
+ * localhost and Vercel preview deployments are where sandbox belongs. Anything
+ * else is a domain somebody might book on for real.
+ */
+function isPublicSite(siteUrl: string | undefined): boolean {
+  if (!siteUrl) return false;
+  try {
+    const host = new URL(siteUrl).hostname.toLowerCase();
+    if (host === "localhost" || host === "127.0.0.1" || host.endsWith(".local")) return false;
+    // Preview deployments are disposable and nobody books on them.
+    if (host.endsWith(".vercel.app")) return false;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function liveReadiness(
+  config: PayPalConfig | null,
+  siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+): LiveReadinessWarning[] {
   if (!config) return [];
   const warnings: LiveReadinessWarning[] = [];
   if (config.env !== "live") {
+    // The dangerous direction, and the one that is easy to reach by accident:
+    // sandbox credentials on the real domain mean a visitor completes a
+    // payment that moves no money while the site records the booking as paid.
+    // Nobody finds out until the desk wonders where the deposit went.
+    if (isPublicSite(siteUrl)) warnings.push("sandbox-on-public-site");
     warnings.push("sandbox");
     return warnings;
   }
@@ -120,6 +148,12 @@ export function describeReadiness(warning: LiveReadinessWarning): string {
       return (
         "PayPal is LIVE with AUTHORIZE intent: deposits are held, not taken. PayPal honours a hold " +
         "for 3 days and allows capture up to 29, so an unconfirmed booking is a clock."
+      );
+    case "sandbox-on-public-site":
+      return (
+        "PayPal is in SANDBOX on what looks like a public site. Visitors can complete a payment that " +
+        "moves NO REAL MONEY while the booking is recorded as paid. Set PAYPAL_ENV=live, or clear the " +
+        "PayPal credentials so bookings fall back to a request."
       );
     case "sandbox":
       return "PayPal is in SANDBOX. No real money moves.";

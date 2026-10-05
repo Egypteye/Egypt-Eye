@@ -434,6 +434,8 @@ export async function POST(request: NextRequest) {
       // Chooses the customer's wording: "held, not charged" against an
       // authorization, "paid and refundable" against a capture.
       moneyMode,
+      // So a test payment cannot be mistaken for a real one.
+      sandbox: provider.env === "sandbox",
       // Used only if the browser cannot render the buttons at all.
       approvalUrl: hold.approvalUrl,
     },

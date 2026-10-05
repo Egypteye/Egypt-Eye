@@ -79,6 +79,12 @@ export type PaymentProvider = {
   /** CAPTURE takes the money on approval; AUTHORIZE only holds it. */
   readonly intent: "CAPTURE" | "AUTHORIZE";
   /**
+   * Which PayPal this is. Carried all the way to the browser so a test
+   * payment cannot be mistaken for a real one — a sandbox payment moves no
+   * money, and somebody who thinks they have paid is the worst outcome here.
+   */
+  readonly env: "live" | "sandbox" | "none";
+  /**
    * What happens to the customer's money, which is what every sentence they
    * read is chosen from. Derived from the intent rather than set separately,
    * because two fields that can disagree eventually do.
@@ -125,6 +131,7 @@ export const disabledProvider: PaymentProvider = {
   enabled: false,
   clientId: null,
   intent: "CAPTURE",
+  env: "none",
   moneyMode: "none",
   async createHold() {
     return {

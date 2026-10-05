@@ -52,6 +52,7 @@ export function payPalProvider(config: PayPalConfig): PaymentProvider {
     enabled: true,
     clientId: config.clientId,
     intent: config.intent,
+    env: config.env,
     // CAPTURE moves the money the moment the customer approves; AUTHORIZE does
     // not. Every customer-facing sentence about the deposit is chosen from
     // this, so a mismatch here is a mismatch in what people are told — which

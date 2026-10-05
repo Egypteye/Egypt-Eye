@@ -71,6 +71,8 @@ type Stage =
       clientId: string;
       amountUsd: number;
       moneyMode: PaymentMode;
+      /** True against PayPal's sandbox, where no real money moves. */
+      sandbox: boolean;
       approvalUrl?: string;
       emailed: boolean;
     }
@@ -255,6 +257,7 @@ export function SecureDateButton({
           clientId: data.deposit.clientId,
           amountUsd: data.deposit.amountUsd,
           moneyMode: data.deposit.moneyMode ?? "paid",
+          sandbox: Boolean(data.deposit.sandbox),
           approvalUrl: data.deposit.approvalUrl || undefined,
           emailed: Boolean(data.emailed),
         });
@@ -358,6 +361,22 @@ export function SecureDateButton({
                     })}
                     {slotLabel ? `, ${slotLabel}` : ""}.
                   </p>
+
+                  {/* A sandbox payment moves no money. Someone who completes
+                      one and believes they have paid for their date is the
+                      worst outcome this whole system can produce, so it is
+                      said in the loudest place available rather than left to
+                      a server log nobody reads. It renders only against the
+                      sandbox, so a live site never shows it. */}
+                  {stage.sandbox && (
+                    <div className="rounded-2xl border-2 border-terracotta bg-terracotta/10 p-4 text-sm leading-relaxed">
+                      <p className="font-semibold text-terracotta">TEST MODE — this is not a real payment</p>
+                      <p className="mt-1.5 text-ink-soft">
+                        This site is connected to PayPal&rsquo;s sandbox. Completing this takes no money and
+                        books nothing. If you are a customer and you can see this, please message us instead.
+                      </p>
+                    </div>
+                  )}
 
                   {/* The terms again, immediately above the buttons. They were
                       shown before Continue too — this is the screen where the
