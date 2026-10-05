@@ -10,7 +10,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
 import { presentDeposit, resolveDeposit } from "@/lib/booking/deposit";
-import { paymentProvider } from "@/lib/booking/activeProvider";
+import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import { resolveRail } from "@/lib/booking/rail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
 import { Gallery } from "@/components/Gallery";
@@ -85,7 +85,7 @@ export default async function ExperienceDetailPage({
   // Asked once, in lib/booking/rail.ts, and read here — the same answer the
   // booking route acts on. Deriving it separately is how a page came to say
   // "held, not charged" about money the route captures.
-  const paymentMode = resolveRail(deposit, paymentProvider()).moneyMode;
+  const paymentMode = resolveRail(deposit, paymentProviderFor({ isAdmin: false })).moneyMode;
 
   return (
     <>

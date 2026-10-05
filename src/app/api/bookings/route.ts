@@ -8,7 +8,7 @@ import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/san
 import { resolveDeposit } from "@/lib/booking/deposit";
 import { extrasTotal, normaliseExtras, selectExtras } from "@/lib/booking/extras";
 import { composePhone } from "@/lib/booking/phone";
-import { paymentProvider } from "@/lib/booking/activeProvider";
+import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import type { PaymentMode } from "@/lib/booking/wording";
 import { resolveRail } from "@/lib/booking/rail";
 import { sendIdempotentEmail } from "@/lib/email/idempotent";
@@ -213,7 +213,10 @@ export async function POST(request: NextRequest) {
   const chosenExtras = selectExtras(normaliseExtras(product.extras), body.extras);
   const extrasSum = extrasTotal(chosenExtras);
 
-  const provider = paymentProvider();
+  // Sandbox on the real site is offered to admins only, so a customer can
+  // never complete a test payment and believe they have booked. See
+  // paymentProviderFor in activeProvider.ts.
+  const provider = paymentProviderFor({ isAdmin: user?.role === "admin" });
   // A PayPal payment link is the fallback path: Egypt Eye creates the links in
   // PayPal, one per deposit amount, and pastes them into the Studio.
   //

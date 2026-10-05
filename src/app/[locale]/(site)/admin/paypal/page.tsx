@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
-import { paymentProvider } from "@/lib/booking/activeProvider";
+import { paymentProvider, paymentProviderFor } from "@/lib/booking/activeProvider";
 import { describeReadiness, liveReadiness, payPalConfig } from "@/lib/booking/paypalConfig";
 import { TestButton } from "./TestButton";
 
@@ -20,6 +20,8 @@ export default async function AdminPayPalPage() {
 
   const config = payPalConfig();
   const provider = paymentProvider();
+  // What a customer — not an admin — would be offered right now.
+  const customerProvider = paymentProviderFor({ isAdmin: false });
   const warnings = liveReadiness(config).filter((warning) => warning !== "sandbox");
 
   return (
@@ -58,7 +60,7 @@ export default async function AdminPayPalPage() {
             <p className="mt-1 text-sm text-ink-soft">
               {config.env === "live"
                 ? "Customers are paying real deposits into your PayPal Business account."
-                : "Nothing here moves real money. Customers would see a red TEST MODE panel in the booking popup."}
+                : "Nothing here moves real money. On a public site the test buttons are shown to signed-in admins only, so you can test the whole booking on the real site while customers carry on with the payment links."}
             </p>
           </div>
 
@@ -89,6 +91,10 @@ export default async function AdminPayPalPage() {
               value={config.webhookId ? `…${config.webhookId.slice(-8)}` : "NOT SET — every delivery is refused"}
             />
             <Row label="Customers are told" value={provider.moneyMode === "hold" ? "Held, not charged" : "Paid, refunded if we cannot confirm"} />
+            <Row
+              label="Who sees the PayPal buttons"
+              value={customerProvider.enabled ? "Everyone" : "Admins only — customers get the payment links"}
+            />
           </dl>
 
           <div className="rounded-2xl border border-black/10 bg-cream p-6">

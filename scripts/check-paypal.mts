@@ -19,6 +19,7 @@ import {
   toPayPalAmount,
   WEBHOOK_SIGNATURE_HEADERS,
   liveReadiness,
+  isPublicSite,
 } from "../src/lib/booking/paypalConfig";
 import { disabledProvider } from "../src/lib/booking/paymentProvider";
 
@@ -222,6 +223,40 @@ ok(
     liveReadiness(payPalConfig(), "https://egypteyetravel.com")
   ).length === 0
 );
+
+// ---------------------------------------------------------------------------
+// 3c. Where sandbox is allowed to be seen.
+//
+// isPublicSite decides whether sandbox buttons are hidden from customers. Get
+// it wrong in one direction and a visitor can complete a payment that moves no
+// money while the booking reads as paid; wrong in the other and the person
+// setting PayPal up cannot test anything because they are treated as a
+// customer on their own site.
+// ---------------------------------------------------------------------------
+for (const url of [
+  "https://egypteyetravel.com",
+  "https://www.egypteyetravel.com",
+  "http://egypteyetravel.com",
+  "https://egypteye.com",
+]) {
+  ok(`${url} must count as a site customers reach`, isPublicSite(url));
+}
+for (const url of [
+  "http://localhost:3000",
+  "https://localhost",
+  "http://127.0.0.1:3000",
+  "https://egypt-eye-git-test-team.vercel.app",
+  "https://anything.vercel.app",
+  "http://site.local",
+  undefined,
+  "",
+  "not a url",
+]) {
+  ok(
+    `${JSON.stringify(url)} must not count as a site customers reach`,
+    !isPublicSite(url)
+  );
+}
 
 // ---------------------------------------------------------------------------
 // 4. Webhooks.

@@ -111,30 +111,42 @@ PayPal lets you hold two so you can rotate without downtime.
    reference survives the round trip. Nobody approves the order, so it leaves
    no trace. If this fails, nothing else will work — fix it here.
 
-3. **Put them in `.env.local`** (the file on your machine, not in Vercel):
+3. **Put them in Vercel**, Production scope, and redeploy:
 
    ```
    PAYPAL_CLIENT_ID=...
    PAYPAL_CLIENT_SECRET=...
    PAYPAL_ENV=sandbox
    PAYPAL_INTENT=CAPTURE
-   NEXT_PUBLIC_SITE_URL=http://localhost:3000
    ```
 
-   **Do not put sandbox keys in Vercel Production.** Real visitors would get
-   sandbox buttons, "pay" nothing, and the site would record the booking as
-   paid. The server warns about this and the dialog shows a red TEST MODE
-   panel, but the simplest protection is not doing it.
+   This is safe, and it is deliberate. **Sandbox on a public site is offered to
+   signed-in admins only** — customers keep the PayPal payment links set on
+   each product, exactly as they have today, so nobody can complete a test
+   payment and believe they have booked. See `paymentProviderFor` in
+   `activeProvider.ts`.
+
+   The alternative was a preview deployment on its own branch with a second
+   copy of every environment variable, which is a lot of moving parts to get
+   wrong while trying to prove one thing works.
+
+   Env var changes only take effect on a new build, so redeploy after adding
+   them.
 
 4. **Get a sandbox buyer.** Testing Tools → Sandbox Accounts. PayPal creates a
    **Business** account (your shop) and a **Personal** account (a customer).
    You pay with the Personal one. Note its email and password.
 
-5. **Run it.** `npm run dev`, open the Exclusive Pyramids Photoshoot, press
-   **Instant Booking**, fill in the two steps, and pay with the Personal
-   sandbox account.
+5. **Check the wiring.** Open `/admin/paypal` on your site, signed in as an
+   admin. It should say SANDBOX, show which settings are in place, and tell
+   you the buttons are admins-only. Press **Test the PayPal connection** — it
+   makes a $1 order nobody approves, so nothing moves.
 
-6. **Check all five of these**, not just that the money moved:
+6. **Run it.** Still signed in as an admin, open the Exclusive Pyramids
+   Photoshoot, press **Instant Booking**, fill in the two steps, and pay with
+   the Personal sandbox account.
+
+7. **Check all five of these**, not just that the money moved:
 
    - [ ] The red **TEST MODE** panel appears above the buttons
    - [ ] After paying, the dialog thanks you for the deposit and **does not say

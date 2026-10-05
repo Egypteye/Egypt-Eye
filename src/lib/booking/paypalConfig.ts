@@ -95,7 +95,7 @@ export type LiveReadinessWarning =
  * localhost and Vercel preview deployments are where sandbox belongs. Anything
  * else is a domain somebody might book on for real.
  */
-function isPublicSite(siteUrl: string | undefined): boolean {
+export function isPublicSite(siteUrl: string | undefined): boolean {
   if (!siteUrl) return false;
   try {
     const host = new URL(siteUrl).hostname.toLowerCase();
@@ -115,10 +115,11 @@ export function liveReadiness(
   if (!config) return [];
   const warnings: LiveReadinessWarning[] = [];
   if (config.env !== "live") {
-    // The dangerous direction, and the one that is easy to reach by accident:
-    // sandbox credentials on the real domain mean a visitor completes a
-    // payment that moves no money while the site records the booking as paid.
-    // Nobody finds out until the desk wonders where the deposit went.
+    // Not a fault — it is how PayPal gets set up, because the only site the
+    // person doing it can reach is the real one. It is reported so nobody
+    // wonders why customers are not seeing the new buttons: on a public site
+    // the sandbox is shown to admins only, and customers keep the payment
+    // links. See paymentProviderFor in activeProvider.ts.
     if (isPublicSite(siteUrl)) warnings.push("sandbox-on-public-site");
     warnings.push("sandbox");
     return warnings;
@@ -151,9 +152,10 @@ export function describeReadiness(warning: LiveReadinessWarning): string {
       );
     case "sandbox-on-public-site":
       return (
-        "PayPal is in SANDBOX on what looks like a public site. Visitors can complete a payment that " +
-        "moves NO REAL MONEY while the booking is recorded as paid. Set PAYPAL_ENV=live, or clear the " +
-        "PayPal credentials so bookings fall back to a request."
+        "PayPal is in SANDBOX on a public site, so the test buttons are shown to signed-in admins only. " +
+        "Customers see the PayPal payment links set on each product, exactly as they do today — nobody " +
+        "can complete a test payment and think they have booked. Switch PAYPAL_ENV to live when you are " +
+        "ready for real deposits."
       );
     case "sandbox":
       return "PayPal is in SANDBOX. No real money moves.";
