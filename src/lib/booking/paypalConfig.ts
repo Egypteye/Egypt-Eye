@@ -76,6 +76,56 @@ export function payPalConfig(): PayPalConfig | null {
 }
 
 /**
+ * What is wrong with a configuration that still "works".
+ *
+ * Every one of these is a setting that takes real money correctly and then
+ * fails at something later, quietly. None of them stops a payment, which is
+ * exactly why they need saying out loud — a live deployment that is silently
+ * missing its webhook looks perfect until the first payment that needs it.
+ */
+export type LiveReadinessWarning =
+  | "live-without-webhook"
+  | "live-with-authorize"
+  | "sandbox";
+
+export function liveReadiness(config: PayPalConfig | null): LiveReadinessWarning[] {
+  if (!config) return [];
+  const warnings: LiveReadinessWarning[] = [];
+  if (config.env !== "live") {
+    warnings.push("sandbox");
+    return warnings;
+  }
+  // The one that costs money. With no webhook id every delivery is refused,
+  // so anything that happens after the customer closes the tab — a reviewed
+  // payment clearing, a refund issued from the PayPal dashboard, a dispute —
+  // never reaches the site. Payments still work, which is what makes this
+  // invisible until it matters.
+  if (!config.webhookId) warnings.push("live-without-webhook");
+  // Not wrong, but worth knowing on day one: a hold PayPal honours for three
+  // days, on a booking nobody has confirmed yet, is a clock somebody has to
+  // watch.
+  if (config.intent === "AUTHORIZE") warnings.push("live-with-authorize");
+  return warnings;
+}
+
+export function describeReadiness(warning: LiveReadinessWarning): string {
+  switch (warning) {
+    case "live-without-webhook":
+      return (
+        "PayPal is LIVE but PAYPAL_WEBHOOK_ID is not set, so every webhook delivery is refused. " +
+        "Payments still complete in the browser, but a payment that clears later, a refund issued " +
+        "from the PayPal dashboard, or a dispute will never reach this site."
+      );
+    case "live-with-authorize":
+      return (
+        "PayPal is LIVE with AUTHORIZE intent: deposits are held, not taken. PayPal honours a hold " +
+        "for 3 days and allows capture up to 29, so an unconfirmed booking is a clock."
+      );
+    case "sandbox":
+      return "PayPal is in SANDBOX. No real money moves.";
+  }
+}
+/**
  * What the customer's money is doing, from the intent alone.
  *
  * Derived rather than configured beside the intent, because two fields that

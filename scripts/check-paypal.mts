@@ -18,6 +18,7 @@ import {
   sameMoney,
   toPayPalAmount,
   WEBHOOK_SIGNATURE_HEADERS,
+  liveReadiness,
 } from "../src/lib/booking/paypalConfig";
 import { disabledProvider } from "../src/lib/booking/paymentProvider";
 
@@ -145,6 +146,46 @@ ok("the two modes are never the same", moneyModeFor("CAPTURE") !== moneyModeFor(
 ok("the disabled provider offers no client id", disabledProvider.clientId === null);
 ok("the disabled provider's money mode is none", disabledProvider.moneyMode === "none");
 ok("the disabled provider is not enabled", disabledProvider.enabled === false);
+
+// ---------------------------------------------------------------------------
+// 3b. Live readiness.
+//
+// Each of these is a setting that takes real money correctly and then fails at
+// something later, silently. A live deployment with no webhook id works
+// perfectly right up to the first payment that needs one — which is exactly
+// why it has to be said out loud rather than noticed.
+// ---------------------------------------------------------------------------
+ok("no configuration raises nothing", liveReadiness(null).length === 0);
+ok(
+  "sandbox is reported as sandbox and nothing else",
+  JSON.stringify(withEnv(CREDS, () => liveReadiness(payPalConfig()))) === JSON.stringify(["sandbox"])
+);
+ok(
+  "sandbox without a webhook id is not an alarm — no real money moves",
+  !withEnv(CREDS, () => liveReadiness(payPalConfig())).includes("live-without-webhook")
+);
+ok(
+  "LIVE with no webhook id is called out",
+  withEnv({ ...CREDS, PAYPAL_ENV: "live" }, () => liveReadiness(payPalConfig())).includes("live-without-webhook")
+);
+ok(
+  "LIVE with a webhook id is not called out for it",
+  !withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
+    liveReadiness(payPalConfig())
+  ).includes("live-without-webhook")
+);
+ok(
+  "LIVE with AUTHORIZE is called out as a clock somebody has to watch",
+  withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_INTENT: "AUTHORIZE", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
+    liveReadiness(payPalConfig())
+  ).includes("live-with-authorize")
+);
+ok(
+  "a fully configured live deployment raises nothing",
+  withEnv({ ...CREDS, PAYPAL_ENV: "live", PAYPAL_WEBHOOK_ID: "WH-1" }, () =>
+    liveReadiness(payPalConfig())
+  ).length === 0
+);
 
 // ---------------------------------------------------------------------------
 // 4. Webhooks.
