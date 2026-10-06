@@ -9,11 +9,42 @@ import { useSessionUser } from "@/lib/auth/useSessionUser";
 import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { localePath } from "@/i18n/locales";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import {
+  HEADER_ACCENTS,
+  HEADER_DROPDOWN_LAST,
+  HEADER_HIDDEN,
+  HEADER_LABELS,
+  HEADER_PRIMARY,
+  type NavAccent,
+} from "@/content/navGroups";
 
-// Only these stay visible in the desktop nav bar; every other site.nav item
-// (Home is already reachable via the logo) is tucked into the "More"
-// dropdown so the bar doesn't get crowded as the nav list grows.
-const PRIMARY_NAV_LABELS = ["Best Seller Tours", "Weekly Trips", "Signature Experiences", "Unique Photoshoots"];
+// Which pages are in the bar, which are in the "More" dropdown and which are
+// footer-only lives in content/navGroups.ts — see the note at the top of it.
+// It used to be a list of English LABELS matched against site.nav, which is
+// how Signature Experiences came to have no link anywhere: the label was
+// listed, site.nav never carried it, and the lookup quietly found nothing.
+// Everything here matches on href instead.
+
+/**
+ * The two new accents, and the one that was already intended.
+ *
+ * Both new colours clear WCAG AA as text: terracotta is 5.12:1 on cream and
+ * 4.86:1 on the dropdown's hover tint, nile is 7.75:1. Gold itself is 2.38:1
+ * and is deliberately not used for text anywhere here — it is a background.
+ */
+const ACCENT_CLASSES: Record<NavAccent, { bar: string; sheet: string }> = {
+  // Unique Photoshoots — the brand amber. Nile green was the first choice and
+  // was wrong: rgb(65,87,65) against a default of rgb(74,92,79) is a colour
+  // only a colour picker can see, so the item did not stand out at all. The
+  // test is whether it reads as different, not whether a class was applied.
+  photoshoots: { bar: "text-gold-dark hover:text-gold", sheet: "text-gold-dark" },
+  // Customize Your Tour — the only item that starts something rather than
+  // going somewhere, so it gets a tinted pill instead of just coloured text.
+  customize: {
+    bar: "text-terracotta hover:text-terracotta/80",
+    sheet: "bg-terracotta/10 text-terracotta hover:bg-terracotta/15",
+  },
+};
 
 export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSettings }) {
   const [open, setOpen] = useState(false);
@@ -26,16 +57,34 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
   // Nav labels are translated by href, not by their English text, and every
   // nav link is rewritten into the active language so browsing never drops
   // the visitor back into English.
-  const label = (item: { href: string; label: string }) => dict.nav.byHref[item.href] ?? item.label;
+  // HEADER_LABELS is checked first and deliberately: "Shop" is what the menu
+  // calls The Boutique, and only the menu. A translation for the href still
+  // wins over it, so a localised menu is never overridden by English.
+  const label = (item: { href: string; label: string }) =>
+    dict.nav.byHref[item.href] ?? HEADER_LABELS[item.href] ?? item.label;
+  const accent = (href: string) => HEADER_ACCENTS[href];
   const to = (href: string) => localePath(href, locale);
   // Presentation only — which account link/avatar to show. Every protected
   // page still authorizes server-side; see useSessionUser's own comment.
   const currentUser = useSessionUser();
 
-  const primaryNav = PRIMARY_NAV_LABELS.map((label) => site.nav.find((item) => item.label === label)).filter(
-    (item): item is (typeof site.nav)[number] => Boolean(item)
+  // The bar. Resolved by href against site.nav so the Studio's label and the
+  // translations still win, with navGroups' own label as the fallback for a
+  // page site.nav does not list.
+  const primaryNav = HEADER_PRIMARY.map((entry) => {
+    const fromNav = site.nav.find((item) => item.href === entry.href);
+    return { href: entry.href, label: fromNav?.label ?? entry.label };
+  });
+
+  // Everything else, minus the four that are footer-only now, with Customize
+  // Your Tour pinned last. Anything the Studio adds to the nav that this file
+  // has never heard of lands here rather than disappearing.
+  const inBar = new Set(HEADER_PRIMARY.map((entry) => entry.href));
+  const dropdown = site.nav.filter(
+    (item) => !inBar.has(item.href) && !HEADER_HIDDEN.includes(item.href) && item.href !== HEADER_DROPDOWN_LAST
   );
-  const moreNav = site.nav.filter((item) => !PRIMARY_NAV_LABELS.includes(item.label));
+  const lastItem = site.nav.find((item) => item.href === HEADER_DROPDOWN_LAST);
+  const moreNav = lastItem ? [...dropdown, lastItem] : dropdown;
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -102,8 +151,8 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
               key={item.href}
               href={to(item.href)}
               className={`whitespace-nowrap text-[13px] font-semibold transition ${
-                item.label === "Signature Experiences"
-                  ? "text-gold-dark hover:text-gold"
+                accent(item.href)
+                  ? ACCENT_CLASSES[accent(item.href)!].bar
                   : "text-ink-soft hover:text-gold-dark"
               }`}
             >
@@ -136,16 +185,30 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
                   moreOpen ? "translate-y-0 opacity-100" : "pointer-events-none -translate-y-1 opacity-0"
                 }`}
               >
-                {moreNav.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={to(item.href)}
-                    onClick={() => setMoreOpen(false)}
-                    className="block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-semibold text-ink-soft transition hover:bg-sand-dim hover:text-gold-dark"
-                  >
-                    {label(item)}
-                  </Link>
-                ))}
+                {moreNav.map((item) => {
+                  const tone = accent(item.href);
+                  return (
+                    <Link
+                      key={item.href}
+                      href={to(item.href)}
+                      onClick={() => setMoreOpen(false)}
+                      /* The pinned last item is separated by a rule as well as
+                         coloured, so it reads as the action at the end of the
+                         list rather than one more destination in it. */
+                      className={`block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-semibold transition ${
+                        item.href === HEADER_DROPDOWN_LAST
+                          ? "mt-1 border-t border-black/5 pt-2.5"
+                          : ""
+                      } ${
+                        tone
+                          ? ACCENT_CLASSES[tone].sheet
+                          : "text-ink-soft hover:bg-sand-dim hover:text-gold-dark"
+                      }`}
+                    >
+                      {label(item)}
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -211,16 +274,25 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
             <div className="mb-2 border-b border-black/5 pb-3">
               <LanguageSwitcher />
             </div>
-            {site.nav.map((item) => (
-              <Link
-                key={item.href}
-                href={to(item.href)}
-                className="rounded-lg px-3 py-2.5 text-sm font-semibold text-ink-soft hover:bg-sand-dim"
-                onClick={() => setOpen(false)}
-              >
-                {label(item)}
-              </Link>
-            ))}
+            {/* The same selection the desktop header shows, in the same
+                order — bar items first, then the dropdown. This rendered
+                site.nav in full, which is the long list the header no longer
+                has: the four footer-only pages appeared here regardless. */}
+            {[...primaryNav, ...moreNav].map((item) => {
+              const tone = accent(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={to(item.href)}
+                  className={`rounded-lg px-3 py-2.5 text-sm font-semibold ${
+                    item.href === HEADER_DROPDOWN_LAST ? "mt-1 border-t border-black/5 pt-3" : ""
+                  } ${tone ? ACCENT_CLASSES[tone].sheet : "text-ink-soft hover:bg-sand-dim"}`}
+                  onClick={() => setOpen(false)}
+                >
+                  {label(item)}
+                </Link>
+              );
+            })}
             <Link
               href={to("/my-journey")}
               className="mt-2 flex items-center justify-center gap-1.5 rounded-lg border border-gold/30 bg-gold/10 px-3 py-2.5 text-sm font-semibold text-gold-dark"

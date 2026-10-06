@@ -80,10 +80,15 @@ export const site = {
     youtube: "https://www.youtube.com/@egypt_eye_",
     pinterest: "https://www.pinterest.com/EgyptEyeTours/",
   },
+  // Every page that has a place in navigation at all. WHERE each one appears
+  // is content/navGroups.ts: the header is a selection of this list and the
+  // footer is a grouping of it, so a page can leave the menu without leaving
+  // the site. Removing an entry HERE still removes it from both, and
+  // check-nav asserts that everything left in this list is reachable.
+  //
   // Signature Experiences and Hotel Deals are deliberately absent: both
-  // sections are withdrawn (content/withdrawnSections.ts). The Footer
-  // renders from this same list, so removing an entry here removes it
-  // from the header and the footer together.
+  // sections are withdrawn (content/withdrawnSections.ts), which means no
+  // link anywhere rather than a link that is hard to find.
   nav: [
     { label: "Home", href: "/" },
     { label: "Explore Egypt", href: "/explore-egypt" },
