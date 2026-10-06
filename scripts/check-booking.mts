@@ -812,6 +812,7 @@ ok(
 ok("the sweep decides for itself whether a release is safe — that belongs in the locked function",
    sweep.includes("release_departure_seats"));
 
+
 // And the route must not confirm a seat it is still waiting to be paid for.
 const seatRoute = await readFile("src/app/api/trip-seats/route.ts", "utf8");
 ok(
@@ -822,6 +823,33 @@ ok("the seat route does not set a hold expiry, so an abandoned checkout keeps th
    seatRoute.includes("seat_hold_expires_at"));
 ok("the seat route prices the deposit itself instead of asking the quote engine",
    seatRoute.includes("quoteDeposit("));
+
+// The cron alone cannot keep a thirty-minute policy. /api/bookings/reconcile
+// is scheduled daily, so a seat abandoned at 09:00 would read as taken until
+// 04:00 the next morning — nineteen hours against a thirty-minute promise.
+// The booking route releases lapsed holds for the departure it is about to
+// claim from, which is the one moment a stale hold actually matters.
+ok(
+  "the booking route does not release lapsed holds before claiming a seat — the daily cron cannot keep a 30-minute hold",
+  seatRoute.includes("releaseExpiredSeatHolds(departureId)")
+);
+const releaseIdx = seatRoute.indexOf("releaseExpiredSeatHolds(departureId)");
+const claimIdx = seatRoute.indexOf('rpc("book_departure_seats"');
+ok(
+  "the release runs AFTER the seat is claimed, which is too late to free anything for this booking",
+  releaseIdx > 0 && claimIdx > 0 && releaseIdx < claimIdx
+);
+// Releasing reads nothing but our own database. Gating it on PayPal being
+// configured would strand every outstanding hold the moment the provider is
+// switched off.
+ok(
+  "releasing seats is gated behind the payment provider being enabled",
+  /if \(!provider\.enabled\) \{\s*report\.seatsReleased \+= await releaseExpiredSeatHolds\(\);/.test(sweep)
+);
+ok(
+  "a failure to release is allowed to fail the booking it was only tidying up for",
+  /try \{\s*await releaseExpiredSeatHolds\(departureId\);\s*\} catch/.test(seatRoute)
+);
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

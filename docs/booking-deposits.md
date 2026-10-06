@@ -931,9 +931,23 @@ the money arrives. Two designs were available:
 
 The second is chosen: the failure costs availability rather than trust, and it
 is recoverable without touching anybody's money. `seat_hold_expires_at` marks
-the claim, the reconcile sweep releases it after **30 minutes**, and the
-confirmation email is held back until capture — sending it at booking time
-would confirm a seat that is about to be released.
+the claim, it is released after **30 minutes**, and the confirmation email is
+held back until capture — sending it at booking time would confirm a seat that
+is about to be released.
+
+**The release is lazy, not scheduled**, and that is what makes thirty minutes
+real. `/api/bookings/reconcile` runs daily at 04:00, so leaving it to the cron
+would hold a seat abandoned at 09:00 until the next morning — nineteen hours
+against a thirty-minute promise. Instead the booking route releases lapsed
+holds *for the departure it is about to claim from*, immediately before
+claiming. A stale hold only matters at the moment somebody else wants that
+seat, and that is exactly when it runs, however often the cron fires. The cron
+remains as a backstop for departures nobody is currently trying to book.
+
+Releasing reads nothing but our own database, so it is deliberately **not**
+gated on PayPal being configured — the sweep does it before its own
+`provider.enabled` early return, because switching the provider off with holds
+outstanding would otherwise strand those seats permanently.
 
 The release is the subtle part, and `check-booking` guards it. Migration 0018
 already carries `trip_departures_seat_sync`, a trigger that adjusts

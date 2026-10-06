@@ -10,6 +10,7 @@ import { tripSeatConfirmationEmail, tripSeatTeamEmail } from "@/lib/email/templa
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { site } from "@/content/site";
 import { createAttempt } from "@/lib/booking/attempts";
+import { releaseExpiredSeatHolds } from "@/lib/booking/reconcile";
 import { paymentProviderFor } from "@/lib/booking/activeProvider";
 import { quoteDeposit } from "@/lib/booking/quote";
 import { siteUrl } from "@/content/seo";
@@ -135,6 +136,26 @@ export async function POST(request: NextRequest) {
   const user = await getCurrentUser();
   const reference = generateReference();
   const supabase = createAdminSupabaseClient();
+
+  // Give back any seats this departure is holding for a checkout that was
+  // abandoned, BEFORE asking whether a seat exists.
+  //
+  // A stale hold only matters at the moment somebody else wants that seat, and
+  // this is that moment. Doing it here rather than leaving it to the nightly
+  // sweep is what makes the thirty-minute policy real: the cron runs at 04:00,
+  // so a seat abandoned at 09:00 would otherwise read as taken for nineteen
+  // hours. Scoped to this one departure, so the customer waiting on a response
+  // does not pay for sweeping the whole table.
+  //
+  // It cannot wrongly free anything — release_departure_seats re-reads each
+  // booking and refuses while any attempt holds or might hold money — and a
+  // failure here must not fail the booking, so it is never awaited into the
+  // error path.
+  try {
+    await releaseExpiredSeatHolds(departureId);
+  } catch (err) {
+    console.error("releasing lapsed seat holds failed, continuing:", err);
+  }
 
   const { data, error } = await supabase.rpc("book_departure_seats", {
     p_departure_id: departureId,
