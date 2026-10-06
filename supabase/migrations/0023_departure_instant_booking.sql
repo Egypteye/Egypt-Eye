@@ -85,26 +85,41 @@ language plpgsql
 security definer
 set search_path = public
 as $fn$
-declare
-  r public.reservations%rowtype;
-  v_paid integer;
+-- Written WITHOUT a `declare` block on purpose.
+--
+-- Supabase's "Run and enable RLS" button scans a script for new tables and
+-- appends ALTER TABLE ... ENABLE ROW LEVEL SECURITY for each one. It cannot
+-- read plpgsql, so it took the local variables declared here for table names,
+-- spliced its own statements into the middle of the function and left the
+-- dollar quote unterminated. Using subqueries instead of variables leaves it
+-- nothing to misread, so the script survives either button.
+--
+-- The cost is re-reading the reservation a few times in exchange for a
+-- migration that applies on the first try. It runs once per abandoned
+-- checkout, so the reads are free in any sense that matters.
 begin
-  select * into r from public.reservations where id = p_reservation_id;
-  if not found then
+  if not exists (select 1 from public.reservations where id = p_reservation_id) then
     return query select 0, 'not_found'::text;
     return;
   end if;
 
   -- Nothing to release: either it never held seats, or a previous run of this
   -- already released them. Idempotent on purpose — the sweep is at-least-once.
-  if r.departure_id is null or r.seats is null or r.seat_hold_expires_at is null then
+  if exists (
+    select 1 from public.reservations
+    where id = p_reservation_id
+      and (departure_id is null or seats is null or seat_hold_expires_at is null)
+  ) then
     return query select 0, 'no_hold'::text;
     return;
   end if;
 
   -- Only a booking that actually claimed a seat has one to give back.
   -- 'waitlisted' rows never incremented seats_taken.
-  if r.status <> 'requested' then
+  if exists (
+    select 1 from public.reservations
+    where id = p_reservation_id and status <> 'requested'
+  ) then
     return query select 0, 'not_releasable'::text;
     return;
   end if;
@@ -112,12 +127,11 @@ begin
   -- The guard that matters. If any attempt against this booking holds money,
   -- or might yet, the seats stay. 'pending' is money PayPal has but has not
   -- credited — not ours yet, and absolutely not a reason to take a seat back.
-  select count(*) into v_paid
-  from public.payment_attempts
-  where reservation_id = p_reservation_id
-    and status in ('captured', 'pending', 'refunded', 'reversed', 'mismatch');
-
-  if v_paid > 0 then
+  if exists (
+    select 1 from public.payment_attempts
+    where reservation_id = p_reservation_id
+      and status in ('captured', 'pending', 'refunded', 'reversed', 'mismatch')
+  ) then
     -- Clear the hold so the sweep stops looking at it, but keep the seats.
     update public.reservations
       set seat_hold_expires_at = null, updated_at = now()
@@ -130,9 +144,9 @@ begin
   --
   -- trip_departures_seat_sync (migration 0018) already fires on this update:
   -- 'requested' is seat-taking, 'cancelled' is not, so the trigger decrements
-  -- seats_taken by exactly r.seats. Doing it here as well would release every
-  -- seat twice and quietly under-count a departure until somebody noticed a
-  -- van with more people than seats.
+  -- seats_taken by exactly this booking's seats. Doing it here as well would
+  -- release every seat twice and quietly under-count a departure until
+  -- somebody noticed a van with more people than seats.
   --
   -- It needs no explicit FOR UPDATE either: the trigger's own UPDATE takes a
   -- row lock on the departure, which serialises against the SELECT ... FOR
@@ -141,14 +155,17 @@ begin
   -- The booking is not deleted. An abandoned checkout is a lead the desk can
   -- follow up, and deleting it would throw away the only record that somebody
   -- wanted these seats.
-  update public.reservations
-    set status = 'cancelled',
-        seat_hold_expires_at = null,
-        seat_hold_released_at = now(),
-        updated_at = now()
-    where id = p_reservation_id;
-
-  return query select r.seats, 'released'::text;
+  return query
+    with freed as (
+      update public.reservations
+        set status = 'cancelled',
+            seat_hold_expires_at = null,
+            seat_hold_released_at = now(),
+            updated_at = now()
+        where id = p_reservation_id
+        returning seats
+    )
+    select coalesce(freed.seats, 0)::integer, 'released'::text from freed;
 end;
 $fn$;
 

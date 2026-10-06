@@ -23,6 +23,7 @@
     "check:booking": "tsx scripts/check-booking.mts",
     "check:csp": "tsx scripts/check-csp.mts",
     "check:nav": "tsx scripts/check-nav.mts",
+    "check:sql": "bash scripts/check-sql.sh",
     "check:redirects": "tsx scripts/check-redirects.mts",
     "check:paypal": "tsx scripts/check-paypal.mts",
     "check:quote": "tsx scripts/check-quote.mts",
