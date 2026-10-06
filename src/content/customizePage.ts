@@ -16,7 +16,7 @@ export const customizePage: ResolvedCustomizePage = {
     { title: "Tell us the basics", body: "Dates, guest count, and how packed or relaxed you want the pace." },
     { title: "Pick cities & activities", body: "Choose from Egypt's icons, Jordan, or the full add-on catalog." },
     { title: "We reply by email", body: "A proposed day-by-day itinerary and transparent pricing — no obligation." },
-    { title: "Confirm with a 20% deposit", body: "Pay the rest in cash or PayPal at the end of your tour." },
+    { title: "Confirm with a 25% deposit", body: "Pay the rest in cash or PayPal at the end of your tour." },
   ],
   formIntroEyebrow: "How it works",
   formIntroTitle: "Tell us what you're after",

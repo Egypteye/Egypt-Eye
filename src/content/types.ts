@@ -179,26 +179,16 @@ export type Experience = {
   paypalLink?: string;
 
   /**
-   * The flat sum that holds this date, in USD. Falls back to the site-wide
-   * default; with neither set the product shows no button rather than a
-   * guessed figure.
-   */
-  depositUsd?: number;
-
-  /**
-   * Whether `depositUsd` is a flat amount or a per-person rate.
+   * The share of the booking taken now, as a percentage, overriding the
+   * site-wide default.
    *
-   * Absent means "fixed", which is what every product configured before this
-   * existed means, so nothing changes until a rule is deliberately set.
+   * The deposit is derived from `price`, never set alongside it. A flat
+   * `depositUsd` used to live here and was a second source of truth for
+   * money: a product could carry a $25 deposit and a $200 price with no
+   * relationship between them, so changing the price left the deposit wrong
+   * and nothing noticed. See lib/booking/quote.ts.
    */
-  depositBasis?: "fixed" | "perPerson";
-
-  /**
-   * An optional ceiling on the per-person portion, so a large group does not
-   * owe a deposit nobody would pay. It caps the service lines only — an extra
-   * somebody deliberately chose is not the thing to discount silently.
-   */
-  depositMaxUsd?: number;
+  depositPercent?: number;
 
   /**
    * The start times this product is actually run at, offered as a dropdown in
@@ -274,23 +264,16 @@ export type Experience = {
  */
 export type BookingExtra = {
   label: string;
-  /** The full price of the extra, settled with the balance. */
-  priceUsd: number;
   /**
-   * How much of this extra's price is taken as deposit, if any.
+   * What one of this extra costs. The customer chooses a quantity, and the
+   * line is price × quantity.
    *
-   * Separate from `priceUsd` because they answer different questions: the
-   * price is what the extra costs, the deposit is what is taken now to hold
-   * it. An extra with no deposit is free to add and settled with the balance,
-   * which is how every extra behaved before deposits could vary — so an
-   * unedited product keeps its current behaviour.
+   * There is no separate deposit figure on an extra any more. The deposit is
+   * one percentage of the whole booking — the item and every extra — so an
+   * extra carrying its own deposit rate was a second answer to a question
+   * that now has one. See lib/booking/quote.ts.
    */
-  depositUsd?: number;
-  /**
-   * Whether that deposit is charged once per booking or once per person. A
-   * camel ride is usually per person; a video reel is usually per booking.
-   */
-  depositBasis?: "booking" | "person";
+  priceUsd: number;
 };
 
 export type Photoshoot = {
@@ -314,26 +297,16 @@ export type Photoshoot = {
   paypalLink?: string;
 
   /**
-   * The flat sum that holds this date, in USD. Falls back to the site-wide
-   * default; with neither set the product shows no button rather than a
-   * guessed figure.
-   */
-  depositUsd?: number;
-
-  /**
-   * Whether `depositUsd` is a flat amount or a per-person rate.
+   * The share of the booking taken now, as a percentage, overriding the
+   * site-wide default.
    *
-   * Absent means "fixed", which is what every product configured before this
-   * existed means, so nothing changes until a rule is deliberately set.
+   * The deposit is derived from `price`, never set alongside it. A flat
+   * `depositUsd` used to live here and was a second source of truth for
+   * money: a product could carry a $25 deposit and a $200 price with no
+   * relationship between them, so changing the price left the deposit wrong
+   * and nothing noticed. See lib/booking/quote.ts.
    */
-  depositBasis?: "fixed" | "perPerson";
-
-  /**
-   * An optional ceiling on the per-person portion, so a large group does not
-   * owe a deposit nobody would pay. It caps the service lines only — an extra
-   * somebody deliberately chose is not the thing to discount silently.
-   */
-  depositMaxUsd?: number;
+  depositPercent?: number;
 
   /**
    * The start times this product is actually run at, offered as a dropdown in
@@ -740,7 +713,11 @@ export type SiteSettings = {
    * own, in USD. Unset means products must each carry their own, which is the
    * safe default — see docs/booking-deposits.md.
    */
-  defaultDepositUsd?: number;
+  /**
+   * The share of a booking taken as a deposit, as a percentage, for every
+   * product that does not override it. Unset means 25%.
+   */
+  defaultDepositPercent?: number;
   name?: string;
   shortName?: string;
   tagline?: string;
@@ -936,8 +913,12 @@ export type ResolvedSiteSettings = {
   pillars: readonly { title: string; description: string }[];
   /** Manual override for the review figure shown on every product. */
   reviewsOverride?: { count?: number; score?: number };
-  /** Mirrors SiteSettings.defaultDepositUsd — see the note there. */
-  defaultDepositUsd?: number;
+  /** Mirrors SiteSettings.defaultDepositPercent — see the note there. */
+  /**
+   * The share of a booking taken as a deposit, as a percentage, for every
+   * product that does not override it. Unset means 25%.
+   */
+  defaultDepositPercent?: number;
   trustStats?: {
     yearsInEgypt?: number;
     happyGuestsLabel?: string;

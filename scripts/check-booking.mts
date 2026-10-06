@@ -11,7 +11,8 @@
  *      would be inventing a business fact, and charging $0 to "secure" a date
  *      would be a broken promise rather than a free one.
  */
-import { payPalLink, presentDeposit, resolveDeposit, type BookableProduct } from "../src/lib/booking/deposit";
+import { payPalLink } from "../src/lib/booking/deposit";
+import { isInstantBookable, quoteDeposit, type QuotableProduct } from "../src/lib/booking/quote";
 import { photoshoots } from "../src/content/photoshoots";
 import { experiences } from "../src/content/experiences";
 import { disabledProvider, chooseProvider } from "../src/lib/booking/paymentProvider";
@@ -101,34 +102,34 @@ for (const state of ALL) {
 }
 
 // ---------------------------------------------------------------------------
-// 3. No deposit figure, no button.
+// 3. No price OR no switch, no button.
+//
+// Two halves, deliberately separate: a price makes a booking possible, the
+// switch makes it offered. Setting a price must NOT put a product on sale,
+// because a price is also just information — it is shown on the page either
+// way.
 // ---------------------------------------------------------------------------
-const base: BookableProduct = { slug: "x", title: "X", price: { amount: 199 } };
+const base: QuotableProduct = { slug: "x", title: "X", price: { amount: 200 }, depositPercent: null };
 
-ok("a product not marked bookable shows no button", resolveDeposit({ ...base }).bookable === false);
+ok("a product not switched on is instantly bookable", !isInstantBookable({ ...base }));
+ok("a priced product with the switch off is on sale", !isInstantBookable({ ...base, bookable: false }));
+ok("a switched-on product with no price is on sale", !isInstantBookable({ ...base, bookable: true, price: null }));
 ok(
-  "a bookable product with no figure anywhere shows no button",
-  resolveDeposit({ ...base, bookable: true }).bookable === false
+  "a switched-on product with a null price amount is on sale",
+  !isInstantBookable({ ...base, bookable: true, price: { amount: null } })
 );
-ok(
-  "a zero deposit is treated as unset, not as free",
-  resolveDeposit({ ...base, bookable: true, depositUsd: 0 }).bookable === false
-);
-ok(
-  "a negative deposit is refused",
-  resolveDeposit({ ...base, bookable: true, depositUsd: -50 }).bookable === false
-);
-ok(
-  "a NaN deposit is refused",
-  resolveDeposit({ ...base, bookable: true, depositUsd: Number.NaN }).bookable === false
-);
+ok("a zero price counts as a price", !isInstantBookable({ ...base, bookable: true, price: { amount: 0 } }));
+ok("a negative price counts as a price", !isInstantBookable({ ...base, bookable: true, price: { amount: -5 } }));
+ok("price plus switch is not bookable", isInstantBookable({ ...base, bookable: true }));
 
-const own = resolveDeposit({ ...base, bookable: true, depositUsd: 50 }, 25);
-ok("the product's own figure wins over the site default", own.bookable && own.amountUsd === 50);
-const fallback = resolveDeposit({ ...base, bookable: true }, 25);
-ok("the site default applies when the product has none", fallback.bookable && fallback.amountUsd === 25);
-const rounded = resolveDeposit({ ...base, bookable: true, depositUsd: 49.4 });
-ok("a deposit is whole dollars", rounded.bookable && rounded.amountUsd === 49);
+// And the figure that follows from it: 25% of price × people, never more.
+const q = quoteDeposit({ ...base, bookable: true }, "photoshoot", { people: 2, extras: [] });
+ok("a priced, switched-on product does not quote", q.ok);
+ok("the deposit is not 25% of the booking", q.ok && q.quote.totalCents === 10000);
+ok(
+  "the deposit is not smaller than the booking — the balance is never taken online",
+  q.ok && q.quote.totalCents < q.quote.bookingTotalCents
+);
 
 // ---------------------------------------------------------------------------
 // 3b. The PayPal link.
@@ -156,9 +157,10 @@ for (const [value, allowed] of LINKS) {
     (payPalLink(value) !== null) === allowed
   );
 }
-ok("a non-PayPal link leaves the product with no pay button",
-  resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" }).bookable &&
-  (resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" }) as { paymentLink: string | null }).paymentLink === null);
+ok(
+  "a non-PayPal link survives into a product's pay button",
+  payPalLink("https://evil.net/pay") === null
+);
 
 // ---------------------------------------------------------------------------
 // 4. The deposit flow never publishes a price.
@@ -173,14 +175,24 @@ ok("a non-PayPal link leaves the product with no pay button",
 // The deposit is a figure Egypt Eye is genuinely asking for, so it is shown.
 // Nothing else is.
 // ---------------------------------------------------------------------------
-const shown = presentDeposit(50);
-ok("presentDeposit leaks a total — the public site does not publish prices", shown.kind === "depositOnly");
-ok("the deposit itself is still shown", shown.deposit === "$50");
-// The signature itself is the guard: it cannot be handed a price to leak.
-ok(
-  "presentDeposit takes a price again — that is how the total got published before",
-  presentDeposit.length === 1
-);
+// 4. What a price reveals, and where.
+//
+// The site does not publish prices: PriceTag renders "Enquire for Pricing"
+// over a real figure on every card and product page. Instant Booking is the
+// deliberate exception — the popup shows "$200 × 2 = $400, 25% = $100", and a
+// page that refuses to name a price beside a popup that names one reads as a
+// trick. So the exception is opt-in per surface rather than global, and the
+// surfaces that take it are the ones with backend pricing.
+// ---------------------------------------------------------------------------
+const priceTag = await readFile("src/components/PriceTag.tsx", "utf8");
+ok("PriceTag reveals a price by default — the rest of the site does not publish prices",
+   /reveal = false/.test(priceTag));
+ok("PriceTag reveals a figure that is not set, instead of falling back",
+   /amount > 0/.test(priceTag) && /Enquire for Pricing/.test(priceTag));
+
+const tourPage = await readFile("src/app/[locale]/(site)/tours/[slug]/page.tsx", "utf8");
+ok("a tour page started publishing its price — only the backend-priced types do",
+   /<PriceTag price=\{tour\.price\} \/>/.test(tourPage));
 
 // ---------------------------------------------------------------------------
 // 5. The payment adapter.
@@ -408,10 +420,18 @@ for (const experience of experiences) {
 // are on the rule that replaced it.
 // ---------------------------------------------------------------------------
 const LINK = "https://www.paypal.com/ncp/payment/ABC123";
-const modeFor = (d: ReturnType<typeof resolveDeposit>, providerEnabled: boolean) =>
+// resolveDeposit is gone — the deposit comes from the quote now — so the rail
+// is exercised through the shape it actually takes: can this product be
+// booked at all, and is there a link.
+type Rail = { bookable: boolean; paymentLink: string | null };
+const railFor = (product: QuotableProduct, link?: string): Rail => ({
+  bookable: isInstantBookable(product),
+  paymentLink: payPalLink(link),
+});
+const modeFor = (d: Rail, providerEnabled: boolean) =>
   !d.bookable ? "none" : d.paymentLink ? "paid" : providerEnabled ? "hold" : "none";
 
-const linked = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: LINK });
+const linked = railFor({ ...base, bookable: true }, LINK);
 ok("a product with a payment link resolves one", linked.bookable && linked.paymentLink === LINK);
 ok(
   "a payment link makes the deposit live even with no API provider",
@@ -422,7 +442,7 @@ ok(
   modeFor(linked, true) === "paid"
 );
 
-const noLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25 });
+const noLink = railFor({ ...base, bookable: true });
 ok("with no link and no provider there is no deposit", modeFor(noLink, false) === "none");
 ok("with no link but a live provider the deposit is a hold", modeFor(noLink, true) === "hold");
 
@@ -447,12 +467,13 @@ const OFF: RailProvider = { enabled: false, moneyMode: "none" };
 
 // Availability comes from the quote now, not from resolveDeposit — that
 // split is what hid a bookable product behind a "Request your date" button.
-const avail = (product: { bookable?: boolean; depositUsd?: number }, paymentLink: string | null) => ({
-  available: depositOffer({ slug: "x", title: "X", ...product }, "photoshoot").available,
+const avail = (product: Partial<QuotableProduct>, paymentLink: string | null) => ({
+  available: depositOffer({ slug: "x", title: "X", price: { amount: 200 }, ...product }, "photoshoot")
+    .available,
   paymentLink,
 });
-const withLink = avail({ bookable: true, depositUsd: 25 }, LINK);
-const withoutLink = avail({ bookable: true, depositUsd: 25 }, null);
+const withLink = avail({ bookable: true }, LINK);
+const withoutLink = avail({ bookable: true }, null);
 const notBookable = avail({}, null);
 
 ok("a capturing API says the money moved", resolveRail(withoutLink, CAPTURING).moneyMode === "paid");
@@ -486,7 +507,7 @@ for (const [label, dep, prov] of [
   );
 }
 
-const badLink = resolveDeposit({ ...base, bookable: true, depositUsd: 25, paypalLink: "https://evil.net/pay" });
+const badLink = railFor({ ...base, bookable: true }, "https://evil.net/pay");
 ok(
   "a rejected link does not leave the deposit looking live",
   modeFor(badLink, false) === "none"
@@ -574,13 +595,19 @@ ok("a duplicate label is kept once", normaliseExtras([
 ]).length === 1);
 ok("extras from a null field are an empty list, not a crash", normaliseExtras(null).length === 0);
 
-// The rule that keeps the wording honest: the deposit is a fixed amount per
-// tier, so extras cannot be charged through the payment link. Nothing may add
-// them together into one figure a customer could mistake for what they paid.
-const deposit25 = presentDeposit(25);
+// Extras are inside the deposit base now, which is a change of promise and
+// therefore a change of wording. What must stay true is the other half: the
+// amount charged is the percentage, never the booking total.
+const withExtra = quoteDeposit(
+  { ...base, bookable: true, extras: [{ label: "Camel Ride", priceUsd: 100 }] },
+  "photoshoot",
+  { people: 1, extras: [{ label: "Camel Ride", quantity: 2 }] }
+);
+ok("an extra does not reach the booking total", withExtra.ok && withExtra.quote.bookingTotalCents === 40000);
+ok("the extra is not inside the percentage", withExtra.ok && withExtra.quote.totalCents === 10000);
 ok(
-  "the deposit presentation absorbed the extras total — the deposit link cannot charge it",
-  deposit25.kind === "depositOnly" && deposit25.deposit === "$25"
+  "the charge grew to the whole booking once extras were added",
+  withExtra.ok && withExtra.quote.totalCents < withExtra.quote.bookingTotalCents
 );
 ok("formatUsd prints whole dollars without decimals", formatUsd(25) === "$25");
 ok("formatUsd keeps cents when there are any", formatUsd(25.5) === "$25.50");

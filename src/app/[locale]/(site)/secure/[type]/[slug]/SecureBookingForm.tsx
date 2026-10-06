@@ -14,7 +14,8 @@ type Props = {
   productType: "photoshoot" | "experience";
   productSlug: string;
   productTitle: string;
-  depositLabel: string;
+  /** The share taken online, shown so the page and the popup agree. */
+  depositPercent: number;
   /** How the deposit is taken — see the same prop on SecureDateButton. */
   paymentMode: PaymentMode;
 };
@@ -28,7 +29,7 @@ export function SecureBookingForm({
   productType,
   productSlug,
   productTitle,
-  depositLabel,
+  depositPercent,
   paymentMode,
 }: Props) {
   const [form, setForm] = useState({
@@ -100,14 +101,14 @@ export function SecureBookingForm({
           <>
             <p className="mt-3 text-sm leading-relaxed text-ink-soft">
               Your request is saved as <strong className="text-ink">{result.reference}</strong>. To hold your date,
-              approve the {depositLabel} deposit. It is a hold — nothing is charged until our team confirms your
+              approve the {depositPercent}% deposit. It is a hold — nothing is charged until our team confirms your
               date.
             </p>
             <a
               href={result.approvalUrl}
               className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
             >
-              Hold my date with {depositLabel}
+              Hold my date with a {depositPercent}% deposit
             </a>
           </>
         ) : (
@@ -220,7 +221,7 @@ export function SecureBookingForm({
       <p className="text-xs leading-relaxed text-ink-soft">
         {paymentMode === "none"
           ? "Pressing this does not charge you. It sends your request to our team."
-          : `Pressing this does not charge you. The next step takes you to PayPal for the ${depositLabel} deposit.`}
+          : `Pressing this does not charge you. The next step takes you to PayPal for the ${depositPercent}% deposit.`}
       </p>
     </form>
   );

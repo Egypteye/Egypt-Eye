@@ -139,7 +139,7 @@ export const site = {
   },
   policies: {
     deposit:
-      "A 20% down payment secures your reservation and is non-refundable. The remaining balance can be paid in cash or via PayPal at the end of the day or tour.",
+      "A 25% down payment secures your reservation and is non-refundable. The remaining balance can be paid in cash or via PayPal at the end of the day or tour.",
     currency:
       "You may pay in USD, Euro, or British Pound. Once your tour is confirmed, the rate we quote you is guaranteed not to change.",
     children: [

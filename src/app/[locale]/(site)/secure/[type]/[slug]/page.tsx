@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
-import { presentDeposit } from "@/lib/booking/deposit";
 import { productRail } from "@/lib/booking/productRail";
 import { HUMAN_CONFIRMS } from "@/lib/booking/wording";
 import { SecureBookingForm } from "./SecureBookingForm";
@@ -43,7 +42,7 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
   // booking route cannot disagree. It used to ask resolveDeposit here, which
   // knows nothing about per-person rules, and so quoted a one-person figure to
   // a group.
-  const { offer, rail } = productRail(product, type, settings.defaultDepositUsd, { isAdmin: false });
+  const { offer, rail } = productRail(product, type, settings.defaultDepositPercent, { isAdmin: false });
   // A product nobody has switched on has no booking page. Reaching this URL by
   // hand should look like what it is — a page that does not exist — rather
   // than an empty form that cannot do anything.
@@ -51,11 +50,12 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
 
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
-  const price = presentDeposit(offer.oneCents / 100);
-  // This page asks for a headcount and the route charges per person, so a
-  // bare figure here would be the rate presented as the total — the same way
-  // a group arrives at a surprise. offer.perPerson is why it is said out loud.
-  const each = offer.available && offer.perPerson ? " per person" : "";
+  // The price and the percentage, both from the backend. This page asks for a
+  // headcount, so the per-person rate is said out loud rather than presented
+  // as a total — that is how a group arrives at a surprise.
+  const price = { deposit: offer.priceLabel };
+  const each = " per person";
+  const depositPercent = offer.depositPercent;
   const paymentMode = rail.moneyMode;
   const productPath = type === "photoshoot" ? `/photoshoots/${slug}` : `/experiences/${slug}`;
 
@@ -99,15 +99,15 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
 
       <dl className="mt-6 space-y-2 rounded-2xl border border-black/5 bg-cream p-5 text-sm">
         <div className="flex justify-between">
-          <dt className="text-ink-soft">Deposit to book this date</dt>
+          <dt className="text-ink-soft">Price per person</dt>
           <dd className="font-semibold text-ink">
             {price.deposit}
             {each}
           </dd>
         </div>
         <p className="pt-1 text-ink-soft">
-          Credited toward your final price. We confirm the full details and price with you directly — the
-          deposit{each ? " for everyone in your group" : ""} is the only amount you pay now.
+          You pay {depositPercent}% of the booking today; the rest is settled with us directly and is never
+          charged online.
         </p>
       </dl>
 
@@ -115,7 +115,7 @@ export default async function SecurePage({ params }: { params: Promise<Params> }
         productType={type}
         productSlug={slug}
         productTitle={product.title}
-        depositLabel={price.deposit}
+        depositPercent={depositPercent}
         paymentMode={paymentMode}
       />
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Photoshoot } from "@/content/types";
 import { SmartImage } from "./SmartImage";
 import { PriceTag } from "./PriceTag";
+import { InstantBookingBadge } from "./InstantBookingBadge";
 import { ExperienceRatingLink } from "./ExperienceRatingLink";
 import { AddToJourneyButton } from "./AddToJourneyButton";
 
@@ -44,7 +45,10 @@ export function PhotoshootCard({ photoshoot }: { photoshoot: Photoshoot }) {
           />
         </div>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-x-3 gap-y-1.5 border-t border-black/5 pt-3">
-          <PriceTag price={photoshoot.price} />
+          {/* Revealed here because this type carries a backend price, and the
+              badge below is offering to take a share of it. See PriceTag. */}
+          <PriceTag price={photoshoot.price} reveal suffix="pp" />
+          <InstantBookingBadge product={photoshoot} />
           <ExperienceRatingLink
             type="photoshoot"
             slug={photoshoot.slug}

@@ -32,13 +32,13 @@ export type DepositRow = {
   title: string;
   slug: string;
   /** Exactly what the query returned, so nothing has to be inferred. */
-  raw: { depositUsd: unknown; depositBasis: unknown; depositMaxUsd: unknown; bookable: unknown };
+  raw: { priceUsd: unknown; depositPercent: unknown; bookable: unknown };
   /** True when this row came from an unpublished draft. */
   isDraft: boolean;
   offer: ReturnType<typeof depositOffer>;
   /** What three people would pay, so a per-person rule is visibly per person. */
   forThreeCents: number | null;
-  extras: { label: string; depositUsd?: number; depositBasis?: string }[];
+  extras: { label: string; priceUsd: number }[];
 };
 
 export type DepositDiagnostics = {
@@ -92,10 +92,10 @@ export async function depositDiagnostics(): Promise<DepositDiagnostics> {
   const [photoshoots, experiences, settings] = await Promise.all([
     fresh<(QuotableProduct & { _id?: string })[]>(photoshootsQuery),
     fresh<(QuotableProduct & { _id?: string })[]>(experiencesQuery),
-    fresh<{ defaultDepositUsd?: number }>(siteSettingsQuery),
+    fresh<{ defaultDepositPercent?: number }>(siteSettingsQuery),
   ]);
 
-  const siteDefaultUsd = settings?.defaultDepositUsd;
+  const siteDefaultUsd = settings?.defaultDepositPercent;
   const all: { kind: DepositRow["kind"]; product: QuotableProduct & { _id?: string } }[] = [
     ...(photoshoots ?? []).map((product) => ({ kind: "photoshoot" as const, product })),
     ...(experiences ?? []).map((product) => ({ kind: "experience" as const, product })),
@@ -104,15 +104,14 @@ export async function depositDiagnostics(): Promise<DepositDiagnostics> {
   const rows = all
     .filter(({ product }) => product.bookable === true)
     .map(({ kind, product }) => {
-      const three = quoteDeposit(product, kind, { people: 3, extraLabels: [] }, siteDefaultUsd);
+      const three = quoteDeposit(product, kind, { people: 3, extras: [] }, siteDefaultUsd);
       return {
         kind,
         title: product.title,
         slug: product.slug,
         raw: {
-          depositUsd: product.depositUsd,
-          depositBasis: product.depositBasis,
-          depositMaxUsd: product.depositMaxUsd,
+          priceUsd: product.price?.amount ?? null,
+          depositPercent: product.depositPercent ?? null,
           bookable: product.bookable,
         },
         isDraft: typeof (product as { _id?: string })._id === "string" && (product as { _id: string })._id.startsWith("drafts."),
@@ -120,11 +119,10 @@ export async function depositDiagnostics(): Promise<DepositDiagnostics> {
         forThreeCents: three.ok ? three.quote.totalCents : null,
         extras: (product.extras ?? []).map((extra) => ({
           label: extra.label,
-          depositUsd: extra.depositUsd,
-          depositBasis: extra.depositBasis,
+          priceUsd: extra.priceUsd,
         })),
       };
     });
 
-  return { configured: true, siteDefaultUsd, rawSiteDefault: settings?.defaultDepositUsd, canSeeDrafts, rows };
+  return { configured: true, siteDefaultUsd, rawSiteDefault: settings?.defaultDepositPercent, canSeeDrafts, rows };
 }

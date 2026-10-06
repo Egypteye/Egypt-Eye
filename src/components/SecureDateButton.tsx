@@ -3,8 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PaymentMode } from "@/lib/booking/wording";
 import type { BookingExtra } from "@/content/types";
-import { extrasTotal, formatUsd, normaliseExtras } from "@/lib/booking/extras";
-import { quoteDeposit, type QuotableProduct } from "@/lib/booking/quote";
+import { formatUsd, normaliseExtras } from "@/lib/booking/extras";
+import { quoteDeposit, MAX_EXTRA_QUANTITY, type QuotableProduct } from "@/lib/booking/quote";
 import { DEFAULT_DIAL_ISO, DIAL_CODES, flagFor } from "@/lib/booking/countryCodes";
 import { composePhone } from "@/lib/booking/phone";
 import { lockModals } from "@/lib/ui/modalLock";
@@ -37,7 +37,11 @@ type Props = {
   productType: "photoshoot" | "experience";
   productSlug: string;
   productTitle: string;
-  depositLabel: string;
+  /**
+   * The share taken online, from the backend. Shown, never used to compute —
+   * every figure comes from quoteDeposit() running on the same product.
+   */
+  depositPercent: number;
   /**
    * What happens to the money: "paid" (it moves when the customer pays),
    * "hold" (it is authorized and moves only when a person confirms) or "none"
@@ -53,8 +57,6 @@ type Props = {
   timeSlots?: readonly string[];
   /** Priced extras. Settled with the balance, never charged by the deposit link. */
   extras?: readonly BookingExtra[];
-  /** True when the deposit scales with the headcount, so the label says so. */
-  perPerson?: boolean;
   /**
    * Everything the deposit calculation needs, so the dialog can show a live
    * total as the headcount and the extras change.
@@ -72,17 +74,6 @@ type Props = {
   /** Overrides the default label. */
   label?: string;
 };
-
-/**
- * Whether a deposit needs its arithmetic spelled out.
- *
- * More than one line always does. So does a single line charged more than
- * once — a per-person deposit for a group — which is the case that was
- * silently hidden while this asked only about the count.
- */
-function showBreakdown(lines: readonly { quantity: number }[]): boolean {
-  return lines.length > 1 || lines.some((line) => line.quantity > 1);
-}
 
 const OTHER_TIME = "__other__";
 
@@ -116,13 +107,12 @@ export function SecureDateButton({
   productType,
   productSlug,
   productTitle,
-  depositLabel,
+  depositPercent,
   paymentMode,
   cancellationSummary,
   cancellationHref,
   timeSlots,
   extras,
-  perPerson,
   quotable,
   productKind,
   className,
@@ -149,7 +139,9 @@ export function SecureDateButton({
     dialIso: DEFAULT_DIAL_ISO,
     phoneNational: "",
   });
-  const [chosen, setChosen] = useState<string[]>([]);
+  // Quantities, not a set of labels. An extra is "chosen" when its quantity
+  // is above zero, so + / − and ticked/unticked are the same control.
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
 
   // What happens to THIS visitor's money.
   //
@@ -235,11 +227,14 @@ export function SecureDateButton({
     target?.focus({ preventScroll: true });
   }, [open, step, stage.kind]);
 
-  const selected = useMemo(
-    () => available.filter((extra) => chosen.includes(extra.label)),
-    [available, chosen]
+  /** What the browser sends, and what the live quote is computed from. */
+  const chosenExtras = useMemo(
+    () =>
+      available
+        .map((extra) => ({ label: extra.label, quantity: quantities[extra.label] ?? 0 }))
+        .filter((entry) => entry.quantity > 0),
+    [available, quantities]
   );
-  const extrasSum = extrasTotal(selected);
 
   // What this selection will actually cost, by the same rules the server will
   // apply. Shown, never sent: the request carries a headcount and labels.
@@ -247,14 +242,15 @@ export function SecureDateButton({
     if (!quotable) return null;
     const result = quoteDeposit(quotable, productKind ?? productType, {
       people: form.people,
-      extraLabels: chosen,
+      extras: chosenExtras,
     });
     return result.ok ? result.quote : null;
-  }, [quotable, productKind, productType, form.people, chosen]);
+  }, [quotable, productKind, productType, form.people, chosenExtras]);
 
-  // The dialog's own figure, which moves with the headcount. Falls back to the
-  // page's label for a product with no rules to compute from.
-  const liveDepositLabel = liveQuote ? money(liveQuote.totalCents) : depositLabel;
+  // The dialog's own figure, which moves with the headcount and the extras.
+  // Null when the product cannot be quoted at all, which is also when no
+  // Instant Booking button exists — so the footer has nothing to claim.
+  const liveDepositLabel = liveQuote ? money(liveQuote.totalCents) : null;
 
   const timeReady = slots.length === 0 || (form.timeChoice !== "" && (form.timeChoice !== OTHER_TIME || form.otherTime.trim() !== ""));
   const stepOneReady = form.startsAt.trim() !== "" && timeReady;
@@ -271,10 +267,17 @@ export function SecureDateButton({
         ? form.otherTime.trim()
         : form.timeChoice;
 
-  function toggleExtra(labelText: string) {
-    setChosen((current) =>
-      current.includes(labelText) ? current.filter((item) => item !== labelText) : [...current, labelText]
-    );
+  /**
+   * Change one extra's quantity.
+   *
+   * Clamped here rather than trusted from the control, because the control is
+   * not the only way this gets called and a negative quantity would be a
+   * negative line on the bill. Zero means not taken, which is also how the
+   * row renders as unticked.
+   */
+  function setExtraQuantity(label: string, next: number) {
+    const safe = Number.isInteger(next) ? Math.min(Math.max(next, 0), MAX_EXTRA_QUANTITY) : 0;
+    setQuantities((current) => ({ ...current, [label]: safe }));
   }
 
   function setPeople(next: number) {
@@ -310,7 +313,7 @@ export function SecureDateButton({
           phoneNational: form.phoneNational,
           // Labels only. The prices come from the product on the server — a
           // total that arrived in this body would be a price the customer set.
-          extras: chosen,
+          extras: chosenExtras,
         }),
       });
       const data = await response.json();
@@ -470,8 +473,8 @@ export function SecureDateButton({
                   <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm leading-relaxed text-ink-soft">
                     <p className="font-semibold text-ink">
                       {stage.moneyMode === "hold"
-                        ? `${depositLabel} held, not charged`
-                        : `${depositLabel} deposit`}
+                        ? `${money(stage.amountUsd * 100)} held, not charged`
+                        : `${money(stage.amountUsd * 100)} deposit — ${depositPercent}% of your booking`}
                     </p>
                     <p className="mt-1.5">
                       <strong className="text-ink">Paying does not confirm your date.</strong> A member of our team
@@ -485,7 +488,7 @@ export function SecureDateButton({
                   {/* How the figure was reached. A deposit that scales with
                       the headcount and the extras has to show its working, or
                       it reads as a number somebody picked. */}
-                  {stage.lines && showBreakdown(stage.lines) && (
+                  {stage.lines && stage.lines.length > 0 && (
                     <div className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm text-ink-soft">
                       <ul className="space-y-1">
                         {stage.lines.map((line) => (
@@ -523,10 +526,10 @@ export function SecureDateButton({
                     }
                   />
 
-                  {selected.length > 0 && (
+                  {chosenExtras.length > 0 && (
                     <p className="text-xs leading-relaxed text-ink-soft">
-                      Your {formatUsd(extrasSum)} of extras is on the booking and settled with the balance — the
-                      payment above is the {depositLabel} deposit only.
+                      Your extras are part of the booking total, so the {depositPercent}% above covers them too.
+                      The remaining balance is settled with us directly.
                     </p>
                   )}
                 </div>
@@ -594,20 +597,28 @@ export function SecureDateButton({
                     </p>
                   </div>
 
-                  {selected.length > 0 && (
+                  {chosenExtras.length > 0 && (
                     <div className="rounded-2xl border border-black/10 bg-white/60 p-4 text-sm text-ink-soft">
                       <p className="font-semibold text-ink">Your extras</p>
                       <ul className="mt-2 space-y-1">
-                        {selected.map((extra) => (
-                          <li key={extra.label} className="flex justify-between gap-4">
-                            <span>{extra.label}</span>
-                            <span className="tabular-nums">{formatUsd(extra.priceUsd)}</span>
-                          </li>
-                        ))}
+                        {chosenExtras.map((entry) => {
+                          const extra = available.find((e) => e.label === entry.label);
+                          if (!extra) return null;
+                          return (
+                            <li key={entry.label} className="flex justify-between gap-4">
+                              <span>
+                                {entry.label}
+                                {entry.quantity > 1 ? ` × ${entry.quantity}` : ""}
+                              </span>
+                              <span className="tabular-nums">
+                                {formatUsd(extra.priceUsd * entry.quantity)}
+                              </span>
+                            </li>
+                          );
+                        })}
                       </ul>
                       <p className="mt-2 border-t border-black/10 pt-2 text-xs">
-                        {formatUsd(extrasSum)} of extras is added to your final price and settled with the
-                        balance — the deposit link above does not include it.
+                        These are part of your booking total — the deposit you paid is {depositPercent}% of it.
                       </p>
                     </div>
                   )}
@@ -740,36 +751,75 @@ export function SecureDateButton({
                           <span className="ml-1 text-xs text-ink-soft">
                             {form.people >= 20
                               ? "For a larger group, message us"
-                              : perPerson
-                                ? `${depositLabel} deposit each`
+                              : quotable?.price?.amount
+                                ? `${formatUsd(quotable.price.amount)} each`
                                 : "in the session"}
                           </span>
                         </div>
                       </div>
 
-                      {/* Shown as soon as there is arithmetic to show. It used
-                          to require two lines, which hid the one case a
-                          customer most wants to check: a per-person deposit
-                          multiplied by the headcount, where "$25 each" and
-                          "$50" are both on screen but nothing says why. */}
-                      {liveQuote && showBreakdown(liveQuote.lines) && (
+                      {/* The whole calculation, shown rather than asserted.
+                          A percentage a customer cannot check is a number they
+                          have to trust, and this is the screen where they are
+                          deciding. Every figure comes from quoteDeposit() —
+                          the same pure function the server runs — so what is
+                          on screen and what is charged cannot be two numbers.
+
+                          It appears as soon as a quote exists, including for
+                          one person with no extras. An earlier version hid it
+                          unless there were two lines, which hid the one case
+                          customers most want to check. */}
+                      {liveQuote && (
                         <div className="rounded-2xl border border-gold/30 bg-sand/40 p-4 text-sm text-ink-soft">
-                          <ul className="space-y-1">
+                          <ul className="space-y-1.5">
                             {liveQuote.lines.map((line) => (
                               <li key={line.label} className="flex justify-between gap-4">
-                                <span>
-                                  {line.quantity > 1
-                                    ? `${line.label} — ${money(line.unitCents)} × ${line.quantity}`
-                                    : line.label}
+                                <span className="min-w-0">
+                                  <span className="block text-ink">
+                                    {line.label}
+                                    {line.quantity > 1 ? ` × ${line.quantity}` : ""}
+                                  </span>
+                                  {line.quantity > 1 && (
+                                    <span className="block text-xs tabular-nums">
+                                      {money(line.unitCents)} × {line.quantity}
+                                    </span>
+                                  )}
                                 </span>
-                                <span className="tabular-nums">{money(line.amountCents)}</span>
+                                <span className="shrink-0 tabular-nums">{money(line.amountCents)}</span>
                               </li>
                             ))}
                           </ul>
-                          <p className="mt-2 flex justify-between gap-4 border-t border-black/10 pt-2 font-semibold text-ink">
-                            <span>Deposit now</span>
-                            <span className="tabular-nums">{money(liveQuote.totalCents)}</span>
+
+                          <p className="mt-2.5 flex justify-between gap-4 border-t border-black/10 pt-2.5">
+                            <span className="text-ink">Booking total</span>
+                            <span className="tabular-nums">{money(liveQuote.bookingTotalCents)}</span>
                           </p>
+
+                          <p className="mt-1.5 flex justify-between gap-4">
+                            <span className="min-w-0">
+                              <span className="block text-ink">{liveQuote.depositPercent}% deposit</span>
+                              <span className="block text-xs tabular-nums">
+                                {money(liveQuote.bookingTotalCents)} × {liveQuote.depositPercent}%
+                              </span>
+                            </span>
+                            <span className="shrink-0 tabular-nums">{money(liveQuote.totalCents)}</span>
+                          </p>
+
+                          <p className="mt-2.5 flex justify-between gap-4 border-t border-black/10 pt-2.5 font-semibold text-ink">
+                            <span>Total deposit</span>
+                            <span className="font-display text-base tabular-nums">
+                              {money(liveQuote.totalCents)}
+                            </span>
+                          </p>
+                          {/* Said plainly, because it is the promise that makes
+                              a deposit reasonable: the rest is never taken
+                              through this website. */}
+                          {liveQuote.balanceCents > 0 && (
+                            <p className="mt-2 text-xs leading-relaxed">
+                              The remaining {money(liveQuote.balanceCents)} is settled with us directly and is
+                              never charged online.
+                            </p>
+                          )}
                         </div>
                       )}
 
@@ -778,31 +828,59 @@ export function SecureDateButton({
                           <legend className={labelText}>Add extras (optional)</legend>
                           <div className="mt-2 overflow-hidden rounded-2xl border border-black/10 bg-white/60">
                             {available.map((extra, index) => {
-                              const on = chosen.includes(extra.label);
+                              const qty = quantities[extra.label] ?? 0;
                               return (
-                                <label
+                                <div
                                   key={extra.label}
-                                  className={`flex cursor-pointer items-center gap-3 px-4 py-3 transition hover:bg-sand/40 ${
+                                  className={`flex items-center gap-3 px-4 py-3 transition ${
                                     index > 0 ? "border-t border-black/5" : ""
-                                  } ${on ? "bg-sand/50" : ""}`}
+                                  } ${qty > 0 ? "bg-sand/50" : ""}`}
                                 >
-                                  <input
-                                    type="checkbox"
-                                    checked={on}
-                                    onChange={() => toggleExtra(extra.label)}
-                                    className="h-5 w-5 shrink-0 rounded border-black/20 text-gold-dark accent-gold-dark focus:ring-gold/30"
-                                  />
-                                  <span className="min-w-0 flex-1 text-sm text-ink">{extra.label}</span>
-                                  <span className="shrink-0 text-sm font-semibold tabular-nums text-ink">
-                                    {formatUsd(extra.priceUsd)}
+                                  <span className="min-w-0 flex-1">
+                                    <span className="block text-sm text-ink">{extra.label}</span>
+                                    <span className="block text-xs tabular-nums text-ink-soft">
+                                      {formatUsd(extra.priceUsd)}
+                                      {qty > 1 ? ` × ${qty} = ${formatUsd(extra.priceUsd * qty)}` : " each"}
+                                    </span>
                                   </span>
-                                </label>
+                                  {/* The same stepper as the headcount, on
+                                      purpose: one control to learn, and it
+                                      cannot produce the empty or negative
+                                      states a number field can. */}
+                                  <span className="flex shrink-0 items-center gap-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => setExtraQuantity(extra.label, qty - 1)}
+                                      disabled={qty <= 0}
+                                      aria-label={`One fewer ${extra.label}`}
+                                      className={stepper}
+                                    >
+                                      −
+                                    </button>
+                                    <output
+                                      aria-live="polite"
+                                      aria-label={`${extra.label} quantity`}
+                                      className="min-w-[1.75rem] text-center font-display text-base font-semibold tabular-nums text-ink"
+                                    >
+                                      {qty}
+                                    </output>
+                                    <button
+                                      type="button"
+                                      onClick={() => setExtraQuantity(extra.label, qty + 1)}
+                                      disabled={qty >= MAX_EXTRA_QUANTITY}
+                                      aria-label={`One more ${extra.label}`}
+                                      className={stepper}
+                                    >
+                                      +
+                                    </button>
+                                  </span>
+                                </div>
                               );
                             })}
                           </div>
                           <p className="mt-2 text-xs leading-relaxed text-ink-soft">
-                            Extras are added to your final price and settled with the balance. Anything that
-                            changes the deposit is shown in the total below.
+                            Extras are part of your booking total, so the deposit percentage applies to them
+                            too. The full working is shown below.
                           </p>
                         </fieldset>
                       )}
@@ -959,9 +1037,9 @@ export function SecureDateButton({
                           </strong>
                         </p>
                       )}
-                      {extrasSum > 0 && (
+                      {liveQuote && liveQuote.balanceCents > 0 && (
                         <p className="mt-0.5 text-xs text-ink-soft">
-                          + {formatUsd(extrasSum)} extras, with the balance
+                          {money(liveQuote.balanceCents)} balance, never charged online
                         </p>
                       )}
                     </div>

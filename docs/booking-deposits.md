@@ -1,5 +1,17 @@
 # Booking deposits
 
+> **The deposit model changed.** It is no longer a flat per-product amount. It
+> is a percentage of the backend price:
+>
+> ```
+> booking value = (price × people) + Σ(extra price × quantity)
+> deposit       = booking value × depositPercent      (default 25%)
+> ```
+>
+> and the deposit is the **only** amount ever collected online. Sections below
+> that describe `depositUsd`, `depositBasis` or `depositMaxUsd` describe a
+> model that no longer exists; see "One price, one switch" at the end.
+
 Letting a decided customer secure a date with a deposit, without losing the
 inquiry that already works.
 
@@ -830,3 +842,80 @@ account. It refuses to touch live without being asked twice.
 - Guesty, [request to book vs instant booking](https://help.guesty.com/hc/en-gb/articles/17298869126429-Setting-a-listing-s-booking-options-instant-booking-or-request-to-book) — approval windows and auto-expiry
 - [Are non-refundable deposits legal in the UK](https://go-legal.ai/are-non-refundable-deposits-legal-in-the-uk-rights-guidance/) — CRA 2015, genuine pre-estimate of loss, CMA position
 - Council of the EU, [revised package travel directive](https://www.consilium.europa.eu/en/press/press-releases/2025/12/02/consumer-protection-council-and-parliament-strike-a-deal-on-revising-rules-on-package-travel/) — 25% prepayment limit, insolvency protection
+
+
+## One price, one switch
+
+The rebuild replaced two competing sources of truth with one.
+
+Before, a product carried a `price` (never displayed, used for admin and
+discounts) **and** a `depositUsd` (charged, unrelated to the price). Nothing
+kept them in step. A product could show a $25 deposit beside a $200 price, and
+changing the price left the deposit saying something nobody meant.
+
+Now there is one input per product:
+
+| Field | What it does |
+|---|---|
+| **Price** | The per-person price. The only money input. Shown on the page when set. |
+| **Instant Booking** | Whether it is offered online. |
+| **Deposit percentage** | Optional per-product override of the site default. |
+
+`depositUsd`, `depositBasis`, `depositMaxUsd` and the per-extra deposit fields
+are **gone**, not deprecated — a field that still parses is a field that still
+fights. The documents in Sanity keep whatever was in them; nothing reads it.
+
+### The two halves of Instant Booking
+
+A price makes a booking *possible*; the switch makes it *offered*. They are
+deliberately separate, because a price is also just information:
+
+| Price | Instant Booking | Page shows |
+|---|---|---|
+| not set | off | no price, no button |
+| set | off | the price, no button |
+| set | on | the price and the button |
+
+`isInstantBookable()` answers both at once and **everything** reads it — the
+badge, the product page, the booking route, the quote. `InstantBookingBadge`
+deliberately takes the product rather than a boolean, so a card cannot be told
+it is bookable by something that worked it out differently. Turning the switch
+off, or clearing the price, removes the badge and the button everywhere at
+once because only one function decides.
+
+### Why the prices are now visible
+
+The site shows "Enquire for Pricing" over a real figure everywhere, on purpose.
+Instant Booking is the one exception, and it has to be: the popup shows the
+customer `$200 × 2 = $400, 25% = $100`, and a page that refuses to name a price
+beside a popup that names one reads as a trick. So `PriceTag` takes an opt-in
+`reveal` flag, and only photoshoots and experiences pass it. Tours are
+unchanged.
+
+### What the percentage cannot do by itself
+
+The site states the deposit share in three static sentences — the FAQ, the
+Customize page and the site policies — that a customer reads long before the
+popup. Those cannot follow a Studio change on their own. `check-quote` asserts
+that every published percentage equals `DEFAULT_DEPOSIT_PERCENT`, so changing
+the default in the Studio without changing the copy fails the check loudly
+rather than contradicting itself quietly on the live site.
+
+### Extras
+
+Extras carry a price and a quantity. They are part of the booking total, so the
+deposit percentage applies to them — a change of promise from "settled with the
+balance", and the wording moved with it. Quantities are clamped at both ends:
+an invalid quantity resolves to *not taken* rather than being clamped upward,
+because inventing a charge the customer did not make is the worse error.
+
+### Weekly Trips are not on this model
+
+They were asked for and are deliberately not included. Weekly Trips already
+have backend pricing — `departures.price_usd` in Supabase, edited at
+`/admin/departures` — and their own booking route that holds seats against a
+finite capacity with a row lock. Putting them on the deposit rail means
+deciding what happens when a payment fails *after* seats are held, and getting
+that wrong oversells a departure or takes money for a seat nobody holds. That
+is a design question, not a wiring job, and it is the one thing this system was
+rebuilt to stop doing in a hurry.

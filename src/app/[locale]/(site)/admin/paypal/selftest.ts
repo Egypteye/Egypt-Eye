@@ -48,7 +48,7 @@ export async function runPaymentSelfTest(): Promise<SelfTestResult> {
       depositBasis: "perPerson",
       extras: [{ label: "Reel", priceUsd: 25, depositUsd: 10, depositBasis: "booking" as const }],
     };
-    const q = quoteDeposit(product, "photoshoot", { people: 3, extraLabels: ["Reel"] });
+    const q = quoteDeposit(product, "photoshoot", { people: 3, extras: ["Reel"] });
     add(
       "The deposit is calculated from the booking",
       q.ok && q.quote.totalCents === 8500,
@@ -56,7 +56,7 @@ export async function runPaymentSelfTest(): Promise<SelfTestResult> {
     );
     const forged = quoteDeposit(product, "photoshoot", {
       people: 3,
-      extraLabels: [{ label: "Reel", depositUsd: 0 } as unknown as string],
+      extras: [{ label: "Reel", depositUsd: 0 } as unknown as string],
     });
     add(
       "A price sent from the browser is ignored",

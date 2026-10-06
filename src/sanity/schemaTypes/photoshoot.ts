@@ -27,54 +27,27 @@ export const photoshoot = defineType({
     defineField({ name: "price", title: "Price", type: "price" }),
     defineField({
       name: "bookable",
-      title: "Offer \"Secure your date\" (deposit booking)",
+      title: "Instant Booking",
       description:
-        "Shows the deposit button on this product. Leave off for anything that really needs a conversation first.",
+        "Offers this online, paying the deposit on the spot. Needs a Price above — with no price there is nothing to take a percentage of, so the button stays hidden however this is set. Setting a price alone does NOT put a product on sale: price with this off shows the price and no button.",
       type: "boolean",
       initialValue: false,
     }),
     defineField({
-      name: "depositUsd",
-      title: "Deposit to secure a date (USD)",
+      name: "depositPercent",
+      title: "Deposit percentage (overrides the site default)",
       description:
-        "IN DOLLARS — type 25 for a $25 deposit, not 2500. With \"Deposit is charged\" set to per person, this is the rate for each person. Leave empty to use the site-wide default; with neither set, no booking button appears at all.",
+        "The share of the booking taken online, e.g. 25 for 25%. Leave empty to use the site-wide default. The rest is never charged through the website. Whole or half percents only; must be above 0 and below 100.",
       type: "number",
       validation: (r) =>
         r
-          .min(1)
-          // Advisory, not an error: a long private trip could carry a deposit
-          // this large, so it must not be blocked. But nobody setting a
-          // photoshoot deposit means 2500, and that is the typo — dollars
-          // entered as cents — that charges somebody a hundred times over.
+          .min(0.5)
+          .max(99.5)
           .custom((value) =>
-            typeof value === "number" && value > 1000
-              ? "That is a very large deposit. Did you mean dollars? 25 is $25; 2500 is $2,500."
-              : true
-          )
-          .warning(),
-    }),
-    defineField({
-      name: "depositBasis",
-      title: "Deposit is charged",
-      description:
-        "A flat amount for the whole booking, or that amount for every person in the session. Leave as flat unless the deposit should scale with the group.",
-      type: "string",
-      options: {
-        list: [
-          { title: "A flat amount per booking", value: "fixed" },
-          { title: "Per person", value: "perPerson" },
-        ],
-        layout: "radio",
-      },
-      initialValue: "fixed",
-    }),
-    defineField({
-      name: "depositMaxUsd",
-      title: "Most the deposit can reach (USD)",
-      description:
-        "Optional ceiling on the per-person part, so a large group does not owe a deposit nobody would pay. Extras are added on top of it.",
-      type: "number",
-      validation: (r) => r.min(1),
+            typeof value !== "number" || Math.abs(value * 2 - Math.round(value * 2)) < 1e-9
+              ? true
+              : "Use whole or half percents — 25 or 12.5, not 25.3."
+          ),
     }),
     defineField({
       name: "paypalLink",

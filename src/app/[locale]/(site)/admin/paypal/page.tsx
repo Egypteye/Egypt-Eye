@@ -133,10 +133,9 @@ export default async function AdminPayPalPage() {
                     </p>
                     {row.offer.available ? (
                       <p className="mt-1 text-sm text-ink-soft">
-                        {row.offer.headline}
-                        {row.offer.perPerson ? " per person" : " per booking"}
+                        {row.offer.priceLabel} per person · {row.offer.depositPercent}% deposit
                         {row.forThreeCents !== null
-                          ? ` · three people would pay $${row.forThreeCents / 100}`
+                          ? ` · three people would pay $${row.forThreeCents / 100} now`
                           : ""}
                       </p>
                     ) : (
@@ -146,9 +145,9 @@ export default async function AdminPayPalPage() {
                         from it. Four rounds of this went "I set it" / "it says
                         not set" with no way to tell which was wrong. */}
                     <p className="mt-2 font-mono text-xs text-ink-soft">
-                      read from Sanity: depositUsd={JSON.stringify(row.raw.depositUsd)} · depositBasis=
-                      {JSON.stringify(row.raw.depositBasis)} · depositMaxUsd=
-                      {JSON.stringify(row.raw.depositMaxUsd)} · bookable={JSON.stringify(row.raw.bookable)}
+                      read from Sanity: price={JSON.stringify(row.raw.priceUsd)} · depositPercent=
+                      {JSON.stringify(row.raw.depositPercent)} · Instant Booking=
+                      {JSON.stringify(row.raw.bookable)}
                       {row.isDraft ? " · UNPUBLISHED DRAFT" : ""}
                     </p>
                   </li>

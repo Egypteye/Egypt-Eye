@@ -41,7 +41,7 @@ export const faqGroups: FaqGroup[] = [
       {
         question: "How does the deposit work?",
         answer:
-          "A 20% down payment secures your reservation and is non-refundable. The remaining balance can be paid in cash or via PayPal at the end of the day or tour — so you settle the larger part after you have travelled, not before.",
+          "A 25% down payment secures your reservation and is non-refundable. The remaining balance can be paid in cash or via PayPal at the end of the day or tour — so you settle the larger part after you have travelled, not before.",
       },
       {
         question: "Which currencies can I pay in?",

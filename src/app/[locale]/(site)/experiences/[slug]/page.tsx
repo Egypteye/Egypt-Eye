@@ -9,6 +9,7 @@ import { pickRelated } from "@/lib/relatedPicker";
 import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
+import { InstantBookingBadge } from "@/components/InstantBookingBadge";
 import { productRail } from "@/lib/booking/productRail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
 import { Gallery } from "@/components/Gallery";
@@ -88,9 +89,11 @@ export default async function ExperienceDetailPage({
   // PayPal's sandbox on the real site, whom the page cannot see. The booking
   // popup re-asks /api/bookings/rail when it opens and takes the viewer's own
   // answer if it arrives. See productRail().
-  const { offer, rail } = productRail(experience, "experience", site.defaultDepositUsd, { isAdmin: false });
-  const depositLabel = offer.available ? offer.headline : "";
-  const perPerson = offer.available && offer.perPerson;
+  const { offer, rail } = productRail(experience, "experience", site.defaultDepositPercent, { isAdmin: false });
+  // The price and the percentage, both from the backend. The popup recomputes
+  // the same figures from the same price with the same pure function, so the
+  // page and the checkout cannot name different numbers.
+  const depositPercent = offer.available ? offer.depositPercent : null;
   // The same rail the booking route acts on. Deriving it separately is how a
   // page came to say "held, not charged" about money the route captures.
   const paymentMode = rail.moneyMode;
@@ -138,6 +141,7 @@ export default async function ExperienceDetailPage({
               type="experience"
               slug={experience.slug}
             />
+            <InstantBookingBadge product={experience} />
             {experience.location && (
               <span className="inline-flex items-center gap-1.5 text-sm text-ink-soft">
                 <svg viewBox="0 0 20 20" className="h-4 w-4 shrink-0 text-gold-dark" fill="currentColor" aria-hidden="true">
@@ -254,20 +258,18 @@ export default async function ExperienceDetailPage({
                 productType="experience"
                 productSlug={experience.slug}
                 productTitle={experience.title}
-                depositLabel={depositLabel}
+                depositPercent={depositPercent ?? 25}
                 paymentMode={paymentMode}
                 cancellationSummary={cancellationSummary}
                 cancellationHref="/cancellation-policy"
                 timeSlots={experience.timeSlots}
                 extras={experience.extras}
-                perPerson={perPerson}
                 quotable={{
                   slug: experience.slug,
                   title: experience.title,
                   bookable: experience.bookable,
-                  depositUsd: experience.depositUsd ?? site.defaultDepositUsd,
-                  depositBasis: experience.depositBasis,
-                  depositMaxUsd: experience.depositMaxUsd,
+                  price: experience.price,
+                  depositPercent: experience.depositPercent ?? site.defaultDepositPercent,
                   extras: experience.extras,
                 }}
                 productKind="experience"
@@ -281,13 +283,16 @@ export default async function ExperienceDetailPage({
                 {paymentMode === "none"
                   ? "Our team confirms your date personally."
                   : paymentMode === "hold"
-                    ? `${depositLabel}${perPerson ? " per person" : ""} deposit held, not charged · no account needed · released if we cannot confirm your date`
-                    : `${depositLabel}${perPerson ? " per person" : ""} deposit · no account needed · fully refunded if we cannot confirm your date`}
+                    ? `${depositPercent}% deposit held, not charged · no account needed · released if we cannot confirm your date`
+                    : `${depositPercent}% deposit today · the rest is never charged online · no account needed`}
               </p>
             </div>
           )}
-          <PriceTag price={experience.price} />
-          <p className="mt-1 text-xs text-ink-soft/85"><T>per person</T></p>
+          {/* Revealed, because this product type carries a backend price and
+              the booking popup shows the arithmetic built on it. A page that
+              refuses to name a price beside a popup that names one reads as a
+              trick. See components/PriceTag.tsx. */}
+          <PriceTag price={experience.price} reveal suffix="per person" />
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}

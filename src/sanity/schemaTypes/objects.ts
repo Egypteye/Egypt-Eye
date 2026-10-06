@@ -62,39 +62,16 @@ export const bookingExtraObject = defineType({
       name: "priceUsd",
       title: "Price (USD)",
       description:
-        "A real, positive figure. An extra with no price is hidden rather than offered free.",
+        "What one of these costs. The customer picks a quantity and the line is price × quantity. It counts toward the booking total, so the deposit percentage applies to it. An extra with no price is hidden rather than offered free.",
       type: "number",
       validation: (r) => r.required().positive(),
     }),
-    defineField({
-      name: "depositUsd",
-      title: "Deposit taken for this extra (USD)",
-      description:
-        "How much of the price is taken now to hold it. Leave empty and the extra is free to add, settled with the balance — which is how extras behaved before this field existed.",
-      type: "number",
-      validation: (r) => r.min(0),
-    }),
-    defineField({
-      name: "depositBasis",
-      title: "That deposit is charged",
-      description:
-        "Once per booking, or once for every person in the session. A camel ride is usually per person; a video reel is usually per booking.",
-      type: "string",
-      options: {
-        list: [
-          { title: "Once per booking", value: "booking" },
-          { title: "Per person", value: "person" },
-        ],
-        layout: "radio",
-      },
-      initialValue: "booking",
-    }),
   ],
   preview: {
-    select: { label: "label", priceUsd: "priceUsd" },
-    prepare: ({ label, priceUsd }) => ({
-      title: label ?? "Untitled extra",
-      subtitle: typeof priceUsd === "number" ? `$${priceUsd}` : "No price — will not be offered",
+    select: { title: "label", subtitle: "priceUsd" },
+    prepare: ({ title, subtitle }) => ({
+      title: title ?? "Extra",
+      subtitle: typeof subtitle === "number" ? `$${subtitle}` : "No price — hidden",
     }),
   },
 });

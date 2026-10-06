@@ -5,7 +5,6 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
-import { extrasTotal, normaliseExtras, selectExtras } from "@/lib/booking/extras";
 import { quoteDeposit } from "@/lib/booking/quote";
 import { createAttempt } from "@/lib/booking/attempts";
 import { composePhone } from "@/lib/booking/phone";
@@ -210,7 +209,7 @@ export async function POST(request: NextRequest) {
   // Sandbox on the real site is offered to admins only, so a customer can
   // never complete a test payment and believe they have booked. See
   // paymentProviderFor in activeProvider.ts.
-  const { offer, rail, provider } = productRail(product, productType, settings.defaultDepositUsd, {
+  const { offer, rail, provider } = productRail(product, productType, settings.defaultDepositPercent, {
     isAdmin: user?.role === "admin",
   });
   if (!offer.available) {
@@ -224,14 +223,12 @@ export async function POST(request: NextRequest) {
   // is not on the product's own list is dropped, including a stale selection
   // from a page cached before an extra was removed: a booking with one extra
   // missing is recoverable, an error the customer cannot act on is not.
-  const chosenExtras = selectExtras(normaliseExtras(product.extras), body.extras);
-  const extrasSum = extrasTotal(chosenExtras);
 
   // The amount, worked out once from what this customer actually selected, and
   // then used everywhere — the row, the link response and the payment attempt.
   // Computing it more than once is how a figure on one surface stops matching
   // a figure on another.
-  const quoted = quoteDeposit(product, productType, { people, extraLabels: body.extras }, settings.defaultDepositUsd);
+  const quoted = quoteDeposit(product, productType, { people, extras: body.extras }, settings.defaultDepositPercent);
   if (!quoted.ok) {
     // depositOffer already said a deposit was possible, so this is a real
     // disagreement rather than an unconfigured product — worth a loud log.
@@ -242,6 +239,20 @@ export async function POST(request: NextRequest) {
     );
   }
   const depositUsd = quoted.quote.totalCents / 100;
+
+  // Built from the QUOTE, not from a second pass over the request.
+  //
+  // This used to call selectExtras() on body.extras independently, which was a
+  // second reading of the same input — and once extras carried quantities the
+  // two readings stopped agreeing: the quote charged for three camel rides and
+  // the row recorded one. The quote is the authority on what was selected and
+  // what it costs, so the row and the emails are derived from it.
+  const extraLines = quoted.quote.lines.filter((line) => line.kind === "extra");
+  const chosenExtras = extraLines.map((line) => ({
+    label: line.quantity > 1 ? `${line.label} × ${line.quantity}` : line.label,
+    priceUsd: line.amountCents / 100,
+  }));
+  const extrasSum = extraLines.reduce((sum, line) => sum + line.amountCents, 0) / 100;
 
   // A PayPal payment link is the fallback path: Egypt Eye creates the links in
   // PayPal, one per deposit amount, and pastes them into the Studio.

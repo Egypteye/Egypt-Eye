@@ -5,6 +5,7 @@ import { Container } from "@/components/Container";
 import { SmartImage } from "@/components/SmartImage";
 import { PriceTag } from "@/components/PriceTag";
 import { SecureDateButton } from "@/components/SecureDateButton";
+import { InstantBookingBadge } from "@/components/InstantBookingBadge";
 import { productRail } from "@/lib/booking/productRail";
 import { cancellationSummary } from "@/content/cancellationPolicy";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
@@ -94,9 +95,11 @@ export default async function PhotoshootDetailPage({
   // PayPal's sandbox on the real site, whom the page cannot see. The booking
   // popup re-asks /api/bookings/rail when it opens and takes the viewer's own
   // answer if it arrives. See productRail().
-  const { offer, rail } = productRail(photoshoot, "photoshoot", site.defaultDepositUsd, { isAdmin: false });
-  const depositLabel = offer.available ? offer.headline : "";
-  const perPerson = offer.available && offer.perPerson;
+  const { offer, rail } = productRail(photoshoot, "photoshoot", site.defaultDepositPercent, { isAdmin: false });
+  // The price and the percentage, both from the backend. The popup recomputes
+  // the same figures from the same price with the same pure function, so the
+  // page and the checkout cannot name different numbers.
+  const depositPercent = offer.available ? offer.depositPercent : null;
   // The same rail the booking route acts on. Deriving it separately is how a
   // page came to say "held, not charged" about money the route captures.
   const paymentMode = rail.moneyMode;
@@ -128,6 +131,7 @@ export default async function PhotoshootDetailPage({
               type="photoshoot"
               slug={photoshoot.slug}
             />
+            <InstantBookingBadge product={photoshoot} />
           </div>
           <p className="mt-5 leading-relaxed text-ink-soft">
             {photoshoot.description}
@@ -216,20 +220,18 @@ export default async function PhotoshootDetailPage({
                 productType="photoshoot"
                 productSlug={photoshoot.slug}
                 productTitle={photoshoot.title}
-                depositLabel={depositLabel}
+                depositPercent={depositPercent ?? 25}
                 paymentMode={paymentMode}
                 cancellationSummary={cancellationSummary}
                 cancellationHref="/cancellation-policy"
                 timeSlots={photoshoot.timeSlots}
                 extras={photoshoot.extras}
-                perPerson={perPerson}
                 quotable={{
                   slug: photoshoot.slug,
                   title: photoshoot.title,
                   bookable: photoshoot.bookable,
-                  depositUsd: photoshoot.depositUsd ?? site.defaultDepositUsd,
-                  depositBasis: photoshoot.depositBasis,
-                  depositMaxUsd: photoshoot.depositMaxUsd,
+                  price: photoshoot.price,
+                  depositPercent: photoshoot.depositPercent ?? site.defaultDepositPercent,
                   extras: photoshoot.extras,
                 }}
                 productKind="photoshoot"
@@ -243,13 +245,16 @@ export default async function PhotoshootDetailPage({
                 {paymentMode === "none"
                   ? "Our team confirms your date personally."
                   : paymentMode === "hold"
-                    ? `${depositLabel}${perPerson ? " per person" : ""} deposit held, not charged · no account needed · released if we cannot confirm your date`
-                    : `${depositLabel}${perPerson ? " per person" : ""} deposit · no account needed · fully refunded if we cannot confirm your date`}
+                    ? `${depositPercent}% deposit held, not charged · no account needed · released if we cannot confirm your date`
+                    : `${depositPercent}% deposit today · the rest is never charged online · no account needed`}
               </p>
             </div>
           )}
-          <PriceTag price={photoshoot.price} />
-          <p className="mt-1 text-xs text-ink-soft/85"><T>per session</T></p>
+          {/* Revealed, because this product type carries a backend price and
+              the booking popup shows the arithmetic built on it. A page that
+              refuses to name a price beside a popup that names one reads as a
+              trick. See components/PriceTag.tsx. */}
+          <PriceTag price={photoshoot.price} reveal suffix="per person" />
           <WhatsAppBookButton
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this photoshoot's page", item: photoshoot.title }}

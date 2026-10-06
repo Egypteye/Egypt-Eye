@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
   }
 
   const user = await getCurrentUser();
-  const { offer, rail } = productRail(product, type, settings.defaultDepositUsd, {
+  const { offer, rail } = productRail(product, type, settings.defaultDepositPercent, {
     isAdmin: user?.role === "admin",
   });
 

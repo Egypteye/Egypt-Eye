@@ -30,12 +30,12 @@ export const siteSettings = defineType({
   type: "document",
   fields: [
     defineField({
-      name: "defaultDepositUsd",
-      title: "Default deposit to secure a date (USD)",
+      name: "defaultDepositPercent",
+      title: "Deposit percentage taken online",
       description:
-        "Used for a bookable product that has no deposit of its own. Leave empty to require each product to set one — with neither, no deposit button appears anywhere.",
+        "The share of a booking collected on the website, e.g. 25 for 25%. Applies to every Instant Booking product that does not set its own. The remaining balance is never charged here. Leave empty for 25%.",
       type: "number",
-      validation: (r) => r.min(1),
+      validation: (r) => r.min(0.5).max(99.5),
     }),
     defineField({ name: "name", title: "Full brand name", type: "string" }),
     defineField({ name: "shortName", title: "Short brand name (navbar/footer)", type: "string" }),

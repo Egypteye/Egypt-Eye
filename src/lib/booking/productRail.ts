@@ -32,10 +32,10 @@ export type Viewer = { isAdmin: boolean };
 export function productRail(
   product: QuotableProduct & { paypalLink?: string | null },
   productType: "photoshoot" | "experience",
-  siteDefaultUsd: number | null | undefined,
+  siteDefaultPercent: number | null | undefined,
   viewer: Viewer
 ): { offer: DepositOffer; rail: PayRail; provider: PaymentProvider } {
-  const offer = depositOffer(product, productType, siteDefaultUsd ?? undefined);
+  const offer = depositOffer(product, productType, siteDefaultPercent);
   const provider = paymentProviderFor(viewer);
   const rail = resolveRail(
     { available: offer.available, paymentLink: payPalLink(product.paypalLink) },

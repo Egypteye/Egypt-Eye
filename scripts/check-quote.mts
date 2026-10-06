@@ -5,29 +5,43 @@
  * has to keep are not style preferences:
  *
  *   1. The browser cannot influence the figure. It sends a headcount and a
- *      list of labels; prices come from the product. A selection carrying its
- *      own price buys nothing.
+ *      list of labels with quantities; every price comes from the product. A
+ *      selection carrying its own price buys nothing.
  *   2. Money never passes through a float. Every figure is integer cents, and
  *      the comparison against what PayPal reports is in cents too — a payment
  *      a cent short has to fail, and 0.1 + 0.2 is not 0.3.
- *   3. A quote is a snapshot. It records the rates that produced it, so a
- *      booking taken today still reads the same after somebody edits the
- *      Studio tomorrow.
- *   4. Broken configuration produces no deposit, never a guess.
+ *   3. A quote is a snapshot. It records the price and percentage that
+ *      produced it, so a booking taken today still reads the same after
+ *      somebody edits the Studio tomorrow.
+ *   4. Broken configuration produces no booking, never a guess.
+ *   5. **The deposit is the only amount collected online.** Never the balance,
+ *      never the whole booking. A bug that charges the full total is the worst
+ *      thing this system can do, so it is asserted rather than assumed.
+ *
+ * The fixtures deliberately use GROQ's shape — explicit `null` for an unset
+ * field, not an omitted key. Every fixture here once used omitted keys, which
+ * tested a shape production never produces, and that is how an unset cap read
+ * as a broken one and took every deposit on the site offline.
  */
 import {
-  depositHeadline,
+  DEFAULT_DEPOSIT_PERCENT,
+  MAX_EXTRA_QUANTITY,
+  MAX_PEOPLE,
   depositOffer,
-  explainOffer,
-  isAbsent,
   describeQuote,
+  explainOffer,
   formatCents,
+  isAbsent,
+  isInstantBookable,
+  percentFor,
+  priceCentsOf,
   quoteDeposit,
-  rulesFor,
+  readExtraSelection,
+  readPercent,
   usdToCents,
+  type OfferProblem,
   type QuotableProduct,
 } from "../src/lib/booking/quote";
-import { resolveDeposit } from "../src/lib/booking/deposit";
 import { readFile } from "node:fs/promises";
 
 const errors: string[] = [];
@@ -35,448 +49,246 @@ const ok = (label: string, condition: boolean) => {
   if (!condition) errors.push(label);
 };
 
+/** The shape GROQ actually returns: unset fields are null, not missing. */
 const PRODUCT: QuotableProduct = {
   slug: "exclusive-pyramids-photoshoot",
   title: "Exclusive Pyramids Photoshoot",
   bookable: true,
-  depositUsd: 25,
-  depositBasis: "perPerson",
+  price: { amount: 200 },
+  depositPercent: null,
   extras: [
-    { label: "Camel Ride", priceUsd: 25, depositUsd: 10, depositBasis: "person" },
-    { label: "Video Reels", priceUsd: 25, depositUsd: 10, depositBasis: "booking" },
-    { label: "Egyptian Scarf", priceUsd: 20 },
+    { label: "Camel Ride", priceUsd: 25 },
+    { label: "Running Horse Ride", priceUsd: 60 },
   ],
 };
 
-const quote = (people: unknown, extraLabels: unknown = [], product = PRODUCT) =>
-  quoteDeposit(product, "photoshoot", { people, extraLabels });
+const quote = (
+  product: QuotableProduct,
+  people: number,
+  extras: unknown = [],
+  sitePercent?: number | null
+) => quoteDeposit(product, "photoshoot", { people, extras }, sitePercent);
 
 // ---------------------------------------------------------------------------
-// 1. Cents.
-// ---------------------------------------------------------------------------
-const CENTS: [unknown, number | null][] = [
-  [25, 2500],
-  [0, 0],
-  [25.5, 2550],
-  [0.01, 1],
-  [1234.56, 123456],
-  [25.005, null],   // sub-cent precision is not a price
-  [-25, null],
-  [Number.NaN, null],
-  [Number.POSITIVE_INFINITY, null],
-  ["25", null],
-  [null, null],
-  [undefined, null],
-];
-for (const [input, expected] of CENTS) {
-  ok(`usdToCents(${JSON.stringify(input)}) should be ${expected}`, usdToCents(input) === expected);
-}
-// The float case, stated explicitly because it is the one that reaches
-// production: 0.1 + 0.2 must still be 30 cents.
-ok("a float sum lands on exact cents", usdToCents(0.1 + 0.2) === 30);
-ok("formatCents drops empty cents", formatCents(2500) === "$25");
-ok("formatCents keeps real cents", formatCents(2550) === "$25.50");
-ok("formatCents pads a single cent", formatCents(2505) === "$25.05");
-
-// ---------------------------------------------------------------------------
-// 2. The arithmetic the brief asks for.
-//
-//    service deposit x guests + selected extra deposits
-// ---------------------------------------------------------------------------
-const solo = quote(1);
-ok("one person, no extras, is one service line", solo.ok && solo.quote.lines.length === 1);
-ok("one person at $25/head is $25", solo.ok && solo.quote.totalCents === 2500);
-
-const three = quote(3);
-ok("three people at $25/head is $75", three.ok && three.quote.totalCents === 7500);
-ok("the service line records the rate and the count", three.ok && three.quote.lines[0].unitCents === 2500 && three.quote.lines[0].quantity === 3);
-
-// A per-booking extra is added once however many people there are.
-const withReel = quote(3, ["Video Reels"]);
-ok("a per-booking extra is charged once", withReel.ok && withReel.quote.totalCents === 7500 + 1000);
-
-// A per-person extra scales with the headcount.
-const withCamels = quote(3, ["Camel Ride"]);
-ok("a per-person extra scales", withCamels.ok && withCamels.quote.totalCents === 7500 + 3000);
-
-const both = quote(3, ["Camel Ride", "Video Reels"]);
-ok("both kinds of extra add up", both.ok && both.quote.totalCents === 7500 + 3000 + 1000);
-
-// An extra with no deposit configured is free to add — exactly how extras
-// behaved before deposits could vary, so an unedited product is unchanged.
-const freeExtra = quote(3, ["Egyptian Scarf"]);
-ok("an extra with no deposit adds nothing", freeExtra.ok && freeExtra.quote.totalCents === 7500);
-ok("and does not appear as a line", freeExtra.ok && freeExtra.quote.lines.length === 1);
-
-// ---------------------------------------------------------------------------
-// 3. The browser cannot set a price.
-// ---------------------------------------------------------------------------
-const forged = quote(1, [{ label: "Camel Ride", depositUsd: 0 } as unknown as string]);
-ok("a selection carrying its own price is not a selection", forged.ok && forged.quote.totalCents === 2500);
-ok("an unknown extra is ignored", quote(1, ["Private Jet"]).ok && (quote(1, ["Private Jet"]) as { quote: { totalCents: number } }).quote.totalCents === 2500);
-const twice = quote(2, ["Camel Ride", "camel ride", "CAMEL RIDE"]);
-ok("the same extra selected repeatedly is charged once", twice.ok && twice.quote.totalCents === 5000 + 2000);
-ok("a non-array selection is no selection", quote(1, "Camel Ride").ok && (quote(1, "Camel Ride") as { quote: { totalCents: number } }).quote.totalCents === 2500);
-
-// ---------------------------------------------------------------------------
-// 4. Headcount.
-// ---------------------------------------------------------------------------
-for (const people of [0, -1, 21, 1.5, Number.NaN, "3", null, undefined]) {
-  const result = quote(people);
-  ok(`a headcount of ${JSON.stringify(people)} must be refused`, !result.ok && result.reason === "badPeople");
-}
-ok("twenty people is still allowed", quote(20).ok);
-
-// ---------------------------------------------------------------------------
-// 5. The cap, which applies to the service and not to chosen extras.
-// ---------------------------------------------------------------------------
-const CAPPED: QuotableProduct = { ...PRODUCT, depositMaxUsd: 100 };
-const capped = quoteDeposit(CAPPED, "photoshoot", { people: 10, extraLabels: [] });
-ok("the service portion is capped", capped.ok && capped.quote.totalCents === 10000);
-ok("the cap records what it reduced", capped.ok && capped.quote.lines[0].cappedFromCents === 25000);
-const cappedPlusExtra = quoteDeposit(CAPPED, "photoshoot", { people: 10, extraLabels: ["Video Reels"] });
-ok(
-  "an extra is added on top of the cap, not absorbed by it",
-  cappedPlusExtra.ok && cappedPlusExtra.quote.totalCents === 10000 + 1000
-);
-const belowCap = quoteDeposit(CAPPED, "photoshoot", { people: 2, extraLabels: [] });
-ok("below the cap nothing is capped", belowCap.ok && belowCap.quote.totalCents === 5000 && belowCap.quote.lines[0].cappedFromCents === undefined);
-
-// ---------------------------------------------------------------------------
-// 6. Broken configuration produces no deposit.
-// ---------------------------------------------------------------------------
-const BAD: [string, QuotableProduct][] = [
-  ["not switched on", { ...PRODUCT, bookable: false }],
-  ["no amount at all", { slug: "x", title: "X", bookable: true }],
-  ["a negative rate", { ...PRODUCT, depositUsd: -25 }],
-  ["a sub-cent rate", { ...PRODUCT, depositUsd: 25.005 }],
-  ["a NaN rate", { ...PRODUCT, depositUsd: Number.NaN }],
-  ["a zero rate with no priced extras", { ...PRODUCT, depositUsd: 0, extras: [] }],
-  ["an unreadable cap", { ...PRODUCT, depositMaxUsd: -5 }],
-];
-for (const [label, product] of BAD) {
-  ok(`${label} must produce no deposit`, !quoteDeposit(product, "photoshoot", { people: 2, extraLabels: [] }).ok);
+// 1. The worked example from the brief, end to end.
+const two = quote(PRODUCT, 2);
+ok("a $200 item for two people does not quote", two.ok);
+if (two.ok) {
+  ok("the booking total is not $200 × 2", two.quote.bookingTotalCents === 40000);
+  ok("the deposit is not 25% of $400", two.quote.totalCents === 10000);
+  ok("the balance is not the other 75%", two.quote.balanceCents === 30000);
+  ok("the percentage is not recorded on the quote", two.quote.depositPercent === 25);
+  ok("the service line is not price × people", two.quote.lines[0].amountCents === 40000);
+  ok("the service line forgets the unit price", two.quote.lines[0].unitCents === 20000);
 }
 
 // ---------------------------------------------------------------------------
-// 7. Backward compatibility.
-//
-// Every product configured before any of this existed carries only a flat
-// `depositUsd`. It must keep behaving exactly as it does in production today,
-// because this ships before anybody edits the Studio.
-// ---------------------------------------------------------------------------
-const LEGACY: QuotableProduct = {
-  slug: "legacy",
-  title: "Legacy",
-  bookable: true,
-  depositUsd: 25,
-  extras: [{ label: "Camel Ride", priceUsd: 25 }],
-};
-ok("a legacy product defaults to a fixed basis", rulesFor(LEGACY).basis === "fixed");
-for (const people of [1, 3, 20]) {
-  const legacy = quoteDeposit(LEGACY, "photoshoot", { people, extraLabels: ["Camel Ride"] });
+// 2. The deposit is the ONLY thing charged. The single most expensive bug
+//    available here is collecting the whole booking, so it is asserted from
+//    several directions rather than trusted to one line.
+for (const people of [1, 2, 3, 7, MAX_PEOPLE]) {
+  const r = quote(PRODUCT, people, [{ label: "Camel Ride", quantity: 2 }]);
+  ok(`no quote for ${people} people`, r.ok);
+  if (!r.ok) continue;
   ok(
-    `a legacy product charges a flat $25 for ${people} people, as it does today`,
-    legacy.ok && legacy.quote.totalCents === 2500
+    `the charge for ${people} equals the whole booking — the balance must never be taken online`,
+    r.quote.totalCents < r.quote.bookingTotalCents
+  );
+  ok(
+    `the charge for ${people} is not the stated percentage of the total`,
+    r.quote.totalCents === Math.round((r.quote.bookingTotalCents * r.quote.depositPercent) / 100)
+  );
+  ok(
+    `deposit and balance for ${people} do not add up to the booking`,
+    r.quote.totalCents + r.quote.balanceCents === r.quote.bookingTotalCents
   );
 }
 
+// 100% would be exactly "charge the whole thing", so it is refused outright.
+ok("a 100% deposit is accepted", readPercent(100) === null);
+ok("a 0% deposit is accepted", readPercent(0) === null);
+ok("a negative percentage is accepted", readPercent(-25) === null);
+ok("a half percent is refused", readPercent(12.5) === 12.5);
+ok("a third of a percent is accepted", readPercent(25.3) === null);
+for (const junk of ["25", null, undefined, Number.NaN, Number.POSITIVE_INFINITY, {}]) {
+  ok(`${JSON.stringify(junk)} is read as a percentage`, readPercent(junk) === null);
+}
+
 // ---------------------------------------------------------------------------
-// 8. The snapshot.
-//
-// A quote has to be able to explain itself later, after the rates it used have
-// been edited. That is the whole reason the rules are stored rather than the
-// total alone.
+// 3. Extras: quantities, and they count toward the deposit base.
+const withExtras = quote(PRODUCT, 2, [
+  { label: "Camel Ride", quantity: 3 },
+  { label: "Running Horse Ride", quantity: 1 },
+]);
+ok("a selection with quantities does not quote", withExtras.ok);
+if (withExtras.ok) {
+  // $400 + (25×3) + 60 = $535 → 25% = $133.75
+  ok("extras are not multiplied by their quantity", withExtras.quote.bookingTotalCents === 53500);
+  ok("the deposit is not 25% of item plus extras", withExtras.quote.totalCents === 13375);
+  ok("a half-cent did not survive as a float", Number.isInteger(withExtras.quote.totalCents));
+  const camel = withExtras.quote.lines.find((l) => l.label === "Camel Ride");
+  ok("the camel line is missing", camel !== undefined);
+  ok("the camel line is not 3 × $25", camel?.amountCents === 7500 && camel?.quantity === 3);
+}
+
+// A price in the request body buys nothing: prices come from the product only.
+const forged = quote(PRODUCT, 1, [{ label: "Camel Ride", quantity: 1, priceUsd: 0 }]);
+ok("a forged price changed the figure", forged.ok && forged.quote.lines[1].unitCents === 2500);
+const invented = quote(PRODUCT, 1, [{ label: "Private Jet", quantity: 1, priceUsd: 5 }]);
+ok("an extra the product does not offer was added", invented.ok && invented.quote.lines.length === 1);
+
+// Invalid quantities resolve to "not taken", never to a negative line.
+for (const bad of [-1, 0, 1.5, Number.NaN, "2", null, undefined]) {
+  const r = quote(PRODUCT, 1, [{ label: "Camel Ride", quantity: bad }]);
+  ok(
+    `quantity ${JSON.stringify(bad)} produced a line — invalid must mean not taken`,
+    r.ok && r.quote.lines.length === 1
+  );
+}
+const huge = quote(PRODUCT, 1, [{ label: "Camel Ride", quantity: 9999 }]);
+ok(
+  "an absurd quantity is not capped",
+  huge.ok && huge.quote.lines[1].quantity === MAX_EXTRA_QUANTITY
+);
+const twice = quote(PRODUCT, 1, [
+  { label: "Camel Ride", quantity: 1 },
+  { label: "camel ride", quantity: 5 },
+]);
+ok("the same extra twice became two lines", twice.ok && twice.quote.lines.length === 2);
+
+// The old wire shape — a bare array of labels — still books, because a page
+// cached before the steppers shipped must not produce an error.
+const legacy = quote(PRODUCT, 1, ["Camel Ride"]);
+ok("the old label-only shape stopped working", legacy.ok && legacy.quote.lines.length === 2);
+ok("the old shape is not read as quantity 1", legacy.ok && legacy.quote.lines[1].quantity === 1);
+ok("readExtraSelection drops a bare string", readExtraSelection(["x"])[0]?.quantity === 1);
+ok("readExtraSelection accepts a non-array", readExtraSelection("nope").length === 0);
+
 // ---------------------------------------------------------------------------
-const snapshot = quote(3, ["Camel Ride", "Video Reels"]);
+// 4. Instant Booking: both halves required, and they are separate questions.
+ok("a product with price and switch on is not bookable", isInstantBookable(PRODUCT));
+ok(
+  "a price alone put a product on sale — the switch must be the second half",
+  !isInstantBookable({ ...PRODUCT, bookable: false })
+);
+ok(
+  "the switch alone put a product on sale with no price to charge a share of",
+  !isInstantBookable({ ...PRODUCT, price: null })
+);
+ok("a null price amount counts as a price", !isInstantBookable({ ...PRODUCT, price: { amount: null } }));
+ok("a zero price counts as a price", !isInstantBookable({ ...PRODUCT, price: { amount: 0 } }));
+ok("priceCentsOf reads a real price wrong", priceCentsOf(PRODUCT) === 20000);
+ok("priceCentsOf invents a price from nothing", priceCentsOf({ ...PRODUCT, price: null }) === null);
+ok("a negative price counts as a price", !isInstantBookable({ ...PRODUCT, price: { amount: -10 } }));
+
+ok("the switch off still quotes", !quote({ ...PRODUCT, bookable: false }, 1).ok);
+ok(
+  "the switch off reports the wrong reason",
+  (quote({ ...PRODUCT, bookable: false }, 1) as { reason: OfferProblem }).reason === "notBookable"
+);
+ok(
+  "a missing price reports the wrong reason",
+  (quote({ ...PRODUCT, price: null }, 1) as { reason: OfferProblem }).reason === "noPrice"
+);
+
+// ---------------------------------------------------------------------------
+// 5. Where the percentage comes from, and GROQ's nulls.
+ok("a product override is ignored", percentFor({ ...PRODUCT, depositPercent: 10 }, 25) === 10);
+ok("the site default is ignored", percentFor(PRODUCT, 30) === 30);
+ok("a null product percent does not fall through to the site", percentFor(PRODUCT, 30) === 30);
+ok(
+  "with nothing set anywhere the default is not 25%",
+  percentFor(PRODUCT, null) === DEFAULT_DEPOSIT_PERCENT
+);
+ok(
+  "a product override that is junk is silently ignored rather than refused",
+  percentFor({ ...PRODUCT, depositPercent: 150 }, 25) === null
+);
+ok("isAbsent does not treat null and undefined alike", isAbsent(null) && isAbsent(undefined));
+ok("isAbsent swallows a real zero", !isAbsent(0));
+
+const tenPercent = quote({ ...PRODUCT, depositPercent: 10 }, 1);
+ok("a product override does not reach the figure", tenPercent.ok && tenPercent.quote.totalCents === 2000);
+const sitePercent = quote(PRODUCT, 1, [], 50);
+ok("the site percentage does not reach the figure", sitePercent.ok && sitePercent.quote.totalCents === 10000);
+
+// ---------------------------------------------------------------------------
+// 6. Cents, never floats. The rounding happens once, at the end.
+ok("usdToCents accepts sub-cent precision", usdToCents(25.005) === null);
+ok("usdToCents accepts a string", usdToCents("25") === null);
+ok("usdToCents accepts a negative", usdToCents(-1) === null);
+ok("usdToCents mangles a whole figure", usdToCents(200) === 20000);
+ok("formatCents drops the cents", formatCents(13375) === "$133.75");
+ok("formatCents adds cents to a whole figure", formatCents(10000) === "$100");
+
+// 33.33% of $0.10 is 3.333 cents. One rounding, and the result is an integer.
+const awkward = quote({ ...PRODUCT, price: { amount: 0.1 }, depositPercent: 33.5 }, 1);
+ok("an awkward percentage produced a fraction of a cent", !awkward.ok || Number.isInteger(awkward.quote.totalCents));
+
+// A deposit that rounds to nothing is no deposit, not a free booking.
+const dust = quote({ ...PRODUCT, price: { amount: 0.01 }, depositPercent: 0.5 }, 1);
+ok("a deposit rounding to zero is still offered", !dust.ok && dust.reason === "zero");
+
+// ---------------------------------------------------------------------------
+// 7. The headcount bounds.
+for (const bad of [0, -1, 1.5, Number.NaN, MAX_PEOPLE + 1]) {
+  const r = quote(PRODUCT, bad as number);
+  ok(`a headcount of ${bad} was accepted`, !r.ok && r.reason === "badPeople");
+}
+
+// ---------------------------------------------------------------------------
+// 8. The snapshot records what produced it, so a later price change cannot
+//    rewrite a booking already taken.
+const snapshot = quote(PRODUCT, 2, [{ label: "Camel Ride", quantity: 2 }]);
+ok("the quote does not record the price it used", snapshot.ok && snapshot.quote.rules.priceCents === 20000);
+ok("the quote does not record the percentage", snapshot.ok && snapshot.quote.rules.depositPercent === 25);
+ok(
+  "the quote does not record each extra's price and quantity",
+  snapshot.ok &&
+    snapshot.quote.rules.extras[0].priceCents === 2500 &&
+    snapshot.quote.rules.extras[0].quantity === 2
+);
 if (snapshot.ok) {
-  const { quote: q } = snapshot;
-  ok("the snapshot records the basis", q.rules.basis === "perPerson");
-  ok("the snapshot records the service rate", q.rules.serviceCents === 2500);
-  ok("the snapshot records each extra's rate", q.rules.extras.length === 2);
+  const after = quote({ ...PRODUCT, price: { amount: 999 } }, 2, [{ label: "Camel Ride", quantity: 2 }]);
   ok(
-    "the snapshot records how each extra was charged",
-    q.rules.extras.find((e) => e.label === "Camel Ride")?.basis === "person" &&
-      q.rules.extras.find((e) => e.label === "Video Reels")?.basis === "booking"
-  );
-  ok("the lines add up to the total", q.lines.reduce((sum, l) => sum + l.amountCents, 0) === q.totalCents);
-  ok("every line's arithmetic holds", q.lines.every((l) => l.amountCents === l.unitCents * l.quantity || l.cappedFromCents !== undefined));
-  ok("the currency is stated", q.currency === "USD");
-  ok("the headcount is stated", q.people === 3);
-  ok("it says which product", q.productSlug === "exclusive-pyramids-photoshoot");
-
-  // The point of the snapshot: the same booking, after the rate changes.
-  const laterProduct: QuotableProduct = { ...PRODUCT, depositUsd: 30 };
-  const later = quoteDeposit(laterProduct, "photoshoot", { people: 3, extraLabels: ["Camel Ride", "Video Reels"] });
-  ok("a changed rate changes new quotes", later.ok && later.quote.totalCents !== q.totalCents);
-  ok("but the old snapshot still reads what was agreed", q.totalCents === 7500 + 3000 + 1000);
-
-  ok("a quote describes itself for a customer", describeQuote(q).length === q.lines.length);
-  ok(
-    "a scaling line shows its rate and count",
-    describeQuote(q)[0].label.includes("$25") && describeQuote(q)[0].label.includes("3")
+    "a price change rewrote the stored snapshot rather than producing a new quote",
+    after.ok && after.quote.rules.priceCents === 99900 && snapshot.quote.rules.priceCents === 20000
   );
 }
 
 // ---------------------------------------------------------------------------
-// 9. The site-wide default, and the page agreeing with the checkout.
-//
-// This is a bug that shipped, and it is worth stating exactly because the
-// shape of it recurs. A product with no deposit of its own falls back to the
-// site-wide default. resolveDeposit — which the product page uses for the
-// button — honoured that fallback. quoteDeposit — which the booking route uses
-// to actually charge — did not. So the page showed "$20 deposit", the route
-// found no rule, answered "we have your request", and the PayPal window never
-// opened. Nothing errored. The customer simply could not pay.
-//
-// Two surfaces answering the same question from two functions is the defect.
-// These assertions pin the agreement rather than the symptom.
-// ---------------------------------------------------------------------------
-const NO_OWN_RATE: QuotableProduct = { slug: "inherits", title: "Inherits", bookable: true };
-const SITE_DEFAULT = 20;
-
-const inherited = quoteDeposit(NO_OWN_RATE, "photoshoot", { people: 2, extraLabels: [] }, SITE_DEFAULT);
-ok("a product with no rate of its own uses the site default", inherited.ok && inherited.quote.totalCents === 2000);
-ok(
-  "without the default that same product produces nothing — the bug",
-  !quoteDeposit(NO_OWN_RATE, "photoshoot", { people: 2, extraLabels: [] }).ok
-);
-ok("rulesFor applies the default too", rulesFor(NO_OWN_RATE, SITE_DEFAULT).amountUsd === SITE_DEFAULT);
-ok("a product's own rate still wins over the default", rulesFor(PRODUCT, SITE_DEFAULT).amountUsd === 25);
-
-// The agreement itself: wherever the page would show a figure, the checkout
-// must be able to charge one, and the two must match.
-const AGREEMENT: [string, QuotableProduct, number | undefined][] = [
-  ["a product with its own flat rate", { slug: "a", title: "A", bookable: true, depositUsd: 25 }, undefined],
-  ["a product inheriting the site default", NO_OWN_RATE, SITE_DEFAULT],
-  ["a product whose rate overrides the default", { slug: "c", title: "C", bookable: true, depositUsd: 50 }, SITE_DEFAULT],
-];
-for (const [label, product, fallback] of AGREEMENT) {
-  // resolveDeposit also carries the product's price, which the quote has no
-  // business knowing — the site publishes no prices. Supplied here only to
-  // satisfy its signature.
-  const page = resolveDeposit({ ...product, price: { amount: 199 } }, fallback);
-  const checkout = quoteDeposit(product, "photoshoot", { people: 1, extraLabels: [] }, fallback);
-  ok(
-    `${label}: the page shows a deposit the checkout cannot charge`,
-    page.bookable === checkout.ok
-  );
-  if (page.bookable && checkout.ok) {
-    ok(
-      `${label}: the page and the checkout disagree about the amount`,
-      Math.round(page.amountUsd * 100) === checkout.quote.totalCents
-    );
-  }
+// 9. The offer: what the product page reads.
+const offer = depositOffer(PRODUCT, "photoshoot");
+ok("the offer is unavailable for a priced, switched-on product", offer.available);
+if (offer.available) {
+  ok("the offer does not carry the price", offer.priceLabel === "$200" && offer.priceCents === 20000);
+  ok("the offer does not carry the percentage", offer.depositPercent === 25);
+  ok("the one-person deposit is wrong", offer.onePersonDepositCents === 5000);
 }
-
-// And the headline the button actually renders comes from the same place.
-const headline = depositHeadline(NO_OWN_RATE, "photoshoot", SITE_DEFAULT);
-ok("the button's figure comes from the quote", headline?.label === "$20");
-ok("a flat rate is not labelled per person", headline?.perPerson === false);
-const perPersonHeadline = depositHeadline(PRODUCT, "photoshoot");
-ok("a per-person rate says so", perPersonHeadline?.perPerson === true && perPersonHeadline.label === "$25");
-ok("an unbookable product has no headline", depositHeadline({ slug: "x", title: "X" }, "photoshoot") === null);
-
-// ---------------------------------------------------------------------------
-// 10. One authority on whether a deposit can be taken.
-//
-// The same mistake has been made three times in this codebase, and each time
-// it was invisible until a customer met it:
-//
-//   1. the rail — a page saying "held, not charged" about money the route had
-//      already captured;
-//   2. the amount — a page showing $20 next to a checkout that found no rule
-//      and never opened PayPal;
-//   3. bookability — a button saying "Request your date" because the page
-//      asked resolveDeposit while the route asked the quote.
-//
-// All three are one defect: two surfaces answering one question from two
-// functions. depositOffer is now the only answer, and this is the invariant
-// that keeps it that way — wherever a button appears, the checkout can quote,
-// and wherever it cannot quote, no button appears.
-// ---------------------------------------------------------------------------
-const CONFIGS: [string, QuotableProduct, number | undefined][] = [
-  ["its own flat rate", { slug: "a", title: "A", bookable: true, depositUsd: 25 }, undefined],
-  ["inheriting the site default", { slug: "b", title: "B", bookable: true }, 20],
-  ["a rate overriding the default", { slug: "c", title: "C", bookable: true, depositUsd: 50 }, 20],
-  ["a per-person rate", { slug: "d", title: "D", bookable: true, depositUsd: 25, depositBasis: "perPerson" }, undefined],
-  ["a per-person rate with a cap", { slug: "e", title: "E", bookable: true, depositUsd: 25, depositBasis: "perPerson", depositMaxUsd: 100 }, undefined],
-  ["the switch off", { slug: "f", title: "F", bookable: false, depositUsd: 25 }, 20],
-  ["no rate and no default", { slug: "g", title: "G", bookable: true }, undefined],
-  ["a zero rate", { slug: "h", title: "H", bookable: true, depositUsd: 0 }, undefined],
-  ["a zero site default", { slug: "i", title: "I", bookable: true }, 0],
-  ["a cap of zero", { slug: "j", title: "J", bookable: true, depositUsd: 25, depositMaxUsd: 0 }, undefined],
-];
-
-for (const [label, product, fallback] of CONFIGS) {
-  const offer = depositOffer(product, "photoshoot", fallback);
-  // The invariant, both ways round, for every configuration anybody can
-  // produce in the Studio.
-  for (const people of [1, 3, 20]) {
-    const charge = quoteDeposit(product, "photoshoot", { people, extraLabels: [] }, fallback);
-    ok(
-      `${label}: a button would show for ${people} people but the checkout cannot charge`,
-      offer.available === charge.ok
-    );
-  }
-  if (offer.available) {
-    ok(`${label}: the button would show an empty figure`, offer.headline.startsWith("$") && offer.headline.length > 1);
-  } else {
-    // Every refusal has to be explainable in the admin page, or somebody is
-    // reading code again to find out why a button vanished.
-    const why = explainOffer(offer.reason);
-    ok(`${label}: the refusal "${offer.reason}" has no explanation`, why.length > 20);
-  }
+for (const reason of ["notBookable", "noPrice", "badPercent", "zero", "badPeople"] as const) {
+  ok(`${reason} has no explanation an editor can act on`, explainOffer(reason).length > 20);
 }
-
-// The specific case that was reported: the switch on, no rate of its own, and
-// the site default removed. Both must agree there is nothing to charge.
-const stranded: QuotableProduct = { slug: "stranded", title: "Stranded", bookable: true };
-const strandedOffer = depositOffer(stranded, "photoshoot", undefined);
-ok("a product with no rate anywhere offers nothing", !strandedOffer.available);
 ok(
-  "and says so in words somebody can act on",
-  !strandedOffer.available && explainOffer(strandedOffer.reason).includes("site-wide default")
+  "the notBookable explanation does not say the price still shows",
+  /price still shows/i.test(explainOffer("notBookable"))
 );
 
-// The instruction has to be in the unit the field is actually in.
-//
-// It said "a positive figure in whole cents", meaning a figure that resolves
-// to whole cents. Read plainly it says to enter cents — and somebody following
-// it types 2500 for a $25 deposit and charges two and a half thousand dollars.
-// The internals are in cents; nothing a human types ever is.
-for (const reason of ["notBookable", "noRule", "zero", "badPeople"] as const) {
-  const text = explainOffer(reason);
+// ---------------------------------------------------------------------------
+// 10. What the customer reads is the arithmetic, not a bare figure.
+if (two.ok) {
+  const rows = describeQuote(two.quote);
+  ok("describeQuote does not show the multiplication", rows[0].detail === "$200 × 2 = $400");
+  ok("describeQuote does not end with the percentage line", rows[rows.length - 1].label === "25% deposit");
   ok(
-    `the "${reason}" explanation tells somebody to enter cents`,
-    !/\bin (whole )?cents\b/i.test(text)
+    "the percentage line does not show its working",
+    rows[rows.length - 1].detail === "$400 × 25% = $100"
   );
 }
-ok(
-  "the missing-amount explanation says dollars, with an example",
-  /DOLLARS/.test(explainOffer("noRule")) && explainOffer("noRule").includes("25")
-);
-ok(
-  "while the same product with a default is bookable",
-  depositOffer(stranded, "photoshoot", 20).available
-);
 
 // ---------------------------------------------------------------------------
-// 11. GROQ-shaped data: every optional field present and null.
-//
-// This section exists because of the bug it would have caught, and the reason
-// it did not exist is worth more than the assertions.
-//
-// Every fixture above builds a product as an object literal, so an optional
-// field that is "not set" is an OMITTED KEY, and reads as `undefined`. Real
-// data never looks like that. GROQ returns an explicit `null` for any field in
-// the projection that the document does not have. So the entire check suite
-// was testing a shape that does not occur in production, and passed happily
-// while the live site could not quote a single deposit.
-//
-// The specific failure: the cap check asked `maxUsd === undefined`. With a
-// real `depositMaxUsd: null` that is false, so an unset cap was treated as an
-// unreadable one and every bookable product reported "no deposit configured" —
-// from the moment depositMaxUsd was added to the query, with correct data in
-// Sanity the whole time.
-//
-// These fixtures are copied from an actual API response.
-// ---------------------------------------------------------------------------
-const FROM_GROQ = {
-  slug: "exclusive-pyramids-photoshoot",
-  title: "Exclusive Pyramids Photoshoot",
-  bookable: true,
-  depositUsd: 25,
-  depositBasis: "perPerson",
-  depositMaxUsd: null,
-  extras: null,
-} as unknown as QuotableProduct;
-
-const groqQuote = quoteDeposit(FROM_GROQ, "photoshoot", { people: 3, extraLabels: [] });
-ok("a real GROQ document can be quoted at all", groqQuote.ok);
-ok("and for the right amount", groqQuote.ok && groqQuote.quote.totalCents === 7500);
-ok("a null cap is no cap, not a broken one", depositOffer(FROM_GROQ, "photoshoot").available);
-ok("isAbsent treats null and undefined alike", isAbsent(null) && isAbsent(undefined));
-ok("isAbsent does not swallow a real value", !isAbsent(0) && !isAbsent(25) && !isAbsent(""));
-
-// Every optional field null at once — a document somebody switched on and
-// filled in nothing else.
-const ALL_NULL = {
-  slug: "bare",
-  title: "Bare",
-  bookable: true,
-  depositUsd: 25,
-  depositBasis: null,
-  depositMaxUsd: null,
-  extras: null,
-} as unknown as QuotableProduct;
-const bare = quoteDeposit(ALL_NULL, "photoshoot", { people: 4, extraLabels: ["Camel Ride"] });
-ok("a document with every optional field null still quotes", bare.ok);
-ok("a null basis means flat, not broken", bare.ok && bare.quote.totalCents === 2500);
-ok("null extras are no extras, not a crash", bare.ok && bare.quote.lines.length === 1);
-
-// Extras as GROQ returns them: present, with null deposit fields.
-const GROQ_EXTRAS = {
-  slug: "x",
-  title: "X",
-  bookable: true,
-  depositUsd: 25,
-  depositBasis: null,
-  depositMaxUsd: null,
-  extras: [
-    { label: "Camel Ride", priceUsd: 25, depositUsd: null, depositBasis: null },
-    { label: "Video Reels", priceUsd: 25, depositUsd: 10, depositBasis: null },
-  ],
-} as unknown as QuotableProduct;
-const withGroqExtras = quoteDeposit(GROQ_EXTRAS, "photoshoot", {
-  people: 2,
-  extraLabels: ["Camel Ride", "Video Reels"],
-});
-ok("an extra with a null deposit adds nothing", withGroqExtras.ok && withGroqExtras.quote.totalCents === 2500 + 1000);
-ok("an extra with a null basis is charged per booking", withGroqExtras.ok && withGroqExtras.quote.lines[1].quantity === 1);
-
-// A cap that IS set but is nonsense must still be refused — the fix must not
-// have turned the check off, only taught it what "absent" means.
-for (const badCap of [-5, Number.NaN, "100", {}]) {
-  const product = { ...FROM_GROQ, depositMaxUsd: badCap } as unknown as QuotableProduct;
-  const offer = depositOffer(product, "photoshoot");
-  ok(
-    `a cap of ${JSON.stringify(badCap)} must be refused, not ignored`,
-    !offer.available && offer.reason === "badCap"
-  );
-  ok(`and explained as a cap problem, not a missing amount`, explainOffer("badCap").includes("Most the deposit can reach"));
-}
-// A real cap still caps.
-const realCap = quoteDeposit(
-  { ...FROM_GROQ, depositMaxUsd: 50 } as unknown as QuotableProduct,
-  "photoshoot",
-  { people: 10, extraLabels: [] }
-);
-ok("a cap that is set still applies", realCap.ok && realCap.quote.totalCents === 5000);
-
-// The site default, null as siteSettings actually returns it.
-const INHERITS = { slug: "i", title: "I", bookable: true, depositUsd: null, depositMaxUsd: null } as unknown as QuotableProduct;
-ok(
-  "a null product amount falls through to the site default",
-  quoteDeposit(INHERITS, "photoshoot", { people: 1, extraLabels: [] }, 20).ok
-);
-ok(
-  "and with a null default too, there is honestly nothing to charge",
-  !quoteDeposit(INHERITS, "photoshoot", { people: 1, extraLabels: [] }, undefined).ok
-);
-
-// ---------------------------------------------------------------------------
-// 12. One place assembles the rail, because four places used to.
-//
-// The page, the secure page and the booking route each built the same answer
-// out of depositOffer + payPalLink + paymentProviderFor, in their own order.
-// Three of them hardcoded `{ isAdmin: false }` while the route passed the real
-// viewer, so an admin testing the sandbox was told "No payment now" by a page
-// and then handed PayPal buttons by the route. That is the fourth time a page
-// and the route have disagreed about money in this codebase; this check is
-// here so there is no fifth.
-//
-// Only productRail.ts may assemble it. Everything else reads the answer.
+// 11. One place assembles the rail, because four places used to. Unchanged by
+//     the pricing rebuild, and still the thing that stops a page and the route
+//     naming different numbers.
 const sources = await Promise.all(
   [
     "src/app/[locale]/(site)/photoshoots/[slug]/page.tsx",
@@ -488,37 +300,51 @@ const sources = await Promise.all(
 for (const { file, text } of sources) {
   ok(`${file} reads the rail from productRail`, text.includes("productRail("));
   ok(`${file} does not assemble one of its own`, !text.includes("resolveRail("));
-  ok(
-    `${file} does not pick a provider for itself`,
-    !text.includes("paymentProviderFor(")
-  );
+  ok(`${file} does not pick a provider for itself`, !text.includes("paymentProviderFor("));
 }
 
-// 13. Wherever a deposit can be quoted, the customer is shown the figure.
-//
-// Both symptoms the popup showed were this: a $25-per-person deposit for two
-// people is $50, the quote said so, and nothing on screen said it. The footer
-// hid the figure behind the rail, and the breakdown asked for two lines when
-// a per-person deposit for a group produces exactly one.
+// 12. And the frontend does no pricing of its own. Every figure in the popup
+//     comes from quoteDeposit; a multiplication written in the component is a
+//     second pricing system that will drift from the server's.
 const dialog = await readFile("src/components/SecureDateButton.tsx", "utf8");
 ok(
   "the dialog resolves the viewer's own payment mode rather than trusting a static page",
   dialog.includes("/api/bookings/rail") && dialog.includes("const mode = viewerMode ?? paymentMode")
 );
+ok("the dialog no longer computes the deposit itself", !/extrasTotal\(/.test(dialog));
+ok("the dialog reads its figures from the shared quote", dialog.includes("quoteDeposit("));
 ok(
-  "and no money sentence still reads the page's mode directly",
-  !/\bpaymentMode (===|!==) "/.test(dialog)
-);
-const forTwo = quoteDeposit(FROM_GROQ, "photoshoot", { people: 2, extraLabels: [] });
-ok("a $25 per-person deposit for two people is $50", forTwo.ok && forTwo.quote.totalCents === 5000);
-ok(
-  "and it arrives as one line charged twice, which is why a two-line test missed it",
-  forTwo.ok && forTwo.quote.lines.length === 1 && forTwo.quote.lines[0].quantity === 2
+  "the dialog shows the booking total and the percentage, not just the amount due",
+  dialog.includes("bookingTotalCents") && dialog.includes("depositPercent")
 );
 ok(
-  "so the breakdown opens on quantity, not on the number of lines",
-  dialog.includes("lines.length > 1 || lines.some((line) => line.quantity > 1)")
+  "the dialog does not promise the balance is never charged online",
+  /never charged online/i.test(dialog)
 );
+
+// ---------------------------------------------------------------------------
+// 13. The published promise and the code agree on the percentage.
+//
+// The site states the deposit share in three places a customer reads before
+// they ever open the popup. It said 20% while this module was about to start
+// charging 25% — a contradiction about money, on the same site, and nothing
+// would have caught it. These are static sentences, so they cannot follow a
+// Studio change by themselves; this check is what makes the divergence loud.
+const published = await Promise.all(
+  ["src/content/site.ts", "src/content/faqHub.ts", "src/content/customizePage.ts"].map(
+    async (file) => ({ file, text: await readFile(file, "utf8") })
+  )
+);
+for (const { file, text } of published) {
+  const stated = [...text.matchAll(/(\d+(?:\.\d+)?)% (?:down payment|deposit)/g)].map((m) => m[1]);
+  ok(`${file} no longer states a deposit percentage at all`, stated.length > 0);
+  for (const value of stated) {
+    ok(
+      `${file} promises a ${value}% deposit while the code charges ${DEFAULT_DEPOSIT_PERCENT}% — change both or neither`,
+      Number(value) === DEFAULT_DEPOSIT_PERCENT
+    );
+  }
+}
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
@@ -528,8 +354,7 @@ if (errors.length > 0) {
   process.exit(1);
 }
 console.log(
-  "check-quote: ok — deposits are computed in whole cents from product configuration only, a selection " +
-    "cannot carry its own price, broken rules produce no deposit, legacy flat amounts are unchanged, and " +
-    "a quote records the rates that produced it, one function assembles the rail, and a deposit that can be " +
-    "quoted is a deposit the customer can see."
+  "check-quote: ok — the deposit is a percentage of the backend price times the quantities, computed in " +
+    "whole cents, never larger than the booking it is a share of; a selection cannot carry its own price; " +
+    "Instant Booking needs both a price and the switch; and a quote records the figures that produced it."
 );
