@@ -8,13 +8,13 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { site } from "@/content/site";
 
-// A Take Egypt Home request: a reservation, an availability question, or a
+// A Boutique request: a reservation, an availability question, or a
 // shop appointment, depending on the category and where the traveller is.
 //
 // It is a request rather than an order because the site has no payment rail
 // and, more importantly, because none of these pieces has a settled price
 // until someone has seen the name, the photograph or the size. The reply is
-// where the specification and the price are agreed. See docs/take-egypt-home.md.
+// where the specification and the price are agreed. See docs/boutique.md.
 //
 // Multipart rather than JSON so the papyrus photograph can travel with the
 // request instead of becoming a second step the customer has to remember.
@@ -147,7 +147,7 @@ export async function POST(request: NextRequest) {
     answers,
     photoUrl,
     photoNote,
-    pageUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com"}/take-egypt-home/${category.slug}`,
+    pageUrl: `${process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com"}/boutique/${category.slug}`,
   });
 
   const result = await sendEmail({

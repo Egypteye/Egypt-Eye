@@ -1327,7 +1327,7 @@ export type TransfersPageContent = {
 };
 
 // ---------------------------------------------------------------------------
-// Take Egypt Home — the shopping section (see docs/take-egypt-home.md).
+// The Boutique — the shopping section (see docs/boutique.md).
 //
 // Modelled as a concierge catalogue rather than a store: there is no cart and
 // no price field that has to be filled, because the thing being sold is a
@@ -1380,7 +1380,7 @@ export type TreasureProduct = {
   /**
    * A sample listing standing in for a real one. Marked on the card, kept out
    * of structured data, and checked by scripts/check-treasures.mts — see the
-   * placeholder section of docs/take-egypt-home.md.
+   * placeholder section of docs/boutique.md.
    */
   placeholder: boolean;
   status: TreasureStatus;
@@ -1447,10 +1447,10 @@ export type TreasureCategory = {
   seo?: PageSeo;
 };
 
-/** The Take Egypt Home landing page, edited in the Studio. Every field is
+/** The Boutique landing page, edited in the Studio. Every field is
  *  optional: the page falls back to its built-in copy for anything unset, so
  *  an empty document renders exactly what ships in the repo. */
-export type TakeEgyptHomePage = {
+export type BoutiquePage = {
   heroEyebrow?: string;
   heroTitle?: string;
   heroSubtitle?: string;

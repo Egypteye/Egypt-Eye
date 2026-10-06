@@ -1,5 +1,5 @@
 /**
- * Guards Take Egypt Home, whose failure mode is a sentence rather than a crash.
+ * Guards The Boutique, whose failure mode is a sentence rather than a crash.
  *
  * This section sells commissioned objects with no settled price, made by
  * people Egypt Eye works with rather than employs. Every risk here is the same
@@ -51,7 +51,7 @@ const UNSUPPORTED = [
 function scan(where: string, text: string) {
   for (const { pattern, why } of UNSUPPORTED) {
     if (pattern.test(text)) {
-      errors.push(`${where}: says "${text.match(pattern)?.[0]}" — ${why}. See docs/take-egypt-home.md.`);
+      errors.push(`${where}: says "${text.match(pattern)?.[0]}" — ${why}. See docs/boutique.md.`);
     }
   }
 }
@@ -137,7 +137,7 @@ for (const product of treasureProducts) {
 // all passed while production was down: `personalization` was missing from
 // the GROQ projection, so the moment a treasureCategory document existed in
 // Sanity the renderer got `undefined` and every build died prerendering
-// /take-egypt-home/cartouches. No check that only reads local content can see
+// /boutique/cartouches. No check that only reads local content can see
 // that, and no build without a live Sanity connection can reproduce it.
 //
 // So this section asserts against the shape Sanity actually returns.

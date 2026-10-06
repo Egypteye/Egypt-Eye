@@ -9,7 +9,7 @@
  * The property that matters most is negative: an update must never blank a
  * price, a photograph, a variant or an SEO override that exists only in the
  * Studio. Those fields have no counterpart in the content files, and the
- * whole point of Take Egypt Home being Studio-editable is that they survive.
+ * whole point of The Boutique being Studio-editable is that they survive.
  */
 import { readFileSync } from "node:fs";
 import { planTreasureUpdate, sameValue } from "../src/lib/migrationPlan";

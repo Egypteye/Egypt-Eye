@@ -98,12 +98,12 @@ export default async function TreasureCategoryPage({
   const ui = await trAll([
     "Sample listing",
     "Photography and final details to come",
-    "Take Egypt Home",
+    "The Boutique",
   ]);
 
   const path = `${TREASURES_PATH}/${category.slug}`;
   const breadcrumbs = breadcrumbJsonLd([
-    { name: "Take Egypt Home", path: TREASURES_PATH },
+    { name: "The Boutique", path: TREASURES_PATH },
     { name: category.title, path },
   ]);
 
@@ -126,7 +126,7 @@ export default async function TreasureCategoryPage({
         <Container className="relative flex min-h-[46vh] flex-col justify-end gap-4 pb-14 pt-32">
           <nav aria-label="Breadcrumb" className="text-sm text-cream/70">
             <Link href={to(TREASURES_PATH)} className="hover:text-cream">
-              {ui["Take Egypt Home"]}
+              {ui["The Boutique"]}
             </Link>
             <span aria-hidden className="mx-2">
               /
@@ -424,7 +424,7 @@ export default async function TreasureCategoryPage({
       <section className="bg-sand/40 py-14">
         <Container>
           <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
-            <T>Also in Take Egypt Home</T>
+            <T>Also in The Boutique</T>
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             {treasureCategories

@@ -84,7 +84,7 @@ import { planTreasureUpdate } from "@/lib/migrationPlan";
 //
 //   https://yoursite.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=nav
 //
-// Take Egypt Home's documents are the exception to all of the above: they
+// The Boutique's documents are the exception to all of the above: they
 // are seeded with createIfNotExists and then left alone, because Egypt Eye
 // edits them in the Studio and a resync must never undo that.
 //
@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
   // below, and there is no local content to reset them to anyway.
   const resetMedia = request.nextUrl.searchParams.get("reset") === "media";
 
-  // `&update=1` lets the Take Egypt Home block patch documents that already
+  // `&update=1` lets the Boutique block patch documents that already
   // exist, instead of only seeding ones that don't. It is a dry run until
   // `&apply=1` joins it — the same two-step shape as the story purge, and the
   // reason is the same: this writes to the live dataset, and the diff is
@@ -835,7 +835,7 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Take Egypt Home.
+  // The Boutique.
   //
   // createIfNotExists, NOT createOrReplace — the only block in this file that
   // works that way, and deliberately. Everything else here is code-authored

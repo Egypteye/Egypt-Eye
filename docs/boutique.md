@@ -1,4 +1,4 @@
-# Take Egypt Home
+# The Boutique
 
 The shopping section, and the decisions behind it.
 
@@ -19,23 +19,45 @@ So the section is built around the trip, not around a cart. Every page answers
 
 ## Naming
 
-**Take Egypt Home**, at `/take-egypt-home`.
+**The Boutique**, at `/boutique`, with **Shop & Collect** as the label above
+the name and *"Take a little piece of Egypt home."* as the slogan.
 
-Rejected: *Egyptian Treasures* — the site's own tagline is already "Unveiling
-Egypt's Treasures", and reusing it for a shop blurs the brand's main line.
-*Shop* and *Egypt Eye Shopping* were rejected for describing the mechanism
-rather than the promise, and for pulling the section toward the generic
-souvenir-store positioning the brief explicitly rules out.
+It launched as **Take Egypt Home** at `/take-egypt-home` and was renamed
+because that name read as generic and under-commercial — it described a
+feeling, and a section that sells needs to read as a place you can buy from.
+"The Boutique" is a shop without being a souvenir shop, and carries the price
+level the pieces actually sit at. "Shop & Collect" sits above it as an eyebrow
+rather than inside brackets, because it is the mechanic — buy it now, collect
+it there — and a mechanic reads as a service.
+
+Deliberately NOT leaned into: anything heavier on ancient Egypt. The pieces
+are already cartouches and papyrus; the frame around them earns its premium by
+being modern and restrained, not by adding more pharaoh.
+
+Rejected earlier, and still rejected: *Egyptian Treasures* — the site's own
+tagline is already "Unveiling Egypt's Treasures", and reusing it for a shop
+blurs the brand's main line. Plain *Shop* and *Egypt Eye Shopping* describe the
+mechanism with none of the price level.
+
+### The rename, and why the old URL still works
+
+`/take-egypt-home` and `/take-egypt-home/:category` 301 to their `/boutique`
+equivalents, in English and in all five prefixed locales — four rules in
+`next.config.ts`. A 301 tells Google the page moved rather than vanished, so
+the ranking the old address earned transfers, and any link already shared still
+arrives somewhere real. The internal names did **not** change: every Sanity
+document is still typed `treasureProduct`, `treasureCategory` or
+`treasureLandingPage`, and renaming a `_type` would orphan the lot.
 
 Category routes carry the search terms rather than the brand:
 
 | Route | Head terms |
 |---|---|
-| `/take-egypt-home` | what to buy in Egypt, authentic Egyptian souvenirs, gifts from Egypt |
-| `/take-egypt-home/cartouches` | Egyptian cartouche, gold/silver cartouche, name in hieroglyphs |
-| `/take-egypt-home/papyrus` | personalised Egyptian papyrus, custom papyrus |
-| `/take-egypt-home/clothing` | Egyptian clothing, traditional Egyptian clothes |
-| `/take-egypt-home/essence-oils` | Egyptian perfume oils, essence oils, alcohol-free |
+| `/boutique` | what to buy in Egypt, authentic Egyptian souvenirs, gifts from Egypt |
+| `/boutique/cartouches` | Egyptian cartouche, gold/silver cartouche, name in hieroglyphs |
+| `/boutique/papyrus` | personalised Egyptian papyrus, custom papyrus |
+| `/boutique/clothing` | Egyptian clothing, traditional Egyptian clothes |
+| `/boutique/essence-oils` | Egyptian perfume oils, essence oils, alcohol-free |
 
 ## The two journeys, and why they are the top-level split
 
@@ -53,8 +75,10 @@ and treat the website listing as a preview.
 
 ## What is deliberately NOT built
 
-**No checkout.** The site has no payment rail — transfers, tours and Weekly
-Trips all run on request-then-confirm, and this follows them. Every CTA is
+**No checkout.** Deposits are taken by PayPal on photoshoots and experiences
+now, but nothing here is priced until it is specified — a cartouche depends on
+metal and name length, clothing on a fitting — so there is no amount a cart
+could charge. This section stays request-then-confirm. Every CTA is
 reserve, enquire, or book an appointment. Building a cart would have been the
 single biggest way to make this feel bolted on.
 
@@ -168,11 +192,11 @@ Everything below is edited in the Studio at `/studio`. No deploy, no developer.
 
 | What | Where |
 |---|---|
-| Products — add, edit, hide, reorder, delete | **Take Egypt Home — Product** |
+| Products — add, edit, hide, reorder, delete | **The Boutique — Product** |
 | Prices, sale prices, "on request" | Each product's **Price**, plus per-variant prices |
 | Product photos, gallery, alt text, captions | Each product's **Main photo** and **Gallery** |
-| Categories — name, hero, intro, FAQs, order, active | **Take Egypt Home — Category** |
-| Landing page — hero, copy, featured products, FAQs | **Take Egypt Home — Landing Page** |
+| Categories — name, hero, intro, FAQs, order, active | **The Boutique — Category** |
+| Landing page — hero, copy, featured products, FAQs | **The Boutique — Landing Page** |
 
 Reordering is the `Display order` number on products and categories: lower
 comes first. Gallery images reorder by dragging.

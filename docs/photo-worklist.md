@@ -47,7 +47,7 @@ Two things worth knowing:
 
 ### Your own products (no photo at all) — 8
 
-Studio: **Take Egypt Home — Product**
+Studio: **The Boutique — Product**
 
 - [ ] `cartouche-double-name` — Two-name cartouche
 - [ ] `cartouche-open-back` — Open-back cartouche
@@ -58,9 +58,9 @@ Studio: **Take Egypt Home — Product**
 - [ ] `clothing-embroidered-kaftan` — Embroidered kaftan
 - [ ] `oil-collection-sampler` — Three-oil sampler
 
-### Take Egypt Home category heroes — 4
+### The Boutique category heroes — 4
 
-Studio: **Take Egypt Home — Category**
+Studio: **The Boutique — Category**
 
 - [ ] `cartouches` — Cartouches
 - [ ] `papyrus` — Papyrus

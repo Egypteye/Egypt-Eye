@@ -13,7 +13,7 @@ import type { TreasureCategory } from "@/content/types";
  * field, so the GROQ projection could not return it, and `TreasureCategory`
  * declares it required — so the moment the first treasureCategory document
  * existed in Sanity, Sanity content won wholesale, `personalization` arrived
- * undefined, and every build died prerendering /take-egypt-home/cartouches
+ * undefined, and every build died prerendering /boutique/cartouches
  * with "Cannot read properties of undefined (reading 'map')".
  *
  * The type promised something the query could not keep. `safeFetch` casts the

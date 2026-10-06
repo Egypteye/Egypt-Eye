@@ -89,7 +89,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     { url: `${siteUrl}/customize`, changeFrequency: "monthly", priority: 0.7 },
     { url: `${siteUrl}/about`, changeFrequency: "yearly", priority: 0.5 },
     { url: `${siteUrl}/faq`, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${siteUrl}/take-egypt-home`, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${siteUrl}/boutique`, changeFrequency: "monthly", priority: 0.8 },
     { url: `${siteUrl}/testimonials`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/privacy`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/terms`, changeFrequency: "yearly", priority: 0.2 },
@@ -101,7 +101,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
   ];
 
   const treasureRoutes: MetadataRoute.Sitemap = treasureCategories.map((c) => ({
-    url: `${siteUrl}/take-egypt-home/${c.slug}`,
+    url: `${siteUrl}/boutique/${c.slug}`,
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));

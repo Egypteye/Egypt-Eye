@@ -39,7 +39,7 @@ import {
   storiesQuery,
   treasureCategoriesQuery,
   treasureProductsQuery,
-  takeEgyptHomePageQuery,
+  boutiquePageQuery,
   storyBySlugQuery,
   testimonialsCountQuery,
   testimonialsPageQuery,
@@ -95,7 +95,7 @@ import type {
   Tour,
   TreasureCategory,
   TreasureProduct,
-  TakeEgyptHomePage,
+  BoutiquePage,
 } from "@/content/types";
 
 // Governs every Sanity fetch site-wide (all tours, stories, experiences,
@@ -963,7 +963,7 @@ export const getHomepage = translated(getHomepageInner);
 export const getListingPages = translated(getListingPagesInner);
 
 // ---------------------------------------------------------------------------
-// Take Egypt Home.
+// The Boutique.
 //
 // Same precedence as everything else here: Sanity wins once it has content,
 // and the content files are the fallback so the section still renders on a
@@ -1001,10 +1001,10 @@ async function getTreasureProductsInner(): Promise<TreasureProduct[]> {
     .sort((a, b) => (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER));
 }
 
-async function getTakeEgyptHomePageInner(): Promise<TakeEgyptHomePage | null> {
-  return (await safeFetch<TakeEgyptHomePage>(takeEgyptHomePageQuery)) ?? null;
+async function getBoutiquePageInner(): Promise<BoutiquePage | null> {
+  return (await safeFetch<BoutiquePage>(boutiquePageQuery)) ?? null;
 }
 
 export const getTreasureCategories = translated(getTreasureCategoriesInner);
 export const getTreasureProducts = translated(getTreasureProductsInner);
-export const getTakeEgyptHomePage = translated(getTakeEgyptHomePageInner);
+export const getBoutiquePage = translated(getBoutiquePageInner);

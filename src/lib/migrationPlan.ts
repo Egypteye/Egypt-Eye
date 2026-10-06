@@ -1,4 +1,4 @@
-// Works out what a Take Egypt Home update would change, before anything is
+// Works out what a Boutique update would change, before anything is
 // written.
 //
 // This is a separate, pure module for one reason: it decides what to overwrite

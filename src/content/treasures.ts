@@ -1,7 +1,11 @@
 import type { TreasureCategory, TreasureProduct } from "./types";
 
-// Take Egypt Home — the shopping section. See docs/take-egypt-home.md for the
-// naming, the two-journey split, and the list of business facts still needed.
+// The Boutique — the shopping section. See docs/boutique.md for the naming,
+// the two-journey split, and the list of business facts still needed.
+//
+// It was called "Take Egypt Home" until the rename; the internal names are
+// deliberately still `treasure*`, which is what every Sanity document in the
+// dataset is typed as. Renaming those would orphan the lot.
 //
 // WHAT IS NOT IN THIS FILE, and must not be added without Egypt Eye supplying
 // it: prices, metals, karats, weights, hallmarks, production times, collection
@@ -14,7 +18,7 @@ import type { TreasureCategory, TreasureProduct } from "./types";
 // scripts/check-treasures.mts. Shipping twenty invented cartouches would have
 // been twenty business facts nobody supplied.
 
-export const TREASURES_PATH = "/take-egypt-home";
+export const TREASURES_PATH = "/boutique";
 
 export const treasureCategories: TreasureCategory[] = [
   // -------------------------------------------------------------------------
@@ -446,7 +450,7 @@ export const treasureCategories: TreasureCategory[] = [
 //
 // Every one is marked `placeholder: true` and carries no price, no metal and no
 // dimensions, because none of those have been supplied. They exist to show the
-// grid and to be replaced. See "What I need from you" in docs/take-egypt-home.md.
+// grid and to be replaced. See "What I need from you" in docs/boutique.md.
 // -----------------------------------------------------------------------------
 
 export const treasureProducts: TreasureProduct[] = [
@@ -459,7 +463,7 @@ export const treasureProducts: TreasureProduct[] = [
   // not state, and what therefore appears nowhere: price, karat, silver
   // purity, weight, dimensions, whether a chain is included, and how many
   // characters a cartouche can hold. Those are in the ask list in
-  // docs/take-egypt-home.md.
+  // docs/boutique.md.
   {
     slug: "khufu-cartouche",
     category: "cartouches",

@@ -6,7 +6,7 @@ import { Reveal } from "@/components/Reveal";
 import { SectionHeading } from "@/components/SectionHeading";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TREASURES_PATH } from "@/content/treasures";
-import { getTakeEgyptHomePage, getTreasureCategories } from "@/sanity/fetchers";
+import { getBoutiquePage, getTreasureCategories } from "@/sanity/fetchers";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata } from "@/content/seo";
 import { alternatesFor } from "@/i18n/alternates";
 import { getLocale } from "@/i18n/dictionary";
@@ -21,17 +21,24 @@ import type { Faq } from "@/content/types";
 // a visitor to compare a silver pendant with a bottle of oil.
 //
 // The two-journey split is the organising idea of the whole section and it is
-// stated here before any product is shown. See docs/take-egypt-home.md.
+// stated here before any product is shown. See docs/boutique.md.
+//
+// Named "Take Egypt Home" until the rename. "The Boutique" carries the shop;
+// "Shop & Collect" is the eyebrow above it, because it is the mechanic — you
+// buy it now, you collect it there — and a mechanic reads as a service rather
+// than as a subtitle in brackets.
 
-const TITLE = "Take Egypt Home";
+const TITLE = "The Boutique";
+/** The line under the name, everywhere the name is presented as a section. */
+const SLOGAN = "Take a little piece of Egypt home.";
 const DESCRIPTION =
-  "Commission a cartouche in your own name, a papyrus with your own face in it, Egyptian clothing fitted in person, or fragrance oils chosen by smelling them — arranged before you arrive and ready during your trip.";
+  "Shop and collect: a cartouche in your own name, a papyrus with your own face in it, Egyptian clothing fitted in person, or fragrance oils chosen by smelling them. Ordered before you fly, finished and waiting when you land.";
 
 const LANDING_FAQS: Faq[] = [
   {
-    question: "Is this a shop?",
+    question: "How does buying actually work?",
     answer:
-      "Not quite. There is no cart and nothing is charged here. You tell us what you are after, we come back with the specification, the price and the date it can be ready, and you decide then. It works the way the rest of Egypt Eye works — a conversation with a person, not a checkout.",
+      "You choose the piece and tell us the details; we come back with the specification, the price and the date it can be ready; you decide then. Nothing is charged on this page. Everything here is made or fitted to order, so the price depends on what you choose — which is why it is confirmed by a person rather than guessed by a checkout.",
   },
   {
     question: "Why order before I arrive?",
@@ -46,7 +53,7 @@ const LANDING_FAQS: Faq[] = [
   {
     question: "Do I have to be booked on a tour with you?",
     answer:
-      "No. This is open to anyone travelling to Egypt. It is more useful if we are already arranging your trip, because we know your dates and where you will be, but it is not a condition.",
+      "No. The Boutique is open to anyone travelling to Egypt. It is more useful if we are already arranging your trip, because we know your dates and where you will be, but it is not a condition.",
   },
   {
     question: "How do I actually collect what I order?",
@@ -56,7 +63,7 @@ const LANDING_FAQS: Faq[] = [
   {
     question: "Can I have something sent to me instead?",
     answer:
-      "Ask. This section is built around collection during a trip, which is what makes it different from ordering online from home, so shipping is handled case by case rather than promised on this page.",
+      "Ask. The Boutique is built around collecting on your trip, which is what makes it different from ordering online from home, so shipping is handled case by case rather than promised on this page.",
   },
 ];
 
@@ -64,7 +71,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
   return {
     ...resolveMetadata({
-      title: `${TITLE} — Egyptian Cartouches, Papyrus, Clothing & Essence Oils`,
+      title: `${TITLE} — Shop & Collect: Cartouches, Papyrus, Clothing & Essence Oils`,
       description: DESCRIPTION,
       path: TREASURES_PATH,
       locale,
@@ -73,34 +80,32 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default async function TakeEgyptHomePage() {
+export default async function BoutiquePage() {
   const locale = await getLocale();
   const to = (path: string) => localePath(path, locale);
 
   // Every field falls back to the copy that ships in this file, so an empty
   // Studio document renders exactly what the repo does and editing one field
   // does not require filling in the other twelve.
-  const [page, rawCategories] = await Promise.all([getTakeEgyptHomePage(), getTreasureCategories()]);
+  const [page, rawCategories] = await Promise.all([getBoutiquePage(), getTreasureCategories()]);
   const categories = await localizeContent(rawCategories, locale);
   const faqs = await localizeContent(page?.faqs?.length ? page.faqs : LANDING_FAQS, locale);
   const copy = await localizeContent(
     {
-      heroEyebrow: page?.heroEyebrow ?? "Take Egypt Home",
-      heroTitle: page?.heroTitle ?? "The best thing you bring back shouldn't be bought at the airport",
-      heroSubtitle:
-        page?.heroSubtitle ??
-        "Four things Egypt makes properly, arranged before you arrive and ready during your trip — with your name, your face or your fitting in them.",
+      heroEyebrow: page?.heroEyebrow ?? "Shop & Collect",
+      heroTitle: page?.heroTitle ?? "The Boutique",
+      heroSubtitle: page?.heroSubtitle ?? SLOGAN,
       intro:
         page?.intro ??
-        "Most Egypt souvenirs are bought in the last hour of a trip, from whatever happens to be near the hotel. The good ones are made to order and take time — which is exactly the thing a traveller never has and a travel company always does. We know your dates. That is the whole idea.",
-      categoriesEyebrow: page?.categoriesEyebrow ?? "Explore",
+        "Four things Egypt makes properly, made to order and collected on your trip. The good pieces take time, which is the one thing a traveller never has and a travel company always does — we already know your dates. Order before you fly and it is finished, not started, when you land.",
+      categoriesEyebrow: page?.categoriesEyebrow ?? "Shop",
       categoriesTitle: page?.categoriesTitle ?? "Four collections",
-      journeysTitle: page?.journeysTitle ?? "Two ways in, depending on where you are",
-      giftsTitle: page?.giftsTitle ?? "The ones you bring back for other people",
+      journeysTitle: page?.journeysTitle ?? "Two ways to shop and collect",
+      giftsTitle: page?.giftsTitle ?? "The pieces you bring back for other people",
       giftsBody:
         page?.giftsBody ??
         "A cartouche carries a name, so it is the rare gift that cannot be bought for the wrong person. A papyrus can hold a family that never came on the trip. An oil is small enough to bring six of. If you tell us who they are for, we will tell you which of the four actually suits them.",
-      giftsCtaLabel: page?.giftsCtaLabel ?? "Start with a name",
+      giftsCtaLabel: page?.giftsCtaLabel ?? "Shop cartouches",
     },
     locale
   );
@@ -121,16 +126,22 @@ export default async function TakeEgyptHomePage() {
             "https://images.unsplash.com/photo-1783713335436-d4fc69a6d8c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600"
           }
           tone="desert"
-          alt="Egyptian souvenirs and crafts laid out on a market stall"
+          alt="Egyptian cartouches, papyrus, clothing and fragrance oils"
           className="absolute inset-0"
           priority
           sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20" />
+        {/* Three lines and nothing else. The mechanic sits above the name as a
+            label, the name is the h1, and the slogan carries the feeling — the
+            substance moves to the band directly below, which is what keeps a
+            shop front feeling like a shop front rather than a page of copy. */}
         <Container className="relative flex min-h-[52vh] flex-col justify-end gap-4 pb-16 pt-32">
           <p className="text-sm font-semibold uppercase tracking-[0.3em] text-gold-light">{copy.heroEyebrow}</p>
-          <h1 className="max-w-3xl font-display text-4xl font-semibold text-cream sm:text-5xl">{copy.heroTitle}</h1>
-          <p className="max-w-2xl text-lg leading-relaxed text-cream/85">{copy.heroSubtitle}</p>
+          <h1 className="max-w-3xl font-display text-5xl font-semibold text-cream sm:text-6xl">{copy.heroTitle}</h1>
+          <p className="max-w-2xl font-display text-xl leading-relaxed text-cream/90 sm:text-2xl">
+            {copy.heroSubtitle}
+          </p>
         </Container>
       </section>
 
@@ -260,7 +271,7 @@ export default async function TakeEgyptHomePage() {
                 <h2 className="mt-2 font-display text-3xl font-semibold text-ink">{copy.giftsTitle}</h2>
                 <p className="mt-4 leading-relaxed text-ink-soft">{copy.giftsBody}</p>
                 <Link
-                  href={to("/take-egypt-home/cartouches")}
+                  href={to(`${TREASURES_PATH}/cartouches`)}
                   className="mt-6 inline-block rounded-full bg-gold px-7 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
                 >
                   {copy.giftsCtaLabel}
@@ -297,7 +308,7 @@ export default async function TakeEgyptHomePage() {
             <SectionHeading eyebrow="Questions" title="Before you ask" align="center" />
           </Reveal>
           <Reveal delay={100} className="mt-10">
-            <FaqAccordion faqs={faqs} idPrefix="take-egypt-home" />
+            <FaqAccordion faqs={faqs} idPrefix="boutique" />
           </Reveal>
         </Container>
       </section>

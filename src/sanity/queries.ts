@@ -254,7 +254,7 @@ export const signatureExperienceBySlugQuery = groq`*[_type == "signatureExperien
 export const allSignatureExperienceSlugsQuery = groq`*[_type == "signatureExperience" && status in ["published", "comingSoon"]].slug.current`;
 
 // ---------------------------------------------------------------------------
-// Take Egypt Home. Hidden products are filtered in GROQ rather than in the
+// The Boutique. Hidden products are filtered in GROQ rather than in the
 // page, so a hidden piece cannot leak through a surface that forgot to check.
 // ---------------------------------------------------------------------------
 const treasureImageFields = groq`image{..., "alt": alt, "caption": caption}`;
@@ -278,7 +278,7 @@ export const treasureProductsQuery = groq`*[_type == "treasureProduct" && status
   specs[]{label, value}, tags, faqs[]{question, answer}, seo
 }`;
 
-export const takeEgyptHomePageQuery = groq`*[_type == "takeEgyptHomePage"][0] {
+export const boutiquePageQuery = groq`*[_type == "takeEgyptHomePage"][0] {
   heroEyebrow, heroTitle, heroSubtitle, heroImage{..., "alt": alt}, intro,
   categoriesTitle, categoriesEyebrow, journeysTitle,
   giftsTitle, giftsBody, giftsCtaLabel,

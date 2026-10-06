@@ -1,7 +1,17 @@
 import { defineField, defineType } from "sanity";
 import { imageCreditField, imageTones, seoFields, translationsField } from "./objects";
 
-// Take Egypt Home — the shopping section, managed from the Studio.
+// The Boutique — the shopping section, managed from the Studio.
+//
+// The document types are still named `treasureProduct`, `treasureCategory`
+// and — the one that still carries the old name — `takeEgyptHomePage`, and
+// they must stay that way. A Sanity document's `_type` is how it is found, and
+// the landing page is stored with `_id: "takeEgyptHomePage"` too; renaming
+// either would leave the live documents pointing at a type the Studio no
+// longer defines, and they would simply stop appearing. The export below keeps
+// the old spelling deliberately, so the identifier matches the string in the
+// dataset. Only the TITLES — the part a human reads in the Studio — changed
+// with the rename.
 //
 // ONE PRICING MODEL, NOT FOUR. The obvious reading of the brief is a
 // different price shape per category: karat and weight for cartouches, base
@@ -88,7 +98,7 @@ export const productStatuses = [
 
 export const treasureProduct = defineType({
   name: "treasureProduct",
-  title: "Take Egypt Home — Product",
+  title: "The Boutique — Product",
   type: "document",
   fields: [
     defineField({ name: "name", title: "Name", type: "string", validation: (r) => r.required() }),
@@ -253,7 +263,7 @@ export const treasureProduct = defineType({
 
 export const treasureCategory = defineType({
   name: "treasureCategory",
-  title: "Take Egypt Home — Category",
+  title: "The Boutique — Category",
   type: "document",
   fields: [
     defineField({ name: "title", title: "Name", type: "string", validation: (r) => r.required() }),
@@ -369,7 +379,7 @@ export const treasureStep = defineType({
 
 export const takeEgyptHomePage = defineType({
   name: "takeEgyptHomePage",
-  title: "Take Egypt Home — Landing Page",
+  title: "The Boutique — Landing Page",
   type: "document",
   fields: [
     defineField({ name: "heroEyebrow", title: "Hero eyebrow", type: "string" }),

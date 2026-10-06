@@ -928,7 +928,7 @@ export function reviewSubmissionEmail({
 }
 
 /**
- * A Take Egypt Home request, sent to the desk.
+ * A Boutique request, sent to the desk.
  *
  * Deliberately says "request" and not "order" throughout: nothing here has a
  * settled price, and the reply is where the specification is agreed. The
@@ -992,7 +992,7 @@ export function treasureRequestTeamEmail({
   const html = baseLayout({
     preheader: `${name} — ${categoryTitle}${productName ? `, ${productName}` : ""}.`,
     bodyHtml: `
-      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">Take Egypt Home — Request</p>
+      <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">The Boutique — Request</p>
       <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(name)} — ${escapeHtml(categoryTitle)}</p>
       <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
       ${photoHtml}
@@ -1000,14 +1000,14 @@ export function treasureRequestTeamEmail({
       ${ctaButton("Open the category page", pageUrl)}
       <p style="margin:16px 0 0;font-size:12px;color:#889;">Reply to this email to reach the traveller directly.</p>
     `,
-    footerHtml: `Sent from Take Egypt Home.`,
+    footerHtml: `Sent from The Boutique.`,
   });
 
-  const text = `Take Egypt Home — Request\n${name} — ${categoryTitle}\n\n${rows
+  const text = `The Boutique — Request\n${name} — ${categoryTitle}\n\n${rows
     .map(([l, v]) => `${l}: ${v}`)
     .join("\n")}${photoUrl ? `\n\nPhoto: ${photoUrl}` : photoNote ? `\n\n${photoNote}` : ""}\n\nNothing has been priced or promised.\n${pageUrl}`;
 
-  return { subject: `Take Egypt Home: ${categoryTitle} — ${name}`, html, text };
+  return { subject: `The Boutique: ${categoryTitle} — ${name}`, html, text };
 }
 
 /**
@@ -1038,12 +1038,12 @@ export function treasureRequestConfirmationEmail({
       <p style="margin:0 0 16px;">Thank you — we have your request${productName ? ` for the <strong>${escapeHtml(productName)}</strong>` : ""} in ${escapeHtml(categoryTitle)}.</p>
       <p style="margin:0 0 16px;">${escapeHtml(next)}</p>
       <p style="margin:0 0 16px;font-size:13px;color:#556;">Nothing has been charged, and nothing is confirmed yet.</p>
-      ${ctaButton("See the other collections", `${SITE_URL}/take-egypt-home`)}
+      ${ctaButton("See the other collections", `${SITE_URL}/boutique`)}
     `,
     footerHtml: `Questions? Just reply to this email — Egypt Eye Travel and Tours.`,
   });
 
-  const text = `Hi ${name},\n\nThank you — we have your request${productName ? ` for the ${productName}` : ""} in ${categoryTitle}.\n\n${next}\n\nNothing has been charged, and nothing is confirmed yet.\n\n${SITE_URL}/take-egypt-home`;
+  const text = `Hi ${name},\n\nThank you — we have your request${productName ? ` for the ${productName}` : ""} in ${categoryTitle}.\n\n${next}\n\nNothing has been charged, and nothing is confirmed yet.\n\n${SITE_URL}/boutique`;
 
   return { subject: `We have your ${categoryTitle.toLowerCase()} request`, html, text };
 }

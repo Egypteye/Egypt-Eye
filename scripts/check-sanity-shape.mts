@@ -1,7 +1,7 @@
 /**
  * Guards the property that a Studio edit cannot take the site down.
  *
- * Take Egypt Home stopped production for two days and three deploys because
+ * The Boutique stopped production for two days and three deploys because
  * `TreasureCategory.personalization` was required by its type and absent from
  * the GROQ projection: the first Studio document made it undefined, and the
  * request form walked it. That was one instance of a class.
@@ -117,7 +117,7 @@ ok("a nested related tour is hardened too", Array.isArray(nestedTour.relatedTour
 //
 // src/sanity/structure.ts is an explicit list with no fallback to
 // documentTypeListItems(), so a schema type that is not named there simply
-// has no entry in the sidebar. That is how Take Egypt Home shipped: schemas,
+// has no entry in the sidebar. That is how The Boutique shipped: schemas,
 // documents and migration all in place, and no way to reach any of it without
 // a developer, which was the one thing the section was asked to avoid.
 // ---------------------------------------------------------------------------
