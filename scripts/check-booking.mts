@@ -750,6 +750,80 @@ for (const file of copySurfaces) {
 
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
+// Weekly Trips: the seat hold, which is the one place a payment can cost
+// somebody else a booking.
+//
+// Every other product is unlimited — two people can book the same photoshoot
+// slot and the worst case is a conversation. A departure has a van. Seats are
+// claimed by book_departure_seats the moment a booking is made, under a row
+// lock, so it cannot oversell; adding a deposit means the seat is claimed
+// before the money arrives and has to go back if it never does.
+//
+// These assert the properties of migration 0023 that are not visible from the
+// TypeScript: it is SQL, so what is checked is that the file says what the
+// system depends on it saying.
+// ---------------------------------------------------------------------------
+const seatSql = await readFile("supabase/migrations/0023_departure_instant_booking.sql", "utf8");
+
+ok(
+  "the release function does not exist",
+  /create or replace function public\.release_departure_seats/.test(seatSql)
+);
+// The single most dangerous mistake available here. trip_departures_seat_sync
+// (0018) already decrements seats_taken when a reservation leaves a
+// seat-taking status, so releasing by hand as well would give every seat back
+// twice and quietly under-count a departure until a van turned up full.
+ok(
+  "the release function touches seats_taken itself — the 0018 trigger already does, and both would double-release",
+  !/update public\.trip_departures\s+set seats_taken/.test(seatSql)
+);
+ok(
+  "the release function does not give the seat back by setting the status, which is what fires the trigger",
+  /set status = 'cancelled'/.test(seatSql)
+);
+// Releasing a seat somebody paid for is far worse than holding one nobody did.
+for (const guarded of ["captured", "pending", "refunded", "reversed", "mismatch"]) {
+  ok(
+    `a '${guarded}' attempt does not stop the seats being released`,
+    new RegExp(`'${guarded}'`).test(seatSql)
+  );
+}
+ok(
+  "the release function is callable by anon — it must be service_role only",
+  /revoke execute on function public\.release_departure_seats\(uuid\) from public/.test(seatSql)
+);
+ok(
+  "the booking is deleted rather than kept — an abandoned checkout is still a lead",
+  !/delete from public\.reservations/.test(seatSql)
+);
+ok("the switch is on by default — a price must not put a departure on sale",
+   /instant_booking boolean not null default false/.test(seatSql));
+
+// The sweep must hold seats for far less time than it waits to abandon a
+// payment: three days of a van held by a closed tab is not a recovery policy.
+const sweep = await readFile("src/lib/booking/reconcile.ts", "utf8");
+const holdMinutes = Number(sweep.match(/SEAT_HOLD_MINUTES = (\d+)/)?.[1] ?? 0);
+const abandonHours = Number(sweep.match(/ABANDON_HOURS = (\d+)/)?.[1] ?? 0);
+ok("the sweep no longer releases seat holds at all", holdMinutes > 0);
+ok(
+  `seats are held for ${holdMinutes} minutes, which is not shorter than the ${abandonHours}h payment abandon window`,
+  holdMinutes < abandonHours * 60
+);
+ok("the sweep decides for itself whether a release is safe — that belongs in the locked function",
+   sweep.includes("release_departure_seats"));
+
+// And the route must not confirm a seat it is still waiting to be paid for.
+const seatRoute = await readFile("src/app/api/trip-seats/route.ts", "utf8");
+ok(
+  "the seat route sends its confirmation email even when a deposit is pending",
+  /if \(!payment\) \{\s*await sendIdempotentEmail/.test(seatRoute)
+);
+ok("the seat route does not set a hold expiry, so an abandoned checkout keeps the seat",
+   seatRoute.includes("seat_hold_expires_at"));
+ok("the seat route prices the deposit itself instead of asking the quote engine",
+   seatRoute.includes("quoteDeposit("));
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

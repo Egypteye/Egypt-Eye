@@ -28,6 +28,7 @@ export type DepartureRow = {
   cancellation_reason: string | null;
   meeting_point: string | null;
   note: string | null;
+  instant_booking?: boolean | null;
 };
 
 /**
@@ -62,6 +63,15 @@ export type Departure = {
   state: DepartureState;
   /** True only when a booking can actually be made right now. */
   bookable: boolean;
+  /**
+   * Whether this departure takes its deposit online.
+   *
+   * The same two halves as every other product: a price makes it possible,
+   * the switch makes it offered. A departure with the switch off still takes
+   * bookings — it just takes them as requests the desk confirms, which is how
+   * every Weekly Trip worked before deposits existed.
+   */
+  instantBooking: boolean;
   /** True when a sold-out departure can still take waitlist names. */
   waitlistable: boolean;
   cancellationReason: string | null;
@@ -126,6 +136,7 @@ export function deriveDeparture(row: DepartureRow, trip: WeeklyTrip): Departure 
     returnsOn: row.returns_on,
     departureTime: row.departure_time,
     priceUsd: Number(row.price_usd),
+    instantBooking: row.instant_booking === true && Number(row.price_usd) > 0,
     childPriceUsd: row.child_price_usd === null ? null : Number(row.child_price_usd),
     capacity: row.capacity,
     seatsTaken: row.seats_taken,

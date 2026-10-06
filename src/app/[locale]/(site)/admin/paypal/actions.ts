@@ -150,6 +150,9 @@ export async function runReconciliation(): Promise<{ summary: string; problems: 
     report.fulfilled > 0 ? `${report.fulfilled} set of emails sent` : "",
     report.expired > 0 ? `${report.expired} closed as abandoned` : "",
     report.stillPending > 0 ? `${report.stillPending} still pending at PayPal` : "",
+    report.seatsReleased > 0
+      ? `${report.seatsReleased} seat${report.seatsReleased === 1 ? "" : "s"} given back to departures whose checkout was abandoned`
+      : "",
   ].filter(Boolean);
   return {
     summary: parts.length > 1 ? parts.join(", ") + "." : "Nothing needed doing.",

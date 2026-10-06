@@ -66,6 +66,9 @@ export async function createDeparture(formData: FormData): Promise<ActionResult>
     departure_time: String(formData.get("departure_time") ?? "").trim() || null,
     price_usd: price,
     child_price_usd: childPrice,
+    // Checkboxes are absent from the form data when unticked, so this reads
+    // as false rather than undefined — the switch is never accidentally on.
+    instant_booking: String(formData.get("instant_booking") ?? "") === "on",
     capacity,
     min_seats: minSeats,
     booking_closes_at: closesRaw ? new Date(closesRaw).toISOString() : null,

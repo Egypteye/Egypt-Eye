@@ -9,6 +9,10 @@ import { sendEmail } from "@/lib/email/resend";
 import { tripSeatConfirmationEmail, tripSeatTeamEmail } from "@/lib/email/templates";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { site } from "@/content/site";
+import { createAttempt } from "@/lib/booking/attempts";
+import { paymentProviderFor } from "@/lib/booking/activeProvider";
+import { quoteDeposit } from "@/lib/booking/quote";
+import { siteUrl } from "@/content/seo";
 
 // Reserves seats on a Weekly Trips departure.
 //
@@ -23,10 +27,23 @@ import { site } from "@/content/site";
 // set, so a seat booking shows up in /admin/reservations and in My Account
 // next to everything else, with the same reference format.
 //
-// No payment, matching the rest of the site: the team confirms and takes
-// payment directly. What the visitor gets here is a held seat, and the email
-// is careful to say that a held seat on a trip that hasn't met its minimum is
-// not yet a confirmed trip.
+// Payment depends on the departure. With Instant Booking off it behaves as it
+// always has — the seat is held, the desk confirms and takes payment directly,
+// and the email is careful to say that a held seat on a trip which hasn't met
+// its minimum is not yet a confirmed trip.
+//
+// With Instant Booking on, a 25% deposit is taken through PayPal, and two
+// things change that are easy to miss:
+//
+//   The confirmation email is NOT sent here. It is sent by fulfilAttempt()
+//   after the money is verified, because telling somebody their seat is held
+//   while the payment is still unmade would confirm a seat that may be about
+//   to be released.
+//
+//   The seat carries an expiry. book_departure_seats claims it immediately —
+//   correctly, under a row lock — so an abandoned checkout would otherwise
+//   hold a seat until a human noticed. seat_hold_expires_at is what the
+//   reconcile sweep reads to give it back. See migration 0023.
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_SEATS_PER_BOOKING = 10;
@@ -176,6 +193,86 @@ export async function POST(request: NextRequest) {
   const guaranteed = seatsTakenAfter >= departure.minSeats;
   const seatsToGuarantee = Math.max(0, departure.minSeats - seatsTakenAfter);
 
+  // --- The deposit, for a departure that takes one ------------------------
+  //
+  // Weekly Trips are the only product with a finite supply, and the seat is
+  // already claimed by this point — book_departure_seats takes it under a row
+  // lock, which is what stops the departure overselling. That is correct, and
+  // it is also what makes the next few lines necessary: the seat is held
+  // before the money arrives, so if the money never arrives the seat has to go
+  // back. `seat_hold_expires_at` is what the reconcile sweep reads to do that.
+  //
+  // A waitlisted booking is never charged. Nothing is owed until a seat
+  // actually opens, which is why the RPC prices those at null.
+  const provider = paymentProviderFor({ isAdmin: user?.role === "admin" });
+  const takingDeposit = !waitlisted && departure.instantBooking && provider.enabled;
+
+  let payment: {
+    orderId: string;
+    clientId: string | null;
+    amountUsd: number;
+    lines: { label: string; unitCents: number; quantity: number; amountCents: number }[];
+    sandbox: boolean;
+  } | null = null;
+
+  if (takingDeposit) {
+    // The same quote engine every other product uses, handed the departure's
+    // own price. One place computes a deposit on this site.
+    const quoted = quoteDeposit(
+      {
+        slug: departure.trip.slug,
+        title: departure.trip.title,
+        bookable: true,
+        price: { amount: departure.priceUsd },
+      },
+      "weeklyTrip",
+      { people: seats, extras: [] }
+    );
+
+    if (quoted.ok) {
+      const opened = await createAttempt({
+        reservationId,
+        reference,
+        quote: quoted.quote,
+        description: `${departure.trip.title} — ${seats} seat${seats === 1 ? "" : "s"}`,
+        returnUrl: `${siteUrl}/secure/return?ref=${encodeURIComponent(reference)}`,
+        cancelUrl: `${siteUrl}/weekly-trips/${departure.trip.slug}`,
+      });
+
+      if (opened.ok) {
+        // Only now does the seat become a *held* seat rather than a booked
+        // one. Set after the attempt exists, so a failure above leaves the
+        // booking exactly as it behaved before deposits: a request the desk
+        // confirms, holding its seat, with nobody expecting a payment.
+        await supabase
+          .from("reservations")
+          .update({ seat_hold_expires_at: new Date(Date.now() + 30 * 60_000).toISOString() })
+          .eq("id", reservationId);
+
+        payment = {
+          orderId: opened.orderId,
+          clientId: opened.clientId,
+          amountUsd: quoted.quote.totalCents / 100,
+          lines: quoted.quote.lines,
+          sandbox: provider.env === "sandbox",
+        };
+      } else {
+        // The seat is kept and the booking stands as a request. Telling the
+        // customer their seat is gone because PayPal was unreachable would be
+        // worse than asking the desk to follow it up.
+        console.error(`trip deposit could not be opened for ${reference}: ${opened.message}`);
+      }
+    } else {
+      console.error(`trip deposit quote failed for ${reference}: ${quoted.reason}`);
+    }
+  }
+
+  // The confirmation email is held back when a payment is pending.
+  //
+  // The rule the whole payment system is built on: nothing tells a customer
+  // their booking is in hand until the money is verified. For a deposit
+  // departure that email is sent by fulfilAttempt() after capture, not here —
+  // sending it now would confirm a seat that is about to be released.
   const { subject, html, text } = tripSeatConfirmationEmail({
     guestName,
     reference,
@@ -189,16 +286,18 @@ export async function POST(request: NextRequest) {
     guaranteed,
     seatsToGuarantee,
   });
-  await sendIdempotentEmail({
-    idempotencyKey: `trip-seat-confirmation:${reservationId}`,
-    notificationType: waitlisted ? "trip_waitlist_confirmation" : "trip_seat_confirmation",
-    to: guestEmail,
-    subject,
-    html,
-    text,
-    customerId: user?.id,
-    reservationId,
-  });
+  if (!payment) {
+    await sendIdempotentEmail({
+      idempotencyKey: `trip-seat-confirmation:${reservationId}`,
+      notificationType: waitlisted ? "trip_waitlist_confirmation" : "trip_seat_confirmation",
+      to: guestEmail,
+      subject,
+      html,
+      text,
+      customerId: user?.id,
+      reservationId,
+    });
+  }
 
   // The desk needs to know a seat went, and a failure to reach them must not
   // fail the booking the traveller has already made — the seat is held
@@ -233,6 +332,10 @@ export async function POST(request: NextRequest) {
 
   return NextResponse.json({
     ok: true,
+    // Present only when a deposit is actually being taken. The form shows the
+    // PayPal buttons on this and nothing else, so a departure with the switch
+    // off cannot render a pay button by accident.
+    payment,
     reference,
     waitlisted,
     seats,

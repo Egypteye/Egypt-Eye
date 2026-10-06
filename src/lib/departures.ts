@@ -20,7 +20,7 @@ import { deriveDeparture, todayInCairo, type Departure, type DepartureRow } from
 export type { Departure, DepartureRow } from "./departureModel";
 
 const SELECT =
-  "id, trip_slug, departs_on, returns_on, departure_time, price_usd, child_price_usd, " +
+  "id, trip_slug, departs_on, returns_on, departure_time, price_usd, child_price_usd, instant_booking, " +
   "capacity, seats_taken, min_seats, booking_closes_at, status, cancellation_reason, " +
   "meeting_point, note";
 

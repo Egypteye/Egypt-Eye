@@ -3,6 +3,8 @@
 import { useMemo, useState, type FormEvent } from "react";
 import Link from "next/link";
 import { useLocale, useTr } from "@/i18n/LocaleProvider";
+import { PayPalDepositButtons } from "./PayPalDepositButtons";
+import { formatCents } from "@/lib/booking/quote";
 import { localePath } from "@/i18n/locales";
 import { SeatPill, GuaranteeNote, SeatBar } from "./SeatAvailability";
 import { formatDateRange, groupByMonth } from "@/lib/departureModel";
@@ -31,6 +33,23 @@ type Result = {
   guaranteed: boolean;
   seatsToGuarantee: number;
   total: number | null;
+  /**
+   * Present only when a deposit is actually being taken for this booking.
+   *
+   * The server decides, never this component: the departure's switch, a usable
+   * price and a live provider all have to agree, and the route returns null
+   * unless they do. Rendering pay buttons on anything else would offer a
+   * payment the booking cannot accept.
+   */
+  payment: {
+    orderId: string;
+    clientId: string | null;
+    amountUsd: number;
+    lines: { label: string; unitCents: number; quantity: number; amountCents: number }[];
+    sandbox: boolean;
+  } | null;
+  /** Set once PayPal reports back, replacing the pay block. */
+  settledMessage?: string;
 };
 
 function inputClass(extra = "") {
@@ -141,7 +160,11 @@ export function TripDepartures({
         <p className="mt-2 text-sm text-ink-soft">
           {result.waitlisted
             ? tr("This departure is full, so we've added you to the waitlist. No seat is held yet and nothing is owed — we'll be in touch if one opens.")
-            : tr("We've emailed your confirmation. One of the team will be in touch shortly to confirm your pickup and take payment — nothing is charged through this website.")}
+            : result.settledMessage
+              ? result.settledMessage
+              : result.payment
+              ? tr("Your seats are held while you pay the deposit below. Pay within 30 minutes or they go back to the departure — and nothing is confirmed until a member of our team has checked it.")
+              : tr("We've emailed your confirmation. One of the team will be in touch shortly to confirm your pickup and take payment — nothing is charged through this website.")}
         </p>
         <dl className="mt-4 grid gap-2 text-sm sm:grid-cols-2">
           <div>
@@ -159,6 +182,65 @@ export function TripDepartures({
             </div>
           )}
         </dl>
+        {/* The deposit, with its working shown — the same calculation the
+            photoshoot popup shows, because it is the same quote engine
+            reading the departure's own price. A percentage a customer cannot
+            check is a number they have to trust. */}
+        {result.payment && (
+          <div className="mt-5 rounded-2xl border border-gold/30 bg-sand/40 p-4">
+            <ul className="space-y-1 text-sm text-ink-soft">
+              {result.payment.lines.map((line) => (
+                <li key={line.label} className="flex justify-between gap-4">
+                  <span>
+                    {line.label}
+                    {line.quantity > 1 ? ` × ${line.quantity}` : ""}
+                    {line.quantity > 1 && (
+                      <span className="block text-xs tabular-nums">
+                        {formatCents(line.unitCents)} × {line.quantity}
+                      </span>
+                    )}
+                  </span>
+                  <span className="shrink-0 tabular-nums">{formatCents(line.amountCents)}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-2.5 flex justify-between gap-4 border-t border-black/10 pt-2.5 font-semibold text-ink">
+              <span>{tr("Deposit to pay now")}</span>
+              <span className="font-display tabular-nums">
+                {formatCents(Math.round(result.payment.amountUsd * 100))}
+              </span>
+            </p>
+            {/* No client id means the SDK cannot be loaded, so there are no
+                buttons to show. The seats stay held and the desk picks it up —
+                an empty space where a pay button should be is better than a
+                button that cannot work. */}
+            {result.payment.clientId === null ? (
+              <p className="mt-3 text-sm text-ink-soft">
+                {tr("We could not open the payment. Your seats are held and our team will be in touch to take the deposit.")}
+              </p>
+            ) : (
+            <div className="mt-4">
+              <PayPalDepositButtons
+                orderId={result.payment.orderId}
+                clientId={result.payment.clientId}
+                reference={result.reference}
+                amountUsd={result.payment.amountUsd}
+                onSettled={(settled) =>
+                  setResult((current) =>
+                    current ? { ...current, payment: null, settledMessage: settled.message } : current
+                  )
+                }
+              />
+            </div>
+            )}
+            {result.payment.sandbox && (
+              <p className="mt-2 text-center text-xs font-semibold text-terracotta">
+                {tr("PayPal sandbox — no real money moves.")}
+              </p>
+            )}
+          </div>
+        )}
+
         {!result.waitlisted && !result.guaranteed && (
           <p className="mt-4 rounded-lg bg-white/70 px-3 py-2 text-xs text-ink-soft">
             {tr("This departure needs {n} more to go ahead. We'll confirm as soon as it does — and if it doesn't run, you pay nothing.").replace(
@@ -217,7 +299,21 @@ export function TripDepartures({
                           <span className="font-semibold text-ink">
                             {formatDateRange(d.departsOn, d.returnsOn, locale)}
                           </span>
-                          <SeatPill departure={d} />
+                          <span className="flex items-center gap-2">
+                            {/* Per departure, because the price it takes a
+                                share of is per departure. The server decides
+                                `instantBooking` — a price alone does not set
+                                it — so turning the switch off removes this. */}
+                            {d.instantBooking && choosable && (
+                              <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full bg-gold/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-gold-dark">
+                                <svg viewBox="0 0 24 24" className="h-2.5 w-2.5" fill="currentColor" aria-hidden>
+                                  <path d="M13 2L4.5 13.5H11l-1 8.5 8.5-11.5H12l1-8.5z" />
+                                </svg>
+                                {tr("Instant Booking")}
+                              </span>
+                            )}
+                            <SeatPill departure={d} />
+                          </span>
                         </div>
                         <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
                           <span className="text-sm text-ink-soft">

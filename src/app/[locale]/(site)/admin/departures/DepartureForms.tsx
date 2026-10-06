@@ -102,6 +102,28 @@ export function CreateDepartureForm({ trips }: { trips: { slug: string; title: s
           <input id="child_price_usd" name="child_price_usd" type="number" min="0" step="1" className={input} />
         </div>
 
+        {/* The switch, next to the price it takes a percentage of. Deliberately
+            not defaulted on: a price is information, this is what puts the
+            departure on sale. */}
+        <div className="sm:col-span-2">
+          <label className="flex items-start gap-2.5 rounded-xl border border-black/10 bg-white/60 p-3">
+            <input
+              id="instant_booking"
+              name="instant_booking"
+              type="checkbox"
+              value="on"
+              className="mt-0.5 h-4 w-4 shrink-0"
+            />
+            <span className="text-sm text-ink">
+              <span className="font-semibold">Instant Booking</span>
+              <span className="mt-0.5 block text-xs text-ink-soft">
+                Take the deposit online for this departure. Needs a price above. With this off the
+                departure still takes bookings — they arrive as requests for the desk to confirm.
+              </span>
+            </span>
+          </label>
+        </div>
+
         <div>
           <label className={label} htmlFor="capacity">
             Seats on the vehicle

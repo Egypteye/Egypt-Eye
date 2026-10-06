@@ -909,13 +909,38 @@ balance", and the wording moved with it. Quantities are clamped at both ends:
 an invalid quantity resolves to *not taken* rather than being clamped upward,
 because inventing a charge the customer did not make is the worse error.
 
-### Weekly Trips are not on this model
+### Weekly Trips, and the seat hold
 
-They were asked for and are deliberately not included. Weekly Trips already
-have backend pricing — `departures.price_usd` in Supabase, edited at
-`/admin/departures` — and their own booking route that holds seats against a
-finite capacity with a row lock. Putting them on the deposit rail means
-deciding what happens when a payment fails *after* seats are held, and getting
-that wrong oversells a departure or takes money for a seat nobody holds. That
-is a design question, not a wiring job, and it is the one thing this system was
-rebuilt to stop doing in a hurry.
+Weekly Trips are on the model now, with one mechanism nothing else needs.
+
+Their price stays where it already was — `departures.price_usd`, edited at
+`/admin/departures` — because that is a real backend already and copying it
+into Sanity would have rebuilt the duplication this whole change removes. The
+Instant Booking switch sits next to it, per departure, for the same reason: the
+switch belongs with the price it takes a share of.
+
+What makes them different is that seats are finite. `book_departure_seats`
+claims the seat the moment a booking is made, under `FOR UPDATE`, which is what
+stops a departure overselling — and which means the seat is claimed *before*
+the money arrives. Two designs were available:
+
+* **Pay first, then claim.** No seat is held for a non-payer, but a customer
+  can pay and find the seats gone, which needs an automatic refund path.
+* **Claim, and release if the money never comes.** An abandoned checkout costs
+  the departure some availability for a bounded time, and it heals itself.
+
+The second is chosen: the failure costs availability rather than trust, and it
+is recoverable without touching anybody's money. `seat_hold_expires_at` marks
+the claim, the reconcile sweep releases it after **30 minutes**, and the
+confirmation email is held back until capture — sending it at booking time
+would confirm a seat that is about to be released.
+
+The release is the subtle part, and `check-booking` guards it. Migration 0018
+already carries `trip_departures_seat_sync`, a trigger that adjusts
+`seats_taken` whenever a reservation moves in or out of a seat-taking status.
+So `release_departure_seats` gives the seat back by **setting the status**, and
+deliberately does not touch `seats_taken` itself — doing both would release
+every seat twice and under-count a departure until a van turned up full. It
+also refuses outright if any attempt against the booking is `captured`,
+`pending`, `refunded`, `reversed` or `mismatch`: releasing a seat somebody paid
+for is far worse than holding one nobody did.
