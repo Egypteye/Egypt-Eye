@@ -1,3 +1,18 @@
+-- HOW TO RUN THIS: paste it into the Supabase SQL editor and press the plain
+-- "Run" button. Do NOT use "Run and enable RLS".
+--
+-- That button scans the script for new tables and appends an ALTER TABLE ...
+-- ENABLE ROW LEVEL SECURITY for each one. It cannot read plpgsql: it takes the
+-- variables in the function's `declare` block below for table names, truncates
+-- the function body to splice its own statements in, and leaves the dollar
+-- quote unterminated — which fails with "unterminated dollar-quoted string"
+-- before Postgres executes anything. Nothing is applied when that happens, so
+-- a retry with the plain Run button is safe.
+--
+-- There is nothing for it to do in any case: this migration creates no tables.
+-- It adds columns to two existing ones, adds an index, and creates a function.
+-- RLS on reservations and trip_departures was set when they were created.
+
 -- Instant Booking for Weekly Trips, and the seat hold that makes it safe.
 --
 -- Every other product on this site is unlimited: two people can book the same
@@ -69,7 +84,7 @@ returns table (released integer, outcome text)
 language plpgsql
 security definer
 set search_path = public
-as $$
+as $fn$
 declare
   r public.reservations%rowtype;
   v_paid integer;
@@ -135,7 +150,7 @@ begin
 
   return query select r.seats, 'released'::text;
 end;
-$$;
+$fn$;
 
 -- Same lockdown as book_departure_seats: PUBLIC includes anon, and anon must
 -- never be able to free somebody else's seats.
