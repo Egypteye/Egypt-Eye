@@ -23,6 +23,7 @@
  * tested a shape production never produces, and that is how an unset cap read
  * as a broken one and took every deposit on the site offline.
  */
+import { quoteSelfTest } from "../src/lib/booking/quoteSelfTest";
 import {
   DEFAULT_DEPOSIT_PERCENT,
   MAX_EXTRA_QUANTITY,
@@ -344,6 +345,18 @@ for (const { file, text } of published) {
       Number(value) === DEFAULT_DEPOSIT_PERCENT
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// The checks the admin panel shows at /admin/paypal, run here too.
+//
+// Those three assertions quote against a fixture, and that fixture used to be
+// written out inside the panel's server action — unreachable from here, so it
+// went stale against the pricing model and reported a failure that was only a
+// failure of the test. Running them here means a renamed field fails the build
+// instead of surfacing on a live admin page.
+for (const check of quoteSelfTest().checks) {
+  ok(`the admin self test would report "${check.label}" as failing: ${check.detail}`, check.ok);
 }
 
 // ---------------------------------------------------------------------------

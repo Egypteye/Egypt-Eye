@@ -4,7 +4,7 @@ import { requireAdmin } from "@/lib/auth/session";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { settleAttempt } from "@/lib/booking/attempts";
 import { fulfilAttempt } from "@/lib/booking/fulfilment";
-import { quoteDeposit } from "@/lib/booking/quote";
+import { quoteSelfTest } from "@/lib/booking/quoteSelfTest";
 
 // The guarantees, exercised against the real database.
 //
@@ -40,30 +40,15 @@ export async function runPaymentSelfTest(): Promise<SelfTestResult> {
 
   try {
     // ---- The quote, which is pure and needs nothing ----------------------
-    const product = {
-      slug: "selftest",
-      title: "Self test",
-      bookable: true,
-      depositUsd: 25,
-      depositBasis: "perPerson",
-      extras: [{ label: "Reel", priceUsd: 25, depositUsd: 10, depositBasis: "booking" as const }],
-    };
-    const q = quoteDeposit(product, "photoshoot", { people: 3, extras: ["Reel"] });
-    add(
-      "The deposit is calculated from the booking",
-      q.ok && q.quote.totalCents === 8500,
-      q.ok ? `3 people x $25 + $10 reel = $${q.quote.totalCents / 100}` : "no quote was produced"
-    );
-    const forged = quoteDeposit(product, "photoshoot", {
-      people: 3,
-      extras: [{ label: "Reel", depositUsd: 0 } as unknown as string],
-    });
-    add(
-      "A price sent from the browser is ignored",
-      forged.ok && forged.quote.totalCents === 7500,
-      "a selection carrying its own price bought nothing"
-    );
-    if (!q.ok) return { ok: false, checks };
+    // The fixture and these three assertions live in src/lib/booking/
+    // quoteSelfTest.ts so that scripts/check-quote.mts runs the very same
+    // ones. They used to be written out here, which made them a second copy
+    // of the quote rules that no check script could reach — so when the
+    // pricing model dropped a field, the check scripts stayed green and this
+    // panel went red, during a go-live.
+    const { checks: quoteChecks, quote } = quoteSelfTest();
+    for (const check of quoteChecks) checks.push(check);
+    if (!quote) return { ok: false, checks };
 
     // ---- A throwaway booking to hang the rest on -------------------------
     const { data: reservation, error: reservationError } = await supabase
@@ -94,9 +79,9 @@ export async function runPaymentSelfTest(): Promise<SelfTestResult> {
       provider: "selftest",
       provider_order_id: orderId,
       status,
-      amount_cents: q.quote.totalCents,
+      amount_cents: quote.totalCents,
       currency: "USD",
-      quote: q.quote,
+      quote,
     });
 
     // ---- THE guarantee: one captured payment per booking ------------------
@@ -192,9 +177,9 @@ export async function runPaymentSelfTest(): Promise<SelfTestResult> {
       reservation_id: reservationId,
       provider_order_id: "SELFTEST-C",
       status: "created",
-      amount_cents: q.quote.totalCents,
+      amount_cents: quote.totalCents,
       currency: "USD",
-      quote: q.quote,
+      quote,
       create_request_id: "x",
       capture_request_id: "x",
       capture_id: null,

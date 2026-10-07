@@ -14,6 +14,7 @@
     "i18n:translate": "tsx scripts/i18n-translate.mts",
     "i18n:keys": "tsx scripts/i18n-keys.mts",
     "i18n:status": "tsx scripts/i18n-status.mts",
+    "check": "npm run check:destinations && npm run check:stories && npm run check:trips && npm run check:reviews && npm run check:shape && npm run check:migration && npm run check:booking && npm run check:csp && npm run check:nav && npm run check:redirects && npm run check:paypal && npm run check:quote && npm run check:links && npm run check:faqs && npm run check:treasures",
     "check:destinations": "tsx scripts/check-destinations.mts",
     "check:stories": "tsx scripts/check-story-images.mts",
     "check:trips": "tsx scripts/check-weekly-trips.mts",
