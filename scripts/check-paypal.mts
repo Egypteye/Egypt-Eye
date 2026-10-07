@@ -23,6 +23,7 @@ import {
   isPublicSite,
 } from "../src/lib/booking/paypalConfig";
 import { disabledProvider } from "../src/lib/booking/paymentProvider";
+import { MAX_LOGGED_BODY, forLog, interpretPayPalBody, payPalErrorMessage } from "../src/lib/booking/paypalBody";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -305,6 +306,82 @@ for (const blank of ["", "   "]) {
   ok(`an empty signature (${JSON.stringify(blank)}) counts as signed`, !hasWebhookSignatureHeaders(headers));
 }
 ok("a delivery with no PayPal headers at all is refused", !hasWebhookSignatureHeaders(new Headers()));
+
+// ---------------------------------------------------------------------------
+// Reading a response body.
+//
+// This is a regression test for a shipped bug, so the fixtures are built to be
+// longer than the truncation limit rather than merely "long". The success path
+// used to parse a body that had been cut to MAX_LOGGED_BODY characters for
+// logging, so every PayPal response bigger than that threw
+// `Unterminated string in JSON at position 2000` — which took out the admin
+// connection test and sat, unnoticed, on the capture path too.
+const bigOrder = {
+  id: "ORDER-BIG",
+  status: "COMPLETED",
+  // Padding that pushes the serialised body well past the logging limit.
+  links: Array.from({ length: 40 }, (_, i) => ({
+    href: `https://api-m.paypal.com/v2/checkout/orders/ORDER-BIG/${"x".repeat(60)}/${i}`,
+    rel: "self",
+    method: "GET",
+  })),
+};
+const bigBody = JSON.stringify(bigOrder);
+ok(
+  `the oversized-response fixture is actually oversized (${bigBody.length} chars vs a ${MAX_LOGGED_BODY} limit)`,
+  bigBody.length > MAX_LOGGED_BODY
+);
+
+const parsedBig = interpretPayPalBody<{ id: string; status: string }>(200, true, bigBody);
+ok(
+  "a success longer than the logging limit is parsed in full, not truncated to it",
+  parsedBig.ok && parsedBig.data.id === "ORDER-BIG" && parsedBig.data.status === "COMPLETED"
+);
+
+// A body that genuinely is not JSON must not throw either: a capture that
+// cannot be read has to come back as a failure so the attempt stays un-settled
+// for the reconciliation sweep, rather than crashing the route after PayPal
+// has already moved the money.
+let threw = false;
+let unreadable: ReturnType<typeof interpretPayPalBody<unknown>> | null = null;
+try {
+  unreadable = interpretPayPalBody<unknown>(200, true, bigBody.slice(0, MAX_LOGGED_BODY));
+} catch {
+  threw = true;
+}
+ok("an unparseable success body does not throw", !threw);
+ok(
+  "an unparseable success body is reported as a failure, never as a success",
+  unreadable !== null && unreadable.ok === false
+);
+
+// 204s carry no body and are a success for the void and refund calls.
+for (const empty of [null, "", "   "]) {
+  const r = interpretPayPalBody<Record<string, unknown>>(204, true, empty);
+  ok(`a 204 with ${JSON.stringify(empty)} for a body is a success`, r.ok);
+}
+
+// An error body is given whole to the message reader, so a long one still
+// yields its detail instead of falling back to the generic sentence.
+const longError = JSON.stringify({
+  name: "UNPROCESSABLE_ENTITY",
+  message: "The requested action could not be performed.",
+  details: [{ issue: "COMPLIANCE_VIOLATION", description: "Transaction is declined." }],
+  links: Array.from({ length: 40 }, (_, i) => ({ href: `https://x/${"y".repeat(60)}/${i}`, rel: "info" })),
+});
+ok(`the oversized-error fixture is actually oversized`, longError.length > MAX_LOGGED_BODY);
+const failed = interpretPayPalBody<unknown>(422, false, longError);
+ok(
+  "a long error body still surfaces its issue rather than the generic message",
+  !failed.ok && failed.message.includes("COMPLIANCE_VIOLATION") && failed.message.includes("Transaction is declined.")
+);
+ok(
+  "a logged error body is truncated, and says so",
+  !failed.ok && failed.body.length < longError.length && failed.body.includes("truncated")
+);
+ok("an unreadable body logs as unreadable", forLog(null) === "<unreadable>");
+ok("a short body is logged whole", forLog('{"a":1}') === '{"a":1}');
+ok("a missing error body still produces a sentence", payPalErrorMessage(null).length > 0);
 
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

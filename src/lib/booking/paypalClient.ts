@@ -1,6 +1,10 @@
 import "server-only";
 
 import { type PayPalConfig } from "./paypalConfig";
+import { forLog, interpretPayPalBody, type PayPalResponse } from "./paypalBody";
+
+// Re-exported so modules already importing it from here keep working.
+export type { PayPalResponse } from "./paypalBody";
 
 export type { PayPalConfig, PayPalIntent } from "./paypalConfig";
 export {
@@ -60,7 +64,7 @@ async function accessToken(config: PayPalConfig): Promise<string | null> {
       cache: "no-store",
     });
     if (!response.ok) {
-      console.error("paypal: token request failed", response.status, await safeText(response));
+      console.error("paypal: token request failed", response.status, forLog(await readBody(response)));
       return null;
     }
     const data = (await response.json()) as { access_token?: string; expires_in?: number };
@@ -79,17 +83,22 @@ function forgetToken() {
   cached = null;
 }
 
-async function safeText(response: Response): Promise<string> {
+/**
+ * The WHOLE body, or null if it cannot be read.
+ *
+ * Deliberately untruncated. This used to return the first 2000 characters, and
+ * the success path in payPalRequest parsed that — see paypalBody.ts for what
+ * that cost. Truncation now happens only where a body is logged.
+ */
+async function readBody(response: Response): Promise<string | null> {
   try {
-    return (await response.text()).slice(0, 2000);
+    return await response.text();
   } catch {
-    return "<unreadable>";
+    return null;
   }
 }
 
-export type PayPalResponse<T> =
-  | { ok: true; status: number; data: T }
-  | { ok: false; status: number; message: string; body: string };
+
 
 /**
  * One authenticated call.
@@ -142,36 +151,13 @@ export async function payPalRequest<T>(
       continue;
     }
 
-    const body = await safeText(response);
-    if (!response.ok) {
-      return { ok: false, status: response.status, message: payPalErrorMessage(body), body };
-    }
-    // 204s carry no body, which is a success for void/refund calls.
-    return { ok: true, status: response.status, data: (body ? JSON.parse(body) : {}) as T };
+    // The body is read once, in full, and interpreted by a pure function that
+    // check-paypal.mts can test. It parses the whole thing and truncates only
+    // for logging; a body it cannot parse comes back as a failure rather than
+    // throwing out of the route.
+    return interpretPayPalBody<T>(response.status, response.ok, await readBody(response));
   }
 
   return { ok: false, status: 401, message: "PayPal rejected our credentials.", body: "" };
 }
 
-/**
- * The most useful sentence out of a PayPal error body.
- *
- * Its errors nest the thing you need two levels down, and a log line reading
- * `{"name":"UNPROCESSABLE_ENTITY",...}` sends you to the dashboard when the
- * answer was in the response all along.
- */
-function payPalErrorMessage(body: string): string {
-  try {
-    const parsed = JSON.parse(body) as {
-      name?: string;
-      message?: string;
-      details?: { issue?: string; description?: string }[];
-    };
-    const detail = parsed.details?.[0];
-    return [parsed.name, parsed.message, detail?.issue, detail?.description]
-      .filter(Boolean)
-      .join(" — ") || "PayPal rejected the request.";
-  } catch {
-    return "PayPal rejected the request.";
-  }
-}
