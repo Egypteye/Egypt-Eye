@@ -149,7 +149,7 @@ export function WeeklyTripsCalendar({
                           <span className="font-display text-lg font-semibold text-ink">${d.priceUsd}</span>
                           <span className="text-xs text-ink-soft/85">{tr("per seat")}</span>
                           <span className="mt-2 hidden text-sm font-semibold text-gold-dark transition group-hover:translate-x-0.5 sm:inline">
-                            {d.bookable ? tr("Reserve →") : tr("View →")}
+                            {d.instantBooking ? tr("Instant Booking →") : d.bookable ? tr("Reserve →") : tr("View →")}
                           </span>
                         </div>
                       </div>

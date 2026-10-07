@@ -1054,7 +1054,7 @@ export function SecureDateButton({
                           ? "Booking…"
                           : mode === "none"
                             ? "Send my request"
-                            : `Book and pay ${liveDepositLabel}`}
+                            : "Instant Booking"}
                     </button>
                   </div>
                   {step === 2 && (

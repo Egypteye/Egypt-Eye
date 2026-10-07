@@ -852,6 +852,65 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// Going live: no test configuration reachable, one wording on every CTA.
+// ---------------------------------------------------------------------------
+const active = await readFile("src/lib/booking/activeProvider.ts", "utf8");
+
+// Sandbox on the real domain is refused to EVERYONE by default. It used to be
+// offered to signed-in admins, which was right while PayPal was being set up
+// and wrong the moment real money moves: a test credential on the live site is
+// a payment that looks real, moves nothing, and leaves a booking marked paid.
+ok(
+  "sandbox on a public site is still allowed for admins by default — a live site must carry no test rail",
+  /PAYPAL_SANDBOX_ADMIN_PREVIEW === "1" && viewer\.isAdmin/.test(active)
+);
+ok(
+  "the admin carve-out is no longer gated on an explicit opt-in",
+  active.includes("const previewing") && active.includes("if (!previewing) return disabledProvider;")
+);
+// And the escape hatch must be visible, or it gets left on.
+const cfg = await readFile("src/lib/booking/paypalConfig.ts", "utf8");
+ok(
+  "PAYPAL_SANDBOX_ADMIN_PREVIEW can be left enabled with nothing reporting it",
+  cfg.includes('warnings.push("sandbox-preview-enabled")')
+);
+ok(
+  "the sandbox-on-public-site warning still claims admins get the buttons, which is no longer true",
+  /NOBODY is offered the buttons/.test(cfg)
+);
+
+// One wording wherever a customer can book and pay on the spot. A badge that
+// says "Instant Booking" over a button that says "Reserve my seat" is two
+// features as far as a customer is concerned.
+const ctas: [string, string][] = [
+  ["src/components/SecureDateButton.tsx", "the photoshoot and experience dialog"],
+  ["src/components/TripDepartures.tsx", "the weekly trip seat form"],
+  ["src/components/WeeklyTripsCalendar.tsx", "the weekly trip calendar card"],
+  ["src/app/[locale]/(site)/secure/[type]/[slug]/SecureBookingForm.tsx", "the secure booking page"],
+];
+for (const [file, where] of ctas) {
+  const text = await readFile(file, "utf8");
+  ok(`${where} does not say "Instant Booking" on its booking CTA`, text.includes("Instant Booking"));
+}
+// The old wordings must be gone from the instant path, but must survive on the
+// request path — a departure with the switch off really is a request, and
+// calling that "Instant Booking" would promise a payment that never happens.
+const trip = await readFile("src/components/TripDepartures.tsx", "utf8");
+ok(
+  "the weekly trip form lost its request-path wording — a non-instant departure is still a request",
+  trip.includes('tr("Reserve my seat")') && trip.includes('tr("Join the waitlist")')
+);
+ok(
+  "the weekly trip CTA does not choose its wording from the departure's own switch",
+  /selected\.instantBooking\s*\n?\s*\?\s*tr\("Instant Booking"\)/.test(trip)
+);
+const dialog2 = await readFile("src/components/SecureDateButton.tsx", "utf8");
+ok(
+  'the dialog still says "Book and pay $X" — the amount is already above the button',
+  !dialog2.includes("Book and pay")
+);
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

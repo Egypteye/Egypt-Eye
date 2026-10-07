@@ -232,3 +232,54 @@ saying so makes the booking confirmed.
 **What has not been proven:** the round trip against PayPal itself. It could
 not be run from the environment this was written in. `npm run paypal:smoke` and
 section 3 are what close that gap, and they have to be run by you.
+
+
+## Going live
+
+The code change is done; the switch is four environment variables in Vercel.
+Set them on **Production**, redeploy, and check `/admin/paypal`.
+
+| Variable | Value |
+|---|---|
+| `PAYPAL_ENV` | `live` |
+| `PAYPAL_CLIENT_ID` | the **Live** client id from PayPal → Apps & Credentials |
+| `PAYPAL_CLIENT_SECRET` | the **Live** secret for that same app |
+| `PAYPAL_WEBHOOK_ID` | the id of a **Live** webhook pointed at `https://egypteyetravel.com/api/webhooks/paypal` |
+
+Then **delete** these if they exist: `PAYPAL_SANDBOX_ADMIN_PREVIEW`, and any
+sandbox client id or secret left in the Production scope. Nothing reads a
+sandbox credential in a live deployment, but a variable that is still there is
+one edit away from being used.
+
+### The webhook is not optional
+
+It is the thing that captures the money. The browser callback is an
+accelerator. With no `PAYPAL_WEBHOOK_ID`, a customer who approves and closes
+the tab is not charged until the daily sweep finds them, and refunds made from
+the PayPal dashboard never reach the site. Subscribe the live webhook to
+`CHECKOUT.ORDER.APPROVED`, `PAYMENT.CAPTURE.COMPLETED`,
+`PAYMENT.CAPTURE.DENIED`, `PAYMENT.CAPTURE.REFUNDED` and
+`PAYMENT.CAPTURE.REVERSED`.
+
+### Sandbox is refused on the live domain
+
+Not just hidden from customers — refused to everybody, admins included. A test
+credential on the real domain produces a payment that looks real, moves no
+money, and leaves a booking recorded as paid. `PAYPAL_SANDBOX_ADMIN_PREVIEW=1`
+re-opens it for signed-in admins if testing on the real domain is ever needed
+again, and `liveReadiness` reports it so it cannot be left on unnoticed.
+
+### What "ready" looks like on /admin/paypal
+
+* Connection test: all four ✓, and the environment reads **live**
+* Safety self-test: all ✓
+* Deposits by product: ✓ on everything you expect to be bookable
+* No readiness warnings
+
+### First live payment
+
+Take one yourself, for the smallest deposit on the site, with a real card or
+PayPal balance. Then check, in order: the money in the PayPal account, the
+booking in `/admin/reservations`, the customer email, the team email. Refund it
+from `/admin/paypal` afterwards and confirm the refund lands. That is the only
+test that proves the live path, and it costs one small transaction fee.

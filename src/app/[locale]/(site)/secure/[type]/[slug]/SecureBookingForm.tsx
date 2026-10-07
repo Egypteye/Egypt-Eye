@@ -108,7 +108,7 @@ export function SecureBookingForm({
               href={result.approvalUrl}
               className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
             >
-              Hold my date with a {depositPercent}% deposit
+              Instant Booking
             </a>
           </>
         ) : (

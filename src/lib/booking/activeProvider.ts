@@ -47,31 +47,28 @@ function announceReadiness(): void {
 /**
  * The provider this particular visitor may use.
  *
- * It exists for one situation, and that situation is how PayPal actually gets
- * set up: the person doing it needs to test against the sandbox, and the only
- * site they can reach is the real one. Sandbox credentials on the real domain
- * would let a customer complete a payment that moves no money while the
- * booking is recorded as paid — so the straightforward answer was a separate
- * preview deployment, which means branches, preview URLs and a second copy of
- * every environment variable. That is a lot of moving parts to get wrong while
- * trying to prove one thing works.
+ * Sandbox on a public site is refused outright. Not to customers, not to
+ * admins — to nobody, because a test credential live on the real domain is a
+ * payment that looks real, moves no money, and leaves a booking recorded as
+ * paid.
  *
- * So sandbox on a public site is simply not offered to customers. An admin
- * gets the PayPal buttons and can test the whole path on the real site;
- * everybody else falls through to the payment links on each product, which is
- * exactly what they get today. Nothing a customer can reach changes, and the
- * testing has nowhere to leak to.
+ * It was not always refused. While PayPal was being set up, the only site the
+ * person doing it could reach was the real one, so signed-in admins were given
+ * the sandbox buttons there and everybody else fell through to the payment
+ * links. That was the right trade while testing and is the wrong one the
+ * moment real money is taken: "no sandbox configuration active on the live
+ * website" has to mean none, including the convenient kind.
  *
- * Live is unaffected: this only ever narrows the sandbox.
+ * PAYPAL_SANDBOX_ADMIN_PREVIEW=1 brings the old behaviour back for admins, so
+ * testing on the real domain is still possible without editing code. It is off
+ * unless deliberately set, and liveReadiness reports it when it is on, so it
+ * cannot be left enabled unnoticed.
  */
 export function paymentProviderFor(viewer: { isAdmin: boolean }): PaymentProvider {
   const provider = paymentProvider();
-  if (
-    provider.env === "sandbox" &&
-    isPublicSite(process.env.NEXT_PUBLIC_SITE_URL) &&
-    !viewer.isAdmin
-  ) {
-    return disabledProvider;
+  if (provider.env === "sandbox" && isPublicSite(process.env.NEXT_PUBLIC_SITE_URL)) {
+    const previewing = process.env.PAYPAL_SANDBOX_ADMIN_PREVIEW === "1" && viewer.isAdmin;
+    if (!previewing) return disabledProvider;
   }
   return provider;
 }

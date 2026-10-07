@@ -87,7 +87,8 @@ export type LiveReadinessWarning =
   | "no-webhook"
   | "live-with-authorize"
   | "sandbox-on-public-site"
-  | "sandbox";
+  | "sandbox"
+  | "sandbox-preview-enabled";
 
 /**
  * Whether this URL is somewhere real customers arrive.
@@ -139,6 +140,11 @@ export function liveReadiness(
   // days, on a booking nobody has confirmed yet, is a clock somebody has to
   // watch.
   if (config.intent === "AUTHORIZE") warnings.push("live-with-authorize");
+  // An escape hatch left open. It does nothing with live credentials — the
+  // sandbox branch above has already returned — but a deployment carrying it
+  // is one env var away from showing test buttons on the real site again, and
+  // this is the only place that would ever say so.
+  if (process.env.PAYPAL_SANDBOX_ADMIN_PREVIEW === "1") warnings.push("sandbox-preview-enabled");
   return warnings;
 }
 
@@ -157,12 +163,19 @@ export function describeReadiness(warning: LiveReadinessWarning): string {
         "PayPal is LIVE with AUTHORIZE intent: deposits are held, not taken. PayPal honours a hold " +
         "for 3 days and allows capture up to 29, so an unconfirmed booking is a clock."
       );
+    case "sandbox-preview-enabled":
+      return (
+        "PAYPAL_SANDBOX_ADMIN_PREVIEW is still set to 1. It does nothing while the credentials are live, " +
+        "but it is the switch that lets sandbox buttons appear on the real site, so it should be removed " +
+        "from the environment now that real money is being taken."
+      );
     case "sandbox-on-public-site":
       return (
-        "PayPal is in SANDBOX on a public site, so the test buttons are shown to signed-in admins only. " +
-        "Customers see the PayPal payment links set on each product, exactly as they do today — nobody " +
-        "can complete a test payment and think they have booked. Switch PAYPAL_ENV to live when you are " +
-        "ready for real deposits."
+        "PayPal is in SANDBOX on a public site, so NOBODY is offered the buttons — not customers, and " +
+        "not admins. A test credential on the real domain is a payment that looks real and moves no " +
+        "money, so no Instant Booking happens here at all; visitors fall through to the PayPal payment " +
+        "links set on each product. Switch PAYPAL_ENV to live for real deposits, or set " +
+        "PAYPAL_SANDBOX_ADMIN_PREVIEW=1 to test on this domain as an admin."
       );
     case "sandbox":
       return "PayPal is in SANDBOX. No real money moves.";

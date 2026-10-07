@@ -348,8 +348,16 @@ export function TripDepartures({
             onSubmit={(e) => submit(e, false)}
             className="rounded-2xl border border-black/5 bg-cream p-5 shadow-sm"
           >
+            {/* One wording wherever a customer can book and pay on the spot.
+                A waitlist is neither, and a departure with the switch off is a
+                request the desk confirms — calling either "Instant Booking"
+                would promise something the flow does not do. */}
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-ink-soft/85">
-              {selected.waitlistable ? tr("Join the waitlist") : tr("Reserve your seats")}
+              {selected.waitlistable
+                ? tr("Join the waitlist")
+                : selected.instantBooking
+                  ? tr("Instant Booking")
+                  : tr("Reserve your seats")}
             </p>
             <p className="mt-1 font-display text-lg font-semibold text-ink">
               {formatDateRange(selected.departsOn, selected.returnsOn, locale)}
@@ -448,7 +456,9 @@ export function TripDepartures({
                 ? tr("Holding your seat…")
                 : selected.waitlistable
                   ? tr("Join the waitlist")
-                  : tr("Reserve my seat")}
+                  : selected.instantBooking
+                    ? tr("Instant Booking")
+                    : tr("Reserve my seat")}
             </button>
 
             {/* Said before the button is pressed, not after — this is the one

@@ -116,7 +116,7 @@ export default async function AdminPayPalPage() {
             </p>
             {products.length === 0 ? (
               <p className="mt-4 text-sm text-ink-soft">
-                No product has the deposit switch on yet. Turn on &ldquo;Offer Secure your date&rdquo; on a
+                No product has the deposit switch on yet. Turn on &ldquo;Instant Booking&rdquo; on a
                 photoshoot or experience in the Studio.
               </p>
             ) : (
