@@ -251,8 +251,12 @@ export default async function Home() {
                   {home.flyingDress.title}
                 </h2>
                 <p className="text-cream/70">{home.flyingDress.body}</p>
+                {/* The rooftop, not the dunes. The copy beside this button
+                    names the Pyramids Rooftop first, and it is the product
+                    Egypt Eye leads with — sending the click to Sand Dunes made
+                    the headline promise and the destination disagree. */}
                 <Link
-                  href="/photoshoots/flying-dress-photoshoot"
+                  href="/photoshoots/pyramids-rooftop-flying-dress-photoshoot"
                   className="w-fit rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
                 >
                   {home.flyingDress.buttonLabel}

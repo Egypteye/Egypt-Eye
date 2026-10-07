@@ -349,11 +349,21 @@ export const photoshoots: Photoshoot[] = [
     // has no such field yet, unlike Activity and Story. The other six
     // photoshoots carry uncredited Unsplash images for the same reason.
     image: unsplashUrl("photo-1734461255986-048992c9d15d"),
-    // Inside the roof's 6am\u20133pm window. Sunrise first because it is the
+    // Across the roof's 6am\u20134pm window. Sunrise leads because it is the one
     // thing no photoshoot inside the Giza complex can offer \u2014 the site does
-    // not open until 8am. Sunset is deliberately not offered: the earliest
-    // sunset of the year is 16:58 in December, two hours after the roof shuts.
-    timeSlots: ["6:00 AM", "9:00 AM", "1:00 PM"],
+    // not open until 8am.
+    //
+    // The last slot starts at three, not four: the session runs 30\u201345 minutes
+    // and has to finish before the roof closes. That is also the better end of
+    // the day in winter \u2014 a three o'clock session finishes about 1h15m before
+    // sunset in November and December, which is genuinely golden hour. In June
+    // it is still four hours short of sunset, so the light is high and hard.
+    //
+    // Sunset itself is never offered: the earliest sunset of the year is 16:58
+    // in December, after the roof has shut. Anyone wanting a time outside this
+    // list uses "Request another time" in the booking sheet, which asks what
+    // would suit them and promises only that we will say what is possible.
+    timeSlots: ["6:00 AM", "9:00 AM", "12:00 PM", "3:00 PM"],
     // Only the fixed-price add-ons. Light makeup, the hairdresser and the
     // custom dress are all quoted "from", and a price that moves after payment
     // is the one thing the deposit flow must never do \u2014 they stay in `addOns`
@@ -422,6 +432,11 @@ export const photoshoots: Photoshoot[] = [
         question: "I have never modelled. Will I know what to do?",
         answer:
           "You do not need to. The photographer directs the whole session, and an assistant handles the dress \u2014 which is most of the work once the wind catches it.",
+      },
+      {
+        question: "Can we shoot in the afternoon, or at sunset?",
+        answer:
+          "Afternoon, yes \u2014 the last session starts at three. In November and December that finishes about an hour before the sun goes down, which is the best light the afternoon has. The roof closes at four, so we cannot promise the sunset itself. If you want a time that is not listed, choose \u201cRequest another time\u201d when you book and we will tell you what is possible for your date.",
       },
       {
         question: "How long does it take?",
