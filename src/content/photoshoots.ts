@@ -1,3 +1,4 @@
+import { unsplashUrl } from "./unsplash";
 import type { Photoshoot } from "./types";
 
 // Photoshoot Packages — Egypt Eye's signature products.
@@ -331,18 +332,43 @@ export const photoshoots: Photoshoot[] = [
     locations: ["Giza Rooftop"],
     imageLabel: "Flying Dress on a Giza Rooftop",
     imageTone: "giza",
-    // No image here on purpose. Egypt Eye is uploading the real rooftop
-    // photography in the Studio, and the only frames we hold are watermarked,
-    // 640px catalogue images from a partner PDF \u2014 too soft for a product
-    // page and not ours to publish. withLocalImageFallback() fills this field
-    // from here only when Sanity leaves it empty, so leaving it unset means
-    // the Studio upload is the single source rather than something stale.
+    // A licensed stand-in until Egypt Eye's own rooftop photography is
+    // uploaded in the Studio \u2014 a real rooftop view of the pyramids, which is
+    // the one thing this product has to show. Nothing from the partner rate
+    // card is used: those frames are watermarked and about 640px wide.
     //
-    // `bookable` is deliberately absent too. The listing renders only Sanity
-    // documents, but the product PAGE falls back to this entry, so a bookable
-    // local copy would take real deposits at a URL nothing links to before
-    // anyone had configured the product. isInstantBookable() needs both a
-    // price and the switch, and the switch belongs in the Studio.
+    // Swapping in Egypt Eye's own photo is the upgrade path unsplash.ts
+    // describes \u2014 replace the image and drop the credit. A Studio upload wins
+    // outright, since withLocalImageFallback() only reaches for this field
+    // when Sanity leaves its own empty.
+    //
+    // Photo: Artfox Photography on Unsplash, "The Pyramids of Giza from a
+    // Rooftop Restaurant at sunset" \u2014 unsplash.com/photos/
+    // the-pyramids-of-giza-are-seen-in-the-distance-S066vM8eWa4
+    // Recorded here rather than in an `imageCredit` field because Photoshoot
+    // has no such field yet, unlike Activity and Story. The other six
+    // photoshoots carry uncredited Unsplash images for the same reason.
+    image: unsplashUrl("photo-1734461255986-048992c9d15d"),
+    // Inside the roof's 6am\u20133pm window. Sunrise first because it is the
+    // thing no photoshoot inside the Giza complex can offer \u2014 the site does
+    // not open until 8am. Sunset is deliberately not offered: the earliest
+    // sunset of the year is 16:58 in December, two hours after the roof shuts.
+    timeSlots: ["6:00 AM", "9:00 AM", "1:00 PM"],
+    // Only the fixed-price add-ons. Light makeup, the hairdresser and the
+    // custom dress are all quoted "from", and a price that moves after payment
+    // is the one thing the deposit flow must never do \u2014 they stay in `addOns`
+    // as prose and are handled by enquiry.
+    extras: [
+      { label: "Full Makeup", priceUsd: 45 },
+      { label: "2 Instagram Reels", priceUsd: 25 },
+      { label: "Extra Dress", priceUsd: 99 },
+    ],
+    // `bookable` is deliberately absent, as it is on every other entry here.
+    // The listing renders only Sanity documents, but the product PAGE falls
+    // back to this entry, so a bookable local copy would take real deposits at
+    // a URL nothing links to before anyone had configured the product.
+    // isInstantBookable() needs both a price and the switch, and the switch
+    // belongs in the Studio.
     description:
       "A flowing dress on a rooftop above Giza, with the pyramids across the skyline and nobody else in the frame. Shot at first light, while the site below is still closed \u2014 and you leave with more than a hundred edited photographs rather than a handful.",
     goodFor: [
