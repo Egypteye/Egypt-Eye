@@ -122,6 +122,8 @@ export function SecureDateButton({
   const [step, setStep] = useState<1 | 2>(1);
   const [stage, setStage] = useState<Stage>({ kind: "form" });
   const [submitting, setSubmitting] = useState(false);
+  // True once a payment has failed in a way its order cannot recover from.
+  const [deadEnd, setDeadEnd] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const slots = useMemo(() => (timeSlots ?? []).filter((slot) => slot.trim() !== ""), [timeSlots]);
@@ -524,7 +526,34 @@ export function SecureDateButton({
                         emailed: stage.emailed,
                       })
                     }
+                    onDeadEnd={() => setDeadEnd(true)}
                   />
+
+                  {/* A refused capture spends the order. Re-sending it is
+                      correctly refused — that is what stops one approval being
+                      captured twice — which leaves the customer with a button
+                      that can only ever say "already failed". So they get a
+                      way back to the form instead of a wall. Their answers are
+                      still in state, so it is one press and a re-submit.
+
+                      The booking they already made is NOT cancelled: it is a
+                      real request the desk can follow up, and throwing it away
+                      because a payment failed would lose the lead as well as
+                      the payment. */}
+                  {deadEnd && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setDeadEnd(false);
+                        setError(null);
+                        setStage({ kind: "form" });
+                        setStep(2);
+                      }}
+                      className="w-full rounded-full border border-black/15 bg-cream px-5 py-3 text-sm font-semibold text-ink transition hover:border-gold/50"
+                    >
+                      Start a new payment
+                    </button>
+                  )}
 
                   {chosenExtras.length > 0 && (
                     <p className="text-xs leading-relaxed text-ink-soft">

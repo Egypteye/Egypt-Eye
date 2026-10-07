@@ -22,6 +22,14 @@ import { useEffect, useRef, useState } from "react";
 // actually happened. This component never decides that a payment succeeded.
 
 type Props = {
+  /**
+   * Called when the payment has failed in a way this order cannot recover
+   * from — a refused capture, a terminal state. The order id is spent at that
+   * point: re-sending it is correctly refused, which is what stops one
+   * approval being captured twice, but it also means the customer has nothing
+   * left to press. The parent offers them a fresh start instead.
+   */
+  onDeadEnd?: () => void;
   orderId: string;
   clientId: string;
   reference: string;
@@ -86,6 +94,7 @@ export function PayPalDepositButtons({
   reference,
   amountUsd,
   onSettled,
+  onDeadEnd,
   fallbackUrl,
 }: Props) {
   const container = useRef<HTMLDivElement>(null);
@@ -100,6 +109,13 @@ export function PayPalDepositButtons({
   useEffect(() => {
     settled.current = onSettled;
   }, [onSettled]);
+  // Same treatment, same reason: this is read from inside the SDK's callback,
+  // and putting it in the mount effect's dependencies would tear the buttons
+  // down and rebuild them whenever the parent re-rendered.
+  const deadEnd = useRef(onDeadEnd);
+  useEffect(() => {
+    deadEnd.current = onDeadEnd;
+  }, [onDeadEnd]);
 
   useEffect(() => {
     let cancelled = false;
@@ -132,6 +148,10 @@ export function PayPalDepositButtons({
               if (!response.ok) {
                 setStatus("ready");
                 setError(data?.error ?? "We could not complete that payment. Please message us on WhatsApp.");
+                // 409 is a terminal state and 502 is a refused capture. Either
+                // way this order will never complete, so pressing the button
+                // again only earns "that payment is already failed".
+                if (response.status === 409 || response.status === 502) deadEnd.current?.();
                 return;
               }
               settled.current({
@@ -215,9 +235,15 @@ export function PayPalDepositButtons({
       )}
 
       {error && (
-        <p role="alert" className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-          {error}
-        </p>
+        <div role="alert" className="mt-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
+          <p>{error}</p>
+          {onDeadEnd && (
+            <p className="mt-1.5 text-xs">
+              Pressing pay again will not help — that attempt is spent. Start a new booking below, or message
+              us and we will take it from here.
+            </p>
+          )}
+        </div>
       )}
     </div>
   );
