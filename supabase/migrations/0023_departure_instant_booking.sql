@@ -1,110 +1,36 @@
--- HOW TO RUN THIS: paste it into the Supabase SQL editor and press the plain
--- "Run" button. Do NOT use "Run and enable RLS".
---
--- That button scans the script for new tables and appends an ALTER TABLE ...
--- ENABLE ROW LEVEL SECURITY for each one. It cannot read plpgsql: it takes the
--- variables in the function's `declare` block below for table names, truncates
--- the function body to splice its own statements in, and leaves the dollar
--- quote unterminated — which fails with "unterminated dollar-quoted string"
--- before Postgres executes anything. Nothing is applied when that happens, so
--- a retry with the plain Run button is safe.
---
--- There is nothing for it to do in any case: this migration creates no tables.
--- It adds columns to two existing ones, adds an index, and creates a function.
--- RLS on reservations and trip_departures was set when they were created.
-
 -- Instant Booking for Weekly Trips, and the seat hold that makes it safe.
---
--- Every other product on this site is unlimited: two people can book the same
--- photoshoot slot and the worst case is a conversation. A departure has a van
--- with a fixed number of seats, and book_departure_seats() already claims one
--- the moment a booking is made — under FOR UPDATE, so it cannot oversell.
---
--- Adding a deposit opens a gap that does not exist anywhere else in the
--- system: seats are claimed now, the money arrives later, and in between the
--- customer can close the tab. Without this migration an abandoned checkout
--- holds seats until a human notices, and a popular departure reads as full to
--- real customers who would have paid.
---
--- Two designs were available.
---
---   Pay first, then claim the seat. No seat is ever held for a non-payer, but
---   a customer can pay and find the seats gone in the interval, which needs an
---   automatic refund path and is a far worse thing to get wrong.
---
---   Claim the seat, release it if the money never comes. An abandoned checkout
---   costs the departure some availability for a bounded time, and it heals
---   itself.
---
--- The second is chosen: the failure costs availability rather than trust, and
--- it is recoverable without touching anybody's money.
+-- Rationale and the full reasoning: docs/booking-deposits.md, "Weekly Trips,
+-- and the seat hold". Kept short deliberately — the Supabase SQL editor
+-- truncates long scripts, which breaks the dollar-quoted function below.
 
--- The switch, per departure rather than per trip, because the price it takes a
--- percentage of is per departure too. A trip is version-controlled content; a
--- departure is the thing the team actually edits week to week.
 alter table public.trip_departures
   add column if not exists instant_booking boolean not null default false;
 
-comment on column public.trip_departures.instant_booking is
-  'Offer this departure online, taking the deposit on the spot. Needs price_usd set. Off by default: a price is information, the switch is what puts it on sale.';
-
--- When an unpaid claim lapses. Null means the seats are not held pending a
--- payment at all, which is every booking taken before this existed and every
--- booking on a departure with the switch off — the request-then-confirm flow,
--- which must keep working untouched.
 alter table public.reservations
   add column if not exists seat_hold_expires_at timestamptz;
 
-comment on column public.reservations.seat_hold_expires_at is
-  'For Instant Booking departures: when seats claimed for an unpaid booking are released. Cleared on capture. Null means no pending-payment hold.';
-
--- Tells an abandoned checkout apart from a customer who cancelled. Both end up
--- 'cancelled', because that is the status that gives the seat back, but the
--- desk needs to know which it is looking at.
 alter table public.reservations
   add column if not exists seat_hold_released_at timestamptz;
 
--- The sweep reads exactly this: live holds, oldest first.
 create index if not exists reservations_seat_hold_idx
   on public.reservations (seat_hold_expires_at)
   where seat_hold_expires_at is not null and departure_id is not null;
 
--- ---------------------------------------------------------------------------
--- Releasing a lapsed hold.
---
--- The mirror of book_departure_seats, and it takes the same lock for the same
--- reason: releasing a seat is a write to seats_taken, and a release racing a
--- booking must not lose an increment.
---
--- It is deliberately conservative. It refuses to release when anything about
--- the booking says money may be involved, because wrongly releasing a seat
--- somebody paid for is far worse than holding one nobody did a little longer.
+-- Gives back seats claimed for a booking nobody paid for.
+-- It sets the STATUS and lets trip_departures_seat_sync (migration 0018)
+-- adjust seats_taken. Touching seats_taken here as well would release twice.
 create or replace function public.release_departure_seats(p_reservation_id uuid)
 returns table (released integer, outcome text)
 language plpgsql
 security definer
 set search_path = public
 as $fn$
--- Written WITHOUT a `declare` block on purpose.
---
--- Supabase's "Run and enable RLS" button scans a script for new tables and
--- appends ALTER TABLE ... ENABLE ROW LEVEL SECURITY for each one. It cannot
--- read plpgsql, so it took the local variables declared here for table names,
--- spliced its own statements into the middle of the function and left the
--- dollar quote unterminated. Using subqueries instead of variables leaves it
--- nothing to misread, so the script survives either button.
---
--- The cost is re-reading the reservation a few times in exchange for a
--- migration that applies on the first try. It runs once per abandoned
--- checkout, so the reads are free in any sense that matters.
 begin
   if not exists (select 1 from public.reservations where id = p_reservation_id) then
     return query select 0, 'not_found'::text;
     return;
   end if;
 
-  -- Nothing to release: either it never held seats, or a previous run of this
-  -- already released them. Idempotent on purpose — the sweep is at-least-once.
   if exists (
     select 1 from public.reservations
     where id = p_reservation_id
@@ -114,8 +40,6 @@ begin
     return;
   end if;
 
-  -- Only a booking that actually claimed a seat has one to give back.
-  -- 'waitlisted' rows never incremented seats_taken.
   if exists (
     select 1 from public.reservations
     where id = p_reservation_id and status <> 'requested'
@@ -124,15 +48,12 @@ begin
     return;
   end if;
 
-  -- The guard that matters. If any attempt against this booking holds money,
-  -- or might yet, the seats stay. 'pending' is money PayPal has but has not
-  -- credited — not ours yet, and absolutely not a reason to take a seat back.
+  -- Never release a seat any payment holds or might yet hold.
   if exists (
     select 1 from public.payment_attempts
     where reservation_id = p_reservation_id
       and status in ('captured', 'pending', 'refunded', 'reversed', 'mismatch')
   ) then
-    -- Clear the hold so the sweep stops looking at it, but keep the seats.
     update public.reservations
       set seat_hold_expires_at = null, updated_at = now()
       where id = p_reservation_id;
@@ -140,21 +61,6 @@ begin
     return;
   end if;
 
-  -- The seat is given back by SETTING THE STATUS, not by touching seats_taken.
-  --
-  -- trip_departures_seat_sync (migration 0018) already fires on this update:
-  -- 'requested' is seat-taking, 'cancelled' is not, so the trigger decrements
-  -- seats_taken by exactly this booking's seats. Doing it here as well would
-  -- release every seat twice and quietly under-count a departure until
-  -- somebody noticed a van with more people than seats.
-  --
-  -- It needs no explicit FOR UPDATE either: the trigger's own UPDATE takes a
-  -- row lock on the departure, which serialises against the SELECT ... FOR
-  -- UPDATE that book_departure_seats holds.
-  --
-  -- The booking is not deleted. An abandoned checkout is a lead the desk can
-  -- follow up, and deleting it would throw away the only record that somebody
-  -- wanted these seats.
   return query
     with freed as (
       update public.reservations
@@ -169,7 +75,5 @@ begin
 end;
 $fn$;
 
--- Same lockdown as book_departure_seats: PUBLIC includes anon, and anon must
--- never be able to free somebody else's seats.
 revoke execute on function public.release_departure_seats(uuid) from public;
 grant execute on function public.release_departure_seats(uuid) to service_role;

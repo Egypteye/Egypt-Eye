@@ -949,6 +949,14 @@ gated on PayPal being configured — the sweep does it before its own
 `provider.enabled` early return, because switching the provider off with holds
 outstanding would otherwise strand those seats permanently.
 
+Migration 0023 is deliberately short and nearly comment-free. The Supabase SQL
+editor truncates long scripts, and a truncated script cuts the function's
+dollar-quoted body in half — which surfaces as `unterminated dollar-quoted
+string` and applies nothing. Three attempts failed that way, each cut at a
+different point as explanatory comments were added ahead of it, which is what
+identified the length rather than the content as the cause. The reasoning lives
+here instead; keep the migration lean.
+
 The release is the subtle part, and `check-booking` guards it. Migration 0018
 already carries `trip_departures_seat_sync`, a trigger that adjusts
 `seats_taken` whenever a reservation moves in or out of a seat-taking status.
