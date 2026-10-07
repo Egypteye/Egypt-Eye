@@ -28,6 +28,7 @@ import {
   hardenTour,
 } from "../src/lib/sanityShape";
 import { tours as localTours } from "../src/content/tours";
+import { photoshoots as localPhotoshoots } from "../src/content/photoshoots";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -142,6 +143,50 @@ for (const type of documentTypes) {
 }
 
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// The optional arrays, which are not "required" but still vanish.
+//
+// A live product shipped with zero FAQs because of this. `faqs` is declared on
+// Tour, Experience and Photoshoot and projected by GROQ, but it was in none of
+// the harden functions — so a Studio document that had never had questions
+// typed into it projected null, nothing fell back to the content file, and the
+// page rendered no FAQ section and no FAQPage structured data. Nothing failed;
+// it was simply absent, which is why it survived to production.
+//
+// requiredArrayFields() cannot catch these because the type marks them
+// optional, so they are asserted by behaviour instead.
+const faqSource = localPhotoshoots.find((p) => (p.faqs?.length ?? 0) > 0);
+ok("no local photoshoot has faqs, so the fallback cannot be asserted", Boolean(faqSource));
+
+if (faqSource) {
+  const neverSet = hardenPhotoshoot(
+    { ...faqSource, faqs: null, addOns: null } as unknown as Photoshoot,
+    faqSource
+  );
+  ok(
+    "a Studio photoshoot that never had faqs typed in loses the content file's questions",
+    (neverSet.faqs?.length ?? 0) === faqSource.faqs!.length
+  );
+  ok(
+    "a Studio photoshoot that never had addOns typed in loses the content file's list",
+    (neverSet.addOns?.length ?? 0) === (faqSource.addOns?.length ?? 0)
+  );
+
+  // The other half of the rule: emptying a list in the Studio is a real edit.
+  const emptied = hardenPhotoshoot({ ...faqSource, faqs: [] } as unknown as Photoshoot, faqSource);
+  ok(
+    "emptying a photoshoot's faqs in the Studio is overruled by the content file",
+    (emptied.faqs?.length ?? 0) === 0
+  );
+
+  // And the Studio always wins when it has its own.
+  const own = hardenPhotoshoot(
+    { ...faqSource, faqs: [{ question: "q", answer: "a" }] } as unknown as Photoshoot,
+    faqSource
+  );
+  ok("the Studio's own faqs are replaced by the content file's", own.faqs?.[0]?.question === "q");
+}
+
 if (errors.length > 0) {
   console.error(`\ncheck-sanity-shape: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

@@ -55,6 +55,7 @@ export function hardenTour(tour: Tour, local?: Tour): Tour {
     highlights: arr(tour.highlights, local?.highlights),
     included: arr(tour.included, local?.included),
     excluded: arr(tour.excluded, local?.excluded),
+    faqs: arr(tour.faqs, local?.faqs),
     relatedExperiences: tour.relatedExperiences?.map((e) => hardenExperience(e)),
   };
 }
@@ -65,6 +66,7 @@ export function hardenExperience(experience: Experience, local?: Experience): Ex
     included: arr(experience.included, local?.included),
     timeSlots: arr(experience.timeSlots, local?.timeSlots),
     extras: arr(experience.extras, local?.extras),
+    faqs: arr(experience.faqs, local?.faqs),
     relatedTours: experience.relatedTours?.map((t) => hardenTour(t)),
   };
 }
@@ -84,6 +86,17 @@ export function hardenPhotoshoot(photoshoot: Photoshoot, local?: Photoshoot): Ph
     // empties the list in Studio gets an empty list, not the repo's copy back.
     timeSlots: arr(photoshoot.timeSlots, local?.timeSlots),
     extras: arr(photoshoot.extras, local?.extras),
+    // Added after a live product shipped with no FAQs at all.
+    //
+    // `faqs` and `addOns` are projected by GROQ and declared on the type, but
+    // they were missing from this list \u2014 so a Studio document that had never
+    // had them typed in projected null, nothing fell back, and the page
+    // rendered zero questions. That also drops the FAQPage structured data,
+    // which is invisible until somebody checks why a product has no rich
+    // result. The same three-case rule applies: never set falls back to the
+    // repo's copy, a list an editor emptied stays empty.
+    addOns: arr(photoshoot.addOns, local?.addOns),
+    faqs: arr(photoshoot.faqs, local?.faqs),
   };
 }
 
