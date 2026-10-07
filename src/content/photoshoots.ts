@@ -323,6 +323,88 @@ export const photoshoots: Photoshoot[] = [
     ],
     destinations: ["Giza"],
   },
+  {
+    slug: "pyramids-rooftop-flying-dress-photoshoot",
+    title: "Pyramids Rooftop Flying Dress Photoshoot",
+    duration: "30\u201345 minutes",
+    price: { amount: 199, currency: "USD" },
+    locations: ["Giza Rooftop"],
+    imageLabel: "Flying Dress on a Giza Rooftop",
+    imageTone: "giza",
+    // No image here on purpose. Egypt Eye is uploading the real rooftop
+    // photography in the Studio, and the only frames we hold are watermarked,
+    // 640px catalogue images from a partner PDF \u2014 too soft for a product
+    // page and not ours to publish. withLocalImageFallback() fills this field
+    // from here only when Sanity leaves it empty, so leaving it unset means
+    // the Studio upload is the single source rather than something stale.
+    //
+    // `bookable` is deliberately absent too. The listing renders only Sanity
+    // documents, but the product PAGE falls back to this entry, so a bookable
+    // local copy would take real deposits at a URL nothing links to before
+    // anyone had configured the product. isInstantBookable() needs both a
+    // price and the switch, and the switch belongs in the Studio.
+    description:
+      "A flowing dress on a rooftop above Giza, with the pyramids across the skyline and nobody else in the frame. Shot at first light, while the site below is still closed \u2014 and you leave with more than a hundred edited photographs rather than a handful.",
+    goodFor: [
+      "Solo travelers",
+      "Couples",
+      "Honeymoons",
+      "Birthdays",
+      "Content creators",
+    ],
+    included: [
+      "Flying dress from our collection, in the colour you choose",
+      "Professional photographer and full posing direction",
+      "An assistant to manage the dress throughout",
+      "Door-to-door transport, pickup and return",
+      "100+ colour-graded photographs",
+      "Delivered within 6\u201310 days",
+    ],
+    addOns: [
+      "Light makeup",
+      "Hairdresser",
+      "Keep a custom-made dress",
+    ],
+    delivery: ["100+ colour-graded photographs", "Delivered within 6\u201310 days"],
+    faqs: [
+      {
+        question: "How many photos do I get, and when?",
+        answer:
+          "More than a hundred, colour-graded, delivered within 6 to 10 days.",
+      },
+      {
+        question: "Why sunrise?",
+        answer:
+          "The Giza site does not open until 8am, so the first light of the day is something no photoshoot inside the complex can offer. From the roof there is no gate \u2014 the pyramids catch the sun while the plateau below is still empty.",
+      },
+      {
+        question: "Do I need a ticket for the pyramids?",
+        answer:
+          "No. The shoot is on a private rooftop, not inside the archaeological site, so there is no entry ticket and no queue.",
+      },
+      {
+        question: "Do I bring the dress?",
+        answer:
+          "No. There are twelve colours to choose from and it is yours for the session. Tell us which one when you book.",
+      },
+      {
+        question: "Can my partner be in the photos?",
+        answer:
+          "Yes. We have traditional Egyptian attire for men in five styles. Let us know when you book.",
+      },
+      {
+        question: "I have never modelled. Will I know what to do?",
+        answer:
+          "You do not need to. The photographer directs the whole session, and an assistant handles the dress \u2014 which is most of the work once the wind catches it.",
+      },
+      {
+        question: "How long does it take?",
+        answer:
+          "Thirty to forty-five minutes on the roof, plus the drive each way, which is included door to door.",
+      },
+    ],
+    destinations: ["Giza"],
+  },
 ];
 
 export function getPhotoshootBySlug(slug: string) {
