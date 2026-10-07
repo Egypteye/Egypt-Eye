@@ -421,7 +421,7 @@ export const photoshoots: Photoshoot[] = [
       {
         question: "Do I bring the dress?",
         answer:
-          "No. There are twelve colours to choose from and it is yours for the session. Tell us which one when you book.",
+          "No. The dress is included and it is yours for the session. There are twelve in the collection, all of them available: Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender and Orchid. Tell us which one you would like when you book.",
       },
       {
         question: "Can my partner be in the photos?",
