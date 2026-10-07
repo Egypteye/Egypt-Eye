@@ -25,6 +25,8 @@
 // link — check-nav asserts it, because adding one back looks like a fix.
 
 /** A nav accent. Each maps to real classes in Navbar — see ACCENT_CLASSES. */
+import { redirectRules } from "./redirectRules";
+
 export type NavAccent = "photoshoots" | "customize";
 
 /**
@@ -150,4 +152,66 @@ export const FOOTER_SECTIONS: FooterSection[] = [
 /** Every href the footer links, for the reachability check and for lookups. */
 export function footerHrefs(): string[] {
   return FOOTER_SECTIONS.flatMap((section) => section.links.map((link) => link.href));
+}
+
+/**
+ * The current URL for a path a navigation entry points at.
+ *
+ * Navigation items come from Sanity, so the Studio can still hold a URL the
+ * site has since renamed. That is not hypothetical: after The Boutique rename
+ * the Studio's nav kept `/take-egypt-home`, and because the header matches its
+ * labels and its hidden list by href, that one stale entry put the old name
+ * back in the live menu and sent every visitor who clicked it through a 308 —
+ * while the footer, which is built from this file, showed the new name on the
+ * same page.
+ *
+ * Rather than hard-code the rename a second time, this reads the answer from
+ * redirectRules(), which is where the rename is already defined — the literal
+ * rules, plus the `/prefix/:path*` ones as plain prefix swaps so a nav entry
+ * pointing at a sub-page resolves too. Anything more complicated needs
+ * path-to-regexp, which does not belong in a module client components import.
+ */
+export function canonicalNavHref(href: string): string {
+  const literal = new Map(
+    redirectRules()
+      .filter((rule) => !rule.source.includes(":") && !rule.source.includes("*"))
+      .map((rule) => [rule.source, rule.destination])
+  );
+
+  // The trailing-wildcard rules, as plain prefix swaps. A renamed section
+  // redirects both itself and everything under it — `/old` plus
+  // `/old/:path*` — and a nav entry can point at a sub-page, so matching only
+  // the exact rule would normalise /take-egypt-home and leave
+  // /take-egypt-home/papyrus behind. This deliberately handles ONLY the
+  // `/prefix/:path*` -> `/other/:path*` form rather than pretending to be a
+  // path matcher: anything more needs path-to-regexp, and this module is
+  // imported by client components, where a new dependency is a real cost.
+  const SUFFIX = "/:path*";
+  const prefixes = redirectRules()
+    .filter((rule) => rule.source.endsWith(SUFFIX) && rule.destination.endsWith(SUFFIX))
+    .map((rule) => ({
+      from: rule.source.slice(0, -SUFFIX.length),
+      to: rule.destination.slice(0, -SUFFIX.length),
+    }))
+    .filter((rule) => !rule.from.includes(":") && !rule.to.includes(":"));
+
+  const step = (path: string): string | null => {
+    const exact = literal.get(path);
+    // A rule whose destination needs a parameter cannot apply to a plain path.
+    if (exact !== undefined && !exact.includes(":")) return exact;
+    for (const { from, to } of prefixes) {
+      if (path.startsWith(`${from}/`)) return `${to}${path.slice(from.length)}`;
+    }
+    return null;
+  };
+
+  // Transitive, so a page renamed twice still resolves, with a cap in case a
+  // rule ever points in a circle.
+  let current = href;
+  for (let hops = 0; hops < 5; hops += 1) {
+    const next = step(current);
+    if (next === null || next === current) return current;
+    current = next;
+  }
+  return current;
 }

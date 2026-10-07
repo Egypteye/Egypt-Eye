@@ -15,6 +15,7 @@ import {
   HEADER_HIDDEN,
   HEADER_LABELS,
   HEADER_PRIMARY,
+  canonicalNavHref,
   type NavAccent,
 } from "@/content/navGroups";
 
@@ -57,9 +58,10 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
   // Nav labels are translated by href, not by their English text, and every
   // nav link is rewritten into the active language so browsing never drops
   // the visitor back into English.
-  // HEADER_LABELS is checked first and deliberately: "Shop" is what the menu
-  // calls The Boutique, and only the menu. A translation for the href still
-  // wins over it, so a localised menu is never overridden by English.
+  // A translation for the href wins, then HEADER_LABELS — "Shop" is what the
+  // menu calls The Boutique, and only the menu — then whatever the Studio or
+  // navGroups called it. So a localised menu is never overridden by English,
+  // and an untranslated href still reads "Shop" rather than its Studio label.
   const label = (item: { href: string; label: string }) =>
     dict.nav.byHref[item.href] ?? HEADER_LABELS[item.href] ?? item.label;
   const accent = (href: string) => HEADER_ACCENTS[href];
@@ -71,8 +73,15 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
   // The bar. Resolved by href against site.nav so the Studio's label and the
   // translations still win, with navGroups' own label as the fallback for a
   // page site.nav does not list.
+  // The Studio's nav, with every href resolved to the URL that page lives at
+  // now. Everything below matches by href — the bar, the hidden list, the
+  // labels, the accents — so a renamed page has to be normalised before any of
+  // it runs, or one stale Studio entry puts an old name back in the live menu.
+  // See canonicalNavHref.
+  const studioNav = site.nav.map((item) => ({ ...item, href: canonicalNavHref(item.href) }));
+
   const primaryNav = HEADER_PRIMARY.map((entry) => {
-    const fromNav = site.nav.find((item) => item.href === entry.href);
+    const fromNav = studioNav.find((item) => item.href === entry.href);
     return { href: entry.href, label: fromNav?.label ?? entry.label };
   });
 
@@ -80,10 +89,17 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
   // Your Tour pinned last. Anything the Studio adds to the nav that this file
   // has never heard of lands here rather than disappearing.
   const inBar = new Set(HEADER_PRIMARY.map((entry) => entry.href));
-  const dropdown = site.nav.filter(
-    (item) => !inBar.has(item.href) && !HEADER_HIDDEN.includes(item.href) && item.href !== HEADER_DROPDOWN_LAST
-  );
-  const lastItem = site.nav.find((item) => item.href === HEADER_DROPDOWN_LAST);
+  const seen = new Set<string>();
+  const dropdown = studioNav.filter((item) => {
+    if (inBar.has(item.href) || HEADER_HIDDEN.includes(item.href)) return false;
+    if (item.href === HEADER_DROPDOWN_LAST) return false;
+    // Normalising can collapse two Studio entries onto one page — the old URL
+    // and the new one both listed — which would show the item twice.
+    if (seen.has(item.href)) return false;
+    seen.add(item.href);
+    return true;
+  });
+  const lastItem = studioNav.find((item) => item.href === HEADER_DROPDOWN_LAST);
   const moreNav = lastItem ? [...dropdown, lastItem] : dropdown;
 
   useEffect(() => {

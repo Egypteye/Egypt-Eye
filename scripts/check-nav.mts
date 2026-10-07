@@ -25,6 +25,8 @@ import {
   footerHrefs,
 } from "../src/content/navGroups";
 import { site } from "../src/content/site";
+import { canonicalNavHref } from "../src/content/navGroups";
+import { redirectRules } from "../src/content/redirectRules";
 import { treasureCategories } from "../src/content/treasures";
 import { isWithdrawnPath, withdrawnSectionPaths } from "../src/content/withdrawnSections";
 import { readdir } from "node:fs/promises";
@@ -164,6 +166,48 @@ for (const href of footer) {
 }
 
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// No navigation link may point at a URL that redirects.
+//
+// A redirected nav link still "works", which is why this went unnoticed on the
+// live site: after the Boutique rename the Studio's nav kept /take-egypt-home,
+// so the header showed the old name and 308'd every visitor who clicked it,
+// while the footer on the same page showed the new one. Both the label and the
+// hidden list are matched by href, so a stale href silently opts out of both.
+const literalRedirects = new Map(
+  redirectRules()
+    .filter((rule) => !rule.source.includes(":") && !rule.source.includes("*"))
+    .map((rule) => [rule.source, rule.destination])
+);
+
+// site.nav carries {href,label}; footerHrefs() returns bare strings. Keeping
+// them in one loop made link.href undefined for every footer entry, so that
+// half of this asserted nothing.
+const navTargets: { href: string; what: string }[] = [
+  ...site.nav.map((item) => ({ href: item.href, what: `header nav "${item.label}"` })),
+  ...footer.map((href) => ({ href, what: "footer link" })),
+];
+
+for (const { href, what } of navTargets) {
+  const target = literalRedirects.get(href);
+  ok(
+    `${what} points at ${href}, which redirects to ${target} — link the destination directly`,
+    target === undefined
+  );
+}
+
+// And the normaliser has to actually resolve the rename it exists for.
+for (const [from, to] of literalRedirects) {
+  ok(
+    `canonicalNavHref leaves ${from} un-normalised, so a stale Studio entry would still render it`,
+    canonicalNavHref(from) === to || to.includes(":")
+  );
+}
+ok(
+  "canonicalNavHref leaves a path with no redirect alone",
+  canonicalNavHref("/photoshoots") === "/photoshoots"
+);
+
 if (errors.length > 0) {
   console.error(`\ncheck-nav: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
