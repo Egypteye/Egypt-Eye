@@ -37,7 +37,13 @@ function announceReadiness(): void {
   const config = payPalConfig();
   if (!config) return;
   for (const warning of liveReadiness(config)) {
-    if (warning === "sandbox") continue;
+    // Skipped because they are STATES, not faults, and this runs on every
+    // cold start — which on Vercel is most requests, so "once per process"
+    // means once per request in practice. Printing a paragraph about the
+    // sandbox on every page view buries the warnings that do matter in the
+    // logs somebody reads while a payment is failing. Both are reported on
+    // /admin/paypal, which is where you go to look at them deliberately.
+    if (warning === "sandbox" || warning === "sandbox-on-public-site") continue;
     if (announced.has(warning)) continue;
     announced.add(warning);
     console.warn(`paypal: ${describeReadiness(warning)}`);
