@@ -84,8 +84,27 @@ export async function POST(request: NextRequest) {
     if (result.reason === "terminal") {
       return NextResponse.json({ error: result.message }, { status: 409 });
     }
+    // A declined card is the customer's problem to solve, not ours, and it is
+    // the one failure here they can actually act on — so it says so.
+    //
+    // A real customer hit this three times in thirteen minutes, each attempt
+    // creating a fresh booking, and was told only "we could not complete that
+    // payment" every time. Nothing in that sentence suggests trying a
+    // different card, so it reads as a broken website rather than a bank
+    // declining. The reason was in payment_attempts.failed_reason the whole
+    // time; it just never reached the person who could do something about it.
+    //
+    // The 502 and the dead-end stay: PayPal will not let a declined order be
+    // captured with another instrument, so a new card genuinely needs a new
+    // order, which is what "Start a new payment" gives them.
+    const declined = /INSTRUMENT_DECLINED/i.test(result.message);
     return NextResponse.json(
-      { error: "We could not complete that payment. Please try again, or message us on WhatsApp." },
+      {
+        error: declined
+          ? "Your bank declined that payment method. Try a different card, or pay with your PayPal balance — " +
+            "press “Start a new payment” below. Nothing has been charged. If it keeps failing, message us on WhatsApp."
+          : "We could not complete that payment. Please try again, or message us on WhatsApp.",
+      },
       { status: 502 }
     );
   }
