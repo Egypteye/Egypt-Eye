@@ -11,6 +11,8 @@ import { composePhone } from "@/lib/booking/phone";
 import type { PaymentMode } from "@/lib/booking/wording";
 import { productRail } from "@/lib/booking/productRail";
 import { siteUrl } from "@/content/seo";
+import { sendEmail } from "@/lib/email/resend";
+import { bookingRequestTeamEmail } from "@/lib/email/templates";
 
 // Creates a deposit booking — the "Secure your date" path.
 //
@@ -342,10 +344,64 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // No email is sent here. See the note at the top of this file: a message
+  // No CUSTOMER email is sent here, and that part is deliberate: a message
   // that arrives before the money does is read as a confirmation, whatever it
-  // says. lib/booking/fulfilment.ts sends both emails once PayPal has
+  // says. lib/booking/fulfilment.ts sends the customer's once PayPal has
   // confirmed the capture, and nothing else in the system may send one.
+  //
+  // The desk is a different question, and getting it wrong cost a day of
+  // bookings. abe106f moved both emails behind the capture, which is right for
+  // the customer and wrong here: a booking nobody pays for then reaches
+  // nobody at all. It sits in `reservations` as status 'requested' and the
+  // only way to find it is to open /admin/reservations and look. That stayed
+  // invisible while no product had Instant Booking switched on — every
+  // visitor used the enquiry button, which emails on submit — and surfaced
+  // the day twelve products were made bookable and the gold button took over
+  // the page.
+  //
+  // So the team notice is restored, on its own. bookingRequestTeamEmail was
+  // written for exactly this and left behind with no caller; its own text
+  // reads "Payment status: NOT YET RECEIVED", which is the honest thing to
+  // tell the desk about a request that may never be paid.
+  //
+  // Failure cannot fail the booking. The row is already written and the
+  // customer is already owed an answer; an email that does not send is a
+  // problem for the log, not for them. `emailedCustomer: false` because that
+  // is now always true here, and the desk needs to know the traveller is
+  // waiting to hear from a person.
+  try {
+    const team = bookingRequestTeamEmail({
+      reference,
+      productTitle: product.title,
+      productType,
+      startsAt: when.iso,
+      slotLabel,
+      people,
+      guestName,
+      guestEmail,
+      guestPhone,
+      notes,
+      depositUsd: takingMoney ? depositUsd : null,
+      paymentLink,
+      moneyMode,
+      extras: chosenExtras,
+      emailedCustomer: false,
+      accountState: user ? "signed-in" : "guest",
+    });
+    const sent = await sendEmail({
+      to: settings.contact.email,
+      subject: team.subject,
+      html: team.html,
+      text: team.text,
+      // So a reply from the desk goes to the traveller, not into a void.
+      replyTo: guestEmail || undefined,
+    });
+    if (!sent.ok) {
+      console.error(`booking team email failed for ${reference} (booking was saved): ${sent.error}`);
+    }
+  } catch (err) {
+    console.error(`booking team email threw for ${reference} (booking was saved):`, err);
+  }
 
   // The payment-link path. Nothing to call: the customer is handed the link
   // and pays in PayPal, and the desk matches the payment to the reference.

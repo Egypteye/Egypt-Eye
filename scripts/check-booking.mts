@@ -11,6 +11,7 @@
  *      would be inventing a business fact, and charging $0 to "secure" a date
  *      would be a broken promise rather than a free one.
  */
+import { readFileSync, readdirSync } from "node:fs";
 import { payPalLink } from "../src/lib/booking/deposit";
 import { isInstantBookable, quoteDeposit, type QuotableProduct } from "../src/lib/booking/quote";
 import { photoshoots } from "../src/content/photoshoots";
@@ -911,6 +912,49 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Every team email template must have a caller.
+//
+// This is here because of a real outage. abe106f moved the booking emails
+// behind the PayPal capture — correct for the customer, who must never get a
+// message that reads as a confirmation before the money moves, and wrong for
+// the desk, which then heard nothing at all about a booking nobody paid for.
+// bookingRequestTeamEmail was left in templates.ts with no caller anywhere.
+//
+// Nothing failed. No test went red, no log line appeared, and the gap stayed
+// invisible for as long as no product had Instant Booking switched on, because
+// every visitor used the enquiry button instead. The day twelve products were
+// made bookable, the booking button took over the page and a day of requests
+// reached nobody.
+//
+// A template nobody calls is the shape that bug takes, so it is asserted.
+const templateSrc = readFileSync("src/lib/email/templates.ts", "utf8");
+const teamTemplates = [...templateSrc.matchAll(/^export function (\w*(?:Team|Admin)\w*)\(/gm)].map((m) => m[1]);
+
+ok("no team email templates were found, so this check is blind", teamTemplates.length > 0);
+
+const sources: string[] = [];
+const walk = (dir: string) => {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = `${dir}/${entry.name}`;
+    if (entry.isDirectory()) walk(full);
+    else if (/\.tsx?$/.test(entry.name) && full !== "src/lib/email/templates.ts") {
+      sources.push(readFileSync(full, "utf8"));
+    }
+  }
+};
+walk("src");
+
+// Matched as a CALL, not a mention. The first version of this check looked for
+// the bare name and passed on the comment above the restored call site, which
+// is the same class of mistake it exists to catch.
+for (const name of teamTemplates) {
+  ok(
+    `${name} exists but nothing calls it — a desk notification that reaches nobody`,
+    sources.some((src) => new RegExp(`\\b${name}\\s*\\(`).test(src))
+  );
+}
+
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
