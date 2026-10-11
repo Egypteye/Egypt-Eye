@@ -37,6 +37,7 @@ import {
 import { subjectAnchor, type ReviewEntry, type ReviewSubject } from "../src/lib/reviewSubjects";
 import { testimonialsPageQuery } from "../src/sanity/queries";
 import { normalizeReviewDate, parseCsv, parseReviewInput } from "../src/lib/testimonials/importParse";
+import { readFileSync } from "node:fs";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -386,6 +387,33 @@ ok("the URL type segment is validated", isReviewSubjectType("tour") && isReviewS
 ok("an invented type segment is rejected", !isReviewSubjectType("tours") && !isReviewSubjectType("../admin"));
 
 // ---------------------------------------------------------------------------
+// The homepage marquee draws a fixed number of reviews, not all of them.
+//
+// This is a payload guard, not a style rule. The component used to render
+// every testimonial twice, and when the CMS reached ~2,600 reviews the
+// homepage became 18.4 MB of HTML (1.4 MB gzipped) carrying 5,184
+// interactive elements, against 341 KB for the next largest page. Nothing
+// failed, nothing logged, and no build got slower — the page just quietly
+// became unusable on a phone. Measured on the live site, 11 Oct 2026.
+//
+// Asserted on the source because the alternative is a browser and a CMS
+// full of reviews. scripts/visual-audit.mts measures the real page.
+const marquee = readFileSync("src/components/ReviewsMarquee.tsx", "utf8");
+
+ok("the homepage marquee caps how many reviews it draws", /const MARQUEE_CARDS = \d+/.test(marquee));
+ok("the marquee slices to that cap before rendering", /testimonials\.slice\(0, MARQUEE_CARDS\)/.test(marquee));
+ok(
+  "the marquee no longer duplicates the full testimonial list (the 18 MB homepage)",
+  !/\[\.\.\.testimonials, \.\.\.testimonials\]/.test(marquee),
+);
+// The animation speed must come from the capped list too. Deriving it from
+// the uncapped one is how one loop ended up taking five and a half hours.
+ok(
+  "the marquee derives its duration from the capped list, not the full one",
+  /Math\.round\(shown\.length \* SECONDS_PER_CARD\)/.test(marquee),
+);
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-reviews: ${errors.length} failure(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -393,4 +421,4 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, theme matching, display paging, fetch slicing and importing all hold.");
+console.log("check-reviews: ok — excerpting, photo handling, schema eligibility, theme matching, display paging, fetch slicing, importing and the homepage marquee cap all hold.");

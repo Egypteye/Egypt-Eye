@@ -1,0 +1,372 @@
+/**
+ * Opens the real site in a real browser and reports what it actually looks
+ * like and does, at three sizes.
+ *
+ * This exists because the alternative is writing CSS and believing it. Every
+ * other check in scripts/ reads source files; this one is the only thing in
+ * the repository that can tell you a heading is invisible against its own
+ * hero image, or that a tap target on a phone is too small to hit.
+ *
+ * It points at a URL, not at a build, which is deliberate. It runs against
+ * production, against a Vercel preview deployment, or against `next dev` on
+ * localhost, with no code change — so the same command verifies a branch
+ * before merge and the live site afterwards.
+ *
+ *   npx tsx scripts/visual-audit.mts                          # live site
+ *   npx tsx scripts/visual-audit.mts --base http://localhost:3000
+ *   npx tsx scripts/visual-audit.mts --pages / /tours /faq
+ *   npx tsx scripts/visual-audit.mts --out .visual-audit
+ *
+ * Needs a Chromium binary. It finds one from CHROME_PATH, or from
+ * PLAYWRIGHT_BROWSERS_PATH, or at the usual system locations, and says so
+ * plainly if it cannot — rather than failing with a stack trace about a
+ * missing executable.
+ *
+ * playwright-core is used rather than playwright on purpose: it bundles no
+ * browser and runs no download on install, so adding this tool cannot slow
+ * down or break a Vercel production build.
+ */
+import { chromium, type Browser, type Page } from "playwright-core";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+
+// --------------------------------------------------------------------------
+// Configuration
+// --------------------------------------------------------------------------
+
+const DEFAULT_BASE = "https://egypteyetravel.com";
+
+// The commercial journey, not a sample of pages. If one of these is broken
+// the business loses money, which is the bar for being in this list.
+const DEFAULT_PAGES = [
+  "/",
+  "/tours",
+  "/photoshoots",
+  "/photoshoots/pyramids-rooftop-flying-dress-photoshoot",
+  "/faq",
+];
+
+const VIEWPORTS = [
+  { name: "mobile", width: 390, height: 844 },
+  { name: "tablet", width: 768, height: 1024 },
+  { name: "desktop", width: 1440, height: 900 },
+] as const;
+
+// Apple and Google both publish ~44px as the minimum comfortable touch
+// target. Anything smaller on a phone is a thing people miss and re-tap.
+const MIN_TAP_TARGET = 44;
+
+function arg(flag: string): string | undefined {
+  const i = process.argv.indexOf(flag);
+  return i >= 0 ? process.argv[i + 1] : undefined;
+}
+function argList(flag: string): string[] | undefined {
+  const i = process.argv.indexOf(flag);
+  if (i < 0) return undefined;
+  const out: string[] = [];
+  for (let j = i + 1; j < process.argv.length && !process.argv[j].startsWith("--"); j++) out.push(process.argv[j]);
+  return out.length ? out : undefined;
+}
+
+const BASE = (arg("--base") ?? DEFAULT_BASE).replace(/\/$/, "");
+const PAGES = argList("--pages") ?? DEFAULT_PAGES;
+const OUT = arg("--out") ?? ".visual-audit";
+
+// --------------------------------------------------------------------------
+// Finding a browser
+// --------------------------------------------------------------------------
+
+function findChromium(): string | null {
+  const candidates = [
+    process.env.CHROME_PATH,
+    process.env.PLAYWRIGHT_BROWSERS_PATH ? join(process.env.PLAYWRIGHT_BROWSERS_PATH, "chromium") : undefined,
+    "/opt/pw-browsers/chromium",
+    "/usr/bin/chromium",
+    "/usr/bin/chromium-browser",
+    "/usr/bin/google-chrome",
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  ].filter((c): c is string => Boolean(c));
+  return candidates.find((c) => existsSync(c)) ?? null;
+}
+
+// --------------------------------------------------------------------------
+// Findings
+// --------------------------------------------------------------------------
+
+type Severity = "error" | "warning" | "note";
+type Finding = { severity: Severity; page: string; viewport?: string; area: string; detail: string };
+
+const findings: Finding[] = [];
+const add = (severity: Severity, page: string, area: string, detail: string, viewport?: string) =>
+  findings.push({ severity, page, viewport, area, detail });
+
+// --------------------------------------------------------------------------
+// Per-page checks
+// --------------------------------------------------------------------------
+
+/** Page-level facts worth knowing before looking at any screenshot. */
+async function inspectStructure(page: Page, path: string) {
+  // NOTE: no named helpers inside this callback. tsx compiles with esbuild's
+  // keepNames, which wraps any function assigned to a const in a __name()
+  // helper — and that helper does not exist inside the browser, so the
+  // evaluate dies with "__name is not defined". Everything here is therefore
+  // inlined or an anonymous callback.
+  const info = await page.evaluate((minTap) => {
+    const headings = Array.from(document.querySelectorAll("h1,h2,h3,h4,h5,h6")).map((h) => ({
+      level: Number(h.tagName[1]),
+      text: (h.textContent ?? "").trim().slice(0, 80),
+    }));
+
+    const imagesWithoutAlt = Array.from(document.querySelectorAll("img"))
+      .filter((img) => !img.hasAttribute("alt"))
+      .map((img) => (img.getAttribute("src") ?? "").slice(0, 120));
+
+    // Interactive things too small to hit reliably on a phone. Measured from
+    // the rendered box, so it accounts for padding, not just font size.
+    //
+    // Anything 1px or smaller in either direction is skipped: that is the
+    // visually-hidden pattern a "Skip to content" link uses, which is an
+    // accessibility feature, not a tap target. Flagging it taught me to
+    // distrust the whole list, which is worse than not flagging it.
+    const smallTargets = Array.from(document.querySelectorAll('a,button,[role="button"],input,select'))
+      .map((el) => {
+        const r = el.getBoundingClientRect();
+        const cs = getComputedStyle(el);
+        return {
+          tag: el.tagName.toLowerCase(),
+          label: (el.textContent ?? "").trim().slice(0, 40),
+          w: Math.round(r.width),
+          h: Math.round(r.height),
+          hidden: cs.visibility === "hidden" || cs.display === "none" || Number(cs.opacity) < 0.02,
+        };
+      })
+      .filter((t) => t.w > 1 && t.h > 1 && !t.hidden && (t.w < minTap || t.h < minTap));
+
+    // Grouped by what they are, not listed one by one. A flat count says
+    // "5126 tap targets are too small", which reads as a broken check and
+    // gets ignored. Grouped, the same data says "2674 × View on
+    // Tripadvisor", which names the component rendering them — that is how
+    // the 18 MB homepage was found.
+    const targetGroups: Record<string, number> = {};
+    for (const t of smallTargets) {
+      const key = `${t.tag} "${t.label}" ${t.w}x${t.h}`;
+      targetGroups[key] = (targetGroups[key] ?? 0) + 1;
+    }
+    const topTargetGroups = Object.entries(targetGroups).sort((a, b) => b[1] - a[1]).slice(0, 5);
+
+    // Total rendered text. A homepage carrying a megabyte of it is shipping
+    // a database to the browser, whatever it looks like.
+    const bodyChars = document.body.innerText.length;
+    const domNodes = document.getElementsByTagName("*").length;
+
+    return {
+      title: document.title,
+      description: document.querySelector('meta[name="description"]')?.getAttribute("content") ?? null,
+      canonical: document.querySelector('link[rel="canonical"]')?.getAttribute("href") ?? null,
+      robots: document.querySelector('meta[name="robots"]')?.getAttribute("content") ?? null,
+      ogImage: document.querySelector('meta[property="og:image"]')?.getAttribute("content") ?? null,
+      headings,
+      imagesWithoutAlt,
+      smallTargets,
+      topTargetGroups,
+      bodyChars,
+      domNodes,
+      jsonLdBlocks: document.querySelectorAll('script[type="application/ld+json"]').length,
+      htmlLang: document.documentElement.getAttribute("lang"),
+    };
+  }, MIN_TAP_TARGET);
+
+  // --- SEO basics
+  if (!info.title) add("error", path, "seo", "No <title>.");
+  else if (info.title.length > 60) add("note", path, "seo", `Title is ${info.title.length} chars; Google truncates around 60: "${info.title}"`);
+  if (!info.description) add("warning", path, "seo", "No meta description — Google writes its own snippet.");
+  if (!info.canonical) add("warning", path, "seo", "No canonical link.");
+  if (!info.ogImage) add("note", path, "seo", "No og:image — shares render without a picture.");
+  if (!info.htmlLang) add("warning", path, "a11y", "<html> has no lang attribute; screen readers guess the language.");
+
+  // --- Heading structure
+  const h1s = info.headings.filter((h) => h.level === 1);
+  if (h1s.length === 0) add("error", path, "a11y", "No <h1> on the page.");
+  if (h1s.length > 1) add("warning", path, "a11y", `${h1s.length} <h1> elements: ${h1s.map((h) => `"${h.text}"`).join(", ")}`);
+  for (let i = 1; i < info.headings.length; i++) {
+    const jump = info.headings[i].level - info.headings[i - 1].level;
+    if (jump > 1) {
+      add("note", path, "a11y", `Heading level jumps h${info.headings[i - 1].level} → h${info.headings[i].level} at "${info.headings[i].text}"`);
+      break; // one example is enough to act on
+    }
+  }
+
+  // --- Images and JSON-LD
+  if (info.imagesWithoutAlt.length) {
+    add("warning", path, "a11y", `${info.imagesWithoutAlt.length} <img> without alt, e.g. ${info.imagesWithoutAlt[0]}`);
+  }
+  if (info.jsonLdBlocks === 0) add("note", path, "seo", "No JSON-LD structured data on this page.");
+
+  return info;
+}
+
+/** axe-core, injected from the installed package rather than a CDN. */
+async function runAxe(page: Page, path: string) {
+  let source: string;
+  try {
+    source = readFileSync(require.resolve("axe-core/axe.min.js"), "utf8");
+  } catch {
+    add("note", path, "a11y", "axe-core is not installed; accessibility rules were not run.");
+    return null;
+  }
+  await page.evaluate(source);
+  const result = (await page.evaluate(async () => {
+    // @ts-expect-error injected at runtime
+    return await window.axe.run(document, { resultTypes: ["violations"] });
+  })) as { violations: { id: string; impact: string | null; description: string; nodes: unknown[] }[] };
+
+  for (const v of result.violations) {
+    const severity: Severity = v.impact === "critical" || v.impact === "serious" ? "warning" : "note";
+    add(severity, path, "a11y", `${v.id} (${v.impact ?? "unknown"}, ${v.nodes.length} element(s)): ${v.description}`);
+  }
+  return result.violations.length;
+}
+
+// --------------------------------------------------------------------------
+// Main
+// --------------------------------------------------------------------------
+
+const executablePath = findChromium();
+if (!executablePath) {
+  console.error(
+    "visual-audit: no Chromium found.\n" +
+      "  Set CHROME_PATH to a Chrome or Chromium binary, or install one:\n" +
+      "    npx playwright install chromium\n" +
+      "  (On this project's cloud sandbox one is already at /opt/pw-browsers/chromium.)",
+  );
+  process.exit(2);
+}
+
+mkdirSync(OUT, { recursive: true });
+
+const proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+const browser: Browser = await chromium.launch({
+  executablePath,
+  args: ["--ignore-certificate-errors"],
+  ...(proxy ? { proxy: { server: proxy } } : {}),
+});
+
+console.log(`visual-audit: ${BASE}`);
+console.log(`  browser  ${executablePath}`);
+console.log(`  pages    ${PAGES.length}   viewports ${VIEWPORTS.map((v) => v.name).join(", ")}`);
+if (proxy) console.log(`  proxy    ${proxy} (load times below include proxy overhead and are NOT the site's real speed)`);
+console.log("");
+
+const pageReports: Record<string, unknown> = {};
+
+for (const path of PAGES) {
+  const url = `${BASE}${path}`;
+  const label = path === "/" ? "home" : path.replace(/^\//, "").replace(/\//g, "-");
+  const perPage: Record<string, unknown> = { url };
+
+  for (const vp of VIEWPORTS) {
+    const context = await browser.newContext({
+      viewport: { width: vp.width, height: vp.height },
+      ignoreHTTPSErrors: true,
+      isMobile: vp.name === "mobile",
+      hasTouch: vp.name === "mobile",
+      deviceScaleFactor: vp.name === "mobile" ? 2 : 1,
+    });
+    const page = await context.newPage();
+
+    const consoleErrors: string[] = [];
+    const failedRequests: string[] = [];
+    page.on("console", (m) => { if (m.type() === "error") consoleErrors.push(m.text().slice(0, 240)); });
+    page.on("requestfailed", (r) => failedRequests.push(`${r.failure()?.errorText ?? "failed"} ${r.url().slice(0, 140)}`));
+    page.on("pageerror", (e) => consoleErrors.push(`uncaught: ${e.message}`.slice(0, 240)));
+
+    const started = Date.now();
+    let status: number | undefined;
+    try {
+      const res = await page.goto(url, { waitUntil: "load", timeout: 60_000 });
+      status = res?.status();
+    } catch (err) {
+      add("error", path, "load", `${vp.name}: navigation failed: ${err instanceof Error ? err.message : String(err)}`, vp.name);
+      await context.close();
+      continue;
+    }
+    const loadMs = Date.now() - started;
+
+    if (status && status >= 400) add("error", path, "load", `${vp.name}: HTTP ${status}`, vp.name);
+
+    // Let entrance animations and carousels settle. Screenshotting mid-fade
+    // produces a washed-out image that looks exactly like a real contrast
+    // bug, which is a false positive worth paying 1.2s to avoid.
+    await page.waitForTimeout(1200);
+
+    const shot = join(OUT, `${label}-${vp.name}.png`);
+    await page.screenshot({ path: shot, fullPage: false });
+
+    for (const e of consoleErrors.slice(0, 3)) add("error", path, "console", `${vp.name}: ${e}`, vp.name);
+    for (const f of failedRequests.slice(0, 3)) add("error", path, "network", `${vp.name}: ${f}`, vp.name);
+
+    // Structure and a11y are page facts, not viewport facts — but tap
+    // targets only mean something on a phone, so the mobile pass owns them.
+    if (vp.name === "mobile") {
+      const info = await inspectStructure(page, path);
+      if (info.smallTargets.length) {
+        const worst = info.topTargetGroups.map(([k, n]) => `${n}× ${k}`).join("; ");
+        add("warning", path, "mobile", `${info.smallTargets.length} tap target(s) under ${MIN_TAP_TARGET}px — ${worst}`, "mobile");
+      }
+      // Payload. These thresholds are not style opinions: a page past them
+      // is slow on a phone no matter how good it looks.
+      if (info.bodyChars > 200_000) {
+        add("error", path, "payload", `${info.bodyChars.toLocaleString()} characters of rendered text — this page is shipping a dataset, not a page`, "mobile");
+      } else if (info.bodyChars > 80_000) {
+        add("warning", path, "payload", `${info.bodyChars.toLocaleString()} characters of rendered text`, "mobile");
+      }
+      if (info.domNodes > 5_000) {
+        add("error", path, "payload", `${info.domNodes.toLocaleString()} DOM nodes — browsers struggle past about 5,000`, "mobile");
+      } else if (info.domNodes > 2_500) {
+        add("warning", path, "payload", `${info.domNodes.toLocaleString()} DOM nodes`, "mobile");
+      }
+      const axeCount = await runAxe(page, path);
+      perPage.structure = info;
+      perPage.axeViolations = axeCount;
+    }
+
+    perPage[vp.name] = { status, loadMs, screenshot: shot, consoleErrors: consoleErrors.length, failedRequests: failedRequests.length };
+    console.log(`  ${status === 200 ? "ok " : "!! "} ${path.padEnd(52)} ${vp.name.padEnd(8)} ${String(loadMs).padStart(6)}ms  → ${shot}`);
+
+    await context.close();
+  }
+
+  pageReports[path] = perPage;
+}
+
+await browser.close();
+
+// --------------------------------------------------------------------------
+// Report
+// --------------------------------------------------------------------------
+
+const errors = findings.filter((f) => f.severity === "error");
+const warnings = findings.filter((f) => f.severity === "warning");
+const notes = findings.filter((f) => f.severity === "note");
+
+const lines: string[] = [`# Visual audit — ${BASE}`, "", `Run ${new Date().toISOString()}`, ""];
+for (const [heading, group] of [["Errors", errors], ["Warnings", warnings], ["Notes", notes]] as const) {
+  lines.push(`## ${heading} (${group.length})`, "");
+  if (!group.length) lines.push("_None._", "");
+  for (const f of group) lines.push(`- **${f.page}**${f.viewport ? ` _(${f.viewport})_` : ""} · \`${f.area}\` — ${f.detail}`);
+  lines.push("");
+}
+writeFileSync(join(OUT, "report.md"), lines.join("\n"));
+writeFileSync(join(OUT, "report.json"), JSON.stringify({ base: BASE, ranAt: new Date().toISOString(), findings, pages: pageReports }, null, 2));
+
+console.log("");
+console.log(`visual-audit: ${errors.length} error(s), ${warnings.length} warning(s), ${notes.length} note(s)`);
+console.log(`  report  ${join(OUT, "report.md")}`);
+console.log(`  shots   ${OUT}/*.png  — LOOK AT THEM. This script cannot tell you a page is ugly.`);
+
+// Errors fail the command so this can gate a deploy. Warnings and notes do
+// not: a heading-order nit should never block a release on its own.
+process.exit(errors.length > 0 ? 1 : 0);
