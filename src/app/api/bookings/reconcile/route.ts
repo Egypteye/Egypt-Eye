@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { getCurrentUser } from "@/lib/auth/session";
 import { reconcilePayments } from "@/lib/booking/reconcile";
+import { pruneRateLimitHits } from "@/lib/rateLimit";
+import { bearerMatches } from "@/lib/security/secrets";
 
 // Runs the payment sweep.
 //
@@ -15,9 +17,7 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 60;
 
 async function authorised(request: NextRequest): Promise<boolean> {
-  const secret = process.env.CRON_SECRET;
-  const header = request.headers.get("authorization");
-  if (secret && header === `Bearer ${secret}`) return true;
+  if (bearerMatches(request, process.env.CRON_SECRET)) return true;
   const user = await getCurrentUser();
   return user?.role === "admin";
 }
@@ -33,7 +33,14 @@ export async function POST(request: NextRequest) {
   if (report.problems.length > 0) {
     console.error("payment reconciliation found problems:", report.problems.join(" | "));
   }
-  return NextResponse.json({ ok: true, ...report });
+
+  // Piggy-backing the rate-limit tidy-up on the one job that already runs
+  // every night, rather than adding a second cron entry and a second
+  // secret for a single DELETE. It runs after the sweep, and cannot fail
+  // it: pruneRateLimitHits swallows its own errors.
+  const { pruned } = await pruneRateLimitHits();
+
+  return NextResponse.json({ ok: true, ...report, rateLimitHitsPruned: pruned });
 }
 
 // Vercel's scheduler issues a GET.

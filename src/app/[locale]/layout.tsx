@@ -17,6 +17,7 @@ import {
   getTours,
 } from "@/sanity/fetchers";
 import { collectReviewSubjects, reviewedSubjectKeys } from "@/lib/reviewSubjects";
+import { jsonLdScript } from "@/content/jsonLd";
 
 // Cyrillic is in the body face's subsets because Russian is one of the
 // supported languages and Cormorant covers it; without it every Russian page
@@ -167,11 +168,11 @@ export default async function RootLayout({
       <body className="min-h-full bg-sand text-ink">
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(organizationJsonLd) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(websiteJsonLd) }}
         />
         <LocaleProvider locale={locale} dict={dict} ui={ui} hasReviews={hasReviews} reviewedKeys={reviewedKeys}>
           {children}

@@ -15,6 +15,7 @@ import { getUpcomingDepartures } from "@/lib/departures";
 import { fromPriceByTrip, nextDepartureByTrip } from "@/lib/departureModel";
 import { breadcrumbJsonLd, tripDepartureEventJsonLd } from "@/content/seo";
 import { site } from "@/content/site";
+import { jsonLdScript } from "@/content/jsonLd";
 
 // Seat counts are the reason anyone loads this page, so it re-renders every
 // minute rather than being baked at build time. A booking made in the last 60
@@ -142,12 +143,12 @@ export default async function WeeklyTripsPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
       {events.map((event, i) => (
         <script
           key={i}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(event) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(event) }}
         />
       ))}
 

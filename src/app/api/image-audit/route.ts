@@ -7,6 +7,16 @@ import { experiences } from "@/content/experiences";
 import { photoshoots } from "@/content/photoshoots";
 import { destinationHubs } from "@/content/destinationHubs";
 import { signatureExperiences } from "@/content/signatureExperiences";
+import { refuseUnlessMaintainer } from "@/lib/security/maintenance";
+
+// AUTHENTICATION: send the secret as a header, not in the URL —
+//
+//   curl -H "Authorization: Bearer $MIGRATE_SECRET" https://yoursite.com/api/image-audit
+//
+// The ?secret=... form in the examples below still works, because this site
+// is operated from a browser with no terminal, but a URL carrying a secret
+// is recorded in the platform's access log and in browser history. See
+// src/lib/security/maintenance.ts.
 
 // Reports which image URLs on the site are actually dead.
 //
@@ -108,10 +118,8 @@ async function probeAll(urls: string[]): Promise<Map<string, number>> {
 }
 
 export async function GET(request: NextRequest) {
-  const secret = request.nextUrl.searchParams.get("secret");
-  if (!process.env.MIGRATE_SECRET || secret !== process.env.MIGRATE_SECRET) {
-    return NextResponse.json({ error: "Invalid or missing secret" }, { status: 401 });
-  }
+  const refused = await refuseUnlessMaintainer(request);
+  if (refused) return refused;
 
   const local = localRows();
   let sanity: Row[] = [];

@@ -12,6 +12,7 @@ import { faqJsonLd } from "@/content/seo";
 import { localizedTransferCategories } from "@/content/productTranslations";
 import { localizeContent } from "@/i18n/localizeDeep";
 import { trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -47,7 +48,7 @@ export default async function TransfersPage() {
           cannot disagree. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd([...page.faqs])) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd([...page.faqs])) }}
       />
       <section className="relative">
         <SmartImage

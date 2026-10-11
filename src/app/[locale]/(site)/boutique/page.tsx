@@ -14,6 +14,7 @@ import { localePath } from "@/i18n/locales";
 import { localizeContent } from "@/i18n/localizeDeep";
 import { T, trAll } from "@/i18n/T";
 import type { Faq } from "@/content/types";
+import { jsonLdScript } from "@/content/jsonLd";
 
 // The gateway. It explains the idea and sends people into one of four rooms;
 // it deliberately does not list products from all four, because the four have
@@ -115,8 +116,8 @@ export default async function BoutiquePage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(faqs)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd(faqs)) }} />
 
       {/* Hero */}
       <section className="relative">

@@ -9,6 +9,7 @@ import { getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
 import { localizeContent } from "@/i18n/localizeDeep";
 import { T, trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 // The canonical home for the questions whose answer does not change between
 // products. It exists so the other 40-odd product pages do not each have to
@@ -45,10 +46,10 @@ export default async function FaqPage() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(allHubFaqs)) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd(allHubFaqs)) }}
       />
 
       <section className="py-20 sm:py-24">

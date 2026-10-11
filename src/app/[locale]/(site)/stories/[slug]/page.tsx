@@ -19,6 +19,7 @@ import { T, trAll } from "@/i18n/T";
 import { contentDictionary, destinationLabelMap } from "@/i18n/contentStore";
 import { pillarFor, serviceFor } from "@/lib/storyLinking";
 import { localePath } from "@/i18n/locales";
+import { jsonLdScript } from "@/content/jsonLd";
 
 export async function generateStaticParams() {
   const stories = await getStories();
@@ -159,22 +160,22 @@ export default async function StoryDetailPage({
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(articleJsonLd) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }}
       />
       {eventJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(eventJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(eventJsonLd) }}
         />
       )}
       {faqJsonLd && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }}
         />
       )}
 

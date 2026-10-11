@@ -1,5 +1,4 @@
 import "server-only";
-import { NextRequest } from "next/server";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 
@@ -44,12 +43,35 @@ export async function checkRateLimit({
   }
 }
 
-// Best-effort client identifier for anonymous (non-authenticated) rate
-// limiting — real IP when the platform provides one (Vercel sets
-// x-forwarded-for), falling back to a shared bucket rather than throwing
-// when it's genuinely unavailable (e.g. local dev).
-export function getClientIp(request: NextRequest): string {
-  const forwarded = request.headers.get("x-forwarded-for");
-  if (forwarded) return forwarded.split(",")[0].trim();
-  return request.headers.get("x-real-ip") ?? "unknown";
+// getClientIp lives in security/clientIp.ts so the check script can reach
+// it; re-exported here because sixteen routes already import it from this
+// module and the header-precedence rules are rate-limiting concerns.
+export { getClientIp } from "./security/clientIp";
+
+// Deletes rate-limit rows older than the longest window any caller uses.
+//
+// cleanup_rate_limit_hits() has existed since migration 0002 and had no
+// caller: its comment says "no cron in this stack yet", which was true when
+// it was written and stopped being true when the nightly payment sweep
+// arrived. So the sweep calls it now. The cost of leaving it uncalled was
+// storage rather than speed — the (bucket_key, created_at) index keeps the
+// window count fast however many rows accumulate — but a table that only
+// ever grows on a site that will run for years is still a bill nobody chose.
+//
+// Failure is logged and swallowed. Tidying up old rows is not worth failing
+// a payment reconciliation run over.
+export async function pruneRateLimitHits(): Promise<{ pruned: boolean }> {
+  if (!supabaseAdminConfigured) return { pruned: false };
+  try {
+    const supabase = createAdminSupabaseClient();
+    const { error } = await supabase.rpc("cleanup_rate_limit_hits");
+    if (error) {
+      console.error("rate limit cleanup failed:", error.message);
+      return { pruned: false };
+    }
+    return { pruned: true };
+  } catch (err) {
+    console.error("rate limit cleanup threw:", err);
+    return { pruned: false };
+  }
 }

@@ -22,6 +22,7 @@ import {
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T, trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 export async function generateStaticParams() {
   const slugs = await getAllSignatureExperienceSlugs();
@@ -108,12 +109,12 @@ export default async function SignatureExperienceDetailPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(touristTrip) }} />
       {experience.faqs && experience.faqs.length > 0 && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(experience.faqs)) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd(experience.faqs)) }}
         />
       )}
       {/* Hero */}

@@ -23,6 +23,7 @@ import {
   tripDepartureEventJsonLd,
 } from "@/content/seo";
 import { site } from "@/content/site";
+import { jsonLdScript } from "@/content/jsonLd";
 
 // Same 60-second window as the hub: the seat counts on this page are the
 // reason to visit it, and /api/trip-seats re-checks them under a lock anyway.
@@ -131,13 +132,13 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(touristTrip) }} />
       {events.map((event, i) => (
-        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(event) }} />
+        <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(event) }} />
       ))}
       {faqSchema && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(faqSchema) }} />
       )}
 
       <section className="relative">

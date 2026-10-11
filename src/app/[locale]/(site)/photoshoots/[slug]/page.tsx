@@ -19,6 +19,7 @@ import { ProductReviews } from "@/components/ProductReviews";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 export async function generateStaticParams() {
   const photoshoots = await getPhotoshoots();
@@ -106,10 +107,10 @@ export default async function PhotoshootDetailPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(touristTrip) }} />
       {faqJsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }} />
       )}
     <section className="py-14">
       <Container className="grid gap-12 lg:grid-cols-[1.4fr_1fr]">

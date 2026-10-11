@@ -7,6 +7,7 @@ import { ExploreEgyptView } from "../ExploreEgyptView";
 import { getDestinationHubs, getListingPages } from "@/sanity/fetchers";
 import { resolveMetadata } from "@/content/seo";
 import { trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 export async function generateStaticParams() {
   const hubs = await getDestinationHubs();
@@ -60,7 +61,7 @@ export default async function ExploreEgyptDestinationPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
       <ExploreEgyptView
         hubs={hubs}
         selectedHub={selectedHub}

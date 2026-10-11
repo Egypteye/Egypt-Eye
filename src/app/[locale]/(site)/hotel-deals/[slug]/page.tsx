@@ -8,6 +8,7 @@ import { getEnabledHotelsPublic, getHotelBySlug, isRateExpired, type HotelRoom }
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, resolveMetadata } from "@/content/seo";
 import { T, trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 function formatPrice(amount: number): string {
   return `$${amount.toLocaleString("en-US")}`;
@@ -110,7 +111,7 @@ export default async function HotelDetailPage({ params }: { params: Promise<{ sl
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
       <section className="relative">
         <SmartImage image={hotel.photos[0]} tone="nile" alt={hotel.name} className="absolute inset-0" priority sizes="100vw" />
         <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/15" />

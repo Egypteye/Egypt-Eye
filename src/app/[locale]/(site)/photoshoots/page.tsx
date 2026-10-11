@@ -8,6 +8,8 @@ import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { getListingPages, getPhotoshoots } from "@/sanity/fetchers";
 import { T, trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
+
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -49,7 +51,7 @@ export default async function PhotoshootsPage() {
   return (
     <>
       {faqJsonLd && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd) }} />
       )}
       <section className="relative">
         <SmartImage

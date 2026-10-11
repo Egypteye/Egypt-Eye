@@ -23,6 +23,7 @@ import { FaqAccordion } from "@/components/FaqAccordion";
 import { faqsForTour } from "@/lib/tourFaqs";
 import { isHiddenTour } from "@/content/hiddenTours";
 import { T, trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 export async function generateStaticParams() {
   const slugs = await getAllTourSlugs();
@@ -114,12 +115,12 @@ export default async function TourDetailPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(touristTrip) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(touristTrip) }} />
       {tourFaqs.length > 0 && (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(tourFaqs)) }}
+          dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd(tourFaqs)) }}
         />
       )}
       <section className="relative">

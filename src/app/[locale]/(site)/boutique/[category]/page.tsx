@@ -20,6 +20,7 @@ import { getLocale } from "@/i18n/dictionary";
 import { localePath } from "@/i18n/locales";
 import { localizeContent } from "@/i18n/localizeDeep";
 import { T, trAll } from "@/i18n/T";
+import { jsonLdScript } from "@/content/jsonLd";
 
 // One route for four categories, which is not the same as one template for
 // four categories: the sections below are each conditional on the category
@@ -109,8 +110,8 @@ export default async function TreasureCategoryPage({
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbs) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd(category.faqs)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(breadcrumbs) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLdScript(faqJsonLd(category.faqs)) }} />
 
       {/* Hero */}
       <section className="relative">

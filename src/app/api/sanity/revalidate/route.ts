@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
+import { bearerMatches } from "@/lib/security/secrets";
 
 // Hit by a Sanity webhook (configured at manage.sanity.io → API → Webhooks —
 // see README → "Setting up instant content updates") the moment an editor
@@ -20,9 +21,7 @@ import { revalidatePath } from "next/cache";
 // i.e. the entire site — cheap and always correct, since this only ever
 // fires on an actual Studio publish, not on a timer.
 export async function POST(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const secret = process.env.SANITY_REVALIDATE_SECRET;
-  if (!secret || authHeader !== `Bearer ${secret}`) {
+  if (!bearerMatches(request, process.env.SANITY_REVALIDATE_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

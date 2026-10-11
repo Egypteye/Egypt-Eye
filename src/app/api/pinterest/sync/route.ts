@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pinUnpinnedStories } from "@/lib/pinterest/sync";
+import { bearerMatches } from "@/lib/security/secrets";
 
 // Hit hourly by Vercel Cron (see vercel.json) — also the same route the
 // admin "Pin Remaining Stories" button's server action calls into via
@@ -10,9 +11,7 @@ import { pinUnpinnedStories } from "@/lib/pinterest/sync";
 export const maxDuration = 60;
 
 export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get("authorization");
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+  if (!bearerMatches(request, process.env.CRON_SECRET)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

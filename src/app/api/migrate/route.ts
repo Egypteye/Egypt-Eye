@@ -23,6 +23,16 @@ import { listingPages } from "@/content/listingPages";
 import { destinationHubs } from "@/content/destinationHubs";
 import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } from "@/content/types";
 import { planTreasureUpdate } from "@/lib/migrationPlan";
+import { refuseUnlessMaintainer } from "@/lib/security/maintenance";
+
+// AUTHENTICATION: send the secret as a header, not in the URL —
+//
+//   curl -H "Authorization: Bearer $MIGRATE_SECRET" https://yoursite.com/api/migrate
+//
+// The ?secret=... form in the examples below still works, because this site
+// is operated from a browser with no terminal, but a URL carrying a secret
+// is recorded in the platform's access log and in browser history. See
+// src/lib/security/maintenance.ts.
 
 // One-time (safely re-runnable) migration: pushes all the existing tour/
 // experience/photoshoot/testimonial/blog/FAQ/site-settings content into
@@ -131,10 +141,8 @@ function key() {
 }
 
 export async function GET(request: NextRequest) {
-  const secret = request.nextUrl.searchParams.get("secret");
-  if (!process.env.MIGRATE_SECRET || secret !== process.env.MIGRATE_SECRET) {
-    return NextResponse.json({ error: "Invalid or missing secret" }, { status: 401 });
-  }
+  const refused = await refuseUnlessMaintainer(request);
+  if (refused) return refused;
 
   const token = process.env.SANITY_API_WRITE_TOKEN;
   if (!token) {
