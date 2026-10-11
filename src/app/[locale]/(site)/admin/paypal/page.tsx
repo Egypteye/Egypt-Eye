@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { paymentProvider, paymentProviderFor } from "@/lib/booking/activeProvider";
 import { describeReadiness, liveReadiness, payPalConfig } from "@/lib/booking/paypalConfig";
+import { rateLimiterHealth } from "@/lib/rateLimit";
 import { TestButton } from "./TestButton";
 import { explainOffer } from "@/lib/booking/quote";
 import { depositDiagnostics } from "./deposits";
@@ -26,6 +27,11 @@ export default async function AdminPayPalPage() {
   // is worse than no diagnostic: it tells somebody who just fixed the problem
   // that the problem is still there.
   const diagnostics = await depositDiagnostics();
+
+  // Probed on every load, not cached. This panel exists because the rate
+  // limiter failed open silently for the life of this site and the only
+  // channel reporting it was a function log nobody can read.
+  const limiter = await rateLimiterHealth();
   const products = diagnostics.rows;
   const siteDefaultUsd = diagnostics.siteDefaultUsd;
 
@@ -75,6 +81,20 @@ export default async function AdminPayPalPage() {
             </p>
           </div>
 
+          {/* Red when the limiter is not working, because that is the state
+              nobody can otherwise see. Placed above the settings table: a
+              broken limiter means every form on the site accepts unlimited
+              submissions, which is worth knowing before anything else here. */}
+          {!limiter.working && (
+            <div className="rounded-2xl border-2 border-terracotta bg-terracotta/10 p-5">
+              <p className="font-display text-lg font-semibold text-ink">Rate limiting is NOT working</p>
+              <p className="mt-1 text-sm text-ink-soft">
+                Every form and public endpoint on this site currently accepts as many submissions as anyone cares to
+                send. {limiter.detail}
+              </p>
+            </div>
+          )}
+
           {warnings.length > 0 && (
             <div className="space-y-3">
               {warnings.map((warning) => (
@@ -100,6 +120,10 @@ export default async function AdminPayPalPage() {
             <Row
               label="Webhook"
               value={config.webhookId ? `…${config.webhookId.slice(-8)}` : "NOT SET — every delivery is refused"}
+            />
+            <Row
+              label="Rate limiting"
+              value={limiter.working ? "Working — hits recorded and counted" : "BROKEN — nothing is limited"}
             />
             <Row label="Customers are told" value={provider.moneyMode === "hold" ? "Held, not charged" : "Paid, refunded if we cannot confirm"} />
             <Row

@@ -176,6 +176,59 @@ ok(
   "the nightly sweep does not call pruneRateLimitHits() — the cleanup function is unreachable again",
 );
 
+// ---------------------------------------------------------------------------
+// 9. The rate limiter must read the error field on every query it makes.
+//
+//    This is the bug that made it a no-op in production: supabase-js
+//    resolves with { data, error } rather than throwing, so an unchecked
+//    error means `count` is undefined, the >= max test is false for ever,
+//    and every caller is waved through. Asserted structurally because the
+//    alternative is a live database.
+// ---------------------------------------------------------------------------
+const limiterSource = readFileSync("src/lib/rateLimit.ts", "utf8");
+
+// Scoped to checkRateLimit's own body. The first version of this check read
+// the whole file, and rateLimiterHealth() — which legitimately contains the
+// same destructuring — satisfied it, so reverting the bug in checkRateLimit
+// left the check green. Narrowing to the one function is the difference
+// between asserting something and asserting nothing.
+const checkStart = limiterSource.indexOf("export async function checkRateLimit");
+const checkEnd = limiterSource.indexOf("export async function rateLimiterHealth");
+ok(checkStart >= 0 && checkEnd > checkStart, "could not locate checkRateLimit in rateLimit.ts to inspect it");
+const checkBody = limiterSource.slice(Math.max(checkStart, 0), checkEnd > checkStart ? checkEnd : undefined);
+
+ok(
+  /const { count, error: countError }/.test(checkBody),
+  "checkRateLimit does not read the error from its count query — an error there leaves count undefined and allows every request",
+);
+ok(
+  /if \(countError\)/.test(checkBody),
+  "checkRateLimit does not act on a failed count query",
+);
+ok(
+  /const { error: insertError } = await supabase\.from\("rate_limit_hits"\)/.test(checkBody),
+  "checkRateLimit discards the result of its insert — if recording a hit fails, counts never accumulate and nothing is ever limited",
+);
+ok(
+  /if \(insertError\)/.test(checkBody),
+  "checkRateLimit does not act on a failed insert",
+);
+
+// Every failing-open path has to say so. A limiter that allows a request
+// after an error and logs nothing is the exact failure this check exists for.
+const failOpenLogs = (checkBody.match(/RATE LIMITER BROKEN/g) ?? []).length;
+ok(
+  failOpenLogs >= 2,
+  `checkRateLimit has ${failOpenLogs} loud failure log(s); both the count and the insert paths must announce that they are failing open`,
+);
+
+// And the operator, who has no access to function logs, must be able to see it.
+const paypalPage = readFileSync("src/app/[locale]/(site)/admin/paypal/page.tsx", "utf8");
+ok(
+  /rateLimiterHealth\s*\(/.test(paypalPage),
+  "the admin diagnostics page does not call rateLimiterHealth() — a broken limiter would be invisible again",
+);
+
 if (problems.length > 0) {
   console.error("check-security FAILED:");
   for (const problem of problems) console.error(`  - ${problem}`);
@@ -185,5 +238,6 @@ if (problems.length > 0) {
 console.log(
   "check-security: ok — JSON-LD cannot escape its script tag and survives a round trip, " +
     "shared secrets are compared in constant time and never authenticate against an unset value, " +
-    "rate-limit keys come from the proxy rather than the caller, and all five CMS-write routes go through the shared guard.",
+    "rate-limit keys come from the proxy rather than the caller, a failed rate-limit query can no longer wave every caller "
+    + "through in silence, and all five CMS-write routes go through the shared guard.",
 );
