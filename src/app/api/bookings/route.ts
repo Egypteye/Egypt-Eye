@@ -5,6 +5,7 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
+import { normaliseOutfits, outfitAllowance, selectOutfits } from "@/lib/booking/outfits";
 import { quoteDeposit } from "@/lib/booking/quote";
 import { createAttempt } from "@/lib/booking/attempts";
 import { composePhone } from "@/lib/booking/phone";
@@ -71,6 +72,7 @@ type Body = {
   dialIso?: unknown;
   phoneNational?: unknown;
   extras?: unknown;
+  outfits?: unknown;
   notes?: unknown;
 };
 
@@ -256,6 +258,26 @@ export async function POST(request: NextRequest) {
   }));
   const extrasSum = extraLines.reduce((sum, line) => sum + line.amountCents, 0) / 100;
 
+  // What the customer will wear.
+  //
+  // Resolved here, after the quote, because the allowance depends on what the
+  // quote found: the headcount plus any extra dress actually bought. The
+  // request supplies ids and counts and nothing else — the names come off the
+  // product, so a crafted body cannot write its own wording onto a booking or
+  // into an email the business is then held to.
+  //
+  // Outfits touch no money. They are not quote lines, there is no price field
+  // to read, and nothing below adds them to a total. That is the whole reason
+  // they are resolved separately from extras rather than alongside them.
+  const chosenOutfits = selectOutfits(
+    normaliseOutfits(product.outfits),
+    body.outfits,
+    outfitAllowance(
+      people,
+      extraLines.map((line) => ({ label: line.label, quantity: line.quantity })),
+    ),
+  );
+
   // A PayPal payment link is the fallback path: Egypt Eye creates the links in
   // PayPal, one per deposit amount, and pastes them into the Studio.
   //
@@ -304,6 +326,7 @@ export async function POST(request: NextRequest) {
           slotLabel,
           people,
           extras: chosenExtras,
+          outfits: chosenOutfits,
         },
       ],
       // Snapshotted, not referenced. The product's prices can change after a
@@ -311,6 +334,9 @@ export async function POST(request: NextRequest) {
       // with them.
       addons: chosenExtras,
       addons_total: extrasSum > 0 ? extrasSum : null,
+      // Snapshotted with the name as shown, so a Studio rename later does not
+      // rewrite what this customer chose. Empty array is a normal booking.
+      outfits: chosenOutfits,
       // The booking is a request until a person says otherwise, whether or not
       // a deposit is ever paid.
       status: "requested",
@@ -385,6 +411,7 @@ export async function POST(request: NextRequest) {
       paymentLink,
       moneyMode,
       extras: chosenExtras,
+      outfits: chosenOutfits,
       emailedCustomer: false,
       accountState: user ? "signed-in" : "guest",
     });

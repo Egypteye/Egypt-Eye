@@ -80,6 +80,14 @@ export const experience = defineType({
       of: [{ type: "bookingExtra" }],
     }),
     defineField({
+      name: "outfits",
+      title: "Outfit collection (Flying Dress colours, men's outfits)",
+      description:
+        "What the customer can choose to wear. Shown as a gallery on the page and as a picker in the booking popup, split into women's dresses and men's outfits. Everything here is included in the price — an option that costs extra belongs in Bookable extras above. Leave empty on products where nobody picks an outfit.",
+      type: "array",
+      of: [{ type: "outfit" }],
+    }),
+    defineField({
       name: "image",
       title: "Photo",
       type: "image",

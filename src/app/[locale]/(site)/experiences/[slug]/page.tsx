@@ -265,6 +265,7 @@ export default async function ExperienceDetailPage({
                 cancellationHref="/cancellation-policy"
                 timeSlots={experience.timeSlots}
                 extras={experience.extras}
+                outfits={experience.outfits}
                 quotable={{
                   slug: experience.slug,
                   title: experience.title,

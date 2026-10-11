@@ -3,6 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PaymentMode } from "@/lib/booking/wording";
 import type { BookingExtra } from "@/content/types";
+import { OutfitPicker, type OutfitQuantities } from "@/components/OutfitPicker";
+import { describeOutfits, outfitAllowance, selectOutfits, type Outfit } from "@/lib/booking/outfits";
 import { formatUsd, normaliseExtras } from "@/lib/booking/extras";
 import { quoteDeposit, MAX_EXTRA_QUANTITY, type QuotableProduct } from "@/lib/booking/quote";
 import { DEFAULT_DIAL_ISO, DIAL_CODES, flagFor } from "@/lib/booking/countryCodes";
@@ -57,6 +59,15 @@ type Props = {
   timeSlots?: readonly string[];
   /** Priced extras. Settled with the balance, never charged by the deposit link. */
   extras?: readonly BookingExtra[];
+  /**
+   * The outfit collection for this product — Flying Dress colours and the
+   * men's outfits beside them. Absent on every product that dresses nobody,
+   * and the picker then renders nothing at all.
+   *
+   * Carries no prices, by design: an outfit cannot move the total, so the
+   * quote does not need to know it exists. See lib/booking/outfits.ts.
+   */
+  outfits?: readonly Outfit[];
   /**
    * Everything the deposit calculation needs, so the dialog can show a live
    * total as the headcount and the extras change.
@@ -113,6 +124,7 @@ export function SecureDateButton({
   cancellationHref,
   timeSlots,
   extras,
+  outfits,
   quotable,
   productKind,
   className,
@@ -144,6 +156,10 @@ export function SecureDateButton({
   // Quantities, not a set of labels. An extra is "chosen" when its quantity
   // is above zero, so + / − and ticked/unticked are the same control.
   const [quantities, setQuantities] = useState<Record<string, number>>({});
+  // Outfit choices, keyed by outfit id. Separate from `quantities` because
+  // extras carry a price and outfits do not — merging them would put a
+  // priceless thing into the structure the quote reads.
+  const [outfitChoice, setOutfitChoice] = useState<OutfitQuantities>({});
 
   // What happens to THIS visitor's money.
   //
@@ -255,6 +271,23 @@ export function SecureDateButton({
   const liveDepositLabel = liveQuote ? money(liveQuote.totalCents) : null;
 
   const timeReady = slots.length === 0 || (form.timeChoice !== "" && (form.timeChoice !== OTHER_TIME || form.otherTime.trim() !== ""));
+  // The same two functions the server runs, so the sheet cannot show a
+  // selection the booking would then drop. chosenExtras is already computed
+  // above from the live quote; the allowance reads it so buying an extra
+  // dress immediately makes room for another colour.
+  const availableOutfits = outfits ?? [];
+  const allowance = outfitAllowance(
+    form.people,
+    Object.entries(quantities)
+      .filter(([, n]) => n > 0)
+      .map(([label, quantity]) => ({ label, quantity })),
+  );
+  const chosenOutfits = selectOutfits(
+    availableOutfits,
+    Object.entries(outfitChoice).map(([id, quantity]) => ({ id, quantity })),
+    allowance,
+  );
+
   const stepOneReady = form.startsAt.trim() !== "" && timeReady;
 
   const phone = composePhone(form.dialIso, form.phoneNational);
@@ -316,6 +349,10 @@ export function SecureDateButton({
           // Labels only. The prices come from the product on the server — a
           // total that arrived in this body would be a price the customer set.
           extras: chosenExtras,
+          // Ids and counts only, for the same reason. The NAME is read from
+          // the product server-side, so a request cannot write "Cherry (free
+          // upgrade)" onto a booking and into an email.
+          outfits: chosenOutfits.map((o) => ({ id: o.id, quantity: o.quantity })),
         }),
       });
       const data = await response.json();
@@ -354,7 +391,10 @@ export function SecureDateButton({
         return;
       }
       if (data.next === "payDeposit" && data.deposit?.approvalUrl) {
-        window.location.href = data.deposit.approvalUrl;
+        // assign() rather than `location.href = …`: identical navigation, but
+        // it is a method call rather than an assignment to a binding outside
+        // the component, which is what the React Compiler lint objects to.
+        window.location.assign(data.deposit.approvalUrl);
         setStage({ kind: "payDeposit", reference: data.reference, approvalUrl: data.deposit.approvalUrl });
         return;
       }
@@ -451,6 +491,15 @@ export function SecureDateButton({
                     })}
                     {slotLabel ? `, ${slotLabel}` : ""}.
                   </p>
+
+                  {/* What was recorded, shown back before they pay. The
+                      booking row already exists at this point, so this is a
+                      receipt for the choice rather than a preview of it. */}
+                  {chosenOutfits.length > 0 && (
+                    <p className="text-sm leading-relaxed text-ink-soft">
+                      Wearing: <strong className="text-ink">{describeOutfits(chosenOutfits)}</strong>.
+                    </p>
+                  )}
 
                   {/* A sandbox payment moves no money. Someone who completes
                       one and believes they have paid for their date is the
@@ -597,6 +646,15 @@ export function SecureDateButton({
                     })}
                     {slotLabel ? `, ${slotLabel}` : ""}.
                   </p>
+
+                  {/* What was recorded, shown back before they pay. The
+                      booking row already exists at this point, so this is a
+                      receipt for the choice rather than a preview of it. */}
+                  {chosenOutfits.length > 0 && (
+                    <p className="text-sm leading-relaxed text-ink-soft">
+                      Wearing: <strong className="text-ink">{describeOutfits(chosenOutfits)}</strong>.
+                    </p>
+                  )}
 
                   <a
                     href={stage.paymentLink}
@@ -913,6 +971,19 @@ export function SecureDateButton({
                           </p>
                         </fieldset>
                       )}
+
+                      {/* Outfits sit AFTER extras and after the headcount,
+                          because both change what can be chosen: the
+                          allowance is the headcount plus any extra dress
+                          bought, so asking this first would mean re-asking
+                          it. Renders nothing when the product has no
+                          collection, which is most of them. */}
+                      <OutfitPicker
+                        outfits={availableOutfits}
+                        allowance={allowance}
+                        value={outfitChoice}
+                        onChange={setOutfitChoice}
+                      />
                     </div>
                   ) : (
                     <div className="space-y-4">
@@ -1072,6 +1143,12 @@ export function SecureDateButton({
                         </p>
                       )}
                     </div>
+                    {step === 2 && chosenOutfits.length > 0 && (
+                      <p className="mb-3 rounded-lg bg-sand-dim px-3 py-2 text-xs leading-relaxed text-ink-soft">
+                        Wearing <strong className="text-ink">{describeOutfits(chosenOutfits)}</strong>.{" "}
+                        Use Back to change it.
+                      </p>
+                    )}
                     <button
                       type="submit"
                       disabled={step === 1 ? !stepOneReady : !stepTwoReady || submitting}

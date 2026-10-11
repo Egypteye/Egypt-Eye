@@ -75,6 +75,7 @@ for (const state of ALL) {
     !/\bis confirmed\b|\bbooking is confirmed\b/i.test(message)
   );
 }
+import { outfitAllowance, selectOutfits, totalOutfitsChosen } from "../src/lib/booking/outfits";
 
 // Every pre-capture state must say, in words, that nothing has been charged.
 for (const state of ["held", "checking", "declined"] as BookingState[]) {
@@ -1018,6 +1019,102 @@ if (sample.ok) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// 9. Outfit selection.
+//
+// The rule this guards is the one that makes outfit selection safe to ship at
+// all: an outfit CANNOT move the price. There is no price field on an Outfit,
+// outfits are never quote lines, and a paid option must go through `extras`,
+// which has a server-side quote behind it. If a price ever appears here, a
+// customer's own browser starts contributing to a total.
+//
+// Asserted on the source because the alternative is a live database and a
+// browser. The booking route's own validation is exercised by the pure
+// functions below.
+// ---------------------------------------------------------------------------
+const outfitsSource = readFileSync("src/lib/booking/outfits.ts", "utf8");
+const outfitSchema = readFileSync("src/sanity/schemaTypes/objects.ts", "utf8");
+
+ok(
+  "an Outfit carries no price field — a paid option must go through extras",
+  !/\bpriceUsd\b|\bprice\s*[?:]/.test(outfitsSource.slice(outfitsSource.indexOf("export type Outfit ="), outfitsSource.indexOf("export type OutfitChoice"))),
+);
+ok(
+  "the Studio outfit object defines no price field either",
+  !/name:\s*"price/i.test(outfitSchema.slice(outfitSchema.indexOf('name: "outfit"'))),
+);
+
+// Server-side validation: a request cannot invent an outfit, its name, or
+// more of them than the booking allows.
+const collection = [
+  { id: "cherry", name: "Cherry", category: "womens-dress" as const },
+  { id: "emerald", name: "Emerald", category: "womens-dress" as const },
+  { id: "retired", name: "Retired", category: "womens-dress" as const, active: false },
+  { id: "linen", name: "Linen", category: "mens-outfit" as const },
+];
+
+ok(
+  "an outfit that is not on the product is dropped",
+  selectOutfits(collection, [{ id: "not-a-dress", quantity: 1 }], 4).length === 0,
+);
+ok(
+  "a retired outfit cannot be selected",
+  selectOutfits(collection, [{ id: "retired", quantity: 1 }], 4).length === 0,
+);
+ok(
+  "the NAME comes from the product, never from the request",
+  selectOutfits(collection, [{ id: "cherry", name: "Cherry (free upgrade)", quantity: 1 }] as never, 4)[0]?.name ===
+    "Cherry",
+);
+ok(
+  "a request cannot choose more outfits than the booking allows",
+  totalOutfitsChosen(selectOutfits(collection, [{ id: "cherry", quantity: 9 }], 2)) === 2,
+);
+ok(
+  "two outfits are trimmed to the allowance in the order chosen",
+  totalOutfitsChosen(
+    selectOutfits(collection, [{ id: "cherry", quantity: 1 }, { id: "emerald", quantity: 5 }], 2),
+  ) === 2,
+);
+ok("the allowance is the headcount", outfitAllowance(3) === 3);
+ok(
+  "buying an extra dress raises the allowance by one",
+  outfitAllowance(2, [{ label: "Extra Dress", quantity: 1 }]) === 3,
+);
+ok(
+  "an unrelated extra does not raise the allowance",
+  outfitAllowance(2, [{ label: "Full Makeup", quantity: 1 }]) === 2,
+);
+ok("a booking with no outfit chosen is still valid", selectOutfits(collection, [], 2).length === 0);
+
+// The emails are the only written record the customer gets of their choice.
+const bookingRoute = readFileSync("src/app/api/bookings/route.ts", "utf8");
+const fulfilment = readFileSync("src/lib/booking/fulfilment.ts", "utf8");
+ok("the booking route resolves outfits server-side", /selectOutfits\s*\(/.test(bookingRoute));
+// Anchored to each of the three places it has to appear, rather than counted.
+// The first version matched `outfits: chosenOutfits` anywhere, and that
+// string occurs three times — the journey snapshot, the reservation row and
+// the team email — so deleting the row column left the check green. Reverting
+// the fix is how that was found. Anchoring also survives a legitimate fourth
+// use, which a count would not.
+ok(
+  "the reservation row stores the outfits",
+  /addons_total:[\s\S]{0,240}?outfits:\s*chosenOutfits/.test(bookingRoute),
+);
+ok(
+  "the journey snapshot stores them too",
+  /journey_snapshot:[\s\S]{0,420}?outfits:\s*chosenOutfits/.test(bookingRoute),
+);
+ok(
+  "the team email is told about them",
+  /bookingRequestTeamEmail\([\s\S]{0,900}?outfits:\s*chosenOutfits/.test(bookingRoute),
+);ok("fulfilment SELECTs the outfits column", /addons_total, outfits,/.test(fulfilment));
+ok("fulfilment passes them to the emails", /outfits:\s*reservation\.outfits/.test(fulfilment));
+
+const emails = readFileSync("src/lib/email/templates.ts", "utf8");
+ok("both paid emails show the outfits in HTML", (emails.match(/outfitFactsRow\(booking\)/g) ?? []).length === 2);
+ok("both paid emails show them in plain text", (emails.match(/outfitTextLine\(booking\)/g) ?? []).length === 2);
+
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -1026,5 +1123,6 @@ if (errors.length > 0) {
 }
 console.log(
   "check-booking: ok — no payment event can confirm a booking, every pre-capture state says nothing is charged, " +
-    "a product with no deposit figure shows no button, and no booking surface promises a reply window."
+    "a product with no deposit figure shows no button, no booking surface promises a reply window, " +
+    "and an outfit can neither carry a price nor be invented by a request."
 );

@@ -6,6 +6,7 @@ import { paymentReceivedCustomerEmail, paymentReceivedTeamEmail } from "@/lib/em
 import { site } from "@/content/site";
 import type { AttemptRow } from "./attempts";
 import type { Quote } from "./quote";
+import type { OutfitChoice } from "@/lib/booking/outfits";
 
 // Telling people a payment arrived.
 //
@@ -45,6 +46,7 @@ type ReservationRow = {
   product_type: string | null;
   addons: { label: string; priceUsd: number }[] | null;
   addons_total: number | null;
+  outfits: OutfitChoice[] | null;
   customer_id: string | null;
 };
 
@@ -68,7 +70,7 @@ export async function fulfilAttempt(attempt: AttemptRow): Promise<FulfilResult> 
     .from("reservations")
     .select(
       "id, reference, guest_name, guest_email, guest_phone, starts_at, slot_label, " +
-        "travelers_adults, product_type, addons, addons_total, customer_id"
+        "travelers_adults, product_type, addons, addons_total, outfits, customer_id"
     )
     .eq("id", attempt.reservation_id)
     .maybeSingle();
@@ -100,6 +102,10 @@ export async function fulfilAttempt(attempt: AttemptRow): Promise<FulfilResult> 
     people: quote.people,
     extras: reservation.addons ?? [],
     extrasTotalUsd: reservation.addons_total,
+    // Straight off the row. The outfit names were snapshotted at booking, so
+    // a dress renamed in the Studio afterwards does not rewrite what this
+    // customer was told they chose.
+    outfits: reservation.outfits ?? [],
   };
 
   const key = attempt.capture_id ?? attempt.id;

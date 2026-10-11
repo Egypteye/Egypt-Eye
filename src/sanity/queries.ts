@@ -57,14 +57,14 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   _id, "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, description, location, included, destinations, physicalLevel,
-  bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}
+  bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, outfits[]{id, name, category, image, hex, note, active}
 }`;
 
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
   steps[]{title, description}, included, goodToKnow, destinations,
-  physicalLevel, mapStops, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd},
+  physicalLevel, mapStops, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, outfits[]{id, name, category, image, hex, note, active},
   relatedTours[]->{${relatedTourFields}},
   seo
 `;
@@ -79,13 +79,13 @@ export const experiencesBySlugsQuery = groq`*[_type == "experience" && slug.curr
 
 export const photoshootsQuery = groq`*[_type == "photoshoot"] | order(order asc) {
   _id, "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd},
+  locations, image, imageTone, description, goodFor, included, addOns, delivery, destinations, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, outfits[]{id, name, category, image, hex, note, active},
   faqs[]{question, answer}
 }`;
 
 const photoshootDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, seo,
+  locations, image, imageTone, gallery, description, goodFor, included, addOns, delivery, destinations, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, outfits[]{id, name, category, image, hex, note, active}, seo,
   faqs[]{question, answer}
 `;
 

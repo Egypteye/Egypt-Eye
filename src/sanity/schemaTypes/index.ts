@@ -3,7 +3,7 @@ import {
   priceObject,
   itineraryDayObject,
   physicalLevelObject,
-  bookingExtraObject,
+  bookingExtraObject, outfitObject,
 } from "./objects";
 import { tour } from "./tour";
 import { experience } from "./experience";
@@ -38,7 +38,7 @@ export const schemaTypes = [
   priceObject,
   itineraryDayObject,
   physicalLevelObject,
-  bookingExtraObject,
+  bookingExtraObject, outfitObject,
   treasureSpec,
   treasureVariant,
   treasureOption,

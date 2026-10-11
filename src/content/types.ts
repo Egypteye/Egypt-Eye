@@ -214,6 +214,20 @@ export type Experience = {
    */
   extras?: BookingExtra[];
 
+  /**
+   * What the customer will wear: the Flying Dress collection, and the men's
+   * outfits beside it.
+   *
+   * Empty or absent on every product that does not dress anyone, which is
+   * most of them — the picker and the page section simply do not render, so
+   * adding this changed nothing for a tour or a horse shoot.
+   *
+   * Outfits carry no price, deliberately. Everything in a collection is
+   * included; an option that costs money belongs in `extras`, which already
+   * has a server-side quote behind it. See lib/booking/outfits.ts.
+   */
+  outfits?: import("@/lib/booking/outfits").Outfit[];
+
   slug: string;
   title: string;
   duration: string;
@@ -276,6 +290,12 @@ export type BookingExtra = {
   priceUsd: number;
 };
 
+// Re-exported from the booking module so a content file can describe a
+// collection without importing from lib/. The definitions live next to the
+// validation that enforces them — see lib/booking/outfits.ts for why an
+// Outfit deliberately has no price.
+export type { Outfit, OutfitCategory, OutfitChoice } from "@/lib/booking/outfits";
+
 export type Photoshoot = {
   /**
    * Whether this product offers the "Secure your date" deposit flow.
@@ -331,6 +351,16 @@ export type Photoshoot = {
    * variable total. See lib/booking/extras.ts.
    */
   extras?: BookingExtra[];
+
+  /**
+   * What the customer will wear — the Flying Dress collection and the men's
+   * outfits beside it. Absent on every product that dresses nobody, which is
+   * most of them: the page section and the booking picker render only when
+   * this has entries, so adding it changed nothing for a horse shoot.
+   *
+   * Outfits carry no price, deliberately. See lib/booking/outfits.ts.
+   */
+  outfits?: import("@/lib/booking/outfits").Outfit[];
 
   slug: string;
   title: string;

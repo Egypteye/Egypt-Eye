@@ -249,3 +249,95 @@ export function translationsField(name = "translations", title = "Translations")
     ],
   });
 }
+
+// An outfit in a product's collection — a Flying Dress colour, or a men's
+// outfit beside it.
+//
+// There is NO price field here and that is the point. Everything in a
+// collection is included in the experience price; an option that costs money
+// belongs in "Bookable extras", which has a server-side quote behind it. A
+// price here would be a number an editor could set that silently changes what
+// a customer pays. See lib/booking/outfits.ts.
+export const outfitObject = defineType({
+  name: "outfit",
+  title: "Outfit",
+  type: "object",
+  fields: [
+    defineField({
+      name: "id",
+      title: "ID",
+      description:
+        "A short stable name used behind the scenes, e.g. 'cherry'. Lowercase, no spaces. Bookings are matched on this, so you can rename the outfit below without breaking past bookings — but changing THIS will orphan them, so set it once and leave it.",
+      type: "string",
+      validation: (r) =>
+        r
+          .required()
+          .max(60)
+          .regex(/^[a-z0-9][a-z0-9-]*$/, { name: "lowercase letters, numbers and hyphens" }),
+    }),
+    defineField({
+      name: "name",
+      title: "Name shown to customers",
+      description: "e.g. 'Cherry'. Safe to change at any time.",
+      type: "string",
+      validation: (r) => r.required().max(80),
+    }),
+    defineField({
+      name: "category",
+      title: "Category",
+      description:
+        "Women's dresses and men's outfits are shown as two separate sections, on the page and in the booking popup.",
+      type: "string",
+      options: {
+        list: [
+          { title: "Women's flying dress", value: "womens-dress" },
+          { title: "Men's outfit", value: "mens-outfit" },
+        ],
+        layout: "radio",
+      },
+      initialValue: "womens-dress",
+      validation: (r) => r.required(),
+    }),
+    defineField({
+      name: "image",
+      title: "Photograph",
+      description:
+        "The real garment. Upload this whenever you can — a customer choosing a dress wants to see the dress, not a coloured circle.",
+      type: "image",
+      options: { hotspot: true },
+    }),
+    defineField({
+      name: "hex",
+      title: "Swatch colour (used only until a photo is uploaded)",
+      description:
+        "A hex colour like #9d2235. Shown as a circle, clearly labelled 'photo coming soon', until the photograph above exists. It is a placeholder, not a colour match.",
+      type: "string",
+      validation: (r) => r.regex(/^#[0-9a-fA-F]{6}$/, { name: "a hex colour like #9d2235" }).warning(),
+    }),
+    defineField({
+      name: "note",
+      title: "Short note (optional)",
+      description: "A factual detail, e.g. 'long train'. Never a promise about availability.",
+      type: "string",
+      validation: (r) => r.max(160),
+    }),
+    defineField({
+      name: "active",
+      title: "Available to choose",
+      description:
+        "Switch off to retire an outfit. It disappears from the page and the booking popup, and bookings that already chose it still read back correctly.",
+      type: "boolean",
+      initialValue: true,
+    }),
+  ],
+  preview: {
+    select: { title: "name", category: "category", media: "image", active: "active" },
+    prepare: ({ title, category, media, active }) => ({
+      title: title ?? "Outfit",
+      subtitle:
+        (category === "mens-outfit" ? "Men's outfit" : "Women's dress") +
+        (active === false ? " — retired" : ""),
+      media,
+    }),
+  },
+});

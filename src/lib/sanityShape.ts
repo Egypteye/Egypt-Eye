@@ -92,6 +92,12 @@ export function hardenExperience(experience: Experience, local?: Experience): Ex
     included: arr(experience.included, local?.included),
     timeSlots: slots(experience.timeSlots, local?.timeSlots),
     extras: arr(experience.extras, local?.extras),
+    // Same three-case rule. A Studio document that has never had an outfit
+    // typed into it projects null and falls back to the repo's collection, so
+    // the twelve dresses are live before anyone opens the CMS — while an
+    // editor who empties the list gets an empty list, not the repo's copy back,
+    // which is how a product stops offering outfits at all.
+    outfits: arr(experience.outfits, local?.outfits),
     faqs: arr(experience.faqs, local?.faqs),
     relatedTours: experience.relatedTours?.map((t) => hardenTour(t)),
   };
@@ -112,6 +118,12 @@ export function hardenPhotoshoot(photoshoot: Photoshoot, local?: Photoshoot): Ph
     // empties the list in Studio gets an empty list, not the repo's copy back.
     timeSlots: slots(photoshoot.timeSlots, local?.timeSlots),
     extras: arr(photoshoot.extras, local?.extras),
+    // Same three-case rule. A Studio document that has never had an outfit
+    // typed into it projects null and falls back to the repo's collection, so
+    // the twelve dresses are live before anyone opens the CMS — while an
+    // editor who empties the list gets an empty list, not the repo's copy back,
+    // which is how a product stops offering outfits at all.
+    outfits: arr(photoshoot.outfits, local?.outfits),
     // Added after a live product shipped with no FAQs at all.
     //
     // `faqs` and `addOns` are projected by GROQ and declared on the type, but

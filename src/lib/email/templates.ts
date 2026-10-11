@@ -8,6 +8,7 @@ import {
 } from "./breakdown";
 import { HUMAN_CONFIRMS, moneyState, replyPromise, type PaymentMode } from "@/lib/booking/wording";
 import { extrasTotal, formatUsd, type BookingExtra } from "@/lib/booking/extras";
+import { describeOutfits, OUTFIT_PREFERENCE_NOTE, type OutfitChoice } from "@/lib/booking/outfits";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 
@@ -1088,6 +1089,7 @@ export function bookingRequestCustomerEmail({
   paymentLink,
   moneyMode,
   extras,
+  outfits,
 }: {
   reference: string;
   guestName: string;
@@ -1108,6 +1110,8 @@ export function bookingRequestCustomerEmail({
   /** Chosen priced extras. Priced into the booking, so the deposit covers
    *  its share of them too; they are not settled separately. */
   extras?: readonly BookingExtra[];
+  /** What they chose to wear. Empty on every product without a collection. */
+  outfits?: readonly OutfitChoice[];
 }) {
   const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
   const when = formatSlot(startsAt, slotLabel);
@@ -1131,6 +1135,18 @@ export function bookingRequestCustomerEmail({
   // customer who ticked $155 of extras and then paid $25 needs the email to
   // account for the difference, or the next conversation starts with a
   // misunderstanding about what they have already paid for.
+  // Their own choice, read back to them. This is the only written record a
+  // customer gets of what they picked, so it names the outfits rather than
+  // saying "your selection has been noted" — and it says we will be in touch
+  // if anything is unavailable, because nothing in this system reserves a
+  // specific dress and promising one here would be a promise the day cannot
+  // keep.
+  const wearing = outfits ?? [];
+  const outfitBlock =
+    wearing.length > 0
+      ? `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Wearing</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(describeOutfits(wearing))}</strong></td></tr>`
+      : "";
+
   const chosen = extras ?? [];
   const extrasBlock =
     chosen.length > 0
@@ -1156,8 +1172,14 @@ export function bookingRequestCustomerEmail({
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">What</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(productTitle)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">When</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(when)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">For</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(who)}</strong></td></tr>
+        ${outfitBlock}
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Reference</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(reference)}</strong></td></tr>
       </table>
+      ${
+        wearing.length > 0
+          ? `<p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">${escapeHtml(OUTFIT_PREFERENCE_NOTE)}</p>`
+          : ""
+      }
       ${extrasBlock}
       ${moneyLine}
       <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
@@ -1176,6 +1198,8 @@ export function bookingRequestCustomerEmail({
     `When: ${when}`,
     `For: ${who}`,
     `Reference: ${reference}`,
+    wearing.length > 0 ? `Wearing: ${describeOutfits(wearing)}` : "",
+    wearing.length > 0 ? OUTFIT_PREFERENCE_NOTE : "",
     "",
     chosen.length > 0
       ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")}\nIncluded in your booking total (${formatUsd(extrasTotal(chosen))}), so your deposit covers its share of them.\n`
@@ -1204,6 +1228,7 @@ export function bookingRequestTeamEmail({
   paymentLink,
   moneyMode,
   extras,
+  outfits,
   emailedCustomer = true,
   accountState,
 }: {
@@ -1224,6 +1249,8 @@ export function bookingRequestTeamEmail({
   /** What happens to the money — decided by the route, never guessed. */
   moneyMode?: PaymentMode;
   extras?: readonly BookingExtra[];
+  /** What they chose to wear. Empty on every product without a collection. */
+  outfits?: readonly OutfitChoice[];
   /** False when there was no address to send the customer a copy to. */
   emailedCustomer?: boolean;
   accountState: "signed-in" | "guest";
@@ -1239,6 +1266,19 @@ export function bookingRequestTeamEmail({
   // doing. Inferring it from "is there a payment link?" was right only while a
   // link was the only way money moved.
   const teamMode: PaymentMode = moneyMode ?? (paymentLink ? "paid" : "hold");
+
+  // What they will wear, split the way the wardrobe is actually packed. The
+  // desk needs the dresses and the men's outfits as separate lines because
+  // they are fetched by different people from different places, not because
+  // the customer thinks of them as two decisions.
+  const wearing = outfits ?? [];
+  const dressRows = wearing.filter((o) => o.category === "womens-dress");
+  const mensRows = wearing.filter((o) => o.category === "mens-outfit");
+  const outfitRows =
+    wearing.length > 0
+      ? (dressRows.length > 0 ? row("Flying dress", describeOutfits(dressRows)) : "") +
+        (mensRows.length > 0 ? row("Men's outfit", describeOutfits(mensRows)) : "")
+      : "";
 
   const chosen = extras ?? [];
   const extrasRows =
@@ -1269,7 +1309,8 @@ export function bookingRequestTeamEmail({
         ${row("Email", guestEmail || "None — guest booking, reply by phone")}
         ${row("Account", accountState === "signed-in" ? "Signed in" : "Guest")}
         ${row("Reference", reference)}
-        ${extrasRows}
+        ${outfitRows}
+      ${extrasRows}
       </table>
       ${
         emailedCustomer
@@ -1301,6 +1342,8 @@ export function bookingRequestTeamEmail({
     `Email: ${guestEmail || "None — guest booking, reply by phone"}`,
     `Account: ${accountState}`,
     `Reference: ${reference}`,
+    dressRows.length > 0 ? `Flying dress: ${describeOutfits(dressRows)}` : "",
+    mensRows.length > 0 ? `Men's outfit: ${describeOutfits(mensRows)}` : "",
     chosen.length > 0
       ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")} (${formatUsd(extrasTotal(chosen))}, inside the booking total)`
       : "",
@@ -1470,10 +1513,31 @@ export type BookingFacts = {
   people: number;
   extras: { label: string; priceUsd: number }[];
   extrasTotalUsd: number | null;
+  /**
+   * What they chose to wear, read back off the reservation row rather than
+   * recomputed — so the email says what was actually recorded, even if the
+   * Studio collection changed between booking and payment.
+   */
+  outfits?: OutfitChoice[];
 };
 
 function whenText(booking: BookingFacts): string {
   return booking.startsAt ? formatSlot(booking.startsAt, booking.slotLabel) : "date to be set";
+}
+
+// The outfit line for a paid booking, in both emails and in both halves of
+// each. Built from what the reservation row stored, so it reports what was
+// actually recorded rather than re-deriving it from a collection that may
+// have been edited between booking and payment.
+function outfitFactsRow(booking: BookingFacts): string {
+  const wearing = booking.outfits ?? [];
+  if (wearing.length === 0) return "";
+  return `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Wearing</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(describeOutfits(wearing))}</strong></td></tr>`;
+}
+
+function outfitTextLine(booking: BookingFacts): string {
+  const wearing = booking.outfits ?? [];
+  return wearing.length > 0 ? `Wearing: ${describeOutfits(wearing)}` : "";
 }
 
 export function paymentReceivedCustomerEmail({
@@ -1509,6 +1573,7 @@ export function paymentReceivedCustomerEmail({
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">What</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(booking.productTitle)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">When</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(when)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">For</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(who)}</strong></td></tr>
+        ${outfitFactsRow(booking)}
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Reference</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(payment.reference)}</strong></td></tr>
       </table>
       <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">How your deposit was worked out</p>
@@ -1535,6 +1600,7 @@ export function paymentReceivedCustomerEmail({
     `What: ${booking.productTitle}`,
     `When: ${when}`,
     `For: ${who}`,
+    outfitTextLine(booking),
     `Reference: ${payment.reference}`,
     "",
     "How your deposit was worked out:",
@@ -1583,6 +1649,7 @@ export function paymentReceivedTeamEmail({
         ${row("What", `${booking.productTitle} (${booking.productType})`)}
         ${row("When", when)}
         ${row("People", String(booking.people))}
+        ${outfitFactsRow(booking)}
         ${row("Name", booking.guestName)}
         ${booking.guestPhone ? row("Phone", booking.guestPhone) : ""}
         ${row("Email", booking.guestEmail || "None — guest booking, reply by phone")}
@@ -1617,6 +1684,7 @@ export function paymentReceivedTeamEmail({
     `What: ${booking.productTitle} (${booking.productType})`,
     `When: ${when}`,
     `People: ${booking.people}`,
+    outfitTextLine(booking),
     `Name: ${booking.guestName}`,
     booking.guestPhone ? `Phone: ${booking.guestPhone}` : "",
     `Email: ${booking.guestEmail || "None — guest booking, reply by phone"}`,

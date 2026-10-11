@@ -1,5 +1,51 @@
 import { unsplashUrl } from "./unsplash";
-import type { Photoshoot } from "./types";
+import type { Outfit, Photoshoot } from "./types";
+
+// THE FLYING DRESS COLLECTION — twelve dresses, all confirmed available by
+// the business (see the "Do I bring the dress?" FAQ below, which names them).
+//
+// Shared by all three Flying Dress products because all three already promise
+// a dress "in the colour you choose" from Egypt Eye's own collection. That is
+// an assumption about one agency collection serving the dunes, Fayoum and the
+// rooftop alike; if a colour never travels to Fayoum, switch it off for that
+// product in the Studio rather than editing this file.
+//
+// `hex` is a swatch shown ONLY until a photograph is uploaded, and the picker
+// labels such an option "photo coming soon" rather than passing the circle off
+// as the garment. These values are approximations of the colour names, not
+// measurements of the real fabric. Upload the photographs in Sanity Studio and
+// the swatches disappear on their own.
+const FLYING_DRESS_COLLECTION: Outfit[] = [
+  { id: "cherry", name: "Cherry", category: "womens-dress", hex: "#9d2235" },
+  { id: "emerald", name: "Emerald", category: "womens-dress", hex: "#1f6f54" },
+  { id: "navy", name: "Navy", category: "womens-dress", hex: "#1e2a4a" },
+  { id: "black", name: "Black", category: "womens-dress", hex: "#15161a" },
+  { id: "verdant", name: "Verdant", category: "womens-dress", hex: "#4b7a3f" },
+  { id: "ginger", name: "Ginger", category: "womens-dress", hex: "#b4662c" },
+  { id: "snowy", name: "Snowy", category: "womens-dress", hex: "#f2efe9" },
+  { id: "golden", name: "Golden", category: "womens-dress", hex: "#c9a227" },
+  { id: "bronzey", name: "BronZey", category: "womens-dress", hex: "#8c6239" },
+  { id: "aqua", name: "Aqua", category: "womens-dress", hex: "#3c9ca8" },
+  { id: "lavender", name: "Lavender", category: "womens-dress", hex: "#9b8ac4" },
+  { id: "orchid", name: "Orchid", category: "womens-dress", hex: "#a4559b" },
+];
+
+// MEN'S OUTFITS — deliberately empty.
+//
+// Nothing in the brief, the PDF, the website or anything the business has
+// confirmed names a single men's outfit, so there is nothing truthful to put
+// here. Inventing "Linen Shirt — Beige" would put a garment on a product page
+// that Egypt Eye may not own.
+//
+// The structure is live and waiting: add entries in Sanity Studio under
+// Outfits with category "Men's outfit" and the section appears on the product
+// page and in the booking sheet by itself. Until then both stay hidden, which
+// is the correct behaviour for a collection that does not exist yet.
+const MENS_OUTFITS: Outfit[] = [];
+
+const FLYING_DRESS_OUTFITS: Outfit[] = [...FLYING_DRESS_COLLECTION, ...MENS_OUTFITS];
+
+
 
 // Photoshoot Packages — Egypt Eye's signature products.
 
@@ -82,6 +128,9 @@ export const photoshoots: Photoshoot[] = [
   },
   {
     slug: "flying-dress-photoshoot",
+    // The dress collection. Same twelve for all three Flying Dress products;
+    // switch any off per product in the Studio.
+    outfits: FLYING_DRESS_OUTFITS,
     title: "Sand Dunes Flying Dress Photoshoot",
     duration: "1 hour",
     price: { amount: 199, originalAmount: 250, currency: "USD" },
@@ -134,6 +183,9 @@ export const photoshoots: Photoshoot[] = [
   },
   {
     slug: "fayoum-flying-dress-photoshoot",
+    // The dress collection. Same twelve for all three Flying Dress products;
+    // switch any off per product in the Studio.
+    outfits: FLYING_DRESS_OUTFITS,
     title: "Fayoum Flying Dress Photoshoot",
     duration: "1 hour",
     price: { amount: 219, originalAmount: 270, currency: "USD" },
@@ -326,6 +378,9 @@ export const photoshoots: Photoshoot[] = [
   },
   {
     slug: "pyramids-rooftop-flying-dress-photoshoot",
+    // The dress collection. Same twelve for all three Flying Dress products;
+    // switch any off per product in the Studio.
+    outfits: FLYING_DRESS_OUTFITS,
     title: "Pyramids Rooftop Flying Dress Photoshoot",
     duration: "30\u201345 minutes",
     price: { amount: 199, currency: "USD" },

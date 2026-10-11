@@ -11,6 +11,7 @@ import { cancellationSummary } from "@/content/cancellationPolicy";
 import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { Gallery } from "@/components/Gallery";
 import { FaqAccordion } from "@/components/FaqAccordion";
+import { OutfitCollection } from "@/components/OutfitCollection";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
@@ -188,6 +189,14 @@ export default async function PhotoshootDetailPage({
             </ul>
           </div>
 
+          {/* The collection. Renders nothing unless this product dresses
+              somebody, so every other photoshoot page is unchanged. Above the
+              FAQs on purpose: for a Flying Dress shoot this is a reason to
+              book, not a detail to check afterwards. */}
+          <div className="mt-10">
+            <OutfitCollection outfits={photoshoot.outfits} tone={photoshoot.imageTone} />
+          </div>
+
           {photoshoot.faqs && photoshoot.faqs.length > 0 && (
             <div className="mt-10">
               <h2 className="font-display text-lg font-semibold text-ink"><T>Good to know</T></h2>
@@ -227,6 +236,7 @@ export default async function PhotoshootDetailPage({
                 cancellationHref="/cancellation-policy"
                 timeSlots={photoshoot.timeSlots}
                 extras={photoshoot.extras}
+                outfits={photoshoot.outfits}
                 quotable={{
                   slug: photoshoot.slug,
                   title: photoshoot.title,
