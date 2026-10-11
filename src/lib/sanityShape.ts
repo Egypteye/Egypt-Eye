@@ -44,6 +44,32 @@ function arr<T>(value: T[] | undefined | null, fallback?: T[]): T[] {
   return fallback ?? [];
 }
 
+/**
+ * Time slots as the Studio actually receives them.
+ *
+ * A real booking page shipped with one dropdown option reading
+ * "\t6:00 AM, 9:00 AM, 1:00 PM", because all three times were pasted into a
+ * single row of the timeSlots array instead of three. The customer was offered
+ * one unusable choice, and nothing failed: the array was present, non-empty
+ * and typed correctly, so every guard upstream was satisfied.
+ *
+ * Typing a comma-separated list into one box is what people do with a list
+ * field, so it is handled rather than policed: entries are trimmed (the tab
+ * came from the paste) and split on commas.
+ *
+ * The trade-off is deliberate. A slot label that legitimately contains a comma
+ * would be split in two, which is cosmetic; a comma-separated list left whole
+ * is a booking form nobody can use. No label in this codebase has ever
+ * contained a comma, and the failure modes are not the same size.
+ */
+function slots(value: string[] | undefined | null, fallback?: string[]): string[] {
+  const source = arr(value, fallback);
+  return source
+    .flatMap((slot) => (typeof slot === "string" ? slot.split(",") : []))
+    .map((slot) => slot.trim())
+    .filter((slot) => slot !== "");
+}
+
 function bySlug<T extends { slug: string }>(items: readonly T[]): Map<string, T> {
   return new Map(items.map((item) => [item.slug, item]));
 }
@@ -64,7 +90,7 @@ export function hardenExperience(experience: Experience, local?: Experience): Ex
   return {
     ...experience,
     included: arr(experience.included, local?.included),
-    timeSlots: arr(experience.timeSlots, local?.timeSlots),
+    timeSlots: slots(experience.timeSlots, local?.timeSlots),
     extras: arr(experience.extras, local?.extras),
     faqs: arr(experience.faqs, local?.faqs),
     relatedTours: experience.relatedTours?.map((t) => hardenTour(t)),
@@ -84,7 +110,7 @@ export function hardenPhotoshoot(photoshoot: Photoshoot, local?: Photoshoot): Ph
     // extras typed into it projects null and falls back to the repo's list, so
     // the popup is complete before anyone edits the CMS — while an editor who
     // empties the list in Studio gets an empty list, not the repo's copy back.
-    timeSlots: arr(photoshoot.timeSlots, local?.timeSlots),
+    timeSlots: slots(photoshoot.timeSlots, local?.timeSlots),
     extras: arr(photoshoot.extras, local?.extras),
     // Added after a live product shipped with no FAQs at all.
     //

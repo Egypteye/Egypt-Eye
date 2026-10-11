@@ -349,21 +349,39 @@ export const photoshoots: Photoshoot[] = [
     // has no such field yet, unlike Activity and Story. The other six
     // photoshoots carry uncredited Unsplash images for the same reason.
     image: unsplashUrl("photo-1734461255986-048992c9d15d"),
-    // Across the roof's 6am\u20134pm window. Sunrise leads because it is the one
-    // thing no photoshoot inside the Giza complex can offer \u2014 the site does
-    // not open until 8am.
+    // Hourly, 7am to 3pm, which is the roof's real booking window.
     //
-    // The last slot starts at three, not four: the session runs 30\u201345 minutes
-    // and has to finish before the roof closes. That is also the better end of
-    // the day in winter \u2014 a three o'clock session finishes about 1h15m before
-    // sunset in November and December, which is genuinely golden hour. In June
-    // it is still four hours short of sunset, so the light is high and hard.
+    // Written out one per entry on purpose. All three used to sit in a single
+    // Studio row as "6:00 AM, 9:00 AM, 1:00 PM", which the dropdown rendered
+    // as one unusable option; sanityShape.ts now splits that shape, but the
+    // repo's own copy should still show what the field expects.
     //
-    // Sunset itself is never offered: the earliest sunset of the year is 16:58
-    // in December, after the roof has shut. Anyone wanting a time outside this
-    // list uses "Request another time" in the booking sheet, which asks what
-    // would suit them and promises only that we will say what is possible.
-    timeSlots: ["6:00 AM", "9:00 AM", "12:00 PM", "3:00 PM"],
+    // 7am leads because it is the one slot no photoshoot inside the Giza
+    // complex can match: the site does not open until 8, so the first hour of
+    // the day belongs to the roof. It is not quite sunrise \u2014 the sun is up
+    // by 06:58 even in October \u2014 but between October and February a seven
+    // o'clock start is only minutes into the day.
+    //
+    // 3pm is last because the session runs 30\u201345 minutes and has to finish
+    // before the roof closes at four. It is also the better end of the day in
+    // winter: a three o'clock session finishes about 1h15m before sunset in
+    // November and December. In June it is four hours short, so the light is
+    // high and hard.
+    //
+    // Sunset is never offered. The earliest sunset of the year is 16:58 in
+    // December, after the roof has shut. Anyone wanting a time outside this
+    // list uses "Request another time" in the booking sheet.
+    timeSlots: [
+      "7:00 AM",
+      "8:00 AM",
+      "9:00 AM",
+      "10:00 AM",
+      "11:00 AM",
+      "12:00 PM",
+      "1:00 PM",
+      "2:00 PM",
+      "3:00 PM",
+    ],
     // Only the fixed-price add-ons. Light makeup, the hairdresser and the
     // custom dress are all quoted "from", and a price that moves after payment
     // is the one thing the deposit flow must never do \u2014 they stay in `addOns`
@@ -380,7 +398,7 @@ export const photoshoots: Photoshoot[] = [
     // isInstantBookable() needs both a price and the switch, and the switch
     // belongs in the Studio.
     description:
-      "A flowing dress on a rooftop above Giza, with the pyramids across the skyline and nobody else in the frame. Shot at first light, while the site below is still closed \u2014 and you leave with more than a hundred edited photographs rather than a handful.",
+      "A flowing dress on a rooftop above Giza, with the pyramids across the skyline and nobody else in the frame. Shot in the early morning, a clear hour before the site below opens \u2014 and you leave with more than a hundred edited photographs rather than a handful.",
     goodFor: [
       "Solo travelers",
       "Couples",
@@ -409,9 +427,9 @@ export const photoshoots: Photoshoot[] = [
           "More than a hundred, colour-graded, delivered within 6 to 10 days.",
       },
       {
-        question: "Why sunrise?",
+        question: "Why so early?",
         answer:
-          "The Giza site does not open until 8am, so the first light of the day is something no photoshoot inside the complex can offer. From the roof there is no gate \u2014 the pyramids catch the sun while the plateau below is still empty.",
+          "The Giza site does not open until 8am, so the first hour of the day is one no photoshoot inside the complex can offer. From the roof there is no gate: at seven the pyramids are catching the low sun and the plateau below is still empty. Between October and February the sun has only been up a few minutes when you start.",
       },
       {
         question: "Do I need a ticket for the pyramids?",

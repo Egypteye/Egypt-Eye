@@ -187,6 +187,43 @@ if (faqSource) {
   ok("the Studio's own faqs are replaced by the content file's", own.faqs?.[0]?.question === "q");
 }
 
+// ---------------------------------------------------------------------------
+// Time slots pasted as one comma-separated row.
+//
+// A live booking page offered a single dropdown option reading
+// "\t6:00 AM, 9:00 AM, 1:00 PM" because all three times went into one row of
+// the Studio's timeSlots array. Nothing failed — the array was present,
+// non-empty and correctly typed — and the customer was given one choice that
+// was not a time.
+const slotSource = localPhotoshoots.find((p) => (p.timeSlots?.length ?? 0) > 1);
+ok("no local photoshoot has multiple timeSlots, so this cannot be asserted", Boolean(slotSource));
+
+if (slotSource) {
+  const pasted = hardenPhotoshoot(
+    { ...slotSource, timeSlots: ["\t7:00 AM, 8:00 AM, 9:00 AM"] } as unknown as Photoshoot,
+    slotSource
+  );
+  ok(
+    "a comma-separated timeSlots row stays one unusable dropdown option",
+    pasted.timeSlots?.length === 3 && pasted.timeSlots[0] === "7:00 AM"
+  );
+  ok(
+    "leading whitespace from a paste survives into the option label",
+    (pasted.timeSlots ?? []).every((slot) => slot === slot.trim() && slot !== "")
+  );
+
+  // Correctly entered slots must pass through untouched.
+  const proper = hardenPhotoshoot(
+    { ...slotSource, timeSlots: ["7:00 AM", "3:00 PM"] } as unknown as Photoshoot,
+    slotSource
+  );
+  ok("properly entered timeSlots are rewritten", proper.timeSlots?.join("|") === "7:00 AM|3:00 PM");
+
+  // And emptying the list in Studio still means "ask the customer".
+  const emptied = hardenPhotoshoot({ ...slotSource, timeSlots: [] } as unknown as Photoshoot, slotSource);
+  ok("emptying timeSlots in Studio is overruled by the content file", (emptied.timeSlots?.length ?? 0) === 0);
+}
+
 if (errors.length > 0) {
   console.error(`\ncheck-sanity-shape: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
