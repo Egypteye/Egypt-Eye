@@ -44,10 +44,6 @@ export async function sendEmail({
   }
 }
 
-export function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
+// Moved to ./breakdown so check scripts can reach it; re-exported here
+// because several modules already import it from this file.
+export { escapeHtml } from "./breakdown";

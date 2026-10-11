@@ -12,6 +12,7 @@
  *      would be a broken promise rather than a free one.
  */
 import { readFileSync, readdirSync } from "node:fs";
+import { breakdownRows, breakdownText, financials } from "../src/lib/email/breakdown";
 import { payPalLink } from "../src/lib/booking/deposit";
 import { isInstantBookable, quoteDeposit, type QuotableProduct } from "../src/lib/booking/quote";
 import { photoshoots } from "../src/content/photoshoots";
@@ -952,6 +953,68 @@ for (const name of teamTemplates) {
   ok(
     `${name} exists but nothing calls it — a desk notification that reaches nobody`,
     sources.some((src) => new RegExp(`\\b${name}\\s*\\(`).test(src))
+  );
+}
+
+// ---------------------------------------------------------------------------
+// What a paying customer is told about their money.
+//
+// The breakdown used to list the priced lines and then jump straight to
+// "Deposit paid", so a $443 booking showed $398 and $45 and then $110.75 with
+// no total, no percentage and no balance. The figures were all in the stored
+// quote; QuoteFacts simply did not expose them.
+//
+// Rendered here rather than eyeballed, because both emails are built from the
+// same two functions and the whole point is that they cannot disagree.
+const sample = quoteDeposit(
+  {
+    slug: "check",
+    title: "Check Product",
+    bookable: true,
+    price: { amount: 199 },
+    depositPercent: null,
+    extras: [{ label: "Full Makeup", priceUsd: 45 }],
+  } as unknown as QuotableProduct,
+  "photoshoot",
+  { people: 2, extras: [{ label: "Full Makeup", quantity: 1 }] }
+);
+ok("the breakdown sample cannot be quoted", sample.ok);
+
+if (sample.ok) {
+  const q = sample.quote;
+  const f = financials(q);
+
+  // The arithmetic the customer can do themselves.
+  ok(
+    "the priced lines do not sum to the booking total",
+    q.lines.reduce((sum, l) => sum + l.amountCents, 0) === f.bookingTotalCents
+  );
+  ok("deposit plus balance is not the booking total", f.depositCents + f.balanceCents === f.bookingTotalCents);
+  ok("the deposit is not a share of the booking", f.depositCents < f.bookingTotalCents);
+
+  // Both renderings must state all four figures, or the email is the old one.
+  const html = breakdownRows(q);
+  const text = breakdownText(q);
+  for (const [what, needle] of [
+    ["the booking total", "$443"],
+    ["what was paid", "$110.75"],
+    ["the balance left", "$332.25"],
+    ["the percentage taken", "25%"],
+  ] as const) {
+    ok(`the HTML breakdown does not state ${what}`, html.includes(needle));
+    ok(`the text breakdown does not state ${what}`, text.includes(needle));
+  }
+
+  // Extras are inside the deposit base, so no email may say otherwise. The
+  // old wording told a customer the full $45 was still owed when $11.25 of it
+  // was already paid.
+  const emailSrc = readFileSync("src/lib/email/templates.ts", "utf8")
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("//") && !line.trim().startsWith("*"))
+    .join("\n");
+  ok(
+    "an email still claims extras are settled with the balance, which the percentage model made false",
+    !/settled with the balance/.test(emailSrc)
   );
 }
 

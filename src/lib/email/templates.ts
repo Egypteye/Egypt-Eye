@@ -1,5 +1,11 @@
 import "server-only";
-import { escapeHtml } from "./resend";
+import {
+  breakdownRows,
+  breakdownText,
+  cents,
+  escapeHtml,
+  type QuoteFacts,
+} from "./breakdown";
 import { HUMAN_CONFIRMS, moneyState, replyPromise, type PaymentMode } from "@/lib/booking/wording";
 import { extrasTotal, formatUsd, type BookingExtra } from "@/lib/booking/extras";
 
@@ -1099,7 +1105,8 @@ export function bookingRequestCustomerEmail({
    * link, money taken, and the email would have said "held, not charged".
    */
   moneyMode?: PaymentMode;
-  /** Chosen priced extras, settled with the balance rather than the deposit. */
+  /** Chosen priced extras. Priced into the booking, so the deposit covers
+   *  its share of them too; they are not settled separately. */
   extras?: readonly BookingExtra[];
 }) {
   const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
@@ -1137,7 +1144,7 @@ export function bookingRequestCustomerEmail({
           .join("")}
         <tr><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;font-family:Arial,sans-serif;font-size:13px;color:#6b7d70;">Added to your final price</td><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;text-align:right;"><strong>${escapeHtml(formatUsd(extrasTotal(chosen)))}</strong></td></tr>
       </table>
-      <p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">Extras are settled with the balance, not with your deposit.</p>`
+      <p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">Extras are part of your booking total, so your deposit covers its share of them.</p>`
       : "";
 
   const html = baseLayout({
@@ -1171,7 +1178,7 @@ export function bookingRequestCustomerEmail({
     `Reference: ${reference}`,
     "",
     chosen.length > 0
-      ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")}\nAdded to your final price (${formatUsd(extrasTotal(chosen))}) and settled with the balance, not with your deposit.\n`
+      ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")}\nIncluded in your booking total (${formatUsd(extrasTotal(chosen))}), so your deposit covers its share of them.\n`
       : "",
     money,
     paymentLink && depositUsd ? `\nPay the $${depositUsd} deposit: ${paymentLink}\nPlease put ${reference} in the PayPal note so we can match it to your booking.` : "",
@@ -1295,7 +1302,7 @@ export function bookingRequestTeamEmail({
     `Account: ${accountState}`,
     `Reference: ${reference}`,
     chosen.length > 0
-      ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")} (${formatUsd(extrasTotal(chosen))}, settled with the balance)`
+      ? `Extras: ${chosen.map((e) => `${e.label} ${formatUsd(e.priceUsd)}`).join(", ")} (${formatUsd(extrasTotal(chosen))}, inside the booking total)`
       : "",
     emailedCustomer
       ? ""
@@ -1465,42 +1472,6 @@ export type BookingFacts = {
   extrasTotalUsd: number | null;
 };
 
-type QuoteFacts = {
-  lines: { label: string; unitCents: number; quantity: number; amountCents: number }[];
-  totalCents: number;
-};
-
-function cents(value: number): string {
-  const whole = Math.trunc(value / 100);
-  const part = Math.abs(value % 100);
-  return part === 0 ? `$${whole}` : `$${whole}.${String(part).padStart(2, "0")}`;
-}
-
-/** The deposit, line by line, exactly as it was calculated. */
-function breakdownRows(quote: QuoteFacts): string {
-  const lines = quote.lines
-    .map(
-      (line) =>
-        `<tr><td style="padding:4px 0;">${escapeHtml(
-          line.quantity > 1 ? `${line.label} — ${cents(line.unitCents)} × ${line.quantity}` : line.label
-        )}</td><td style="padding:4px 0;text-align:right;">${escapeHtml(cents(line.amountCents))}</td></tr>`
-    )
-    .join("");
-  return `${lines}<tr><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;"><strong>Deposit paid</strong></td><td style="padding:8px 0 0;border-top:1px solid #e4e8e5;text-align:right;"><strong>${escapeHtml(
-    cents(quote.totalCents)
-  )}</strong></td></tr>`;
-}
-
-function breakdownText(quote: QuoteFacts): string {
-  return quote.lines
-    .map(
-      (line) =>
-        `  ${line.quantity > 1 ? `${line.label} — ${cents(line.unitCents)} x ${line.quantity}` : line.label}: ${cents(line.amountCents)}`
-    )
-    .concat(`  Deposit paid: ${cents(quote.totalCents)}`)
-    .join("\n");
-}
-
 function whenText(booking: BookingFacts): string {
   return booking.startsAt ? formatSlot(booking.startsAt, booking.slotLabel) : "date to be set";
 }
@@ -1518,16 +1489,13 @@ export function paymentReceivedCustomerEmail({
   const when = whenText(booking);
   const who = `${booking.people} ${booking.people === 1 ? "person" : "people"}`;
 
-  const extrasHtml =
-    booking.extras.length > 0
-      ? `<p style="margin:0 0 16px;"><strong>Extras on your booking:</strong> ${escapeHtml(
-          booking.extras.map((e) => e.label).join(", ")
-        )}. ${
-          booking.extrasTotalUsd
-            ? `$${booking.extrasTotalUsd} of extras is added to your final price and settled with the balance.`
-            : ""
-        }</p>`
-      : "";
+  // No separate extras paragraph: every extra is already a priced line in the
+  // breakdown above. The sentence that used to sit here said extras were
+  // "settled with the balance", which stopped being true when the deposit
+  // became a percentage of the whole booking. On a $443 booking carrying $45
+  // of extras, $11.25 of those extras is already paid, so it overstated what
+  // the customer still owed.
+  const extrasHtml = "";
 
   const html = baseLayout({
     preheader: `We have your ${cents(payment.amountCents)} deposit for ${booking.productTitle}.`,
@@ -1573,7 +1541,7 @@ export function paymentReceivedCustomerEmail({
     breakdownText(quote),
     "",
     booking.extras.length > 0 ? `Extras on your booking: ${booking.extras.map((e) => e.label).join(", ")}` : "",
-    booking.extrasTotalUsd ? `$${booking.extrasTotalUsd} of extras is settled with the balance.` : "",
+    "",
     "",
     replyPromise(),
     "",
@@ -1628,7 +1596,7 @@ export function paymentReceivedTeamEmail({
         booking.extras.length > 0
           ? `<p style="margin:0 0 16px;"><strong>Extras booked:</strong> ${escapeHtml(
               booking.extras.map((e) => `${e.label} ($${e.priceUsd})`).join(", ")
-            )}${booking.extrasTotalUsd ? ` — $${booking.extrasTotalUsd} settled with the balance` : ""}. Build the time in.</p>`
+            )}${booking.extrasTotalUsd ? ` — $${booking.extrasTotalUsd}, inside the booking total above` : ""}. Build the time in.</p>`
           : ""
       }
       <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
