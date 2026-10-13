@@ -203,8 +203,10 @@ so it is deliberately not being done.
 
 ## 7. The four dashboard steps, in order
 
-**Do them in this order.** Step 2 before step 3 is the one that matters — see
-the warning.
+**The order matters and is not the obvious one.** Environment variables come
+before the branch setting, because Vercel will not accept a production branch
+that has never deployed, and a deployment without those variables cannot
+succeed. The domain comes last, after a green build on the right branch.
 
 ### 1. Create the project
 
@@ -215,35 +217,9 @@ Vercel → Add New → Project → import **`Egypteye/Egypt-Eye`**.
 - **Root directory:** leave as the repository root
 - Do **not** attach a domain yet
 
-### 2. Set the production branch to `flying-dresses-production`
+### 2. Set the environment variables — FIRST
 
-Project → Settings → **Environments** → **Production** → the branch-tracking
-field.
-
-**Not** Settings → Git. An earlier version of this document said Git, which is
-where it used to live; current Vercel has moved production-branch configuration
-onto the Environments page, and the Git page now only covers the repository
-connection, commit comments and deploy hooks.
-
-If it is not on the Environments page either, the reliable fallback is to
-delete the project and re-import the repository — the import screen asks which
-branch to deploy. Nothing is lost, because a project with no successful
-deployment and no domain holds nothing.
-
-> ⚠️ **Do this before attaching the domain.** A new Vercel project defaults its
-> production branch to the repository's default branch, which here is
-> `claude/egypt-eye-travel-website-fckb5t` — Egypt Eye's. If the domain is
-> attached while that is still the setting, **flyingdressesegypt.com will serve
-> the Egypt Eye travel site**, and it will do so without the hostname lockdown,
-> because that branch does not contain it.
->
-> Change the branch, confirm a deployment from `flying-dresses-production` has
-> succeeded, and only then attach the domain.
-
-### 3. Set the environment variables
-
-Project → Settings → Environment Variables. Per §4 above. The four public ones
-can be set to all environments:
+Project → Settings → Environment Variables. These four, all environments:
 
 ```
 NEXT_PUBLIC_SANITY_PROJECT_ID   eoashi0y
@@ -252,16 +228,51 @@ NEXT_PUBLIC_FLYING_DRESSES_URL  https://flyingdressesegypt.com
 NEXT_PUBLIC_EGYPT_EYE_ORIGIN    https://egypteyetravel.com
 ```
 
-Then add **`RESEND_API_KEY`** so the enquiry form can send. I have not set it
-and will not: it is a secret, and copying one between projects is not a change
-to make on someone's behalf without being asked. Use a separate Resend key for
-this brand if you can — it is one more thing that cannot leak sideways.
+**This has to come before the branch, and the reason is a chicken-and-egg.**
+Vercel refuses to make a branch the production branch until that branch has
+deployed at least once — "No deployments found for ... Deploy the branch, then
+retry." But a deployment with no Sanity variables fails at
+`src/sanity/env.ts`, which throws at module load. So: variables, then a
+deployment, then the branch setting. Any other order stalls.
 
-**Add nothing else.** Specifically no `PAYPAL_*`, no `SUPABASE_*`, no
+`src/sanity/env.ts` is the only module-scope environment throw in the whole
+codebase, so those two Sanity values are the only ones that can fail a build
+this way.
+
+Then add **`RESEND_API_KEY`** so the enquiry form can send. It will not block a
+build — the route returns a handled error and the form offers WhatsApp instead
+— so it can follow later. Use a separate Resend key for this brand if you can.
+
+**Add nothing else.** No `PAYPAL_*`, no `SUPABASE_*`, no
 `SANITY_API_WRITE_TOKEN`, no `MIGRATE_SECRET`. §4 explains what each absence
 buys.
 
-### 4. Attach the domain — only after step 2 is confirmed
+### 3. Deploy `flying-dresses-production` once
+
+Any of these, once the variables are in:
+
+- **Redeploy an existing attempt.** Deployments → find the
+  `flying-dresses-production` build (it will be there, failed, if anything has
+  been pushed to the branch) → **Redeploy**.
+- **Push to the branch.** Any commit triggers a build.
+- **Deploy Hook.** Settings → Git → Deploy Hooks → create one with branch
+  `flying-dresses-production`, then open the URL it gives you.
+
+Wait for it to go green. The log should say `Branch: flying-dresses-production`
+— that line is the thing to check.
+
+### 3b. Now set the production branch
+
+Project → Settings → **Environments** → **Production** → branch tracking →
+`flying-dresses-production`.
+
+**Not** Settings → Git. Current Vercel has moved production-branch
+configuration onto the Environments page; the Git page now only carries the
+repository connection, commit comments and deploy hooks.
+
+With a green deployment on the branch, the option will be selectable.
+
+### 4. Attach the domain — only after the branch is confirmed
 
 Project → Settings → Domains → add `flyingdressesegypt.com` and
 `www.flyingdressesegypt.com`, then point the DNS at Vercel as it instructs.
