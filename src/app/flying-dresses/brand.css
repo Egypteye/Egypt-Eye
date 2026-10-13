@@ -61,6 +61,47 @@
      too light to carry the gold accent: it measured 3.96:1, under AA. At
      #3a2e1c every pairing clears it — ivory 12.07:1, ivory-dim 9.10:1,
      gold 5.83:1, rose 7.67:1 — while keeping the hue the covers use. */
+  /* =====================================================================
+     SHAPE, DEPTH AND GLASS
+     =====================================================================
+     The brief: rounded geometry, floating panels, translucency, background
+     blur, layered depth, soft shadows. Taken from the references as a
+     LANGUAGE, not a skin — the colours below are the brand's own.
+
+     Applied with judgment rather than everywhere. Blur is expensive and it
+     flattens a photograph behind it, so backdrop-filter is used on exactly
+     four things: the floating header, the phone's sticky bar, the caption
+     plate in the pinned scene, and the booking panel. Everything else gets
+     its depth from radius, a hairline and a soft shadow, which cost nothing.
+
+     Every shadow is tinted with the brand's brown rather than black. Black
+     shadow on a warm cream page reads grey and cheap; this keeps the whole
+     surface in one colour family. */
+  --fd-r-xs: 0.625rem;
+  --fd-r-sm: 0.875rem;
+  --fd-r-md: 1.25rem;
+  --fd-r-lg: 1.75rem;
+  --fd-r-xl: 2.25rem;
+  --fd-r-pill: 999px;
+
+  /* Two layers each: a tight contact shadow so the edge reads, and a wide
+     soft one for the float. One big blur alone looks like a smudge. */
+  --fd-shadow-sm: 0 1px 2px rgba(58, 46, 28, 0.05), 0 2px 8px rgba(58, 46, 28, 0.05);
+  --fd-shadow-md: 0 2px 4px rgba(58, 46, 28, 0.05), 0 12px 32px rgba(58, 46, 28, 0.09);
+  --fd-shadow-lg: 0 4px 10px rgba(58, 46, 28, 0.06), 0 28px 64px rgba(58, 46, 28, 0.13);
+  --fd-shadow-float: 0 2px 6px rgba(58, 46, 28, 0.06), 0 18px 48px rgba(58, 46, 28, 0.14);
+
+  /* 0.72 is deliberate. Below about 0.7 the ink on these panels stops
+     clearing AA over a busy photograph, and the blur cannot be relied on to
+     save it — Firefox shipped backdrop-filter late and it can be disabled.
+     At 0.72 the panel is legible with the blur switched off entirely. */
+  --fd-glass: rgba(248, 244, 237, 0.72);
+  --fd-glass-strong: rgba(248, 244, 237, 0.86);
+  --fd-glass-dark: rgba(58, 46, 28, 0.58);
+  --fd-glass-edge: rgba(255, 255, 255, 0.5);
+  --fd-hairline: rgba(58, 46, 28, 0.1);
+  --fd-blur: 18px;
+
   --fd-ink: #3a2e1c;
   --fd-ink-2: #463826;
   --fd-ink-3: #54452f;
@@ -70,8 +111,23 @@
 
   --fd-ivory: #f8f4ed;
   --fd-ivory-dim: #ded5c7;
-  --fd-sand: #e9ded0;
-  --fd-sand-deep: #d6c7b2;
+
+  /* THE OWNER'S CHOSEN PALETTE.
+     Supplied as four swatches: #F8EDC5, #DDB786, #D0C0A7, #E4DDD3. All four
+     are light, so they are SURFACES, not text: there is no colour among them
+     that type can be set in. The dark stays --fd-ink, which was sampled from
+     the brand's own social covers and is in the same warm family.
+
+     Measured, --fd-ink on each:
+       butter 11.28:1   tan 7.05:1   greige 7.42:1   shell 9.82:1
+     Every one clears WCAG AA with room to spare.
+
+     One pairing to avoid: --fd-ink-soft on tan is 4.41:1, just under. Use
+     --fd-ink on tan. */
+  --fd-sand: #e4ddd3;
+  --fd-sand-deep: #d0c0a7;
+  --fd-butter: #f8edc5;
+  --fd-tan: #ddb786;
 
   /* Two golds. The lighter one is for text on dark, the darker for text on
      the light backgrounds — one gold cannot clear AA in both directions.
@@ -86,7 +142,13 @@
      4.54:1 on sand-deep. All three clear 4.5:1, so it is safe anywhere on
      this palette rather than safe on the one background someone measured. */
   --fd-gold: #c9a85f;
-  --fd-gold-ink: #6b501c;
+  /* Darkened from #6b501c when the owner's palette landed. On the two new
+     surfaces that token measured 4.22:1 (greige) and 4.01:1 (tan), both under
+     AA — the same mistake as last time, a gold checked against one background
+     and shipped. #614919 is the same hue at 39deg, solved down in lightness
+     until the worst case cleared: ivory 7.74, butter 7.24, shell 6.29,
+     greige 4.76, tan 4.52. */
+  --fd-gold-ink: #614919;
 
   /* The logo's own two colours, sampled from the artwork the owner supplied.
      Used ONLY by the wordmark — they are not part of the general palette,
@@ -2241,4 +2303,368 @@ textarea {
   .fd-pin-steps > * {
     grid-area: auto;
   }
+}
+
+/* ===========================================================================
+   THE DESIGN LANGUAGE LAYER
+   ===========================================================================
+   Rounded geometry, floating panels, translucency, layered depth.
+
+   WHY IT IS A LAYER AT THE END RATHER THAN EDITS THROUGHOUT
+
+   Every rule here is written at the SAME specificity as the rule it adjusts,
+   so source order decides and nothing needs a `!important` or a compound
+   selector. That is not tidiness, it is the lesson from the footer: raising
+   specificity to win one fight made `.fd-btn-outline-light` lose the next one
+   and shipped an invisible button. A flat layer can be read top to bottom and
+   removed in one piece.
+
+   What is deliberately NOT given glass, radius or shadow: body prose, the
+   footer, and the section rhythm. A page where everything floats has no
+   foreground. The footer stays flat and grounded so the page has a floor.
+   =========================================================================== */
+
+/* ---- The header floats -----------------------------------------------
+   Detached from the top edge and rounded into a capsule, as in the
+   references. The hairline is kept and the shadow stays small: this is a
+   photography brand, and a header that hovers on a heavy drop shadow looks
+   like a dashboard.                                                      */
+.fd-header {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 100;
+  margin: 0.75rem var(--fd-gutter) 0;
+  border: 1px solid var(--fd-glass-edge);
+  border-radius: var(--fd-r-pill);
+  background: var(--fd-glass-strong);
+  box-shadow: var(--fd-shadow-float);
+  /* The sticky header must not leave a gap of page showing above it. */
+  backdrop-filter: none;
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-header {
+    background: var(--fd-glass);
+    backdrop-filter: blur(var(--fd-blur)) saturate(140%);
+  }
+}
+
+.fd-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 4rem;
+  /* The shell's own gutter would double up inside a header that already has
+     an outer margin. */
+  padding-inline: clamp(1rem, 0.6rem + 1.4vw, 1.75rem);
+}
+
+/* The page starts under a floating header, so it needs the header's height
+   back as breathing room rather than hiding beneath it. */
+.fd-hero {
+  margin-top: calc(-5.5rem - 0.75rem);
+  padding-top: 5.5rem;
+}
+
+/* ---- Navigation: pills ------------------------------------------------ */
+.fd-nav a {
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--fd-r-pill);
+  transition:
+    background-color var(--fd-fast) var(--fd-ease-soft),
+    color var(--fd-fast) var(--fd-ease-soft);
+}
+
+.fd-nav a:hover {
+  background: color-mix(in srgb, var(--fd-sand-deep) 55%, transparent);
+}
+
+/* The current page reads as a filled pill, the way the references mark an
+   active tab. aria-current is already on the link, so this needs no extra
+   class and cannot fall out of step with what a screen reader announces. */
+.fd-nav a[aria-current="page"] {
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+}
+
+/* ---- Buttons: capsules ------------------------------------------------ */
+.fd-btn {
+  border-radius: var(--fd-r-pill);
+  box-shadow: var(--fd-shadow-sm);
+}
+
+.fd-btn-ghost,
+.fd-btn-outline-light {
+  box-shadow: none;
+}
+
+.fd-btn:hover {
+  box-shadow: var(--fd-shadow-md);
+}
+
+.fd-icon-btn,
+.fd-burger {
+  border-radius: var(--fd-r-pill);
+}
+
+/* ---- Frames, cards and tiles: rounded, with real depth ---------------- */
+.fd-figure,
+.fd-slot {
+  border-radius: var(--fd-r-lg);
+}
+
+.fd-tile-media,
+.fd-tile-media .fd-figure,
+.fd-tile-media .fd-slot {
+  border-radius: var(--fd-r-lg);
+}
+
+.fd-tile {
+  border-radius: var(--fd-r-lg);
+  transition:
+    translate var(--fd-slow) var(--fd-ease-soft),
+    box-shadow var(--fd-slow) var(--fd-ease-soft);
+}
+
+.fd-tile:hover {
+  translate: 0 -4px;
+  box-shadow: var(--fd-shadow-lg);
+}
+
+.fd-outfit-media {
+  border-radius: var(--fd-r-md);
+  box-shadow: var(--fd-shadow-sm);
+  transition:
+    translate var(--fd-slow) var(--fd-ease-soft),
+    box-shadow var(--fd-slow) var(--fd-ease-soft);
+}
+
+.fd-outfit:hover .fd-outfit-media {
+  translate: 0 -3px;
+  box-shadow: var(--fd-shadow-md);
+}
+
+.fd-swatch,
+.fd-swatch-dot,
+.fd-outfit-colour,
+.fd-lightbox-colour {
+  border-radius: var(--fd-r-md);
+}
+
+.fd-swatch-dot {
+  border-radius: var(--fd-r-pill);
+}
+
+/* ---- Panels: the translucent, layered ones ---------------------------- */
+.fd-note {
+  border-radius: var(--fd-r-lg);
+  border: 1px solid var(--fd-glass-edge);
+  background: var(--fd-glass-strong);
+  box-shadow: var(--fd-shadow-md);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-note {
+    background: var(--fd-glass);
+    backdrop-filter: blur(var(--fd-blur)) saturate(130%);
+  }
+}
+
+.fd-faq,
+.fd-table-wrap,
+.fd-drawer,
+.fd-lightbox-inner,
+.fd-lightbox-stage,
+.fd-pill,
+.fd-price,
+.fd-form {
+  border-radius: var(--fd-r-md);
+}
+
+.fd-pill {
+  border-radius: var(--fd-r-pill);
+}
+
+.fd-field input,
+.fd-field select,
+.fd-field textarea {
+  border-radius: var(--fd-r-sm);
+}
+
+/* ---- The horizontal rail: a row of floating cards --------------------- */
+.fd-rail > * {
+  border-radius: var(--fd-r-lg);
+}
+
+/* Room for the lift and the shadow. Without it `overflow-x: auto` clips the
+   bottom of a card the moment it rises on hover. */
+.fd-rail {
+  padding-block: 0.75rem 1.25rem;
+}
+
+/* ---- The pinned scene: a caption plate --------------------------------
+   The captions sit over a photograph, which is the one place on this site
+   where contrast cannot be computed in advance: it depends on the picture.
+   A translucent dark plate behind the words fixes that for any photograph,
+   and it is also the single most reference-like moment on the page.      */
+.fd-pin-step {
+  padding: clamp(1.25rem, 0.75rem + 2vw, 2.5rem);
+  border-radius: var(--fd-r-xl);
+  border: 1px solid rgba(248, 244, 237, 0.14);
+  background: var(--fd-glass-dark);
+  box-shadow: var(--fd-shadow-lg);
+  /* The plate is as wide as its words, not as wide as the column. */
+  justify-self: start;
+  max-width: min(46rem, 100%);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-pin-step {
+    background: rgba(58, 46, 28, 0.42);
+    backdrop-filter: blur(14px) saturate(120%);
+  }
+}
+
+.fd-pin-media img {
+  border-radius: 0;
+}
+
+/* ---- The phone's sticky bar: a floating capsule ----------------------- */
+.fd-sticky-cta {
+  inset-inline: var(--fd-gutter);
+  bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  padding: 0.5rem;
+  border: 1px solid var(--fd-glass-edge);
+  border-top: 1px solid var(--fd-glass-edge);
+  border-radius: var(--fd-r-pill);
+  background: var(--fd-glass-strong);
+  box-shadow: var(--fd-shadow-float);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-sticky-cta {
+    background: var(--fd-glass);
+    backdrop-filter: blur(var(--fd-blur)) saturate(140%);
+  }
+}
+
+/* ---- Where the warm accents actually land ----------------------------
+   Two of the owner's four swatches are too saturated to be page
+   backgrounds: butter and tan would turn a photography site into a
+   stationery set. They earn their place as accents instead, where a small
+   area of warmth lifts a neutral page.                                   */
+.fd-rule,
+.fd-rule-center {
+  background: var(--fd-tan);
+}
+
+.fd-eyebrow {
+  color: var(--fd-gold-ink);
+}
+
+/* ---- Motion: one shared easing for the new depth ----------------------
+   Everything above moves on translate and box-shadow only, never on width,
+   height, top or left, so none of it triggers layout. And all of it stops
+   dead under reduced motion, which the site already honours globally.    */
+@media (prefers-reduced-motion: reduce) {
+  .fd-tile:hover,
+  .fd-outfit:hover .fd-outfit-media {
+    translate: none;
+  }
+}
+
+/* ---- Phone ------------------------------------------------------------
+   The floating header's side margin eats into a 390px screen, so it tucks
+   in, and the capsule relaxes to a rounded rectangle: a pill that tall
+   looks like a lozenge rather than a bar.                                */
+@media (max-width: 48rem) {
+  .fd-header {
+    margin-inline: 0.75rem;
+    border-radius: var(--fd-r-lg);
+  }
+
+  .fd-figure,
+  .fd-slot,
+  .fd-tile,
+  .fd-tile-media {
+    border-radius: var(--fd-r-md);
+  }
+
+  .fd-pin-step {
+    border-radius: var(--fd-r-lg);
+  }
+}
+
+/* ---- Corrections found by looking at the restyled header ---------------
+   Three faults the capsule exposed, all of them caused by the new padding
+   rather than present before it.                                         */
+
+/* 1. EVERY NAV LABEL WRAPPED ONTO TWO LINES. The pill padding widened each
+      item enough that "The Wardrobe", "Rent & Hire" and the call to action
+      broke mid-phrase and doubled the header's height. The pills carry
+      their own spacing, so the gap between them comes down to compensate. */
+.fd-nav a,
+.fd-header-cta,
+.fd-nav {
+  white-space: nowrap;
+}
+
+@media (min-width: 64rem) {
+  .fd-nav {
+    gap: clamp(0.125rem, -0.4rem + 0.8vw, 0.5rem);
+  }
+}
+
+/* 2. THE UNDERLINE AND THE PILL BOTH MARKED THE CURRENT PAGE. Two active
+      states for one fact, and on the filled pill the gold hairline sat on
+      dark where it could not be seen anyway. The pill is the clearer of the
+      two, so the underline goes. */
+.fd-nav a::after {
+  display: none;
+}
+
+/* 3. THE WORDMARK COLLIDED WITH ITSELF.
+      "Egypt" is set across the caps as a signature lockup, which is the
+      right idea and was wrong by about a third: at 2.6x the cap height and
+      only 38% down, the script's x-height ran straight through FLYING
+      DRESSES and the two were unreadable as either one word or two.
+
+      Smaller and lower. The loops of the E and the y still cross the caps,
+      which is what makes it a lockup rather than two stacked lines, but the
+      body of the word now sits clear underneath. The mark also needs real
+      height reserved or the descender is clipped by the capsule. */
+.fd-mark {
+  /* Room for the descender of "Egypt". Measured, not guessed: at 0.85 the
+     tails of the y and the p were sliced off by the capsule's bottom edge. */
+  padding-bottom: calc(var(--fd-mark-size, 1.15rem) * 1.25);
+}
+
+.fd-mark-script {
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 1.95);
+  translate: 0 56%;
+}
+
+.fd-wordmark {
+  align-items: flex-start;
+  padding-block: 0.25rem;
+}
+
+/* ---- THE WARDROBE'S TWELVE SWATCHES HAD NEVER RENDERED -----------------
+   `.fd-outfit-media` is a <span> (see OutfitMedia in _components/Wardrobe.tsx)
+   and this rule set `aspect-ratio` without setting `display`. An inline box
+   ignores aspect-ratio, and its only child is `position: absolute`, so the
+   element computed to 0x0 and drew nothing. Measured: w=0 h=0 display=inline.
+
+   The effect was that the wardrobe page — whose entire job is showing twelve
+   dresses — rendered as a list of names with "photo coming soon" under each,
+   and the colour that stands in for the missing photograph was never visible.
+   It has been that way since the page was built. Nothing caught it, because
+   nothing renders this page and looks at it: the check scripts read source
+   text, and axe does not report an invisible element as a contrast or
+   structure fault.
+
+   Found by taking a screenshot of the page and seeing an empty grid. */
+.fd-outfit-media {
+  display: block;
 }

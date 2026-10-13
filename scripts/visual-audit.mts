@@ -231,6 +231,35 @@ async function inspectStructure(page: Page, path: string) {
       if (collisions.length >= 3) break;
     }
 
+    // A BOX THAT ASKED FOR AN ASPECT RATIO AND GOT NO HEIGHT.
+    //
+    // aspect-ratio does nothing on an inline box. `.fd-outfit-media` is a
+    // <span> that set `aspect-ratio` and never set `display`, so it computed
+    // to 0x0 and the wardrobe's twelve colour swatches drew nothing at all —
+    // on the page whose whole purpose is showing twelve dresses. It shipped
+    // that way and no check noticed, because an element with no height is
+    // invisible to contrast, heading and tap-target checks alike: there is
+    // nothing there to measure.
+    //
+    // So this looks for the shape of that mistake rather than that one
+    // element: anything that declares an aspect ratio and then renders with
+    // no height is either a collapsed box or a rule with no effect, and both
+    // are worth knowing about.
+    const collapsed = [];
+    for (const el of document.querySelectorAll("*")) {
+      const cs = getComputedStyle(el);
+      if (cs.aspectRatio === "auto" || !cs.aspectRatio) continue;
+      if (cs.display === "none") continue;
+      const r = el.getBoundingClientRect();
+      if (r.height >= 1) continue;
+      collapsed.push(
+        `${el.tagName.toLowerCase()}.${(el.className || "").toString().split(" ")[0]} ` +
+          `has aspect-ratio ${cs.aspectRatio} but renders ${Math.round(r.width)}x${Math.round(r.height)} ` +
+          `(display: ${cs.display})`
+      );
+      if (collapsed.length >= 3) break;
+    }
+
     // Total rendered text. A homepage carrying a megabyte of it is shipping
     // a database to the browser, whatever it looks like.
     const bodyChars = document.body.innerText.length;
@@ -247,6 +276,7 @@ async function inspectStructure(page: Page, path: string) {
       smallTargets,
       topTargetGroups,
       collisions,
+      collapsed,
       bodyChars,
       domNodes,
       jsonLdBlocks: document.querySelectorAll('script[type="application/ld+json"]').length,
@@ -277,6 +307,11 @@ async function inspectStructure(page: Page, path: string) {
   // --- Text printed on top of other text
   for (const c of info.collisions) {
     add("error", path, "layout", `Text overlaps text: ${c}`);
+  }
+
+  // --- Boxes that asked for a ratio and got no height
+  for (const c of info.collapsed) {
+    add("error", path, "layout", `Collapsed box: ${c}`);
   }
 
   // --- Images and JSON-LD
