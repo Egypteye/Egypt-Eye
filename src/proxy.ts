@@ -8,6 +8,110 @@ import { DEFAULT_LOCALE, LOCALE_CODES } from "@/i18n/locales";
 // turn that into a loop.
 const CANONICAL_HOST = "egypteyetravel.com";
 
+// ---------------------------------------------------------------------------
+// FLYING DRESSES EGYPT — a second brand, on a second domain, in this one app.
+//
+// Its pages live at /flying-dresses/* (src/app/flying-dresses) under their own
+// root layout. Every internal link uses that prefix, so the site works
+// identically on any host and stays statically prerendered — see the note in
+// src/app/flying-dresses/_lib/seo.ts for why the prefix is kept rather than
+// stripped at render time.
+//
+// What this proxy adds is the SHORT form on the brand's own domain:
+// flyingdressesegypt.com/wardrobe reaches the wardrobe, which is what someone
+// typing or sharing a URL will write. It is a rewrite, not a redirect, so
+// there is no extra round trip.
+// ---------------------------------------------------------------------------
+const FLYING_DRESSES_HOST = "flyingdressesegypt.com";
+const FLYING_DRESSES_BASE = "/flying-dresses";
+
+function hostname(host: string): string {
+  return (host.split(":")[0] ?? "").toLowerCase();
+}
+
+function isFlyingDressesHost(host: string): boolean {
+  const name = hostname(host);
+  return (
+    name === FLYING_DRESSES_HOST ||
+    name === `www.${FLYING_DRESSES_HOST}` ||
+    // flyingdressesegypt.localhost. Browsers and most systems resolve any
+    // *.localhost name to the loopback address, so this brand can be reviewed
+    // on its own host during development without touching /etc/hosts. Add the
+    // name to allowedDevOrigins in next.config.ts when using it with next dev.
+    (name.endsWith(".localhost") && name.startsWith("flyingdressesegypt."))
+  );
+}
+
+/**
+ * Paths that must reach their real handler untouched on the brand's domain:
+ * route handlers, the CMS, Next's own assets, and anything with a file
+ * extension (which is every static asset under public/).
+ */
+function isFlyingDressesExempt(pathname: string): boolean {
+  return (
+    pathname.startsWith("/api/") ||
+    pathname.startsWith("/auth/") ||
+    pathname.startsWith("/studio") ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/photos/") ||
+    pathname.startsWith("/brand/") ||
+    pathname.startsWith("/videos/")
+  );
+}
+
+/**
+ * Everything the Flying Dresses domain does.
+ *
+ * Returns a response and does NOT fall through to the Egypt Eye handling
+ * below: no retired-story 410s (those are the journal's URLs, on the other
+ * domain), no locale rewrite (this brand is English-only and has no [locale]
+ * segment), and no Supabase session refresh (it has no accounts to keep
+ * signed in, and touching the session on every request would cost a round
+ * trip for nothing).
+ */
+function flyingDressesProxy(request: NextRequest): NextResponse {
+  const host = request.headers.get("host") ?? "";
+  const { pathname } = request.nextUrl;
+
+  // One canonical host for this brand too, for the same reason Egypt Eye has
+  // one: a site answering on both www and apex is two sites as far as a
+  // search engine is concerned. Only the real production domain is
+  // redirected, so *.localhost review hosts keep working.
+  if (hostname(host) === `www.${FLYING_DRESSES_HOST}`) {
+    const url = request.nextUrl.clone();
+    url.host = FLYING_DRESSES_HOST;
+    url.protocol = "https";
+    url.port = "";
+    return NextResponse.redirect(url, 308);
+  }
+
+  // robots.txt and sitemap.xml are per-brand: the Egypt Eye ones at
+  // app/robots.ts and app/sitemap.xml advertise the travel domain's sitemap
+  // and would be wrong here. A metadata route cannot vary by host because it
+  // is generated at build time, so each brand has its own route handler and
+  // this maps the domain-root URL onto it.
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
+    const url = request.nextUrl.clone();
+    url.pathname = `${FLYING_DRESSES_BASE}${pathname}`;
+    return NextResponse.rewrite(url, { request });
+  }
+
+  // Already addressing the real tree. This is the form every internal link
+  // uses, so it is the common case.
+  if (pathname === FLYING_DRESSES_BASE || pathname.startsWith(`${FLYING_DRESSES_BASE}/`)) {
+    return NextResponse.next({ request });
+  }
+
+  if (isFlyingDressesExempt(pathname) || /\.[a-z0-9]+$/i.test(pathname)) {
+    return NextResponse.next({ request });
+  }
+
+  // The short form: / -> /flying-dresses, /wardrobe -> /flying-dresses/wardrobe.
+  const url = request.nextUrl.clone();
+  url.pathname = pathname === "/" ? FLYING_DRESSES_BASE : `${FLYING_DRESSES_BASE}${pathname}`;
+  return NextResponse.rewrite(url, { request });
+}
+
 // Refreshes the Supabase auth session cookie on every request so a signed-in
 // visitor's session stays valid across Server Component renders (which can
 // only read cookies, not write them — see src/lib/supabase/server.ts). A
@@ -24,6 +128,12 @@ export async function proxy(request: NextRequest) {
   // it earns between them. Only the www form of the production domain is
   // redirected — preview and local hosts are left alone so they keep working.
   const host = request.headers.get("host") ?? "";
+
+  // The second brand is handled entirely on its own and never falls through.
+  if (isFlyingDressesHost(host)) {
+    return flyingDressesProxy(request);
+  }
+
   if (host === `www.${CANONICAL_HOST}`) {
     const url = request.nextUrl.clone();
     url.host = CANONICAL_HOST;
@@ -141,6 +251,13 @@ function isLocaleExempt(pathname: string): boolean {
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/studio") ||
     pathname.startsWith("/_next") ||
+    // Flying Dresses Egypt is a separate brand with its own root layout and
+    // no [locale] segment, so /flying-dresses/x must never become
+    // /en/flying-dresses/x — which would 404. It stays reachable on this
+    // domain for review before DNS is pointed, and app/robots.ts disallows it
+    // so the travel domain never indexes the second brand's pages.
+    pathname === "/flying-dresses" ||
+    pathname.startsWith("/flying-dresses/") ||
     pathname === "/sitemap.xml" ||
     pathname === "/robots.txt" ||
     pathname === "/favicon.ico" ||
@@ -154,6 +271,11 @@ export const config = {
     // The public asset folders are matched WITH their trailing slash on
     // purpose: a bare "photos" also excludes /photoshoots, which silently
     // dropped that page out of the locale rewrite.
-    "/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|robots.txt|sitemap.xml|photos/|brand/|videos/).*)",
+    // robots.txt and sitemap.xml ARE matched, unlike the other static files:
+    // this deployment answers on two domains that need two different copies
+    // of each, and a metadata route is generated at build time and cannot
+    // vary by host. isLocaleExempt() still returns them untouched on the
+    // Egypt Eye domain, so their behaviour there is unchanged.
+    "/((?!_next/static|_next/image|favicon.ico|icon.png|apple-icon.png|photos/|brand/|videos/).*)",
   ],
 };

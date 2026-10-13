@@ -1,49 +1,14 @@
 import { unsplashUrl } from "./unsplash";
-import type { Outfit, Photoshoot } from "./types";
+import type { Photoshoot } from "./types";
+import { FLYING_DRESS_OUTFITS } from "./outfitCollection";
 
-// THE FLYING DRESS COLLECTION — twelve dresses, all confirmed available by
-// the business (see the "Do I bring the dress?" FAQ below, which names them).
-//
-// Shared by all three Flying Dress products because all three already promise
-// a dress "in the colour you choose" from Egypt Eye's own collection. That is
-// an assumption about one agency collection serving the dunes, Fayoum and the
-// rooftop alike; if a colour never travels to Fayoum, switch it off for that
-// product in the Studio rather than editing this file.
-//
-// `hex` is a swatch shown ONLY until a photograph is uploaded, and the picker
-// labels such an option "photo coming soon" rather than passing the circle off
-// as the garment. These values are approximations of the colour names, not
-// measurements of the real fabric. Upload the photographs in Sanity Studio and
-// the swatches disappear on their own.
-const FLYING_DRESS_COLLECTION: Outfit[] = [
-  { id: "cherry", name: "Cherry", category: "womens-dress", hex: "#9d2235" },
-  { id: "emerald", name: "Emerald", category: "womens-dress", hex: "#1f6f54" },
-  { id: "navy", name: "Navy", category: "womens-dress", hex: "#1e2a4a" },
-  { id: "black", name: "Black", category: "womens-dress", hex: "#15161a" },
-  { id: "verdant", name: "Verdant", category: "womens-dress", hex: "#4b7a3f" },
-  { id: "ginger", name: "Ginger", category: "womens-dress", hex: "#b4662c" },
-  { id: "snowy", name: "Snowy", category: "womens-dress", hex: "#f2efe9" },
-  { id: "golden", name: "Golden", category: "womens-dress", hex: "#c9a227" },
-  { id: "bronzey", name: "BronZey", category: "womens-dress", hex: "#8c6239" },
-  { id: "aqua", name: "Aqua", category: "womens-dress", hex: "#3c9ca8" },
-  { id: "lavender", name: "Lavender", category: "womens-dress", hex: "#9b8ac4" },
-  { id: "orchid", name: "Orchid", category: "womens-dress", hex: "#a4559b" },
-];
-
-// MEN'S OUTFITS — deliberately empty.
-//
-// Nothing in the brief, the PDF, the website or anything the business has
-// confirmed names a single men's outfit, so there is nothing truthful to put
-// here. Inventing "Linen Shirt — Beige" would put a garment on a product page
-// that Egypt Eye may not own.
-//
-// The structure is live and waiting: add entries in Sanity Studio under
-// Outfits with category "Men's outfit" and the section appears on the product
-// page and in the booking sheet by itself. Until then both stay hidden, which
-// is the correct behaviour for a collection that does not exist yet.
-const MENS_OUTFITS: Outfit[] = [];
-
-const FLYING_DRESS_OUTFITS: Outfit[] = [...FLYING_DRESS_COLLECTION, ...MENS_OUTFITS];
+// The wardrobe — twelve flying dresses and five traditional men's gawns —
+// used to be declared here. It now lives in content/outfitCollection.ts,
+// because Flying Dresses Egypt (content/flyingDresses.ts) sells the same
+// physical garments and a second copy of the list would let the two brands
+// drift until they disagreed about one wardrobe. That file carries the
+// reasoning for every value in it, including why the men's outfits are
+// photo-less and why `BronZey` keeps its capital.
 
 
 
@@ -133,7 +98,17 @@ export const photoshoots: Photoshoot[] = [
     outfits: FLYING_DRESS_OUTFITS,
     title: "Sand Dunes Flying Dress Photoshoot",
     duration: "1 hour",
-    price: { amount: 199, originalAmount: 250, currency: "USD" },
+    // Verified against the live Sanity dataset (project eoashi0y, production)
+    // rather than guessed: price.amount 179, originalAmount 179, no discount.
+    //
+    // This fallback used to read $199 with an originalAmount of $250 — a price
+    // this shoot has not charged and a strike-through discount Sanity does
+    // not have. Sanity wins wholesale, so it was invisible in production and
+    // would only have surfaced if the CMS were unreachable: the one moment a
+    // wrong price is most expensive and least likely to be noticed. It also
+    // made the two brands disagree, because Flying Dresses Egypt reads the
+    // same figure from content/flyingDresses.ts and had the live one.
+    price: { amount: 179, currency: "USD" },
     locations: ["Sand Dunes"],
     imageLabel: "Flying Dress in the Sand Dunes",
     imageTone: "desert",
@@ -188,7 +163,17 @@ export const photoshoots: Photoshoot[] = [
     outfits: FLYING_DRESS_OUTFITS,
     title: "Fayoum Flying Dress Photoshoot",
     duration: "1 hour",
-    price: { amount: 219, originalAmount: 270, currency: "USD" },
+    // Verified against the live Sanity dataset (project eoashi0y, production)
+    // rather than guessed: price.amount 349, originalAmount 349, no discount.
+    //
+    // This fallback used to read $219 with an originalAmount of $270 — a price
+    // this shoot has not charged and a strike-through discount Sanity does
+    // not have. Sanity wins wholesale, so it was invisible in production and
+    // would only have surfaced if the CMS were unreachable: the one moment a
+    // wrong price is most expensive and least likely to be noticed. It also
+    // made the two brands disagree, because Flying Dresses Egypt reads the
+    // same figure from content/flyingDresses.ts and had the live one.
+    price: { amount: 349, currency: "USD" },
     locations: ["Fayoum — Wadi El Rayan & the Magic Lake"],
     imageLabel: "Flying Dress in Fayoum",
     imageTone: "desert",

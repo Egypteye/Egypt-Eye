@@ -12,19 +12,36 @@ export async function sendEmail({
   html,
   text,
   replyTo,
+  from: fromOverride,
 }: {
   to: string;
   subject: string;
   html: string;
   text: string;
   replyTo?: string;
+  /**
+   * The From header, for callers that are not Egypt Eye.
+   *
+   * Added when Flying Dresses Egypt — a separate brand on its own domain in
+   * this same app — started sending its own enquiry emails. Without it every
+   * message from that brand arrived as "Egypt Eye Travel", which is a
+   * different company as far as the customer is concerned.
+   *
+   * Optional, so every existing caller is byte-for-byte unchanged: omit it and
+   * RESEND_FROM_EMAIL still decides. Whatever is passed must be a sender
+   * Resend has a verified domain for, or Resend rejects the send and this
+   * returns ok:false — which is the correct failure, since the alternative is
+   * silently spoofing a domain.
+   */
+  from?: string;
 }): Promise<{ ok: boolean; error?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     return { ok: false, error: "RESEND_API_KEY not configured" };
   }
 
-  const from = process.env.RESEND_FROM_EMAIL || "Egypt Eye Travel <onboarding@resend.dev>";
+  const from =
+    fromOverride || process.env.RESEND_FROM_EMAIL || "Egypt Eye Travel <onboarding@resend.dev>";
 
   try {
     const res = await fetch("https://api.resend.com/emails", {

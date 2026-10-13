@@ -247,17 +247,37 @@ if (!executablePath) {
 
 mkdirSync(OUT, { recursive: true });
 
-const proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+// The cloud sandbox routes outbound HTTPS through an agent proxy, and
+// Chromium has to be told about it or every request to a deployed site hangs.
+//
+// But a LOCAL base must never go through it. Chromium's --proxy-server applies
+// to localhost too, and the agent proxy answers a localhost request with
+// HTTP 405 Method Not Allowed — so auditing `next dev` reported every page as
+// a 405 with no title and no <h1>, which reads exactly like a catastrophically
+// broken site rather than like a misrouted request. That cost a real debugging
+// detour; hence the bypass and the note.
+const isLocalBase = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i.test(BASE);
+const proxy = isLocalBase ? undefined : process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
 const browser: Browser = await chromium.launch({
   executablePath,
   args: ["--ignore-certificate-errors"],
-  ...(proxy ? { proxy: { server: proxy } } : {}),
+  ...(proxy
+    ? {
+        proxy: {
+          server: proxy,
+          // Belt and braces: even against a remote base, anything local that
+          // a page happens to request stays off the proxy.
+          bypass: "localhost,127.0.0.1,::1",
+        },
+      }
+    : {}),
 });
 
 console.log(`visual-audit: ${BASE}`);
 console.log(`  browser  ${executablePath}`);
 console.log(`  pages    ${PAGES.length}   viewports ${VIEWPORTS.map((v) => v.name).join(", ")}`);
 if (proxy) console.log(`  proxy    ${proxy} (load times below include proxy overhead and are NOT the site's real speed)`);
+if (isLocalBase) console.log("  proxy    bypassed for a local base");
 console.log("");
 
 const pageReports: Record<string, unknown> = {};

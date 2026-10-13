@@ -9,7 +9,11 @@ const nextConfig: NextConfig = {
   // address works. Add a LAN IP here too if you test on a phone.
   //
   // Development only; `next build` ignores it.
-  allowedDevOrigins: ["localhost", "127.0.0.1"],
+  // flyingdressesegypt.localhost is how the second brand (src/proxy.ts) is
+  // reviewed on its own host during development: *.localhost resolves to the
+  // loopback address without touching /etc/hosts, and the proxy's host check
+  // then serves the Flying Dresses tree from the domain root.
+  allowedDevOrigins: ["localhost", "127.0.0.1", "flyingdressesegypt.localhost"],
 
   // Full Next.js server mode (Vercel) — needed for the embedded Sanity
   // Studio at /studio and for content to update without a manual rebuild.
