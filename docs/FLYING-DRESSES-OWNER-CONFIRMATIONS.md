@@ -229,6 +229,12 @@ you want it translated.
 
 ## 4. Fixed, for your information
 
+- **The brand name is settled as "Flying Dresses Egypt", plural**, and the site
+  is consistent with it throughout. Your logo artwork and the brown social
+  cover both read "FLYING DRESS" singular — the site does not use them for
+  that reason, and sets the wordmark as text instead. The artwork still needs
+  re-exporting for use off the website. See the asset checklist.
+
 - **Men's outfits now appear in the booking picker, and this is verified.** The
   Egypt Eye rooftop page has been telling customers *"we have traditional
   Egyptian attire for men in five styles"* while the outfit picker offered only

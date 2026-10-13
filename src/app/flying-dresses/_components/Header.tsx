@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
 import { brand, flyingDressEnquiry, nav, whatsappHref } from "@/content/flyingDresses";
+import { Wordmark } from "./Wordmark";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -92,10 +93,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
               className="fd-wordmark-img"
             />
           ) : (
-            <>
-              <span className="fd-wordmark-name">{brand.shortName}</span>
-              <span className="fd-wordmark-sub">Egypt</span>
-            </>
+            <Wordmark />
           )}
         </Link>
 

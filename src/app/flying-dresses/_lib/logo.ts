@@ -49,3 +49,28 @@ export function brandLogo(): BrandLogo {
 }
 
 export const LOGO_PATHS = { dark: DARK, light: LIGHT };
+
+/**
+ * The social share image (og:image), if it has been added.
+ *
+ * The owner has brand covers — flowing silk on a warm brown, with the name
+ * set over it — which is exactly what a share card should be: it is the image
+ * that represents the brand when a link is pasted into WhatsApp, Instagram,
+ * Facebook or a message. Without one, every shared link to this site renders
+ * as a bare grey rectangle with a URL under it, which is a conversion loss on
+ * the channel this business actually sells through.
+ *
+ * Same file-drop pattern as the logo, and the same reasoning: referencing a
+ * path that is not there would advertise a broken image in every link preview,
+ * which is worse than advertising none.
+ *
+ * 1200x630 is the size to export at. A square cover will be centre-cropped by
+ * most platforms; exporting at the right ratio keeps the name off the crop.
+ */
+const COVER = "/brand/flying-dresses-cover.jpg";
+
+export function brandCover(): string | null {
+  return has(COVER) ? COVER : null;
+}
+
+export const COVER_PATH = COVER;

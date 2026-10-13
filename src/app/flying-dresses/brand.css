@@ -40,20 +40,32 @@
      for emphasis; no second accent.
 
      Contrast, measured against the backgrounds each is actually used on:
-       --fd-ink      on --fd-ivory   16.0:1
+       --fd-ink      on --fd-ivory   12.1:1
        --fd-ink-soft on --fd-ivory    7.1:1
-       --fd-ivory    on --fd-ink     16.0:1
-       --fd-ivory-dim on --fd-ink    11.6:1
+       --fd-ivory    on --fd-ink     12.1:1
+       --fd-ivory-dim on --fd-ink     9.1:1
        --fd-gold-ink on --fd-ivory    6.9:1
        --fd-gold-ink on --fd-sand     5.7:1
        --fd-gold-ink on --fd-sand-deep 4.5:1
-       --fd-gold     on --fd-ink      7.4:1
+       --fd-gold     on --fd-ink      5.8:1
      Every pairing clears WCAG 2.2 AA (4.5:1) at body size, measured against
      each background it is actually used on rather than just one.         */
 
-  --fd-ink: #14110f;
-  --fd-ink-2: #1e1a17;
-  --fd-ink-3: #2b2521;
+  /* THE DARK IS A WARM BROWN, NOT A NEAR-BLACK.
+     Taken from the brand's own social covers, which sit on a warm brown and
+     an olive with cream type over flowing silk. The site's dark was #14110f
+     — effectively black — and read colder and harder than anything else the
+     brand puts out.
+
+     #3a2e1c is the covers' brown, darkened. The sampled value (#5c4526) is
+     too light to carry the gold accent: it measured 3.96:1, under AA. At
+     #3a2e1c every pairing clears it — ivory 12.07:1, ivory-dim 9.10:1,
+     gold 5.83:1, rose 7.67:1 — while keeping the hue the covers use. */
+  --fd-ink: #3a2e1c;
+  --fd-ink-2: #463826;
+  --fd-ink-3: #54452f;
+  /* Muted text on LIGHT backgrounds. Unchanged: it is warm-neutral already
+     and measures 7.55:1 on ivory. */
   --fd-ink-soft: #554d46;
 
   --fd-ivory: #f8f4ed;
@@ -75,6 +87,16 @@
      this palette rather than safe on the one background someone measured. */
   --fd-gold: #c9a85f;
   --fd-gold-ink: #6b501c;
+
+  /* The logo's own two colours, sampled from the artwork the owner supplied.
+     Used ONLY by the wordmark — they are not part of the general palette,
+     because the rose is far too light to carry text on ivory and would be a
+     trap sitting in the token list next to colours that can.
+     --fd-brand-ink measures 8.2:1 on ivory, so the name is legible as text
+     and not only as a logotype. */
+  --fd-brand-ink: #5f3f38;
+  --fd-brand-rose: #c9aaa0;
+  --fd-brand-rose-soft: #d9c0b7;
   --fd-gold-line: rgba(201, 168, 95, 0.32);
 
   /* ---- Type ------------------------------------------------------------
@@ -454,7 +476,7 @@ textarea {
 .fd-btn-ghost {
   background: transparent;
   color: var(--fd-ink);
-  border-color: rgba(20, 17, 15, 0.28);
+  border-color: rgba(58, 46, 28, 0.28);
 }
 
 .fd-btn-ghost:hover {
@@ -768,7 +790,7 @@ textarea {
   background: color-mix(in srgb, var(--fd-ivory) 88%, transparent);
   /* A 1px hairline rather than a shadow. A luxury brand's header does not
      float above the page on a drop shadow. */
-  border-bottom: 1px solid rgba(20, 17, 15, 0.08);
+  border-bottom: 1px solid rgba(58, 46, 28, 0.08);
 }
 
 @supports (backdrop-filter: blur(8px)) {
@@ -787,8 +809,7 @@ textarea {
 
 .fd-wordmark {
   display: inline-flex;
-  flex-direction: column;
-  justify-content: center;
+  align-items: center;
   /* 146x31 before. The logo is the home link and is tapped constantly. */
   min-height: 2.75rem;
   gap: 0.1rem;
@@ -815,6 +836,73 @@ textarea {
   height: 3.25rem;
   object-fit: contain;
   margin-bottom: 1rem;
+}
+
+/* ---- THE WORDMARK -----------------------------------------------------
+   Letterspaced serif capitals with a script "Egypt" overlapping beneath,
+   following the supplied artwork. Built from two stacked layers in a grid
+   cell so the script can sit behind the capitals without either of them
+   being absolutely positioned out of the flow — which keeps the mark's box
+   real, so the header can size around it and the link stays a 44px target. */
+.fd-mark {
+  position: relative;
+  display: inline-grid;
+  justify-items: center;
+  line-height: 1;
+  isolation: isolate;
+}
+
+.fd-mark-name {
+  grid-area: 1 / 1;
+  z-index: 1;
+  font-family: var(--fd-display);
+  font-weight: 500;
+  font-size: var(--fd-mark-size, 1.15rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fd-brand-ink);
+  /* The trailing letter's tracking would otherwise push the mark off centre
+     over the script beneath it. */
+  text-indent: 0.18em;
+  white-space: nowrap;
+}
+
+/* The script, sitting low and overlapping the capitals, as in the artwork.
+   translate rather than `position: absolute` so it still contributes nothing
+   to layout but moves with the mark at any size. */
+.fd-mark-script {
+  grid-area: 1 / 1;
+  z-index: 0;
+  font-family: var(--fd-script);
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 2.6);
+  line-height: 1;
+  color: var(--fd-brand-rose);
+  translate: 0 38%;
+  pointer-events: none;
+}
+
+/* The footer version, on ink. The rose is kept but lightened, and the
+   capitals become ivory — the supplied light artwork does the same thing. */
+.fd-mark-light .fd-mark-name {
+  color: var(--fd-ivory);
+}
+
+.fd-mark-light .fd-mark-script {
+  color: var(--fd-brand-rose-soft);
+  opacity: 0.75;
+}
+
+@media (min-width: 64rem) {
+  .fd-mark {
+    --fd-mark-size: 1.3rem;
+  }
+}
+
+/* The footer wants it larger, and with room for the script's descender. */
+.fd-footer .fd-mark {
+  --fd-mark-size: 1.5rem;
+  margin-bottom: 1.75rem;
+  justify-items: start;
 }
 
 .fd-wordmark-name {
@@ -945,7 +1033,7 @@ textarea {
 }
 
 .fd-drawer li + li {
-  border-top: 1px solid rgba(20, 17, 15, 0.08);
+  border-top: 1px solid rgba(58, 46, 28, 0.08);
 }
 
 .fd-drawer a {
@@ -996,7 +1084,7 @@ textarea {
   inset: 0;
   z-index: -1;
   background:
-    linear-gradient(to top, rgba(20, 17, 15, 0.88) 0%, rgba(20, 17, 15, 0.45) 38%, rgba(20, 17, 15, 0.12) 68%, rgba(20, 17, 15, 0.3) 100%);
+    linear-gradient(to top, rgba(58, 46, 28, 0.88) 0%, rgba(58, 46, 28, 0.45) 38%, rgba(58, 46, 28, 0.12) 68%, rgba(58, 46, 28, 0.3) 100%);
 }
 
 .fd-hero-body {
@@ -1119,7 +1207,7 @@ textarea {
   place-items: center;
   padding: 2rem;
   text-align: center;
-  background-image: var(--fd-slot-bg, linear-gradient(145deg, #2b2521, #554d46));
+  background-image: var(--fd-slot-bg, linear-gradient(145deg, #3a2e1c, #6b6054));
   color: var(--fd-ivory);
   position: relative;
 }
@@ -1136,13 +1224,13 @@ textarea {
   --fd-slot-bg: linear-gradient(150deg, #8a6a28 0%, #c9a85f 48%, #d6c7b2 100%);
 }
 .fd-slot-tone-rooftop {
-  --fd-slot-bg: linear-gradient(150deg, #2b2521 0%, #8a6a28 55%, #c9a85f 100%);
+  --fd-slot-bg: linear-gradient(150deg, #3a2e1c 0%, #8a6a28 55%, #c9a85f 100%);
 }
 .fd-slot-tone-fayoum {
   --fd-slot-bg: linear-gradient(150deg, #3c6f78 0%, #d6c7b2 55%, #e9ded0 100%);
 }
 .fd-slot-tone-neutral {
-  --fd-slot-bg: linear-gradient(150deg, #2b2521 0%, #554d46 100%);
+  --fd-slot-bg: linear-gradient(150deg, #3a2e1c 0%, #6b6054 100%);
 }
 
 .fd-slot-label {
@@ -1150,7 +1238,7 @@ textarea {
   font-size: var(--fd-step-2);
   line-height: 1.1;
   max-width: 22ch;
-  text-shadow: 0 1px 12px rgba(20, 17, 15, 0.55);
+  text-shadow: 0 1px 12px rgba(58, 46, 28, 0.55);
 }
 
 .fd-slot-note {
@@ -1159,7 +1247,7 @@ textarea {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0.9;
-  text-shadow: 0 1px 8px rgba(20, 17, 15, 0.6);
+  text-shadow: 0 1px 8px rgba(58, 46, 28, 0.6);
 }
 
 /* ---- The pinned scene -------------------------------------------------
@@ -1400,7 +1488,7 @@ textarea {
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0.45rem 0.9rem 0.45rem 0.5rem;
-  border: 1px solid rgba(20, 17, 15, 0.18);
+  border: 1px solid rgba(58, 46, 28, 0.18);
   background: transparent;
   font-size: var(--fd-step--1);
   letter-spacing: 0.1em;
@@ -1424,7 +1512,7 @@ textarea {
   border-radius: 50%;
   /* A hairline inside the dot, so "Snowy" at #f2efe9 is still a visible
      circle on an ivory page rather than an invisible one. */
-  box-shadow: inset 0 0 0 1px rgba(20, 17, 15, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(58, 46, 28, 0.22);
   flex: none;
 }
 
@@ -1594,7 +1682,7 @@ textarea {
 .fd-table th,
 .fd-table td {
   padding: 1rem 1rem 1rem 0;
-  border-bottom: 1px solid rgba(20, 17, 15, 0.1);
+  border-bottom: 1px solid rgba(58, 46, 28, 0.1);
   vertical-align: baseline;
 }
 
@@ -1604,7 +1692,7 @@ textarea {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--fd-ink-soft);
-  border-bottom-color: rgba(20, 17, 15, 0.25);
+  border-bottom-color: rgba(58, 46, 28, 0.25);
 }
 
 .fd-table tbody th {
@@ -1624,11 +1712,11 @@ textarea {
    open/closed state is visible without colour.                            */
 
 .fd-faq {
-  border-top: 1px solid rgba(20, 17, 15, 0.12);
+  border-top: 1px solid rgba(58, 46, 28, 0.12);
 }
 
 .fd-faq details {
-  border-bottom: 1px solid rgba(20, 17, 15, 0.12);
+  border-bottom: 1px solid rgba(58, 46, 28, 0.12);
 }
 
 .fd-faq summary {
@@ -1753,7 +1841,7 @@ textarea {
   min-height: 3rem;
   padding: 0.75rem 0.9rem;
   background: var(--fd-ivory);
-  border: 1px solid rgba(20, 17, 15, 0.22);
+  border: 1px solid rgba(58, 46, 28, 0.22);
   border-radius: 0;
   font-size: var(--fd-step-0);
   /* 16px minimum on the actual input, or iOS Safari zooms the whole page the
@@ -1819,12 +1907,12 @@ textarea {
   margin: 0;
   padding: 0;
   border: 0;
-  background: rgba(20, 17, 15, 0.97);
+  background: rgba(58, 46, 28, 0.97);
   color: var(--fd-ivory);
 }
 
 .fd-lightbox::backdrop {
-  background: rgba(20, 17, 15, 0.9);
+  background: rgba(58, 46, 28, 0.9);
 }
 
 .fd-lightbox-inner {
@@ -1901,7 +1989,7 @@ textarea {
   gap: 0.5rem;
   padding: 0.6rem var(--fd-gutter) calc(0.6rem + env(safe-area-inset-bottom));
   background: color-mix(in srgb, var(--fd-ivory) 94%, transparent);
-  border-top: 1px solid rgba(20, 17, 15, 0.1);
+  border-top: 1px solid rgba(58, 46, 28, 0.1);
 }
 
 @supports (backdrop-filter: blur(8px)) {

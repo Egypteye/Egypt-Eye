@@ -8,6 +8,7 @@ import {
   rentalServices,
   whatsappHref,
 } from "@/content/flyingDresses";
+import { Wordmark } from "./Wordmark";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -38,9 +39,7 @@ export function FlyingDressesFooter({ logo }: { logo?: string | null }) {
                 className="fd-footer-logo"
               />
             ) : (
-              <p className="fd-display fd-h4" style={{ margin: "0 0 1rem" }}>
-                {brand.name}
-              </p>
+              <Wordmark tone="light" />
             )}
             <p className="fd-muted" style={{ maxWidth: "28ch", margin: "0 0 1.5rem" }}>
               Flying-dress photography on a Giza rooftop, in the dunes outside Cairo, and out at

@@ -5,7 +5,7 @@ import { brand } from "@/content/flyingDresses";
 import { FlyingDressesHeader } from "./_components/Header";
 import { FlyingDressesFooter } from "./_components/Footer";
 import { StickyEnquire } from "./_components/StickyEnquire";
-import { brandLogo } from "./_lib/logo";
+import { brandCover, brandLogo } from "./_lib/logo";
 import { fdJsonLd, fdMetadata, fdOrganizationJsonLd, fdSiteUrl } from "./_lib/seo";
 
 /**
@@ -54,12 +54,30 @@ const italianno = Italianno({
   display: "swap",
 });
 
+const cover = brandCover();
+
 export const metadata: Metadata = {
   metadataBase: new URL(fdSiteUrl),
   ...fdMetadata({
     title: `${brand.name} — ${brand.tagline}`,
     description: brand.description,
   }),
+  // The share card every pasted link renders as. Emitted only when the file
+  // is actually present — see brandCover(). Set on the root layout so every
+  // page inherits it; a page that wants its own can override `openGraph`.
+  ...(cover
+    ? {
+        openGraph: {
+          type: "website",
+          siteName: brand.name,
+          title: `${brand.name} — ${brand.tagline}`,
+          description: brand.description,
+          url: fdSiteUrl,
+          images: [{ url: cover, width: 1200, height: 630, alt: brand.name }],
+        },
+        twitter: { card: "summary_large_image", images: [cover] },
+      }
+    : {}),
   icons: {
     // Inline SVG favicon: a hairline "F" in the brand gold on ink. Data URI
     // rather than a file so this brand does not borrow Egypt Eye's icon.png,
@@ -70,7 +88,7 @@ export const metadata: Metadata = {
           "data:image/svg+xml," +
           encodeURIComponent(
             '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' +
-              '<rect width="32" height="32" fill="#14110f"/>' +
+              '<rect width="32" height="32" fill="#3a2e1c"/>' +
               '<text x="16" y="23" font-family="Didot,Georgia,serif" font-size="20" fill="#c9a85f" text-anchor="middle">F</text>' +
               "</svg>"
           ),
@@ -81,7 +99,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#14110f",
+  themeColor: "#3a2e1c",
   // Deliberately NOT maximum-scale or user-scalable:no. Pinch-zoom is an
   // accessibility requirement (WCAG 2.2, 1.4.4 Resize Text) and locking it is
   // a common luxury-site mistake.

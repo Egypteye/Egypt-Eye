@@ -38,48 +38,61 @@ constraint on how good the site can look.
 
 ---
 
-## Priority 0 — the logo, which is two files away
+## Priority 0 — the logo and the covers
 
-You sent the logo in conversation, which does not put the files in the
-repository, so the site is currently showing a **typeset wordmark** —
-"Flying Dresses / EGYPT" set in the brand's display face — rather than your
-actual mark.
+### The name is settled, and the artwork disagrees with it
 
-**The code is already waiting for it.** Drop these two files in and the logo
-appears in the header and the footer on the next deploy, with no code change:
+You confirmed the agency is **Flying Dresses Egypt** — plural. Two of the three
+brand files you sent say something else:
+
+| Asset | Reads | Correct? |
+| --- | --- | --- |
+| Logo (brown and cream versions) | FLYING DRESS **Egypt** | ✗ singular |
+| Social cover, olive | THE FLYING **DRESSES** OF EGYPT | ✓ |
+| Social cover, brown | FLYING DRESS **Egypt** | ✗ singular |
+
+**The site now sets the wordmark as live text rather than using the artwork**,
+so the header and footer read "FLYING DRESSES / *Egypt*" — the right name, in
+the logo's own layout: letterspaced serif capitals with the script overlapping
+beneath, in the logo's red-brown and dusty rose.
+
+That turned out to be better than waiting for a corrected export. It is sharp
+at every size, costs no image request, recolours itself for the dark footer,
+and is readable by a screen reader. **Nothing is blocked** — but the logo files
+themselves still need re-exporting with the plural for use anywhere off the
+website: Instagram, printed material, email signatures, the brown cover.
+
+### If you do re-export, the site will use it
+
+Drop the corrected files in and they take precedence over the text wordmark
+automatically, with no code change:
 
 | Put the file here | Which version |
 | --- | --- |
-| `public/brand/flying-dresses-logo.png` | The brown/rose version, for the light header |
-| `public/brand/flying-dresses-logo-light.png` | The cream version, for the dark footer |
+| `public/brand/flying-dresses-logo.png` | Brown/rose, for the light header |
+| `public/brand/flying-dresses-logo-light.png` | Cream, for the dark footer |
+| `public/brand/flying-dresses-cover.jpg` | A social cover, 1200×630 |
 
-PNG with transparency, around 600–800px wide, is ideal. SVG is better still if
-you have it — rename the paths to `.svg` in
-`src/app/flying-dresses/_lib/logo.ts` if so.
+PNG with transparency for the logos; SVG is better still if you have it.
+If only the dark logo is added, the footer keeps the text wordmark rather than
+putting a dark logo on a dark background where it would vanish.
 
-If only the dark version is added, the footer keeps the typeset wordmark rather
-than showing a dark logo on an ink background, where it would be invisible.
+### The cover is worth adding first
 
-### One question about the logo
+Right now, pasting a link to this site into WhatsApp, Instagram or Facebook
+renders a bare grey rectangle. **The olive cover is the one to use** — it is
+the one with the correct plural name — exported at 1200×630 so the name is not
+lost to the platform's crop. One file, and every shared link gets a proper
+card. For a business that sells through WhatsApp, that is not a small thing.
 
-**The mark reads "FLYING DRESS" — singular.** The domain, the brochure and
-every page of the site say "Flying Dresses" — plural. Both are defensible, but
-they should not both be in use: the header would show one and the page text the
-other.
+### The site's palette now follows your covers
 
-Tell us which is the brand name and the site will be made consistent with it.
-Changing the written name is a one-line edit in `src/content/flyingDresses.ts`.
-
-### A note on the logo's colours
-
-Your mark uses a deep red-brown and a dusty rose. The site's accent is a
-darker antique gold, chosen and contrast-tested against all three background
-tones so every label clears WCAG AA. The two are compatible — both warm and
-desaturated — and the logo will sit comfortably as supplied.
-
-If you would rather the site's accent matched the logo exactly, say so: it is a
-single token change, but it needs the contrast re-measured afterwards, because
-the dusty rose is far too light for text on an ivory background.
+The covers sit on a warm brown and an olive with cream type over flowing silk.
+The site's dark was effectively black, which read colder and harder than
+anything else the brand puts out, so it is now the covers' brown. The sampled
+value was slightly too light to carry text safely, so it is that brown
+darkened — same hue, and every text pairing measured above the accessibility
+minimum.
 
 ---
 
