@@ -2,6 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { RETIRED_STORY_SLUGS } from "@/content/retiredStories";
 import { DEFAULT_LOCALE, LOCALE_CODES } from "@/i18n/locales";
+// The single authority for "is this request for the other brand?". Kept in
+// its own import-free file so a check script can run it over real hostnames
+// — see the incident note at the top of that file.
+import {
+  FLYING_DRESSES_HOST,
+  hostname,
+  isFlyingDressesHost,
+} from "@/lib/brand/flyingDressesHost";
 
 // Hardcoded rather than derived from NEXT_PUBLIC_SITE_URL: this decides
 // whether to issue a redirect, and a misconfigured env var would otherwise
@@ -22,25 +30,7 @@ const CANONICAL_HOST = "egypteyetravel.com";
 // typing or sharing a URL will write. It is a rewrite, not a redirect, so
 // there is no extra round trip.
 // ---------------------------------------------------------------------------
-const FLYING_DRESSES_HOST = "flyingdressesegypt.com";
 const FLYING_DRESSES_BASE = "/flying-dresses";
-
-function hostname(host: string): string {
-  return (host.split(":")[0] ?? "").toLowerCase();
-}
-
-function isFlyingDressesHost(host: string): boolean {
-  const name = hostname(host);
-  return (
-    name === FLYING_DRESSES_HOST ||
-    name === `www.${FLYING_DRESSES_HOST}` ||
-    // flyingdressesegypt.localhost. Browsers and most systems resolve any
-    // *.localhost name to the loopback address, so this brand can be reviewed
-    // on its own host during development without touching /etc/hosts. Add the
-    // name to allowedDevOrigins in next.config.ts when using it with next dev.
-    (name.endsWith(".localhost") && name.startsWith("flyingdressesegypt."))
-  );
-}
 
 /**
  * THE ALLOW-LIST. Everything the Flying Dresses domain may serve that is not
@@ -103,8 +93,12 @@ function flyingDressesProxy(request: NextRequest): NextResponse {
 
   // One canonical host for this brand too, for the same reason Egypt Eye has
   // one: a site answering on both www and apex is two sites as far as a
-  // search engine is concerned. Only the real production domain is
-  // redirected, so *.localhost review hosts keep working.
+  // search engine is concerned.
+  //
+  // Only the real www domain is redirected. The *.vercel.app and *.localhost
+  // review hosts have no www form, and bouncing one of those to a domain whose
+  // DNS is not pointed yet would make a working deployment look broken — which
+  // is how the owner would first meet this code.
   if (hostname(host) === `www.${FLYING_DRESSES_HOST}`) {
     const url = request.nextUrl.clone();
     url.host = FLYING_DRESSES_HOST;

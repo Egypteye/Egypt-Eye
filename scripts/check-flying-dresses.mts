@@ -34,6 +34,7 @@ import {
   FLYING_DRESS_COLLECTION,
   MENS_OUTFITS,
 } from "../src/content/outfitCollection.js";
+import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
 import { allSlots } from "../src/app/flying-dresses/_lib/assets.js";
 
@@ -437,9 +438,97 @@ ok(
   proxySource.includes('pathname.startsWith("/flying-dresses/")')
 );
 ok(
-  "src/proxy.ts no longer recognises the Flying Dresses host, so its own domain would serve the travel site",
+  "src/proxy.ts no longer asks isFlyingDressesHost which brand a request is for, so the host table below " +
+    "guards nothing that runs",
   proxySource.includes("isFlyingDressesHost")
 );
+
+// ---------------------------------------------------------------------------
+// WHICH HOSTNAMES ARE THIS BRAND'S — the real function, over real hostnames.
+//
+// This replaced an assertion that only checked the proxy source CONTAINED the
+// string "isFlyingDressesHost". That assertion passed throughout the incident
+// described at the top of src/lib/brand/flyingDressesHost.ts, in which the
+// Flying Dresses deployment served the ENTIRE Egypt Eye site — Studio, admin
+// and every API route — on all three of its *.vercel.app hostnames, because
+// none of them matched and an unmatched host falls through to the other brand.
+// It is the exact failure CLAUDE.md §4 is about: a check that passes on the
+// broken code checks nothing.
+//
+// So this calls the function. Both columns matter and for different reasons:
+// a hostname missing from TRUE is an Egypt Eye site served on a Flying Dresses
+// address (the incident), and a hostname wrongly in TRUE is the travel site
+// going dark. Every case below was taken from a real Vercel dashboard.
+//
+// Proven three ways, each restored afterwards:
+//   - deleting the .vercel.app clause, which is the original bug: the three
+//     project hostnames go red.
+//   - widening it to a bare `name.includes("flying-dresses")`: three go red,
+//     among them the egypt-eye-git-flying-dresses alias.
+//   - dropping the `.endsWith(".vercel.app")` guard: one goes red,
+//     flying-dresses-egypt-preview.example.com, and only because that case was
+//     added for it — see the note beside it.
+// ---------------------------------------------------------------------------
+const FLYING_DRESSES_HOSTNAMES = [
+  // The brand's own domain, which is all the first version of this matched.
+  "flyingdressesegypt.com",
+  "www.flyingdressesegypt.com",
+  "FlyingDressesEgypt.com", // Host headers are not case-normalised for us.
+  "flyingdressesegypt.com:443",
+  // The three hostnames Vercel generates for the flying-dresses-egypt project,
+  // copied from the deployment the owner opened and was shown the wrong site.
+  "flying-dresses-egypt.vercel.app",
+  "flying-dresses-egypt-git-flying-dresses-99c405-egypt-eye-travel.vercel.app",
+  "flying-dresses-egypt-p0gbrpg5v-egypt-eye-travel.vercel.app",
+  // Local review host.
+  "flyingdressesegypt.localhost:3000",
+];
+
+const EGYPT_EYE_HOSTNAMES = [
+  // The live travel site. If any of these ever matched, it would go dark:
+  // every Egypt Eye URL would 404 on its own domain.
+  "egypteyetravel.com",
+  "www.egypteyetravel.com",
+  "egypt-eye.vercel.app",
+  "egypt-eye-git-main-egypt-eye-travel.vercel.app",
+  // THE IMPORTANT ONE. This is the alias Egypt Eye's own project produces if
+  // it ever builds this brand's branch. It contains "flying-dresses" and must
+  // still be Egypt Eye — which is why the match is anchored to the start of
+  // the hostname rather than being a substring search.
+  "egypt-eye-git-flying-dresses-production-egypt-eye-travel.vercel.app",
+  "localhost:3000",
+  // Suffix spoofing: a hostname somebody else controls that begins with ours.
+  "flying-dresses-egypt.vercel.app.example.com",
+  "flyingdressesegypt.com.example.com",
+  // A real custom domain that merely starts the same way is not this project.
+  "flying-dresses-egypt.example.com",
+  // This one, specifically, is what makes `.endsWith(".vercel.app")` load
+  // bearing rather than decorative. It begins with `flying-dresses-egypt-`,
+  // so the prefix test alone accepts it — only the suffix test refuses it. The
+  // two spoofs above do NOT exercise that guard, because both have a `.` after
+  // "egypt" where the prefix wants a `-`; a first version of this table used
+  // only those and the guard could be deleted with every assertion still
+  // passing. Which is CLAUDE.md §4 happening live, inside the check written to
+  // honour CLAUDE.md §4.
+  "flying-dresses-egypt-preview.example.com",
+  "",
+];
+
+for (const host of FLYING_DRESSES_HOSTNAMES) {
+  ok(
+    `"${host}" is not recognised as a Flying Dresses hostname, so that address serves the ENTIRE Egypt Eye ` +
+      "site — Studio, admin and every API route — because an unmatched host falls through to the other brand",
+    isFlyingDressesHost(host)
+  );
+}
+
+for (const host of EGYPT_EYE_HOSTNAMES) {
+  ok(
+    `"${host}" is wrongly claimed by Flying Dresses, so every Egypt Eye URL on it would 404 — the live ` +
+      "travel site going dark",
+    !isFlyingDressesHost(host)
+  );
+}
 ok(
   "src/proxy.ts's matcher excludes robots.txt again, so the brand domain cannot serve its own copy",
   !/robots\.txt\|sitemap\.xml/.test(proxySource)

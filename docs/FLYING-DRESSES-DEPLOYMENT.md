@@ -107,6 +107,60 @@ Measured against a running server with `Host: flyingdressesegypt.com`:
 `scripts/check-flying-dresses.mts` asserts these properties, and each assertion
 was proven by breaking it and watching the check go red.
 
+### 3.1b The allow-list has to run, and at first it did not
+
+The table above was measured with `Host: flyingdressesegypt.com`, and that is
+the only host it was true for. Everything in §3.1 lives *inside* the branch
+that asks "is this request for the Flying Dresses brand?", and the first
+version of that question matched the custom domain and nothing else.
+
+Vercel gives every deployment three hostnames of its own:
+
+```
+flying-dresses-egypt.vercel.app                       the project
+flying-dresses-egypt-git-<branch>-<team>.vercel.app   the branch
+flying-dresses-egypt-<hash>-<team>.vercel.app         one deployment
+```
+
+None of them matched, so on all three the Flying Dresses deployment served
+**Egypt Eye** — the whole travel site, Studio and admin and every API route
+live, because an unmatched hostname falls through to the other brand and the
+refusals never ran.
+
+That made this project a second public copy of the Egypt Eye application: the
+exact thing §2 and §3 exist to prevent, at an address that had not been
+considered. It was found by opening the deployment and seeing the wrong site in
+it, not by any check.
+
+**Fixed**, and the fix needs nothing in the dashboard. The decision now lives
+in `src/lib/brand/flyingDressesHost.ts`, which has no imports so a check script
+can run it, and it recognises the brand's domain *and* the hostnames of the
+`flying-dresses-egypt` project. Measured on a running server:
+
+| Host | `/` | `/wardrobe` | `/studio` | `/api/webhooks/paypal` |
+| --- | --- | --- | --- | --- |
+| `flyingdressesegypt.com` | Flying Dresses | Flying Dresses | 404 | 404 |
+| `flying-dresses-egypt.vercel.app` | Flying Dresses | Flying Dresses | 404 | 404 |
+| `flying-dresses-egypt-<hash>-…vercel.app` | Flying Dresses | Flying Dresses | 404 | 404 |
+| `egypteyetravel.com` | Egypt Eye | — | 200 | reachable |
+| `egypt-eye-git-flying-dresses-production-…vercel.app` | Egypt Eye | — | — | — |
+
+The last row is the one that keeps the match narrow: that is the alias Egypt
+Eye's own project produces if it ever builds this brand's branch. It contains
+the words "flying-dresses" and must still be Egypt Eye, so the match is
+anchored to the start of the hostname and scoped to `.vercel.app` rather than
+being a substring search.
+
+The check script now calls that function over thirteen real hostnames in both
+directions — a missing one is this incident, a spurious one takes the live
+travel site dark. Proven red three ways, including one case that exists only
+because the first version of the table could not tell whether the
+`.vercel.app` scope was load bearing.
+
+**What this means for you:** the `flying-dresses-egypt.vercel.app` link in the
+Vercel dashboard shows the Flying Dresses site from the next deployment
+onwards, so the brand can be reviewed before DNS is pointed anywhere.
+
 ### 3.2 The Flying Dresses project needs no PayPal credentials at all
 
 The deposit button links **absolutely** to
