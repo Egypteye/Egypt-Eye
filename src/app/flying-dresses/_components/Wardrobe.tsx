@@ -227,7 +227,7 @@ export function Wardrobe({
                   className="fd-lightbox-colour"
                   style={{ ["--fd-outfit-colour" as string]: open.hex }}
                   role="img"
-                  aria-label={`${open.name} — a colour swatch. No photograph of this dress has been published yet.`}
+                  aria-label={`${open.name}: a colour swatch. No photograph of this dress has been published yet.`}
                 />
               ) : (
                 <div className="fd-lightbox-colour fd-outfit-monogram" style={{ position: "static" }}>

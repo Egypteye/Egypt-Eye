@@ -39,7 +39,7 @@ import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
  */
 
 export const metadata: Metadata = fdMetadata({
-  title: `${brand.name} — ${brand.tagline}`,
+  title: `${brand.name} | ${brand.tagline}`,
   description: brand.description,
 });
 
@@ -112,7 +112,7 @@ export default function FlyingDressesHome() {
             <div className="fd-prose fd-muted">
               <p>
                 A car collects you from your hotel. A dress is waiting in the colour you chose.
-                A photographer directs the whole session, and an assistant does the real work —
+                A photographer directs the whole session, and an assistant does the real work:
                 holding the train, throwing it, keeping it out of the sand between frames.
               </p>
               <p>
@@ -134,7 +134,7 @@ export default function FlyingDressesHome() {
               alt={agency.blueGownDesert.alt}
               width={agency.blueGownDesert.width}
               height={agency.blueGownDesert.height}
-              ratio="fd-ratio-portrait"
+              ratio="fd-ratio-landscape"
               sizes="(min-width: 60rem) 36vw, 92vw"
               drift
               className="fd-fabric"
@@ -195,7 +195,7 @@ export default function FlyingDressesHome() {
                   </p>
                   <div className="fd-actions" style={{ marginTop: "2rem" }}>
                     <Link className="fd-btn" href={fdPath("/experiences/pyramids-rooftop")}>
-                      The rooftop shoot — $199
+                      The rooftop shoot: $199
                     </Link>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export default function FlyingDressesHome() {
                     alt={art.alt}
                     width={art.width}
                     height={art.height}
-                    ratio="fd-ratio-portrait"
+                    ratio="fd-ratio-landscape"
                     sizes="(min-width: 60rem) 40vw, 92vw"
                     tone={pkg.tone}
                     label={"wanted" in art ? art.wanted : undefined}
@@ -303,7 +303,7 @@ export default function FlyingDressesHome() {
             </div>
             <p className="fd-muted" style={{ margin: 0 }}>
               Every dress in the collection is included in the price. Choosing one does not change
-              what you pay — and there are five traditional gawns for a partner in the frame.
+              what you pay, and there are five traditional gawns for a partner in the frame.
             </p>
           </div>
         </div>
@@ -321,14 +321,14 @@ export default function FlyingDressesHome() {
           <div
             tabIndex={0}
             role="group"
-            aria-label="The dress collection — scroll sideways to see all twelve"
+            aria-label="The dress collection: scroll sideways to see all twelve"
           >
           <ul className="fd-rail" style={{ listStyle: "none", margin: 0 }}>
             {dresses.map((dress) => (
               <li key={dress.id}>
                 <Link className="fd-tile" href={fdPath(`/wardrobe?dress=${dress.id}`)}>
                   <span
-                    className="fd-tile-media fd-ratio-portrait"
+                    className="fd-tile-media fd-ratio-landscape"
                     style={{ display: "block", background: dress.hex }}
                   />
                   <span className="fd-tile-body" style={{ display: "block" }}>
@@ -373,7 +373,7 @@ export default function FlyingDressesHome() {
             </h2>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.5rem" }}>
               Not everyone needs a photographer. Rent one dress from the same collection of twelve,
-              add accessories, or hire a traditional gawn — delivered to your hotel in Cairo, or
+              add accessories, or hire a traditional gawn, delivered to your hotel in Cairo, or
               collected from us.
             </p>
           </div>
@@ -395,7 +395,7 @@ export default function FlyingDressesHome() {
                       alt={art.alt}
                       width={art.width}
                       height={art.height}
-                      ratio="fd-ratio-square"
+                      ratio="fd-ratio-landscape"
                       tone="neutral"
                       label={art.wanted}
                     />
@@ -472,7 +472,7 @@ export default function FlyingDressesHome() {
             </div>
             <p className="fd-muted" style={{ margin: 0 }}>
               Two frames here are ours. The rest of this gallery is marked as waiting for
-              photographs — we would rather show you a labelled gap than a stock photograph you
+              photographs. We would rather show you a labelled gap than a stock photograph you
               might mistake for our work.
             </p>
           </div>
@@ -484,7 +484,7 @@ export default function FlyingDressesHome() {
                 alt={agency.blueGownDesert.alt}
                 width={agency.blueGownDesert.width}
                 height={agency.blueGownDesert.height}
-                ratio="fd-ratio-tall"
+                ratio="fd-ratio-landscape"
                 sizes="(min-width: 60rem) 30vw, 92vw"
                 drift
               />
@@ -589,7 +589,7 @@ export default function FlyingDressesHome() {
               <h3>The dress is a preference, not a reservation</h3>
               <p>
                 We note the colour you choose and have it ready for you. If it is unavailable on the
-                day we contact you before your shoot — rather than promising a specific garment three
+                day we contact you before your shoot, rather than promising a specific garment three
                 weeks out and sorting it out on the roof.
               </p>
             </li>
@@ -625,7 +625,7 @@ export default function FlyingDressesHome() {
           ================================================================ */}
       <section className="fd-section" aria-labelledby="fd-invite-heading">
         <div className="fd-shell fd-shell-narrow fd-center">
-          <p className="fd-script">So — which colour?</p>
+          <p className="fd-script">So, which colour?</p>
           <h2
             id="fd-invite-heading"
             className="fd-display fd-h2"
@@ -635,7 +635,7 @@ export default function FlyingDressesHome() {
           </h2>
           <hr className="fd-rule fd-rule-center" />
           <p className="fd-lead fd-muted" style={{ marginInline: "auto" }}>
-            Send the form and you get a reply from a person — about the date, the dress, and the
+            Send the form and you get a reply from a person, about the date, the dress, and the
             price where it is not published here. Or message us and ask one question.
           </p>
           <div

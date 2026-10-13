@@ -1205,8 +1205,15 @@ textarea {
 .fd-slot {
   display: grid;
   place-items: center;
-  padding: 2rem;
+  /* Scales with the frame: at 2rem flat, a small tile spent most of its
+     height on padding and pushed the label out of the box. */
+  padding: clamp(0.75rem, 6cqi, 2rem);
   text-align: center;
+  /* So the label can be sized in cqi below. */
+  container-type: inline-size;
+  /* A frame has a fixed aspect-ratio, so anything that still does not fit is
+     clipped rather than spilling over the frame below it. */
+  overflow: hidden;
   background-image: var(--fd-slot-bg, linear-gradient(145deg, #3a2e1c, #6b6054));
   color: var(--fd-ivory);
   position: relative;
@@ -1233,17 +1240,26 @@ textarea {
   --fd-slot-bg: linear-gradient(150deg, #3a2e1c 0%, #6b6054 100%);
 }
 
+/* SIZED TO THE FRAME, NOT TO THE PAGE.
+   This was var(--fd-step-2), a page-level step, in a box whose height is set
+   by its aspect-ratio. In the home page gallery that produced a 192px-tall
+   frame holding 295px of text: the label ran straight out of the bottom of
+   its own box and over the caption beneath it. Measured on a 1440px viewport;
+   the phone layout was fine, which is why reading it on a phone missed it.
+   cqi is a percentage of THIS frame's width, so the label now shrinks with
+   the frame it is in and cannot outgrow it. */
 .fd-slot-label {
   font-family: var(--fd-display);
-  font-size: var(--fd-step-2);
-  line-height: 1.1;
-  max-width: 22ch;
+  font-size: clamp(0.95rem, 7cqi, 1.75rem);
+  line-height: 1.15;
+  max-width: 24ch;
+  text-wrap: balance;
   text-shadow: 0 1px 12px rgba(58, 46, 28, 0.55);
 }
 
 .fd-slot-note {
-  margin-top: 0.75rem;
-  font-size: var(--fd-step--1);
+  margin-top: 0.6rem;
+  font-size: clamp(0.6rem, 3cqi, 0.78rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0.9;
@@ -1307,21 +1323,63 @@ textarea {
   z-index: 1;
 }
 
-/* The three captions cross-fade on the parent's scroll range. */
+/* The three captions cross-fade as the track passes through the viewport.
+   =======================================================================
+   THIS WAS BROKEN IN EVERY BROWSER AND THE @supports GUARD DID NOT CATCH IT
+   =======================================================================
+   It used to say `scroll-timeline-name: --fd-pin` on .fd-pin-track. A SCROLL
+   timeline only exists on a scroll CONTAINER, and .fd-pin-track is a 280svh
+   block with no overflow — it does not scroll, it is simply tall. So the
+   named timeline was never active, the animation referencing it never
+   applied, and all three captions rendered at their base style: fully opaque,
+   stacked in one grid cell by the rule below. Three headlines printed on top
+   of each other, which is what the owner was looking at.
+
+   @supports did not save us because @supports tests whether the browser
+   PARSES `animation-timeline: scroll()`, not whether this particular timeline
+   resolves to anything. Both were true at once: supported, and inactive.
+
+   A VIEW timeline is the right construct here and needs no scroll container —
+   it measures this element's own progress across the viewport, which is
+   exactly the thing the sticky stage is tracking. `contain 0%` to
+   `contain 100%` is precisely the window during which the stage is pinned, so
+   the three ranges below divide the pin itself rather than guessing. */
 @media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: scroll()) {
+  @supports (animation-timeline: view()) {
     .fd-pin-track {
-      /* Names a timeline the children can attach to. */
-      scroll-timeline-name: --fd-pin;
-      scroll-timeline-axis: block;
+      view-timeline-name: --fd-pin;
+      view-timeline-axis: block;
     }
     .fd-pin-step {
       animation: fd-step linear both;
       animation-timeline: --fd-pin;
     }
-    .fd-pin-step:nth-child(1) { animation-range: 0% 34%; }
-    .fd-pin-step:nth-child(2) { animation-range: 30% 66%; }
-    .fd-pin-step:nth-child(3) { animation-range: 62% 96%; }
+    .fd-pin-step:nth-child(1) { animation-range: contain 0% contain 36%; }
+    .fd-pin-step:nth-child(2) { animation-range: contain 32% contain 68%; }
+    /* THE LAST CAPTION ARRIVES AND STAYS.
+       It used to run fd-step like the other two, which ends at opacity 0, over
+       a range finishing at contain 100%. `contain 100%` is the moment the
+       sticky stage stops being pinned, but the stage is still on screen for
+       the whole of its slide-off after that: measured at 1440x900, the final
+       36% of the track showed the photograph with no words on it at all.
+       This one fades in and holds. `both` keeps the end frame after the range,
+       so it carries the call to action off the screen with it. */
+    .fd-pin-step:nth-child(3) {
+      animation-name: fd-step-settle;
+      animation-range: contain 64% contain 88%;
+    }
+  }
+}
+
+/* The third caption's arrival. No exit: see the note on nth-child(3). */
+@keyframes fd-step-settle {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -1348,7 +1406,10 @@ textarea {
   gap: 2rem;
 }
 
-@supports (animation-timeline: scroll()) {
+/* Stacking and animating must be guarded by the SAME condition. When they
+   drifted apart the stack applied without the cross-fade, which is the bug
+   above: the captions were overlaid and then never faded. */
+@supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
     .fd-pin-steps {
       display: grid;
@@ -1525,7 +1586,10 @@ textarea {
 
 .fd-outfit-media {
   position: relative;
-  aspect-ratio: 2 / 3;
+  /* Landscape, like every other frame on the site. The owner's photographs
+     are overwhelmingly landscape, and a portrait tile would either letterbox
+     them or crop a dress in half. */
+  aspect-ratio: 3 / 2;
   overflow: hidden;
   background: var(--fd-sand);
 }
@@ -1939,7 +2003,9 @@ textarea {
 
 .fd-lightbox-colour {
   width: min(70vw, 22rem);
-  aspect-ratio: 2 / 3;
+  /* Matches .fd-outfit-media so the swatch is the same shape as the
+     photograph that will replace it. */
+  aspect-ratio: 3 / 2;
   background: var(--fd-outfit-colour, var(--fd-sand-deep));
 }
 
@@ -2050,7 +2116,16 @@ textarea {
   gap: 0.6rem;
 }
 
-.fd-footer a {
+/* `:not(.fd-btn)` matters. This rule used to match buttons too, and because
+   it is more specific (0,1,1) than `.fd-btn` (0,1,0) it painted them in the
+   footer's muted link colour. The first fix for that added
+   `.fd-footer .fd-btn { color: ... }` at (0,2,0), which rescued the solid
+   button and broke the OUTLINE one beside it: `.fd-btn-outline-light` is only
+   (0,1,0), so it lost, and "WhatsApp" rendered dark ink on the dark footer —
+   an empty-looking box, exactly the symptom the first fix was meant to cure.
+   Excluding buttons here instead lets each button variant win on its own, so
+   there is no override to keep in sync. */
+.fd-footer a:not(.fd-btn) {
   color: var(--fd-ivory-dim);
   text-decoration: none;
   font-size: var(--fd-step-0);
@@ -2068,17 +2143,13 @@ textarea {
    1.32:1, which is to say unreadable. It looked like an empty box and nobody
    would have clicked it.
    Found by axe, not by looking — which is the whole argument for running it. */
+/* Height only. Colour is each variant's own business now — see the note on
+   `.fd-footer a:not(.fd-btn)` above. */
 .fd-footer .fd-btn {
-  color: var(--fd-btn-fg);
   min-height: 3rem;
 }
 
-.fd-footer .fd-btn:hover {
-  color: var(--fd-btn-bg);
-  text-decoration: none;
-}
-
-.fd-footer a:hover {
+.fd-footer a:not(.fd-btn):hover {
   color: var(--fd-ivory);
   text-decoration: underline;
   text-underline-offset: 0.25em;

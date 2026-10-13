@@ -56,7 +56,7 @@ export async function generateMetadata({
   if (!pkg) return fdMetadata({ title: "Not found", description: "", noindex: true });
 
   return fdMetadata({
-    title: `${pkg.title} Flying Dress Photoshoot — $${pkg.priceUsd} per person`,
+    title: `${pkg.title} Flying Dress Photoshoot: $${pkg.priceUsd} per person`,
     description: `${pkg.intro} Includes the dress, door-to-door transport, an assistant and 100+ colour-graded photographs delivered in 6–10 days.`,
     path: `/experiences/${pkg.slug}`,
   });
@@ -137,7 +137,7 @@ export default async function ExperiencePage({
                 alt={art.hero.alt}
                 width={art.hero.width}
                 height={art.hero.height}
-                ratio="fd-ratio-portrait"
+                ratio="fd-ratio-landscape"
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone={pkg.tone}
                 label={"wanted" in art.hero ? art.hero.wanted : undefined}

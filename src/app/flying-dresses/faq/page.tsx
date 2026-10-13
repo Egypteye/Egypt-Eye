@@ -32,7 +32,7 @@ import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from ".
 export const metadata: Metadata = fdMetadata({
   title: "Questions",
   description:
-    "What is included, how to choose a dress, makeup and hair, transport, photo delivery, extra dresses, men's attire, dress rental, payment methods and changes — the questions people actually ask before a flying-dress photoshoot in Egypt.",
+    "What is included, how to choose a dress, makeup and hair, transport, photo delivery, extra dresses, men's attire, dress rental, payment methods and changes: the questions people actually ask before a flying-dress photoshoot in Egypt.",
   path: "/faq",
 });
 
@@ -41,7 +41,7 @@ const priceList = packages.map((p) => `${p.name} $${p.priceUsd}`).join(", ");
 const BOOKING: { question: string; answer: string }[] = [
   {
     question: "What does a photoshoot cost?",
-    answer: `Per person: ${priceList}. The session, the dress, the transport, the assistant and the photographs are the same in all three — the difference is the landscape and how far you have to drive to it.`,
+    answer: `Per person: ${priceList}. The session, the dress, the transport, the assistant and the photographs are the same in all three. The difference is the landscape and how far you have to drive to it.`,
   },
   {
     question: "What is included in the price?",
@@ -51,7 +51,7 @@ const BOOKING: { question: string; answer: string }[] = [
   {
     question: "How do I book?",
     answer:
-      "You do not book on this website — you enquire, and we confirm. Send the form or message us with your dates and we will tell you what is free, confirm the price, and arrange payment directly. Nothing on this site charges a card.",
+      "You do not book on this website. You enquire, and we confirm. Send the form or message us with your dates and we will tell you what is free, confirm the price, and arrange payment directly. Nothing on this site charges a card.",
   },
   {
     question: "Is a WhatsApp message a booking?",
@@ -78,7 +78,7 @@ const DRESSES: { question: string; answer: string }[] = [
   {
     question: "Can you guarantee the dress I choose?",
     answer:
-      "We note your choice and have it ready for you, and in practice it is almost always the one you get. We will not promise it absolutely — a dress can come back from a shoot needing cleaning — and if yours is unavailable we will tell you before your shoot rather than on the day.",
+      "We note your choice and have it ready for you, and in practice it is almost always the one you get. We will not promise it absolutely, because a dress can come back from a shoot needing cleaning, and if yours is unavailable we will tell you before your shoot rather than on the day.",
   },
   {
     question: "What sizes are the dresses?",
@@ -88,7 +88,7 @@ const DRESSES: { question: string; answer: string }[] = [
   {
     question: "Can I rent a dress without a photoshoot?",
     answer:
-      "Yes. One dress from the collection, delivered to your hotel in Cairo or collected from us, with no photographer and no assistant. It is priced on request — ask and we will send the price, the length of the window and the terms in writing.",
+      "Yes. One dress from the collection, delivered to your hotel in Cairo or collected from us, with no photographer and no assistant. It is priced on request. Ask and we will send the price, the length of the window and the terms in writing.",
   },
   {
     question: "Do you have accessories?",
@@ -100,7 +100,7 @@ const DRESSES: { question: string; answer: string }[] = [
 const MENS: { question: string; answer: string }[] = [
   {
     question: "Do you have outfits for men?",
-    answer: `Yes — ${mensOutfits.length} styles of traditional Egyptian gawn: ${mensOutfits.map((m) => m.name).join(", ")}. They can be worn in a photoshoot or hired on their own.`,
+    answer: `Yes. ${mensOutfits.length} styles of traditional Egyptian gawn: ${mensOutfits.map((m) => m.name).join(", ")}. They can be worn in a photoshoot or hired on their own.`,
   },
   {
     question: "What is the difference between a Saeedy and a Bahary gawn?",
@@ -130,7 +130,7 @@ const ON_THE_DAY: { question: string; answer: string }[] = [
   {
     question: "How do I get there?",
     answer:
-      "We collect you and bring you back. Door-to-door transport is included in all three photoshoot prices — tell us your hotel or pickup area when you enquire.",
+      "We collect you and bring you back. Door-to-door transport is included in all three photoshoot prices. Tell us your hotel or pickup area when you enquire.",
   },
   {
     question: "What should I bring?",
@@ -140,7 +140,7 @@ const ON_THE_DAY: { question: string; answer: string }[] = [
   {
     question: "I have never modelled. Will I know what to do?",
     answer:
-      "You do not need to. The photographer directs the whole session — where to stand, how to hold the dress, when to move — and the assistant handles the fabric, which is most of the work once the wind catches it.",
+      "You do not need to. The photographer directs the whole session (where to stand, how to hold the dress, when to move) and the assistant handles the fabric, which is most of the work once the wind catches it.",
   },
   {
     question: "Can we shoot at sunset?",
@@ -162,7 +162,7 @@ const AFTER: { question: string; answer: string }[] = [
   {
     question: "Can I keep a dress?",
     answer:
-      "Yes — a dress made or customised for you to keep is $249. That is different from the dress included in a shoot, which is rented for the session.",
+      "Yes. A dress made or customised for you to keep is $249. That is different from the dress included in a shoot, which is rented for the session.",
   },
 ];
 
@@ -178,7 +178,7 @@ const PAYING: { question: string; answer: string }[] = [
   },
   {
     question: "What if I need to change or cancel?",
-    answer: `${cancellation.summary} Talk to us as early as you can — in practice moving a date is far easier than cancelling one.`,
+    answer: `${cancellation.summary} Talk to us as early as you can. In practice moving a date is far easier than cancelling one.`,
   },
   {
     question: "Are deposits refundable?",
@@ -215,7 +215,7 @@ export default function FaqPage() {
             <h1 className="fd-display fd-h1">Questions</h1>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
               Everything people ask before a shoot, and a few things they only ask afterwards. If
-              what you want is not here, send it — we would rather answer one question than have you
+              what you want is not here, send it. We would rather answer one question than have you
               guess.
             </p>
           </div>

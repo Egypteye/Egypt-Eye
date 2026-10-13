@@ -174,7 +174,7 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
       </div>
 
       <p className="fd-muted" style={{ fontSize: "var(--fd-step--1)", marginTop: "1.25rem" }}>
-        Secure checkout runs on our Egypt Eye booking page — the same team, the same shoot, the
+        Secure checkout runs on our Egypt Eye booking page: the same team, the same shoot, the
         same PayPal account. Card details are never typed into a form on this site.
       </p>
     </div>

@@ -163,7 +163,7 @@ export function EnquiryForm({
     return (
       <div className="fd-form-status" role="status">
         <p className="fd-display fd-h4" style={{ margin: "0 0 0.5rem" }}>
-          Thank you — your enquiry is with us.
+          Thank you. Your enquiry is with us.
         </p>
         <p style={{ margin: "0 0 0.75rem" }}>
           We have emailed you a copy. We will come back to you about the date, and about the price
@@ -251,10 +251,10 @@ export function EnquiryForm({
 
         <Field id="fd-package" label="Photoshoot location">
           <select id="fd-package" name="package" value={pkg} onChange={(e) => setPkg(e.target.value)}>
-            <option value="">Not sure yet — advise me</option>
+            <option value="">Not sure yet, advise me</option>
             {packages.map((p) => (
               <option key={p.slug} value={p.slug}>
-                {p.name} — ${p.priceUsd} per person
+                {p.name}: ${p.priceUsd} per person
               </option>
             ))}
           </select>
@@ -271,7 +271,7 @@ export function EnquiryForm({
             value={service}
             onChange={(e) => setService(e.target.value)}
           >
-            <option value="">No — I want a photoshoot</option>
+            <option value="">No, I want a photoshoot</option>
             {rentalServices.map((s) => (
               <option key={s.slug} value={s.slug}>
                 {s.title}
@@ -367,7 +367,7 @@ export function EnquiryForm({
                     />
                     <span>
                       {addOn.label}
-                      {" — "}
+                      {": "}
                       {addOn.priceUsd === null
                         ? "on request"
                         : `${addOn.fromPrice ? "from " : ""}$${addOn.priceUsd}`}

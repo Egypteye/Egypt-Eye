@@ -157,6 +157,80 @@ async function inspectStructure(page: Page, path: string) {
     }
     const topTargetGroups = Object.entries(targetGroups).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
+    // TEXT PRINTED ON TOP OF OTHER TEXT.
+    //
+    // This exists because the home page shipped with three headlines stacked
+    // in one grid cell, all at full opacity, rendering as an unreadable smear
+    // — and every check in this repository passed on it. The console was
+    // clean, axe was happy (it measures contrast, not collision), the tap
+    // targets were fine and the HTML was valid. The owner found it by looking
+    // at the site.
+    //
+    // The cause was a cross-fade whose timeline never activated, so the rule
+    // that stacks the captions applied while the rule that fades them did
+    // not. That specific bug is fixed; this is here so the next one of its
+    // shape is caught by a machine instead of a customer.
+    //
+    // Compares only elements with their own visible text at 18px or larger —
+    // display type, where a collision is both most likely and most damaging.
+    // Ancestor/descendant pairs are skipped: a heading always overlaps the
+    // section containing it, and that is not a defect.
+    const bigText = Array.from(document.querySelectorAll("h1,h2,h3,h4,p,span,li,figcaption,div"))
+      .filter((el) => {
+        const own = Array.from(el.childNodes)
+          .filter((n) => n.nodeType === 3)
+          .map((n) => n.textContent ?? "")
+          .join("")
+          .trim();
+        if (own.length < 8) return false;
+        // checkVisibility walks the ANCESTORS. getComputedStyle(el).opacity
+        // does not, and that distinction is the whole check: in the pinned
+        // scene the <p> carrying the headline is always opacity 1 — it is the
+        // .fd-pin-step WRAPPING it that the cross-fade animates. Reading the
+        // paragraph alone reported every caption as permanently visible, so
+        // this flagged three collisions on correct code and would have been
+        // switched off within a day.
+        if (!el.checkVisibility({ opacityProperty: true, visibilityProperty: true, contentVisibilityAuto: true })) {
+          return false;
+        }
+        const cs = getComputedStyle(el);
+        if (parseFloat(cs.fontSize) < 18) return false;
+        // Mid-fade is not a collision. Walk up for the effective opacity: a
+        // genuinely stuck element sits at full opacity all the way to the
+        // root, which is what this threshold means.
+        let eff = 1;
+        let n: Element | null = el;
+        while (n && n !== document.documentElement) {
+          eff *= Number(getComputedStyle(n).opacity);
+          if (eff < 0.9) return false;
+          n = n.parentElement;
+        }
+        const r = el.getBoundingClientRect();
+        return r.width > 24 && r.height > 12;
+      });
+
+    const collisions = [];
+    for (let i = 0; i < bigText.length; i++) {
+      for (let j = i + 1; j < bigText.length; j++) {
+        const a = bigText[i];
+        const b = bigText[j];
+        if (a.contains(b) || b.contains(a)) continue;
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+        const w = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+        const h = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+        if (w <= 0 || h <= 0) continue;
+        const overlap = w * h;
+        const smaller = Math.min(ra.width * ra.height, rb.width * rb.height);
+        if (overlap / smaller < 0.6) continue;
+        collisions.push(
+          `"${(a.textContent ?? "").trim().slice(0, 40)}" over "${(b.textContent ?? "").trim().slice(0, 40)}"`
+        );
+        if (collisions.length >= 3) break;
+      }
+      if (collisions.length >= 3) break;
+    }
+
     // Total rendered text. A homepage carrying a megabyte of it is shipping
     // a database to the browser, whatever it looks like.
     const bodyChars = document.body.innerText.length;
@@ -172,6 +246,7 @@ async function inspectStructure(page: Page, path: string) {
       imagesWithoutAlt,
       smallTargets,
       topTargetGroups,
+      collisions,
       bodyChars,
       domNodes,
       jsonLdBlocks: document.querySelectorAll('script[type="application/ld+json"]').length,
@@ -197,6 +272,11 @@ async function inspectStructure(page: Page, path: string) {
       add("note", path, "a11y", `Heading level jumps h${info.headings[i - 1].level} → h${info.headings[i].level} at "${info.headings[i].text}"`);
       break; // one example is enough to act on
     }
+  }
+
+  // --- Text printed on top of other text
+  for (const c of info.collisions) {
+    add("error", path, "layout", `Text overlaps text: ${c}`);
   }
 
   // --- Images and JSON-LD

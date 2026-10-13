@@ -34,8 +34,8 @@ export default function ExperiencesPage() {
           <div style={{ maxWidth: "46rem" }}>
             <h1 className="fd-display fd-h1">Three places, one dress</h1>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
-              The same session — the dress, the direction, the assistant, the hundred-plus
-              photographs — in three landscapes that produce completely different pictures. What
+              The same session (the dress, the direction, the assistant, the hundred-plus
+              photographs) in three landscapes that produce completely different pictures. What
               changes between them is the light, the horizon, and how much of your day it takes.
             </p>
           </div>
@@ -87,7 +87,7 @@ export default function ExperiencesPage() {
                   alt={art.alt}
                   width={art.width}
                   height={art.height}
-                  ratio="fd-ratio-portrait"
+                  ratio="fd-ratio-landscape"
                   sizes="(min-width: 60rem) 40vw, 92vw"
                   tone={pkg.tone}
                   label={"wanted" in art ? art.wanted : undefined}

@@ -431,6 +431,81 @@ ok(
   robotsSource.includes('"/flying-dresses"')
 );
 
+// ---------------------------------------------------------------------------
+// NO EM-DASHES IN ANYTHING A VISITOR READS.
+//
+// The owner asked for them gone, in those words: they read as machine-written,
+// and this is a business selling a human morning with a photographer. 85 of
+// them were repunctuated by hand rather than swapped for a single character,
+// because the right replacement differs every time: a colon before a list, a
+// full stop between two independent clauses, a comma around an aside,
+// parentheses where a pair of dashes was doing a parenthesis's job.
+//
+// Only STRINGS AND JSX count. Code comments keep theirs: they are documentation
+// for whoever reads this repository next, no visitor can see them, and
+// rewriting a hundred of them would churn the file history for nothing.
+//
+// Proven by putting a single em-dash back into a page's prose: red. And by
+// putting one in a comment: still green, which is the distinction this makes.
+// ---------------------------------------------------------------------------
+function stripComments(src: string): string {
+  let out = "";
+  let mode: "code" | "block" = "code";
+  for (const line of src.split("\n")) {
+    let m: "code" | "block" = mode;
+    for (let i = 0; i < line.length; i++) {
+      const two = line.slice(i, i + 2);
+      if (m === "code" && two === "/*") { m = "block"; i++; continue; }
+      if (m === "block" && two === "*/") { m = "code"; i++; continue; }
+      // A // comment runs to end of line. There is no http:// in these files'
+      // prose; if one is ever added this would stop reading the rest of that
+      // line, which fails safe (it can only miss a dash, never invent one).
+      if (m === "code" && two === "//") break;
+      if (m === "code") out += line[i];
+    }
+    mode = m;
+    out += "\n";
+  }
+  return out;
+}
+
+const PROSE_FILES = [
+  "src/content/flyingDresses.ts",
+  "src/app/flying-dresses/_lib/assets.ts",
+  "src/app/flying-dresses/_lib/seo.ts",
+  "src/app/flying-dresses/page.tsx",
+  "src/app/flying-dresses/layout.tsx",
+  "src/app/flying-dresses/about/page.tsx",
+  "src/app/flying-dresses/faq/page.tsx",
+  "src/app/flying-dresses/enquire/page.tsx",
+  "src/app/flying-dresses/packages/page.tsx",
+  "src/app/flying-dresses/rentals/page.tsx",
+  "src/app/flying-dresses/rentals/[slug]/page.tsx",
+  "src/app/flying-dresses/wardrobe/page.tsx",
+  "src/app/flying-dresses/experiences/page.tsx",
+  "src/app/flying-dresses/experiences/[slug]/page.tsx",
+  "src/app/flying-dresses/not-found.tsx",
+  "src/app/flying-dresses/_components/Header.tsx",
+  "src/app/flying-dresses/_components/Footer.tsx",
+  "src/app/flying-dresses/_components/Wardrobe.tsx",
+  "src/app/flying-dresses/_components/EnquiryForm.tsx",
+  "src/app/flying-dresses/_components/BookingRail.tsx",
+  "src/app/flying-dresses/_components/StickyEnquire.tsx",
+  "src/app/flying-dresses/_components/FaqList.tsx",
+  "src/app/flying-dresses/_components/Scene.tsx",
+];
+
+for (const file of PROSE_FILES) {
+  const visible = stripComments(read(file));
+  const count = (visible.match(/\u2014/g) ?? []).length;
+  ok(
+    `${file} has ${count} em-dash(es) in text a visitor reads. The owner asked for none: ` +
+      "repunctuate by hand (a colon, a full stop, a comma or parentheses as the sentence needs), " +
+      "do not swap in a hyphen.",
+    count === 0
+  );
+}
+
 const proxySource = read("src/proxy.ts");
 ok(
   "src/proxy.ts no longer exempts /flying-dresses from the locale rewrite — every page would be rewritten to " +

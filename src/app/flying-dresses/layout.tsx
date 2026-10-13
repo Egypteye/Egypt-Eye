@@ -59,7 +59,7 @@ const cover = brandCover();
 export const metadata: Metadata = {
   metadataBase: new URL(fdSiteUrl),
   ...fdMetadata({
-    title: `${brand.name} — ${brand.tagline}`,
+    title: `${brand.name} | ${brand.tagline}`,
     description: brand.description,
   }),
   // The share card every pasted link renders as. Emitted only when the file
@@ -70,7 +70,7 @@ export const metadata: Metadata = {
         openGraph: {
           type: "website",
           siteName: brand.name,
-          title: `${brand.name} — ${brand.tagline}`,
+          title: `${brand.name} | ${brand.tagline}`,
           description: brand.description,
           url: fdSiteUrl,
           images: [{ url: cover, width: 1200, height: 630, alt: brand.name }],

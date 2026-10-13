@@ -10,7 +10,7 @@ import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 export const metadata: Metadata = fdMetadata({
   title: "The Wardrobe",
   description:
-    "The twelve flying dresses — Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender and Orchid — plus five traditional Egyptian gawns for men. Every dress is included in the photoshoot price.",
+    "The twelve flying dresses (Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender and Orchid) plus five traditional Egyptian gawns for men. Every dress is included in the photoshoot price.",
   path: "/wardrobe",
 });
 
@@ -28,7 +28,7 @@ const WARDROBE_FAQS = [
   {
     question: "Can you promise me a specific dress on a specific day?",
     answer:
-      "We note your choice and have it ready for you, and in practice it is almost always the one you get. We will not promise it absolutely, because a dress can come back from a shoot needing cleaning — and if yours is unavailable we would rather tell you before your shoot than on the roof.",
+      "We note your choice and have it ready for you, and in practice it is almost always the one you get. We will not promise it absolutely, because a dress can come back from a shoot needing cleaning, and if yours is unavailable we would rather tell you before your shoot than on the roof.",
   },
   {
     question: "What size are they?",
@@ -38,7 +38,7 @@ const WARDROBE_FAQS = [
   {
     question: "Can I rent a dress without booking a photoshoot?",
     answer:
-      "Yes — that is a separate service. One dress from this collection, delivered to your hotel in Cairo or collected from us, with no photographer. It is priced on request.",
+      "Yes. That is a separate service. One dress from this collection, delivered to your hotel in Cairo or collected from us, with no photographer. It is priced on request.",
   },
 ];
 
@@ -59,7 +59,7 @@ export default function WardrobePage() {
             <h1 className="fd-display fd-h1">The Wardrobe</h1>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
               Twelve flying dresses and five traditional gawns. Every dress is included in the
-              photoshoot price — pick the one you want and tell us when you enquire, or rent one on
+              photoshoot price. Pick the one you want and tell us when you enquire, or rent one on
               its own.
             </p>
             <p className="fd-note">
@@ -103,7 +103,7 @@ export default function WardrobePage() {
             </ul>
             <p className="fd-note">
               We have not photographed the gawns for this site yet, so this page names them rather
-              than showing them. Ask and we will send you pictures of the actual garments — and
+              than showing them. Ask and we will send you pictures of the actual garments, and
               tell us which pair interests you, because what distinguishes the two Saeedy cuts from
               each other is easier to show than to describe.
             </p>
@@ -120,7 +120,7 @@ export default function WardrobePage() {
               alt={empty.mensGawn.alt}
               width={empty.mensGawn.width}
               height={empty.mensGawn.height}
-              ratio="fd-ratio-portrait"
+              ratio="fd-ratio-landscape"
               sizes="(min-width: 60rem) 40vw, 92vw"
               tone="neutral"
               label={empty.mensGawn.wanted}

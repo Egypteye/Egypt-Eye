@@ -30,7 +30,7 @@ import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 export const metadata: Metadata = fdMetadata({
   title: "Plan Your Photoshoot",
   description:
-    "Tell us the date, the location and the dress, and we will confirm what is available. An enquiry, not a booking — nothing is charged on this website.",
+    "Tell us the date, the location and the dress, and we will confirm what is available. An enquiry, not a booking. Nothing is charged on this website.",
   path: "/enquire",
   noindex: true,
 });
@@ -93,7 +93,7 @@ export default async function EnquirePage({
                 What happens next
               </p>
               <p style={{ margin: "0 0 0.75rem" }}>
-                A person reads it and replies — about whether your date is free, and about the price
+                A person reads it and replies, about whether your date is free, and about the price
                 where it is not published on the site.
               </p>
               <p style={{ margin: 0 }}>

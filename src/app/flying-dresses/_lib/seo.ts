@@ -56,7 +56,7 @@ export function fdMetadata({
   noindex?: boolean;
 }): Metadata {
   const canonical = fdUrl(path);
-  const fullTitle = path === "" ? title : `${title} — ${brand.name}`;
+  const fullTitle = path === "" ? title : `${title} | ${brand.name}`;
 
   return {
     title: fullTitle,

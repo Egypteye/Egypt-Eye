@@ -27,7 +27,7 @@ export function StickyEnquire() {
         rel="noopener noreferrer"
       >
         WhatsApp
-        <span className="fd-sr"> — message us (opens in a new tab)</span>
+        <span className="fd-sr">, message us (opens in a new tab)</span>
       </a>
       <Link className="fd-btn" style={{ flex: 1 }} href={fdPath("/enquire")}>
         Enquire

@@ -82,7 +82,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
             wordmark otherwise. See _lib/logo.ts — dropping the file in is the
             whole switch. `priority` because this is in the first viewport on
             every page and is part of what the brand is recognised by. */}
-        <Link className="fd-wordmark" href={fdPath()} aria-label={`${brand.name} — home`}>
+        <Link className="fd-wordmark" href={fdPath()} aria-label={`${brand.name} home`}>
           {logo ? (
             <Image
               src={logo}

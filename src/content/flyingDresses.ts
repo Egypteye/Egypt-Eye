@@ -133,12 +133,12 @@ export const brand = {
    * twenty-five retouched photographs. See docs/INSPIRATION-RESEARCH.md §2.
    */
   heroSupport:
-    "A flowing dress above Giza an hour before the gates open, or out in the dunes with nobody else in the frame. You leave with more than a hundred colour-graded photographs — not a handful.",
+    "A flowing dress above Giza an hour before the gates open, or out in the dunes with nobody else in the frame. You leave with more than a hundred colour-graded photographs, not a handful.",
 
   tagline: "Editorial flying-dress photography in Egypt",
 
   description:
-    "Flying-dress photoshoots in Egypt — a rooftop above the Pyramids of Giza, the sand dunes outside Cairo, and the lakes and white dunes of Fayoum. Twelve dresses, traditional Egyptian attire for men, door-to-door transport and 100+ colour-graded photographs. Dress rental without a photoshoot is available separately.",
+    "Flying-dress photoshoots in Egypt: a rooftop above the Pyramids of Giza, the sand dunes outside Cairo, and the lakes and white dunes of Fayoum. Twelve dresses, traditional Egyptian attire for men, door-to-door transport and 100+ colour-graded photographs. Dress rental without a photoshoot is available separately.",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -250,7 +250,7 @@ export const packageIncludes: Inclusion[] = [
   },
   {
     title: "One flying dress, yours for the session",
-    detail: "Rented from the collection for the shoot, in the colour you choose. Included in the price — choosing one does not change what you pay.",
+    detail: "Rented from the collection for the shoot, in the colour you choose. Included in the price. Choosing one does not change what you pay.",
   },
   {
     title: "An assistant for the dress",
@@ -258,7 +258,7 @@ export const packageIncludes: Inclusion[] = [
   },
   {
     title: "A 30–45 minute photoshoot",
-    detail: "Directed throughout. You do not need to know how to pose — that is the photographer's job and the dress does the rest.",
+    detail: "Directed throughout. You do not need to know how to pose. That is the photographer's job and the dress does the rest.",
   },
   {
     title: "Delivered in 6–10 days",
@@ -343,7 +343,7 @@ export const packages: FlyingDressPackage[] = [
       "Approximately 45 minutes from central Cairo, towards New Cairo.",
     gettingThereConfidence: "confirm",
     intro:
-      "Open dune country close enough to Cairo to shoot at first light and be back for breakfast. No skyline, no other people, nothing in the frame that dates the photograph — just sand, wind and whichever colour you chose.",
+      "Open dune country close enough to Cairo to shoot at first light and be back for breakfast. No skyline, no other people, nothing in the frame that dates the photograph, just sand, wind and whichever colour you chose.",
     whyThis: [
       "The closest of the three to central Cairo, so it costs you a morning rather than a day.",
       "Low sun across open dunes is the light this product was invented for.",
@@ -369,7 +369,7 @@ export const packages: FlyingDressPackage[] = [
       },
     ],
     confirm: [
-      "Current price — brochure says $179 per person.",
+      "Current price: brochure says $179 per person.",
       "The exact shooting area, and whether it is a fixed site or chosen on the day.",
       "The start times actually offered, by season.",
     ],
@@ -386,10 +386,10 @@ export const packages: FlyingDressPackage[] = [
       "A private rooftop with views of the Pyramids of Giza. Door-to-door transport included; no entry ticket to the archaeological site is needed.",
     gettingThereConfidence: "verified",
     intro:
-      "The Giza site does not open until eight. From a rooftop there is no gate — so at seven the pyramids are catching the first low sun, the plateau below is still empty, and the only person in your photographs is you.",
+      "The Giza site does not open until eight. From a rooftop there is no gate, so at seven the pyramids are catching the first low sun, the plateau below is still empty, and the only person in your photographs is you.",
     whyThis: [
       "The one hour of the day no photoshoot inside the Giza complex can offer.",
-      "No entry ticket and no queue — the shoot is on a private roof, not inside the site.",
+      "No entry ticket and no queue. The shoot is on a private roof, not inside the site.",
       "The pyramids across a skyline, which is a different photograph from standing underneath them.",
     ],
     visualDirection:
@@ -417,7 +417,7 @@ export const packages: FlyingDressPackage[] = [
       },
     ],
     confirm: [
-      "Current price — brochure and the live sister-brand page both say $199 per person.",
+      "Current price: brochure and the live sister-brand page both say $199 per person.",
       "The booking window and last session time for this roof, as they stand now.",
     ],
   },
@@ -425,7 +425,7 @@ export const packages: FlyingDressPackage[] = [
     slug: "fayoum",
     eyeSlug: "fayoum-flying-dress-photoshoot",
     name: "Fayoum",
-    title: "Fayoum — the Lakes and the White Dunes",
+    title: "Fayoum: the Lakes and the White Dunes",
     eyebrow: "Three hours from Cairo",
     priceUsd: 349,
     priceConfidence: "confirm",
@@ -459,7 +459,7 @@ export const packages: FlyingDressPackage[] = [
       },
     ],
     confirm: [
-      "Current price — brochure says $349 per person.",
+      "Current price: brochure says $349 per person.",
       "THE NAME. The brochure calls this \"White Desert / Fayoum\" and then describes Fayoum: three hours from Cairo, white dunes, waterfalls, lakes. Egypt's White Desert is at Farafra, far beyond Fayoum and a different trip entirely. This page says Fayoum, because the brochure's own description is Fayoum. If the product really does run to the White Desert, the distance, the duration and the price all need revisiting.",
       "Whether the exact sites are Wadi El Rayan and the Magic Lake, as the sister brand's page states.",
     ],
@@ -530,7 +530,7 @@ export const addOns: AddOn[] = [
     label: "An additional dress",
     priceUsd: 99,
     fromPrice: false,
-    detail: "A second look in the same session — a second colour, and the frames to go with it.",
+    detail: "A second look in the same session: a second colour, and the frames to go with it.",
     confidence: "confirm",
   },
   {
@@ -621,14 +621,14 @@ export const rentalServices: RentalService[] = [
     summary:
       "Rent one flying dress from the collection of twelve and shoot it yourself. Delivered to your hotel in Cairo, or collected from us.",
     intro:
-      "Not everyone needs a photographer. If you are travelling with someone who shoots, or you simply want the dress for your own camera and your own morning, this is the dress on its own — the same twelve garments from the same collection, without the session built around them.",
+      "Not everyone needs a photographer. If you are travelling with someone who shoots, or you simply want the dress for your own camera and your own morning, this is the dress on its own: the same twelve garments from the same collection, without the session built around them.",
     youGet: [
       "One flying dress from the collection of twelve, in the colour you choose.",
-      "Delivery to your hotel in Cairo, or collection from us — whichever suits you.",
+      "Delivery to your hotel in Cairo, or collection from us, whichever suits you.",
     ],
     notIncluded: [
       "No photographer. The photographs are yours to take.",
-      "No assistant. Someone has to hold and throw the fabric, and on a rental that is your own companion — it is more work than it looks.",
+      "No assistant. Someone has to hold and throw the fabric, and on a rental that is your own companion. It is more work than it looks.",
       "No transport to a location, and no access arranged. A rooftop with a pyramid view is a private roof, not a public one.",
       "No edited gallery, since there is no shoot to edit.",
     ],
@@ -640,7 +640,7 @@ export const rentalServices: RentalService[] = [
       {
         title: "We reply with the price and the terms",
         detail:
-          "The rental price, how long you have it for, and what happens if it comes back damaged — in writing, before you commit to anything. Nothing is charged on this website.",
+          "The rental price, how long you have it for, and what happens if it comes back damaged: in writing, before you commit to anything. Nothing is charged on this website.",
       },
       {
         title: "You collect it, or we bring it",
@@ -687,11 +687,11 @@ export const rentalServices: RentalService[] = [
       },
     ],
     confirm: [
-      "THE RENTAL PRICE. Nothing is published. Research found rental-only established in Cappadocia at roughly a fifth of a full shoot, and no Egyptian operator selling it at all — the price is a commercial decision, not a figure to copy.",
-      "The rental window — how many hours or days one rental runs for.",
+      "THE RENTAL PRICE. Nothing is published. Research found rental-only established in Cappadocia at roughly a fifth of a full shoot, and no Egyptian operator selling it at all. The price is a commercial decision, not a figure to copy.",
+      "The rental window: how many hours or days one rental runs for.",
       "The security deposit or damage terms, and whether a card or cash hold is taken.",
       "Whether delivery is free, charged, or limited to certain areas of Cairo.",
-      "Which of the twelve dresses are actually available to rent out unaccompanied — the whole collection is listed here, which assumes all twelve are.",
+      "Which of the twelve dresses are actually available to rent out unaccompanied. The whole collection is listed here, which assumes all twelve are.",
       "Dress sizes and fit range.",
     ],
   },
@@ -705,7 +705,7 @@ export const rentalServices: RentalService[] = [
     summary:
       "Accessories are available alongside any shoot or any dress rental. Ask us what is in the collection.",
     intro:
-      "The brochure confirms accessories are available and does not list them — so rather than guess at a collection we have not seen, this page tells you the service is real and asks you to ask. It is the one page on this site that is deliberately short.",
+      "The brochure confirms accessories are available and does not list them, so rather than guess at a collection we have not seen, this page tells you the service is real and asks you to ask. It is the one page on this site that is deliberately short.",
     youGet: [
       "Accessories to wear with a photoshoot or a dress rental.",
     ],
@@ -747,7 +747,7 @@ export const rentalServices: RentalService[] = [
       },
     ],
     confirm: [
-      "THE ACCESSORY LIST. This page cannot show a collection until someone names what is in it. Photographs and names are all that is needed — the grid is already built.",
+      "THE ACCESSORY LIST. This page cannot show a collection until someone names what is in it. Photographs and names are all that is needed. The grid is already built.",
       "Accessory prices, or whether they are included with certain packages.",
       "Whether accessories can be rented without a dress at all.",
     ],
@@ -762,7 +762,7 @@ export const rentalServices: RentalService[] = [
     summary:
       "Five styles of traditional Egyptian gawn, for a partner in the frame or to rent on its own.",
     intro:
-      "A flying-dress photograph with two people in it is a different picture from one with one. Five styles of traditional gawn, in the Saeedy and Bahary traditions of Upper Egypt and the Delta, plus a classic plain cut — worn in a shoot, or rented on their own the same way a dress is.",
+      "A flying-dress photograph with two people in it is a different picture from one with one. Five styles of traditional gawn, in the Saeedy and Bahary traditions of Upper Egypt and the Delta, plus a classic plain cut, worn in a shoot, or rented on their own the same way a dress is.",
     youGet: [
       "One gawn from the five styles, for a photoshoot or as a rental.",
       "Delivery to your hotel in Cairo, or collection from us.",
@@ -792,7 +792,7 @@ export const rentalServices: RentalService[] = [
       {
         question: "What is the difference between Saeedy and Bahary?",
         answer:
-          "They are the two regional dress traditions the names come from — Saeedy from Upper Egypt, Bahary from the north and the Delta. What distinguishes our particular garments within each pair is something we would rather show you than describe: ask and we will send photographs.",
+          "They are the two regional dress traditions the names come from: Saeedy from Upper Egypt, Bahary from the north and the Delta. What distinguishes our particular garments within each pair is something we would rather show you than describe: ask and we will send photographs.",
       },
       {
         question: "Can my partner wear one during my flying-dress shoot?",
@@ -807,13 +807,13 @@ export const rentalServices: RentalService[] = [
       {
         question: "Are there photographs of the five styles?",
         answer:
-          "Not on this page yet — which is why it names them rather than showing them. Ask and we will send you pictures of the actual garments.",
+          "Not on this page yet, which is why it names them rather than showing them. Ask and we will send you pictures of the actual garments.",
       },
     ],
     confirm: [
       "PHOTOGRAPHS of all five gawns. This is the single highest-value asset gap on the site: five named garments with no pictures.",
       "What distinguishes Saeedy Gawn 1 from Saeedy Gawn 2, and Bahary Gawn 3 from Bahary Gawn 4. The brochure numbers them and does not say.",
-      "Prices — both as a photoshoot add-on and as a standalone rental.",
+      "Prices: both as a photoshoot add-on and as a standalone rental.",
       "Sizes available.",
       "Whether the brochure's numbering (1–5) is how the owner refers to them, or an artefact of the list.",
     ],
@@ -864,7 +864,7 @@ export const cancellation = {
    * not have to rediscover it.
    */
   ambiguity:
-    "The brochure sets out both a 15-day and a 7-day provision for amendments and cancellations, and they overlap rather than nest — it is not determinable from the brochure alone which applies to a cancellation made, say, 10 days out, nor how the charge differs for payments made after the deposit. This needs the owner's answer before any cancellation policy is published.",
+    "The brochure sets out both a 15-day and a 7-day provision for amendments and cancellations, and they overlap rather than nest. It is not determinable from the brochure alone which applies to a cancellation made, say, 10 days out, nor how the charge differs for payments made after the deposit. This needs the owner's answer before any cancellation policy is published.",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -899,8 +899,8 @@ export function flyingDressEnquiry(draft: EnquiryDraft = {}): string {
   const lines: string[] = [];
   lines.push(
     draft.subject
-      ? `Hello Flying Dresses Egypt — I would like to ask about ${draft.subject}.`
-      : "Hello Flying Dresses Egypt — I would like to ask about a flying-dress photoshoot."
+      ? `Hello Flying Dresses Egypt. I would like to ask about ${draft.subject}.`
+      : "Hello Flying Dresses Egypt. I would like to ask about a flying-dress photoshoot."
   );
   lines.push("");
 

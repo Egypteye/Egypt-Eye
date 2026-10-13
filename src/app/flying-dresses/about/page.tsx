@@ -121,7 +121,7 @@ export default function AboutPage() {
               </h3>
               <p>
                 The photographer directs the whole session. Almost nobody arriving has modelled
-                before and it does not matter — being told where to stand and when to move is the
+                before and it does not matter. Being told where to stand and when to move is the
                 service.
               </p>
             </li>
@@ -157,7 +157,7 @@ export default function AboutPage() {
                 Then more than a hundred photographs
               </h3>
               <p>
-                Colour-graded, delivered within six to ten days. Not a handful of selects — the full
+                Colour-graded, delivered within six to ten days. Not a handful of selects, the full
                 set from the session.
               </p>
             </li>

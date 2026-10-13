@@ -123,7 +123,7 @@ export default async function RentalServicePage({
                 alt={art.alt}
                 width={art.width}
                 height={art.height}
-                ratio="fd-ratio-portrait"
+                ratio="fd-ratio-landscape"
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone="neutral"
                 label={art.wanted}

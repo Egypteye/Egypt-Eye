@@ -46,7 +46,7 @@ export default function RentalsPage() {
             <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
               Three ways to borrow the wardrobe without booking a session. Rent one dress from the
               collection of twelve and shoot it yourself, add accessories, or hire a traditional
-              gawn — brought to your hotel in Cairo, or collected from us.
+              gawn, brought to your hotel in Cairo, or collected from us.
             </p>
           </div>
         </div>
@@ -106,7 +106,7 @@ export default function RentalsPage() {
                   alt={art.alt}
                   width={art.width}
                   height={art.height}
-                  ratio="fd-ratio-portrait"
+                  ratio="fd-ratio-landscape"
                   sizes="(min-width: 60rem) 40vw, 92vw"
                   tone="neutral"
                   label={art.wanted}
@@ -130,8 +130,8 @@ export default function RentalsPage() {
               figure here that turns out not to apply to you.
             </p>
             <p>
-              Ask and you get the price, the length of the window and the terms — including anything
-              held against damage — in writing, before you commit to anything. Nothing on this
+              Ask and you get the price, the length of the window and the terms, including anything
+              held against damage, in writing, before you commit to anything. Nothing on this
               website charges a card.
             </p>
           </div>

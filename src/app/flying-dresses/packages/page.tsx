@@ -15,7 +15,7 @@ import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 export const metadata: Metadata = fdMetadata({
   title: "Prices",
   description:
-    "Flying-dress photoshoot prices in Egypt: Sand Dunes $179, Pyramids Rooftop $199, Fayoum $349 — all per person, all including the dress, door-to-door transport, an assistant and 100+ colour-graded photographs. Extras and hire priced separately.",
+    "Flying-dress photoshoot prices in Egypt: Sand Dunes $179, Pyramids Rooftop $199, Fayoum $349, all per person, all including the dress, door-to-door transport, an assistant and 100+ colour-graded photographs. Extras and hire priced separately.",
   path: "/packages",
 });
 
@@ -36,7 +36,7 @@ export default function PackagesPage() {
             <h1 className="fd-display fd-h1">Prices</h1>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
               Three photoshoots, priced per person. The session, the dress, the transport, the
-              assistant and the photographs are the same in all three — what you are paying the
+              assistant and the photographs are the same in all three. What you are paying the
               difference for is the landscape and the drive.
             </p>
           </div>
@@ -265,7 +265,7 @@ export default function PackagesPage() {
               <li key={method.label}>
                 <span>
                   <strong style={{ fontWeight: 500 }}>{method.label}</strong>
-                  {method.detail ? ` — ${method.detail}` : null}
+                  {method.detail ? `: ${method.detail}` : null}
                 </span>
               </li>
             ))}
