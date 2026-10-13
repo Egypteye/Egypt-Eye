@@ -217,7 +217,18 @@ Vercel → Add New → Project → import **`Egypteye/Egypt-Eye`**.
 
 ### 2. Set the production branch to `flying-dresses-production`
 
-Project → Settings → Git → **Production Branch**.
+Project → Settings → **Environments** → **Production** → the branch-tracking
+field.
+
+**Not** Settings → Git. An earlier version of this document said Git, which is
+where it used to live; current Vercel has moved production-branch configuration
+onto the Environments page, and the Git page now only covers the repository
+connection, commit comments and deploy hooks.
+
+If it is not on the Environments page either, the reliable fallback is to
+delete the project and re-import the repository — the import screen asks which
+branch to deploy. Nothing is lost, because a project with no successful
+deployment and no domain holds nothing.
 
 > ⚠️ **Do this before attaching the domain.** A new Vercel project defaults its
 > production branch to the repository's default branch, which here is
