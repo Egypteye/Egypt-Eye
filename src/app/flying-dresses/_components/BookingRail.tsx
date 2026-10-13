@@ -3,7 +3,7 @@ import { getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
 import { productRail } from "@/lib/booking/productRail";
 import { HUMAN_CONFIRMS } from "@/lib/booking/wording";
 import type { FlyingDressPackage } from "@/content/flyingDresses";
-import { flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
+import { EGYPT_EYE_ORIGIN, flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -156,12 +156,18 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
       </p>
 
       <div className="fd-actions">
-        {/* A plain link, not a fetch. The booking page owns the money; this is
-            the door to it, and it survives a reload, a shared link and the
-            round trip to PayPal because it is a URL. */}
-        <Link className="fd-btn" href={`/secure/photoshoot/${pkg.eyeSlug}`}>
+        {/* An ABSOLUTE link to the Egypt Eye origin, and a plain <a> rather
+            than next/link, because this leaves the app.
+
+            It is absolute so that this brand's own deployment never has to
+            serve a payment route — see EGYPT_EYE_ORIGIN in
+            content/flyingDresses.ts. The Flying Dresses project therefore
+            needs no PayPal credentials at all, which is why src/proxy.ts can
+            refuse every /api/bookings/* path on this domain without breaking
+            anything. */}
+        <a className="fd-btn" href={`${EGYPT_EYE_ORIGIN}/secure/photoshoot/${pkg.eyeSlug}`}>
           Choose your date &amp; pay the deposit
-        </Link>
+        </a>
         <Link className="fd-btn fd-btn-ghost" href={fdPath(`/enquire?package=${pkg.slug}`)}>
           Or ask us first
         </Link>

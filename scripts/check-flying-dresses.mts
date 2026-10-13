@@ -456,6 +456,52 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// 8b. THE BRAND DOMAIN MAY NOT SERVE EGYPT EYE
+//
+// This repository builds ONE application. A second Vercel project created
+// from it to serve flyingdressesegypt.com contains the ENTIRE Egypt Eye app:
+// 34 API routes, the embedded Sanity Studio, the admin and account pages, the
+// PayPal capture endpoint and the PayPal webhook. A separate Vercel project
+// does not isolate any of it, because what decides which URLs answer is the
+// hostname, not the deployment.
+//
+// So the proxy answers 404 for those paths on that host, and the booking link
+// points at the Egypt Eye origin absolutely — which is what lets the Flying
+// Dresses project hold no PayPal credentials at all.
+//
+// These are the assertions that keep that true. Proven by putting
+// `pathname.startsWith("/api/")` back into the allow-list, and separately by
+// changing the booking href back to a relative `/secure/photoshoot/...`:
+// red in both cases.
+// ---------------------------------------------------------------------------
+ok(
+  "src/proxy.ts no longer refuses Egypt Eye's routes on the Flying Dresses host — /studio, /auth and every " +
+    "/api route would answer on that domain, on a deployment that also carries the booking and CMS endpoints",
+  /pathname\.startsWith\("\/api\/"\) \|\| pathname\.startsWith\("\/auth\/"\) \|\| pathname\.startsWith\("\/studio"\)/.test(
+    proxySource
+  ) && proxySource.includes("status: 404")
+);
+
+ok(
+  "src/proxy.ts uses an allow-list for the Flying Dresses host — a deny-list lets every route added later " +
+    "through by default, which is the wrong direction for a second hostname on a shared application",
+  proxySource.includes("isFlyingDressesAllowed") && !proxySource.includes("isFlyingDressesExempt")
+);
+
+const bookingRail = read("src/app/flying-dresses/_components/BookingRail.tsx");
+ok(
+  "the deposit link is relative, so it resolves against the Flying Dresses domain — where the proxy refuses " +
+    "payment routes, so the button 404s. It must point at the Egypt Eye origin, which is what keeps PayPal " +
+    "credentials off this brand's deployment entirely.",
+  bookingRail.includes("EGYPT_EYE_ORIGIN") && !/href=\{`\/secure\//.test(bookingRail)
+);
+
+ok(
+  "the Flying Dresses enquiry endpoint is not reachable on the brand's own domain, so its form cannot submit",
+  proxySource.includes('pathname === "/api/flying-dresses-enquiry"')
+);
+
+// ---------------------------------------------------------------------------
 // 9. AN ENQUIRY NEVER CLAIMS TO BE A BOOKING
 //
 // The WhatsApp message is what a customer reads back to themselves. It must ask

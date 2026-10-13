@@ -48,6 +48,31 @@ import {
 
 export const FLYING_DRESSES_PATH = "/flying-dresses";
 
+/**
+ * Where the deposit is actually taken.
+ *
+ * Instant booking runs on the Egypt Eye deployment — the one that holds the
+ * PayPal credentials, writes the reservation and sends the emails. This brand
+ * links to it ABSOLUTELY rather than with a relative path, and that is a
+ * deliberate isolation decision, not a convenience:
+ *
+ *   - If Flying Dresses is served from its own Vercel project, a relative
+ *     /secure/... would resolve against flyingdressesegypt.com, where
+ *     src/proxy.ts now refuses every Egypt Eye route. The link would 404.
+ *   - Pointing it at the Egypt Eye origin means the Flying Dresses project
+ *     NEVER NEEDS PAYPAL CREDENTIALS. It cannot take a payment, cannot capture
+ *     one and cannot receive a webhook, because it has nothing to do it with.
+ *     That is the strongest form of isolation available: not a guard, an
+ *     absence.
+ *   - And it keeps "the same PayPal" literally true — it is not the same
+ *     account configured twice, it is the same checkout.
+ *
+ * Override per deployment with NEXT_PUBLIC_EGYPT_EYE_ORIGIN if the travel
+ * site ever moves.
+ */
+export const EGYPT_EYE_ORIGIN =
+  process.env.NEXT_PUBLIC_EGYPT_EYE_ORIGIN || "https://egypteyetravel.com";
+
 // ---------------------------------------------------------------------------
 // VERIFICATION MARKERS
 //

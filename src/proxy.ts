@@ -43,19 +43,47 @@ function isFlyingDressesHost(host: string): boolean {
 }
 
 /**
- * Paths that must reach their real handler untouched on the brand's domain:
- * route handlers, the CMS, Next's own assets, and anything with a file
- * extension (which is every static asset under public/).
+ * THE ALLOW-LIST. Everything the Flying Dresses domain may serve that is not
+ * inside its own page tree.
+ *
+ * =========================================================================
+ * THIS IS AN ALLOW-LIST BECAUSE A DENY-LIST WAS WRONG
+ * =========================================================================
+ * It used to exempt `/api/`, `/auth/` and `/studio` wholesale, on the
+ * reasoning that route handlers should reach their real handler. That is
+ * correct for one site and dangerous for two.
+ *
+ * This repository builds ONE application. If a second Vercel project is
+ * created from it to serve flyingdressesegypt.com, that deployment contains
+ * the entire Egypt Eye app — all 34 API routes, the embedded Sanity Studio,
+ * the admin pages, the account pages and the PayPal capture and webhook
+ * endpoints. A separate Vercel project does NOT isolate any of that, because
+ * the isolation people assume they are buying is of the DEPLOYMENT, and what
+ * actually matters is which URLs the HOSTNAME answers.
+ *
+ * So the brand's domain answers its own pages, its own enquiry endpoint, and
+ * static assets. Everything else is 404 — including /studio, /admin,
+ * /account, /api/migrate, /api/bookings/*, /api/webhooks/paypal and the
+ * purge routes. Those are guarded by their own secrets and by Sanity's login
+ * as well, but a URL that should not exist on this domain should not answer
+ * on this domain, secret or no secret. Defence in depth, and one less domain
+ * to think about when a credential is next rotated.
+ *
+ * Deliberately NOT allowed, and why each one matters:
+ *   /studio         a second Studio URL for the same dataset
+ *   /auth/*         Egypt Eye's Supabase auth callback
+ *   /api/* (others) booking, payment capture, webhooks, CMS writes, admin
  */
-function isFlyingDressesExempt(pathname: string): boolean {
+function isFlyingDressesAllowed(pathname: string): boolean {
   return (
-    pathname.startsWith("/api/") ||
-    pathname.startsWith("/auth/") ||
-    pathname.startsWith("/studio") ||
+    // Its own enquiry form's endpoint, and nothing else under /api.
+    pathname === "/api/flying-dresses-enquiry" ||
+    // Framework and static assets, which carry no authority.
     pathname.startsWith("/_next") ||
     pathname.startsWith("/photos/") ||
     pathname.startsWith("/brand/") ||
-    pathname.startsWith("/videos/")
+    pathname.startsWith("/videos/") ||
+    pathname === "/favicon.ico"
   );
 }
 
@@ -102,11 +130,28 @@ function flyingDressesProxy(request: NextRequest): NextResponse {
     return NextResponse.next({ request });
   }
 
-  if (isFlyingDressesExempt(pathname) || /\.[a-z0-9]+$/i.test(pathname)) {
+  if (isFlyingDressesAllowed(pathname)) {
+    return NextResponse.next({ request });
+  }
+
+  // Anything else addressed at an Egypt Eye route on this domain is refused
+  // outright rather than rewritten, so /studio and /api/bookings/paypal are a
+  // 404 here and not a working endpoint on a second hostname.
+  if (pathname.startsWith("/api/") || pathname.startsWith("/auth/") || pathname.startsWith("/studio")) {
+    return new NextResponse("Not found", {
+      status: 404,
+      headers: { "content-type": "text/plain; charset=utf-8", "x-robots-tag": "noindex" },
+    });
+  }
+
+  // A file extension that is not one of the asset folders above is not a page
+  // either — let it 404 as itself rather than rewriting it into the tree.
+  if (/\.[a-z0-9]+$/i.test(pathname)) {
     return NextResponse.next({ request });
   }
 
   // The short form: / -> /flying-dresses, /wardrobe -> /flying-dresses/wardrobe.
+  // An unknown path lands on this brand's own not-found page.
   const url = request.nextUrl.clone();
   url.pathname = pathname === "/" ? FLYING_DRESSES_BASE : `${FLYING_DRESSES_BASE}${pathname}`;
   return NextResponse.rewrite(url, { request });
