@@ -164,29 +164,144 @@ is now on the Egypt Eye deployment alone.
 
 ---
 
-## 6. Next steps, in order, for your approval
+## 6. Setting it up — what I did, and what needs your hands
 
-Nothing below has been done.
+### Done
 
-1. **Create the second Vercel project.** Same GitHub repo
-   (`Egypteye/Egypt-Eye`), **production branch set to a Flying Dresses branch —
-   not Egypt Eye's**. The two projects then deploy from two branches and never
-   interfere.
-2. **Set its environment variables** per §4 — and confirm the PayPal and
-   Supabase ones are absent rather than merely unset in one environment.
-3. **Add `flyingdressesegypt.com`** (and `www.`) as domains on that project
-   only, and point the DNS at it.
-4. **Stop the Egypt Eye project building this branch.** By default a Vercel
-   project builds preview deployments for every branch in its repo. Those are
-   previews and cannot reach production, but they burn build minutes and are
-   confusing. An Ignored Build Step on the Egypt Eye project settles it.
-5. **Add the Sanity CORS origin** for the new domain if the booking rail's
-   availability check needs it.
-6. **Decide separately about the Egypt Eye fixes.** The five men's gawns and the
-   two corrected fallback prices are genuine improvements to the travel site and
-   are currently sitting on this branch. They reach Egypt Eye only by a
-   deliberate merge, and that should be its own reviewed change — not a
-   side-effect of launching a second brand.
+**The production branch exists.** `flying-dresses-production` is pushed and
+carries this work. It is a sibling of Egypt Eye's branch, not a child of it,
+and nothing merges between them.
 
-Steps 1 to 5 touch no Egypt Eye configuration. Step 6 is the only one that
-changes the live travel site, and it is deliberately last and separate.
+### Blocked — the Vercel API refuses this session
+
+Creating the project, setting its environment variables, attaching the domain
+and changing build settings all fail with the same error:
+
+> 403 forbidden — Not authorized: Trying to access resource under scope
+> `egypt-eye-travel`. You must re-authenticate to this scope or use a token
+> with access to this scope.
+
+The connector can *list* the team's projects and nothing more. There is no
+Vercel CLI installed here, no stored credentials and no `VERCEL_TOKEN`, so the
+documented CLI fallback is not available either. These four steps need doing in
+the dashboard, by someone with access to that team.
+
+### Dropped — the Sanity CORS origin is not needed
+
+An earlier draft of this document listed it. It was wrong.
+
+Every Sanity call the Flying Dresses pages make is **server-side** — the
+booking rail is an async Server Component, and no client component on this
+brand references Sanity at all. Server-side fetches do not use CORS. The only
+thing that would have needed it is the embedded Studio, and that now returns
+404 on this domain.
+
+Adding a CORS origin would widen browser access to the dataset for no benefit,
+so it is deliberately not being done.
+
+---
+
+## 7. The four dashboard steps, in order
+
+**Do them in this order.** Step 2 before step 3 is the one that matters — see
+the warning.
+
+### 1. Create the project
+
+Vercel → Add New → Project → import **`Egypteye/Egypt-Eye`**.
+
+- **Name:** `flying-dresses-egypt`
+- **Framework:** Next.js (auto-detected)
+- **Root directory:** leave as the repository root
+- Do **not** attach a domain yet
+
+### 2. Set the production branch to `flying-dresses-production`
+
+Project → Settings → Git → **Production Branch**.
+
+> ⚠️ **Do this before attaching the domain.** A new Vercel project defaults its
+> production branch to the repository's default branch, which here is
+> `claude/egypt-eye-travel-website-fckb5t` — Egypt Eye's. If the domain is
+> attached while that is still the setting, **flyingdressesegypt.com will serve
+> the Egypt Eye travel site**, and it will do so without the hostname lockdown,
+> because that branch does not contain it.
+>
+> Change the branch, confirm a deployment from `flying-dresses-production` has
+> succeeded, and only then attach the domain.
+
+### 3. Set the environment variables
+
+Project → Settings → Environment Variables. Per §4 above. The four public ones
+can be set to all environments:
+
+```
+NEXT_PUBLIC_SANITY_PROJECT_ID   eoashi0y
+NEXT_PUBLIC_SANITY_DATASET      production
+NEXT_PUBLIC_FLYING_DRESSES_URL  https://flyingdressesegypt.com
+NEXT_PUBLIC_EGYPT_EYE_ORIGIN    https://egypteyetravel.com
+```
+
+Then add **`RESEND_API_KEY`** so the enquiry form can send. I have not set it
+and will not: it is a secret, and copying one between projects is not a change
+to make on someone's behalf without being asked. Use a separate Resend key for
+this brand if you can — it is one more thing that cannot leak sideways.
+
+**Add nothing else.** Specifically no `PAYPAL_*`, no `SUPABASE_*`, no
+`SANITY_API_WRITE_TOKEN`, no `MIGRATE_SECRET`. §4 explains what each absence
+buys.
+
+### 4. Attach the domain — only after step 2 is confirmed
+
+Project → Settings → Domains → add `flyingdressesegypt.com` and
+`www.flyingdressesegypt.com`, then point the DNS at Vercel as it instructs.
+
+The app already redirects `www` to the apex, so either spelling works.
+
+### 5. Stop each project building the other's branches
+
+Both projects watch the same repository, so by default each builds previews for
+the other's branches. Previews cannot reach production, but they burn build
+minutes and make the deployment list confusing.
+
+Settings → Git → **Ignored Build Step** on each project.
+
+> ⚠️ **The exit codes are inverted and this is the usual mistake.** Vercel
+> **skips** the build when the command exits **0**, and **proceeds** when it
+> exits **1**. Getting it backwards on the Egypt Eye project would stop the
+> travel site deploying.
+
+On **flying-dresses-egypt** — build only this brand's branches:
+
+```sh
+case "$VERCEL_GIT_COMMIT_REF" in flying-dresses-production|claude/zealous-volta-ec0mvn) exit 1 ;; *) exit 0 ;; esac
+```
+
+On **egypt-eye** — skip only this brand's branches, leave everything else
+exactly as it is today:
+
+```sh
+case "$VERCEL_GIT_COMMIT_REF" in flying-dresses-production|claude/zealous-volta-ec0mvn) exit 0 ;; *) exit 1 ;; esac
+```
+
+This is the only step that touches Egypt Eye's configuration. It is written to
+be additive — it skips two named branches and changes nothing about how the
+production branch or any existing preview branch builds. If you would rather
+not touch the Egypt Eye project at all, leave it: the cost is some wasted
+preview builds, not any risk.
+
+---
+
+## 8. After it is up
+
+- Check `https://flyingdressesegypt.com/studio` returns **404**, not a login
+  screen. That one request confirms the hostname lockdown is live.
+- Check the deposit button on a photoshoot page goes to
+  `egypteyetravel.com/secure/photoshoot/...` and that the checkout works there
+  as it does today.
+- Send yourself one message from a WhatsApp button to confirm the number.
+- Add the social cover (§ asset checklist) so shared links stop previewing as a
+  grey rectangle.
+
+Still outstanding and deliberately separate: **the Egypt Eye fixes** — the five
+men's gawns and the two corrected fallback prices — remain on the branch and
+reach the travel site only by a merge you approve.
