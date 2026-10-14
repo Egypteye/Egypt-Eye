@@ -131,16 +131,46 @@ async function inspectStructure(page: Page, path: string) {
     // visually-hidden pattern a "Skip to content" link uses, which is an
     // accessibility feature, not a tap target. Flagging it taught me to
     // distrust the whole list, which is worse than not flagging it.
+    //
+    // TWO MORE THINGS ARE NOT TAP TARGETS, both learned from this form.
+    //
+    // 1. A control a finger cannot reach. The enquiry form's honeypot is a
+    //    real 204x33 input parked at left: -9999px, on purpose: it is
+    //    aria-hidden, tabIndex -1, and off-screen rather than display:none
+    //    because some bots fill positioned fields and skip hidden ones. It
+    //    was reported as an undersized tap target on the most
+    //    conversion-critical page on the site.
+    //
+    // 2. A checkbox inside its own <label>. The box is 24x24 and the label
+    //    around it is 207x46, and the label is what a thumb actually hits,
+    //    because clicking a label activates its control. Measuring the input
+    //    reported eight failures on a form whose targets are all 46px.
+    //
+    // Both were wrong, both were on /enquire, and a page that cries wolf
+    // twice is a page whose next warning nobody reads.
     const smallTargets = Array.from(document.querySelectorAll('a,button,[role="button"],input,select'))
       .map((el) => {
-        const r = el.getBoundingClientRect();
         const cs = getComputedStyle(el);
+        // The real target is the label wrapping a control, when there is one.
+        const label = el.closest("label");
+        const target = label ?? el;
+        const r = target.getBoundingClientRect();
+        const unreachable =
+          el.closest("[aria-hidden='true']") !== null ||
+          el.getAttribute("tabindex") === "-1" ||
+          r.right < 0 ||
+          r.bottom < 0 ||
+          r.left > innerWidth;
         return {
           tag: el.tagName.toLowerCase(),
-          label: (el.textContent ?? "").trim().slice(0, 40),
+          label: (target.textContent ?? "").trim().slice(0, 40),
           w: Math.round(r.width),
           h: Math.round(r.height),
-          hidden: cs.visibility === "hidden" || cs.display === "none" || Number(cs.opacity) < 0.02,
+          hidden:
+            cs.visibility === "hidden" ||
+            cs.display === "none" ||
+            Number(cs.opacity) < 0.02 ||
+            unreachable,
         };
       })
       .filter((t) => t.w > 1 && t.h > 1 && !t.hidden && (t.w < minTap || t.h < minTap));

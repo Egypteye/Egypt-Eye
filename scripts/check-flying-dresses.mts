@@ -921,6 +921,63 @@ for (const [token, file] of usedClasses) {
 }
 
 // ---------------------------------------------------------------------------
+// A "NO PHOTOGRAPH YET" LINE MUST BE CONDITIONAL ON THERE BEING NO PHOTOGRAPH
+//
+// The wardrobe lightbox told every visitor "A colour swatch, not the fabric.
+// Ask us for photographs" — correct while the wardrobe was twelve hex values,
+// and wrong the moment twelve real photographs landed, because the line then
+// sat directly under a photograph of the dress. It denied the picture above it
+// and asked the customer to request what was already on screen.
+//
+// The thumbnail note in the SAME component was written conditionally and was
+// right the whole time. So the component disagreed with itself, and nothing
+// caught it: both branches compile, both render, and neither is a crash.
+//
+// This asserts the shape rather than the wording: wherever Wardrobe.tsx says
+// no photograph exists, `dressPhotos` must be tested nearby, so the claim is
+// driven by the registry rather than by what was true on the day it was typed.
+//
+// It is a text-proximity check and it knows it: it proves the condition is
+// THERE, not that it is the right way round. That is still the difference
+// between this bug being impossible to miss and it shipping for a week.
+//
+// Proven by reverting the caption to the unconditional string: red. Restored:
+// green. Also proven to be load-bearing by deleting the `dressPhotos` test
+// from the thumbnail note alone: red, naming that line.
+// ---------------------------------------------------------------------------
+// Comments stripped first, for the same reason the CSS guard above strips
+// them: the explanatory comment beside this very caption names `dressPhotos`,
+// so an unstripped scan would be satisfied by the note describing the bug
+// rather than by the code that prevents it.
+const WARDROBE_SRC = read("src/app/flying-dresses/_components/Wardrobe.tsx")
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/^\s*\/\/.*$/gm, "");
+
+/** Lines that assert to the visitor that no photograph of this garment exists. */
+const NO_PHOTO_CLAIMS = [
+  "A colour swatch, not the fabric",
+  "Ask us for photographs",
+  "Photo coming soon",
+  "Photo on request",
+];
+
+for (const claim of NO_PHOTO_CLAIMS) {
+  let from = 0;
+  for (;;) {
+    const at = WARDROBE_SRC.indexOf(claim, from);
+    if (at < 0) break;
+    from = at + claim.length;
+    // The enclosing ternary's condition sits above the string. 400 characters
+    // covers the longest of them in this file with room to spare.
+    const window = WARDROBE_SRC.slice(Math.max(0, at - 400), at);
+    ok(
+      `Wardrobe.tsx says "${claim}" without testing dressPhotos first — it will say that over a real photograph`,
+      window.includes("dressPhotos[")
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

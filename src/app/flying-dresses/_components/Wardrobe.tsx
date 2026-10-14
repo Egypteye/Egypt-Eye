@@ -251,9 +251,20 @@ export function Wardrobe({
                 <p className="fd-muted" style={{ margin: 0, fontSize: "var(--fd-step--1)" }}>
                   {openIndex !== null ? `${openIndex + 1} of ${shown.length}` : null}
                   {" · "}
-                  {open.category === "mens-outfit"
-                    ? "Traditional attire. Ask us for photographs of the actual garment."
-                    : "A colour swatch, not the fabric. Ask us for photographs."}
+                  {/* THIS LINE HAS TO AGREE WITH THE PICTURE ABOVE IT.
+                      It used to read "A colour swatch, not the fabric. Ask us
+                      for photographs" unconditionally, which was true for as
+                      long as there were no photographs. The day the real ones
+                      landed it became a caption telling a customer that the
+                      photograph they are looking at is not one, and asking
+                      them to request what is already on their screen. The
+                      tile note below the thumbnail was conditional; this was
+                      not, so the two disagreed in the same component. */}
+                  {dressPhotos[open.id]
+                    ? `From the ${dressPhotos[open.id].shoot} shoot. The dress is the one you would wear.`
+                    : open.category === "mens-outfit"
+                      ? "Traditional attire. Ask us for photographs of the actual garment."
+                      : "A colour swatch, not the fabric. Ask us for photographs."}
                 </p>
                 <Link
                   className="fd-btn fd-btn-light"
