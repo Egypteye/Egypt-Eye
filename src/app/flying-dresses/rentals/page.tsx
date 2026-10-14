@@ -4,6 +4,7 @@ import { RENTAL_DELIVERY_LABELS, rentalServices } from "@/content/flyingDresses"
 import { Scene } from "../_components/Scene";
 import { empty } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
+import { wardrobeShareImage } from "../_lib/shareImages";
 
 /**
  * The hire hub — the three services this build was commissioned to add.
@@ -15,6 +16,7 @@ import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
  */
 
 export const metadata: Metadata = fdMetadata({
+  image: wardrobeShareImage,
   title: "Rent & Hire",
   description:
     "Rent a flying dress without a photoshoot, hire accessories, or hire one of five traditional Egyptian gawns. Delivered to your hotel in Cairo or collected from us. Priced on request.",

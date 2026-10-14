@@ -6,8 +6,10 @@ import { Wardrobe } from "../_components/Wardrobe";
 import { Scene } from "../_components/Scene";
 import { empty } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
+import { wardrobeShareImage } from "../_lib/shareImages";
 
 export const metadata: Metadata = fdMetadata({
+  image: wardrobeShareImage,
   title: "The Wardrobe",
   description:
     "The twelve flying dresses (Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender and Orchid) plus five traditional Egyptian gawns for men. Every dress is included in the photoshoot price.",

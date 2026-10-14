@@ -44,19 +44,73 @@ export function fdUrl(path = ""): string {
   return `${fdSiteUrl}${fdPath(path)}`;
 }
 
+/**
+ * THE SHARE IMAGE.
+ *
+ * A link to this site used to render as grey text everywhere it was pasted:
+ * WhatsApp, Instagram DMs, Facebook, iMessage, Slack. `openGraph` carried a
+ * title, a description and a url and NO image, and `twitter.card` was set to
+ * "summary_large_image", which asks for the big photo card and then supplies
+ * no photo. For a business whose entire product is photographs, shared by
+ * customers in exactly those places, that was the worst available first
+ * impression.
+ *
+ * It was not fixable before: there were no photographs. There are now.
+ *
+ * The default is the hero poster, which is a real client frame on the Giza
+ * rooftop at 1600x900 — wider than the 1.91:1 the scrapers prefer, which they
+ * crop rather than reject, and the subject sits centre so the crop is safe.
+ * Pages that have a better, more specific frame pass one.
+ */
+export type FdShareImage = { src: string; width: number; height: number; alt?: string };
+
+export const FD_DEFAULT_SHARE_IMAGE: FdShareImage = {
+  src: "/brand/flying-dresses/hero-poster.jpg",
+  width: 1600,
+  height: 900,
+  alt: "A flying dress on a rooftop above the Pyramids of Giza at first light",
+};
+
+/**
+ * Scrapers do not resolve relative URLs. WhatsApp, Slack and Facebook each
+ * fetch the page and then fetch the image as its own request, with no page
+ * context, so "/brand/..." is a 404 to them and the card falls back to text.
+ * Every share image therefore goes out absolute.
+ */
+function fdAbsolute(src: string): string {
+  return src.startsWith("http") ? src : `${fdSiteUrl}${src}`;
+}
+
 export function fdMetadata({
   title,
   description,
   path = "",
   noindex = false,
+  image = FD_DEFAULT_SHARE_IMAGE,
 }: {
   title: string;
   description: string;
   path?: string;
   noindex?: boolean;
+  /**
+   * A page-specific share image. Its DIMENSIONS TRAVEL WITH IT, deliberately:
+   * the first version of this took a bare path and hardcoded 1600x900 beside
+   * it, which is right for the hero poster and wrong for every dress
+   * photograph, all of which are 1600x1067. Scrapers lay the card out from the
+   * declared size, so a page passing a taller frame would have shipped a
+   * correct picture with a lie about its shape.
+   */
+  image?: FdShareImage;
 }): Metadata {
   const canonical = fdUrl(path);
   const fullTitle = path === "" ? title : `${title} | ${brand.name}`;
+
+  const shareImage = {
+    url: fdAbsolute(image.src),
+    width: image.width,
+    height: image.height,
+    alt: image.alt ?? description,
+  };
 
   return {
     title: fullTitle,
@@ -69,11 +123,13 @@ export function fdMetadata({
       title: fullTitle,
       description,
       url: canonical,
+      images: [shareImage],
     },
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
       description,
+      images: [shareImage.url],
     },
   };
 }

@@ -17,6 +17,7 @@ import { BookingRail } from "../../_components/BookingRail";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { agency, location } from "../../_lib/assets";
+import { shootShareImages } from "../../_lib/shareImages";
 import {
   fdBreadcrumbJsonLd,
   fdFaqJsonLd,
@@ -59,6 +60,7 @@ export async function generateMetadata({
     title: `${pkg.title} Flying Dress Photoshoot: $${pkg.priceUsd} per person`,
     description: `${pkg.intro} Includes the dress, door-to-door transport, an assistant and 100+ colour-graded photographs delivered in 6–10 days.`,
     path: `/experiences/${pkg.slug}`,
+    image: shootShareImages[pkg.slug],
   });
 }
 

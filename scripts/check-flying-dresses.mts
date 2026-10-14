@@ -1013,6 +1013,97 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// EVERY SHARE IMAGE EXISTS, AND DECLARES ITS REAL SHAPE
+//
+// A link to this site used to render as grey text in WhatsApp, Instagram and
+// iMessage: openGraph carried no `images` while twitter.card asked for
+// "summary_large_image", so the big photo card was requested and no photo
+// supplied. For a photography business whose customers share links in exactly
+// those apps, that was the worst available first impression.
+//
+// Two ways the fix can rot, and both are silent, because a share card is
+// rendered on somebody else's server and nobody on this team ever sees it:
+//
+//   1. The file moves or is renamed. The card goes back to grey text.
+//   2. The declared size stops matching the file. Scrapers lay the card out
+//      from the numbers, not the pixels, so the picture is right and its shape
+//      is a lie. This is live: the poster is 1600x900, the dress frames are
+//      1600x1067 and the shoot frames are 2000x1333, and the first draft of
+//      fdMetadata hardcoded 1600x900 for all of them.
+//
+// So this reads the JPEG's own SOF header and compares it with what the code
+// claims. Proven by swapping one entry's height to 999 (red, naming it) and by
+// pointing one at a file that does not exist (red). Restored: green.
+// ---------------------------------------------------------------------------
+const SHARE_IMAGES_SRC = read("src/app/flying-dresses/_lib/shareImages.ts");
+const SEO_SRC = read("src/app/flying-dresses/_lib/seo.ts");
+
+// BOUNDED TO EACH OBJECT, and that is the whole point. The first version of
+// these two used /openGraph:[\s\S]*?images:/, which walks past the end of the
+// openGraph object and happily matches the `images:` belonging to `twitter:`
+// further down. Deleting the openGraph image left it green — the exact failure
+// this check exists to catch, in the check itself. `[^}]*` stops at the
+// object's own closing brace; neither object contains a nested one.
+ok(
+  "fdMetadata no longer emits an openGraph image, so every shared link renders as grey text",
+  /openGraph:\s*\{[^}]*images:/.test(SEO_SRC)
+);
+ok(
+  "fdMetadata asks for a large Twitter card without supplying an image",
+  !/card: "summary_large_image"/.test(SEO_SRC) || /twitter:\s*\{[^}]*images:/.test(SEO_SRC)
+);
+
+/** Reads width and height out of a JPEG's start-of-frame marker. */
+const jpegSize = (file: string): { width: number; height: number } | null => {
+  const buf = readFileSync(file);
+  let i = 2;
+  while (i < buf.length) {
+    if (buf[i] !== 0xff) {
+      i += 1;
+      continue;
+    }
+    const marker = buf[i + 1]!;
+    if (marker === 0xc0 || marker === 0xc1 || marker === 0xc2) {
+      return { height: buf.readUInt16BE(i + 5), width: buf.readUInt16BE(i + 7) };
+    }
+    if (marker === 0xd8 || marker === 0xd9 || (marker >= 0xd0 && marker <= 0xd7)) {
+      i += 2;
+      continue;
+    }
+    i += 2 + buf.readUInt16BE(i + 2);
+  }
+  return null;
+};
+
+// Each declared share image, as { src, width, height } in source order.
+const declaredShareImages = [
+  ...SEO_SRC.matchAll(
+    /src:\s*"([^"]+)",\s*\n\s*width:\s*(\d+),\s*\n\s*height:\s*(\d+)/g
+  ),
+  ...SHARE_IMAGES_SRC.matchAll(
+    /src:\s*"([^"]+)",\s*\n\s*width:\s*(\d+),\s*\n\s*height:\s*(\d+)/g
+  ),
+];
+
+ok(
+  "no share image is declared anywhere, so the share-image check is asserting nothing",
+  declaredShareImages.length >= 4
+);
+
+for (const [, src, width, height] of declaredShareImages) {
+  const file = `public${src}`;
+  if (!existsSync(file)) {
+    ok(`the share image ${src} is not in public/, so every card linking to it renders as text`, false);
+    continue;
+  }
+  const real = jpegSize(file);
+  ok(
+    `${src} is declared ${width}x${height} but is really ${real?.width}x${real?.height} — scrapers lay the card out from the declared size`,
+    real !== null && real.width === Number(width) && real.height === Number(height)
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

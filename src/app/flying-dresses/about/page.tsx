@@ -4,6 +4,7 @@ import { brand, contact, dresses, mensOutfits, packages } from "@/content/flying
 import { Scene } from "../_components/Scene";
 import { agency } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
+import { aboutShareImage } from "../_lib/shareImages";
 
 /**
  * About.
@@ -28,6 +29,7 @@ import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
  */
 
 export const metadata: Metadata = fdMetadata({
+  image: aboutShareImage,
   title: "About",
   description:
     "Who runs Flying Dresses Egypt, how a shoot actually works, and what we will and will not promise. Flying-dress photography in Cairo, Giza and Fayoum.",
