@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Cinzel, Cormorant_Garamond, Noto_Kufi_Arabic } from "next/font/google";
+import { Cinzel, Cormorant_Garamond, Noto_Kufi_Arabic, Noto_Sans_Egyptian_Hieroglyphs } from "next/font/google";
 import "../globals.css";
 import { site } from "@/content/site";
 import { siteUrl } from "@/content/seo";
@@ -43,6 +43,19 @@ const notoKufi = Noto_Kufi_Arabic({
   variable: "--font-arabic",
   weight: ["400", "500", "600", "700"],
   subsets: ["arabic"],
+});
+
+// Hieroglyphs are a late Unicode block, and almost nothing has them. Windows
+// carries them in Segoe UI Historic; macOS, iOS and Android do not ship a
+// face that covers U+13000 at all. Without this the cartouche preview renders
+// as a row of empty boxes for most visitors — which is exactly what it did in
+// a real browser before this was added. next/font self-hosts it, so it is
+// served from our own origin and the font-src 'self' policy still holds.
+const notoHieroglyphs = Noto_Sans_Egyptian_Hieroglyphs({
+  variable: "--font-hieroglyph",
+  weight: ["400"],
+  subsets: ["egyptian-hieroglyphs"],
+  display: "swap",
 });
 
 /**
@@ -163,7 +176,7 @@ export default async function RootLayout({
     <html
       lang={info.htmlLang}
       dir={info.dir}
-      className={`${cormorant.variable} ${cinzel.variable} ${notoKufi.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${cinzel.variable} ${notoKufi.variable} ${notoHieroglyphs.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-sand text-ink">
         <script

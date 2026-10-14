@@ -15,7 +15,7 @@
     "i18n:translate": "tsx scripts/i18n-translate.mts",
     "i18n:keys": "tsx scripts/i18n-keys.mts",
     "i18n:status": "tsx scripts/i18n-status.mts",
-    "check": "npm run check:destinations && npm run check:stories && npm run check:trips && npm run check:reviews && npm run check:shape && npm run check:migration && npm run check:booking && npm run check:csp && npm run check:security && npm run check:nav && npm run check:redirects && npm run check:paypal && npm run check:quote && npm run check:links && npm run check:faqs && npm run check:treasures",
+    "check": "npm run check:destinations && npm run check:stories && npm run check:trips && npm run check:reviews && npm run check:shape && npm run check:migration && npm run check:booking && npm run check:csp && npm run check:security && npm run check:nav && npm run check:redirects && npm run check:paypal && npm run check:quote && npm run check:links && npm run check:faqs && npm run check:treasures && npm run check:hieroglyphs",
     "check:destinations": "tsx scripts/check-destinations.mts",
     "check:stories": "tsx scripts/check-story-images.mts",
     "check:trips": "tsx scripts/check-weekly-trips.mts",
@@ -31,9 +31,11 @@
     "check:paypal": "tsx scripts/check-paypal.mts",
     "check:quote": "tsx scripts/check-quote.mts",
     "paypal:smoke": "tsx scripts/paypal-smoke.mts",
+    "smoke:cartouche": "node scripts/cartouche-smoke.mjs",
     "check:links": "tsx scripts/check-links.mts",
     "check:faqs": "tsx scripts/check-faqs.mts",
-    "check:treasures": "tsx scripts/check-treasures.mts"
+    "check:treasures": "tsx scripts/check-treasures.mts",
+    "check:hieroglyphs": "tsx scripts/check-hieroglyphs.mts"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.0",

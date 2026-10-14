@@ -6,6 +6,7 @@ import { SmartImage } from "@/components/SmartImage";
 import { Reveal } from "@/components/Reveal";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TreasureRequestForm } from "@/components/TreasureRequestForm";
+import { CartoucheNameStudio } from "@/components/CartoucheNameStudio";
 import { TourCard } from "@/components/TourCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
@@ -152,6 +153,19 @@ export default async function TreasureCategoryPage({
           ))}
         </Container>
       </section>
+
+      {/* Name studio — cartouches only, because it is the only category where
+          the piece is literally a name. It fills the enquiry's existing
+          "Name to be written" field rather than collecting the name twice. */}
+      {category.slug === "cartouches" && (
+        <section className="py-16">
+          <Container className="mx-auto max-w-5xl">
+            <Reveal>
+              <CartoucheNameStudio />
+            </Reveal>
+          </Container>
+        </section>
+      )}
 
       {/* The pieces */}
       {products.length > 0 && (
