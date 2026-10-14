@@ -248,8 +248,18 @@ async function inspectStructure(page: Page, path: string) {
     const collapsed = [];
     for (const el of document.querySelectorAll("*")) {
       const cs = getComputedStyle(el);
-      if (cs.aspectRatio === "auto" || !cs.aspectRatio) continue;
+      // "auto 1600 / 900" is the INTRINSIC ratio a browser derives from an
+      // img's width/height attributes, not a rule anybody wrote. Only an
+      // authored aspect-ratio can be the mistake this looks for, and the
+      // distinction is the leading "auto". Without it this flagged the
+      // fallback <img> inside the hero <video>, which is 0x0 precisely
+      // because the video is playing — a correct state reported as a fault,
+      // which is how a check gets switched off.
+      if (!cs.aspectRatio || cs.aspectRatio === "auto" || cs.aspectRatio.startsWith("auto")) continue;
       if (cs.display === "none") continue;
+      // Fallback content of a <video> or <audio> never renders while the
+      // media works. It is markup for a browser that cannot play it.
+      if (el.closest("video, audio, picture")) continue;
       const r = el.getBoundingClientRect();
       if (r.height >= 1) continue;
       collapsed.push(
@@ -258,6 +268,58 @@ async function inspectStructure(page: Page, path: string) {
           `(display: ${cs.display})`
       );
       if (collapsed.length >= 3) break;
+    }
+
+    // TEXT EATEN BY A ROUNDED CORNER.
+    //
+    // `overflow: hidden` plus `border-radius` clips content to the CURVE, not
+    // to the box. Any text that reaches a corner loses its first or last
+    // letters to it, and it is invisible in code review because the two
+    // properties are usually in different rules written months apart: the
+    // overflow belonged to the card, the radius arrived with a restyle.
+    //
+    // It shipped exactly that way here. A tile's last line sat at inset 0 from
+    // the left and 0 from the bottom of a 28px radius, so "PRICE ON REQUEST"
+    // rendered with the P sliced in half. The owner spotted it; nothing else
+    // did, because the text is present in the DOM, correctly sized, correctly
+    // contrasted, and simply not all drawn.
+    const cornerClipped = [];
+    for (const box of document.querySelectorAll("*")) {
+      const cs = getComputedStyle(box);
+      if (cs.overflow === "visible" && cs.overflowX === "visible") continue;
+      const radii = [
+        parseFloat(cs.borderTopLeftRadius),
+        parseFloat(cs.borderTopRightRadius),
+        parseFloat(cs.borderBottomLeftRadius),
+        parseFloat(cs.borderBottomRightRadius),
+      ];
+      const maxR = Math.max(...radii.map((n) => (Number.isFinite(n) ? n : 0)));
+      if (maxR < 4) continue;
+      const br = box.getBoundingClientRect();
+      if (br.width < 10 || br.height < 10) continue;
+      for (const el of box.querySelectorAll("p,span,a,h1,h2,h3,h4,h5,h6,li,dt,dd,figcaption")) {
+        const own = Array.from(el.childNodes)
+          .filter((n) => n.nodeType === 3)
+          .map((n) => n.textContent ?? "")
+          .join("")
+          .trim();
+        if (own.length < 3) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width < 5 || r.height < 5) continue;
+        // Inside the square region a corner's curve cuts into?
+        const nearLeft = r.left - br.left < maxR;
+        const nearRight = br.right - r.right < maxR;
+        const nearTop = r.top - br.top < maxR;
+        const nearBottom = br.bottom - r.bottom < maxR;
+        if ((nearLeft || nearRight) && (nearTop || nearBottom)) {
+          cornerClipped.push(
+            `"${own.slice(0, 32)}" sits in a ${Math.round(maxR)}px rounded corner of ` +
+              `${box.tagName.toLowerCase()}.${(box.className || "").toString().split(" ")[0]} (overflow: ${cs.overflow})`
+          );
+          break;
+        }
+      }
+      if (cornerClipped.length >= 3) break;
     }
 
     // Total rendered text. A homepage carrying a megabyte of it is shipping
@@ -277,6 +339,7 @@ async function inspectStructure(page: Page, path: string) {
       topTargetGroups,
       collisions,
       collapsed,
+      cornerClipped,
       bodyChars,
       domNodes,
       jsonLdBlocks: document.querySelectorAll('script[type="application/ld+json"]').length,
@@ -314,6 +377,11 @@ async function inspectStructure(page: Page, path: string) {
     add("error", path, "layout", `Collapsed box: ${c}`);
   }
 
+  // --- Text eaten by a rounded corner
+  for (const c of info.cornerClipped) {
+    add("error", path, "layout", `Corner clip: ${c}`);
+  }
+
   // --- Images and JSON-LD
   if (info.imagesWithoutAlt.length) {
     add("warning", path, "a11y", `${info.imagesWithoutAlt.length} <img> without alt, e.g. ${info.imagesWithoutAlt[0]}`);
@@ -333,10 +401,53 @@ async function runAxe(page: Page, path: string) {
     return null;
   }
   await page.evaluate(source);
+
+  // SETTLE THE SCROLL REVEALS BEFORE MEASURING COLOUR.
+  //
+  // Every section on the Flying Dresses pages fades in on a `view()` timeline,
+  // so at scroll-top the sections below the fold legitimately sit part-way
+  // through `fd-rise` — and axe blends an ancestor's opacity into the
+  // foreground colour before testing it. It therefore measured the eyebrow in
+  // section 2 as #e3dccf on #f8f4ed, a ratio of 1.24, and reported six serious
+  // contrast violations on a page whose real colours are #614919 and #3a2e1c
+  // on #f8f4ed and pass AA comfortably.
+  //
+  // Verified before writing this: scrolling the whole page in half-viewport
+  // steps and recording each element's highest opacity, all 20 reveal
+  // elements reach 1 at both 390px and 1440px. Nothing was dim; axe was
+  // simply reading them mid-fade.
+  //
+  // Desktop hid the problem, which is the dangerous part. At exactly opacity 0
+  // axe skips an element as invisible, so the wider viewport — where the
+  // sections are further from `entry` — reported zero violations while mobile
+  // reported six. A rule that fires only at one width, on correct code, is a
+  // rule the next person learns to ignore.
+  //
+  // So contrast is measured against the state a reader actually reads: the
+  // animations are pinned to their end, scoped to this scan and reverted
+  // straight after, which leaves the screenshots and the layout detectors
+  // (they need the live animation — the pinned-caption bug was only visible
+  // mid-scroll) untouched.
+  const SETTLE_ID = "__audit_settle_reveals";
+  await page.evaluate((id) => {
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = `
+      .fd-reveal, .fd-reveal-group > *, .fd-fabric, .fd-words > span, .fd-pin-step {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+      }`;
+    document.head.appendChild(style);
+  }, SETTLE_ID);
+
   const result = (await page.evaluate(async () => {
     // @ts-expect-error injected at runtime
     return await window.axe.run(document, { resultTypes: ["violations"] });
   })) as { violations: { id: string; impact: string | null; description: string; nodes: unknown[] }[] };
+
+  await page.evaluate((id) => document.getElementById(id)?.remove(), SETTLE_ID);
 
   for (const v of result.violations) {
     const severity: Severity = v.impact === "critical" || v.impact === "serious" ? "warning" : "note";
@@ -371,7 +482,14 @@ mkdirSync(OUT, { recursive: true });
 // a 405 with no title and no <h1>, which reads exactly like a catastrophically
 // broken site rather than like a misrouted request. That cost a real debugging
 // detour; hence the bypass and the note.
-const isLocalBase = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i.test(BASE);
+//
+// `*.localhost` counts as local too. RFC 6761 reserves the whole .localhost
+// TLD for loopback, and the second brand is only reachable in `next dev` by
+// hostname — flyingdressesegypt.localhost:3000 — because the proxy routes by
+// Host header. A pattern that matched bare `localhost` only sent exactly that
+// audit through the agent proxy and reported the entire brand as 405s.
+const isLocalBase =
+  /^https?:\/\/([a-z0-9-]+\.)*(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i.test(BASE);
 const proxy = isLocalBase ? undefined : process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
 const browser: Browser = await chromium.launch({
   executablePath,
@@ -382,7 +500,7 @@ const browser: Browser = await chromium.launch({
           server: proxy,
           // Belt and braces: even against a remote base, anything local that
           // a page happens to request stays off the proxy.
-          bypass: "localhost,127.0.0.1,::1",
+          bypass: "localhost,*.localhost,127.0.0.1,::1",
         },
       }
     : {}),

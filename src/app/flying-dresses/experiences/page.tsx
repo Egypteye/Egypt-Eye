@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { packageIncludes, packages } from "@/content/flyingDresses";
 import { Scene } from "../_components/Scene";
-import { empty, location } from "../_lib/assets";
+import { agency, location } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 
 export const metadata: Metadata = fdMetadata({
@@ -14,7 +14,7 @@ export const metadata: Metadata = fdMetadata({
 
 const ART = {
   "sand-dunes": location.saharaDunes,
-  "pyramids-rooftop": empty.rooftopPortrait,
+  "pyramids-rooftop": agency.rooftopPortrait,
   fayoum: location.fayoumArchway,
 } as const;
 

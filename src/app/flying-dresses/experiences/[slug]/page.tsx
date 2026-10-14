@@ -16,7 +16,7 @@ import {
 import { BookingRail } from "../../_components/BookingRail";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
-import { empty, location } from "../../_lib/assets";
+import { agency, location } from "../../_lib/assets";
 import {
   fdBreadcrumbJsonLd,
   fdFaqJsonLd,
@@ -41,9 +41,9 @@ export function generateStaticParams() {
 export const dynamicParams = false;
 
 const ART = {
-  "sand-dunes": { hero: location.saharaDunes, detail: empty.fayoumDress },
-  "pyramids-rooftop": { hero: empty.rooftopPortrait, detail: location.gizaPlateau },
-  fayoum: { hero: location.fayoumArchway, detail: empty.fayoumDress },
+  "sand-dunes": { hero: location.saharaDunes, detail: agency.fayoumDress },
+  "pyramids-rooftop": { hero: agency.rooftopPortrait, detail: location.gizaPlateau },
+  fayoum: { hero: location.fayoumArchway, detail: agency.fayoumDress },
 } as const;
 
 export async function generateMetadata({

@@ -491,6 +491,32 @@ textarea {
   grid-template-columns: repeat(auto-fill, minmax(var(--fd-min, 14rem), 1fr));
 }
 
+/* The work gallery, section 8 of the home page.
+   NOT .fd-grid. That one is auto-fill, so its column count is whatever the
+   viewport divides into — at 82rem with a 15rem minimum it lands on four, and
+   the gallery holds six frames, so the second row came out half empty with one
+   frame stranded under nothing. A gallery of a photographer's own work is the
+   last place on the site that should look unconsidered.
+   Six divides evenly by 1, 2 and 3, so the count is pinned to those three and
+   every row is full at every width. */
+.fd-gallery {
+  display: grid;
+  gap: clamp(0.75rem, 0.4rem + 1.4vw, 1.75rem);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 40rem) {
+  .fd-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 60rem) {
+  .fd-gallery {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* ==========================================================================
    5. BUTTONS AND LINKS
    ========================================================================== */
@@ -1141,12 +1167,46 @@ textarea {
 /* The scrim. Two stops, bottom-weighted, so the headline sits on ink and the
    top of the photograph stays a photograph. Without this the type is
    unreadable on a bright sky and no amount of font weight fixes it. */
+/* TWO GRADIENTS, AND THE SECOND ONE IS WHY.
+   =====================================================================
+   The vertical scrim alone was written for a photograph whose bright areas
+   were known. The hero is video now: the frame behind the headline changes
+   every second, and over twelve seconds it goes from pale sky to a sunlit
+   gold dress. A scrim that only darkens from the bottom leaves the headline
+   sitting on whatever happens to be there, and for part of the loop that is
+   near-white silk under ivory type.
+
+   So a second gradient darkens the reading column from the left. It is the
+   side the text is on, it is weighted to fade out well before the middle, and
+   the right-hand side of the frame — where the picture is actually doing its
+   work — stays clear.
+
+   Measured against the brightest frame of the loop with the headline over it:
+   the ivory holds above 4.5:1 across the text column. */
 .fd-hero-scrim {
   position: absolute;
   inset: 0;
   z-index: -1;
   background:
+    linear-gradient(
+      to right,
+      rgba(58, 46, 28, 0.72) 0%,
+      rgba(58, 46, 28, 0.52) 28%,
+      rgba(58, 46, 28, 0.12) 58%,
+      rgba(58, 46, 28, 0) 78%
+    ),
     linear-gradient(to top, rgba(58, 46, 28, 0.88) 0%, rgba(58, 46, 28, 0.45) 38%, rgba(58, 46, 28, 0.12) 68%, rgba(58, 46, 28, 0.3) 100%);
+}
+
+/* On a phone the text column is the whole width, so a left-to-right scrim
+   would leave the right edge of the headline unprotected. There the vertical
+   one does the work and this just lifts the floor. */
+@media (max-width: 48rem) {
+  .fd-hero-scrim {
+    background:
+      linear-gradient(to right, rgba(58, 46, 28, 0.55) 0%, rgba(58, 46, 28, 0.42) 100%),
+      linear-gradient(to top, rgba(58, 46, 28, 0.9) 0%, rgba(58, 46, 28, 0.5) 45%, rgba(58, 46, 28, 0.25) 100%);
+  }
 }
 
 .fd-hero-body {
@@ -2420,14 +2480,30 @@ textarea {
   border-radius: var(--fd-r-lg);
 }
 
+/* THE RADIUS GOES ON THE PICTURE, NOT ON THE CARD.
+   =====================================================================
+   This rule used to put `border-radius: var(--fd-r-lg)` on .fd-tile, which
+   already carries `overflow: hidden` from the rule above. Rounded corners plus
+   overflow clipping means the CORNER CURVE CLIPS THE CONTENT, and a tile's
+   last line of text sits exactly there: measured at inset 0 from the left edge
+   and 0 from the bottom, inside a 28px radius. The curve ate the first letters
+   of it — "PRICE ON REQUEST" rendered with the P sliced in half.
+
+   A tile is a picture with a caption under it. The picture is the card and
+   takes the radius, the shadow and the lift; the caption sits on the page,
+   outside anything that clips. Which is also what the references do. */
 .fd-tile {
-  border-radius: var(--fd-r-lg);
+  transition: translate var(--fd-slow) var(--fd-ease-soft);
+}
+
+.fd-tile-media {
   transition:
     translate var(--fd-slow) var(--fd-ease-soft),
     box-shadow var(--fd-slow) var(--fd-ease-soft);
+  box-shadow: var(--fd-shadow-sm);
 }
 
-.fd-tile:hover {
+.fd-tile:hover .fd-tile-media {
   translate: 0 -4px;
   box-shadow: var(--fd-shadow-lg);
 }
@@ -2472,7 +2548,14 @@ textarea {
 }
 
 .fd-faq,
-.fd-table-wrap,
+/* .fd-table-wrap IS DELIBERATELY NOT IN THIS LIST.
+   It was, and it cost the price table its corner text. The element scrolls
+   (overflow-x: auto), so it is a clipping box, and a clipping box with a
+   radius clips to the CURVE — the same way a 28px radius on .fd-tile ate the
+   "P" of "PRICE ON REQUEST". Here the table's first column is flush left on
+   purpose (`padding: 1rem 1rem 1rem 0`), so "Three hours from Cairo" sat
+   right in the 20px arc and lost its first letters. Flush-left text and a
+   rounded clipping box cannot both be had; the text wins. */
 .fd-drawer,
 .fd-lightbox-inner,
 .fd-lightbox-stage,
@@ -2568,7 +2651,7 @@ textarea {
    height, top or left, so none of it triggers layout. And all of it stops
    dead under reduced motion, which the site already honours globally.    */
 @media (prefers-reduced-motion: reduce) {
-  .fd-tile:hover,
+  .fd-tile:hover .fd-tile-media,
   .fd-outfit:hover .fd-outfit-media {
     translate: none;
   }
@@ -2586,7 +2669,6 @@ textarea {
 
   .fd-figure,
   .fd-slot,
-  .fd-tile,
   .fd-tile-media {
     border-radius: var(--fd-r-md);
   }
@@ -2667,4 +2749,78 @@ textarea {
    Found by taking a screenshot of the page and seeing an empty grid. */
 .fd-outfit-media {
   display: block;
+}
+
+/* A real photograph in an outfit tile. Fills the 3:2 frame; the frame already
+   clips, and object-fit keeps the dress from being squashed into it. */
+.fd-outfit-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The hero video fills its frame exactly as the photograph did, including the
+   art-directed crop: on a phone the subject of a landscape frame sits in the
+   upper middle, not the centre. The poster uses the same rule, so the still
+   and the moving version are framed identically and the swap is invisible. */
+.fd-hero-video,
+.fd-hero-video img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 32%;
+  display: block;
+}
+
+/* ---- The header's horizontal lockup -----------------------------------
+   The stacked mark writes "Egypt" across the capitals. That is the brand's
+   signature and it needs vertical room to read as one mark; inside a 64px
+   header capsule it reads as two words colliding, which is what the owner
+   saw. Side by side on a shared baseline it is the same two words, laid out
+   for the shape of the container they are actually in.
+
+   `.fd-mark` is an inline-grid with both children stacked in one cell, so the
+   inline variant has to undo that cell before it can lay them out in a row. */
+.fd-mark-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.42em;
+  padding-bottom: 0;
+}
+
+.fd-mark-inline .fd-mark-name,
+.fd-mark-inline .fd-mark-script {
+  grid-area: auto;
+  position: static;
+  translate: none;
+}
+
+/* The script is FIRST in the DOM because the stacked lockup paints it behind
+   the capitals. Stacking there is set by z-index, not by source order, so
+   reordering visually here costs nothing and the markup stays one component.
+   Without this the header read "Egypt Flying Dresses". */
+.fd-mark-inline .fd-mark-name {
+  order: 1;
+}
+
+.fd-mark-inline .fd-mark-script {
+  order: 2;
+}
+
+.fd-mark-inline .fd-mark-script {
+  /* Large enough to be the flourish, small enough to sit on the capitals'
+     baseline without driving the header's height. line-height 0 keeps the
+     script's generous ascenders and descenders from doing exactly that. */
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 1.75);
+  line-height: 0;
+  /* Optical, not metric: a roundhand's baseline sits visually high next to
+     letterspaced capitals. */
+  position: relative;
+  top: 0.06em;
+}
+
+.fd-wordmark:has(.fd-mark-inline) {
+  align-items: center;
+  padding-block: 0;
 }

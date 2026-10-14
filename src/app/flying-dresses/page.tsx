@@ -11,6 +11,7 @@ import {
 } from "@/content/flyingDresses";
 import { dresses, mensOutfits } from "@/content/flyingDresses";
 import { Scene } from "./_components/Scene";
+import { HeroVideo } from "./_components/HeroVideo";
 import { agency, empty, location } from "./_lib/assets";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
 
@@ -43,6 +44,31 @@ export const metadata: Metadata = fdMetadata({
   description: brand.description,
 });
 
+/**
+ * THE WORK GALLERY, section 8.
+ *
+ * Declared out here rather than inline so the sentence above the grid can be
+ * counted from the same array the grid renders. The count is six because
+ * .fd-gallery is pinned to 1, 2 or 3 columns and six divides evenly by all
+ * three — the five cells this replaced sat in an auto-fill grid that landed on
+ * four columns, stranding one frame in a row of its own.
+ *
+ * `empty.couple` stays in the list on purpose. It is the one subject the
+ * agency has no photograph of, and a labelled gap is the brief's answer to
+ * that, not a stock photograph standing in for client work.
+ */
+const galleryFrames = [
+  agency.blueGownDesert,
+  agency.whiteGownDune,
+  agency.assistantAtWork,
+  agency.fayoumDress,
+  agency.rooftopPortrait,
+  empty.couple,
+];
+
+/** How many of the above are real photographs. Drives the copy, so it cannot drift. */
+const galleryOurs = galleryFrames.filter((frame) => frame.kind !== "empty").length;
+
 export default function FlyingDressesHome() {
   return (
     <>
@@ -57,15 +83,17 @@ export default function FlyingDressesHome() {
           ================================================================ */}
       <section className="fd-hero fd-on-dark">
         <div className="fd-hero-media">
-          <Scene
-            src={location.gizaPlateau.src}
-            alt={location.gizaPlateau.alt}
-            width={location.gizaPlateau.width}
-            height={location.gizaPlateau.height}
-            ratio=""
-            sizes="100vw"
-            // The one priority image on the page. This is the LCP element.
-            priority
+          {/* The owner's own footage: a gold dress on the Giza rooftop, the
+              pyramids behind it, from the Milya shoot. Twelve seconds, muted,
+              looping, and not fetched at all for anyone who asked for less
+              motion or turned Save-Data on — see HeroVideo. The poster is the
+              video's own first frame, so there is no visible swap. */}
+          <HeroVideo
+            poster="/brand/flying-dresses/hero-poster.jpg"
+            src="/brand/flying-dresses/hero.mp4"
+            srcSmall="/brand/flying-dresses/hero-small.mp4"
+            srcWebm="/brand/flying-dresses/hero.webm"
+            alt="A gold flying dress turning on a rooftop above Giza, the pyramids on the skyline behind"
           />
         </div>
         <div className="fd-hero-scrim" aria-hidden="true" />
@@ -229,7 +257,7 @@ export default function FlyingDressesHome() {
               pkg.slug === "sand-dunes"
                 ? location.saharaDunes
                 : pkg.slug === "pyramids-rooftop"
-                  ? empty.rooftopPortrait
+                  ? agency.rooftopPortrait
                   : location.fayoumArchway;
 
             return (
@@ -470,51 +498,49 @@ export default function FlyingDressesHome() {
                 What a morning looks like
               </h2>
             </div>
+            {/* COUNTED, NOT TYPED.
+                This read "Two frames here are ours" for as long as two were,
+                and stayed that way on the day four more arrived — a sentence
+                on the page disagreeing with the pictures beside it. The
+                numbers come from the gallery below now, so the claim cannot
+                drift from what is actually shown. */}
             <p className="fd-muted" style={{ margin: 0 }}>
-              Two frames here are ours. The rest of this gallery is marked as waiting for
-              photographs. We would rather show you a labelled gap than a stock photograph you
-              might mistake for our work.
+              {galleryOurs === galleryFrames.length
+                ? "Every frame here is ours, from real client mornings."
+                : `${galleryOurs} of these ${galleryFrames.length} frames are ours. The rest are marked as waiting for photographs.`}{" "}
+              We would rather show you a labelled gap than a stock photograph you might mistake
+              for our work.
             </p>
           </div>
 
-          <div className="fd-grid fd-reveal-group" style={{ ["--fd-min" as string]: "15rem" }}>
-            <figure style={{ gridRow: "span 2" }}>
-              <Scene
-                src={agency.blueGownDesert.src}
-                alt={agency.blueGownDesert.alt}
-                width={agency.blueGownDesert.width}
-                height={agency.blueGownDesert.height}
-                ratio="fd-ratio-landscape"
-                sizes="(min-width: 60rem) 30vw, 92vw"
-                drift
-              />
-              <figcaption className="fd-caption">{agency.blueGownDesert.credit}</figcaption>
-            </figure>
+          {/* ONE LIST, ONE SHAPE, EVERY CELL THE SAME.
+              This was two hand-written figures plus a mapped three, the first
+              of them carrying `gridRow: span 2`. With five cells in a
+              four-column grid that left one stranded in the second row under
+              nothing, and only the hand-written two had captions, so the rows
+              did not line up either. A gallery of a photographer's work is the
+              last place on a site that should look unconsidered.
 
-            <figure>
-              <Scene
-                src={agency.whiteGownDune.src}
-                alt={agency.whiteGownDune.alt}
-                width={agency.whiteGownDune.width}
-                height={agency.whiteGownDune.height}
-                ratio="fd-ratio-landscape"
-                sizes="(min-width: 60rem) 30vw, 92vw"
-                drift
-              />
-              <figcaption className="fd-caption">{agency.whiteGownDune.credit}</figcaption>
-            </figure>
-
-            {[empty.assistantAtWork, empty.couple, empty.fayoumDress].map((slot) => (
-              <figure key={slot.alt}>
+              Every frame is now the same 3:2 cell with a caption line under
+              it, captioned or deliberately blank, so the baselines align
+              whatever the mix of real photographs and gaps happens to be. */}
+          <div className="fd-gallery fd-reveal-group">
+            {galleryFrames.map((frame) => (
+              <figure key={frame.alt}>
                 <Scene
-                  src={slot.src}
-                  alt={slot.alt}
-                  width={slot.width}
-                  height={slot.height}
+                  src={frame.src}
+                  alt={frame.alt}
+                  width={frame.width}
+                  height={frame.height}
                   ratio="fd-ratio-landscape"
                   tone="neutral"
-                  label={slot.wanted}
+                  sizes="(min-width: 60rem) 30vw, 92vw"
+                  label={frame.wanted}
+                  drift={frame.kind !== "empty"}
                 />
+                <figcaption className="fd-caption">
+                  {frame.credit ?? (frame.kind === "empty" ? "Photograph to come" : "")}
+                </figcaption>
               </figure>
             ))}
           </div>

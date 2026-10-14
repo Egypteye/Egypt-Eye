@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Outfit } from "@/lib/booking/outfits";
+import Image from "next/image";
+import { dressPhotos } from "../_lib/dressPhotos";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -185,7 +187,7 @@ export function Wardrobe({
               <OutfitMedia outfit={outfit} />
               <p className="fd-outfit-name">{outfit.name}</p>
               <p className="fd-outfit-note">
-                {outfit.image
+                {dressPhotos[outfit.id]
                   ? "View larger"
                   : outfit.category === "mens-outfit"
                     ? "Photo on request"
@@ -222,7 +224,15 @@ export function Wardrobe({
             </div>
 
             <div className="fd-lightbox-stage">
-              {open.hex ? (
+              {dressPhotos[open.id] ? (
+                <Image
+                  src={dressPhotos[open.id].src}
+                  alt={dressPhotos[open.id].alt}
+                  width={1600}
+                  height={1067}
+                  sizes="(min-width: 64rem) 70vw, 92vw"
+                />
+              ) : open.hex ? (
                 <div
                   className="fd-lightbox-colour"
                   style={{ ["--fd-outfit-colour" as string]: open.hex }}
@@ -317,9 +327,25 @@ function FilterChip({
  * inventing one would be inventing a product attribute.
  */
 function OutfitMedia({ outfit }: { outfit: Outfit }) {
+  const photo = dressPhotos[outfit.id];
   return (
     <span className="fd-outfit-media">
-      {outfit.hex ? (
+      {photo ? (
+        // next/image, not a plain <img>, and the reason is the count: this
+        // grid is seventeen tiles at once, each rendered about 400px wide from
+        // a 1600px original. Served raw that is 2.4MB of wardrobe; resized and
+        // re-encoded per breakpoint it is a fraction of it. `sizes` is what
+        // makes that work, so it describes the real grid rather than guessing.
+        <Image
+          className="fd-outfit-photo"
+          src={photo.src}
+          alt=""
+          width={1600}
+          height={1067}
+          sizes="(min-width: 64rem) 20vw, (min-width: 48rem) 33vw, 45vw"
+          loading="lazy"
+        />
+      ) : outfit.hex ? (
         <span
           className="fd-outfit-colour"
           style={{ ["--fd-outfit-colour" as string]: outfit.hex }}

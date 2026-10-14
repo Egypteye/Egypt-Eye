@@ -41,13 +41,27 @@ import { brand } from "@/content/flyingDresses";
 export function Wordmark({
   /** "light" inverts it for the ink footer. */
   tone = "dark",
+  /**
+   * "stacked" is the signature lockup: the script written across the capitals.
+   * It needs room to be read as one mark rather than two collided words, and
+   * in a 64px header bar it does not have any — the owner's note was that it
+   * "looks ugly", and at that size it does.
+   *
+   * "inline" sets the same two words side by side on a shared baseline. It is
+   * the same mark, laid out for a horizontal bar, which is what the header is.
+   */
+  layout = "stacked",
   className = "",
 }: {
   tone?: "dark" | "light";
+  layout?: "stacked" | "inline";
   className?: string;
 }) {
   return (
-    <span className={`fd-mark fd-mark-${tone} ${className}`.trim()} aria-hidden="true">
+    <span
+      className={`fd-mark fd-mark-${tone} fd-mark-${layout} ${className}`.trim()}
+      aria-hidden="true"
+    >
       <span className="fd-mark-script">Egypt</span>
       <span className="fd-mark-name">
         {/* Spaced as individual words so the tracking is even and the line can

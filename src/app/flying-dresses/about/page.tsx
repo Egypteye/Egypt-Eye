@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { brand, contact, dresses, mensOutfits, packages } from "@/content/flyingDresses";
 import { Scene } from "../_components/Scene";
-import { agency, empty } from "../_lib/assets";
+import { agency } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 
 /**
@@ -190,13 +190,13 @@ export default function AboutPage() {
 
           <figure>
             <Scene
-              src={empty.assistantAtWork.src}
-              alt={empty.assistantAtWork.alt}
-              width={empty.assistantAtWork.width}
-              height={empty.assistantAtWork.height}
+              src={agency.assistantAtWork.src}
+              alt={agency.assistantAtWork.alt}
+              width={agency.assistantAtWork.width}
+              height={agency.assistantAtWork.height}
               ratio="fd-ratio-landscape"
               tone="neutral"
-              label={empty.assistantAtWork.wanted}
+              label={agency.assistantAtWork.wanted}
             />
           </figure>
         </div>

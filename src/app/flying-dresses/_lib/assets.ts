@@ -88,6 +88,38 @@ export const agency = {
     height: 533,
     credit: "Cherry Travel collaboration, July 2023",
   }),
+  heroRooftop: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-group.jpg",
+    alt: "Six women on the Giza rooftop with their backs to the camera, arms raised, each in a different colour, a pyramid on the skyline",
+    width: 2000,
+    height: 1333,
+    credit: "Agency shoot, supplied October 2026",
+  }),
+  rooftopPortrait: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-gold.jpg",
+    alt: "A gold dress fanned out across the Giza rooftop, the wearer facing the two pyramids",
+    width: 2000,
+    height: 1333,
+    credit: "Milya shoot, supplied October 2026",
+  }),
+  fayoumDress: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/fayoum-dress.jpg",
+    alt: "An amber dress on the shore at Fayoum, its train thrown out across the sand beside the water",
+    width: 2000,
+    height: 1333,
+    credit: "Nunu and Kassy shoot, Fayoum",
+  }),
+  assistantAtWork: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/assistant.jpg",
+    alt: "The assistant at the right of frame, mid-throw, sending the gold train up into the air behind the wearer",
+    width: 1600,
+    height: 1067,
+    credit: "Milya shoot. The assistant is visible at the right of the frame.",
+  }),
 };
 
 /**
@@ -143,45 +175,17 @@ export const location = {
  * work.
  */
 export const empty = {
-  heroRooftop: slot({
-    kind: "empty",
-    src: null,
-    alt: "A flowing dress on a Giza rooftop at first light, the pyramids across the skyline",
-    width: 1800,
-    height: 1200,
-    wanted: "A flying dress on the rooftop, pyramids behind, shot at 7am",
-  }),
-  rooftopPortrait: slot({
-    kind: "empty",
-    src: null,
-    alt: "A flying dress lifted by the wind on the rooftop above Giza",
-    width: 1800,
-    height: 1200,
-    wanted: "The rooftop shoot, dress mid-air, shot wide",
-  }),
-  fayoumDress: slot({
-    kind: "empty",
-    src: null,
-    alt: "A flying dress against the pale dunes and lake water of Fayoum",
-    width: 1800,
-    height: 1200,
-    wanted: "Fayoum: dress against white dunes and water",
-  }),
-  assistantAtWork: slot({
-    kind: "empty",
-    src: null,
-    alt: "The assistant throwing the train of a flying dress between frames",
-    width: 1800,
-    height: 1200,
-    wanted: "Behind the scenes: the assistant handling the dress",
-  }),
   couple: slot({
     kind: "empty",
     src: null,
     alt: "A couple photographed together, one in a flying dress and one in a traditional gawn",
     width: 1800,
     height: 1200,
-    wanted: "A couples' frame: dress and gawn together",
+    // Deliberately still empty. The supplied group photographs are several
+    // women together, which is a different picture and a different sale: this
+    // slot sits beside the men's wear and has to show a dress and a gawn in
+    // one frame or it is arguing for something it does not show.
+    wanted: "A couples' frame: a dress and a gawn together",
   }),
   mensGawn: slot({
     kind: "empty",
@@ -209,9 +213,26 @@ export const empty = {
   }),
 };
 
+/**
+ * The wardrobe in one photograph.
+ *
+ * Added when the owner's October 2026 shoot folder turned out to contain group
+ * frames: eight women in eight of the twelve colours, which says what the
+ * wardrobe page spends a grid of seventeen tiles saying.
+ */
+export const wardrobeLineup = slot({
+  kind: "agency",
+  src: "/photos/flying-dresses/wardrobe-lineup.jpg",
+  alt: "Eight women together on the Giza rooftop, each in a different colour from the collection",
+  width: 2000,
+  height: 1333,
+  credit: "Agency group shoot, supplied October 2026",
+});
+
 /** Everything, for the check script and the asset checklist. */
 export const allSlots: Record<string, ImageSlot> = {
   ...agency,
   ...location,
   ...empty,
+  wardrobeLineup,
 };

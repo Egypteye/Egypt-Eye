@@ -17,6 +17,7 @@
  * version. The notes under each section say what was broken to prove it.
  */
 import { readFileSync, existsSync } from "node:fs";
+import { execSync } from "node:child_process";
 import {
   addOns,
   brand,
@@ -321,9 +322,31 @@ for (const dress of FLYING_DRESS_COLLECTION) {
 //
 // Proven by pointing one slot at /photos/about/does-not-exist.jpg: red.
 // ---------------------------------------------------------------------------
+/**
+ * THE ONLY FILES THAT MAY BE CALLED THE AGENCY'S OWN WORK.
+ *
+ * This list is the point of the whole check. "agency" is a claim about
+ * provenance, and on a photography site a false one is the worst thing the
+ * code can say: it presents somebody else's picture as proof of what this
+ * business delivers. Adding a line here is therefore a deliberate act with a
+ * reason attached, never a convenience.
+ *
+ * The first two were already published on egypteyetravel.com as creator
+ * collaborations. The rest came from the owner in October 2026, from their own
+ * client shoots, through a Drive folder they shared for this purpose; the EXIF
+ * on the originals reads "egypt-eye-travel / EGYPT.EYE". The shoot each frame
+ * came from is recorded beside it in _lib/dressPhotos.ts and in the credit on
+ * the slot itself, so any one of them can be traced back.
+ */
 const AGENCY_WORK = new Set([
   "/photos/about/briana-trip-flying-dress.jpg",
   "/photos/about/cherry-travel-flying-dress.jpg",
+  "/photos/flying-dresses/rooftop-group.jpg",
+  "/photos/flying-dresses/rooftop-gold.jpg",
+  "/photos/flying-dresses/fayoum-dress.jpg",
+  "/photos/flying-dresses/assistant.jpg",
+  "/photos/flying-dresses/wardrobe-lineup.jpg",
+  "/photos/flying-dresses/fayoum-black.jpg",
 ]);
 
 for (const [key, slot] of Object.entries(allSlots)) {
@@ -353,15 +376,15 @@ for (const [key, slot] of Object.entries(allSlots)) {
   );
 
   // The important one. "agency" means "this is the business's own client
-  // work", and only two files on this deployment are. Promoting a stock
-  // location photo to agency work by editing a page is exactly what the
-  // brief forbids, and it is a one-word edit.
+  // work". Promoting a stock location photo to agency work by editing a page
+  // is exactly what the brief forbids, and it is a one-word edit.
   //
   // Proven by changing the Giza plateau slot's kind to "agency": red.
   if (slot.kind === "agency") {
     ok(
-      `image slot "${key}" claims to be the agency's own photography, but ${slot.src} is not one of the two ` +
-        "genuine flying-dress photographs on this deployment. Location photography must stay kind:\"location\".",
+      `image slot "${key}" claims to be the agency's own photography, but ${slot.src} is not on the list of ` +
+        "frames whose provenance has been established. Add it to AGENCY_WORK with a reason, or leave the slot " +
+        'as kind:"location" or kind:"empty".',
       slot.src !== null && AGENCY_WORK.has(slot.src)
     );
   }
@@ -806,6 +829,96 @@ ok(
   "the brand has no canonical URL, so every canonical tag and sitemap entry is relative",
   brand.url.startsWith("https://")
 );
+
+// ---------------------------------------------------------------------------
+// EVERY fd- CLASS THE BRAND'S PAGES USE IS ACTUALLY DEFINED IN brand.css
+//
+// This one exists because it already happened. The home page's work gallery
+// was renamed from `fd-grid` to `fd-gallery` and no rule was ever written for
+// the new name, so six figures that should have sat in a grid stacked one per
+// row, full width, down the page. Nothing caught it: TypeScript does not read
+// class strings, ESLint does not read CSS, and all 17 checks passed. The page
+// rendered, it was simply wrong — which is the exact failure mode the top of
+// this file says the whole script is for.
+//
+// A className is a string, so a typo or a half-finished rename is invisible to
+// every other tool in the project. This closes that gap: collect every fd-
+// token the brand's own .tsx files put in a className, and require each one to
+// have a definition in brand.css.
+//
+// Tokens built by interpolation cannot be checked from source text, so a
+// className containing `${` is skipped rather than guessed at.
+//
+// PROVEN, four ways, each one failure naming the right class, green restored:
+//   A  all three `.fd-gallery` rules renamed to `.fd-gallery-x`  -> red
+//   B  same, plus `.fd-gallery` added back in a comment only     -> red
+//      (B is the one that matters: the first draft of this guard read the
+//      unstripped file and B passed it, which is CLAUDE.md §4's
+//      matched-its-own-comment failure reproduced by accident.)
+//   C  the @media-only `.fd-list-2` renamed                      -> red
+//      (C is why the parser is a lookahead and not a split on `}`: the split
+//      version could not see into a media query and called fd-list-2,
+//      fd-form-2 and fd-has-sticky-cta undefined when all three are defined.)
+//   D  the className itself typo'd to `fd-galery`                -> red
+// ---------------------------------------------------------------------------
+// COMMENTS STRIPPED FIRST, AND THIS IS NOT OPTIONAL.
+// The first version of this guard read the whole file, and the explanatory
+// comment above .fd-gallery names `.fd-gallery` in prose. So the class was
+// "defined" by the comment describing it, and renaming the rule it guards left
+// the check green. That is CLAUDE.md §4's first recorded failure — a guard
+// that matched its own comment — reproduced here by accident.
+const BRAND_CSS = read("src/app/flying-dresses/brand.css").replace(
+  /\/\*[\s\S]*?\*\//g,
+  ""
+);
+
+/**
+ * Every class brand.css actually defines.
+ *
+ * Matched in SELECTOR POSITION ONLY: a class token whose next structural
+ * character is `{` rather than `;` or `}`. That is what distinguishes
+ * `.fd-gallery {` from a mention in a declaration value.
+ *
+ * The lookahead is why this is not a split on `}`. Splitting that way reads
+ * only the outermost selector of each block, so every rule nested inside a
+ * `@media` was invisible — the first version of this parser reported
+ * fd-list-2, fd-form-2 and fd-has-sticky-cta as undefined when all three are
+ * defined, just behind a breakpoint. Over half this file's rules are inside a
+ * media query, so a parser that cannot see into one is useless here.
+ */
+const definedClasses = new Set(
+  [...BRAND_CSS.matchAll(/\.(fd-[a-z0-9-]+)(?=[^{};]*\{)/g)].map((m) => m[1]!)
+);
+
+/** Every .tsx under the brand's route, which is the only place fd- classes are used. */
+const brandTsx = execSync(
+  "find src/app/flying-dresses -name '*.tsx' -type f",
+  { encoding: "utf8" }
+)
+  .trim()
+  .split("\n")
+  .filter(Boolean);
+
+const usedClasses = new Map<string, string>();
+for (const file of brandTsx) {
+  const source = read(file);
+  for (const match of source.matchAll(/className=(?:"([^"]*)"|\{`([^`]*)`\})/g)) {
+    const value = match[1] ?? match[2] ?? "";
+    if (value.includes("${")) continue;
+    for (const token of value.split(/\s+/)) {
+      if (token.startsWith("fd-") && !usedClasses.has(token)) {
+        usedClasses.set(token, file);
+      }
+    }
+  }
+}
+
+for (const [token, file] of usedClasses) {
+  ok(
+    `${file} uses the class "${token}", which brand.css never defines — the element renders unstyled`,
+    definedClasses.has(token)
+  );
+}
 
 // ---------------------------------------------------------------------------
 // Report.

@@ -93,7 +93,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
               className="fd-wordmark-img"
             />
           ) : (
-            <Wordmark />
+            <Wordmark layout="inline" />
           )}
         </Link>
 
