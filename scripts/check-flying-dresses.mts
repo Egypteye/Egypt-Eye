@@ -978,6 +978,41 @@ for (const claim of NO_PHOTO_CLAIMS) {
 }
 
 // ---------------------------------------------------------------------------
+// THE STICKY BAR'S CONTEXT COMES FROM THE CATALOGUE, NOT FROM THE URL
+//
+// The phone action bar is the only call to action visible on a phone, so it is
+// the most-used enquiry path on the site. It lives in the layout, which means
+// no page can hand it a prop and the route is the only thing it can read.
+//
+// The tempting version of that is to slice the slug out of the pathname and
+// interpolate it into /enquire?package=<slug>. That turns the address bar into
+// an input: /experiences/anything-at-all would produce a link to a package
+// that does not exist, and a renamed product would keep generating links to
+// its old slug forever. /enquire already resolves its query against the
+// catalogue for exactly this reason, and the bar that feeds it must do the
+// same, so an unknown route degrades to the generic enquiry.
+//
+// Proven by replacing the `packages.find` lookup with a pathname slice: red.
+// Restored: green.
+// ---------------------------------------------------------------------------
+const STICKY_SRC = read("src/app/flying-dresses/_components/StickyEnquire.tsx")
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/^\s*\/\/.*$/gm, "");
+
+ok(
+  "StickyEnquire does not resolve the route against `packages`, so its enquiry link can name a package that does not exist",
+  /packages\.find\(/.test(STICKY_SRC)
+);
+ok(
+  "StickyEnquire does not resolve the route against `rentalServices`, so its enquiry link can name a service that does not exist",
+  /rentalServices\.find\(/.test(STICKY_SRC)
+);
+ok(
+  "StickyEnquire interpolates the pathname straight into an /enquire link — the address bar is not a product id",
+  !/enquire\?[^`"']*\$\{\s*pathname/.test(STICKY_SRC)
+);
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
