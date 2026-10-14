@@ -18,7 +18,15 @@ import { chromium } from "playwright-core";
 
 const BASE = process.env.SMOKE_BASE || "http://localhost:3000";
 const URL = `${BASE}/boutique/cartouches`;
-const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || "/opt/pw-browsers/chromium" });
+// Same launch arguments as scripts/visual-audit.mts: the cloud sandbox reaches
+// the public internet only through an inspecting proxy.
+const proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+const b = await chromium.launch({
+  executablePath: process.env.CHROME_PATH || "/opt/pw-browsers/chromium",
+  args: ["--ignore-certificate-errors"],
+  // localhost must bypass it, or a local run never reaches the dev server.
+  ...(proxy ? { proxy: { server: proxy, bypass: "localhost,127.0.0.1,::1" } } : {}),
+});
 const p = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
 const fails = [];
 const ok = (label, cond) => { console.log(`${cond ? "PASS" : "FAIL"}  ${label}`); if (!cond) fails.push(label); };
@@ -56,6 +64,37 @@ ok("a card explains what a sign is a picture of", /A picture of/.test(body));
 ok("no card claims a sign means an English letter", !/means the letter|letter “?[a-z]”? in hieroglyph/i.test(body));
 ok("no price or checkout appears in the panel", !/\$\d|USD|EGP|add to (cart|basket)/i.test(body));
 ok("the panel says the layout is not final", /not a proof/i.test(body));
+
+// The one thing no string match can prove: that the signs actually PAINT.
+// Before the webfont was wired every glyph here was an empty box, and the
+// markup looked identical. document.fonts.check asks the browser directly.
+const fontLoaded = await p.evaluate(async () => {
+  await document.fonts.ready;
+  const el = document.querySelector(".font-hieroglyph");
+  if (!el) return { ok: false, why: "no .font-hieroglyph element" };
+  const family = getComputedStyle(el).fontFamily;
+  const first = family.split(",")[0].trim().replace(/^["']|["']$/g, "");
+  return { ok: document.fonts.check(`24px "${first}"`, "\u{13171}"), family };
+});
+ok(`a real hieroglyph face is loaded (${fontLoaded.family ?? fontLoaded.why})`, fontLoaded.ok === true);
+
+// And that the sign is not being drawn as a missing-glyph box: a tofu box is
+// a different width from the quail chick, so compare against a character the
+// face definitely lacks.
+const painted = await p.evaluate(() => {
+  const mk = (ch, font) => {
+    const s = document.createElement("span");
+    s.textContent = ch;
+    s.style.cssText = `position:absolute;visibility:hidden;font-size:64px;font-family:${font}`;
+    document.body.appendChild(s);
+    const w = s.getBoundingClientRect().width;
+    s.remove();
+    return w;
+  };
+  const face = getComputedStyle(document.querySelector(".font-hieroglyph")).fontFamily;
+  return { glyph: mk("\u{13171}", face), tofu: mk("\u{13171}", "monospace") };
+});
+ok(`the sign is drawn by the face, not a fallback box (${painted.glyph} vs ${painted.tofu})`, painted.glyph !== painted.tofu);
 
 // ---- 2. carry into the enquiry ------------------------------------------
 ok("the enquiry field starts empty", (await field.inputValue()) === "");
