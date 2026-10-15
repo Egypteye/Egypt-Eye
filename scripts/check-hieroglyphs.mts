@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import { ALL_SIGNS, spellName, glyphString, CARTOUCHE_CAPACITY } from "../src/lib/hieroglyphs/signs";
+import { ALL_SIGNS, spellName, glyphString, CARTOUCHE_CAPACITY, SYMBOLS, UNREADABLE } from "../src/lib/hieroglyphs/signs";
 
 /**
  * Guards the hieroglyph data, and one mistake in particular.
@@ -22,7 +22,6 @@ const EXPECTED: ReadonlyArray<readonly [string, number]> = [
   ["G1", 0x1313F],
   ["M17", 0x131CB],
   ["M17a", 0x131CC],
-  ["D36", 0x1309D],
   ["G43", 0x13171],
   ["D58", 0x130C0],
   ["Q3", 0x132AA],
@@ -31,7 +30,6 @@ const EXPECTED: ReadonlyArray<readonly [string, number]> = [
   ["N35", 0x13216],
   ["D21", 0x1308B],
   ["O4", 0x13254],
-  ["V28", 0x1339B],
   ["O34", 0x13283],
   ["S29", 0x132F4],
   ["N37", 0x13219],
@@ -42,6 +40,9 @@ const EXPECTED: ReadonlyArray<readonly [string, number]> = [
   ["D46", 0x130A7],
   ["I10", 0x13193],
   ["E23", 0x130ED],
+  ["V4", 0x1336F],
+  ["V13", 0x1337F],
+  ["Aa1", 0x1340D],
 ];
 
 const errors: string[] = [];
@@ -84,8 +85,8 @@ for (const letter of "abcdefghijklmnopqrstuvwxyz") {
 }
 // X is written with two signs, which is the whole reason the counter counts
 // signs rather than letters.
-ok("X is written with two signs, not one", spellName("x").signCount === 2);
-ok("a four-letter name containing X needs five signs", spellName("maxi").signCount === 5);
+ok("X is one sign, as the card groups C, K and X together", spellName("x").signCount === 1);
+ok("C, K and X all draw the same sign", glyphString(spellName("c")) === glyphString(spellName("k")) && glyphString(spellName("k")) === glyphString(spellName("x")));
 
 // ---------------------------------------------------------------------------
 // 4. Nothing is dropped silently.
@@ -117,9 +118,50 @@ ok("\u00fc folds to u", glyphString(spellName("M\u00fcller")) === glyphString(sp
 ok("a digit IS still reported", spellName("Ana 7").unsupported.join("") === "7");
 
 // ---------------------------------------------------------------------------
+// 5c. The workshop's card, which outranks the textbook.
+//
+//     SH, TH and KH are ONE sign each on their chart. Spelling them as two
+//     would draw the wrong signs and overstate how much room a name needs —
+//     the difference between a name that fits and one that does not.
+// ---------------------------------------------------------------------------
+ok("SH is one sign, not S then H", spellName("sh").signCount === 1);
+ok("TH is one sign, not T then H", spellName("th").signCount === 1);
+ok("KH is one sign, not K then H", spellName("kh").signCount === 1);
+ok("SH draws the pool, not the folded cloth", glyphString(spellName("sh")) === "\u{13219}");
+ok("TH draws the tethering rope", glyphString(spellName("th")) === "\u{1337F}");
+ok("KH draws the lined disc", glyphString(spellName("kh")) === "\u{1340D}");
+ok("Sharon is five signs, not six", spellName("Sharon").signCount === 5);
+ok("a digraph is reported as one letter", spellName("Sharon").letters[0]?.mapping?.letter === "SH");
+// A digraph must not swallow a letter pair that only looks like one.
+ok("the S in Sahar is still a plain S", spellName("Sahar").letters[0]?.mapping?.letter === "S");
+ok("a trailing S is not left waiting for an H", spellName("as").signCount === 2);
+
+// The card's O is the lasso and its I is the doubled reed. Both differ from
+// what a textbook alone would give, and the card is what gets engraved.
+ok("O is the lasso", glyphString(spellName("o")) === "\u{1336F}");
+ok("O is not the quail chick", glyphString(spellName("o")) !== "\u{13171}");
+ok("I is the doubled reed", glyphString(spellName("i")) === "\u{131CC}");
+ok("I and Y draw the same sign, as the card shows", glyphString(spellName("i")) === glyphString(spellName("y")));
+ok("E is still the single reed", glyphString(spellName("e")) === "\u{131CB}");
+
+// The workshop's own readings are quoted, never invented. Their card has no
+// entry for Q, so Q must carry no meaning rather than a made-up one.
+const everyLetter = "abcdefghijklmnopqrstuvwxyz".split("");
+const withMeaning = everyLetter.filter((c) => spellName(c).letters[0]?.mapping?.meaning);
+ok("most letters carry the workshop's reading", withMeaning.length === 25);
+ok("Q carries no invented meaning", spellName("q").letters[0]?.mapping?.meaning === undefined);
+ok("M quotes the card verbatim, typo and all", spellName("m").letters[0]?.mapping?.meaning === "Wise Persone");
+ok("every mapping records that it came from the card", everyLetter.every((c) => spellName(c).letters[0]?.mapping?.source === "workshop-card"));
+
+// The one sign on the card that could not be read is named, not guessed.
+ok("the unreadable sign is declared", UNREADABLE.some((u) => u.label === "CH"));
+ok("CH falls back to two signs rather than inventing one", spellName("ch").signCount === 2);
+ok("the symbols are listed but never written into a name", SYMBOLS.length === 3 && !glyphString(spellName("ankh")).includes(SYMBOLS[0].glyph));
+
+// ---------------------------------------------------------------------------
 // 6. A known spelling, end to end.
 // ---------------------------------------------------------------------------
-ok("OMAR spells quail-owl-vulture-mouth", glyphString(spellName("Omar")) === "\u{13171}\u{13153}\u{1313F}\u{1308B}");
+ok("OMAR spells lasso-owl-vulture-mouth", glyphString(spellName("Omar")) === "\u{1336F}\u{13153}\u{1313F}\u{1308B}");
 
 // ---------------------------------------------------------------------------
 // 7. The wiring. The panel is reachable, and the spelling the workshop
@@ -158,6 +200,10 @@ ok(
   !/USD|EGP|\$\d|\bprices?\b|\bcost\b|add to (cart|basket)|buy now/i.test(studio),
 );
 ok("the studio says the layout is not final", /not a proof|workshop sets the final layout/i.test(studio));
+// The workshop's readings are folklore the shop sells, not Egyptology. The
+// panel must show them as the workshop's, never as what the sign means.
+ok("the workshop's readings are attributed to the workshop", /The workshop reads this as/.test(studio));
+ok("a reading is never presented as the sign's meaning", !/\{meaning\}<\/strong>|means <|the sign means/i.test(studio));
 
 // ---------------------------------------------------------------------------
 // 8. The font. Almost nothing ships a face covering U+13000 — Windows has

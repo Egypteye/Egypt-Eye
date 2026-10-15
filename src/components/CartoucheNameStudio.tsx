@@ -58,8 +58,8 @@ export function CartoucheNameStudio({ capacity = CARTOUCHE_CAPACITY }: { capacit
         </h2>
         <p className="mt-2 max-w-2xl text-sm leading-relaxed text-ink-soft">
           Hieroglyphs follow sound rather than spelling, the same way Egyptian scribes wrote foreign
-          names like Ptolemy and Cleopatra. Type a name to see which signs it uses and what each one
-          is a picture of.
+          names like Ptolemy and Cleopatra. Type a name to see which signs it uses, what each one is
+          a picture of, and how our workshop in Luxor reads it.
         </p>
       </div>
 
@@ -210,7 +210,7 @@ function LetterRow({ entry }: { entry: SpelledLetter }) {
     );
   }
 
-  const { letter, signs, caveat } = entry.mapping;
+  const { letter, signs, caveat, meaning } = entry.mapping;
   return (
     <li className="flex gap-3 rounded-xl border border-black/5 bg-sand px-3 py-2.5">
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-gold/15 font-display text-lg font-semibold text-ink">
@@ -229,6 +229,14 @@ function LetterRow({ entry }: { entry: SpelledLetter }) {
         <p className="mt-1 text-xs leading-relaxed text-ink-soft">
           {signs.map((s) => `A picture of ${s.depicts}. ${s.note}`).join(" ")}
         </p>
+        {meaning && (
+          // The workshop's own reading, off their card. Not Egyptology, not a
+          // translation, and labelled so nobody mistakes it for either.
+          <p className="mt-1.5 text-[11px] leading-relaxed text-ink-soft">
+            <span className="font-semibold text-gold-dark">The workshop reads this as:</span>{" "}
+            <span className="italic">{meaning}</span>
+          </p>
+        )}
         {caveat && (
           <p className="mt-1.5 rounded-lg bg-sand-deep/50 px-2.5 py-1.5 text-[11px] leading-relaxed text-ink-soft">
             {caveat}
