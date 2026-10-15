@@ -20,12 +20,15 @@ const BASE = process.env.SMOKE_BASE || "http://localhost:3000";
 const URL = `${BASE}/boutique/cartouches`;
 // Same launch arguments as scripts/visual-audit.mts: the cloud sandbox reaches
 // the public internet only through an inspecting proxy.
-const proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+// Only for a run against the public site. Routing a localhost run through
+// the sandbox proxy makes the dev server unreachable, and the failure looks
+// exactly like a broken page.
+const isLocal = /^https?:\/\/(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/.test(BASE);
+const proxy = isLocal ? null : process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
 const b = await chromium.launch({
   executablePath: process.env.CHROME_PATH || "/opt/pw-browsers/chromium",
   args: ["--ignore-certificate-errors"],
-  // localhost must bypass it, or a local run never reaches the dev server.
-  ...(proxy ? { proxy: { server: proxy, bypass: "localhost,127.0.0.1,::1" } } : {}),
+  ...(proxy ? { proxy: { server: proxy } } : {}),
 });
 const p = await (await b.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
 const fails = [];
@@ -44,7 +47,10 @@ await p.waitForFunction(() => {
   const el = document.querySelector('[role="img"][aria-label*="cartouche"], [role="img"][aria-label*="hieroglyphic"]');
   return Boolean(el);
 }, null, { timeout: 60000 });
-const oval = p.locator('[role="img"]').filter({ hasNot: p.locator("x-none") }).first();
+// The cartouche is an <svg>, not an HTML element, so its signs are read
+// with textContent rather than innerText.
+const oval = p.locator('svg[role="img"]').first();
+const ovalText = () => oval.evaluate((el) => (el.textContent || "").replace(/\s/g, ""));
 const typeName = async (v) => {
   for (let i = 0; i < 3; i++) {
     await input.fill(v);
@@ -55,7 +61,7 @@ const typeName = async (v) => {
 
 // ---- 1. a name that fits -------------------------------------------------
 await typeName("Omar");
-ok("Omar renders the four expected signs", (await oval.innerText()).replace(/\s/g, "") === "\u{13171}\u{13153}\u{1313F}\u{1308B}");
+ok("Omar renders the four expected signs", (await ovalText()) === "\u{1336F}\u{13153}\u{1313F}\u{1308B}");
 ok("the counter reads 4 of 4", (await p.getByText(/^4 of 4 signs$/).count()) === 1);
 const cards = await p.locator("li").filter({ hasText: /read as/ }).count();
 ok("one card per letter (4)", cards === 4);
@@ -114,7 +120,25 @@ const over = await p.locator("section[aria-labelledby=cartouche-studio]").innerT
 ok("over capacity is stated, not hidden", /is more than one cartouche holds/.test(over));
 ok("the real sign count is shown", /7 of 4 signs/.test(over));
 ok("nothing claims it fits", !/Mohamed fits/i.test(over));
-ok("the glyphs are still shown in full", (await oval.innerText()).replace(/\s/g, "").length >= 7);
+ok("the glyphs are still shown in full", [...(await ovalText())].length === 7);
+
+// The arithmetic check proves the LINE BOXES fit. Only a real browser knows
+// how tall the drawn glyphs actually are, so measure them against the rope.
+const overflow = await p.evaluate(() => {
+  const svg = document.querySelector('svg[role="img"]');
+  const loop = svg.querySelector("rect");
+  const box = loop.getBBox();
+  const bad = [];
+  for (const t of svg.querySelectorAll("text")) {
+    const b = t.getBBox();
+    if (b.x < box.x || b.y < box.y || b.x + b.width > box.x + box.width || b.y + b.height > box.y + box.height) {
+      bad.push({ ch: t.textContent, x: Math.round(b.x), y: Math.round(b.y), w: Math.round(b.width), h: Math.round(b.height) });
+    }
+  }
+  return { bad, loop: { x: box.x, y: box.y, w: box.width, h: box.height } };
+});
+ok(`seven signs stay inside the rope (${overflow.bad.length} outside)`, overflow.bad.length === 0);
+if (overflow.bad.length) console.log("  overflowing:", JSON.stringify(overflow.bad));
 
 // ---- 4. an unwritable character ----------------------------------------
 // z IS writable (the door bolt), so a name with z must NOT report an error.

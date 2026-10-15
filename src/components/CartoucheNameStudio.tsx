@@ -1,9 +1,9 @@
 "use client";
 
 import { useId, useMemo, useState } from "react";
+import { CARTOUCHE_VIEWBOX, LOOP, TIE_Y, signFontSize, signPositions } from "@/lib/hieroglyphs/cartoucheLayout";
 import {
   CARTOUCHE_CAPACITY,
-  glyphString,
   spellName,
   type SpelledLetter,
 } from "@/lib/hieroglyphs/signs";
@@ -63,7 +63,7 @@ export function CartoucheNameStudio({ capacity = CARTOUCHE_CAPACITY }: { capacit
         </p>
       </div>
 
-      <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+      <div className="grid gap-6 p-6 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
         {/* ---------------------------------------------------------------- */}
         {/* Input + the cartouche itself                                     */}
         {/* ---------------------------------------------------------------- */}
@@ -89,7 +89,7 @@ export function CartoucheNameStudio({ capacity = CARTOUCHE_CAPACITY }: { capacit
             />
           </div>
 
-          <Cartouche spelling={spelling} />
+          <Cartouche spelling={spelling} over={over} />
 
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p
@@ -171,29 +171,100 @@ export function CartoucheNameStudio({ capacity = CARTOUCHE_CAPACITY }: { capacit
   );
 }
 
-/** The oval itself — a shen loop, which is what a cartouche actually is. */
-function Cartouche({ spelling }: { spelling: ReturnType<typeof spellName> }) {
-  const glyphs = glyphString(spelling);
+/**
+ * The cartouche itself — upright, as the workshop makes it.
+ *
+ * Drawn as SVG rather than a CSS pill so the proportions and the knot at the
+ * foot are exact rather than approximated. A cartouche is a loop of rope laid
+ * around a name with the ends tied off at the bottom; the tie is the detail
+ * that makes it read as a piece of jewellery instead of a rounded rectangle,
+ * and it is the first thing lost when this is built out of border-radius.
+ *
+ * Signs stack top to bottom, which is how a vertical cartouche is actually
+ * read, and the type size is computed from how many there are so a one-sign
+ * name and a four-sign name both sit comfortably inside the same shape.
+ */
+
+function Cartouche({ spelling, over }: { spelling: ReturnType<typeof spellName>; over: boolean }) {
+  const signs = spelling.signs;
+  const size = signFontSize(signs.length);
+  const centres = signPositions(signs.length);
+
   return (
-    <div className="flex items-center justify-center rounded-2xl bg-gradient-to-b from-sand-deep to-sand-dim px-4 py-8">
-      <div
-        className="relative flex min-h-28 min-w-44 items-center justify-center rounded-full border-[3px] border-gold-dark bg-cream px-7 py-5"
+    <div className="flex items-center justify-center rounded-2xl bg-gradient-to-b from-sand-deep to-sand-dim px-4 py-6">
+      <svg
+        viewBox={`0 0 ${CARTOUCHE_VIEWBOX.w} ${CARTOUCHE_VIEWBOX.h}`}
+        className="h-[clamp(15rem,42vw,20rem)] w-auto"
         role="img"
         aria-label={
-          glyphs
-            ? `Your name written with ${spelling.signCount} hieroglyphic signs`
+          signs.length
+            ? `Your name written with ${signs.length} hieroglyphic signs, inside a cartouche`
             : "An empty cartouche"
         }
       >
-        <span className="font-hieroglyph select-none text-3xl leading-tight tracking-[0.1em] text-ink sm:text-4xl">
-          {glyphs || <span className="text-ink-soft/30">— — —</span>}
-        </span>
-        {/* The bar across the foot of the loop, which closes the rope. */}
-        <span
-          aria-hidden
-          className="absolute -bottom-[3px] left-1/2 h-[3px] w-12 -translate-x-1/2 rounded-full bg-gold-dark"
+        {/* The rope loop. */}
+        <rect
+          x={LOOP.x}
+          y={LOOP.y}
+          width={LOOP.w}
+          height={LOOP.h}
+          rx={LOOP.r}
+          fill="var(--color-cream)"
+          stroke={over ? "var(--color-terracotta)" : "var(--color-gold-dark)"}
+          strokeWidth={3}
         />
-      </div>
+        {/* The ends of the rope, tied off below the loop. */}
+        <line
+          x1={18}
+          y1={TIE_Y}
+          x2={102}
+          y2={TIE_Y}
+          stroke={over ? "var(--color-terracotta)" : "var(--color-gold-dark)"}
+          strokeWidth={3}
+          strokeLinecap="round"
+        />
+        <g stroke={over ? "var(--color-terracotta)" : "var(--color-gold-dark)"} strokeWidth={2}>
+          <rect
+            x={52}
+            y={TIE_Y - 9}
+            width={16}
+            height={18}
+            fill="var(--color-cream)"
+            strokeWidth={2.5}
+          />
+          {/* The binding across the knot. */}
+          {[56, 60, 64].map((x) => (
+            <line key={x} x1={x} y1={TIE_Y - 7} x2={x} y2={TIE_Y + 7} strokeWidth={1.4} />
+          ))}
+        </g>
+
+        {signs.length === 0 ? (
+          <text
+            x={CARTOUCHE_VIEWBOX.w / 2}
+            y={CARTOUCHE_VIEWBOX.h / 2}
+            textAnchor="middle"
+            dominantBaseline="central"
+            className="fill-ink-soft/25 font-display"
+            fontSize={26}
+          >
+            — —
+          </text>
+        ) : (
+          signs.map((sign, i) => (
+            <text
+              key={`${sign.gardiner}-${i}`}
+              x={CARTOUCHE_VIEWBOX.w / 2}
+              y={centres[i]}
+              textAnchor="middle"
+              dominantBaseline="central"
+              fontSize={size}
+              className="font-hieroglyph fill-ink"
+            >
+              {sign.glyph}
+            </text>
+          ))
+        )}
+      </svg>
     </div>
   );
 }

@@ -1,4 +1,11 @@
 import { readFileSync } from "node:fs";
+import {
+  CARTOUCHE_VIEWBOX,
+  LOOP,
+  TIE_Y,
+  fitsInsideLoop,
+  signFontSize,
+} from "../src/lib/hieroglyphs/cartoucheLayout";
 import { ALL_SIGNS, spellName, glyphString, CARTOUCHE_CAPACITY, SYMBOLS, UNREADABLE } from "../src/lib/hieroglyphs/signs";
 
 /**
@@ -199,6 +206,8 @@ ok(
   "the studio names no price and offers no checkout",
   !/USD|EGP|\$\d|\bprices?\b|\bcost\b|add to (cart|basket)|buy now/i.test(studio),
 );
+ok("the cartouche is drawn as SVG, not a CSS pill", /viewBox=\{`0 0 \$\{CARTOUCHE_VIEWBOX\.w\}/.test(studio));
+ok("the tie at the foot of the rope is drawn", /TIE_Y/.test(studio) && /<line/.test(studio));
 ok("the studio says the layout is not final", /not a proof|workshop sets the final layout/i.test(studio));
 // The workshop's readings are folklore the shop sells, not Egyptology. The
 // panel must show them as the workshop's, never as what the sign means.
@@ -228,16 +237,40 @@ ok("the variable reaches the document", /notoHieroglyphs\.variable/.test(layout)
 ok("a .font-hieroglyph rule exists", /\.font-hieroglyph \{[\s\S]{0,300}?var\(--font-hieroglyph\)/.test(css));
 // Both places that print a sign must carry the class. The oval alone passing
 // would leave every explanation card as tofu.
-const glyphRenders = studio.match(/\{glyphs \|\||\{signs\.map\(\(s\) => s\.glyph\)/g) ?? [];
+const glyphRenders = studio.match(/\{sign\.glyph\}|\{signs\.map\(\(s\) => s\.glyph\)/g) ?? [];
 ok("both sign renderings exist", glyphRenders.length === 2);
 ok(
   "the cartouche itself uses the face",
-  /className="font-hieroglyph[^"]*"[\s\S]{0,200}?\{glyphs \|\|/.test(studio),
+  /className="font-hieroglyph[^"]*"[\s\S]{0,120}?\{sign\.glyph\}/.test(studio),
 );
 ok(
   "the explanation cards use the face",
   /className="font-hieroglyph[^"]*"[\s\S]{0,300}?\{signs\.map\(\(s\) => s\.glyph\)/.test(studio),
 );
+
+// ---------------------------------------------------------------------------
+// 9. The shape, and the promise that nothing spills out of it.
+//
+//    The cartouche is upright because the workshop's card is, and the signs
+//    stack top to bottom the way a vertical cartouche is really read. The
+//    sizing is arithmetic, so prove it rather than eyeballing a screenshot:
+//    a seven-sign name must shrink to fit, never overflow, and never be
+//    quietly cut down to four.
+// ---------------------------------------------------------------------------
+ok("the loop is upright, not lying on its side", CARTOUCHE_VIEWBOX.h > CARTOUCHE_VIEWBOX.w * 2.5);
+ok("the rope ends are true semicircles", LOOP.r * 2 === LOOP.w);
+ok("the tie sits below the loop", TIE_Y > LOOP.y + LOOP.h);
+
+for (let n = 1; n <= 12; n += 1) {
+  ok(`${n} sign(s) stay inside the rope`, fitsInsideLoop(n));
+}
+ok("more signs means smaller signs, never larger", signFontSize(7) < signFontSize(4));
+ok("a short name does not swell to fill the loop", signFontSize(1) === signFontSize(3));
+ok("a sign always has a size", signFontSize(1) > 0);
+ok("an empty name draws nothing", signFontSize(0) === 0);
+// The honest half of "never overflows": an over-long name keeps every sign.
+ok("an over-long name keeps all its signs", spellName("Mohamed").signs.length === 7);
+ok("nothing is trimmed to the capacity", spellName("Mohamed").letters.length === 7);
 
 if (errors.length > 0) {
   console.error(`\ncheck-hieroglyphs: ${errors.length} failure(s)\n`);
