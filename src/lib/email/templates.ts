@@ -1860,3 +1860,137 @@ export function boutiqueOrderTeamEmail(order: BoutiqueOrderFacts) {
 
   return { subject: `PAID — cartouche for ${order.engravedName} (${order.reference})`, html, text };
 }
+
+// ---------------------------------------------------------------------------
+// Private shop visit
+//
+// A REQUEST, never an appointment. Nobody has supplied the shop's opening
+// hours, so neither of these may say a time, and both say in words that a
+// person confirms afterwards. The team's copy carries the map pins; the
+// customer's does not, because we have not claimed a partnership with any
+// of those shops.
+// ---------------------------------------------------------------------------
+
+export type ShopVisitFacts = {
+  reference: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  areaName: string;
+  mapUrls: string[];
+  preferredDate?: string | null;
+  preferredTime?: string | null;
+  visitors: number;
+  interests: string[];
+  notes?: string | null;
+};
+
+const VISIT_NOT_CONFIRMED =
+  "This is a request, not a booking. Nothing is held and no time is confirmed until one of our team comes back to you.";
+
+export function shopVisitCustomerEmail(v: ShopVisitFacts) {
+  const first = v.name.split(" ")[0] || v.name;
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  const html = baseLayout({
+    preheader: `We have your request to visit the shop — ${v.reference}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(first)},</p>
+      <p style="margin:0 0 16px;"><strong>We have your request to come and smell the collection.</strong></p>
+      <p style="margin:0 0 16px;">${escapeHtml(VISIT_NOT_CONFIRMED)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("Where", v.areaName)}
+        ${v.preferredDate ? row("You asked for", v.preferredDate) : ""}
+        ${v.preferredTime ? row("Time", v.preferredTime) : ""}
+        ${row("How many of you", String(v.visitors))}
+        ${v.interests.length > 0 ? row("Interested in", v.interests.join(", ")) : ""}
+        ${row("Reference", v.reference)}
+      </table>
+      <p style="margin:0 0 16px;">Bring nothing and buy nothing. An hour is enough to work through a range properly, and you only take home what you actually liked on your own skin.</p>
+    `,
+    footerHtml: `Quote ${escapeHtml(v.reference)} if you reply. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${first},`,
+    "",
+    "We have your request to come and smell the collection.",
+    "",
+    VISIT_NOT_CONFIRMED,
+    "",
+    `Where: ${v.areaName}`,
+    v.preferredDate ? `You asked for: ${v.preferredDate}` : "",
+    v.preferredTime ? `Time: ${v.preferredTime}` : "",
+    `How many of you: ${v.visitors}`,
+    v.interests.length > 0 ? `Interested in: ${v.interests.join(", ")}` : "",
+    `Reference: ${v.reference}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Your shop visit request — ${v.reference}`, html, text };
+}
+
+export function shopVisitTeamEmail(v: ShopVisitFacts) {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  const html = baseLayout({
+    preheader: `Shop visit request — ${v.areaName}, ${v.visitors} visitor(s).`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;"><strong>Somebody wants to come and smell the oils.</strong> Nothing is confirmed — one of us needs to come back with a time.</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("Where", v.areaName)}
+        ${v.preferredDate ? row("Preferred date", v.preferredDate) : ""}
+        ${v.preferredTime ? row("Preferred time", v.preferredTime) : ""}
+        ${row("Visitors", String(v.visitors))}
+        ${v.interests.length > 0 ? row("Wants to explore", v.interests.join(", ")) : ""}
+        ${row("Name", v.name)}
+        ${row("Email", v.email)}
+        ${v.phone ? row("Phone / WhatsApp", v.phone) : ""}
+        ${row("Reference", v.reference)}
+      </table>
+      ${
+        v.notes
+          ? `<p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Their note</p><p style="margin:0 0 16px;">${escapeHtml(
+              v.notes
+            )}</p>`
+          : ""
+      }
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Shops in this area</p>
+      <ul style="margin:0 0 16px;padding-left:18px;">
+        ${v.mapUrls
+          .map((u) => `<li style="margin:0 0 6px;"><a href="${escapeHtml(u)}">${escapeHtml(u)}</a></li>`)
+          .join("")}
+      </ul>
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — shop visit ${escapeHtml(v.reference)}.`,
+  });
+
+  const text = [
+    "Somebody wants to come and smell the oils. Nothing is confirmed.",
+    "",
+    `Where: ${v.areaName}`,
+    v.preferredDate ? `Preferred date: ${v.preferredDate}` : "",
+    v.preferredTime ? `Preferred time: ${v.preferredTime}` : "",
+    `Visitors: ${v.visitors}`,
+    v.interests.length > 0 ? `Wants to explore: ${v.interests.join(", ")}` : "",
+    `Name: ${v.name}`,
+    `Email: ${v.email}`,
+    v.phone ? `Phone / WhatsApp: ${v.phone}` : "",
+    `Reference: ${v.reference}`,
+    v.notes ? `\nTheir note: ${v.notes}` : "",
+    "",
+    "Shops in this area:",
+    ...v.mapUrls.map((u) => `  ${u}`),
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Shop visit request — ${v.areaName} (${v.reference})`, html, text };
+}

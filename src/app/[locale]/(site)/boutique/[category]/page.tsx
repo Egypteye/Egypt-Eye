@@ -14,7 +14,8 @@ import { TourCard } from "@/components/TourCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
 import { treasureCategories, TREASURES_PATH } from "@/content/treasures";
-import { SHOPPING_TOURS_PATH } from "@/content/shoppingTours";
+import { SHOPPING_TOURS_PATH, visitAreas } from "@/content/shoppingTours";
+import { ShopVisitForm } from "@/components/ShopVisitForm";
 import { getTreasureCategories, getTreasureProducts } from "@/sanity/fetchers";
 import { availabilityLabel, cardPrice, ctaForStatus, isOrderable, statusLabel } from "@/lib/treasureDisplay";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata } from "@/content/seo";
@@ -403,6 +404,33 @@ export default async function TreasureCategoryPage({
           </Reveal>
         </Container>
       </section>
+
+      {/* Come and smell them. Offered only where the category has an
+          in-person path, which is where choosing in person is genuinely the
+          better answer rather than a second form. */}
+      {category.inEgypt && (
+        <section id="visit" className="scroll-mt-24 border-t border-black/5 py-16">
+          <Container className="mx-auto max-w-3xl">
+            <Reveal>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
+                <T>In person</T>
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-semibold text-ink">
+                <T>Book a private shop visit</T>
+              </h2>
+              <p className="mt-3 leading-relaxed text-ink-soft">
+                <T>
+                  No description of a fragrance survives contact with your own nose. Tell us when you are free
+                  and we will arrange an hour with someone who knows the range.
+                </T>
+              </p>
+            </Reveal>
+            <div className="mt-8 rounded-3xl border border-black/5 bg-cream p-6 sm:p-8">
+              <ShopVisitForm areas={visitAreas.map((a) => ({ slug: a.slug, name: a.name, blurb: a.blurb }))} />
+            </div>
+          </Container>
+        </section>
+      )}
 
       {/* Shopping tours — offered where the category is something you would
           genuinely want to choose in person, and pointing at a real page

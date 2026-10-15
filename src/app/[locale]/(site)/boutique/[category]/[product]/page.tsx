@@ -225,6 +225,11 @@ export default async function TreasureProductPage({ params }: { params: Promise<
                     variants={(product.variants ?? []).map((v) => v.label)}
                     unitCents={orderable ? (unitPriceCents(product) ?? 0) : null}
                     offersVisit={Boolean(category.inEgypt)}
+                    unavailableReason={
+                      categorySlug === "essence-oils"
+                        ? "Fragrance is not something to buy from a photograph, so we do not sell it online. Ask us about this one, or come and smell the range — both are free."
+                        : undefined
+                    }
                   />
                 </div>
               </Reveal>

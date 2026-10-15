@@ -93,6 +93,64 @@ export const shoppingAreas: ShoppingArea[] = [
   },
 ];
 
+/**
+ * Where a shop visit actually happens.
+ *
+ * Supplied by the owner as Google Maps pins. They are NOT published: a map
+ * link to a third party's shop, sitting on our page, reads as an endorsement
+ * or a partnership, and we have claimed neither. They also could not be
+ * opened from here — this sandbox cannot resolve maps.app.goo.gl — so nobody
+ * has verified what each one is called.
+ *
+ * So they travel in the TEAM's email instead, where they are routing
+ * information for whoever arranges the visit. The customer chooses an AREA,
+ * which is what the owner asked for: Giza is "around the pyramids" rather
+ * than one address, because there are several shops to choose between.
+ *
+ * Name each pin in `label` once someone has opened it. Until then the label
+ * stays empty and the email shows the raw link, which is honest.
+ */
+export type VisitPin = { label?: string; mapUrl: string };
+
+export type VisitArea = {
+  slug: string;
+  name: string;
+  /** What the customer is told about where they would be going. */
+  blurb: string;
+  /** Team-only. Never rendered on a public page. */
+  pins: VisitPin[];
+};
+
+export const visitAreas: VisitArea[] = [
+  {
+    slug: "old-cairo",
+    name: "Old Cairo",
+    blurb: "Khan el-Khalili and the lanes around it.",
+    pins: [{ mapUrl: "https://maps.app.goo.gl/Ugq7NuAM4tQKB54YA" }],
+  },
+  {
+    slug: "giza",
+    name: "Giza — around the pyramids",
+    blurb: "Several workshops within reach of the plateau, so this pairs with a morning at the site.",
+    pins: [
+      { mapUrl: "https://maps.app.goo.gl/HcKkztpnfpn5FbcD8" },
+      { mapUrl: "https://maps.app.goo.gl/mg9o64nkjezFmY4C8" },
+      { mapUrl: "https://maps.app.goo.gl/Vnh7Cfiw7x3VCZ6t7" },
+    ],
+  },
+];
+
+export function visitAreaBySlug(slug: string): VisitArea | undefined {
+  return visitAreas.find((a) => a.slug === slug);
+}
+
+/**
+ * Opening hours are NOT recorded anywhere, because nobody has supplied them.
+ * That is why every visit is a request rather than a confirmed appointment,
+ * and why no page here states a time the shop is open.
+ */
+export const VISIT_HOURS_KNOWN = false;
+
 export function shoppingAreaBySlug(slug: string): ShoppingArea | undefined {
   return shoppingAreas.find((a) => a.slug === slug);
 }

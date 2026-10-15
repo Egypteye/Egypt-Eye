@@ -1,6 +1,9 @@
 import { readFileSync } from "node:fs";
 import {
   SHOPPING_TOURS_PATH,
+  VISIT_HOURS_KNOWN,
+  visitAreaBySlug,
+  visitAreas,
   hasConfirmedShoppingTour,
   shoppingAreas,
   shoppingToursPage,
@@ -112,6 +115,66 @@ ok(
   "and only where the category has an in-person path",
   /\{category\.inEgypt && \([\s\S]{0,900}?SHOPPING_TOURS_PATH/.test(category),
 );
+
+// ---------------------------------------------------------------------------
+// 6. The private shop visit.
+//
+//    A REQUEST, never an appointment. Nobody has supplied the shop's opening
+//    hours, so a page that told a traveller to turn up at eleven on Thursday
+//    would be inventing one.
+// ---------------------------------------------------------------------------
+const form = readFileSync("src/components/ShopVisitForm.tsx", "utf8");
+const route = readFileSync("src/app/api/shop-visit/route.ts", "utf8");
+const templates = readFileSync("src/lib/email/templates.ts", "utf8");
+
+ok("opening hours are recorded as unknown", VISIT_HOURS_KNOWN === false);
+ok("two areas are offered", visitAreas.length === 2);
+ok("Old Cairo is one", Boolean(visitAreaBySlug("old-cairo")));
+ok("Giza is the other", Boolean(visitAreaBySlug("giza")));
+// The owner asked for Giza as an AREA, because several shops are in reach.
+ok("Giza is described as an area, not an address", /around the pyramids/i.test(visitAreaBySlug("giza")!.name));
+ok("Giza holds several shops", (visitAreaBySlug("giza")?.pins.length ?? 0) >= 3);
+ok("every pin has a map link", visitAreas.every((a) => a.pins.every((pin) => pin.mapUrl.startsWith("https://"))));
+
+// THE PINS ARE TEAM-ONLY. A map link to a third party's shop sitting on our
+// page reads as a partnership, and we have claimed none.
+ok("the page passes only slug, name and blurb to the form", /areas=\{visitAreas\.map\(\(a\) => \(\{ slug: a\.slug, name: a\.name, blurb: a\.blurb \}\)\)\}/.test(category));
+ok("no map link is rendered in the category page", !/maps\.app\.goo\.gl/.test(category));
+ok("no map link is rendered in the form", !/maps\.app\.goo\.gl|mapUrl/.test(form));
+ok("the pins go in the team email only", /mapUrls/.test(templates));
+const customerEmail = templates.slice(
+  templates.indexOf("export function shopVisitCustomerEmail"),
+  templates.indexOf("export function shopVisitTeamEmail")
+);
+ok("the customer email carries no map link", !/mapUrls/.test(customerEmail));
+
+// It is a request. Said in the form, and in both emails.
+ok("the form says it is not a booking", /A request, not a booking/.test(form));
+ok("the success state repeats it", /Nothing is booked and no time is held/.test(form));
+ok("the emails share one not-confirmed line", /VISIT_NOT_CONFIRMED/.test(templates));
+ok("that line denies a booking", /This is a request, not a booking/.test(templates));
+ok("no opening hour is stated anywhere", !/\b(open|opens|closing|closes) (at|from) \d/i.test(code(form) + code(category)));
+
+// Success is only reported once the team's email actually went out.
+ok("a failed team email is an error, not a thank-you", /if \(!delivered\) \{[\s\S]{0,400}?status: 502/.test(route));
+ok("the customer receipt is sent after, and cannot fail the request", route.indexOf("shopVisitTeamEmail") < route.indexOf("shopVisitCustomerEmail"));
+ok("the area is looked up server-side, not trusted", /visitAreaBySlug\(areaSlug\) \?\? visitAreas\[0\]/.test(route));
+ok("the route is rate limited", /bucket: "shop-visit"/.test(route));
+ok("the honeypot is the shared one", /text\(body\.company/.test(route));
+ok("the client ip comes from the proxy helper", /key: getClientIp\(request\)/.test(route));
+
+// The visit is offered where choosing in person is the better answer, and
+// not bolted onto every category.
+// Anchored to the visit section itself: the file has an earlier
+// `category.inEgypt` block, so a loose match would prove the wrong one.
+const visitAt = category.indexOf('<section id="visit"');
+ok("the visit section exists", visitAt > 0);
+ok(
+  "and renders only where the category has an in-person path",
+  /\{category\.inEgypt && \(\s*$/.test(category.slice(Math.max(0, visitAt - 200), visitAt).trimEnd() + "\n"),
+);
+ok("the form is inside it", category.indexOf("ShopVisitForm", visitAt) > visitAt);
+ok("it is anchored where the product pages link", /id="visit"/.test(category));
 
 if (errors.length > 0) {
   console.error(`\ncheck-shopping-tours: ${errors.length} failure(s)\n`);

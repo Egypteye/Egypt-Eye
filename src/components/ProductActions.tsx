@@ -25,6 +25,7 @@ export function ProductActions({
   variants,
   unitCents,
   offersVisit,
+  unavailableReason,
 }: {
   productSlug: string;
   productName: string;
@@ -34,6 +35,14 @@ export function ProductActions({
   /** null when the product has no confirmed price, which means no buy button. */
   unitCents: number | null;
   offersVisit: boolean;
+  /**
+   * Why this product cannot be bought here, in the customer's terms.
+   *
+   * Fragrance is not sold online at all — it is chosen by smelling it, which
+   * is the owner's decision and a true one. Saying "we are still confirming
+   * the price" there would promise a checkout that is never coming.
+   */
+  unavailableReason?: string;
 }) {
   const [variant, setVariant] = useState(variants[0] ?? "");
   const buyable = unitCents !== null && unitCents > 0;
@@ -107,8 +116,8 @@ export function ProductActions({
 
       {!buyable && (
         <p className="text-xs leading-relaxed text-ink-soft/85">
-          We are still confirming the bottle sizes and the price on this one with the shop. Ask us and we
-          will come back with both — nothing is charged in the meantime.
+          {unavailableReason ??
+            "We are still confirming the bottle sizes and the price on this one with the shop. Ask us and we will come back with both — nothing is charged in the meantime."}
         </p>
       )}
 
