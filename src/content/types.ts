@@ -1380,6 +1380,27 @@ export type TreasureOption = {
   note?: string;
 };
 
+/**
+ * The scent families the Boutique sorts fragrance by.
+ *
+ * A product may sit in more than one — a rose-and-amber blend is honestly
+ * both — which is why this is a list rather than a single value. It is the
+ * one thing about an oil that can be assigned from the name alone, so it is
+ * the only facet we filter on until the supplier confirms the rest.
+ */
+export type ScentFamily = "floral" | "fresh" | "woody" | "amber" | "signature";
+
+/**
+ * What the liquid actually is.
+ *
+ * Deliberately OPTIONAL, and deliberately not defaulted. A bottle labelled
+ * "Sandalwood" is not therefore a pure essential oil, and saying so without
+ * a supplier's word for it would be a claim about composition we cannot
+ * support. Undefined means "nobody has told us", and the UI shows no product
+ * type at all rather than guessing — see docs/oils-research.md.
+ */
+export type TreasureProductType = "essentialOil" | "fragranceOil" | "perfumeOil" | "blend";
+
 export type TreasureProduct = {
   slug: string;
   /** Resolved to the category slug at fetch time, whether it came from a
@@ -1410,6 +1431,14 @@ export type TreasureProduct = {
   specs?: { label: string; value: string }[];
   /** Omitted entirely while the price is genuinely not set. */
   price?: Price;
+  /** Scent families this product belongs to. Empty until assigned. */
+  scentFamily?: ScentFamily[];
+  /** Omitted while unverified. Never inferred from the product's name. */
+  productType?: TreasureProductType;
+  /** Where a documented fact about this product came from. */
+  sourceUrl?: string;
+  /** What still needs confirming before this can be sold. Shown to the team. */
+  verificationNote?: string;
   variants?: TreasureVariant[];
   options?: TreasureOption[];
   tags?: string[];

@@ -273,6 +273,7 @@ export const treasureProductsQuery = groq`*[_type == "treasureProduct" && status
   blurb, blurbTranslations, description, placeholder, status, availability, featured, order,
   ${treasureImageFields}, imageTone, gallery[]{..., "alt": alt, "caption": caption},
   price{amount, originalAmount, note},
+  scentFamily, productType, sourceUrl, verificationNote,
   variants[]{label, price{amount, originalAmount, note}, availability},
   options[]{label, price{amount, originalAmount, note}, note},
   specs[]{label, value}, tags, faqs[]{question, answer}, seo

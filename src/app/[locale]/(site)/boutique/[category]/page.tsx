@@ -7,6 +7,8 @@ import { Reveal } from "@/components/Reveal";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TreasureRequestForm } from "@/components/TreasureRequestForm";
 import { CartoucheNameStudio } from "@/components/CartoucheNameStudio";
+import { ScentFilter } from "@/components/ScentFilter";
+import { availableFamilies, familyCounts } from "@/lib/boutique/scentFamilies";
 import { isInstantlyOrderable, unitPriceCents } from "@/lib/boutique/cartoucheOrder";
 import { TourCard } from "@/components/TourCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
@@ -187,13 +189,22 @@ export default async function TreasureCategoryPage({
                 </T>
               </p>
             </Reveal>
+            <ScentFilter
+              families={availableFamilies(products)}
+              counts={familyCounts(products)}
+              total={products.length}
+            >
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((product, i) => {
                 const price = cardPrice(product);
                 const availability = availabilityLabel(product.availability);
                 const badge = statusLabel(product.status);
                 return (
-                  <Reveal key={product.slug} delay={i * 60}>
+                  // data-scent is what the CSS filter reads. It sits on a
+                  // wrapper rather than the card so the whole grid cell hides
+                  // and the layout closes up instead of leaving a hole.
+                  <div key={product.slug} data-scent={(product.scentFamily ?? []).join(" ")}>
+                  <Reveal delay={i * 60}>
                     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm">
                       {product.image && (
                         <div className="relative aspect-[4/3] overflow-hidden">
@@ -285,9 +296,11 @@ export default async function TreasureCategoryPage({
                       </div>
                     </article>
                   </Reveal>
+                  </div>
                 );
               })}
             </div>
+            </ScentFilter>
           </Container>
         </section>
       )}

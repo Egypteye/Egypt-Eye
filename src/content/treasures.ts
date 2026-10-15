@@ -592,6 +592,356 @@ export const treasureProducts: TreasureProduct[] = [
     status: "onRequest",
     order: 2,
   },
+  {
+    slug: "oil-akhenatons-gold",
+    category: "essence-oils",
+    name: "Akhenaton's Gold",
+    blurb:
+      "Named for the pharaoh who abolished Egypt's gods and kept only the sun. A house blend — we are waiting on the shop before describing it.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 10,
+  },
+  {
+    slug: "oil-secrets-of-the-desert",
+    category: "essence-oils",
+    name: "Secrets of the Desert",
+    blurb:
+      "A house blend named for the Western Desert. Its notes are being confirmed with the shop rather than guessed at here.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 11,
+  },
+  {
+    slug: "oil-aroma-of-isis",
+    category: "essence-oils",
+    name: "Aroma of Isis",
+    blurb:
+      "Isis was the goddess invoked for protection and mourning, and her name sits on one of the house blends. Notes to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 12,
+  },
+  {
+    slug: "oil-lotus-flower",
+    category: "essence-oils",
+    name: "Lotus Flower",
+    blurb:
+      "The blue lotus opens at dawn and closes at dusk, which is why Egypt made it the emblem of rebirth. Its notes are being confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["floral"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 13,
+  },
+  {
+    slug: "oil-red-musk",
+    category: "essence-oils",
+    name: "Red Musk",
+    blurb:
+      "The darker of the two musks on the shelf. We will describe it properly once the shop confirms what is in it.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["amber"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 14,
+  },
+  {
+    slug: "oil-tulip-intense",
+    category: "essence-oils",
+    name: "Tulip Intense",
+    blurb:
+      "A floral in the collection, and an unusual one. Its notes are being confirmed with the shop.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["floral"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 15,
+  },
+  {
+    slug: "oil-cool-peppermint",
+    category: "essence-oils",
+    name: "Cool Peppermint",
+    blurb:
+      "The sharpest thing on the shelf, and the one people reach for in the heat. Composition to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["fresh"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 16,
+  },
+  {
+    slug: "oil-egyptian-violet",
+    category: "essence-oils",
+    name: "Egyptian Violet",
+    blurb:
+      "Violet is the scent that disappears as you smell it — the flower contains a compound that briefly switches the receptor off. Notes to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["floral"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 17,
+  },
+  {
+    slug: "oil-sandalwood",
+    category: "essence-oils",
+    name: "Sandalwood",
+    blurb:
+      "In perfumery, sandalwood is the foundation other scents get built on top of. Whether this bottle is a distilled oil or a blend is unconfirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["woody"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 18,
+  },
+  {
+    slug: "oil-gardenia",
+    category: "essence-oils",
+    name: "Gardenia",
+    blurb:
+      "A heavy white floral. Its notes are being confirmed with the shop before we describe them.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["floral"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 19,
+  },
+  {
+    slug: "oil-mandarin",
+    category: "essence-oils",
+    name: "Mandarin",
+    blurb:
+      "The lightest of the citruses, and the one that fades first. Composition to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["fresh"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 20,
+  },
+  {
+    slug: "oil-frankincense",
+    category: "essence-oils",
+    name: "Frankincense",
+    blurb:
+      "Burned in Egyptian temples for three thousand years, and still tapped from Boswellia trees by hand. Whether this bottle is resin oil or a blend is unconfirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["woody"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 21,
+  },
+  {
+    slug: "oil-amon-ra",
+    category: "essence-oils",
+    name: "Amon-Ra",
+    blurb:
+      "Amun-Ra was the hidden god fused with the visible sun — the chief deity of Thebes. A house blend; notes to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 22,
+  },
+  {
+    slug: "oil-jasmine",
+    category: "essence-oils",
+    name: "Jasmine",
+    blurb:
+      "Jasmine is picked before sunrise, because the flower loses its scent in daylight. Egypt is one of the world's main growers. Notes to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["floral"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 23,
+  },
+  {
+    slug: "oil-egyptian-rose",
+    category: "essence-oils",
+    name: "Egyptian Rose",
+    blurb:
+      "Rose is the most expensive floral there is by weight of petals. What is in this bottle is being confirmed with the shop.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["floral"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 24,
+  },
+  {
+    slug: "oil-lemongrass",
+    category: "essence-oils",
+    name: "Lemongrass",
+    blurb:
+      "Green and sharp, and the one most people recognise instantly. Whether it is a distilled oil or a blend is unconfirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["fresh"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 25,
+  },
+  {
+    slug: "oil-sakar-ra",
+    category: "essence-oils",
+    name: "Sakar-ra",
+    blurb:
+      "A house blend carrying an Egyptian name. We will not invent its notes — the shop is confirming them.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 26,
+  },
+  {
+    slug: "oil-white-musk",
+    category: "essence-oils",
+    name: "White Musk",
+    blurb:
+      "The cleaner of the two musks. Its notes are being confirmed with the shop.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["amber"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 27,
+  },
+  {
+    slug: "oil-queen-of-egypt",
+    category: "essence-oils",
+    name: "Queen of Egypt",
+    blurb:
+      "A house blend named for the obvious. Its notes are being confirmed rather than guessed at.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 28,
+  },
+  {
+    slug: "oil-egyptian-neroli",
+    category: "essence-oils",
+    name: "Egyptian Neroli",
+    blurb:
+      "Neroli is distilled from bitter orange blossom — floral and citrus at once, which is why it sits in both families here. Composition to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["floral", "fresh"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 29,
+  },
+  {
+    slug: "oil-sweet-treasures",
+    category: "essence-oils",
+    name: "Sweet Treasures",
+    blurb:
+      "A house blend on the sweeter side of the shelf. Notes to be confirmed with the shop.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 30,
+  },
+  {
+    slug: "oil-royal-amber",
+    category: "essence-oils",
+    name: "Royal Amber",
+    blurb:
+      "Amber in perfumery is not the fossil resin but a warm accord built to resemble it. What is in this bottle is unconfirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["amber"],
+    imageTone: "desert",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 31,
+  },
+  {
+    slug: "oil-thousand-and-one-nights",
+    category: "essence-oils",
+    name: "Thousand & One Nights",
+    blurb:
+      "Named for the story collection that gave the West most of its idea of Arabia. A house blend; notes to be confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 32,
+  },
+  {
+    slug: "oil-nefertiti",
+    category: "essence-oils",
+    name: "Nefertiti",
+    blurb:
+      "Nefertiti's bust is the most reproduced object from ancient Egypt. A house blend carries her name; its notes are being confirmed.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["signature"],
+    imageTone: "luxor",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 33,
+  },
+  {
+    slug: "oil-papyrus",
+    category: "essence-oils",
+    name: "Papyrus",
+    blurb:
+      "Papyrus grew thick along the Nile and gave the world its first paper. A green, reedy name — the contents are being confirmed with the shop.",
+    placeholder: true,
+    status: "onRequest",
+    scentFamily: ["woody"],
+    imageTone: "nile",
+    verificationNote:
+      "Name read from the supplier photograph. Composition, scent notes, bottle sizes, ingredients and price are ALL unconfirmed — see docs/oils-research.md. Do not set a price or untick 'sample listing' until the Cairo shop has confirmed them in writing.",
+    order: 34,
+  },
 ];
 
 export function treasureCategoryBySlug(slug: string): TreasureCategory | undefined {
