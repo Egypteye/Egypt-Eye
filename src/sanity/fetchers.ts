@@ -752,6 +752,14 @@ async function getSiteSettingsInner(): Promise<ResolvedSiteSettings> {
     ...localSite,
     ...result,
     contact: { ...localSite.contact, ...result.contact },
+    // Merged rather than replaced, and blank strings dropped, so a field the
+    // owner clears in Studio reads as absent to missingLegalIdentity() and
+    // gets reported on /admin — rather than printing "Registered address: ."
+    legal: Object.fromEntries(
+      Object.entries({ ...localSite.legal, ...result.legal }).filter(
+        ([, v]) => typeof v === "string" && v.trim() !== "",
+      ),
+    ),
     socials: { ...localSite.socials, ...result.socials },
     heroSlides:
       result.heroImages && result.heroImages.length > 0

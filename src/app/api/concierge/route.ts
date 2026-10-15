@@ -60,9 +60,13 @@ export async function POST(request: NextRequest) {
 
   let res: Response;
   try {
-    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`, {
+    // The key travels as a header, not `?key=`, so it stays out of URLs,
+    // proxy access logs and anything that records a request line. Same
+    // reasoning as scripts/i18n-translate.mts, and the same fix already
+    // applied to MIGRATE_SECRET.
+    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       body: JSON.stringify({
         system_instruction: { parts: [{ text: systemInstruction }] },
         contents,

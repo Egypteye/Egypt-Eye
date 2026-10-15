@@ -67,6 +67,12 @@ export const site = {
     whatsapp: "+20 127 414 4599",
     whatsappLink: "https://wa.me/201274144599",
   },
+  // Deliberately empty. These are real registered details that only the
+  // owner holds; inventing them on a legal page is exactly the kind of thing
+  // that gets a travel business in trouble. He fills them in Sanity Studio
+  // under Site Settings → Registered business details, and /admin lists them
+  // as outstanding until he does.
+  legal: {},
   // The real accounts. Share-sheet tracking parameters (mibextid, igsi,
   // _r/_t, feature=shared) are stripped — they identify whoever copied the
   // link, add nothing for visitors, and these bare profile URLs are the

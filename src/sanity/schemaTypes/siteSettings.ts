@@ -146,6 +146,34 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: "legal",
+      title: "Registered business details",
+      description:
+        "Used on the Privacy Policy and Terms pages. Leave a field blank and the sentence is simply left out — nothing is guessed or made up. These are the details a customer or a card provider would look for to see who they are dealing with.",
+      type: "object",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "entityName",
+          title: "Registered business name",
+          description: "The name the business is registered under, if it differs from \"Egypt Eye Travel\".",
+          type: "string",
+        }),
+        defineField({
+          name: "registrationNumber",
+          title: "Commercial registration number",
+          type: "string",
+        }),
+        defineField({
+          name: "registeredAddress",
+          title: "Registered address",
+          description: "One line. The address on the registration, not a meeting point.",
+          type: "string",
+        }),
+      ],
+    }),
+
+    defineField({
       name: "socials",
       title: "Social links",
       type: "object",

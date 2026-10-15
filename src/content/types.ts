@@ -760,6 +760,11 @@ export type SiteSettings = {
     whatsapp?: string;
     whatsappLink?: string;
   };
+  legal?: {
+    entityName?: string;
+    registrationNumber?: string;
+    registeredAddress?: string;
+  };
   socials?: {
     instagram?: string;
     facebook?: string;
@@ -904,6 +909,15 @@ export type ResolvedSiteSettings = {
     email: string;
     whatsapp: string;
     whatsappLink: string;
+  };
+  // The registered details the privacy policy and terms need. Optional
+  // because only the owner has them, and they are entered in Sanity Studio
+  // rather than committed here. /admin reports them as missing while blank;
+  // the policy leaves the sentence out rather than printing a placeholder.
+  legal?: {
+    entityName?: string;
+    registrationNumber?: string;
+    registeredAddress?: string;
   };
   socials: {
     instagram: string;
