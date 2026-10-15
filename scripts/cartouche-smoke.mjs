@@ -78,6 +78,34 @@ ok("no buy button while every piece is on request", !/Order it now|Continue to p
 ok("no price is shown on a piece that has none", !/\$\d/.test(body));
 ok("the enquiry is the way through", /Use this name in my enquiry|Ask about customisation/.test(body));
 
+// ---- symbols ------------------------------------------------------------
+// Each one takes a place in the cartouche, so an ankh on a four-sign name
+// makes five. Nothing is dropped to make room.
+const ankh = p.getByRole("button", { name: /Ankh/ });
+await typeName("Ali");
+const before = [...(await ovalText())].length;
+await ankh.click();
+await p.waitForTimeout(500);
+ok("pressing a symbol adds it to the cartouche", [...(await ovalText())].length === before + 1);
+ok("the symbol is pressed", (await ankh.getAttribute("aria-pressed")) === "true");
+ok("the counter counts it", /4 of 4 signs/.test(await p.locator("section[aria-labelledby=cartouche-studio]").innerText()));
+ok("the ankh is the last sign", (await ovalText()).endsWith("\u{132F9}"));
+
+await ankh.click();
+await p.waitForTimeout(400);
+ok("pressing it again removes it", [...(await ovalText())].length === before);
+
+// On a four-sign name it must overflow, and say so.
+await typeName("Omar");
+await ankh.click();
+await p.waitForTimeout(500);
+const full = await p.locator("section[aria-labelledby=cartouche-studio]").innerText();
+ok("a symbol can fill the cartouche past four", /5 of 4 signs/.test(full));
+ok("it says each symbol takes a place", /Each symbol takes a place too/.test(full));
+ok("all five are still drawn", [...(await ovalText())].length === 5);
+await ankh.click();
+await p.waitForTimeout(400);
+
 // The one thing no string match can prove: that the signs actually PAINT.
 // Before the webfont was wired every glyph here was an empty box, and the
 // markup looked identical. document.fonts.check asks the browser directly.

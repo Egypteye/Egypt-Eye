@@ -56,7 +56,7 @@ const quoteInput = mod.slice(mod.indexOf("export type QuoteInput"), mod.indexOf(
 ok("QuoteInput has no price field", !/\b(price|amount|cents|total|currency)\b\s*[?]?:/i.test(quoteInput));
 ok("QuoteInput takes the product, not a figure", /product: OrderableProduct/.test(quoteInput));
 
-const bodyType = route.slice(route.indexOf("type Body = {"), route.indexOf("};", route.indexOf("type Body = {")));
+const bodyType = code(route.slice(route.indexOf("type Body = {"), route.indexOf("};", route.indexOf("type Body = {"))));
 ok("the request body has no price field", !/\b(price|amount|cents|total|currency|unitCents)\b/i.test(bodyType));
 ok("the request body has no sign list", !/\b(signs|glyphs|signCodes|spelling)\b/i.test(bodyType));
 
@@ -173,7 +173,7 @@ ok(
   "an unknown fulfilment is refused",
   quoteCartouche({ ...base, product: priced(), fulfilment: "post-to-uk" as never }).ok === false,
 );
-ok("there is no address field to collect", !/address|postcode|postal|country/i.test(code(bodyType)));
+ok("there is no address field to collect", !/address|postcode|postal|country/i.test(bodyType));
 
 // ---------------------------------------------------------------------------
 // 6. Ordering. The row exists before PayPal is asked for anything, or a
@@ -225,7 +225,7 @@ ok("the enquiry is offered whether or not anything is orderable", /Ask about cus
 ok("the panel offers the enquiry as the way out", /onAskInstead/.test(panel) && /Ask about customisation instead/.test(panel));
 
 // The panel must not be able to invent its own price or bypass the name rules.
-ok("the panel posts no price", !/totalCents:|unitCents:|amount/.test(panel.slice(panel.indexOf("body: JSON.stringify"), panel.indexOf("});", panel.indexOf("body: JSON.stringify")))));
+ok("the panel posts no price", !/totalCents:|unitCents:|amount/.test(code(panel.slice(panel.indexOf("body: JSON.stringify"), panel.indexOf("});", panel.indexOf("body: JSON.stringify"))))));
 ok("the pay button is disabled until the name fits", /disabled=\{busy \|\| !nameOk\}/.test(panel));
 ok("a name that overflows the cartouche blocks the sale", /spelling\.fits/.test(panel));
 ok("an unwritable character blocks the sale", /spelling\.unsupported\.length === 0/.test(panel));
@@ -247,6 +247,45 @@ const attempts = readFileSync("src/lib/booking/attempts.ts", "utf8");
 ok("there is one createAttempt, taking either parent", /parent: AttemptParent/.test(attempts));
 ok("an attempt writes exactly one parent column", /reservation_id: input\.parent\.kind === "reservation"/.test(attempts));
 ok("settling reads whichever parent the row has", /PARENT_TABLE\[parent\.kind\]/.test(attempts));
+
+// ---------------------------------------------------------------------------
+// 9. Symbols. A customer may add an ankh, lotus, scarab or eye, and the
+//    workshop counts each as one of the four — so one on a four-sign name
+//    makes five, and five does not sell.
+// ---------------------------------------------------------------------------
+const withAnkh = quoteCartouche({ ...base, name: "Ali", symbols: ["ankh"], product: priced() });
+ok("a symbol can be added", withAnkh.ok);
+if (withAnkh.ok) {
+  ok("the symbol is counted", withAnkh.quote.signCount === 4);
+  ok("the symbol is recorded for the workshop", withAnkh.quote.symbols.join() === "ankh");
+  ok("the symbol is in the sign codes", withAnkh.quote.signCodes.includes("S34"));
+  ok("the symbol comes after the name", withAnkh.quote.signCodes.at(-1) === "S34");
+}
+ok(
+  "a symbol that pushes a name over four is refused",
+  quoteCartouche({ ...base, name: "Omar", symbols: ["ankh"], product: priced() }).ok === false,
+);
+const over4 = quoteCartouche({ ...base, name: "Omar", symbols: ["ankh"], product: priced() });
+ok("and it says the cartouche is full", !over4.ok && over4.reason === "over-capacity");
+
+// A request cannot smuggle in a sign that is not on the card.
+const fake = quoteCartouche({ ...base, name: "Ali", symbols: ["dragon", "\u{13000}"], product: priced() });
+ok("an unknown symbol key is dropped, not drawn", fake.ok && fake.quote.symbols.length === 0);
+ok("and the sign count is unchanged by it", fake.ok && fake.quote.signCount === 3);
+ok(
+  "a repeated symbol is counted once",
+  (() => {
+    const r = quoteCartouche({ ...base, name: "Ali", symbols: ["ankh", "ankh"], product: priced() });
+    return r.ok && r.quote.signCount === 4;
+  })(),
+);
+
+// Keys travel, never glyphs — so there is nothing to smuggle.
+const panelBody = code(panel.slice(panel.indexOf("body: JSON.stringify"), panel.indexOf("});", panel.indexOf("body: JSON.stringify"))));
+ok("the panel sends symbol keys", /symbols,/.test(panelBody));
+ok("the panel sends no glyphs", !/glyph/i.test(panelBody));
+ok("the route caps how many it will read", /body\.symbols\.slice\(0, 8\)/.test(route));
+ok("the stored symbols come from the quote", /symbols: quote\.symbols/.test(route));
 
 if (errors.length > 0) {
   console.error(`\ncheck-boutique: ${errors.length} failure(s)\n`);

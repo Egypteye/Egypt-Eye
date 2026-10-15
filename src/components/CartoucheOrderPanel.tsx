@@ -3,7 +3,7 @@
 import { useId, useState } from "react";
 import { PayPalDepositButtons } from "@/components/PayPalDepositButtons";
 import { formatCents } from "@/lib/booking/quote";
-import type { Spelling } from "@/lib/hieroglyphs/signs";
+import type { Spelling, SymbolKey } from "@/lib/hieroglyphs/signs";
 
 // Buying a cartouche, rather than asking about one.
 //
@@ -36,11 +36,13 @@ export function CartoucheOrderPanel({
   choices,
   spelling,
   engravedName,
+  symbols,
   onAskInstead,
 }: {
   choices: OrderableChoice[];
   spelling: Spelling;
   engravedName: string;
+  symbols: SymbolKey[];
   onAskInstead: () => void;
 }) {
   const ids = useId();
@@ -71,6 +73,8 @@ export function CartoucheOrderPanel({
         body: JSON.stringify({
           productSlug: slug,
           name: engravedName,
+          // Keys, not glyphs. The server looks up what each one means.
+          symbols,
           quantity,
           fulfilment: "collect-in-egypt",
           customerName,

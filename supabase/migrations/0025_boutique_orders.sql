@@ -125,3 +125,9 @@ begin
       for each row execute function public.set_updated_at();
   end if;
 end $$;
+
+-- Symbols the customer added beside the name (ankh, lotus, scarab, eye).
+-- Each counts as one of the signs the cartouche holds, which is why
+-- sign_count already includes them; this records WHICH were chosen.
+alter table public.boutique_orders
+  add column if not exists symbols jsonb not null default '[]'::jsonb;

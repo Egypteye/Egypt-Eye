@@ -36,6 +36,8 @@ export const runtime = "nodejs";
 type Body = {
   productSlug?: unknown;
   name?: unknown;
+  /** Symbol KEYS only — "ankh", "lotus", "scarab", "eye". Never glyphs. */
+  symbols?: unknown;
   quantity?: unknown;
   fulfilment?: unknown;
   customerName?: unknown;
@@ -107,6 +109,9 @@ export async function POST(request: NextRequest) {
   const quoted = quoteCartouche({
     product: { slug: product.slug, name: product.name, status: product.status, price: product.price },
     name: engraved,
+    // Capped before it reaches the quote, which filters unknown keys anyway —
+    // a request cannot make the list long enough to be worth iterating.
+    symbols: Array.isArray(body.symbols) ? body.symbols.slice(0, 8).map((v) => String(v)) : [],
     quantity,
     fulfilment,
   });
@@ -131,6 +136,7 @@ export async function POST(request: NextRequest) {
       category_slug: product.category,
       engraved_name: quote.engravedName,
       sign_codes: quote.signCodes,
+      symbols: quote.symbols,
       glyphs: quote.glyphs,
       sign_count: quote.signCount,
       quantity: quote.quantity,
@@ -209,6 +215,7 @@ export async function POST(request: NextRequest) {
       signCount: quote.signCount,
       capacity: quote.capacity,
       quantity: quote.quantity,
+      symbols: quote.symbols,
     },
   });
 }

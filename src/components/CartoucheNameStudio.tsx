@@ -5,6 +5,9 @@ import { CARTOUCHE_VIEWBOX, LOOP, TIE_Y, signFontSize, signPositions } from "@/l
 import { CartoucheOrderPanel, type OrderableChoice } from "@/components/CartoucheOrderPanel";
 import {
   CARTOUCHE_CAPACITY,
+  SYMBOLS,
+  composeCartouche,
+  type SymbolKey,
   spellName,
   type SpelledLetter,
 } from "@/lib/hieroglyphs/signs";
@@ -34,10 +37,11 @@ export function CartoucheNameStudio({
   orderable?: OrderableChoice[];
 }) {
   const [name, setName] = useState("");
+  const [symbols, setSymbols] = useState<SymbolKey[]>([]);
   const [applied, setApplied] = useState(false);
   const inputId = useId();
 
-  const spelling = useMemo(() => spellName(name, capacity), [name, capacity]);
+  const spelling = useMemo(() => composeCartouche(name, symbols, capacity), [name, symbols, capacity]);
   const { signCount, unsupported, hasContent } = spelling;
   const over = hasContent && signCount > capacity;
 
@@ -50,7 +54,11 @@ export function CartoucheNameStudio({
     const field = document.getElementById(FIELD_ID) as HTMLInputElement | null;
     if (!field) return;
     const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
-    setter?.call(field, name.trim());
+    // The symbols go in with the name, because the enquiry has one text
+    // field and the desk needs to know an ankh was asked for.
+    const chosen = SYMBOLS.filter((sym) => symbols.includes(sym.key)).map((sym) => sym.label);
+    const written = chosen.length > 0 ? `${name.trim()} + ${chosen.join(" + ")}` : name.trim();
+    setter?.call(field, written);
     field.dispatchEvent(new Event("input", { bubbles: true }));
     field.scrollIntoView({ behavior: "smooth", block: "center" });
     field.focus({ preventScroll: true });
@@ -114,6 +122,7 @@ export function CartoucheNameStudio({
                 type="button"
                 onClick={() => {
                   setName("");
+                  setSymbols([]);
                   setApplied(false);
                 }}
                 className="text-sm text-ink-soft underline underline-offset-2 transition hover:text-ink"
@@ -123,12 +132,52 @@ export function CartoucheNameStudio({
             )}
           </div>
 
+          {/* The four symbols on the workshop's card. Each one takes a place
+              in the cartouche, so adding one to a four-sign name makes five
+              — which is said plainly rather than silently dropping either. */}
+          <fieldset className="border-t border-black/5 pt-4">
+            <legend className="text-sm font-semibold text-ink">Add a symbol</legend>
+            <p className="mt-1 text-xs leading-relaxed text-ink-soft/85">
+              Each one takes a place in the cartouche, the same as a letter.
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {SYMBOLS.map((sym) => {
+                const on = symbols.includes(sym.key);
+                return (
+                  <button
+                    key={sym.key}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => {
+                      setSymbols((prev) =>
+                        prev.includes(sym.key) ? prev.filter((k) => k !== sym.key) : [...prev, sym.key]
+                      );
+                      setApplied(false);
+                    }}
+                    className={`flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition ${
+                      on
+                        ? "border-gold/60 bg-gold/15 text-ink"
+                        : "border-black/10 bg-cream text-ink-soft hover:border-gold/30"
+                    }`}
+                  >
+                    <span className="font-hieroglyph text-xl leading-none">{sym.sign.glyph}</span>
+                    <span className="font-semibold">{sym.label}</span>
+                    {sym.workshopMeaning && (
+                      <span className="text-xs text-ink-soft/80">{sym.workshopMeaning}</span>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
           {/* Honest messages. Nothing is hidden and nothing is dropped. */}
           {over && (
             <p className="rounded-xl bg-terracotta/10 px-4 py-3 text-sm leading-relaxed text-ink">
-              <strong>{spelling.signCount} signs is more than one cartouche holds.</strong> A shorter
-              form of the name usually fits — or ask us about a larger piece when you enquire, and we
-              will tell you what is possible.
+              <strong>{spelling.signCount} signs is more than one cartouche holds.</strong>{" "}
+              {symbols.length > 0
+                ? "Each symbol takes a place too. Remove one, shorten the name, or ask us about a larger piece when you enquire."
+                : "A shorter form of the name usually fits — or ask us about a larger piece when you enquire, and we will tell you what is possible."}
             </p>
           )}
           {unsupported.length > 0 && (
@@ -191,6 +240,7 @@ export function CartoucheNameStudio({
             choices={orderable}
             spelling={spelling}
             engravedName={name.trim()}
+            symbols={symbols}
             onAskInstead={useInEnquiry}
           />
         </div>

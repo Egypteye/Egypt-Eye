@@ -113,21 +113,60 @@ const SIGNS = {
   lion:      { gardiner: "E23", glyph: "\u{130ED}", sound: "rw / l", depicts: "a reclining lion", note: "Egyptian had no L of its own. Scribes used this lion for L when writing Greek and Roman names, and the card does the same.", confidence: "convention" },
 } satisfies Record<string, Hieroglyph>;
 
-/** Every distinct sign, for a reference panel. */
-export const ALL_SIGNS: Hieroglyph[] = Object.values(SIGNS);
+
 
 /**
  * The symbols on the card that are not letters.
  *
- * Listed so they are not lost, and NOT written into a name. Whether a
- * customer may add one, and whether it uses up one of the signs the
- * cartouche holds, is an open question with the workshop.
+ * A customer may add these beside their name, and the workshop counts each
+ * one as one of the signs the cartouche holds — confirmed by the owner. So
+ * adding an ankh to a four-sign name makes five, which does not fit, and the
+ * panel says so rather than quietly dropping either.
+ *
+ * Their meanings are the workshop's own, off the reverse of the card, and are
+ * labelled as theirs wherever they are shown.
  */
-export const SYMBOLS: { name: string; glyph: string; gardiner: string; workshopMeaning: string }[] = [
-  { name: "Ankh",         glyph: "\u{132F9}", gardiner: "S34", workshopMeaning: "Long Life" },
-  { name: "Scarab",       glyph: "\u{131A3}", gardiner: "L1",  workshopMeaning: "Good Luck" },
-  { name: "Eye of Horus", glyph: "\u{13080}", gardiner: "D10", workshopMeaning: "Protection" },
+export const SYMBOL_KEYS = ["ankh", "lotus", "scarab", "eye"] as const;
+export type SymbolKey = (typeof SYMBOL_KEYS)[number];
+
+const SYMBOL_SIGNS = {
+  ankh:   { gardiner: "S34", glyph: "\u{132F9}", sound: "ꜥnḫ", depicts: "an ankh, the sign of life", note: "Worn and carried by gods in every temple wall in Egypt.", confidence: "documented" },
+  lotus:  { gardiner: "M9",  glyph: "\u{131B8}", sound: "sšn", depicts: "a lotus flower", note: "The flower that closes at dusk and opens at dawn.", confidence: "documented" },
+  scarab: { gardiner: "L1",  glyph: "\u{131A3}", sound: "ḫpr", depicts: "a scarab beetle", note: "Read as 'to come into being'.", confidence: "documented" },
+  eye:    { gardiner: "D10", glyph: "\u{13080}", sound: "wḏꜣt", depicts: "the Eye of Horus", note: "The eye torn out and made whole again.", confidence: "documented" },
+} satisfies Record<SymbolKey, Hieroglyph>;
+
+export const SYMBOLS: { key: SymbolKey; label: string; sign: Hieroglyph; workshopMeaning: string }[] = [
+  { key: "ankh",   label: "Ankh",         sign: SYMBOL_SIGNS.ankh,   workshopMeaning: "Long Life" },
+  { key: "lotus",  label: "Lotus",        sign: SYMBOL_SIGNS.lotus,  workshopMeaning: "" },
+  { key: "scarab", label: "Scarab",       sign: SYMBOL_SIGNS.scarab, workshopMeaning: "Good Luck" },
+  { key: "eye",    label: "Eye of Horus", sign: SYMBOL_SIGNS.eye,    workshopMeaning: "Protection" },
 ];
+
+/** A symbol dressed as a letter mapping, so the UI renders it unchanged. */
+const SYMBOL_MAP: Record<SymbolKey, LetterMapping> = Object.fromEntries(
+  SYMBOLS.map((s) => [
+    s.key,
+    {
+      letter: s.label,
+      signs: [s.sign],
+      meaning: s.workshopMeaning || undefined,
+      source: "workshop-card" as const,
+    },
+  ])
+) as Record<SymbolKey, LetterMapping>;
+
+/**
+ * Every distinct sign on the card — the letters and the four symbols.
+ *
+ * One list, because a symbol is as much a sign as the owl is: it occupies a
+ * place in the cartouche and counts toward the four.
+ */
+export const ALL_SIGNS: Hieroglyph[] = [...Object.values(SIGNS), ...Object.values(SYMBOL_SIGNS)];
+
+export function isSymbolKey(value: unknown): value is SymbolKey {
+  return typeof value === "string" && (SYMBOL_KEYS as readonly string[]).includes(value);
+}
 
 /**
  * On the card but not implemented, because it could not be read from the
@@ -321,4 +360,47 @@ export function describeSpelling(name: string, spelling: Spelling): string {
   if (!spelling.hasContent) return "";
   const sounds = spelling.signs.map((s) => s.sound).join(", ");
   return `${name.trim().toUpperCase()} → ${glyphString(spelling)} (${sounds}) — ${spelling.signCount} of ${spelling.capacity} signs`;
+}
+
+
+/**
+ * A name plus any symbols the customer added.
+ *
+ * The symbols come AFTER the name, each counting as one of the signs the
+ * cartouche holds — which is the workshop's rule, so adding an ankh to a
+ * four-sign name makes five and does not fit. Nothing is dropped to make room:
+ * the count is reported honestly and the customer decides what to change.
+ *
+ * Duplicates are collapsed and unknown keys ignored, because neither is a
+ * thing a customer can mean, and both are things a tampered request can send.
+ */
+export function composeCartouche(
+  name: string,
+  symbols: readonly SymbolKey[] = [],
+  capacity: number = CARTOUCHE_CAPACITY
+): Spelling {
+  const spelled = spellName(name, capacity);
+
+  const chosen: SymbolKey[] = [];
+  for (const key of symbols) {
+    if (isSymbolKey(key) && !chosen.includes(key)) chosen.push(key);
+  }
+  if (chosen.length === 0) return spelled;
+
+  const letters = [...spelled.letters];
+  const signs = [...spelled.signs];
+  for (const key of chosen) {
+    const mapping = SYMBOL_MAP[key];
+    letters.push({ input: mapping.letter, mapping });
+    signs.push(...mapping.signs);
+  }
+
+  return {
+    ...spelled,
+    letters,
+    signs,
+    signCount: signs.length,
+    fits: signs.length > 0 && signs.length <= spelled.capacity,
+    hasContent: signs.length > 0,
+  };
 }

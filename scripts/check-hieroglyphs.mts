@@ -6,7 +6,15 @@ import {
   fitsInsideLoop,
   signFontSize,
 } from "../src/lib/hieroglyphs/cartoucheLayout";
-import { ALL_SIGNS, spellName, glyphString, CARTOUCHE_CAPACITY, SYMBOLS, UNREADABLE } from "../src/lib/hieroglyphs/signs";
+import {
+  ALL_SIGNS,
+  CARTOUCHE_CAPACITY,
+  SYMBOLS,
+  UNREADABLE,
+  composeCartouche,
+  glyphString,
+  spellName,
+} from "../src/lib/hieroglyphs/signs";
 
 /**
  * Guards the hieroglyph data, and one mistake in particular.
@@ -50,6 +58,10 @@ const EXPECTED: ReadonlyArray<readonly [string, number]> = [
   ["V4", 0x1336F],
   ["V13", 0x1337F],
   ["Aa1", 0x1340D],
+  ["S34", 0x132F9],
+  ["M9", 0x131B8],
+  ["L1", 0x131A3],
+  ["D10", 0x13080],
 ];
 
 /**
@@ -174,7 +186,24 @@ ok("every mapping records that it came from the card", everyLetter.every((c) => 
 // The one sign on the card that could not be read is named, not guessed.
 ok("the unreadable sign is declared", UNREADABLE.some((u) => u.label === "CH"));
 ok("CH falls back to two signs rather than inventing one", spellName("ch").signCount === 2);
-ok("the symbols are listed but never written into a name", SYMBOLS.length === 3 && !glyphString(spellName("ankh")).includes(SYMBOLS[0].glyph));
+// Symbols are added deliberately, never by typing their name: "ankh" in the
+// name box is the letters A-N-K-H, not the sign.
+ok("there are four symbols on the card", SYMBOLS.length === 4);
+ok("typing a symbol's name does not summon the symbol", !glyphString(spellName("ankh")).includes(SYMBOLS[0].sign.glyph));
+ok("a chosen symbol IS added", glyphString(composeCartouche("Ali", ["ankh"])).includes(SYMBOLS[0].sign.glyph));
+
+// The workshop counts each symbol as one of the four. So an ankh on a
+// four-sign name makes five, and five does not fit.
+ok("a symbol counts as a sign", composeCartouche("Ali", ["ankh"]).signCount === 4);
+ok("a symbol can push a name over the limit", composeCartouche("Omar", ["ankh"]).signCount === 5);
+ok("and over the limit does not fit", !composeCartouche("Omar", ["ankh"]).fits);
+ok("two symbols count as two", composeCartouche("Lea", ["ankh", "eye"]).signCount === 5);
+ok("the symbol comes after the name", glyphString(composeCartouche("Ali", ["ankh"])).endsWith(SYMBOLS[0].sign.glyph));
+// Neither is something a customer can mean; both are things a request can send.
+ok("a repeated symbol is collapsed", composeCartouche("Ali", ["ankh", "ankh"]).signCount === 4);
+ok("an unknown symbol key is ignored", composeCartouche("Ali", ["dragon" as never]).signCount === 3);
+ok("no symbols changes nothing", composeCartouche("Omar", []).signCount === spellName("Omar").signCount);
+ok("every symbol has a verified codepoint", SYMBOLS.every((sym) => expected.get(sym.sign.gardiner) === sym.sign.glyph.codePointAt(0)));
 
 // ---------------------------------------------------------------------------
 // 6. A known spelling, end to end.

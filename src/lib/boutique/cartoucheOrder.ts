@@ -1,6 +1,13 @@
 import type { Price, TreasureStatus } from "@/content/types";
 import { usdToCents } from "@/lib/booking/quote";
-import { CARTOUCHE_CAPACITY, describeSpelling, glyphString, spellName } from "@/lib/hieroglyphs/signs";
+import {
+  CARTOUCHE_CAPACITY,
+  composeCartouche,
+  describeSpelling,
+  glyphString,
+  isSymbolKey,
+  type SymbolKey,
+} from "@/lib/hieroglyphs/signs";
 
 // What a cartouche order IS, worked out once.
 //
@@ -57,6 +64,12 @@ export type QuoteInput = {
   product: OrderableProduct;
   /** Exactly as the customer typed it. */
   name: string;
+  /**
+   * Symbols the customer added beside the name — ankh, lotus, scarab, eye.
+   * KEYS only, never glyphs: the sign each key stands for is looked up here,
+   * so a request cannot smuggle in a sign that is not on the card.
+   */
+  symbols?: readonly string[];
   quantity: number;
   fulfilment: Fulfilment;
   capacity?: number;
@@ -76,6 +89,8 @@ export type CartoucheQuote = {
   engravedName: string;
   /** Gardiner codes, in order — what the workshop actually needs. */
   signCodes: string[];
+  /** The symbols chosen, in order, as keys. */
+  symbols: SymbolKey[];
   /** The signs themselves, for the email and the record. */
   glyphs: string;
   signCount: number;
@@ -169,7 +184,10 @@ export function quoteCartouche(input: QuoteInput): QuoteResult {
   if (!engravedName) return refuse("name-empty");
 
   const capacity = input.capacity ?? CARTOUCHE_CAPACITY;
-  const spelling = spellName(engravedName, capacity);
+  // Keys the request sent that are not on the card are dropped rather than
+  // guessed at; composeCartouche also collapses a repeat.
+  const symbols = (input.symbols ?? []).filter(isSymbolKey) as SymbolKey[];
+  const spelling = composeCartouche(engravedName, symbols, capacity);
   if (!spelling.hasContent) return refuse("name-unwritable");
   // A name that would lose a character is never quietly engraved without it.
   if (spelling.unsupported.length > 0) return refuse("name-unwritable");
@@ -187,6 +205,7 @@ export function quoteCartouche(input: QuoteInput): QuoteResult {
       productName: input.product.name,
       engravedName,
       signCodes: spelling.signs.map((s) => s.gardiner),
+      symbols,
       glyphs: glyphString(spelling),
       signCount: spelling.signCount,
       capacity: spelling.capacity,
