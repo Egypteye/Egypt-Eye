@@ -1711,3 +1711,152 @@ export function paymentReceivedTeamEmail({
     text,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Boutique orders
+//
+// A cartouche is paid for in full, not deposited on, and it is collected in
+// Egypt rather than posted — so neither of these may reuse the deposit
+// wording. Two things they must both carry: the signs that will actually be
+// engraved, and the plain statement that the spelling is confirmed before
+// anything is cut. A pendant cannot be un-engraved.
+// ---------------------------------------------------------------------------
+
+export type BoutiqueOrderFacts = {
+  reference: string;
+  productName: string;
+  engravedName: string;
+  glyphs: string;
+  spellingLine: string;
+  signCount: number;
+  capacity: number;
+  quantity: number;
+  unitCents: number;
+  totalCents: number;
+  currency: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string | null;
+  collectionNotes?: string | null;
+  orderId: string;
+  captureId: string;
+};
+
+function boutiqueRows(order: BoutiqueOrderFacts): string {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+  return [
+    row("Piece", order.productName),
+    row("Name to be written", order.engravedName),
+    row("Signs", `${order.glyphs}  (${order.signCount} of ${order.capacity})`),
+    order.quantity > 1 ? row("Quantity", String(order.quantity)) : "",
+    row("Collection", "In Egypt — we arrange the handover with you"),
+    row("Paid", `${cents(order.totalCents)} ${order.currency}`),
+    row("Reference", order.reference),
+  ].join("");
+}
+
+export function boutiqueOrderCustomerEmail(order: BoutiqueOrderFacts) {
+  const first = order.customerName.split(" ")[0] || order.customerName;
+  const html = baseLayout({
+    preheader: `Your ${order.productName} is ordered — ${order.engravedName}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(first)},</p>
+      <p style="margin:0 0 16px;"><strong>Your cartouche is ordered — thank you.</strong> ${escapeHtml(
+        cents(order.totalCents)
+      )} ${escapeHtml(order.currency)} has been received.</p>
+      <p style="margin:0 0 16px;">We will confirm the spelling with you before anything is engraved. A cartouche cannot be un-engraved, so we would rather ask twice than cut the wrong name once.</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${boutiqueRows(order)}
+      </table>
+      <p style="margin:0 0 16px;">We will be in touch to arrange where and when to hand it over while you are in Egypt.</p>
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:12px;color:#6b7d70;">PayPal order ${escapeHtml(
+        order.orderId
+      )} · transaction ${escapeHtml(order.captureId)}</p>
+    `,
+    footerHtml: `Quote ${escapeHtml(order.reference)} if you reply to this email. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${first},`,
+    "",
+    `Your cartouche is ordered — thank you. ${cents(order.totalCents)} ${order.currency} received.`,
+    "",
+    "We will confirm the spelling with you before anything is engraved.",
+    "",
+    `Piece: ${order.productName}`,
+    `Name to be written: ${order.engravedName}`,
+    `Signs: ${order.spellingLine}`,
+    order.quantity > 1 ? `Quantity: ${order.quantity}` : "",
+    `Collection: in Egypt — we arrange the handover with you`,
+    `Paid: ${cents(order.totalCents)} ${order.currency}`,
+    `Reference: ${order.reference}`,
+    "",
+    `PayPal order ${order.orderId} · transaction ${order.captureId}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Your cartouche is ordered — ${order.reference}`, html, text };
+}
+
+export function boutiqueOrderTeamEmail(order: BoutiqueOrderFacts) {
+  const html = baseLayout({
+    preheader: `PAID — ${order.productName} for ${order.engravedName} (${order.reference}).`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;"><strong>A cartouche has been paid for in full.</strong></p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${boutiqueRows(order)}
+      </table>
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">For the workshop</p>
+      <p style="margin:0 0 16px;font-size:15px;"><strong>${escapeHtml(order.spellingLine)}</strong></p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Customer</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(
+          order.customerName
+        )}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Email</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(
+          order.customerEmail
+        )}</strong></td></tr>
+        ${
+          order.customerPhone
+            ? `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Phone</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(
+                order.customerPhone
+              )}</strong></td></tr>`
+            : ""
+        }
+      </table>
+      ${
+        order.collectionNotes
+          ? `<p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">What they told us</p><p style="margin:0 0 16px;">${escapeHtml(
+              order.collectionNotes
+            )}</p>`
+          : ""
+      }
+      <p style="margin:0 0 16px;">Confirm the spelling with the customer before the workshop cuts anything.</p>
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — boutique order ${escapeHtml(order.reference)}.`,
+  });
+
+  const text = [
+    "A cartouche has been paid for in full.",
+    "",
+    `Piece: ${order.productName}`,
+    `For the workshop: ${order.spellingLine}`,
+    order.quantity > 1 ? `Quantity: ${order.quantity}` : "",
+    `Paid: ${cents(order.totalCents)} ${order.currency}`,
+    `Reference: ${order.reference}`,
+    "",
+    `Customer: ${order.customerName}`,
+    `Email: ${order.customerEmail}`,
+    order.customerPhone ? `Phone: ${order.customerPhone}` : "",
+    order.collectionNotes ? `What they told us: ${order.collectionNotes}` : "",
+    "",
+    "Confirm the spelling with the customer before the workshop cuts anything.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `PAID — cartouche for ${order.engravedName} (${order.reference})`, html, text };
+}

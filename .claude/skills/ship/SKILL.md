@@ -14,7 +14,7 @@ staging. A push deploys to a live travel business that takes real deposits.
 ```bash
 npx tsc --noEmit      # must be 0 errors
 npm run lint          # must be clean
-npm run check         # 16 offline checks, all ok
+npm run check         # 18 offline checks, all ok
 ```
 
 All three, every time, in that order. `npm run check` is cheap; running it is

@@ -2,6 +2,7 @@
 
 import { useId, useMemo, useState } from "react";
 import { CARTOUCHE_VIEWBOX, LOOP, TIE_Y, signFontSize, signPositions } from "@/lib/hieroglyphs/cartoucheLayout";
+import { CartoucheOrderPanel, type OrderableChoice } from "@/components/CartoucheOrderPanel";
 import {
   CARTOUCHE_CAPACITY,
   spellName,
@@ -21,7 +22,17 @@ import {
 
 const FIELD_ID = "treasure-cartoucheName";
 
-export function CartoucheNameStudio({ capacity = CARTOUCHE_CAPACITY }: { capacity?: number }) {
+export function CartoucheNameStudio({
+  capacity = CARTOUCHE_CAPACITY,
+  // Only pieces that have a real price in the CMS reach here. The server
+  // decides that, not this component — see isInstantlyOrderable. When the
+  // list is empty, which it is in production today because every cartouche is
+  // "on request", there is no buy button and the enquiry is the way through.
+  orderable = [],
+}: {
+  capacity?: number;
+  orderable?: OrderableChoice[];
+}) {
   const [name, setName] = useState("");
   const [applied, setApplied] = useState(false);
   const inputId = useId();
@@ -133,9 +144,13 @@ export function CartoucheNameStudio({ capacity = CARTOUCHE_CAPACITY }: { capacit
               <button
                 type="button"
                 onClick={useInEnquiry}
-                className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink shadow-md shadow-gold/25 transition hover:bg-gold-light"
+                className={
+                  orderable.length > 0
+                    ? "rounded-full border border-gold/50 px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold/10"
+                    : "rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink shadow-md shadow-gold/25 transition hover:bg-gold-light"
+                }
               >
-                Use this name in my enquiry
+                {orderable.length > 0 ? "Ask about customisation" : "Use this name in my enquiry"}
               </button>
               {applied && (
                 <p className="text-xs text-ink-soft" aria-live="polite">
@@ -167,6 +182,19 @@ export function CartoucheNameStudio({ capacity = CARTOUCHE_CAPACITY }: { capacit
           )}
         </div>
       </div>
+
+      {/* Buying it outright. Renders only for a piece with a real price; the
+          enquiry above is always available either way. */}
+      {orderable.length > 0 && (
+        <div className="border-t border-black/5 bg-sand/40 p-6">
+          <CartoucheOrderPanel
+            choices={orderable}
+            spelling={spelling}
+            engravedName={name.trim()}
+            onAskInstead={useInEnquiry}
+          />
+        </div>
+      )}
     </section>
   );
 }

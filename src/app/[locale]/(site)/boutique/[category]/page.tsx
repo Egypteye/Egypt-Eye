@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TreasureRequestForm } from "@/components/TreasureRequestForm";
 import { CartoucheNameStudio } from "@/components/CartoucheNameStudio";
+import { isInstantlyOrderable, unitPriceCents } from "@/lib/boutique/cartoucheOrder";
 import { TourCard } from "@/components/TourCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
@@ -161,7 +162,11 @@ export default async function TreasureCategoryPage({
         <section className="py-16">
           <Container className="mx-auto max-w-5xl">
             <Reveal>
-              <CartoucheNameStudio />
+              <CartoucheNameStudio
+                orderable={products
+                  .filter((p) => isInstantlyOrderable(p))
+                  .map((p) => ({ slug: p.slug, name: p.name, unitCents: unitPriceCents(p) ?? 0 }))}
+              />
             </Reveal>
           </Container>
         </section>

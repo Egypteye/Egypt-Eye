@@ -71,6 +71,13 @@ ok("no card claims a sign means an English letter", !/means the letter|letter â€
 ok("no price or checkout appears in the panel", !/\$\d|USD|EGP|add to (cart|basket)/i.test(body));
 ok("the panel says the layout is not final", /not a proof/i.test(body));
 
+// Today every cartouche is "on request" with no price, so there must be no
+// buy button â€” a price on the page that the business has not set would be
+// invented. The enquiry is the way through, and it is present.
+ok("no buy button while every piece is on request", !/Order it now|Continue to payment/.test(body));
+ok("no price is shown on a piece that has none", !/\$\d/.test(body));
+ok("the enquiry is the way through", /Use this name in my enquiry|Ask about customisation/.test(body));
+
 // The one thing no string match can prove: that the signs actually PAINT.
 // Before the webfont was wired every glyph here was an empty box, and the
 // markup looked identical. document.fonts.check asks the browser directly.

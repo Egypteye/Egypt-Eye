@@ -41,6 +41,14 @@ for f in "$D"/tests/[0-9]*.sql; do
     echo "check-sql: test $(basename "$f") failed"; echo "$out" | grep ERROR | head -3; exit 1
   fi
   echo "$out" | grep -E "expect|->" | sed 's/^/  /'
+  # Generic "N (expect M)" assertions, for any test that prints one.
+  while read -r line; do
+    got=$(echo "$line" | sed -nE 's/.*=([0-9]+) \(expect.*/\1/p')
+    want=$(echo "$line" | sed -nE 's/.*\(expect ([0-9]+).*/\1/p')
+    if [ -n "$got" ] && [ -n "$want" ] && [ "$got" != "$want" ]; then
+      echo "check-sql: got $got but expected $want in $(basename "$f")"; exit 1
+    fi
+  done <<< "$(echo "$out" | grep -E '=[0-9]+ \(expect')"
   # The assertions are written as "(expect N ...)" next to the real figure;
   # a mismatch is a wrong number printed beside the expectation, so compare.
   if echo "$out" | grep -qE "seats_taken=([0-9]+) \(expect ([0-9]+)" ; then
@@ -53,4 +61,4 @@ for f in "$D"/tests/[0-9]*.sql; do
     done <<< "$(echo "$out" | grep -E 'seats_taken=[0-9]+ \(expect')"
   fi
 done
-echo "check-sql: ok — every migration applies to a clean database, and 0023 releases a lapsed seat hold exactly once, never a paid one, and is idempotent."
+echo "check-sql: ok — every migration applies to a clean database, 0023 releases a lapsed seat hold exactly once and never a paid one, and a payment attempt must belong to exactly one parent: never both, never neither."

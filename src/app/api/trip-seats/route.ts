@@ -252,7 +252,7 @@ export async function POST(request: NextRequest) {
 
     if (quoted.ok) {
       const opened = await createAttempt({
-        reservationId,
+        parent: { kind: "reservation", id: reservationId },
         reference,
         quote: quoted.quote,
         description: `${departure.trip.title} — ${seats} seat${seats === 1 ? "" : "s"}`,

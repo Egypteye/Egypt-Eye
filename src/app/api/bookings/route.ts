@@ -458,7 +458,7 @@ export async function POST(request: NextRequest) {
   // order we created but have no record of cannot happen. See
   // lib/booking/attempts.ts for why that ordering is the one that matters.
   const opened = await createAttempt({
-    reservationId: data.id,
+    parent: { kind: "reservation", id: data.id },
     reference: data.reference,
     quote: quoted.quote,
     description: `Deposit to secure ${product.title} — ${data.reference}`,

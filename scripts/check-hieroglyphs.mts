@@ -52,6 +52,17 @@ const EXPECTED: ReadonlyArray<readonly [string, number]> = [
   ["Aa1", 0x1340D],
 ];
 
+/**
+ * Source with its comments removed.
+ *
+ * A guard in this project once passed because it matched its own explanatory
+ * comment, and a second one did it again while this file was being written.
+ * Anything asserting what the code SAYS runs against this, not the raw file.
+ */
+function code(src: string): string {
+  return src.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
+}
+
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
   if (!condition) errors.push(label);
@@ -187,7 +198,7 @@ const studio = readFileSync("src/components/CartoucheNameStudio.tsx", "utf8");
 ok("the page imports the studio", /import \{ CartoucheNameStudio \} from "@\/components\/CartoucheNameStudio"/.test(page));
 ok(
   "the studio renders only for cartouches",
-  /category\.slug === "cartouches" && \([\s\S]{0,400}?<CartoucheNameStudio \/>/.test(page),
+  /category\.slug === "cartouches" && \([\s\S]{0,400}?<CartoucheNameStudio/.test(page),
 );
 
 // The route must call spellName on what WAS SUBMITTED. Matching the call
@@ -202,9 +213,12 @@ ok("the spelling is attached to the emailed answers", /answers\.push\(\{ label: 
 // promise a purchase the site cannot take. Everything in the Boutique is
 // an enquiry: nothing is priced and nothing is charged.
 ok("the studio writes into the enquiry's own field", studio.includes('const FIELD_ID = "treasure-cartoucheName"'));
+// The preview half never names money. A price may appear on this page, but
+// only from CartoucheOrderPanel, only for a piece that has one in the CMS,
+// and only through formatCents — never typed into this component.
 ok(
-  "the studio names no price and offers no checkout",
-  !/USD|EGP|\$\d|\bprices?\b|\bcost\b|add to (cart|basket)|buy now/i.test(studio),
+  "the studio hardcodes no price and offers no cart",
+  !/USD|EGP|\$\d|add to (cart|basket)|buy now/i.test(code(studio)),
 );
 ok("the cartouche is drawn as SVG, not a CSS pill", /viewBox=\{`0 0 \$\{CARTOUCHE_VIEWBOX\.w\}/.test(studio));
 ok("the tie at the foot of the rope is drawn", /TIE_Y/.test(studio) && /<line/.test(studio));
