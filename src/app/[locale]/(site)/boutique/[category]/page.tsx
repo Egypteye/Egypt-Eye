@@ -14,6 +14,7 @@ import { TourCard } from "@/components/TourCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
 import { treasureCategories, TREASURES_PATH } from "@/content/treasures";
+import { SHOPPING_TOURS_PATH } from "@/content/shoppingTours";
 import { getTreasureCategories, getTreasureProducts } from "@/sanity/fetchers";
 import { availabilityLabel, cardPrice, ctaForStatus, isOrderable, statusLabel } from "@/lib/treasureDisplay";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata } from "@/content/seo";
@@ -402,6 +403,33 @@ export default async function TreasureCategoryPage({
           </Reveal>
         </Container>
       </section>
+
+      {/* Shopping tours — offered where the category is something you would
+          genuinely want to choose in person, and pointing at a real page
+          rather than a dead link. */}
+      {category.inEgypt && (
+        <section className="border-t border-black/5 bg-sand-dim py-14">
+          <Container className="mx-auto max-w-3xl text-center">
+            <Reveal>
+              <h2 className="font-display text-2xl font-semibold text-ink">
+                <T>Or make a day of it</T>
+              </h2>
+              <p className="mt-3 leading-relaxed text-ink-soft">
+                <T>
+                  A private shopping day through the craft quarters of Cairo, with someone who knows the workshops,
+                  the prices and the language. Discover Egyptian fragrances in person rather than from a page.
+                </T>
+              </p>
+              <Link
+                href={localePath(SHOPPING_TOURS_PATH, locale)}
+                className="mt-6 inline-block rounded-full border border-gold/50 px-7 py-3 text-sm font-semibold text-ink transition hover:bg-gold/10"
+              >
+                <T>Explore shopping tours</T>
+              </Link>
+            </Reveal>
+          </Container>
+        </section>
+      )}
 
       {/* Travel notes — oils only, and deliberately promises nothing */}
       {category.slug === "essence-oils" && (

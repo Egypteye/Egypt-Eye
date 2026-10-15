@@ -121,6 +121,7 @@ export const FOOTER_SECTIONS: FooterSection[] = [
       { href: "/boutique/papyrus", label: "Papyrus" },
       { href: "/boutique/clothing", label: "Clothing" },
       { href: "/boutique/essence-oils", label: "Essence Oils" },
+      { href: "/shopping-tours", label: "Shopping Tours" },
     ],
   },
   {
