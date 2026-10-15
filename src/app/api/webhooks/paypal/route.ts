@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import { redactPayerData } from "@/lib/privacy/redact";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { paymentProvider } from "@/lib/booking/activeProvider";
 import { markAttempt, settleAttempt } from "@/lib/booking/attempts";
@@ -98,7 +99,11 @@ export async function POST(request: NextRequest) {
     event_type: eventType,
     reservation_id: reservation?.id ?? null,
     reference: reference || null,
-    payload: event as unknown as Record<string, unknown>,
+    // The payer is stripped BEFORE the row is written — not deleted later
+    // on a schedule. PayPal keeps the real record and the order id points at
+    // it, so we do not need a copy of somebody's name and home address. See
+    // lib/privacy/redact.ts.
+    payload: redactPayerData(event) as Record<string, unknown>,
   });
 
   if (logError) {
