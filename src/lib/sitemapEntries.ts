@@ -10,7 +10,7 @@ import {
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
 import { weeklyTrips } from "@/content/weeklyTrips";
-import { treasureCategories } from "@/content/treasures";
+import { treasureCategories, treasureProducts } from "@/content/treasures";
 import { isWithdrawnPath } from "@/content/withdrawnSections";
 // Slugs that 301-redirect elsewhere (see next.config.ts, which builds its
 // redirects from the same map) — keep them out of the sitemap even where the
@@ -99,6 +99,17 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     { url: `${siteUrl}/affiliate`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/collaborate`, changeFrequency: "monthly", priority: 0.5 },
   ];
+
+  // Products get their own entries, but only the ones that are real. A
+  // sample listing is a placeholder for a product we have not confirmed, and
+  // offering Google a page of unconfirmed facts is not discoverability.
+  const treasureProductRoutes: MetadataRoute.Sitemap = treasureProducts
+    .filter((p) => !p.placeholder && p.status !== "hidden")
+    .map((p) => ({
+      url: `${siteUrl}/boutique/${p.category}/${p.slug}`,
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    }));
 
   const treasureRoutes: MetadataRoute.Sitemap = treasureCategories.map((c) => ({
     url: `${siteUrl}/boutique/${c.slug}`,
@@ -196,6 +207,7 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     ...destinationRoutes,
     ...weeklyTripRoutes,
     ...treasureRoutes,
+    ...treasureProductRoutes,
     ...productReviewRoutes,
   ].filter((entry) => !isWithdrawnPath(entry.url.slice(siteUrl.length) || "/"));
 

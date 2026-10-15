@@ -113,6 +113,55 @@ for (const f of SCENT_FAMILIES) {
 ok("the filter offers no product-type facet", !/essentialOil|fragranceOil|perfumeOil/.test(code(filter)));
 ok("a single-family collection shows no filter at all", /families\.length < 2/.test(filter));
 
+// ---------------------------------------------------------------------------
+// 6. The product page, and the claims it must not make.
+// ---------------------------------------------------------------------------
+const pdp = readFileSync("src/app/[locale]/(site)/boutique/[category]/[product]/page.tsx", "utf8");
+const actions = readFileSync("src/components/ProductActions.tsx", "utf8");
+const sitemap = readFileSync("src/lib/sitemapEntries.ts", "utf8");
+
+ok("every product has its own page", /generateStaticParams/.test(pdp) && /treasureProducts/.test(pdp));
+ok("the page 404s on an unknown product", /notFound\(\)/.test(pdp));
+
+// Offer structured data needs a price and an availability. Emitting either on
+// a piece that is still "on request" is a manual action, not a rich result.
+ok("a breadcrumb is emitted", /breadcrumbJsonLd/.test(pdp));
+ok("no Product or Offer schema is emitted", !/"@type": ?"Product"|productJsonLd|offerJsonLd/.test(code(pdp)));
+
+// The buy button is gated on a real price, by the same function the cartouche
+// flow uses. There is no second answer to "can this be bought".
+ok("the page asks the shared predicate", /isInstantlyOrderable\(product\)/.test(pdp));
+ok("the price passed in comes from the shared function", /unitPriceCents\(product\)/.test(pdp));
+ok("no price means no buy button", /unitCents !== null && unitCents > 0/.test(actions));
+ok("an unpriced product says why", /still confirming the bottle sizes and the price/.test(actions));
+ok("the buy button names the fulfilment", /collected in Egypt/.test(actions));
+
+// Only one gold button renders: four shouting at once is not a hierarchy.
+// The two gold buttons in the source are the arms of ONE ternary, so counting
+// occurrences would be counting the branch that does not render. What can be
+// proven here is that the SECONDARY actions are never gold; that exactly one
+// renders is asserted in the browser instead.
+ok("buying is primary when possible, asking when not", /buyable \? \(/.test(actions));
+ok("the actions block is addressable", /data-product-actions/.test(actions));
+const secondary = actions.slice(actions.indexOf("{buyable && ("));
+ok("the secondary enquiry is not gold", !/bg-gold /.test(secondary.slice(0, secondary.indexOf("</Link>"))));
+ok("the visit button is not gold", !/bg-gold /.test(secondary.slice(secondary.indexOf("offersVisit"))));
+
+// A shop visit is the right answer for fragrance and nonsense for a pendant,
+// so the page decides rather than every product carrying the button.
+ok("the visit CTA is conditional", /offersVisit && \(/.test(actions));
+ok("the condition is the category's own visit section", /offersVisit=\{Boolean\(category\.inEgypt\)\}/.test(pdp));
+
+// The enquiry carries the product, so nobody retypes what they just chose.
+ok("the enquiry identifies the product", /product=\$\{encodeURIComponent\(productSlug\)\}/.test(actions));
+ok("and the chosen size", /size=\$\{encodeURIComponent\(variant\)\}/.test(actions));
+
+// A sample listing is a product we have not confirmed. Offering Google a page
+// of unconfirmed facts is not discoverability.
+ok("product pages reach the sitemap", /treasureProductRoutes/.test(sitemap));
+ok("sample listings are kept out of it", /\.filter\(\(p\) => !p\.placeholder/.test(sitemap));
+ok("so no oil is in the sitemap yet", oils.every((p) => p.placeholder));
+
 if (errors.length > 0) {
   console.error(`\ncheck-oils: ${errors.length} failure(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
