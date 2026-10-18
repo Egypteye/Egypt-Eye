@@ -4,6 +4,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { reconcilePayments } from "@/lib/booking/reconcile";
 import { pruneRateLimitHits } from "@/lib/rateLimit";
 import { applyDataRetention } from "@/lib/privacy/retention";
+import { deleteExpiredCommissionPhotos } from "@/lib/privacy/photoRetention";
 import { bearerMatches } from "@/lib/security/secrets";
 
 // Runs the payment sweep.
@@ -48,11 +49,16 @@ export async function POST(request: NextRequest) {
   // it cannot fail the payment reconciliation it runs after.
   const retention = await applyDataRetention();
 
+  // Photographs live in storage, not in a table, so they need their own
+  // sweep. Same nightly job, same swallow-your-own-errors rule.
+  const photos = await deleteExpiredCommissionPhotos();
+
   return NextResponse.json({
     ok: true,
     ...report,
     rateLimitHitsPruned: pruned,
     retention: retention.report ?? { ok: retention.ok },
+    commissionPhotos: photos,
   });
 }
 

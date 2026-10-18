@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth/session";
 import { getSiteSettings } from "@/sanity/fetchers";
 import { missingLegalIdentity } from "@/lib/privacy/policy";
 import { previewDataRetention } from "@/lib/privacy/retention";
+import { deleteExpiredCommissionPhotos } from "@/lib/privacy/photoRetention";
 import { NotConfiguredNotice } from "./NotConfiguredNotice";
 
 export const metadata = { title: "Admin Overview", robots: { index: false, follow: false } };
@@ -41,6 +42,11 @@ export default async function AdminOverviewPage() {
   // the privacy policy promises these deletions in writing, and this is
   // where that promise is visible to the person who made it.
   const retention = await previewDataRetention();
+
+  // Not a sweep, a health check: if the photo store is missing, every papyrus
+  // commission is losing the customer's photograph silently. Listing an empty
+  // or absent bucket deletes nothing, so running it here is safe.
+  const photoStore = await deleteExpiredCommissionPhotos();
   const pending = Object.entries(retention.report ?? {})
     .filter(([key, value]) => typeof value === "number" && value > 0 && key !== "dry_run")
     .map(([key, value]) => ({ key: key.replace(/_/g, " "), value: value as number }));
@@ -85,6 +91,26 @@ export default async function AdminOverviewPage() {
           </p>
         </div>
       )}
+      {photoStore.bucketMissing && (
+        <div className="mt-6 rounded-2xl border border-terracotta/40 bg-terracotta/5 p-5">
+          <p className="font-semibold text-terracotta">
+            Papyrus photographs are not being saved
+          </p>
+          <p className="mt-2 text-sm text-ink-soft">
+            The private store for commission photographs does not exist, so every photograph a
+            customer attaches to a papyrus request is lost on arrival. The customer believes they
+            sent it. You get an email saying &ldquo;ask the customer to reply with it&rdquo;, which
+            is easy to miss among the rest of the request.
+          </p>
+          <p className="mt-2 text-sm text-ink-soft">
+            Nothing is broken in the website code — the storage bucket was never created in
+            Supabase. Ask for <strong>migration 0019</strong> to be applied, or create a private
+            bucket named <strong>treasure-uploads</strong> in the Supabase dashboard under Storage
+            (private, 8&nbsp;MB limit, JPEG/PNG/WebP only).
+          </p>
+        </div>
+      )}
+
       {retention.ok && (
         <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-5">
           <p className="font-semibold text-ink">Data retention</p>

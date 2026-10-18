@@ -2,6 +2,8 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import {
   BANNED_PLACEHOLDER_PHRASES,
+  COMMISSION_PHOTO_DAYS,
+  photoCutoff,
   readsLikeAnInstructionToTheAuthor,
   privacyPolicyStrings,
   POLICY_UPDATED,
@@ -657,6 +659,101 @@ ok(
   "the article explains the arrangement instead of hiding it",
   /arranged and operated through the licensed Egyptian agency we work under/.test(content) &&
     /who is the licensed operator for my trip/i.test(content),
+);
+
+// --- Commission photographs. ----------------------------------------------
+//
+// The hardest promise on the page to keep honest. A treasure request writes
+// no database row — it emails the team a signed link — so there is nothing
+// anywhere that knows when a commission was handed over. An earlier draft of
+// this policy promised deletion "once the finished item is handed over to
+// you", which no code could ever have kept: precisely the defect this script
+// exists to catch, written into the policy itself. It is a timer instead,
+// and these assertions pair the stated period to the code that applies it.
+const photoSweep = readFileSync("src/lib/privacy/photoRetention.ts", "utf8");
+
+ok("the stated photo period is a real number", Number.isInteger(COMMISSION_PHOTO_DAYS) && COMMISSION_PHOTO_DAYS > 0);
+ok(
+  "the page states the period the sweep uses",
+  new RegExp(`deleted automatically ${COMMISSION_PHOTO_DAYS} days`).test(policyText),
+);
+ok("the sweep takes its cutoff from the policy module", /photoCutoff/.test(photoSweep));
+ok(
+  "the sweep does not hardcode its own period",
+  !/\b(30|60|90|180|365) \* 24 \* 60 \* 60 \* 1000/.test(photoSweep.replace(/days \* 24/, "")),
+);
+ok("the sweep targets the private bucket", /"treasure-uploads"/.test(photoSweep));
+ok(
+  "the nightly route runs the photo sweep",
+  /deleteExpiredCommissionPhotos\(\)/.test(readFileSync("src/app/api/bookings/reconcile/route.ts", "utf8")),
+);
+
+// The cutoff arithmetic, which is the part that can silently be wrong.
+const noon = new Date("2026-06-15T12:00:00Z");
+const cutoff = photoCutoff(noon);
+ok(
+  "the cutoff is exactly the stated number of days back",
+  Math.round((noon.getTime() - cutoff.getTime()) / 86_400_000) === COMMISSION_PHOTO_DAYS,
+);
+ok("the cutoff is in the past", cutoff < noon);
+ok(
+  "a photo sent today is not due for deletion",
+  new Date("2026-06-15T11:00:00Z") > cutoff,
+);
+ok(
+  "a photo older than the period is due for deletion",
+  new Date("2026-01-01T00:00:00Z") < cutoff,
+);
+
+// A file whose age cannot be established must be left alone: deleting
+// something of unknown age is the wrong way to resolve the doubt.
+ok(
+  "a photo with no timestamp is kept, not deleted",
+  /if \(created && created < cutoff\)/.test(photoSweep),
+);
+
+// The policy must not claim a photograph is taken where none is. The
+// cartouche customiser has no file input at all; saying otherwise is the
+// mirror image of hiding a collection, and just as wrong.
+const cartouchePanel = readFileSync("src/components/CartoucheOrderPanel.tsx", "utf8");
+const cartoucheStudio = readFileSync("src/components/CartoucheNameStudio.tsx", "utf8");
+const cartoucheTakesAPhoto = /type="file"|FileReader|\.files\b/.test(cartouchePanel + cartoucheStudio);
+
+// Read the boutique item specifically, and distinguish a CLAIM from a
+// DENIAL. A first attempt tested /cartouche[^.]*photograph/ against the whole
+// page, which matched the sentence saying the customiser takes NO photograph
+// — an assertion that fires on the correct text and stays quiet on the wrong
+// one is worse than none.
+const boutiqueItem = sections
+  .flatMap((sec) => sec.items ?? [])
+  .find((item) => /boutique/i.test(item.label));
+ok("the boutique collection item still exists", boutiqueItem !== undefined);
+const claimsAPhoto =
+  /photograph|photo\b/i.test(boutiqueItem?.text ?? "") &&
+  !/no photograph|takes no/i.test(boutiqueItem?.text ?? "");
+ok(
+  `the policy's claim about cartouche photos matches the form (form: ${cartoucheTakesAPhoto}, page: ${claimsAPhoto})`,
+  claimsAPhoto === cartoucheTakesAPhoto,
+);
+ok("the policy says the customiser takes no photograph", /takes no photograph/.test(policyText));
+
+// The missing-bucket case has to reach the owner. A console.error does not:
+// he works from a browser, Sanity Studio and the Vercel dashboard, which is
+// why CLAUDE.md says diagnostics belong on an /admin page. This found a live
+// defect — the papyrus form requires a photograph, the bucket was never
+// created in production, and every attached photo has been lost on arrival
+// with nothing but a log line to say so.
+const adminPage = readFileSync("src/app/[locale]/(site)/admin/page.tsx", "utf8");
+ok("the sweep can tell a missing bucket from a failure", /bucketMissing/.test(photoSweep));
+ok("a missing bucket is detected by message", /bucket not found\|does not exist/i.test(photoSweep));
+ok("/admin reports a missing photo store", /bucketMissing/.test(adminPage));
+ok(
+  "/admin says what to do about it",
+  /treasure-uploads/.test(adminPage) && /0019/.test(adminPage),
+);
+ok(
+  "the warning explains the customer-facing effect",
+  /customer believes they\s+sent it/i.test(adminPage),
 );
 
 // The newsletter send must still filter to confirmed, subscribed addresses —

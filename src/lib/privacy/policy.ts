@@ -56,6 +56,37 @@ export type PolicySection = {
   items?: { label: string; text: string }[];
 };
 
+/**
+ * How long a photograph sent for a papyrus commission is kept.
+ *
+ * Time-based, not "once the item is handed over", because nothing in this
+ * system knows when that happened: a treasure request creates no database
+ * row at all. It is emailed to the team with a signed link, and the photo
+ * sits in a private bucket afterwards with nothing to mark it finished.
+ *
+ * An earlier draft of this policy promised deletion "once the finished item
+ * is handed over to you", which would have been a promise no code could keep
+ * — the exact defect this file exists to prevent, written into the file
+ * itself. 90 days is generous against the 30-day signed link the team works
+ * from, and short enough that we are not holding somebody's family
+ * photograph, often of their children, indefinitely for no reason.
+ */
+export const COMMISSION_PHOTO_DAYS = 90;
+
+/**
+ * The moment before which a commission photograph is due for deletion.
+ *
+ * Here rather than beside the sweep that uses it, because the sweep imports
+ * `server-only` — it talks to Supabase storage — and a `server-only` module
+ * cannot be imported by the check scripts at all. Splitting the arithmetic
+ * out is the pattern CLAUDE.md asks for, and the reason paypalBody.ts,
+ * breakdown.ts and clientIp.ts exist. Putting it in the sweep first is how
+ * this was written, and the check died on the import.
+ */
+export function photoCutoff(now: Date, days = COMMISSION_PHOTO_DAYS): Date {
+  return new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+}
+
 /** The day the wording below last changed. Shown to the reader. */
 export const POLICY_UPDATED = "15 October 2026";
 
@@ -99,9 +130,8 @@ export const RETENTION = [
     text: "Your address is marked unsubscribed immediately and never emailed again. We keep the address on a do-not-contact list so a later sign-up cannot add you back by mistake, and your first name is removed. That is the one case where keeping something is the privacy-respecting choice.",
   },
   {
-    label: "Photographs you send us",
-    text:
-      "A reference photo for an engraved cartouche or a papyrus commission is deleted once the finished item is handed over to you.",
+    label: "Photographs you send us for a commission",
+    text: `A photograph sent for a papyrus commission is stored privately — never at a public web address — and deleted automatically ${COMMISSION_PHOTO_DAYS} days after you send it. The link our team uses to look at it stops working after 30.`,
   },
   {
     label: "Payment confirmations from PayPal",
@@ -166,7 +196,7 @@ export function policySections(
         },
         {
           label: "When you order something from the boutique",
-          text: "Your name, email address and phone number, the name you want engraved, and a reference photograph if you send one. We use it to make the item and to arrange handing it to you.",
+          text: "Your name, email address and phone number, and the name you want engraved. We use it to make the item and to arrange handing it to you. The cartouche customiser takes no photograph — the signs come from the name you type.",
         },
         {
           label: "If you create an account",
@@ -179,6 +209,10 @@ export function policySections(
         {
           label: "If you apply to work with us",
           text: "Your company, your name, your email address, your phone number and your message, from the partner and travel-agent forms.",
+        },
+        {
+          label: "If you ask us for a papyrus or another commission",
+          text: "What the form asks for, and the photograph if the piece is painted from one. The photograph goes to a private store that has no public address, and only our team can open it, through a link that expires. It is the one thing we take that is often a picture of somebody else — usually a family, often children — so it is handled accordingly and deleted on a timer.",
         },
         {
           label: 'If you use the "Ask Egypt Eye" assistant',
