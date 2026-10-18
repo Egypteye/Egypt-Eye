@@ -34,9 +34,9 @@ export default function CelebrationsPage() {
         }}
       />
 
-      <section className="fd-section-tight">
+      <section className="fd-section-tight fd-section-lede">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>
@@ -53,7 +53,7 @@ export default function CelebrationsPage() {
         </div>
       </section>
 
-      <section className="fd-section-tight" style={{ paddingTop: 0 }}>
+      <section className="fd-section-tight fd-section-joined">
         <div className="fd-shell">
           <ExperienceHub categories={categories} section="celebrations" />
         </div>

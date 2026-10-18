@@ -3,7 +3,7 @@ import {
   DELIVERY_LABELS,
   type FlyingDressExperience,
 } from "@/content/flyingDressExperiences";
-import { flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
+import { flyingDressEnquiry, mailtoHref, whatsappHref } from "@/content/flyingDresses";
 import { FaqList } from "./FaqList";
 import { fdPath } from "../_lib/seo";
 
@@ -21,35 +21,71 @@ import { fdPath } from "../_lib/seo";
  * date-locked decision, and "the rooftop belongs to a hotel and has to agree"
  * is not small print to them. It is the thing they most need to hear early.
  *
+ * WHY IT CAN BE RENDERED WITHOUT ITS OWN HEADING. A category that holds a
+ * single experience is that experience: the category page prints the
+ * category's title and intro as the page's h1 and lede, and this component
+ * then printed its own, almost identical, title and intro directly
+ * underneath. On the maternity page the two headings were word for word the
+ * same and the two paragraphs differed by a clause — which reads as a
+ * rendering fault, and was reported as one. `headless` drops this
+ * component's heading block when the page above it has already said that,
+ * and keeps everything that is NOT a repetition: the two ways to get in
+ * touch, and the note about the price.
+ *
  * NO PRICE APPEARS unless the experience carries a confirmed one. Every
  * experience in the catalogue today is `enquire`, so every one of these pages
  * ends in a conversation rather than a checkout. That is correct: there is no
  * payment rail on this brand and no availability to check against.
  */
-export function ExperienceDetail({ experience }: { experience: FlyingDressExperience }) {
+export function ExperienceDetail({
+  experience,
+  headless = false,
+}: {
+  experience: FlyingDressExperience;
+  /** The page above has already printed this experience's title and intro. */
+  headless?: boolean;
+}) {
   const enquiryHref = fdPath(`/enquire?experience=${experience.slug}`);
-  const whatsapp = whatsappHref(
-    flyingDressEnquiry({ subject: experience.title, location: experience.name })
-  );
+  // One draft, three ways out: the form, the inbox and the phone. Built once
+  // so an experience cannot arrive described differently depending on which
+  // button the visitor happened to reach first.
+  const draft = { subject: experience.title, location: experience.name };
+  const whatsapp = whatsappHref(flyingDressEnquiry(draft));
+  const email = mailtoHref(draft);
 
   return (
     <>
-      <section className="fd-section-tight" aria-labelledby={`fd-${experience.slug}-heading`}>
+      <section
+        className={`fd-section-tight${headless ? " fd-section-joined" : ""}`}
+        {...(headless
+          ? { "aria-label": experience.title }
+          : { "aria-labelledby": `fd-${experience.slug}-heading` })}
+      >
         <div className="fd-shell fd-shell-narrow">
-          <p className="fd-eyebrow">{experience.eyebrow}</p>
-          <h2 id={`fd-${experience.slug}-heading`} className="fd-display fd-h2">
-            {experience.title}
-          </h2>
-          <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
-            {experience.intro}
-          </p>
+          {headless ? null : (
+            <>
+              <p className="fd-eyebrow">{experience.eyebrow}</p>
+              <h2 id={`fd-${experience.slug}-heading`} className="fd-display fd-h2">
+                {experience.title}
+              </h2>
+              <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
+                {experience.intro}
+              </p>
+            </>
+          )}
 
-          <div className="fd-actions" style={{ marginTop: "2.5rem" }}>
+          <div className="fd-actions" style={{ marginTop: headless ? 0 : "2.5rem" }}>
             <Link className="fd-btn" href={enquiryHref}>
               Plan this experience
             </Link>
+            {/* Small, because there is a hierarchy here: one way to start
+                planning, and two quieter ways to just ask. Three full-size
+                capsules stacked down a phone read as three equal demands. */}
+            <a className="fd-btn fd-btn-ghost fd-btn-sm" href={email}>
+              Enquire by email
+            </a>
             <a
-              className="fd-btn fd-btn-ghost"
+              className="fd-btn fd-btn-ghost fd-btn-sm"
               href={whatsapp}
               target="_blank"
               rel="noopener noreferrer"

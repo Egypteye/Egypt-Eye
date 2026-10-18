@@ -95,8 +95,12 @@
      clearing AA over a busy photograph, and the blur cannot be relied on to
      save it — Firefox shipped backdrop-filter late and it can be disabled.
      At 0.72 the panel is legible with the blur switched off entirely. */
-  --fd-glass: rgba(250, 247, 242, 0.72);
-  --fd-glass-strong: rgba(250, 247, 242, 0.86);
+  /* Raised from 0.72 / 0.86. Over the hero's dark photograph the header was
+     reading as a grey bar rather than an ivory one: a blurred backdrop at
+     72% lets enough of a near-black frame through to shift the whole
+     capsule off-white. Ivory is the brand; grey is an accident. */
+  --fd-glass: rgba(250, 247, 242, 0.88);
+  --fd-glass-strong: rgba(250, 247, 242, 0.95);
   --fd-glass-dark: rgba(20, 20, 20, 0.58);
   --fd-glass-edge: rgba(255, 255, 255, 0.5);
   --fd-hairline: rgba(20, 20, 20, 0.1);
@@ -186,11 +190,11 @@
   --fd-step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
   --fd-step-0: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
   --fd-step-1: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
-  --fd-step-2: clamp(1.375rem, 1.2rem + 0.8vw, 1.875rem);
-  --fd-step-3: clamp(1.75rem, 1.4rem + 1.6vw, 2.75rem);
-  --fd-step-4: clamp(2.25rem, 1.6rem + 2.9vw, 4.25rem);
-  --fd-step-5: clamp(2.75rem, 1.5rem + 5.6vw, 6.5rem);
-  --fd-step-6: clamp(3.25rem, 1.1rem + 9.2vw, 9rem);
+  --fd-step-2: clamp(1.25rem, 1.12rem + 0.6vw, 1.625rem);
+  --fd-step-3: clamp(1.5rem, 1.26rem + 1.1vw, 2.25rem);
+  --fd-step-4: clamp(1.875rem, 1.42rem + 2vw, 3.25rem);
+  --fd-step-5: clamp(2.25rem, 1.4rem + 3.8vw, 4.75rem);
+  --fd-step-6: clamp(2.75rem, 1.3rem + 6.4vw, 6.5rem);
 
   /* ---- Space ----------------------------------------------------------- */
   --fd-gutter: clamp(1rem, 0.5rem + 2.2vw, 2.5rem);
@@ -380,7 +384,10 @@ textarea {
 }
 
 .fd-lead {
-  font-size: var(--fd-step-1);
+  /* Between step 0 and step 1 rather than at step 1: a lede that is only
+     just larger than body text still reads as a lede, and at step 1 it was
+     filling a third of a phone screen before the page had said anything. */
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.1875rem);
   line-height: 1.6;
   max-width: var(--fd-measure);
   margin: 0 0 1.5rem;
@@ -589,7 +596,12 @@ textarea {
   display: block;
   color: var(--fd-ink-soft);
   font-size: var(--fd-step--1);
-  line-height: 1.6;
+  /* Sentence case and normal tracking: this is a sentence, not a caption
+     strip. Inheriting .fd-tile-meta's uppercase + 0.14em turned every card
+     description into three lines of letterspaced capitals. */
+  text-transform: none;
+  letter-spacing: 0.005em;
+  line-height: 1.65;
   margin-bottom: 1.25rem;
 }
 
@@ -927,16 +939,13 @@ ol.fd-beats h3::before {
   text-decoration: none;
 }
 
-.fd-arrow-link::after {
-  content: "";
-  width: 1.5rem;
-  height: 1px;
-  background: currentColor;
-  transition: width var(--fd-mid) var(--fd-ease);
-}
-
-.fd-arrow-link:hover::after {
-  width: 2.75rem;
+/* THE DRAWN DASH AFTER "SEE THE EXPERIENCE" IS GONE, at the owner's
+   instruction: no dashes anywhere on the site. The link still reads as a
+   link, by its letterspaced uppercase setting and its underline on hover,
+   so nothing is lost but the rule. */
+.fd-arrow-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
 }
 
 /* ==========================================================================
@@ -1404,15 +1413,28 @@ ol.fd-beats h3::before {
 }
 
 .fd-drawer {
-  position: fixed;
-  inset: 4.5rem 0 0;
+  /* Anchored to the header, which is `position: sticky` and therefore the
+     containing block for this. No viewport maths to fall out of step. */
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline: 0;
   z-index: 99;
   background: var(--fd-ivory);
-  padding: 2rem var(--fd-gutter) 3rem;
+  border: 1px solid var(--fd-glass-edge);
+  box-shadow: var(--fd-shadow-float);
+  padding: 0.5rem 1.25rem 1.25rem;
+  max-height: calc(100svh - 8rem);
   overflow-y: auto;
-  /* Animated with opacity and translate, never height — an animated height
-     relayouts the page on every frame. */
-  animation: fd-enter var(--fd-mid) var(--fd-ease) both;
+  /* No slide. The owner's word for the old one was "slider", and a menu
+     that travels is a menu you wait for. A fade is enough to stop it
+     appearing out of nowhere, and reduced motion removes even that. */
+  animation: fd-fade var(--fd-fast) var(--fd-ease) both;
+}
+
+@keyframes fd-fade {
+  from {
+    opacity: 0;
+  }
 }
 
 @media (min-width: 64rem) {
@@ -1423,7 +1445,7 @@ ol.fd-beats h3::before {
 
 .fd-drawer ul {
   list-style: none;
-  margin: 0 0 2rem;
+  margin: 0 0 1.25rem;
   padding: 0;
 }
 
@@ -1431,11 +1453,14 @@ ol.fd-beats h3::before {
   border-top: 1px solid rgba(20, 20, 20, 0.08);
 }
 
-.fd-drawer a {
+.fd-drawer ul a {
   display: block;
-  padding: 1rem 0;
+  padding: 0.85rem 0;
   font-family: var(--fd-display);
-  font-size: var(--fd-step-2);
+  /* Was step 2. In a panel the width of the header a 30px serif line is a
+     headline, not a menu item. */
+  font-size: var(--fd-step-0);
+  letter-spacing: 0.01em;
   color: var(--fd-ink);
   text-decoration: none;
 }
@@ -2036,14 +2061,8 @@ ol.fd-timeline h3::before {
   align-items: baseline;
 }
 
-.fd-list h3::before {
-  content: "";
-  flex: none;
-  width: 0.5rem;
-  height: 1px;
-  background: var(--fd-gold);
-  translate: 0 -0.3em;
-}
+/* The dash that used to sit before every list heading is gone with the
+   rest of them. The heading's own weight carries the hierarchy. */
 
 .fd-list p {
   margin: 0;
@@ -2663,6 +2682,19 @@ ol.fd-timeline h3::before {
   box-shadow: none;
 }
 
+/* ---- The small button ------------------------------------------------
+   The default .fd-btn is 48px tall with 28px of side padding, which is
+   right for a page's one main action and far too much for a pair of them
+   repeated beside every item, or for the phone's bar — where two of them
+   filled a third of the screen. 44px still clears WCAG 2.2's target size
+   (24px minimum, 44px the AAA figure) with room to spare. */
+.fd-btn-sm {
+  min-height: 2.75rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+}
+
 .fd-btn:hover {
   box-shadow: var(--fd-shadow-md);
 }
@@ -2794,7 +2826,7 @@ ol.fd-timeline h3::before {
 .fd-sticky-cta {
   inset-inline: var(--fd-gutter);
   bottom: calc(0.75rem + env(safe-area-inset-bottom));
-  padding: 0.5rem;
+  padding: 0.35rem;
   border: 1px solid var(--fd-glass-edge);
   border-top: 1px solid var(--fd-glass-edge);
   border-radius: var(--fd-r-pill);
@@ -3019,4 +3051,148 @@ ol.fd-timeline h3::before {
 .fd-wordmark:has(.fd-mark-inline) {
   align-items: center;
   padding-block: 0;
+}
+
+/* ---- The bar, taken down a weight --------------------------------------
+   The owner's note was that the header "doesn't look luxe". Measured against
+   the screenshot, the fault is bulk rather than taste: a 4rem minimum height
+   plus 0.75rem of top margin plus a float shadow is 90px of chrome above a
+   photograph, and the mark inside it was being set large enough to need all
+   of it.
+
+   Restraint is the whole correction. A thinner capsule, a hairline instead of
+   a visible border, a shadow you have to look for, and a smaller mark with
+   more air around the letterspacing.                                       */
+.fd-header {
+  border-color: color-mix(in srgb, var(--fd-ink) 8%, transparent);
+  box-shadow: 0 1px 2px rgba(20, 20, 20, 0.03), 0 8px 24px -16px rgba(20, 20, 20, 0.18);
+}
+
+.fd-header-inner {
+  min-height: 3.5rem;
+}
+
+@media (min-width: 64rem) {
+  .fd-header-inner {
+    min-height: 3.75rem;
+  }
+}
+
+/* The hero's offset is measured from the header's height, so it comes down
+   with it or the first section floats. */
+.fd-hero {
+  margin-top: calc(-5rem - 0.75rem);
+  padding-top: 5rem;
+}
+
+/* The mark: smaller, with the capitals' tracking opened up. A didone set
+   small with generous letterspacing is the whole vocabulary of a fashion
+   masthead; the same letters set large and tight read as a sign. */
+.fd-mark {
+  --fd-mark-size: 0.95rem;
+}
+
+@media (min-width: 48rem) {
+  .fd-mark {
+    --fd-mark-size: 1.05rem;
+  }
+}
+
+.fd-mark-inline .fd-mark-name {
+  letter-spacing: 0.22em;
+  font-weight: 400;
+}
+
+.fd-mark-inline .fd-mark-script {
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 1.9);
+}
+
+/* The header's own button matches the pair that now sit beside every item,
+   rather than being the one oversized thing in a slim bar. */
+.fd-header-cta {
+  min-height: 2.5rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+
+/* ---- The pair of ways to reach us, under every item --------------------
+   Quieter than a page's main action: these repeat down a page and a column
+   of filled capsules would read as a toolbar rather than as an offer.      */
+.fd-item-actions {
+  margin-top: 1.25rem;
+  gap: 0.5rem;
+}
+
+.fd-item-actions .fd-btn {
+  box-shadow: none;
+}
+
+/* ---- The space under a page's opening ---------------------------------
+   Two `fd-section-tight` blocks stacked put a full section's bottom padding
+   and a full section's top padding between a page's lede and the first thing
+   it introduces. On a phone that is most of a screen of nothing. This closes
+   the seam wherever a section is explicitly marked as continuing the one
+   above it.                                                               */
+.fd-section-joined {
+  padding-top: 0;
+}
+
+.fd-section-lede {
+  padding-bottom: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+}
+
+/* The breadcrumb was set at the eyebrow's full 0.16em tracking, which on a
+   390px screen wrapped "Home / Special Experiences / Maternity and family"
+   onto two lines of widely spaced red capitals before the page had said
+   anything. Same size, less air. */
+.fd-eyebrow-crumbs {
+  letter-spacing: 0.08em;
+  /* The eyebrow's line-height is set for a one-line label. A crumb trail
+     wraps on a phone, and at that leading the two lines read as two
+     separate things. */
+  line-height: 1.45;
+  /* The SIZE is deliberately left alone. The visual audit already reports
+     the "Home" crumb at 39x48 — inside WCAG 2.2 AA's 24px minimum, under
+     the 44px AAA figure the audit warns at — and making the type smaller
+     would narrow it further for no gain. Tracking is where the width was. */
+}
+
+/* ---- The bar is ivory, not glass --------------------------------------
+   The frosted treatment was the last thing making the header look wrong.
+   Over the hero — a near-black photograph — a blurred ivory at any opacity
+   that still reads as translucent mixes enough of that photograph in to
+   come out GREY, and it changes colour as you scroll. A masthead that is a
+   different shade on every page is the opposite of a brand mark.
+
+   The references the owner sent all do the same thing: a solid, floating
+   white bar. So this overrides the @supports rule above it — later, same
+   specificity — and the capsule is simply ivory, everywhere, always. The
+   glass tokens stay in use on the note panels and the phone's bar, where
+   what sits behind them is page, not photograph.                          */
+.fd-header {
+  background: var(--fd-ivory);
+  backdrop-filter: none;
+  border-color: color-mix(in srgb, var(--fd-ink) 10%, transparent);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-header {
+    background: var(--fd-ivory);
+    backdrop-filter: none;
+  }
+}
+
+/* Two tap targets the audit measured a hair under the 44px it warns at.
+   Both are real: a 19px-tall inline link and a 43px crumb are fiddly on a
+   phone whatever WCAG's 24px floor allows. */
+.fd-eyebrow-crumbs a {
+  padding-inline: 0.2rem;
+  margin-inline: -0.2rem;
+}
+
+.fd-inline-link {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding-block: 0.75rem;
 }

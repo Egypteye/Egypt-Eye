@@ -41,7 +41,7 @@ export default function AboutPage() {
     <>
       <section className="fd-section-tight">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>

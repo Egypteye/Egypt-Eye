@@ -1465,6 +1465,115 @@ for (const file of brandTsx) {
 }
 
 // ---------------------------------------------------------------------------
+// NO DASHES, ANYWHERE A VISITOR CAN SEE ONE
+//
+// The owner's instruction, after seeing the drawn rule that used to trail
+// every "See the experience" link: no dashes on this site. That covers three
+// different things, which is why a grep for one character is not enough:
+//
+//   1. the DRAWN ones — `.fd-arrow-link::after` and `.fd-list h3::before`
+//      were 1px-tall pseudo-elements, invisible to any search for "—"
+//   2. the TYPED ones in copy — em dashes in a sentence
+//   3. the RANGES — "30–45 minutes", which is the form they kept coming back
+//      in, because a range reads naturally with one and nobody thinks of it
+//      as a dash while typing it
+//
+// Comments are stripped first. This file's own prose is full of em dashes and
+// so is every component's, and a check that fires on a comment is a check
+// people disable. Proven on all three: restoring the `::after` rule, typing
+// an em dash into a heading, and putting "6–10 days" back — each one red,
+// naming the file and the line. Restored: green.
+// ---------------------------------------------------------------------------
+{
+  const brandCss = read("src/app/flying-dresses/brand.css");
+  ok(
+    "brand.css draws the dash after .fd-arrow-link again — the owner asked for no dashes on the site",
+    !/\.fd-arrow-link::after\s*\{/.test(brandCss)
+  );
+  ok(
+    "brand.css draws the dash before .fd-list headings again — the owner asked for no dashes on the site",
+    !/\.fd-list h3::before\s*\{/.test(brandCss)
+  );
+
+  const copyFiles = execSync(
+    "find src/app/flying-dresses -name '*.tsx' -type f",
+    { encoding: "utf8" }
+  )
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .concat([
+      "src/content/flyingDresses.ts",
+      "src/content/flyingDressExperiences.ts",
+      "src/content/flyingDressCollaborations.ts",
+    ]);
+
+  for (const file of copyFiles) {
+    // Block comments become the same number of blank lines so the reported
+    // line number still points at the real one.
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => "\n".repeat((m.match(/\n/g) ?? []).length))
+      .replace(/^\s*\/\/.*$/gm, "");
+    source.split("\n").forEach((line, index) => {
+      ok(
+        `${file}:${index + 1} contains a dash in visible copy: ${line.trim().slice(0, 80)}`,
+        !/[—–]/.test(line)
+      );
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// THE HOME PAGE CARRIES NO PRICE
+//
+// Asked for directly, and the kind of thing that creeps back one section at a
+// time: a figure added to a new panel "just so people know". The prices are
+// not gone from the site — /packages and every /experiences/<slug> still
+// publish the full figure and the whole extras table — they are gone from the
+// page a visitor meets first, where a number arrives before the thing it buys
+// has been described.
+//
+// Proven by putting `<span className="fd-price">${pkg.priceUsd}</span>` back
+// into the package panel: red. Removed: green.
+// ---------------------------------------------------------------------------
+{
+  const home = read("src/app/flying-dresses/page.tsx")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
+  ok(
+    "the home page renders a priceUsd figure again — prices belong on /packages and the experience pages, not on the first page a visitor meets",
+    !/priceUsd/.test(home)
+  );
+  ok(
+    'the home page uses the .fd-price class again — that class exists to set a price in the display face, so its presence here means a figure is being shown',
+    !/className="fd-price"/.test(home)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// A CATEGORY OF ONE MAY NOT PRINT ITS HEADING TWICE
+//
+// The category page sets the category's title as the h1 and its intro as the
+// lede. ExperienceDetail then set the experience's title and intro directly
+// underneath. For a category holding exactly one experience those two pairs
+// are the same sentence written twice, which on /celebrations/maternity-and-
+// family rendered as "Maternity and family portraits" twice in one viewport
+// with near-identical paragraphs under each. The owner reported it as a
+// duplication bug, which is exactly what it looked like.
+//
+// Proven by dropping the `headless` prop from the celebrations page: red.
+// Restored: green.
+// ---------------------------------------------------------------------------
+for (const section of ["celebrations", "creative"]) {
+  const file = `src/app/flying-dresses/${section}/[slug]/page.tsx`;
+  const source = read(file);
+  ok(
+    `${file} renders ExperienceDetail without \`headless\` — a category holding one experience would print its title and intro twice`,
+    /headless=\{experiences\.length === 1\}/.test(source)
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

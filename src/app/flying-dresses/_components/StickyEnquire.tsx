@@ -18,7 +18,10 @@ import { fdPath } from "../_lib/seo";
  * form. It is CSS-hidden above 48rem rather than conditionally rendered, so
  * there is no layout shift and no hydration mismatch on resize.
  *
- * It is deliberately slim, it carries no close button (two taps, no dismissal
+ * It is deliberately slim — `fd-btn-sm` rather than the page's full-size
+ * button, because at the default 48px height with 28px of side padding the
+ * two of them filled a third of a phone screen, which is what the owner
+ * reported. It carries no close button (two taps, no dismissal
  * state to persist), and the layout reserves space for it via
  * `.fd-has-sticky-cta` so it never covers the footer or the last field of the
  * enquiry form. The brief's warning about a persistent bar obscuring form
@@ -63,7 +66,7 @@ export function StickyEnquire() {
   return (
     <div className="fd-sticky-cta">
       <a
-        className="fd-btn fd-btn-ghost"
+        className="fd-btn fd-btn-ghost fd-btn-sm"
         style={{ flex: 1 }}
         href={whatsappHref(whatsappMessage)}
         target="_blank"
@@ -72,7 +75,7 @@ export function StickyEnquire() {
         WhatsApp
         <span className="fd-sr">, message us (opens in a new tab)</span>
       </a>
-      <Link className="fd-btn" style={{ flex: 1 }} href={enquiryHref}>
+      <Link className="fd-btn fd-btn-sm" style={{ flex: 1 }} href={enquiryHref}>
         Enquire
       </Link>
     </div>

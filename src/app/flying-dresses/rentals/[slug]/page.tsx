@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import {
   RENTAL_DELIVERY_LABELS,
   flyingDressEnquiry,
+  mailtoHref,
   payment,
   rentalServiceBySlug,
   rentalServices,
@@ -71,7 +72,7 @@ export default async function RentalServicePage({
     <>
       <section className="fd-section-tight">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>
@@ -105,6 +106,12 @@ export default async function RentalServicePage({
                 <Link className="fd-btn" href={fdPath(`/enquire?service=${service.slug}`)}>
                   Ask for a price
                 </Link>
+                <a
+                  className="fd-btn fd-btn-ghost"
+                  href={mailtoHref({ subject: service.title })}
+                >
+                  Enquire by email
+                </a>
                 <a
                   className="fd-btn fd-btn-ghost"
                   href={whatsappHref(flyingDressEnquiry({ subject: service.title }))}

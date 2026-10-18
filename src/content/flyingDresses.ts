@@ -257,11 +257,11 @@ export const packageIncludes: Inclusion[] = [
     detail: "One person whose whole job is the fabric: holding the train, throwing it, keeping it out of the sand between frames.",
   },
   {
-    title: "A 30–45 minute photoshoot",
+    title: "A 30 to 45 minute photoshoot",
     detail: "Directed throughout. You do not need to know how to pose. That is the photographer's job and the dress does the rest.",
   },
   {
-    title: "Delivered in 6–10 days",
+    title: "Delivered in 6 to 10 days",
     detail: "Your edited gallery, within six to ten days of the shoot.",
   },
 ];
@@ -867,7 +867,7 @@ export const rentalServices: RentalService[] = [
       "What distinguishes Saeedy Gawn 1 from Saeedy Gawn 2, and Bahary Gawn 3 from Bahary Gawn 4. The brochure numbers them and does not say.",
       "Prices: both as a photoshoot add-on and as a standalone rental.",
       "Sizes available.",
-      "Whether the brochure's numbering (1–5) is how the owner refers to them, or an artefact of the list.",
+      "Whether the brochure's numbering (1 to 5) is how the owner refers to them, or an artefact of the list.",
     ],
   },
 ];
@@ -975,6 +975,32 @@ export function flyingDressEnquiry(draft: EnquiryDraft = {}): string {
   lines.push("");
   lines.push("Could you confirm availability and the price for these dates?");
   return lines.join("\n");
+}
+
+/**
+ * The same draft, addressed to the inbox instead of the phone.
+ *
+ * WHY A `mailto:` RATHER THAN A SECOND LINK TO THE FORM. The form is better
+ * for us — it is structured, it is captured, and it cannot be lost in a spam
+ * folder. It is not better for everyone: a visitor who would rather write in
+ * their own words, keep a copy in their sent items, or forward the thread to
+ * the person they are planning this with has nowhere to do that, and the only
+ * address on the site is in the footer. This gives the same prefilled message
+ * WhatsApp gets, to the published address, from wherever they happen to be
+ * standing on the page.
+ *
+ * It does NOT replace the form anywhere. Every page that had a form link
+ * still has it; this sits beside it.
+ */
+export function mailtoHref(draft: EnquiryDraft = {}): string {
+  const subject = draft.subject
+    ? `Enquiry: ${draft.subject}`
+    : "Flying Dresses Egypt enquiry";
+  return (
+    `mailto:${contact.email}` +
+    `?subject=${encodeURIComponent(subject)}` +
+    `&body=${encodeURIComponent(flyingDressEnquiry(draft))}`
+  );
 }
 
 // ---------------------------------------------------------------------------

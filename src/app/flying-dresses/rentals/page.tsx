@@ -3,6 +3,7 @@ import Link from "next/link";
 import { RENTAL_DELIVERY_LABELS, rentalServices } from "@/content/flyingDresses";
 import { Scene } from "../_components/Scene";
 import { empty } from "../_lib/assets";
+import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { wardrobeShareImage } from "../_lib/shareImages";
 
@@ -34,7 +35,7 @@ export default function RentalsPage() {
     <>
       <section className="fd-section-tight">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>
@@ -100,6 +101,8 @@ export default function RentalsPage() {
                     Ask for a price
                   </Link>
                 </div>
+
+                <ItemActions label={service.title} draft={{ subject: service.title }} />
               </div>
 
               <figure>

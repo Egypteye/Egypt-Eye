@@ -74,9 +74,9 @@ export default async function ExperienceCategoryPage({
         }}
       />
 
-      <section className="fd-section-tight">
+      <section className="fd-section-tight fd-section-lede">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>
@@ -97,8 +97,16 @@ export default async function ExperienceCategoryPage({
         </div>
       </section>
 
+      {/* `headless` when this category holds exactly one experience: the h1
+          and lede above are already that experience's title and intro, and
+          printing them again directly underneath is the duplication the
+          owner reported on the maternity page. */}
       {experiences.map((experience) => (
-        <ExperienceDetail key={experience.slug} experience={experience} />
+        <ExperienceDetail
+          key={experience.slug}
+          experience={experience}
+          headless={experiences.length === 1}
+        />
       ))}
 
       <section className="fd-section-tight fd-sand">

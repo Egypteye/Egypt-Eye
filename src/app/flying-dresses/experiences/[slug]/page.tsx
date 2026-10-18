@@ -6,6 +6,7 @@ import {
   cancellation,
   dresses,
   flyingDressEnquiry,
+  mailtoHref,
   mensOutfits,
   packageBySlug,
   packageIncludes,
@@ -58,7 +59,7 @@ export async function generateMetadata({
 
   return fdMetadata({
     title: `${pkg.title} Flying Dress Photoshoot: $${pkg.priceUsd} per person`,
-    description: `${pkg.intro} Includes the dress, door-to-door transport, an assistant and 100+ colour-graded photographs delivered in 6–10 days.`,
+    description: `${pkg.intro} Includes the dress, door-to-door transport, an assistant and 100+ colour-graded photographs delivered in 6 to 10 days.`,
     path: `/experiences/${pkg.slug}`,
     image: shootShareImages[pkg.slug],
   });
@@ -86,7 +87,7 @@ export default async function ExperiencePage({
           price and the inclusions matter more than the drama. */}
       <section className="fd-section-tight">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>
@@ -109,7 +110,7 @@ export default async function ExperiencePage({
               <div className="fd-tile-meta" style={{ marginBottom: "1.75rem" }}>
                 <span className="fd-price">${pkg.priceUsd}</span>
                 <span>per person</span>
-                <span>30–45 minutes</span>
+                <span>30 to 45 minutes</span>
                 <span>100+ photographs</span>
               </div>
 
@@ -120,17 +121,26 @@ export default async function ExperiencePage({
                   booking button here that cannot take a booking. */}
               <BookingRail pkg={pkg} />
 
-              <p style={{ marginTop: "1.25rem" }}>
+              {/* The two ways to ask rather than book, beside the rail
+                  rather than at the foot of the page. Both carry this
+                  shoot's draft, so neither arrives blank. */}
+              <div className="fd-actions fd-item-actions">
                 <a
-                  className="fd-arrow-link"
+                  className="fd-btn fd-btn-ghost fd-btn-sm"
+                  href={mailtoHref({ subject: pkg.title, location: pkg.name })}
+                >
+                  Enquire by email
+                </a>
+                <a
+                  className="fd-btn fd-btn-ghost fd-btn-sm"
                   href={whatsappHref(enquiryMessage)}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Or ask on WhatsApp
+                  WhatsApp
                   <span className="fd-sr"> (opens in a new tab)</span>
                 </a>
-              </p>
+              </div>
             </div>
 
             <figure>

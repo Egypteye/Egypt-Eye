@@ -18,6 +18,7 @@ import { hardenFlyingDressGallery } from "@/lib/sanityShape";
 import type { FlyingDressGallery } from "@/content/types";
 import { HeroVideo } from "./_components/HeroVideo";
 import { agency, empty, location } from "./_lib/assets";
+import { ItemActions } from "./_components/ItemActions";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
 
 /**
@@ -276,9 +277,8 @@ export default async function FlyingDressesHome() {
                   </ul>
 
                   <div className="fd-tile-meta" style={{ marginBottom: "1.5rem" }}>
-                    <span className="fd-price">${pkg.priceUsd}</span>
-                    <span>per person</span>
-                    <span>30–45 minutes</span>
+                    <span>30 to 45 minutes</span>
+                    <span>100+ photographs</span>
                   </div>
 
                   <div className="fd-actions">
@@ -286,6 +286,11 @@ export default async function FlyingDressesHome() {
                       {pkg.name} in full
                     </Link>
                   </div>
+
+                  <ItemActions
+                    label={pkg.title}
+                    draft={{ subject: pkg.title, location: pkg.name }}
+                  />
                 </div>
 
                 <figure>
@@ -472,7 +477,7 @@ export default async function FlyingDressesHome() {
           <div style={{ maxWidth: "44rem", marginBottom: "3rem" }}>
             <p className="fd-eyebrow">Included in every shoot</p>
             <h2 id="fd-included-heading" className="fd-display fd-h2">
-              Six things, in every price
+              Six things, included every time
             </h2>
           </div>
 
@@ -539,33 +544,21 @@ export default async function FlyingDressesHome() {
             Makeup, hair, reels, a second dress
           </h2>
 
-          <div className="fd-table-wrap" tabIndex={0} role="group" aria-label="Optional extras and their prices, scrollable sideways">
+          <div className="fd-table-wrap" tabIndex={0} role="group" aria-label="Optional extras, scrollable sideways">
             <table className="fd-table">
               <caption className="fd-sr">
-                Optional extras and their prices. Some are starting prices and some are quoted on
-                request.
+                Optional extras and what each one is. Prices are on the packages page.
               </caption>
               <thead>
                 <tr>
                   <th scope="col">Extra</th>
-                  <th scope="col">Price</th>
-                  <th scope="col">Notes</th>
+                  <th scope="col">What it is</th>
                 </tr>
               </thead>
               <tbody>
                 {addOns.map((addOn) => (
                   <tr key={addOn.id}>
                     <th scope="row">{addOn.label}</th>
-                    <td>
-                      {addOn.priceUsd === null ? (
-                        <span className="fd-price-from">On request</span>
-                      ) : (
-                        <>
-                          {addOn.fromPrice ? <span className="fd-price-from">from </span> : null}
-                          <span className="fd-price">${addOn.priceUsd}</span>
-                        </>
-                      )}
-                    </td>
                     <td className="fd-muted" style={{ fontSize: "var(--fd-step--1)" }}>
                       {addOn.detail}
                     </td>
@@ -574,6 +567,13 @@ export default async function FlyingDressesHome() {
               </tbody>
             </table>
           </div>
+
+          <p className="fd-muted" style={{ marginTop: "1.5rem", fontSize: "var(--fd-step--1)" }}>
+            <Link className="fd-inline-link" href={fdPath("/packages")}>
+              See what each of these costs
+            </Link>, or ask us for
+            the ones you want and we will put them in your quote.
+          </p>
         </div>
       </section>
 

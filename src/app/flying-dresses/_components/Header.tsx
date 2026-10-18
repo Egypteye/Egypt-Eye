@@ -18,15 +18,25 @@ import { fdPath } from "../_lib/seo";
  *
  * ACCESSIBILITY DECISIONS
  *
- * - The drawer is a plain nav, not a modal dialog. It covers the viewport
- *   below the header but the header stays interactive, so trapping focus
- *   inside it would make the close button unreachable by keyboard from
- *   outside. Escape closes it; the toggle keeps focus.
+ * - The drawer is a plain nav, not a modal dialog, and since the redesign it
+ *   is a PANEL HUNG OFF THE HEADER rather than a sheet over the viewport.
+ *   It used to be pinned at `inset: 4.5rem 0 0`, measured from the top of the
+ *   window — which stopped being where the header is the day the header began
+ *   floating 0.75rem down inside its own capsule. The first menu item sat
+ *   behind the bar and the page showed through above it. Anchoring it to the
+ *   header, which is `position: sticky` and so is its containing block, means
+ *   it cannot drift from the thing it belongs to again.
+ *   The header stays interactive, so trapping focus inside the panel would
+ *   make the close button unreachable by keyboard from outside. Escape
+ *   closes it; the toggle keeps focus.
  * - `aria-expanded` lives on the button that controls the drawer, and
  *   `aria-controls` points at it, which is what tells a screen reader the
  *   relationship rather than leaving it to the visual arrangement.
- * - Body scroll is locked while it is open, because a full-height overlay you
- *   can scroll the page behind is disorienting on a phone.
+ * - Body scroll is NO LONGER locked. That rule existed because a full-height
+ *   overlay you can scroll the page behind is disorienting; a panel attached
+ *   to a sticky header travels with it and has no such problem, and freezing
+ *   a page under a menu a visitor may only be glancing at is friction for
+ *   nothing.
  * - The drawer closes on navigation. Without that, tapping a link on a phone
  *   changes the page underneath an overlay that is still covering it, which
  *   reads as a broken link.
@@ -53,7 +63,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
   const open = openFor === pathname;
   const setOpen = (next: boolean) => setOpenFor(next ? pathname : null);
 
-  // Escape closes; scroll locks while open.
+  // Escape closes.
   useEffect(() => {
     if (!open) return;
     const onKey = (event: KeyboardEvent) => {
@@ -64,12 +74,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
       if (event.key === "Escape") setOpenFor(null);
     };
     document.addEventListener("keydown", onKey);
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.removeEventListener("keydown", onKey);
-      document.body.style.overflow = previous;
-    };
+    return () => document.removeEventListener("keydown", onKey);
   }, [open]);
 
   const isCurrent = (href: string) =>
@@ -141,11 +146,11 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
             ))}
           </ul>
           <div className="fd-actions">
-            <Link className="fd-btn fd-btn-block" href={fdPath("/enquire")}>
+            <Link className="fd-btn fd-btn-sm fd-btn-block" href={fdPath("/enquire")}>
               Plan your shoot
             </Link>
             <a
-              className="fd-btn fd-btn-ghost fd-btn-block"
+              className="fd-btn fd-btn-ghost fd-btn-sm fd-btn-block"
               href={whatsappHref(flyingDressEnquiry())}
               target="_blank"
               rel="noopener noreferrer"

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { packageIncludes, packages } from "@/content/flyingDresses";
 import { Scene } from "../_components/Scene";
 import { agency, location } from "../_lib/assets";
+import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 
 export const metadata: Metadata = fdMetadata({
@@ -23,7 +24,7 @@ export default function ExperiencesPage() {
     <>
       <section className="fd-section-tight">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>
@@ -64,7 +65,7 @@ export default function ExperiencesPage() {
                 <div className="fd-tile-meta" style={{ margin: "1.75rem 0" }}>
                   <span className="fd-price">${pkg.priceUsd}</span>
                   <span>per person</span>
-                  <span>30–45 min shoot</span>
+                  <span>30 to 45 min shoot</span>
                   <span>100+ photographs</span>
                 </div>
 
@@ -79,6 +80,11 @@ export default function ExperiencesPage() {
                     Enquire
                   </Link>
                 </div>
+
+                <ItemActions
+                  label={pkg.title}
+                  draft={{ subject: pkg.title, location: pkg.name }}
+                />
               </div>
 
               <figure>

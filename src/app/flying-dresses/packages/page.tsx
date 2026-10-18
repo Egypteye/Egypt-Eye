@@ -10,6 +10,7 @@ import {
   rentalServices,
 } from "@/content/flyingDresses";
 import { BookingRail } from "../_components/BookingRail";
+import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 
 export const metadata: Metadata = fdMetadata({
@@ -24,7 +25,7 @@ export default function PackagesPage() {
     <>
       <section className="fd-section-tight">
         <div className="fd-shell">
-          <nav aria-label="Breadcrumb" className="fd-eyebrow" style={{ marginBottom: "2rem" }}>
+          <nav aria-label="Breadcrumb" className="fd-eyebrow fd-eyebrow-crumbs" style={{ marginBottom: "2rem" }}>
             <Link href={fdPath()} style={{ color: "inherit" }}>
               Home
             </Link>
@@ -90,7 +91,7 @@ export default function PackagesPage() {
                       {pkg.gettingThere}
                     </td>
                     <td className="fd-muted" style={{ fontSize: "var(--fd-step--1)" }}>
-                      30–45 min · 100+ photographs · delivered in 6–10 days
+                      30 to 45 min · 100+ photographs · delivered in 6 to 10 days
                     </td>
                     <td>
                       <Link className="fd-arrow-link" href={fdPath(`/experiences/${pkg.slug}`)}>
@@ -133,6 +134,13 @@ export default function PackagesPage() {
                   {pkg.title}
                 </p>
                 <BookingRail pkg={pkg} />
+                {/* Beside the rail, not instead of it: a deposit is the
+                    fastest route for someone who has decided, and these two
+                    are for everyone who has a question first. */}
+                <ItemActions
+                  label={pkg.title}
+                  draft={{ subject: pkg.title, location: pkg.name }}
+                />
               </div>
             ))}
           </div>
