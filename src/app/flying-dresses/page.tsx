@@ -27,7 +27,7 @@ import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
  *
  *   1  the hero                 — one frame, one claim, two ways in
  *   2  what it actually is      — the product, in four lines
- *   3  the rooftop story        — THE pinned scene. The only one on the site.
+ *   3  the rooftop story        - why seven in the morning is the product
  *   4  the three locations      — alternating editorial panels, not three cards
  *   5  the wardrobe             — a horizontal rail of the twelve
  *   6  rent without a shoot     — the three hire services
@@ -177,63 +177,56 @@ export default async function FlyingDressesHome() {
       </section>
 
       {/* ================================================================
-          3. THE ROOFTOP STORY — the one pinned scene on the site.
+          3. THE ROOFTOP STORY.
 
-          Pure sticky positioning. The browser's own scrolling is never
-          intercepted, so a visitor who does not want the story can flick
-          straight past it at any speed. Three viewports of track for three
-          captions; without scroll-driven animation support, or with reduced
-          motion, the three simply stack and read as a normal section.
+          This was a pinned, scroll-driven scene: three viewports of track
+          with the captions cross-fading as you scrolled. It is gone, at the
+          owner's request, because it froze on their phone and because a
+          visitor who simply wants to read the page should never have to
+          out-scroll an animation to do it.
 
-          It earns the pin because it carries the single best competitive
-          fact this brand has: the gates open at eight, and the roof has no
-          gate.
+          The ARGUMENT stays, because it is the single best competitive fact
+          this brand has: the gates open at eight, and the roof has no gate.
+          It is now three plain statements that are all on screen at once and
+          cost nothing to render.
           ================================================================ */}
-      <section className="fd-pin" aria-labelledby="fd-rooftop-heading">
-        <div className="fd-pin-track">
-          <div className="fd-pin-stage fd-on-dark">
-            <div className="fd-pin-media" aria-hidden="true">
-              <Scene
-                src={location.gizaHorseback.src}
-                alt=""
-                width={location.gizaHorseback.width}
-                height={location.gizaHorseback.height}
-                ratio=""
-                sizes="100vw"
-              />
-            </div>
+      <section className="fd-section fd-dark fd-on-dark" aria-labelledby="fd-rooftop-heading">
+        <div className="fd-shell fd-split" style={{ alignItems: "center" }}>
+          <div>
+            <p className="fd-eyebrow">The hour nobody else can sell</p>
+            <h2 id="fd-rooftop-heading" className="fd-display fd-h2" style={{ marginBottom: "2.5rem" }}>
+              Seven in the morning, <span className="fd-script-accent">above Giza</span>
+            </h2>
 
-            <div className="fd-shell fd-pin-body">
-              <h2 id="fd-rooftop-heading" className="fd-sr">
-                The hour before the gates open
-              </h2>
-              <div className="fd-pin-steps">
-                <div className="fd-pin-step">
-                  <p className="fd-eyebrow">07:00</p>
-                  <p className="fd-display fd-h2" style={{ maxWidth: "24ch" }}>
-                    The Giza site does not open until eight.
-                  </p>
-                </div>
-                <div className="fd-pin-step">
-                  <p className="fd-eyebrow">The roof</p>
-                  <p className="fd-display fd-h2" style={{ maxWidth: "24ch" }}>
-                    From a rooftop there is no gate, and no ticket.
-                  </p>
-                </div>
-                <div className="fd-pin-step">
-                  <p className="fd-eyebrow">The frame</p>
-                  <p className="fd-display fd-h2" style={{ maxWidth: "26ch" }}>
-                    So the pyramids catch the first light, and nobody else is in it.
-                  </p>
-                  <div className="fd-actions" style={{ marginTop: "2rem" }}>
-                    <Link className="fd-btn" href={fdPath("/experiences/pyramids-rooftop")}>
-                      The rooftop shoot: $199
-                    </Link>
-                  </div>
-                </div>
-              </div>
+            <ol className="fd-list fd-beats">
+              <li>
+                <h3>The Giza site does not open until eight.</h3>
+              </li>
+              <li>
+                <h3>From a rooftop there is no gate, and no ticket.</h3>
+              </li>
+              <li>
+                <h3>So the pyramids catch the first light, and nobody else is in it.</h3>
+              </li>
+            </ol>
+
+            <div className="fd-actions" style={{ marginTop: "2.5rem" }}>
+              <Link className="fd-btn fd-btn-light" href={fdPath("/experiences/pyramids-rooftop")}>
+                The rooftop shoot: $199
+              </Link>
             </div>
           </div>
+
+          <figure style={{ margin: 0 }}>
+            <Scene
+              src={location.gizaHorseback.src}
+              alt={location.gizaHorseback.alt}
+              width={location.gizaHorseback.width}
+              height={location.gizaHorseback.height}
+              ratio="fd-ratio-landscape"
+              sizes="(min-width: 60rem) 45vw, 92vw"
+            />
+          </figure>
         </div>
       </section>
 
@@ -349,7 +342,17 @@ export default async function FlyingDressesHome() {
             orphaned items instead of a list of twelve dresses. The group and
             the keyboard focus belong on the scroll container; the list stays a
             list. */}
-        <div style={{ marginInline: "calc(var(--fd-gutter) * -1)" }}>
+        {/* NO NEGATIVE MARGIN HERE. It used to carry
+            `marginInline: calc(var(--fd-gutter) * -1)` to bleed the rail to
+            the screen edges, which assumed a .fd-shell parent whose gutter
+            padding it was cancelling. There is no shell here: the parent is a
+            full-width .fd-section with no padding, so the negative margin had
+            nothing to cancel and simply made this box two gutters WIDER than
+            the viewport. That was 17px of horizontal page scroll on a phone
+            and 294px on a tablet: the whole page slid sideways under your
+            thumb. The rail carries its own padding-inline, so it still starts
+            inset from the edge and still bleeds. */}
+        <div>
           <div
             tabIndex={0}
             role="group"

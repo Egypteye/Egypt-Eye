@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Bodoni_Moda, Italianno, Jost } from "next/font/google";
+import { Bodoni_Moda, Jost, Sacramento } from "next/font/google";
 import "./brand.css";
 import { brand } from "@/content/flyingDresses";
 import { FlyingDressesHeader } from "./_components/Header";
@@ -28,7 +28,7 @@ import { fdJsonLd, fdMetadata, fdOrganizationJsonLd, fdSiteUrl } from "./_lib/se
 // Only the weights actually used, listed explicitly rather than taking the
 // variable font's whole range. Bodoni is display-only here and needs italic
 // (the pull-quotes and the one-word accents); Jost carries all body and UI
-// text; Italianno has a single weight and is used for at most one phrase per
+// text; the script has a single weight and is used for at most one phrase per
 // page. `display: "swap"` everywhere so text is never invisible while a font
 // loads — a didone that arrives 200ms late is a reflow, a blank headline is a
 // failed LCP.
@@ -47,7 +47,21 @@ const jost = Jost({
   display: "swap",
 });
 
-const italianno = Italianno({
+/**
+ * THE SIGNATURE HAND.
+ *
+ * Was Italianno, a formal copperplate calligraphy with hairline strokes. It
+ * is beautiful at 80px on a wedding invitation and it disappears at the sizes
+ * this brand actually uses it: one or two words crossing a headline, in red,
+ * at roughly 1.35em of the heading around it. Hairlines at that size on a
+ * warm white simply go grey.
+ *
+ * Sacramento is a signature hand rather than a calligraphic one: a single
+ * monoline weight, so it holds its colour at small sizes and reads as
+ * handwriting rather than as penmanship. That is what the references the
+ * owner supplied are doing with their red script.
+ */
+const sacramento = Sacramento({
   variable: "--font-fd-script",
   weight: "400",
   subsets: ["latin"],
@@ -116,7 +130,7 @@ export default function FlyingDressesLayout({
   const logo = brandLogo();
 
   return (
-    <html lang="en" className={`${bodoni.variable} ${jost.variable} ${italianno.variable}`}>
+    <html lang="en" className={`${bodoni.variable} ${jost.variable} ${sacramento.variable}`}>
       <body>
         <a className="fd-skip" href="#fd-main">
           Skip to content

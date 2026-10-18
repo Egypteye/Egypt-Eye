@@ -588,6 +588,46 @@ for (const path of PAGES) {
     const shot = join(OUT, `${label}-${vp.name}.png`);
     await page.screenshot({ path: shot, fullPage: false });
 
+    // THE PAGE SLIDING SIDEWAYS — measured on EVERY viewport, deliberately.
+    //
+    // This is in the per-viewport loop and not in inspectStructure (which
+    // only runs the mobile pass) because the real instance of this bug was a
+    // desktop nav that switched on at 1024px and needed 1440: 312px of
+    // sideways scroll at 1024 and 86px at 1280, with the phone perfectly
+    // fine. A detector that only looked at 390px would have reported the page
+    // as clean while every laptop slid under the cursor.
+    const slide = await page.evaluate(() => {
+      const overflow =
+        document.documentElement.scrollWidth - document.documentElement.clientWidth;
+      const culprits: string[] = [];
+      if (overflow > 1) {
+        const vw = document.documentElement.clientWidth;
+        Array.from(document.querySelectorAll("*")).forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width < 1 || r.right <= vw + 1) return;
+          const parent = el.parentElement;
+          if (!parent || parent.getBoundingClientRect().right > vw + 1) return;
+          const cs = getComputedStyle(el);
+          // An element that scrolls itself is MEANT to be wider than its box.
+          if (cs.overflowX === "auto" || cs.overflowX === "scroll") return;
+          const cls = typeof el.className === "string" ? el.className.trim() : "";
+          const name = el.tagName.toLowerCase() + (cls ? "." + cls.split(/\s+/).join(".") : "");
+          if (culprits.length < 4 && !culprits.includes(name)) culprits.push(name);
+        });
+      }
+      return { overflow, culprits };
+    });
+    if (slide.overflow > 1) {
+      add(
+        "error",
+        path,
+        "layout",
+        `Page scrolls sideways by ${slide.overflow}px` +
+          (slide.culprits.length ? ` — widest: ${slide.culprits.join(", ")}` : ""),
+        vp.name
+      );
+    }
+
     for (const e of consoleErrors.slice(0, 3)) add("error", path, "console", `${vp.name}: ${e}`, vp.name);
     for (const f of failedRequests.slice(0, 3)) add("error", path, "network", `${vp.name}: ${f}`, vp.name);
 

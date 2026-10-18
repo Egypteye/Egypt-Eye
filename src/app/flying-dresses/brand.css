@@ -86,80 +86,92 @@
 
   /* Two layers each: a tight contact shadow so the edge reads, and a wide
      soft one for the float. One big blur alone looks like a smudge. */
-  --fd-shadow-sm: 0 1px 2px rgba(58, 46, 28, 0.05), 0 2px 8px rgba(58, 46, 28, 0.05);
-  --fd-shadow-md: 0 2px 4px rgba(58, 46, 28, 0.05), 0 12px 32px rgba(58, 46, 28, 0.09);
-  --fd-shadow-lg: 0 4px 10px rgba(58, 46, 28, 0.06), 0 28px 64px rgba(58, 46, 28, 0.13);
-  --fd-shadow-float: 0 2px 6px rgba(58, 46, 28, 0.06), 0 18px 48px rgba(58, 46, 28, 0.14);
+  --fd-shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.05), 0 2px 8px rgba(20, 20, 20, 0.05);
+  --fd-shadow-md: 0 2px 4px rgba(20, 20, 20, 0.05), 0 12px 32px rgba(20, 20, 20, 0.09);
+  --fd-shadow-lg: 0 4px 10px rgba(20, 20, 20, 0.06), 0 28px 64px rgba(20, 20, 20, 0.13);
+  --fd-shadow-float: 0 2px 6px rgba(20, 20, 20, 0.06), 0 18px 48px rgba(20, 20, 20, 0.14);
 
   /* 0.72 is deliberate. Below about 0.7 the ink on these panels stops
      clearing AA over a busy photograph, and the blur cannot be relied on to
      save it — Firefox shipped backdrop-filter late and it can be disabled.
      At 0.72 the panel is legible with the blur switched off entirely. */
-  --fd-glass: rgba(248, 244, 237, 0.72);
-  --fd-glass-strong: rgba(248, 244, 237, 0.86);
-  --fd-glass-dark: rgba(58, 46, 28, 0.58);
+  --fd-glass: rgba(250, 247, 242, 0.72);
+  --fd-glass-strong: rgba(250, 247, 242, 0.86);
+  --fd-glass-dark: rgba(20, 20, 20, 0.58);
   --fd-glass-edge: rgba(255, 255, 255, 0.5);
-  --fd-hairline: rgba(58, 46, 28, 0.1);
+  --fd-hairline: rgba(20, 20, 20, 0.1);
   --fd-blur: 18px;
 
-  --fd-ink: #3a2e1c;
-  --fd-ink-2: #463826;
-  --fd-ink-3: #54452f;
-  /* Muted text on LIGHT backgrounds. Unchanged: it is warm-neutral already
-     and measures 7.55:1 on ivory. */
-  --fd-ink-soft: #554d46;
+  /* =====================================================================
+     RED, WHITE AND BLACK
+     =====================================================================
+     The owner asked for this palette directly, against editorial references
+     that all run the same way: a vivid red used at full-bleed section scale,
+     near-black type on warm white, and the red doing the shouting.
 
-  --fd-ivory: #f8f4ed;
-  --fd-ivory-dim: #ded5c7;
+     The previous palette was four light swatches with an antique gold. All
+     four were SURFACES with no colour type could be set in, so the gold had
+     to carry every accent and was repeatedly caught failing AA on one
+     background or another. Red does not have that problem: #c8102e clears
+     4.5:1 as text on every light surface here AND carries white type on top
+     of itself, so one colour does both jobs.
 
-  /* THE OWNER'S CHOSEN PALETTE.
-     Supplied as four swatches: #F8EDC5, #DDB786, #D0C0A7, #E4DDD3. All four
-     are light, so they are SURFACES, not text: there is no colour among them
-     that type can be set in. The dark stays --fd-ink, which was sampled from
-     the brand's own social covers and is in the same warm family.
+     MEASURED, against every background each colour is actually used on.
+     Nothing in this block is estimated:
 
-     Measured, --fd-ink on each:
-       butter 11.28:1   tan 7.05:1   greige 7.42:1   shell 9.82:1
-     Every one clears WCAG AA with room to spare.
+       ink        on white    17.2    on paper   17.2    on tint   15.4
+       ink-soft   on white     7.5    on paper    7.0    on tint    6.0
+       red        on white     5.9    on paper    5.5    on tint    4.9
+       red        on tint-deep 4.6
+       white      on red       5.9    paper on red       5.5
+       paper      on black    17.2    ivory-dim on black 13.9
+       red-light  on black     4.7
 
-     One pairing to avoid: --fd-ink-soft on tan is 4.41:1, just under. Use
-     --fd-ink on tan. */
-  --fd-sand: #e4ddd3;
-  --fd-sand-deep: #d0c0a7;
-  --fd-butter: #f8edc5;
-  --fd-tan: #ddb786;
+     Every pairing clears WCAG 2.2 AA at body size.
 
-  /* Two golds. The lighter one is for text on dark, the darker for text on
-     the light backgrounds — one gold cannot clear AA in both directions.
+     TWO THINGS THAT ARE NOT SAFE, and are therefore not done anywhere:
+       - red type on black measures 3.1. That is AA Large only, so the red on
+         a dark section is --fd-gold (#e04a5f, 4.7) and never --fd-gold-ink.
+       - black type on red measures 3.1, same reason. Type on a red fill is
+         white or paper.
 
-     --fd-gold-ink was #8a6a28, which measured 4.59:1 on ivory and was
-     described in this comment as clearing AA. It did, on ivory. It was never
-     checked against the OTHER two light backgrounds it is used on, and axe
-     found it at 3.79:1 on --fd-sand and 3.04:1 on --fd-sand-deep — so every
-     gold eyebrow on a sand section failed AA, which is most of them.
+     tint-deep is #f0dee0 and not the #ebd3d5 it started as, because red on
+     that measured 4.15 and the whole point of this palette is that the red
+     is safe everywhere. Solved up in lightness until it cleared. */
+  --fd-ink: #141414;
+  --fd-ink-2: #2e2e2e;
+  --fd-ink-3: #3f3f3f;
+  /* Secondary text on light backgrounds. */
+  --fd-ink-soft: #555555;
 
-     #6b501c is the same hue, darker: 6.87:1 on ivory, 5.67:1 on sand and
-     4.54:1 on sand-deep. All three clear 4.5:1, so it is safe anywhere on
-     this palette rather than safe on the one background someone measured. */
-  --fd-gold: #c9a85f;
-  /* Darkened from #6b501c when the owner's palette landed. On the two new
-     surfaces that token measured 4.22:1 (greige) and 4.01:1 (tan), both under
-     AA — the same mistake as last time, a gold checked against one background
-     and shipped. #614919 is the same hue at 39deg, solved down in lightness
-     until the worst case cleared: ivory 7.74, butter 7.24, shell 6.29,
-     greige 4.76, tan 4.52. */
-  --fd-gold-ink: #614919;
+  /* Warm white rather than #fff. The references are all cream-white; pure
+     white next to this red reads clinical. */
+  --fd-ivory: #faf7f2;
+  /* Muted type on the black sections. */
+  --fd-ivory-dim: #e6dede;
+
+  /* The two pale red surfaces, for banding sections without going full red.
+     Surfaces only: no type is ever set in these. */
+  --fd-sand: #f6e7e9;
+  --fd-sand-deep: #f0dee0;
+  --fd-butter: #ffffff;
+  --fd-tan: #f0dee0;
+
+  /* THE RED, which is one colour doing two jobs.
+     --fd-gold-ink is the red as TYPE and as a fill: 5.9 on white, and white
+     on it is also 5.9. The token keeps its old name because eight rules
+     reference it and renaming them is churn with no reader benefit.
+     --fd-gold is the lighter red, and exists for exactly one reason: the red
+     above is 3.1 on black, so a dark section needs its own. */
+  --fd-gold: #e04a5f;
+  --fd-gold-ink: #c8102e;
 
   /* The logo's own two colours, sampled from the artwork the owner supplied.
-     Used ONLY by the wordmark — they are not part of the general palette,
-     because the rose is far too light to carry text on ivory and would be a
-     trap sitting in the token list next to colours that can.
-     --fd-brand-ink measures 8.2:1 on ivory, so the name is legible as text
-     and not only as a logotype. */
-  --fd-brand-ink: #5f3f38;
-  --fd-brand-rose: #c9aaa0;
-  --fd-brand-rose-soft: #d9c0b7;
-  --fd-gold-line: rgba(201, 168, 95, 0.32);
+     Used ONLY by the wordmark. */
+  --fd-brand-ink: #141414;
+  --fd-brand-rose: #c8102e;
+  --fd-brand-rose-soft: #e04a5f;
+  --fd-gold-line: rgba(200, 16, 46, 0.3);
 
   /* ---- Type ------------------------------------------------------------
      Bodoni Moda is a didone: high stroke contrast, flat serifs. It is the
@@ -167,7 +179,7 @@
      is why it is display-only here and every small label is in Jost.      */
   --fd-display: var(--font-fd-display), "Didot", "Times New Roman", serif;
   --fd-sans: var(--font-fd-sans), ui-sans-serif, system-ui, sans-serif;
-  --fd-script: var(--font-fd-script), cursive;
+  --fd-script: var(--font-fd-script), "Snell Roundhand", cursive;
 
   /* Fluid scale. clamp() rather than breakpoints so a 380px phone and a
      1600px desktop both get a deliberate size instead of the nearest one. */
@@ -570,6 +582,96 @@ textarea {
   }
 }
 
+/* ---- A full-bleed red section ------------------------------------------
+   The references all do the same thing: one section is the brand colour at
+   full width and everything on it is white. That is what carries the palette,
+   and it is why the red had to clear AA as a BACKGROUND as well as as type.
+
+   Type on this is white or paper, never black: black on this red measures
+   3.1, which is AA Large only. The rule below sets the colour rather than
+   leaving it to each page, so nobody has to remember. */
+.fd-red {
+  background: var(--fd-gold-ink);
+  color: var(--fd-ivory);
+}
+
+.fd-red .fd-eyebrow,
+.fd-red .fd-muted,
+.fd-red .fd-caption {
+  color: var(--fd-ivory-dim);
+}
+
+/* ---- The signature script, used as an accent inside a heading -----------
+   The thing the references actually do: a line of high-contrast serif with
+   one or two words crossing it in a handwritten red. It is decoration on top
+   of a real heading, never a heading on its own, so it stays inside the h2
+   and the text remains selectable and readable by a screen reader in order.
+
+   `transform` rather than a negative margin, so it leans across the line
+   without changing the height of the block it sits in. */
+.fd-script-accent {
+  font-family: var(--fd-script);
+  color: var(--fd-gold-ink);
+  font-size: 1.35em;
+  line-height: 0.8;
+  display: inline-block;
+  transform: rotate(-3deg);
+  padding-inline: 0.08em;
+}
+
+/* On a dark or red section the accent cannot be the main red: it measures
+   3.1 on black. These two give it a colour that clears AA there. */
+.fd-on-dark .fd-script-accent {
+  color: var(--fd-gold);
+}
+
+.fd-red .fd-script-accent {
+  color: var(--fd-ivory);
+}
+
+/* ---- The three rooftop beats -------------------------------------------
+   What replaced the pinned scroll scene. A numbered sequence, all of it on
+   screen at once, no timeline and nothing to out-scroll. */
+.fd-beats {
+  counter-reset: fd-beat;
+  gap: 1.5rem;
+}
+
+.fd-beats > li {
+  counter-increment: fd-beat;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.fd-beats > li::before {
+  content: counter(fd-beat, decimal-leading-zero);
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.14em;
+  color: var(--fd-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* `ol.fd-beats` for the same reason as ol.fd-timeline above: `.fd-list h3`
+   is the same specificity and sits later in this file, so a plain class
+   selector loses on source order and these rendered in the sans. Twice now
+   the same trap, so it is worth stating plainly: anything overriding
+   .fd-list here needs the element qualifier. */
+ol.fd-beats h3 {
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  font-weight: 400;
+  letter-spacing: 0;
+  margin: 0;
+  display: block;
+}
+
+ol.fd-beats h3::before {
+  display: none;
+}
+
 /* ==========================================================================
    5. BUTTONS AND LINKS
    ========================================================================== */
@@ -617,7 +719,7 @@ textarea {
 .fd-btn-ghost {
   background: transparent;
   color: var(--fd-ink);
-  border-color: rgba(58, 46, 28, 0.28);
+  border-color: rgba(20, 20, 20, 0.28);
 }
 
 .fd-btn-ghost:hover {
@@ -637,7 +739,7 @@ textarea {
 .fd-btn-outline-light {
   background: transparent;
   color: var(--fd-ivory);
-  border-color: rgba(248, 244, 237, 0.45);
+  border-color: rgba(250, 247, 242, 0.45);
 }
 
 .fd-on-dark .fd-btn-outline:hover,
@@ -931,7 +1033,7 @@ textarea {
   background: color-mix(in srgb, var(--fd-ivory) 88%, transparent);
   /* A 1px hairline rather than a shadow. A luxury brand's header does not
      float above the page on a drop shadow. */
-  border-bottom: 1px solid rgba(58, 46, 28, 0.08);
+  border-bottom: 1px solid rgba(20, 20, 20, 0.08);
 }
 
 @supports (backdrop-filter: blur(8px)) {
@@ -1064,11 +1166,30 @@ textarea {
   display: none;
 }
 
-@media (min-width: 64rem) {
+/* THE DESKTOP NAV ONLY APPEARS WHERE IT FITS.
+   It used to switch on at 64rem (1024px) with seven links, a wordmark and a
+   button beside it, and that content needs about 1400px. Between 1024 and
+   1400 the header simply ran off the side of the screen: 312px of horizontal
+   page scroll at 1024, 86px at 1280. Every 1366px laptop was affected.
+   The gap and tracking are tightened and it still did not fit: measured at
+   every width, the overflow was 312px at 1024, 174 at 1180, 86 at 1280 and
+   11 at 1366. Seven links, a wordmark and a button need about 1440px, so
+   that is where the switch is, and the number comes from the measurement
+   rather than from a guess.
+
+   The trade is deliberate: a 1366px laptop now gets the burger menu, which
+   is a smaller loss than a header that runs off the side of the screen and
+   drags the whole page with it. The burger already carries every link. */
+@media (min-width: 90rem) {
   .fd-nav {
     display: flex;
     align-items: center;
-    gap: clamp(1rem, 0.2rem + 1.4vw, 2rem);
+    gap: clamp(0.75rem, -0.4rem + 1.6vw, 1.5rem);
+  }
+
+  .fd-nav a {
+    letter-spacing: 0.07em;
+    white-space: nowrap;
   }
 }
 
@@ -1123,7 +1244,7 @@ textarea {
   align-items: center;
 }
 
-@media (min-width: 64rem) {
+@media (min-width: 90rem) {
   .fd-burger {
     display: none;
   }
@@ -1174,7 +1295,7 @@ textarea {
 }
 
 .fd-drawer li + li {
-  border-top: 1px solid rgba(58, 46, 28, 0.08);
+  border-top: 1px solid rgba(20, 20, 20, 0.08);
 }
 
 .fd-drawer a {
@@ -1243,12 +1364,12 @@ textarea {
   background:
     linear-gradient(
       to right,
-      rgba(58, 46, 28, 0.72) 0%,
-      rgba(58, 46, 28, 0.52) 28%,
-      rgba(58, 46, 28, 0.12) 58%,
-      rgba(58, 46, 28, 0) 78%
+      rgba(20, 20, 20, 0.72) 0%,
+      rgba(20, 20, 20, 0.52) 28%,
+      rgba(20, 20, 20, 0.12) 58%,
+      rgba(20, 20, 20, 0) 78%
     ),
-    linear-gradient(to top, rgba(58, 46, 28, 0.88) 0%, rgba(58, 46, 28, 0.45) 38%, rgba(58, 46, 28, 0.12) 68%, rgba(58, 46, 28, 0.3) 100%);
+    linear-gradient(to top, rgba(20, 20, 20, 0.88) 0%, rgba(20, 20, 20, 0.45) 38%, rgba(20, 20, 20, 0.12) 68%, rgba(20, 20, 20, 0.3) 100%);
 }
 
 /* On a phone the text column is the whole width, so a left-to-right scrim
@@ -1257,8 +1378,8 @@ textarea {
 @media (max-width: 48rem) {
   .fd-hero-scrim {
     background:
-      linear-gradient(to right, rgba(58, 46, 28, 0.55) 0%, rgba(58, 46, 28, 0.42) 100%),
-      linear-gradient(to top, rgba(58, 46, 28, 0.9) 0%, rgba(58, 46, 28, 0.5) 45%, rgba(58, 46, 28, 0.25) 100%);
+      linear-gradient(to right, rgba(20, 20, 20, 0.55) 0%, rgba(20, 20, 20, 0.42) 100%),
+      linear-gradient(to top, rgba(20, 20, 20, 0.9) 0%, rgba(20, 20, 20, 0.5) 45%, rgba(20, 20, 20, 0.25) 100%);
   }
 }
 
@@ -1317,7 +1438,7 @@ textarea {
   position: relative;
   width: 1px;
   height: 2.5rem;
-  background: rgba(248, 244, 237, 0.25);
+  background: rgba(250, 247, 242, 0.25);
 }
 
 .fd-cue-line::after {
@@ -1398,7 +1519,7 @@ textarea {
   content: "";
   position: absolute;
   inset: 0.75rem;
-  border: 1px solid rgba(248, 244, 237, 0.22);
+  border: 1px solid rgba(250, 247, 242, 0.22);
   pointer-events: none;
 }
 
@@ -1429,7 +1550,7 @@ textarea {
   line-height: 1.15;
   max-width: 24ch;
   text-wrap: balance;
-  text-shadow: 0 1px 12px rgba(58, 46, 28, 0.55);
+  text-shadow: 0 1px 12px rgba(20, 20, 20, 0.55);
 }
 
 .fd-slot-note {
@@ -1438,112 +1559,7 @@ textarea {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   opacity: 0.9;
-  text-shadow: 0 1px 8px rgba(58, 46, 28, 0.6);
-}
-
-/* ---- The pinned scene -------------------------------------------------
-   ONE on the whole site, on the home page, for the rooftop story. Pure
-   sticky positioning: the parent is tall, the child sticks, and the scroll
-   is never intercepted — a visitor can flick past it at any speed and the
-   browser's own scrolling is untouched. That is the difference between a
-   pinned section and a hijacked one.                                      */
-
-.fd-pin {
-  position: relative;
-}
-
-.fd-pin-track {
-  /* Three viewports of scroll for three states. More than this and a visitor
-     who does not want the story is trapped in it. */
-  height: 280svh;
-}
-
-.fd-pin-stage {
-  position: sticky;
-  top: 0;
-  height: 100svh;
-  display: grid;
-  align-items: center;
-  overflow: hidden;
-  background: var(--fd-ink);
-  color: var(--fd-ivory);
-}
-
-.fd-pin-media {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.fd-pin-media img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  opacity: 0.55;
-}
-
-/* The figure wrapper inside the pinned scene must not carry the pale
-   placeholder background every other figure has.
-   Two reasons, and the second is the real one: axe measured the white
-   headline against --fd-sand-deep and reported 1.36:1, because that was the
-   nearest solid ancestor it could see. And before the photograph loads, a
-   visitor really would get ivory text on pale sand. Ink in both cases. */
-.fd-pin-media .fd-figure,
-.fd-pin-media .fd-slot {
-  background: var(--fd-ink);
-}
-
-.fd-pin-body {
-  position: relative;
-  z-index: 1;
-}
-
-/* The three captions cross-fade as the track passes through the viewport.
-   =======================================================================
-   THIS WAS BROKEN IN EVERY BROWSER AND THE @supports GUARD DID NOT CATCH IT
-   =======================================================================
-   It used to say `scroll-timeline-name: --fd-pin` on .fd-pin-track. A SCROLL
-   timeline only exists on a scroll CONTAINER, and .fd-pin-track is a 280svh
-   block with no overflow — it does not scroll, it is simply tall. So the
-   named timeline was never active, the animation referencing it never
-   applied, and all three captions rendered at their base style: fully opaque,
-   stacked in one grid cell by the rule below. Three headlines printed on top
-   of each other, which is what the owner was looking at.
-
-   @supports did not save us because @supports tests whether the browser
-   PARSES `animation-timeline: scroll()`, not whether this particular timeline
-   resolves to anything. Both were true at once: supported, and inactive.
-
-   A VIEW timeline is the right construct here and needs no scroll container —
-   it measures this element's own progress across the viewport, which is
-   exactly the thing the sticky stage is tracking. `contain 0%` to
-   `contain 100%` is precisely the window during which the stage is pinned, so
-   the three ranges below divide the pin itself rather than guessing. */
-@media (prefers-reduced-motion: no-preference) {
-  @supports (animation-timeline: view()) {
-    .fd-pin-track {
-      view-timeline-name: --fd-pin;
-      view-timeline-axis: block;
-    }
-    .fd-pin-step {
-      animation: fd-step linear both;
-      animation-timeline: --fd-pin;
-    }
-    .fd-pin-step:nth-child(1) { animation-range: contain 0% contain 36%; }
-    .fd-pin-step:nth-child(2) { animation-range: contain 32% contain 68%; }
-    /* THE LAST CAPTION ARRIVES AND STAYS.
-       It used to run fd-step like the other two, which ends at opacity 0, over
-       a range finishing at contain 100%. `contain 100%` is the moment the
-       sticky stage stops being pinned, but the stage is still on screen for
-       the whole of its slide-off after that: measured at 1440x900, the final
-       36% of the track showed the photograph with no words on it at all.
-       This one fades in and holds. `both` keeps the end frame after the range,
-       so it carries the call to action off the screen with it. */
-    .fd-pin-step:nth-child(3) {
-      animation-name: fd-step-settle;
-      animation-range: contain 64% contain 88%;
-    }
-  }
+  text-shadow: 0 1px 8px rgba(20, 20, 20, 0.6);
 }
 
 /* The third caption's arrival. No exit: see the note on nth-child(3). */
@@ -1574,28 +1590,6 @@ textarea {
   }
 }
 
-/* Without scroll-driven animation support, or with reduced motion, the three
-   steps stack and all read at once. Which is a legible section, not a bug. */
-.fd-pin-steps {
-  display: grid;
-  gap: 2rem;
-}
-
-/* Stacking and animating must be guarded by the SAME condition. When they
-   drifted apart the stack applied without the cross-fade, which is the bug
-   above: the captions were overlaid and then never faded. */
-@supports (animation-timeline: view()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .fd-pin-steps {
-      display: grid;
-      gap: 0;
-    }
-    .fd-pin-steps > * {
-      grid-area: 1 / 1;
-    }
-  }
-}
-
 /* ---- The horizontal rail ---------------------------------------------
    Native overflow scrolling with snap points. No JS, no custom wheel
    handling, no scroll hijack. It is swipeable on a phone, trackpad-scrollable
@@ -1606,6 +1600,18 @@ textarea {
 .fd-rail {
   display: grid;
   grid-auto-flow: column;
+  /* `min-width: 0` is the whole fix for a horizontal scrollbar on the page.
+     A grid with `grid-auto-flow: column` has an intrinsic width of all twelve
+     columns added together, and a grid item's default `min-width: auto`
+     refuses to shrink below that — so `overflow-x: auto` had nothing to
+     scroll against and the RAIL pushed the page wide instead of scrolling
+     inside itself. It measured 17px of horizontal overflow on a 390px phone
+     and 294px on a 1024px tablet, which is a page that slides sideways under
+     your thumb on every screen.
+     Measured before and after on the committed build to be sure it was this
+     and not the new palette: the same two numbers were already there. */
+  min-width: 0;
+  max-width: 100%;
   grid-auto-columns: min(78vw, 22rem);
   gap: clamp(0.75rem, 0.4rem + 1.2vw, 1.5rem);
   overflow-x: auto;
@@ -1724,7 +1730,7 @@ textarea {
   gap: 0.5rem;
   min-height: 2.75rem;
   padding: 0.45rem 0.9rem 0.45rem 0.5rem;
-  border: 1px solid rgba(58, 46, 28, 0.18);
+  border: 1px solid rgba(20, 20, 20, 0.18);
   background: transparent;
   font-size: var(--fd-step--1);
   letter-spacing: 0.1em;
@@ -1748,7 +1754,7 @@ textarea {
   border-radius: 50%;
   /* A hairline inside the dot, so "Snowy" at #f2efe9 is still a visible
      circle on an ivory page rather than an invisible one. */
-  box-shadow: inset 0 0 0 1px rgba(58, 46, 28, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(20, 20, 20, 0.22);
   flex: none;
 }
 
@@ -1968,7 +1974,7 @@ ol.fd-timeline h3::before {
 .fd-table th,
 .fd-table td {
   padding: 1rem 1rem 1rem 0;
-  border-bottom: 1px solid rgba(58, 46, 28, 0.1);
+  border-bottom: 1px solid rgba(20, 20, 20, 0.1);
   vertical-align: baseline;
 }
 
@@ -1978,7 +1984,7 @@ ol.fd-timeline h3::before {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--fd-ink-soft);
-  border-bottom-color: rgba(58, 46, 28, 0.25);
+  border-bottom-color: rgba(20, 20, 20, 0.25);
 }
 
 .fd-table tbody th {
@@ -1998,11 +2004,11 @@ ol.fd-timeline h3::before {
    open/closed state is visible without colour.                            */
 
 .fd-faq {
-  border-top: 1px solid rgba(58, 46, 28, 0.12);
+  border-top: 1px solid rgba(20, 20, 20, 0.12);
 }
 
 .fd-faq details {
-  border-bottom: 1px solid rgba(58, 46, 28, 0.12);
+  border-bottom: 1px solid rgba(20, 20, 20, 0.12);
 }
 
 .fd-faq summary {
@@ -2127,7 +2133,7 @@ ol.fd-timeline h3::before {
   min-height: 3rem;
   padding: 0.75rem 0.9rem;
   background: var(--fd-ivory);
-  border: 1px solid rgba(58, 46, 28, 0.22);
+  border: 1px solid rgba(20, 20, 20, 0.22);
   border-radius: 0;
   font-size: var(--fd-step-0);
   /* 16px minimum on the actual input, or iOS Safari zooms the whole page the
@@ -2193,12 +2199,12 @@ ol.fd-timeline h3::before {
   margin: 0;
   padding: 0;
   border: 0;
-  background: rgba(58, 46, 28, 0.97);
+  background: rgba(20, 20, 20, 0.97);
   color: var(--fd-ivory);
 }
 
 .fd-lightbox::backdrop {
-  background: rgba(58, 46, 28, 0.9);
+  background: rgba(20, 20, 20, 0.9);
 }
 
 .fd-lightbox-inner {
@@ -2248,14 +2254,14 @@ ol.fd-timeline h3::before {
   place-items: center;
   width: 3rem;
   height: 3rem;
-  border: 1px solid rgba(248, 244, 237, 0.35);
+  border: 1px solid rgba(250, 247, 242, 0.35);
   color: var(--fd-ivory);
   font-size: 1.25rem;
   transition: background-color var(--fd-fast), border-color var(--fd-fast);
 }
 
 .fd-icon-btn:hover {
-  background: rgba(248, 244, 237, 0.12);
+  background: rgba(250, 247, 242, 0.12);
   border-color: var(--fd-ivory);
 }
 
@@ -2277,7 +2283,7 @@ ol.fd-timeline h3::before {
   gap: 0.5rem;
   padding: 0.6rem var(--fd-gutter) calc(0.6rem + env(safe-area-inset-bottom));
   background: color-mix(in srgb, var(--fd-ivory) 94%, transparent);
-  border-top: 1px solid rgba(58, 46, 28, 0.1);
+  border-top: 1px solid rgba(20, 20, 20, 0.1);
 }
 
 @supports (backdrop-filter: blur(8px)) {
@@ -2395,7 +2401,7 @@ ol.fd-timeline h3::before {
 .fd-footer-base {
   margin-top: 3rem;
   padding-top: 1.5rem;
-  border-top: 1px solid rgba(248, 244, 237, 0.14);
+  border-top: 1px solid rgba(250, 247, 242, 0.14);
   display: flex;
   flex-wrap: wrap;
   gap: 0.75rem 2rem;
@@ -2427,41 +2433,6 @@ ol.fd-timeline h3::before {
     transition-duration: 1ms !important;
     transition-delay: 0ms !important;
     scroll-behavior: auto !important;
-  }
-
-  /* Belt and braces: drop the timelines themselves, so a scroll-driven
-     animation cannot run at all rather than running in 1ms. */
-  .fd-reveal,
-  .fd-reveal-group > *,
-  .fd-fabric,
-  .fd-drift img,
-  .fd-depth-back,
-  .fd-depth-front,
-  .fd-words > span,
-  .fd-pin-step {
-    animation: none !important;
-    animation-timeline: none !important;
-    opacity: 1 !important;
-    transform: none !important;
-    scale: 1 !important;
-    clip-path: none !important;
-  }
-
-  /* The pinned scene becomes three stacked, readable blocks. */
-  .fd-pin-track {
-    height: auto;
-  }
-  .fd-pin-stage {
-    position: static;
-    height: auto;
-    padding-block: var(--fd-section);
-  }
-  .fd-pin-steps {
-    display: grid;
-    gap: 2rem;
-  }
-  .fd-pin-steps > * {
-    grid-area: auto;
   }
 }
 
@@ -2686,33 +2657,6 @@ ol.fd-timeline h3::before {
   padding-block: 0.75rem 1.25rem;
 }
 
-/* ---- The pinned scene: a caption plate --------------------------------
-   The captions sit over a photograph, which is the one place on this site
-   where contrast cannot be computed in advance: it depends on the picture.
-   A translucent dark plate behind the words fixes that for any photograph,
-   and it is also the single most reference-like moment on the page.      */
-.fd-pin-step {
-  padding: clamp(1.25rem, 0.75rem + 2vw, 2.5rem);
-  border-radius: var(--fd-r-xl);
-  border: 1px solid rgba(248, 244, 237, 0.14);
-  background: var(--fd-glass-dark);
-  box-shadow: var(--fd-shadow-lg);
-  /* The plate is as wide as its words, not as wide as the column. */
-  justify-self: start;
-  max-width: min(46rem, 100%);
-}
-
-@supports (backdrop-filter: blur(4px)) {
-  .fd-pin-step {
-    background: rgba(58, 46, 28, 0.42);
-    backdrop-filter: blur(14px) saturate(120%);
-  }
-}
-
-.fd-pin-media img {
-  border-radius: 0;
-}
-
 /* ---- The phone's sticky bar: a floating capsule ----------------------- */
 .fd-sticky-cta {
   inset-inline: var(--fd-gutter);
@@ -2751,6 +2695,29 @@ ol.fd-timeline h3::before {
    height, top or left, so none of it triggers layout. And all of it stops
    dead under reduced motion, which the site already honours globally.    */
 @media (prefers-reduced-motion: reduce) {
+  /* THE TIMELINES HAVE TO GO, not just the durations. A scroll-driven
+     animation with a 1ms duration still runs on scroll: its progress comes
+     from the scroll position, not from time, so the blanket rule above does
+     nothing to it. Each of these is parked at its end state instead.
+
+     This rule briefly disappeared when the pinned scene was deleted, because
+     `.fd-pin-step` was one of the selectors in the list and the whole rule
+     went with it. check-flying-dresses caught it in the same minute. */
+  .fd-reveal,
+  .fd-reveal-group > *,
+  .fd-fabric,
+  .fd-drift img,
+  .fd-depth-back,
+  .fd-depth-front,
+  .fd-words > span {
+    animation: none !important;
+    animation-timeline: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    scale: 1 !important;
+    clip-path: none !important;
+  }
+
   .fd-tile:hover .fd-tile-media,
   .fd-outfit:hover .fd-outfit-media {
     translate: none;
@@ -2771,10 +2738,6 @@ ol.fd-timeline h3::before {
   .fd-slot,
   .fd-tile-media {
     border-radius: var(--fd-r-md);
-  }
-
-  .fd-pin-step {
-    border-radius: var(--fd-r-lg);
   }
 }
 

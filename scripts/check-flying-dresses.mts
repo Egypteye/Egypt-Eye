@@ -740,9 +740,36 @@ if (reducedStart !== -1) {
       "for a visitor who asked for less motion",
     reducedBlock.includes("animation-timeline: none !important")
   );
+}
+
+// ---------------------------------------------------------------------------
+// NO PINNED SCROLL SCENE, ANYWHERE
+//
+// The home page used to carry one: three viewports of track with the captions
+// cross-fading as you scrolled. The owner had it removed because it froze on
+// their phone, and the principle behind that is worth keeping: a visitor who
+// wants to read the page should never have to out-scroll an animation.
+//
+// This replaces an assertion that used to require the reduced-motion block to
+// RESET that scene. That was the right guard while the scene existed; now that
+// it is gone, requiring the reset would have meant keeping dead CSS alive to
+// satisfy a check. The stronger property is that the scene cannot come back.
+//
+// A tall scroll track is the mechanism, so that is what is caught: a height in
+// svh/vh above 150 is a section built to be scrolled through rather than
+// looked at.
+//
+// Proven by re-adding `.fd-pin-track { height: 280svh; }`: red. Removed:
+// green.
+// ---------------------------------------------------------------------------
+ok(
+  "brand.css still defines the pinned scroll scene, which the owner had removed because it froze",
+  !/\.fd-pin/.test(stripComments(brandCss))
+);
+for (const match of stripComments(brandCss).matchAll(/height:\s*(\d+)(svh|vh)/g)) {
   ok(
-    "the reduced-motion block does not reset the pinned scene, so it stays a 280svh scroll trap",
-    reducedBlock.includes(".fd-pin-track")
+    `a section is ${match[1]}${match[2]} tall, which is a scroll track rather than a section — the pinned scene was removed for exactly this`,
+    Number(match[1]) <= 150
   );
 }
 
