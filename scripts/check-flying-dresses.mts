@@ -1548,6 +1548,52 @@ for (const file of brandTsx) {
     'the home page uses the .fd-price class again — that class exists to set a price in the display face, so its presence here means a figure is being shown',
     !/className="fd-price"/.test(home)
   );
+
+  // THE FIRST VERSION OF THIS CHECK WAS NOT ENOUGH, and the owner found the
+  // gap before it did: the rooftop story's button read "The rooftop shoot:
+  // $199" as a HARD-CODED STRING. It referenced neither `priceUsd` nor
+  // `.fd-price`, so both tests above passed over it while a price sat on the
+  // home page in a filled capsule on a dark panel — about as prominent as a
+  // price can be.
+  //
+  // A figure typed into a sentence is the form this will keep coming back
+  // in, because it is the form that does not look like pricing code. So the
+  // check is now on the CHARACTER: a dollar followed by a digit, anywhere in
+  // the page's comment-stripped source. `${pkg.priceUsd}` is caught by this
+  // too, which is the point — one rule, no way around it that is not also
+  // obvious to read.
+  //
+  // Proven by typing "$199" back into that button: red, with the line.
+  home.split("\n").forEach((line, index) => {
+    ok(
+      `the home page shows a price on line ${index + 1}: ${line.trim().slice(0, 80)}`,
+      !/\$\s?\d/.test(line)
+    );
+  });
+
+  // AND THE SAME TEST ON THE VALUES, not just the markup.
+  //
+  // The source check above passed while the home page displayed "$35" and
+  // "$45", because the figures were not in the page at all — they were in
+  // the add-on DESCRIPTIONS in content/flyingDresses.ts, which the page
+  // rendered in a column. A guard that reads only the file it is suspicious
+  // of will keep missing the data that file pulls in.
+  //
+  // So: every add-on string the home page actually renders is checked for a
+  // currency figure. `detail` is deliberately NOT checked — it carries the
+  // prices on purpose, for /packages — which is exactly why the home page
+  // must not be the thing that renders it.
+  ok(
+    "the home page renders addOn.detail, which carries the prices — it should render addOn.homeNote",
+    !/addOn\.detail/.test(home)
+  );
+  for (const addOn of addOns) {
+    ok(
+      `addOn "${addOn.id}" has a price in its homeNote, which the home page displays: ${addOn.homeNote}`,
+      !/\$\s?\d/.test(addOn.homeNote)
+    );
+    ok(`addOn "${addOn.id}" has an empty homeNote`, addOn.homeNote.trim().length > 0);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1571,6 +1617,45 @@ for (const section of ["celebrations", "creative"]) {
     `${file} renders ExperienceDetail without \`headless\` — a category holding one experience would print its title and intro twice`,
     /headless=\{experiences\.length === 1\}/.test(source)
   );
+}
+
+// ---------------------------------------------------------------------------
+// EVERY GENUINE SERVICE IS REACHABLE FROM THE HOME PAGE
+//
+// The home page linked to the two hub pages and to none of the eight
+// experiences behind them, so half the catalogue was two clicks deep behind a
+// one-word label a visitor had to guess the meaning of. Nothing was broken,
+// which is why nothing reported it: the pages existed, they were in the
+// sitemap, and they were invisible to the page that gets the traffic.
+//
+// This is the kind of gap that reopens every time something is added to the
+// catalogue, because adding a category and adding it to the home page are two
+// separate edits and only one of them is obviously required. So the check
+// reads the catalogue and the home page's source and insists they agree.
+//
+// Proven by deleting one category's card loop from the home page: red, naming
+// the category. Restored: green.
+// ---------------------------------------------------------------------------
+{
+  const home = read("src/app/flying-dresses/page.tsx");
+  // The cards are rendered from `experienceCategories`, so what has to be
+  // true is that the page iterates it — a hard-coded subset would pass a
+  // link-by-link test while silently dropping whatever was added last.
+  ok(
+    "the home page no longer renders the experience catalogue, so the celebration and creative experiences are two clicks deep behind a hub label",
+    /experienceCategories\.map\(/.test(home)
+  );
+  ok(
+    "the home page imports experienceCategories but never links each one to its own page",
+    /\$\{category\.section\}\/\$\{category\.slug\}/.test(home)
+  );
+
+  for (const service of rentalServices) {
+    ok(
+      `the home page does not link the hire service "${service.slug}"`,
+      home.includes("rentalServices.map(") || home.includes(service.slug)
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

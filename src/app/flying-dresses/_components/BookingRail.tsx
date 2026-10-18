@@ -57,6 +57,42 @@ import { fdPath } from "../_lib/seo";
  * No disabled button, no button that 404s, no "coming soon". A control that
  * looks like it books and does not is worse than no control.
  */
+/**
+ * CAN ANY OF THESE ACTUALLY BE PAID FOR ONLINE RIGHT NOW?
+ *
+ * This exists because /packages was promising something its own rails then
+ * refused. The section was headed "Pay a deposit and choose your date now"
+ * over the sentence "Booking runs on the same secure PayPal checkout our team
+ * has used for every photoshoot" — and underneath it, all three rails said
+ * "Online deposits are not open for this date right now". Typed prose above
+ * a computed component, drifting apart the moment the computed half changed.
+ *
+ * A customer reads the promise, scrolls, finds no way to pay, and concludes
+ * the site is broken — or worse, that the business is not real. It is the
+ * most expensive kind of copy error: it costs trust at the exact moment the
+ * visitor had decided to spend money.
+ *
+ * So the heading and the lede now ASK, through the same `productRail()`
+ * authority the rails themselves use. One source, one answer, and the two
+ * halves of the section cannot disagree again.
+ */
+export async function anyPackageTakesPaymentOnline(
+  list: readonly FlyingDressPackage[]
+): Promise<boolean> {
+  const settings = await getSiteSettings();
+  const results = await Promise.all(
+    list.map(async (pkg) => {
+      const product = await getPhotoshootBySlug(pkg.eyeSlug);
+      if (!product) return false;
+      const resolved = productRail(product, "photoshoot", settings.defaultDepositPercent, {
+        isAdmin: false,
+      });
+      return resolved.offer.available && resolved.rail.moneyMode !== "none";
+    })
+  );
+  return results.some(Boolean);
+}
+
 export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
   const [product, settings] = await Promise.all([
     getPhotoshootBySlug(pkg.eyeSlug),

@@ -541,6 +541,21 @@ export type AddOn = {
   /** True where the brochure says "starts at". */
   fromPrice: boolean;
   detail: string;
+  /**
+   * THE SAME FACT WITH NO FIGURE IN IT, for the home page.
+   *
+   * `detail` is the pricing page's wording and three of these have a number
+   * written into the sentence — "Starts at $35", "Price on request". The home
+   * page renders this column, so those numbers were appearing on a page the
+   * owner had asked to be free of prices, and no check caught them: the
+   * figures are in THIS file, while the guard was reading the page's source.
+   *
+   * Two fields rather than one stripping routine, because stripping is a
+   * guess about where a sentence ends. These are written, and they say the
+   * same thing: what the extra is and who it suits, which is what the home
+   * page's column is for. The prices are one click away on /packages.
+   */
+  homeNote: string;
   confidence: Confidence;
 };
 
@@ -551,6 +566,7 @@ export const addOns: AddOn[] = [
     priceUsd: 35,
     fromPrice: true,
     detail: "Starts at $35. The final price depends on what you want, so it is confirmed with you rather than charged up front.",
+    homeNote: "Done before the shoot, to whatever level you want. Confirmed with you rather than charged up front.",
     confidence: "confirm",
   },
   {
@@ -559,6 +575,7 @@ export const addOns: AddOn[] = [
     priceUsd: 45,
     fromPrice: false,
     detail: "A full application before the shoot.",
+    homeNote: "A full application before the shoot.",
     confidence: "confirm",
   },
   {
@@ -567,6 +584,7 @@ export const addOns: AddOn[] = [
     priceUsd: 45,
     fromPrice: true,
     detail: "Starts at $45. Worth considering for the dunes and Fayoum, where there is real wind.",
+    homeNote: "Worth considering for the dunes and Fayoum, where there is real wind.",
     confidence: "confirm",
   },
   {
@@ -575,6 +593,7 @@ export const addOns: AddOn[] = [
     priceUsd: 25,
     fromPrice: false,
     detail: "Two short vertical edits from the session, cut for Reels and TikTok.",
+    homeNote: "Two short vertical edits from the session, cut for Reels and TikTok.",
     confidence: "confirm",
   },
   {
@@ -583,6 +602,7 @@ export const addOns: AddOn[] = [
     priceUsd: 99,
     fromPrice: false,
     detail: "A second look in the same session: a second colour, and the frames to go with it.",
+    homeNote: "A second look in the same session: a second colour, and the frames to go with it.",
     confidence: "confirm",
   },
   {
@@ -591,6 +611,7 @@ export const addOns: AddOn[] = [
     priceUsd: 249,
     fromPrice: false,
     detail: "Keep it. A dress made or customised for you rather than rented for the session.",
+    homeNote: "Keep it. A dress made or customised for you rather than rented for the session.",
     confidence: "confirm",
   },
   {
@@ -599,6 +620,7 @@ export const addOns: AddOn[] = [
     priceUsd: null,
     fromPrice: false,
     detail: "Available alongside any shoot. The brochure confirms accessories exist without listing them or pricing them, so ask and we will tell you what is in the collection.",
+    homeNote: "Available alongside any shoot. Ask and we will tell you what is in the collection.",
     confidence: "missing",
   },
   {
@@ -607,6 +629,7 @@ export const addOns: AddOn[] = [
     priceUsd: null,
     fromPrice: false,
     detail: "Five styles of gawn, for a partner in the frame. Price on request.",
+    homeNote: "Five styles of gawn, for a partner in the frame.",
     confidence: "missing",
   },
 ];

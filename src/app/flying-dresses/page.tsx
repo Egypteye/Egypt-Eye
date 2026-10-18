@@ -19,6 +19,7 @@ import type { FlyingDressGallery } from "@/content/types";
 import { HeroVideo } from "./_components/HeroVideo";
 import { agency, empty, location } from "./_lib/assets";
 import { ItemActions } from "./_components/ItemActions";
+import { experienceCategories } from "@/content/flyingDressExperiences";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
 
 /**
@@ -213,7 +214,7 @@ export default async function FlyingDressesHome() {
 
             <div className="fd-actions" style={{ marginTop: "2.5rem" }}>
               <Link className="fd-btn fd-btn-light" href={fdPath("/experiences/pyramids-rooftop")}>
-                The rooftop shoot: $199
+                See the rooftop shoot
               </Link>
             </div>
           </div>
@@ -398,6 +399,58 @@ export default async function FlyingDressesHome() {
       </section>
 
       {/* ================================================================
+          5b. EVERY OTHER REASON PEOPLE COME TO US.
+
+          THE WHOLE CATALOGUE WAS TWO CLICKS DEEP. The home page linked to
+          /celebrations and /creative — two hub pages — and not to a single
+          one of the eight experiences behind them. A visitor who came here
+          to find out whether anyone in Egypt photographs a surprise proposal
+          above the pyramids had to guess that "Celebrations" meant that, and
+          click twice on the guess. Most do not: they leave and search again.
+
+          Half this brand's catalogue was invisible to the page that gets the
+          traffic. Naming all eight here costs one section and makes every one
+          of them a destination a search engine and a reader can both see.
+
+          It is a LIST OF NAMES ON PURPOSE rather than eight more picture
+          cards: there are no photographs of most of these yet, and eight
+          labelled gaps would read as eight things we have not done.
+          ================================================================ */}
+      <section className="fd-section fd-sand" aria-labelledby="fd-catalogue-heading">
+        <div className="fd-shell">
+          <div style={{ maxWidth: "44rem", marginBottom: "2.5rem" }}>
+            <p className="fd-eyebrow">Not only a photoshoot</p>
+            <h2 id="fd-catalogue-heading" className="fd-display fd-h2">
+              The other reasons people book the rooftop
+            </h2>
+            <p className="fd-lead fd-muted" style={{ marginTop: "1.5rem" }}>
+              The same locations and the same photography, pointed at whatever you are marking.
+              Each of these is quoted rather than listed, because what it costs depends on the
+              decoration, the venue and the hour.
+            </p>
+          </div>
+
+          <div className="fd-card-grid fd-reveal-group">
+            {experienceCategories.map((category) => (
+              <Link
+                key={category.id}
+                className="fd-tile fd-experience-card"
+                href={fdPath(`/${category.section}/${category.slug}`)}
+              >
+                <span className="fd-tile-body">
+                  <span className="fd-tile-title fd-display">{category.title}</span>
+                  <span className="fd-tile-meta">{category.intro}</span>
+                  <span className="fd-arrow-link" aria-hidden="true">
+                    See the experience
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ================================================================
           6. RENT WITHOUT A SHOOT — the three hire services.
 
           Given a full section rather than a footnote, because research found
@@ -552,7 +605,7 @@ export default async function FlyingDressesHome() {
               <thead>
                 <tr>
                   <th scope="col">Extra</th>
-                  <th scope="col">What it is</th>
+                  <th scope="col">Who it is for</th>
                 </tr>
               </thead>
               <tbody>
@@ -560,7 +613,7 @@ export default async function FlyingDressesHome() {
                   <tr key={addOn.id}>
                     <th scope="row">{addOn.label}</th>
                     <td className="fd-muted" style={{ fontSize: "var(--fd-step--1)" }}>
-                      {addOn.detail}
+                      {addOn.homeNote}
                     </td>
                   </tr>
                 ))}
