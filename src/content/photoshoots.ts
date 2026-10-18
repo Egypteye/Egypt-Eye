@@ -313,7 +313,11 @@ export const photoshoots: Photoshoot[] = [
     // that reaches the page is Sanity's, and this copy is the fallback and
     // the string the i18n pipeline extracts.
     seo: {
-      seoTitle: "Horse Galloping at the Pyramids \u2014 Running Horse Video | Egypt Eye",
+      // No "| Egypt Eye" here: [locale]/layout.tsx sets
+      // `template: "%s | ${site.shortName}"`, so the brand is appended to
+      // every title already. Including it produced
+      // "... | Egypt Eye | Egypt Eye" on the live page.
+      seoTitle: "Horse Galloping at the Pyramids \u2014 Running Horse Video",
       seoDescription:
         "A cinematic horse galloping video at the Nine Pyramids View, paired with the Jumping Horse Photoshoot \u2014 a running horse at full stride with the Giza Pyramids behind it, filmed by our team.",
     },
