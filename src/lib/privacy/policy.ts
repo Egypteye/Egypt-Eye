@@ -300,6 +300,18 @@ export const privacyPolicyStrings: string[] = policySections(
  */
 export const BANNED_PLACEHOLDER_PHRASES = [
   "Draft structure",
+  // From the Terms page, which had its own set. The list above was built
+  // from the privacy page alone, so restoring the Terms placeholder passed
+  // every assertion — the same gap, one page over.
+  //
+  // Narrow on purpose. A first attempt banned the bare phrase "do not
+  // publish", which the privacy policy legitimately contains: "we do not
+  // publish it anywhere without asking you first", in the section about
+  // photographs of other people. A blocklist that fails on correct text gets
+  // the correct text changed to suit it.
+  "needs a lawyer",
+  "do not publish liability",
+  "without legal review",
   "not yet published",
   "List every field",
   "Describe the actual use",
@@ -313,3 +325,23 @@ export const BANNED_PLACEHOLDER_PHRASES = [
   "TODO",
   "Lorem ipsum",
 ] as const;
+
+/**
+ * Does a sentence read like an instruction to whoever will write the page,
+ * rather than text for the reader?
+ *
+ * The phrase list above is a blocklist, and a blocklist only ever covers the
+ * mistakes already made: the Terms page shipped its own placeholders ("State
+ * how a booking becomes confirmed", "Explain who can request a change") and
+ * passed every assertion, because the list had been written from the privacy
+ * page. This catches the shape instead of the wording, so a placeholder
+ * nobody has seen before still fails.
+ *
+ * The verbs are the ones a drafting note uses. Sentences that legitimately
+ * open with an imperative address the CUSTOMER — "Tell us while you are
+ * still in Egypt", "Check it early", "Ask us and we will tell you" — and
+ * none of them begin with these.
+ */
+export function readsLikeAnInstructionToTheAuthor(line: string): boolean {
+  return /^(State|Explain|Confirm|Describe|List|Disclose|Cover|Reuse|Replace|Add) /.test(line.trim());
+}

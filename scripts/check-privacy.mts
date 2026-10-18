@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import {
   BANNED_PLACEHOLDER_PHRASES,
+  readsLikeAnInstructionToTheAuthor,
   privacyPolicyStrings,
   POLICY_UPDATED,
   PROCESSORS,
@@ -9,6 +10,7 @@ import {
   missingLegalIdentity,
   policySections,
 } from "../src/lib/privacy/policy";
+import { termsSections, termsStrings } from "../src/content/terms";
 import { REDACTED, containsPayerData, redactPayerData } from "../src/lib/privacy/redact";
 
 // What we promise not to keep.
@@ -229,6 +231,13 @@ for (const phrase of BANNED_PLACEHOLDER_PHRASES) {
   ok(`the policy no longer says "${phrase}"`, !new RegExp(phrase, "i").test(policyText));
   ok(`the page no longer says "${phrase}"`, !new RegExp(phrase, "i").test(page));
 }
+const policyInstructions = sections
+  .flatMap((sec) => [sec.title, ...sec.body, ...(sec.items ?? []).flatMap((i) => [i.label, i.text])])
+  .filter(readsLikeAnInstructionToTheAuthor);
+ok(
+  `no policy sentence is an instruction to its own author${policyInstructions.length ? ` (${policyInstructions[0]})` : ""}`,
+  policyInstructions.length === 0,
+);
 ok("the page renders the policy module", /policySections\(/.test(page));
 ok("the page shows when it was last updated", /POLICY_UPDATED/.test(page));
 ok("the last-updated date is a real date", /^\d{1,2} \w+ \d{4}$/.test(POLICY_UPDATED));
@@ -478,6 +487,113 @@ ok(
 ok(
   "the personalised-goods notice is extractable too",
   readFileSync("src/content/cancellationPolicy.ts", "utf8").includes("  personalisedItemNotice,"),
+);
+
+// ===========================================================================
+// 7. The Terms of Service, which were the same defect on the document that
+//    defines the contract.
+//
+//    One section's entire published body was "This needs a lawyer's input —
+//    do not publish liability language without legal review." Live, indexable,
+//    linked from the footer, on a site taking card payments.
+// ===========================================================================
+const terms = termsSections();
+const termsText = terms
+  .flatMap((s) => [s.title, ...s.blocks.flatMap((b) => (b.kind === "p" ? [b.text] : b.items))])
+  .join("\n");
+const termsPage = readFileSync("src/app/[locale]/(site)/terms/page.tsx", "utf8");
+const termsSource = readFileSync("src/content/terms.ts", "utf8");
+
+ok("the terms have real sections", terms.length >= 8);
+ok("no terms section is a stub", terms.every((s) => s.blocks.length > 0));
+// A paragraph introducing a list is legitimately short ("Children are priced
+// as follows:"), so the rule is: a paragraph must either say something
+// substantial, or be the lead-in to a list that does.
+ok(
+  "no terms block is a stub",
+  terms.every((section) =>
+    section.blocks.every((block, i) => {
+      if (block.kind === "list") return block.items.length > 0 && block.items.every((x) => x.length > 10);
+      if (block.text.length > 40) return true;
+      return section.blocks[i + 1]?.kind === "list";
+    }),
+  ),
+);
+for (const phrase of BANNED_PLACEHOLDER_PHRASES) {
+  ok(`the terms no longer say "${phrase}"`, !new RegExp(phrase, "i").test(termsText));
+  ok(`the terms page no longer says "${phrase}"`, !new RegExp(phrase, "i").test(termsPage));
+}
+const termsInstructions = terms
+  .flatMap((sec) => [sec.title, ...sec.blocks.flatMap((b) => (b.kind === "p" ? [b.text] : b.items))])
+  .filter(readsLikeAnInstructionToTheAuthor);
+ok(
+  `no terms sentence is an instruction to its own author${termsInstructions.length ? ` (${termsInstructions[0]})` : ""}`,
+  termsInstructions.length === 0,
+);
+ok("the terms page renders the module", /termsSections\(/.test(termsPage));
+ok("the terms show when they were last updated", /termsLastUpdated/.test(termsPage));
+
+// The figures must come from the one place they already live, not be retyped
+// here. A deposit percentage stated twice is a deposit percentage that will
+// eventually disagree with itself, in a document a customer can hold us to.
+ok("the deposit terms are imported, not restated", /site\.policies\.deposit/.test(termsSource));
+ok("the currency terms are imported, not restated", /site\.policies\.currency/.test(termsSource));
+ok("the child pricing is imported, not restated", /site\.policies\.children/.test(termsSource));
+ok("the cancellation summary is imported, not restated", /cancellationSummary/.test(termsSource));
+// Tested against the SOURCE, not the rendered text: the rendered text of
+// course contains "25%", because site.policies.deposit says so. What must
+// never happen is that figure being retyped here, where it would drift from
+// the one the booking code and every other surface quote.
+ok(
+  "no deposit percentage is retyped in the terms source",
+  !/\b\d{1,2}% ?(down payment|deposit|of the)/.test(termsSource),
+);
+
+// The booking rule the code actually enforces — check-booking asserts that no
+// payment event can confirm a booking — must be what the terms promise.
+ok(
+  "the terms state that a payment alone does not confirm a booking",
+  /not at the moment a payment goes through/.test(termsText),
+);
+ok("the terms say who the operator of record is", /operator of record/.test(termsText));
+ok("the terms recommend insurance", /Travel insurance/.test(termsText));
+
+// No liability limitation. The draft page was right that it needs a lawyer,
+// and an unfair term in a consumer contract is void anyway — so the terms say
+// which law governs and that consumer rights are untouched, and claim nothing
+// more. These assertions stop a limitation being slipped in unreviewed.
+const LIABILITY_CLAUSES = [
+  /we (accept|assume) no (liability|responsibility)/i,
+  /to the (maximum|fullest) extent permitted/i,
+  /in no event shall/i,
+  /our (total )?liability (is|shall be) limited/i,
+  /you (waive|agree to waive)/i,
+  /hold us harmless/i,
+];
+const found = LIABILITY_CLAUSES.filter((re) => re.test(termsText)).map(String);
+ok(
+  `no unreviewed liability limitation is published${found.length ? ` (matched: ${found.join(", ")})` : ""}`,
+  found.length === 0,
+);
+ok(
+  "the terms say consumer rights are not reduced",
+  /nothing on this page reduces them/.test(termsText),
+);
+
+// And translatable, for the same reason as the privacy policy.
+ok("the terms are in the extractor's sources", /\["terms", \{ body: termsStrings \}\]/.test(extractor));
+ok(
+  "the terms flattening keeps every level",
+  termsStrings.length ===
+    1 +
+      terms.reduce(
+        (n, s) =>
+          n +
+          1 +
+          (s.hrefLabel ? 1 : 0) +
+          s.blocks.reduce((m, b) => m + (b.kind === "p" ? 1 : b.items.length), 0),
+        0,
+      ),
 );
 
 // --- No claim to a licence we do not hold. -------------------------------

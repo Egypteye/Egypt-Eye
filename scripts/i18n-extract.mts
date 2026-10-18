@@ -40,6 +40,7 @@ import { agencyTrips } from "../src/content/aboutCredibility.js";
 // sees the structural `kind`/`id` fields that carry no prose.
 import { cancellationPolicyStrings } from "../src/content/cancellationPolicy.js";
 import { egyptCities } from "../src/content/egyptCities.js";
+import { termsStrings } from "../src/content/terms.js";
 // Lives in lib/privacy rather than content/ because check-privacy.mts has to
 // read it offline, which `server-only` would prevent. Flattened the same way
 // cancellationPolicyStrings is.
@@ -71,6 +72,7 @@ const sources: [string, unknown][] = [
   // strings is collected as nothing.
   ["cancellationPolicy", { body: cancellationPolicyStrings }],
   ["privacyPolicy", { body: privacyPolicyStrings }],
+  ["terms", { body: termsStrings }],
   ["egyptCities", egyptCities],
 ];
 
