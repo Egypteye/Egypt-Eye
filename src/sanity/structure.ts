@@ -58,6 +58,12 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem("treasureCategory").title("✦ The Boutique — Categories"),
       S.documentTypeListItem("treasureProduct").title("✦ The Boutique — Products"),
       S.divider(),
+      // Flying Dresses Egypt. A second brand on its own domain, whose content
+      // otherwise lives entirely in code — these galleries are the one part
+      // the owner can change without a developer, which is the whole reason
+      // they are here rather than in src/content.
+      S.documentTypeListItem("flyingDressGallery").title("✿ Flying Dresses — Galleries"),
+      S.divider(),
       S.documentTypeListItem("tour").title("Tours"),
       S.documentTypeListItem("experience").title("Extra Experiences"),
       S.documentTypeListItem("photoshoot").title("Photoshoot Packages"),

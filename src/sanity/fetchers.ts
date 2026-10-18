@@ -96,7 +96,7 @@ import type {
   TreasureCategory,
   TreasureProduct,
   BoutiquePage,
-} from "@/content/types";
+  FlyingDressGallery,} from "@/content/types";
 
 // Governs every Sanity fetch site-wide (all tours, stories, experiences,
 // listing pages, homepage — everything routes through safeFetch below).
@@ -1008,3 +1008,73 @@ async function getBoutiquePageInner(): Promise<BoutiquePage | null> {
 export const getTreasureCategories = translated(getTreasureCategoriesInner);
 export const getTreasureProducts = translated(getTreasureProductsInner);
 export const getBoutiquePage = translated(getBoutiquePageInner);
+
+/**
+ * A Flying Dresses gallery, by its stable id.
+ *
+ * THE PROJECTION IS THE DANGEROUS PART of any Sanity-backed type here, and it
+ * is why this one is written out field by field rather than with `...`: a
+ * required field the projection does not select is undefined on every
+ * document, forever, and nothing in the type system notices. That is the exact
+ * shape of the bug that stopped the Boutique deploying for two days.
+ *
+ * Images resolve to a URL and their real pixel size here rather than in the
+ * component, so a Sanity frame and a repo frame reach <Gallery> as the same
+ * thing and the component needs no idea where a frame came from.
+ *
+ * A frame with no photograph keeps `src: null` and becomes kind "empty", which
+ * is what makes it render as a labelled gap instead of a picture. The editor
+ * never picks "empty"; it is the absence of an upload, so it cannot drift
+ * from what is actually there.
+ */
+export async function getFlyingDressGallery(
+  galleryId: string
+): Promise<FlyingDressGallery | null> {
+  const doc = await safeFetch<{
+    galleryId: string;
+    title: string;
+    layout: FlyingDressGallery["layout"];
+    frames: {
+      url: string | null;
+      width: number | null;
+      height: number | null;
+      alt: string | null;
+      kind: "agency" | "location" | null;
+      credit: string | null;
+      wanted: string | null;
+    }[] | null;
+  }>(
+    `*[_type == "flyingDressGallery" && galleryId == $galleryId][0]{
+      galleryId,
+      title,
+      layout,
+      "frames": frames[]{
+        "url": photo.asset->url,
+        "width": photo.asset->metadata.dimensions.width,
+        "height": photo.asset->metadata.dimensions.height,
+        alt,
+        kind,
+        credit,
+        wanted
+      }
+    }`,
+    { galleryId }
+  );
+
+  if (!doc) return null;
+
+  return {
+    galleryId: doc.galleryId,
+    title: doc.title,
+    layout: doc.layout,
+    frames: (doc.frames ?? []).map((frame) => ({
+      kind: frame.url ? (frame.kind ?? "agency") : "empty",
+      src: frame.url,
+      alt: frame.alt ?? "",
+      ...(frame.width ? { width: frame.width } : {}),
+      ...(frame.height ? { height: frame.height } : {}),
+      ...(frame.credit ? { credit: frame.credit } : {}),
+      ...(frame.wanted ? { wanted: frame.wanted } : {}),
+    })),
+  };
+}

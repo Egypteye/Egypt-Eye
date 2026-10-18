@@ -12,6 +12,10 @@ import {
 import { dresses, mensOutfits } from "@/content/flyingDresses";
 import { Scene } from "./_components/Scene";
 import { Gallery, galleryTally } from "./_components/Gallery";
+import { flyingDressGalleryById } from "@/content/flyingDressGalleries";
+import { getFlyingDressGallery } from "@/sanity/fetchers";
+import { hardenFlyingDressGallery } from "@/lib/sanityShape";
+import type { FlyingDressGallery } from "@/content/types";
 import { HeroVideo } from "./_components/HeroVideo";
 import { agency, empty, location } from "./_lib/assets";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
@@ -48,29 +52,28 @@ export const metadata: Metadata = fdMetadata({
 /**
  * THE WORK GALLERY, section 8.
  *
- * Declared out here rather than inline so the sentence above the grid can be
- * counted from the same array the grid renders. The count is six because
- * .fd-gallery is pinned to 1, 2 or 3 columns and six divides evenly by all
- * three — the five cells this replaced sat in an auto-fill grid that landed on
- * four columns, stranding one frame in a row of its own.
+ * Now owner-editable. The Studio document wins wholesale when one exists,
+ * which is the documented behaviour of every Sanity-backed type here and the
+ * reason the owner can reorder frames and rewrite captions without a
+ * developer. With no document, the repo's own gallery renders, so the page
+ * works on a deployment with no Sanity at all.
  *
- * `empty.couple` stays in the list on purpose. It is the one subject the
- * agency has no photograph of, and a labelled gap is the brief's answer to
- * that, not a stock photograph standing in for client work.
+ * hardenFlyingDressGallery() sits between the two and keeps the distinction
+ * the sanity-content skill is emphatic about: a gallery an editor EMPTIED
+ * stays empty, while a gallery the projection never returned falls back. The
+ * first is a real edit; quietly restoring the repo's frames would overrule it.
  */
-const galleryFrames = [
-  agency.blueGownDesert,
-  agency.whiteGownDune,
-  agency.assistantAtWork,
-  agency.fayoumDress,
-  agency.rooftopPortrait,
-  empty.couple,
-];
+async function workGallery(): Promise<FlyingDressGallery> {
+  const local = flyingDressGalleryById("home-work");
+  const fromSanity = await getFlyingDressGallery("home-work");
+  if (!fromSanity) return local!;
+  return hardenFlyingDressGallery(fromSanity, local);
+}
 
-/** How many of the above are real photographs. Drives the copy, so it cannot drift. */
-const { ours: galleryOurs, total: galleryTotal } = galleryTally(galleryFrames);
+export default async function FlyingDressesHome() {
+  const gallery = await workGallery();
+  const { ours: galleryOurs, total: galleryTotal } = galleryTally(gallery.frames);
 
-export default function FlyingDressesHome() {
   return (
     <>
       {/* ================================================================
@@ -517,7 +520,7 @@ export default function FlyingDressesHome() {
           {/* The layout, the captions, the labelled gaps and the uniform cell
               shape all live in Gallery now, because every one of them has
               already drifted once when it was hand-built here. */}
-          <Gallery frames={galleryFrames} layout="grid" />
+          <Gallery frames={gallery.frames} layout={gallery.layout} />
         </div>
       </section>
 

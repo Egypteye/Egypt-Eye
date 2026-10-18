@@ -19,9 +19,10 @@
  * So this file asserts against the shape Sanity actually returns.
  */
 import { readFileSync, readdirSync } from "node:fs";
-import type { DestinationHub, Experience, Photoshoot, SignatureExperience, Tour } from "../src/content/types";
+import type { DestinationHub, Experience, FlyingDressGallery, Photoshoot, SignatureExperience, Tour } from "../src/content/types";
 import {
   hardenDestinationHub,
+  hardenFlyingDressGallery,
   hardenExperience,
   hardenPhotoshoot,
   hardenSignatureExperience,
@@ -45,6 +46,8 @@ const COVERED: Record<string, (doc: Record<string, unknown>) => Record<string, u
   DestinationHub: (d) => hardenDestinationHub(d as unknown as DestinationHub) as unknown as Record<string, unknown>,
   SignatureExperience: (d) =>
     hardenSignatureExperience(d as unknown as SignatureExperience) as unknown as Record<string, unknown>,
+  FlyingDressGallery: (d) =>
+    hardenFlyingDressGallery(d as unknown as FlyingDressGallery) as unknown as Record<string, unknown>,
 };
 
 const types = readFileSync(new URL("../src/content/types.ts", import.meta.url), "utf8");

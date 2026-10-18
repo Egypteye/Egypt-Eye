@@ -23,6 +23,10 @@ import { host } from "./host";
 import { author } from "./author";
 import { event } from "./event";
 import {
+  flyingDressFrameObject,
+  flyingDressGallery,
+} from "./flyingDressGallery";
+import {
   takeEgyptHomePage,
   treasureCategory,
   treasureOption,
@@ -43,6 +47,7 @@ export const schemaTypes = [
   treasureVariant,
   treasureOption,
   treasureStep,
+  flyingDressFrameObject,
   // Document types shown in the Studio's content list.
   tour,
   experience,
@@ -56,6 +61,7 @@ export const schemaTypes = [
   event,
   treasureCategory,
   treasureProduct,
+  flyingDressGallery,
   takeEgyptHomePage,
   faqItem,
   siteSettings,

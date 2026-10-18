@@ -38,6 +38,9 @@ import {
 import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
 import { allSlots } from "../src/app/flying-dresses/_lib/assets.js";
+import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
+import { hardenFlyingDressGallery } from "../src/lib/sanityShape.js";
+import type { FlyingDressGallery } from "../src/content/types.js";
 
 const errors: string[] = [];
 /** Signature matches the other check scripts: label first, condition second. */
@@ -1149,6 +1152,67 @@ for (const file of brandTsx) {
     `${file} builds its own fd-gallery grid instead of using <Gallery> — every gallery bug on this site came through a hand-built grid`,
     !/className="fd-gallery/.test(source)
   );
+}
+
+// ---------------------------------------------------------------------------
+// EMPTYING A GALLERY IN THE STUDIO MUST EMPTY IT, NOT RESTORE THE REPO'S
+//
+// The galleries are the one part of this brand the owner can edit without a
+// developer, which means the Studio has to behave the way they expect or it is
+// worse than not having it. The three cases are from the sanity-content skill
+// and the middle one is the whole point:
+//
+//   null / undefined  the projection never returned it  -> the repo's frames
+//   []                an editor emptied the gallery     -> STAYS EMPTY
+//   no local entry    a Studio-only gallery             -> empty, not a throw
+//
+// Collapsing [] into null is the easy mistake, it reads as a sensible
+// fallback, and it quietly overrules a deliberate deletion: the owner removes
+// six frames, publishes, and the old six come back with nothing to say why.
+//
+// `layout` is checked for a different reason. It is a union, and a document
+// saved before that field existed returns null, which would reach the page as
+// the class `fd-gallery-null` and silently render an unstyled block — the same
+// bug as the gallery that had no CSS at all.
+//
+// Proven by making arr() treat [] as missing (red on the emptied case) and by
+// returning gallery.layout unchecked (red on the null and junk cases).
+// ---------------------------------------------------------------------------
+{
+  const localGallery = flyingDressGalleryById("home-work");
+  ok("the home-work gallery is missing from the content file, so its fallback is gone", Boolean(localGallery));
+
+  if (localGallery) {
+    const base = { galleryId: "home-work", title: "T", layout: "grid" as const };
+    const framesOf = (doc: unknown, local?: typeof localGallery) =>
+      hardenFlyingDressGallery(doc as FlyingDressGallery, local).frames.length;
+
+    ok(
+      "a gallery the projection did not return does not fall back to the content file",
+      framesOf({ ...base, frames: null }, localGallery) === localGallery.frames.length
+    );
+    ok(
+      "EMPTYING a gallery in the Studio silently restores the repo's frames, overruling the editor",
+      framesOf({ ...base, frames: [] }, localGallery) === 0
+    );
+    ok(
+      "a Studio-only gallery with no frames throws instead of rendering nothing",
+      framesOf({ ...base, frames: null }, undefined) === 0
+    );
+
+    const layoutOf = (layout: unknown) =>
+      hardenFlyingDressGallery(
+        { ...base, layout, frames: [] } as unknown as FlyingDressGallery,
+        localGallery
+      ).layout;
+    for (const bad of [null, undefined, "", "fd-gallery-null"]) {
+      ok(
+        `layout ${JSON.stringify(bad)} reaches the page unchecked and renders an unstyled block`,
+        layoutOf(bad) === "grid"
+      );
+    }
+    ok("a real layout is not overwritten", layoutOf("strip") === "strip");
+  }
 }
 
 // ---------------------------------------------------------------------------

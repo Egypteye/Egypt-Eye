@@ -1477,3 +1477,49 @@ export type BoutiquePage = {
   faqs?: Faq[];
   seo?: PageSeo;
 };
+
+/**
+ * ONE FRAME IN A FLYING DRESSES GALLERY.
+ *
+ * Structurally what `src/app/flying-dresses/_lib/assets.ts` has always called
+ * an ImageSlot; it lives here now because a Studio-backed type has to be in
+ * this file for scripts/check-sanity-shape.mts to see it, and that check is
+ * what stops a cleared field taking the site down.
+ *
+ * `kind` is the honesty field and it is not cosmetic: "empty" renders a
+ * designed, labelled gap rather than a photograph, which is the brief's one
+ * unbreakable rule about imagery on this brand.
+ */
+export type FlyingDressFrame = {
+  kind: "agency" | "location" | "empty";
+  /** null only when kind is "empty". */
+  src: string | null;
+  /** Describes the photograph to someone who cannot see it. */
+  alt: string;
+  /** Intrinsic size when known, so the box is reserved before the bytes land. */
+  width?: number;
+  height?: number;
+  /** Attribution, which travels with the photograph rather than the page. */
+  credit?: string;
+  /** For an empty frame: what belongs here, shown on the slot itself. */
+  wanted?: string;
+};
+
+/**
+ * A named set of frames the owner can reorder and recaption in the Studio.
+ *
+ * `galleryId` is the stable key the code looks a gallery up by, NOT the title:
+ * renaming "What a morning looks like" must not detach the gallery from the
+ * page that renders it.
+ *
+ * `frames` is a required array, so hardenFlyingDressGallery() guarantees it at
+ * the fetch boundary. An editor emptying a gallery should empty that section,
+ * never end the build — which is exactly what an unhardened required array did
+ * to the Boutique for two days.
+ */
+export type FlyingDressGallery = {
+  galleryId: string;
+  title: string;
+  layout: "grid" | "feature" | "strip";
+  frames: FlyingDressFrame[];
+};

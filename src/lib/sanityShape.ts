@@ -1,5 +1,6 @@
 import type {
   DestinationHub,
+  FlyingDressGallery,
   Experience,
   Photoshoot,
   SignatureExperience,
@@ -185,3 +186,38 @@ export const hardenSignatureExperiences = (
   const map = bySlug(local);
   return items.map((e) => hardenSignatureExperience(e, map.get(e.slug)));
 };
+
+/**
+ * A Flying Dresses gallery, safe to render.
+ *
+ * `frames` is required by the type, so every page walks it without checking.
+ * The three cases are the ones the whole of this file exists for, and the
+ * middle one is the one that is easy to get wrong:
+ *
+ *   - null/undefined: the projection did not return it, or no editor ever set
+ *     it. The repo's own frames are the richer answer, so use them.
+ *   - []: an editor emptied the gallery. That is a real edit. Keep it empty;
+ *     quietly restoring the repo's frames would overrule a deliberate choice
+ *     and the editor would have no way to tell why.
+ *   - no local counterpart: a gallery that exists only in the Studio. Empty,
+ *     so it renders nothing rather than throwing.
+ *
+ * `layout` gets the same treatment for a different reason: it is a union, and
+ * a document saved before the field existed returns null for it, which would
+ * reach the component as a class name of `fd-gallery-null`.
+ */
+export function hardenFlyingDressGallery(
+  gallery: FlyingDressGallery,
+  local?: FlyingDressGallery
+): FlyingDressGallery {
+  const layout = gallery.layout;
+  return {
+    ...gallery,
+    title: gallery.title || local?.title || "",
+    layout:
+      layout === "grid" || layout === "feature" || layout === "strip"
+        ? layout
+        : (local?.layout ?? "grid"),
+    frames: arr(gallery.frames, local?.frames),
+  };
+}

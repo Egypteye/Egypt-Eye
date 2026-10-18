@@ -1,5 +1,14 @@
 import { Scene } from "./Scene";
-import type { ImageSlot } from "../_lib/assets";
+import type { FlyingDressFrame } from "@/content/types";
+
+/**
+ * Frames are typed as FlyingDressFrame rather than the registry's ImageSlot
+ * because a Studio frame may not know its pixel size, while a repo one always
+ * does. An ImageSlot is assignable to this, so both sources arrive here as the
+ * same thing and the component needs no idea which it is holding. CSS reserves
+ * the box through the aspect-ratio class either way; width and height only
+ * sharpen what next/image ships.
+ */
 
 /**
  * A set of photographs, laid out, captioned and counted from one list.
@@ -59,7 +68,7 @@ export function Gallery({
   className = "",
 }: {
   /** Registry entries, never inline paths. See _lib/assets.ts. */
-  frames: ImageSlot[];
+  frames: FlyingDressFrame[];
   layout?: GalleryLayout;
   /** Overridable for the rare frame that genuinely needs portrait. */
   ratio?: string;
@@ -98,7 +107,7 @@ export function Gallery({
  * where the drift showed up last time: the copy claimed two when four were
  * shown. Anything describing a gallery counts it with this.
  */
-export function galleryTally(frames: ImageSlot[]): { ours: number; total: number } {
+export function galleryTally(frames: FlyingDressFrame[]): { ours: number; total: number } {
   return {
     ours: frames.filter((frame) => frame.kind !== "empty").length,
     total: frames.length,
