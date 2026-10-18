@@ -438,6 +438,69 @@ ok(
   (retentionSql.match(/anonymised_at = now\(\)/g) ?? []).length >= 6,
 );
 
+// --- No claim to a licence we do not hold. -------------------------------
+//
+// Egypt Eye holds no tourism licence; the tours run under a larger agency's.
+// Two ways that gets us in trouble, and this guards both.
+//
+// The first is claiming a licence or a registration we do not have. Under
+// Egypt's tourism companies law that is not a paperwork slip, it is holding
+// yourself out as something you are not, and a fabricated licence number on
+// a public page turns a gap into an allegation.
+//
+// The second is subtler and was live on the site: an SEO article called
+// "Best Travel Agencies in Egypt" opened with "Check the License Before
+// Anything Else" and told readers that an operator who "can't produce a
+// license or company registration, or that runs entirely through informal
+// messaging-app bookings" is "a real risk" — then listed "no registration
+// details" as a walk-away red flag. That is this business describing itself
+// as the thing to avoid, on a page built to rank for people shopping for
+// exactly this, and it would be handed straight to us in any dispute. It
+// now explains the arrangement honestly instead, and says we work that way.
+const content = execSync("cat src/content/*.ts src/content/storyBatches/*.ts", {
+  encoding: "utf8",
+  maxBuffer: 256 * 1024 * 1024,
+});
+
+/** First-person claims to hold a licence, registration or accreditation. */
+const SELF_LICENCE = [
+  /\b(we|Egypt Eye[^.]{0,30}) (are|is) (a )?(fully )?licen[cs]ed\b/i,
+  /\bour (tourism |operating )?licen[cs]e\b/i,
+  /\bwe (are|is) registered (with|at|under)\b/i,
+  /\bgovernment[- ]approved\b/i,
+  /\bministry[- ]approved\b/i,
+  /\bofficially accredited\b/i,
+  /\blicen[cs]e (number|no\.?) *[:#]? *[0-9]/i,
+  /\bcommercial registration (number|no\.?) *[:#]? *[0-9]/i,
+];
+const selfClaims = SELF_LICENCE.filter((re) => re.test(content)).map((re) => String(re));
+ok(
+  `no page claims a licence or registration of our own${selfClaims.length ? ` (matched: ${selfClaims.join(", ")})` : ""}`,
+  selfClaims.length === 0,
+);
+
+// And the article must not set a test the business visibly fails.
+const SELF_DEFEATING = [
+  "can't produce a license or company registration",
+  "cannot produce a license or company registration",
+  "no registration details",
+  "Check the License Before Anything Else",
+];
+const selfDefeating = SELF_DEFEATING.filter((phrase) => content.includes(phrase));
+ok(
+  `no article tells readers to walk away from an operator like us${selfDefeating.length ? ` (found: ${selfDefeating.join("; ")})` : ""}`,
+  selfDefeating.length === 0,
+);
+
+// The honest replacement has to actually be there — deleting the bad text
+// and saying nothing would pass the two assertions above while leaving the
+// reader to assume the licence is ours.
+ok(
+  "the article explains the arrangement instead of hiding it",
+  /arranged and operated through the licensed Egyptian agency we work under/.test(content) &&
+    /who is the licensed operator for my trip/i.test(content),
+);
+
 // The newsletter send must still filter to confirmed, subscribed addresses —
 // the page promises an unconfirmed address is never emailed anything else.
 const newsletter = readFileSync("src/app/[locale]/(site)/admin/newsletter/actions.ts", "utf8");
@@ -447,18 +510,27 @@ ok('the newsletter send filters on unsubscribed', /\.eq\("unsubscribed", false\)
 // --- The registered details the owner still has to supply. ----------------
 ok("a blank legal identity reports all three fields", missingLegalIdentity({}).length === 3);
 ok(
-  "a filled legal identity reports nothing",
-  missingLegalIdentity({ entityName: "X", registrationNumber: "1", registeredAddress: "A" }).length === 0,
+  "a filled operator of record reports nothing",
+  missingLegalIdentity({ operatorName: "X", operatorLicence: "1", operatorAddress: "A" }).length === 0,
 );
-ok("whitespace does not count as filled", missingLegalIdentity({ entityName: "   " }).length === 3);
+ok("whitespace does not count as filled", missingLegalIdentity({ operatorName: "   " }).length === 3);
+
+// The crucial one. Egypt Eye holds no tourism licence. Until the licensed
+// agency's details are entered, no page may state or imply a licence number
+// — and the page must still tell the reader the tours run under a licensed
+// agency, rather than leaving them to assume the brand is the operator.
+ok("no licence number is claimed while the field is blank", !/licence [0-9A-Za-z/-]+/.test(policyText));
 ok(
-  "the policy omits the registration sentence when blank",
-  !/Commercial registration number:/.test(policyText),
+  "the page still says the operator is a licensed agency we work under",
+  /arranged and operated through the licensed Egyptian agency we work under/.test(policyText),
 );
 ok(
-  "the policy includes it once filled",
-  /Commercial registration number: 4242/.test(
-    policySections({ email: "e@x.com" }, { registrationNumber: "4242" })
+  "the operator is named once the field is filled",
+  /arranged and operated by Nile Example Travel, which holds tourism licence 4242/.test(
+    policySections(
+      { email: "e@x.com" },
+      { operatorName: "Nile Example Travel", operatorLicence: "4242" },
+    )
       .flatMap((s) => s.body)
       .join("\n"),
   ),

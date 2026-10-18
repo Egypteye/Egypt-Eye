@@ -25,11 +25,13 @@ export default async function AdminOverviewPage() {
       supabase.from("discount_campaigns").select("id", { count: "exact", head: true }).eq("active", true),
     ]);
 
-  // The registered details the Privacy Policy and Terms pages want. They are
-  // left out of those pages while blank rather than printed as placeholders,
-  // so without this notice nobody would ever find out they are missing: a
-  // console warning does not reach somebody working from a browser, Sanity
-  // Studio and the Vercel dashboard.
+  // Who the customer is actually contracting with. Egypt Eye holds no
+  // tourism licence of its own and operates under a larger licensed agency,
+  // so the legal pages need THAT agency's name and licence number. They are
+  // left out while blank rather than printed as placeholders, so without
+  // this notice nobody would ever find out they are missing: a console
+  // warning does not reach somebody working from a browser, Sanity Studio
+  // and the Vercel dashboard.
   const site = await getSiteSettings();
   const missingLegal = missingLegalIdentity(site.legal);
 
@@ -58,12 +60,17 @@ export default async function AdminOverviewPage() {
       {missingLegal.length > 0 && (
         <div className="mt-6 rounded-2xl border border-terracotta/40 bg-terracotta/5 p-5">
           <p className="font-semibold text-terracotta">
-            The legal pages are missing {missingLegal.length} of our registered details
+            The site does not say who the licensed operator is
           </p>
           <p className="mt-2 text-sm text-ink-soft">
-            A customer, a card provider or a tourism authority looking for who they are dealing with
-            will not find it. Nothing has been guessed — the sentences are simply left out of the
-            Privacy Policy and Terms until you fill these in.
+            We hold no tourism licence of our own, so the tours are operated under the licence of the
+            agency we work under — which is a normal arrangement, but only while we say so. Right now
+            the site does not name them, which leaves a customer, a card provider or the Ministry to
+            assume the licence is ours. That assumption is the risk, not the arrangement.
+          </p>
+          <p className="mt-2 text-sm text-ink-soft">
+            Nothing has been guessed. The sentence naming them is simply left out of the Privacy
+            Policy and the Terms until these are filled in, and no page claims a licence number.
           </p>
           <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-ink">
             {missingLegal.map((field) => (
@@ -71,8 +78,10 @@ export default async function AdminOverviewPage() {
             ))}
           </ul>
           <p className="mt-3 text-sm text-ink-soft">
-            Add them in Sanity Studio under <strong>Site Settings → Registered business details</strong>.
-            They appear on the site within a minute; no deployment is needed.
+            Ask the agency for these in writing, then add them in Sanity Studio under{" "}
+            <strong>Site Settings → Operator of record</strong>. They appear on the site within a
+            minute; no deployment is needed. Never type a licence number you have not been given —
+            a wrong one is far worse than a blank field.
           </p>
         </div>
       )}

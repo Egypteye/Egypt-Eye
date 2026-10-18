@@ -401,9 +401,15 @@ export const stories: Story[] = [
       p(
         "Egypt has thousands of tour operators, and the gap between the best and the worst of them is enormous — the same nine-day Cairo-to-Luxor-to-Aswan itinerary can be an unhurried, well-guided trip, or four rushed days spent being herded past monuments and into commission shops, depending entirely on who's running it. Picking the right operator matters more here than in most destinations, because so much of what actually shapes the trip — which guide you get, how early you arrive at a site, whether you're given time to actually take a photo — never shows up on a price comparison page."
       ),
-      h2("Check the License Before Anything Else"),
+      h2("Find Out Who the Licensed Operator Is"),
       p(
-        "Every legitimate Egyptian tour operator is licensed through the Ministry of Tourism and Antiquities, and that licensing is what allows a company to actually operate inside archaeological sites — hire registered guides, coordinate with site security, and take legal responsibility for a group. An operator that can't produce a license or company registration, or that runs entirely through informal messaging-app bookings with no business name attached, is a real risk, not just an inconvenience: if anything goes wrong on-site, an unlicensed operator has no standing to fix it."
+        "Operating tours in Egypt — hiring registered guides, working inside archaeological sites, coordinating with site security, carrying legal responsibility for a group — requires a licence from the Ministry of Tourism and Antiquities. What surprises most travellers is that the licence does not always belong to the brand they found online. A great deal of Egyptian travel, including some of the most specialised and best-run trips, is sold by small teams working under the licence of a larger agency. The small team plans the trip and answers your messages; the licensed agency is the operator of record and carries the legal responsibility."
+      ),
+      p(
+        "That arrangement is normal and entirely legitimate. We work that way ourselves: Egypt Eye Travel is a small specialist team, and the tours we sell are arranged and operated through the licensed Egyptian agency we work under. What matters is not whether the brand you are talking to holds the licence itself — it is whether they will tell you plainly who does."
+      ),
+      p(
+        "So the question to ask is not \"are you licensed?\", which invites a yes from anyone. Ask: who is the licensed operator for my trip, and what is their licence number? A straight answer, in writing, is the signal you want. Evasion, or a company that will not say who is actually responsible for you once you land, is the thing to walk away from."
       ),
       h2("Look at the Guides, Not Just the Itinerary"),
       p(
@@ -432,7 +438,8 @@ export const stories: Story[] = [
       h2("Red Flags Worth Walking Away From"),
       ...bullets([
         "Pressure to book and pay a deposit within hours, with no time to think it over",
-        "No verifiable online presence — no real reviews, no consistent company name across platforms, no registration details",
+        "A company that will not tell you, in writing, who the licensed operator for your trip is",
+        "No verifiable online presence — no real reviews, and no consistent company name across platforms",
         "A quote with no itinerary breakdown, just a single total price",
         "An itinerary padded with stops at 'government' papyrus, perfume, or essential-oil shops that mainly exist to pay guide commissions",
         "No clear cancellation or refund policy offered in writing",

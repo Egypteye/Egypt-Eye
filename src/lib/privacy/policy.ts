@@ -18,11 +18,34 @@
 // processor named here stops being used, or starts being used without being
 // named.
 
-/** The legal identity of the business, filled in Sanity Studio. */
+/**
+ * Who the customer is actually dealing with, filled in Sanity Studio.
+ *
+ * Egypt Eye Travel is a brand and a small team. It does not hold a tourism
+ * licence of its own: it works as a department under a larger licensed
+ * agency, and that agency is the operator of record for the tours sold here.
+ *
+ * That arrangement is ordinary in Egyptian tourism and perfectly legitimate.
+ * What is NOT safe is a website that stays silent about it, because then the
+ * customer is left to assume the brand they paid is the licensed operator —
+ * and a tour operator's licence is exactly the thing a traveller, a card
+ * provider or an authority asks about when something has gone wrong.
+ *
+ * So these fields name the licensed operator. They are deliberately NOT
+ * "our registration number": an earlier version of this type asked for one,
+ * which was the wrong question and the kind of prompt that gets a number
+ * invented to fill a gap. Nothing here is ever guessed — a blank field is
+ * left out of the page and reported on /admin instead.
+ */
 export type LegalIdentity = {
+  /** The licensed agency the tours are arranged and operated through. */
+  operatorName?: string;
+  /** Its tourism licence number, as issued to that agency — never ours. */
+  operatorLicence?: string;
+  /** Its registered address, one line. */
+  operatorAddress?: string;
+  /** Our own registered trading entity, if and when one exists. */
   entityName?: string;
-  registrationNumber?: string;
-  registeredAddress?: string;
 };
 
 export type PolicySection = {
@@ -104,12 +127,20 @@ export function policySections(
   contact: { email: string; whatsapp?: string },
   legal: LegalIdentity = {},
 ): PolicySection[] {
+  // Said plainly, and only where it is true. No sentence here claims a
+  // licence, a registration or an address that has not been entered.
+  const operator = legal.operatorName
+    ? `Your tour is arranged and operated by ${legal.operatorName}${
+        legal.operatorLicence ? `, which holds tourism licence ${legal.operatorLicence}` : ""
+      }. Egypt Eye Travel is the team you deal with: we plan the trip, answer your messages and look after the information described on this page.`
+    : "Egypt Eye Travel is a small specialist team. We plan your trip and are the people you deal with directly; the tours themselves are arranged and operated through the licensed Egyptian agency we work under.";
+
   const identity = [
     legal.entityName
       ? `We trade as Egypt Eye Travel. The business responsible for your information is ${legal.entityName}.`
       : "Egypt Eye Travel operates this website and is responsible for the personal information described on this page.",
-    legal.registrationNumber ? `Commercial registration number: ${legal.registrationNumber}.` : "",
-    legal.registeredAddress ? `Registered address: ${legal.registeredAddress}.` : "",
+    operator,
+    legal.operatorAddress ? `The operator's registered address is ${legal.operatorAddress}.` : "",
   ].filter(Boolean);
 
   const reach = contact.whatsapp
@@ -231,9 +262,9 @@ export function policySections(
  */
 export function missingLegalIdentity(legal: LegalIdentity = {}): string[] {
   const missing: string[] = [];
-  if (!legal.entityName?.trim()) missing.push("Registered business name");
-  if (!legal.registrationNumber?.trim()) missing.push("Commercial registration number");
-  if (!legal.registeredAddress?.trim()) missing.push("Registered address");
+  if (!legal.operatorName?.trim()) missing.push("Name of the licensed agency we operate under");
+  if (!legal.operatorLicence?.trim()) missing.push("That agency's tourism licence number");
+  if (!legal.operatorAddress?.trim()) missing.push("That agency's registered address");
   return missing;
 }
 

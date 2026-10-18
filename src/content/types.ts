@@ -761,9 +761,10 @@ export type SiteSettings = {
     whatsappLink?: string;
   };
   legal?: {
+    operatorName?: string;
+    operatorLicence?: string;
+    operatorAddress?: string;
     entityName?: string;
-    registrationNumber?: string;
-    registeredAddress?: string;
   };
   socials?: {
     instagram?: string;
@@ -910,14 +911,18 @@ export type ResolvedSiteSettings = {
     whatsapp: string;
     whatsappLink: string;
   };
-  // The registered details the privacy policy and terms need. Optional
-  // because only the owner has them, and they are entered in Sanity Studio
-  // rather than committed here. /admin reports them as missing while blank;
-  // the policy leaves the sentence out rather than printing a placeholder.
+  // Who the customer is actually contracting with. Egypt Eye holds no
+  // tourism licence of its own — it works under a larger licensed agency,
+  // which is the operator of record. These name THAT agency. Optional
+  // because only the owner has them, entered in Sanity Studio rather than
+  // committed here. /admin reports them as missing while blank; the legal
+  // pages leave the sentence out rather than printing a placeholder, and
+  // nothing anywhere claims a licence that has not been entered.
   legal?: {
+    operatorName?: string;
+    operatorLicence?: string;
+    operatorAddress?: string;
     entityName?: string;
-    registrationNumber?: string;
-    registeredAddress?: string;
   };
   socials: {
     instagram: string;

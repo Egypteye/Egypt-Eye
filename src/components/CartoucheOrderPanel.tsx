@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { PayPalDepositButtons } from "@/components/PayPalDepositButtons";
+import { personalisedItemAnchor, personalisedItemNotice } from "@/content/cancellationPolicy";
 import { formatCents } from "@/lib/booking/quote";
 import type { Spelling, SymbolKey } from "@/lib/hieroglyphs/signs";
 
@@ -274,7 +275,17 @@ export function CartoucheOrderPanel({
         </p>
       )}
 
-      <div className="mt-5 flex flex-wrap items-center gap-3">
+      <div className="mt-5 rounded-xl border border-sand-deep bg-sand/40 px-4 py-3">
+        <p className="text-sm leading-relaxed text-ink">{personalisedItemNotice}</p>
+        <a
+          href={personalisedItemAnchor}
+          className="mt-1 inline-block text-xs font-semibold text-ink-soft underline underline-offset-4 transition hover:text-ink"
+        >
+          Personalised items in our Cancellation Policy
+        </a>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-3">
         <button
           type="submit"
           disabled={busy || !nameOk}
