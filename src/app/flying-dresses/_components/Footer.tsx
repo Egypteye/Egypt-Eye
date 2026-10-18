@@ -121,6 +121,9 @@ export function FlyingDressesFooter({ logo }: { logo?: string | null }) {
             © {year} {brand.name}
           </p>
           <nav aria-label="Footer" style={{ display: "flex", gap: "1.5rem", flexWrap: "wrap" }}>
+            <Link href={fdPath("/collaborate")} style={{ color: "inherit" }}>
+              Collaborate
+            </Link>
             <Link href={fdPath("/packages")} style={{ color: "inherit" }}>
               Prices
             </Link>

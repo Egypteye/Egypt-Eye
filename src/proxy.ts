@@ -66,8 +66,13 @@ const FLYING_DRESSES_BASE = "/flying-dresses";
  */
 function isFlyingDressesAllowed(pathname: string): boolean {
   return (
-    // Its own enquiry form's endpoint, and nothing else under /api.
+    // Its own two form endpoints, and nothing else under /api. Each one is
+    // listed individually on purpose: a prefix match like
+    // `startsWith("/api/flying-dresses")` would silently admit every future
+    // route that happens to begin with those words, which is how an
+    // allow-list becomes a deny-list without anybody deciding to change it.
     pathname === "/api/flying-dresses-enquiry" ||
+    pathname === "/api/flying-dresses-collaborate" ||
     // Framework and static assets, which carry no authority.
     pathname.startsWith("/_next") ||
     pathname.startsWith("/photos/") ||

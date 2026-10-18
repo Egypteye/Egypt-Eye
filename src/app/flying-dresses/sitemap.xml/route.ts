@@ -43,6 +43,7 @@ export function GET() {
     })),
     { path: "/wardrobe", priority: "0.8" },
     { path: "/packages", priority: "0.8" },
+    { path: "/collaborate", priority: "0.7" },
     { path: "/faq", priority: "0.6" },
     { path: "/about", priority: "0.5" },
   ];

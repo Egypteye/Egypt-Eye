@@ -161,3 +161,55 @@ ${brand.name}`;
     text,
   };
 }
+
+/**
+ * The receipt for a COLLABORATION PROPOSAL, which is a different thing from an
+ * enquiry and needs different words.
+ *
+ * The enquiry receipt above says "nothing is booked yet and nothing has been
+ * charged" and mentions the dress they chose. Sent to a hotel offering a
+ * rooftop or a label proposing a music video, that reads as a form letter from
+ * a business that did not understand the message.
+ *
+ * The sentence that matters here is the opposite one: sending a form is not an
+ * agreement. It is the sentence that stops somebody turning up expecting a
+ * shoot they were never promised, so it is passed in from one shared constant
+ * rather than written twice.
+ */
+export function flyingDressesCollaborationReceipt({
+  name,
+  category,
+  noPromise,
+}: {
+  name: string;
+  category: string;
+  noPromise: string;
+}) {
+  const bodyHtml = `
+    <p style="margin:0 0 16px;">Hi ${escapeHtml(name)},</p>
+    <p style="margin:0 0 16px;">Thank you — we have your collaboration proposal under <strong>${escapeHtml(category)}</strong>.</p>
+    <p style="margin:0 0 16px;">A person reads every one of these, and we will come back to you either way. If it is a fit we will say what we think the next step is; if it is not, we will tell you that too rather than leave you waiting.</p>
+    <p style="margin:0 0 16px;padding:12px 14px;background:${IVORY};border-left:2px solid #c8102e;font-size:14px;color:${MUTED};">
+      ${escapeHtml(noPromise)}
+    </p>
+    <p style="margin:0;">If it is easier, reply to this email or message us on WhatsApp at ${escapeHtml(contact.whatsapp)}.</p>
+  `;
+
+  const text = `Hi ${name},
+
+Thank you — we have your collaboration proposal under ${category}.
+
+A person reads every one of these, and we will come back to you either way. If it is a fit we will say what we think the next step is; if it is not, we will tell you that too rather than leave you waiting.
+
+${noPromise}
+
+If it is easier, reply to this email or message us on WhatsApp at ${contact.whatsapp}.
+
+${brand.name}`;
+
+  return {
+    subject: `We have your proposal — ${brand.name}`,
+    html: layout({ preheader: `We have your collaboration proposal.`, bodyHtml }),
+    text,
+  };
+}

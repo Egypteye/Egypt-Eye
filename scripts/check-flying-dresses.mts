@@ -1423,6 +1423,48 @@ for (const file of brandTsx) {
 }
 
 // ---------------------------------------------------------------------------
+// A ROUTE MAY NOT MISTAKE sendEmail's RESULT FOR A BOOLEAN
+//
+// sendEmail resolves to `{ ok, error }`. An object is ALWAYS truthy, so
+//
+//     const sent = await sendEmail({ ... });
+//     if (!sent) return error;          // can never be true
+//
+// compiles, type-checks, lints clean and silently tells every sender their
+// message arrived. The collaboration route shipped exactly this in its first
+// draft and returned {"ok":true} on a deployment with no RESEND_API_KEY
+// configured, which is the single worst outcome available to a contact form:
+// the sender stops chasing and waits for a reply that is never coming.
+//
+// TypeScript cannot catch it, because truthiness of an object is legal. So
+// this does: every `const x = await sendEmail(...)` must be followed by a use
+// of `x.ok` somewhere in the same file.
+//
+// Proven by changing `sentToTeam.ok` back to `sentToTeam`: red, naming the
+// file and the variable. Restored: green.
+// ---------------------------------------------------------------------------
+{
+  const apiFiles = execSync("find src/app/api -name 'route.ts' -type f", { encoding: "utf8" })
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of apiFiles) {
+    const source = read(file).replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+    for (const match of source.matchAll(/const\s+(\w+)\s*=\s*await\s+sendEmail\(/g)) {
+      const name = match[1]!;
+      ok(
+        `${file} assigns sendEmail() to \`${name}\` and never reads \`${name}.ok\` — sendEmail returns an object, which is always truthy, so a failed send reports success`,
+        // `?.ok` counts. treasure-request/route.ts uses optional chaining and
+        // is correct; the first version of this pattern flagged it, and a
+        // check that fires on correct code is one people stop reading.
+        new RegExp(`\\b${name}\\??\\.ok\\b`).test(source)
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
