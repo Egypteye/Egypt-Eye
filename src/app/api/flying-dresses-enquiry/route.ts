@@ -16,6 +16,7 @@ import {
   packageBySlug,
   rentalServiceBySlug,
 } from "@/content/flyingDresses";
+import { experienceBySlug, experiencePath } from "@/content/flyingDressExperiences";
 
 /**
  * The Flying Dresses enquiry.
@@ -90,12 +91,18 @@ export async function POST(request: NextRequest) {
   // ---------------------------------------------------------------------
   const pkg = packageBySlug(clean(body.package, 60));
   const service = rentalServiceBySlug(clean(body.service, 60));
+  // Resolved against the catalogue, never echoed back from the client, for the
+  // same reason as the package and the service above: whatever arrives here
+  // ends up in an email the business reads as fact.
+  const experience = experienceBySlug(clean(body.experience, 60));
 
   const subject = pkg
     ? `${pkg.title} — $${pkg.priceUsd} per person`
     : service
       ? service.title
-      : "A flying-dress photoshoot";
+      : experience
+        ? experience.title
+        : "A flying-dress photoshoot";
 
   // Rental, accessories and men's wear are quoted rather than priced. Drives
   // which "what happens next" the customer's receipt carries.
@@ -154,9 +161,11 @@ export async function POST(request: NextRequest) {
 
   const pageUrl = pkg
     ? `${brand.url}/flying-dresses/experiences/${pkg.slug}`
-    : service
-      ? `${brand.url}/flying-dresses/rentals/${service.slug}`
-      : `${brand.url}/flying-dresses/enquire`;
+    : experience
+      ? `${brand.url}/flying-dresses${experiencePath(experience)}`
+      : service
+        ? `${brand.url}/flying-dresses/rentals/${service.slug}`
+        : `${brand.url}/flying-dresses/enquire`;
 
   const team = flyingDressesTeamEmail({ subject, rows, message, pageUrl });
 

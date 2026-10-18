@@ -1,4 +1,5 @@
 import { packages, rentalServices } from "@/content/flyingDresses";
+import { categoryPath, experienceCategories } from "@/content/flyingDressExperiences";
 import { fdUrl } from "../_lib/seo";
 
 /**
@@ -30,6 +31,16 @@ export function GET() {
     ...packages.map((p) => ({ path: `/experiences/${p.slug}`, priority: "0.9" })),
     { path: "/rentals", priority: "0.9" },
     ...rentalServices.map((s) => ({ path: `/rentals/${s.slug}`, priority: "0.8" })),
+    // The experiences catalogue. One URL per CATEGORY and none per
+    // experience: each category currently holds a single experience and the
+    // category page renders it in full, so a second URL would be the same
+    // page competing with itself.
+    { path: "/celebrations", priority: "0.9" },
+    { path: "/creative", priority: "0.9" },
+    ...experienceCategories.map((c) => ({
+      path: categoryPath(c),
+      priority: "0.8",
+    })),
     { path: "/wardrobe", priority: "0.8" },
     { path: "/packages", priority: "0.8" },
     { path: "/faq", priority: "0.6" },

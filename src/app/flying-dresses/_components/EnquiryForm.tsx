@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { experienceBySlug } from "@/content/flyingDressExperiences";
 import {
   RENTAL_DELIVERY_LABELS,
   addOns,
@@ -56,11 +57,13 @@ type Status = "idle" | "sending" | "sent" | "error";
 export function EnquiryForm({
   initialPackage = "",
   initialService = "",
+  initialExperience = "",
   initialDress = "",
   initialMens = "",
 }: {
   initialPackage?: string;
   initialService?: string;
+  initialExperience?: string;
   initialDress?: string;
   initialMens?: string;
 }) {
@@ -69,6 +72,10 @@ export function EnquiryForm({
   const [phone, setPhone] = useState("");
   const [pkg, setPkg] = useState(initialPackage);
   const [service, setService] = useState(initialService);
+  // Carried, not editable: the experience comes from the page the visitor
+  // arrived from. There is no selector for it because the catalogue is eight
+  // items and a ninth dropdown helps nobody.
+  const [experience] = useState(initialExperience);
   const [date, setDate] = useState("");
   const [people, setPeople] = useState("");
   const [dress, setDress] = useState(initialDress);
@@ -91,8 +98,14 @@ export function EnquiryForm({
   const whatsappMessage = useMemo(() => {
     const chosenPackage = packages.find((p) => p.slug === pkg);
     const chosenService = rentalServices.find((s) => s.slug === service);
+    // The experience is in the subject too. Without it, a visitor who read the
+    // whole proposal page, opened the form and then chose WhatsApp arrived in
+    // the chat asking about "a flying-dress photoshoot" — the same context
+    // leak the phone bar had, on the other of the two paths out of this form.
+    const chosenExperience = experienceBySlug(experience);
     return flyingDressEnquiry({
-      subject: chosenService?.title ?? chosenPackage?.title ?? undefined,
+      subject:
+        chosenService?.title ?? chosenPackage?.title ?? chosenExperience?.title ?? undefined,
       name,
       location: chosenPackage?.name,
       date,
@@ -106,7 +119,7 @@ export function EnquiryForm({
       delivery: delivery ? RENTAL_DELIVERY_LABELS[delivery as "hotel-delivery" | "collection"] : undefined,
       notes: message,
     });
-  }, [pkg, service, name, date, people, dress, mens, extras, hotel, delivery, message]);
+  }, [pkg, service, experience, name, date, people, dress, mens, extras, hotel, delivery, message]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -133,6 +146,7 @@ export function EnquiryForm({
           phone,
           package: pkg,
           service,
+          experience,
           date,
           people,
           dress,

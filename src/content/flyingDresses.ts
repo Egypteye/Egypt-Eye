@@ -985,11 +985,24 @@ export function flyingDressEnquiry(draft: EnquiryDraft = {}): string {
 // cruises, transfers, a boutique and a journal.
 // ---------------------------------------------------------------------------
 
+/**
+ * SIX ITEMS, AND THAT IS A CEILING RATHER THAN A COINCIDENCE.
+ *
+ * The header is a wordmark, these links and a button, and measured across the
+ * rendered page that content needs about 1440px before it stops running off
+ * the side of the screen. Every item added here lowers the width at which the
+ * desktop nav can appear at all.
+ *
+ * So the catalogue was added by RESTRUCTURING rather than appending: Packages
+ * and Questions moved to the footer, which already linked both, and the two
+ * new sections took their places. "Experiences" became "Photoshoots" because
+ * it now has to mean one specific thing beside Celebrations and Creative.
+ */
 export const nav: { label: string; href: string }[] = [
-  { label: "Experiences", href: `${FLYING_DRESSES_PATH}/experiences` },
+  { label: "Photoshoots", href: `${FLYING_DRESSES_PATH}/experiences` },
+  { label: "Celebrations", href: `${FLYING_DRESSES_PATH}/celebrations` },
+  { label: "Creative", href: `${FLYING_DRESSES_PATH}/creative` },
   { label: "The Wardrobe", href: `${FLYING_DRESSES_PATH}/wardrobe` },
   { label: "Rent & Hire", href: `${FLYING_DRESSES_PATH}/rentals` },
-  { label: "Packages", href: `${FLYING_DRESSES_PATH}/packages` },
   { label: "About", href: `${FLYING_DRESSES_PATH}/about` },
-  { label: "Questions", href: `${FLYING_DRESSES_PATH}/faq` },
 ];

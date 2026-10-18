@@ -39,6 +39,12 @@ import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
 import { allSlots } from "../src/app/flying-dresses/_lib/assets.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
+import {
+  ROOFTOP_LOCATION_NOTE,
+  VENUE_DEPENDENCY,
+  experienceCategories,
+  flyingDressExperiences,
+} from "../src/content/flyingDressExperiences.js";
 import { hardenFlyingDressGallery } from "../src/lib/sanityShape.js";
 import type { FlyingDressGallery } from "../src/content/types.js";
 
@@ -1275,6 +1281,145 @@ for (const pkg of packages) {
       figure === pkg.priceUsd
     );
   }
+}
+
+// ---------------------------------------------------------------------------
+// THE EXPERIENCES CATALOGUE CANNOT PROMISE WHAT THE BUSINESS HAS NOT CONFIRMED
+//
+// This catalogue is eight experiences the owner described as CAPABILITIES. Not
+// one of them has a confirmed price, a signed venue agreement or a verified
+// equipment list behind it. The whole file is therefore written to make the
+// honest answer the easy one, and these assertions are what stop that decaying
+// the first time somebody is in a hurry.
+//
+// Five properties, each of which has a specific way of going wrong:
+//
+//   1. A PRICE CANNOT APPEAR while that experience still lists an open price
+//      question. This is the expensive one: a figure on the page is what a
+//      customer plans around and quotes back when it turns out to be wrong.
+//   2. `included` may not contain anything a partner or the venue supplies.
+//      Cake, musicians, dining, transport and sound are other people's to
+//      deliver, and listing them as included is a promise we cannot keep.
+//   3. Anything mentioning a rooftop carries the venue dependency, because the
+//      rooftop belongs to a hotel and a customer planning a surprise around it
+//      deserves to know that before they book flights.
+//   4. Nothing offers drone filming. Egypt restricts it and the reported
+//      penalty is equipment seizure.
+//   5. The location note is the shared constant on every experience, so the
+//      sentence that separates a hotel rooftop from the archaeological complex
+//      cannot drift on one page while staying right on the others.
+//
+// Proven by: setting a fixed price while the price question is open (red),
+// moving "Cake, flowers or refreshments" into `included` (red), deleting a
+// venue dependency (red), adding a drone extra (red), and replacing one
+// locationNote with a hand-written sentence (red).
+// ---------------------------------------------------------------------------
+{
+  const PARTNER_WORDS = [
+    "cake",
+    "flowers",
+    "musician",
+    "singer",
+    "dj ",
+    "catering",
+    "dining",
+    "transport",
+    "sound system",
+    "generator",
+    "hair and makeup",
+    "celebrant",
+  ];
+
+  for (const exp of flyingDressExperiences) {
+    const priceStillOpen = exp.confirm.some((line) => /price/i.test(line));
+    if (exp.pricing.kind !== "enquire") {
+      ok(
+        `${exp.slug} shows a price while its own confirm list still has an open price question — that figure is not confirmed`,
+        !priceStillOpen
+      );
+    }
+
+    for (const line of exp.included) {
+      const lower = ` ${line.toLowerCase()} `;
+      const offending = PARTNER_WORDS.find((w) => lower.includes(w));
+      ok(
+        `${exp.slug} lists "${line.slice(0, 48)}" as INCLUDED, but ${offending?.trim()} is supplied by a partner or the venue — included means we deliver it`,
+        offending === undefined
+      );
+    }
+
+    const mentionsRooftop = (exp.intro + exp.included.join(" ") + exp.locationNote)
+      .toLowerCase()
+      .includes("rooftop");
+    if (mentionsRooftop) {
+      ok(
+        `${exp.slug} talks about a rooftop without carrying the venue dependency, so a customer could plan around a roof nobody has agreed to`,
+        exp.dependencies.some((d) => d === VENUE_DEPENDENCY)
+      );
+    }
+
+    const allProse = [
+      exp.intro,
+      ...exp.included,
+      ...exp.extras.map((x) => x.label),
+      ...exp.dependencies,
+      ...exp.faqs.map((f) => `${f.question} ${f.answer}`),
+    ]
+      .join(" ")
+      .toLowerCase();
+    const offersDrone = exp.extras.some((x) => /drone/i.test(x.label));
+    ok(
+      `${exp.slug} offers drone filming as an extra — Egypt restricts it and the reported penalty is equipment seizure`,
+      !offersDrone
+    );
+    if (allProse.includes("drone")) {
+      ok(
+        `${exp.slug} mentions drones without saying we do not fly them`,
+        /do not fly drones|do not offer it|restricted/i.test(allProse)
+      );
+    }
+
+    ok(
+      `${exp.slug} has a hand-written location note instead of the shared one, so the hotel-rooftop-not-complex sentence can drift on this page alone`,
+      exp.locationNote === ROOFTOP_LOCATION_NOTE
+    );
+  }
+
+  ok(
+    "no experience is in the catalogue at all, so these assertions are checking nothing",
+    flyingDressExperiences.length > 0
+  );
+  for (const exp of flyingDressExperiences) {
+    ok(
+      `${exp.slug} has a category that is not in experienceCategories, so it renders on no page`,
+      experienceCategories.some((c) => c.id === exp.category)
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// JSON-LD MUST BE IN A SCRIPT TAG
+//
+// `fdJsonLd()` returns a STRING. Written as `{fdJsonLd(...)}` in JSX, React
+// renders that string as visible page text: a 250-character unbroken line of
+// JSON printed at the top of the page, which pushed the layout 252px sideways
+// on four new pages at once — and structured data that no crawler can read,
+// because it never reached a script tag.
+//
+// Both halves are silent. The page still renders, the build still passes, and
+// the JSON looks right in the source because it IS right; it is simply in the
+// wrong place. The correct form is the one every older page already uses:
+// `dangerouslySetInnerHTML={{ __html: fdJsonLd(...) }}` on a
+// <script type="application/ld+json">.
+//
+// Proven by changing one page back to the bare form: red, naming the file.
+// ---------------------------------------------------------------------------
+for (const file of brandTsx) {
+  const source = read(file).replace(/\{\/\*[\s\S]*?\*\/\}/g, "");
+  ok(
+    `${file} renders fdJsonLd() bare in JSX — that prints the raw JSON as page text and the structured data never reaches a script tag`,
+    !/\{\s*fdJsonLd\(/.test(source)
+  );
 }
 
 // ---------------------------------------------------------------------------

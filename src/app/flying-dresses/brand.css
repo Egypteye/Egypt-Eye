@@ -529,6 +529,139 @@ textarea {
   }
 }
 
+/* `grid` is .fd-gallery's own behaviour, so this rule changes nothing — and it
+   exists anyway, because <Gallery> emits fd-gallery-grid and a class the
+   stylesheet has never heard of is indistinguishable from a typo. The check
+   that reads every class used in the brand's .tsx files found this one. */
+.fd-gallery-grid {
+  grid-auto-flow: row;
+}
+
+/* ---- Cards for the experiences catalogue --------------------------------
+   NOT .fd-gallery. These are navigation cards, and the gallery carries rules
+   about labelled gaps, attribution and derived counts that mean nothing here.
+   Reusing it was the lazy option and the check that forbids hand-built
+   galleries caught it, correctly. */
+.fd-card-grid {
+  display: grid;
+  gap: clamp(0.75rem, 0.4rem + 1.4vw, 1.5rem);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 40rem) {
+  .fd-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .fd-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.fd-experience-card {
+  display: block;
+  padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+  background: var(--fd-ivory);
+  border: 1px solid var(--fd-hairline);
+  border-radius: var(--fd-r-md);
+  box-shadow: var(--fd-shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow var(--fd-fast) var(--fd-ease-soft),
+    translate var(--fd-fast) var(--fd-ease-soft);
+}
+
+.fd-experience-card:hover {
+  box-shadow: var(--fd-shadow-md);
+  translate: 0 -2px;
+}
+
+.fd-experience-card .fd-tile-title {
+  display: block;
+  font-size: var(--fd-step-1);
+  margin-bottom: 0.75rem;
+}
+
+.fd-experience-card .fd-tile-meta {
+  display: block;
+  color: var(--fd-ink-soft);
+  font-size: var(--fd-step--1);
+  line-height: 1.6;
+  margin-bottom: 1.25rem;
+}
+
+/* ---- Extras, each naming who supplies it --------------------------------
+   The supplier line is the point of this list, so it is styled as information
+   rather than as a footnote. */
+.fd-extras-list {
+  gap: 1.25rem;
+}
+
+ol.fd-extras-list h4,
+.fd-extras-list h4 {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step-0);
+  font-weight: 500;
+  margin: 0 0 0.25rem;
+}
+
+.fd-supplier {
+  margin: 0;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.04em;
+  color: var(--fd-ink-soft);
+}
+
+/* In-house is the only one that means "we can simply do this", so it is the
+   only one that gets the brand colour. The rest read as qualifications,
+   which is what they are. */
+.fd-supplier-in-house {
+  color: var(--fd-gold-ink);
+}
+
+/* ---- The three facts: where, how long, how far ahead -------------------- */
+.fd-facts {
+  display: grid;
+  gap: 1.75rem;
+  margin: 0;
+}
+
+@media (min-width: 48rem) {
+  .fd-facts {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+.fd-facts dt {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fd-gold-ink);
+  margin-bottom: 0.5rem;
+}
+
+.fd-facts dd {
+  margin: 0;
+  color: var(--fd-ink-soft);
+  font-size: var(--fd-step--1);
+  line-height: 1.65;
+}
+
+/* Dependencies are not achievements, so they do not get the tick mark that
+   .fd-ticks draws. */
+.fd-ticks-plain > li::before {
+  content: none;
+}
+
+.fd-ticks-plain > li {
+  padding-left: 0;
+}
+
 /* ---- The three gallery layouts ----------------------------------------
    Three, and not an open-ended set, because every layout is a shape the
    captions have to line up in and a `sizes` attribute has to be right for.

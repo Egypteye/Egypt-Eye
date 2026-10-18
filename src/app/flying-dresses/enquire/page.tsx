@@ -7,6 +7,7 @@ import {
   packageBySlug,
   rentalServiceBySlug,
 } from "@/content/flyingDresses";
+import { experienceBySlug } from "@/content/flyingDressExperiences";
 import { EnquiryForm } from "../_components/EnquiryForm";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 
@@ -48,6 +49,10 @@ export default async function EnquirePage({
   // Resolved, never trusted. An unknown id becomes "" and selects nothing.
   const pkg = packageBySlug(one(params.package))?.slug ?? "";
   const service = rentalServiceBySlug(one(params.service))?.slug ?? "";
+  // Resolved against the catalogue exactly like the two above. An unknown
+  // slug selects nothing, so a stale link from a retired experience still
+  // opens a working form rather than a broken one.
+  const experience = experienceBySlug(one(params.experience))?.slug ?? "";
   const dressParam = one(params.dress).toLowerCase();
   const dress = dresses.find((d) => d.id.toLowerCase() === dressParam)?.id ?? "";
   const mensParam = one(params.mens).toLowerCase();
@@ -82,6 +87,7 @@ export default async function EnquirePage({
             <EnquiryForm
               initialPackage={pkg}
               initialService={service}
+              initialExperience={experience}
               initialDress={dress}
               initialMens={mens}
             />
