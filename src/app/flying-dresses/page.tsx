@@ -11,6 +11,7 @@ import {
 } from "@/content/flyingDresses";
 import { dresses, mensOutfits } from "@/content/flyingDresses";
 import { Scene } from "./_components/Scene";
+import { Gallery, galleryTally } from "./_components/Gallery";
 import { HeroVideo } from "./_components/HeroVideo";
 import { agency, empty, location } from "./_lib/assets";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
@@ -67,7 +68,7 @@ const galleryFrames = [
 ];
 
 /** How many of the above are real photographs. Drives the copy, so it cannot drift. */
-const galleryOurs = galleryFrames.filter((frame) => frame.kind !== "empty").length;
+const { ours: galleryOurs, total: galleryTotal } = galleryTally(galleryFrames);
 
 export default function FlyingDressesHome() {
   return (
@@ -505,45 +506,18 @@ export default function FlyingDressesHome() {
                 numbers come from the gallery below now, so the claim cannot
                 drift from what is actually shown. */}
             <p className="fd-muted" style={{ margin: 0 }}>
-              {galleryOurs === galleryFrames.length
+              {galleryOurs === galleryTotal
                 ? "Every frame here is ours, from real client mornings."
-                : `${galleryOurs} of these ${galleryFrames.length} frames are ours. The rest are marked as waiting for photographs.`}{" "}
+                : `${galleryOurs} of these ${galleryTotal} frames are ours. The rest are marked as waiting for photographs.`}{" "}
               We would rather show you a labelled gap than a stock photograph you might mistake
               for our work.
             </p>
           </div>
 
-          {/* ONE LIST, ONE SHAPE, EVERY CELL THE SAME.
-              This was two hand-written figures plus a mapped three, the first
-              of them carrying `gridRow: span 2`. With five cells in a
-              four-column grid that left one stranded in the second row under
-              nothing, and only the hand-written two had captions, so the rows
-              did not line up either. A gallery of a photographer's work is the
-              last place on a site that should look unconsidered.
-
-              Every frame is now the same 3:2 cell with a caption line under
-              it, captioned or deliberately blank, so the baselines align
-              whatever the mix of real photographs and gaps happens to be. */}
-          <div className="fd-gallery fd-reveal-group">
-            {galleryFrames.map((frame) => (
-              <figure key={frame.alt}>
-                <Scene
-                  src={frame.src}
-                  alt={frame.alt}
-                  width={frame.width}
-                  height={frame.height}
-                  ratio="fd-ratio-landscape"
-                  tone="neutral"
-                  sizes="(min-width: 60rem) 30vw, 92vw"
-                  label={frame.wanted}
-                  drift={frame.kind !== "empty"}
-                />
-                <figcaption className="fd-caption">
-                  {frame.credit ?? (frame.kind === "empty" ? "Photograph to come" : "")}
-                </figcaption>
-              </figure>
-            ))}
-          </div>
+          {/* The layout, the captions, the labelled gaps and the uniform cell
+              shape all live in Gallery now, because every one of them has
+              already drifted once when it was hand-built here. */}
+          <Gallery frames={galleryFrames} layout="grid" />
         </div>
       </section>
 

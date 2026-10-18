@@ -1104,6 +1104,54 @@ for (const [, src, width, height] of declaredShareImages) {
 }
 
 // ---------------------------------------------------------------------------
+// ONLY Gallery.tsx MAY BUILD A GALLERY
+//
+// Every rule that keeps a gallery honest on this site has already been broken
+// once, and each time it was broken by a page building its own grid by hand:
+//
+//   * the grid lost its CSS in a rename and stacked six frames down the page;
+//   * the intro read "Two frames here are ours" on a day when four were;
+//   * only some figures had captions, so the rows shared no baseline;
+//   * one cell carried `gridRow: span 2` and stranded another beside it.
+//
+// So the rules live in the component, and this stops a page going around it.
+// Three things are asserted, and the third is the one that matters:
+//
+//   1. Gallery renders through `Scene`, which is what makes a missing
+//      photograph a labelled gap rather than a stock photo.
+//   2. Every frame gets a `<figcaption>`, so the baselines line up.
+//   3. No other .tsx builds `className="fd-gallery`. That is the hole every
+//      one of the bugs above came through.
+//
+// Proven by re-inlining the home page's old hand-built grid (red, naming
+// page.tsx), by replacing Scene with a bare <img> (red), and by deleting the
+// figcaption (red). Restored: green.
+// ---------------------------------------------------------------------------
+const GALLERY_SRC = read("src/app/flying-dresses/_components/Gallery.tsx")
+  .replace(/\/\*[\s\S]*?\*\//g, "")
+  .replace(/^\s*\/\/.*$/gm, "");
+
+ok(
+  "Gallery no longer renders through Scene, so a missing photograph stops being a labelled gap",
+  /<Scene\b/.test(GALLERY_SRC)
+);
+ok(
+  "Gallery no longer gives every frame a figcaption, so captioned and uncaptioned rows stop sharing a baseline",
+  /<figcaption/.test(GALLERY_SRC)
+);
+
+for (const file of brandTsx) {
+  if (file.endsWith("_components/Gallery.tsx")) continue;
+  const source = read(file)
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "");
+  ok(
+    `${file} builds its own fd-gallery grid instead of using <Gallery> — every gallery bug on this site came through a hand-built grid`,
+    !/className="fd-gallery/.test(source)
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

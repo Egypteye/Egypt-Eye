@@ -517,6 +517,59 @@ textarea {
   }
 }
 
+/* ---- The three gallery layouts ----------------------------------------
+   Three, and not an open-ended set, because every layout is a shape the
+   captions have to line up in and a `sizes` attribute has to be right for.
+   Three tells every story on this site; a fourth is a decision, not a prop. */
+
+/* FEATURE: one large frame, the rest supporting it. The large one is first in
+   the DOM because it is first in importance — reading order and visual order
+   agree, which they did not in the lockup that read "Egypt FLYING DRESSES". */
+@media (min-width: 60rem) {
+  .fd-gallery-feature {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .fd-gallery-feature > figure:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+
+/* STRIP: a horizontal run for a sequence, scrolled rather than wrapped, so a
+   series stays a series instead of breaking into ragged rows.
+   Scroll snap, and `scroll-padding` so a snapped frame is not jammed against
+   the edge. No radius on this element: it scrolls, and a rounded clipping box
+   eats the corners of whatever is inside it, which is what cost the price
+   table its first column. */
+.fd-gallery-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(16rem, 22rem);
+  grid-template-columns: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--fd-gutter);
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.fd-gallery-strip > figure {
+  scroll-snap-align: start;
+}
+
+@media (min-width: 40rem) {
+  .fd-gallery-strip {
+    grid-template-columns: none;
+  }
+}
+
+@media (min-width: 60rem) {
+  .fd-gallery-strip {
+    grid-template-columns: none;
+  }
+}
+
 /* ==========================================================================
    5. BUTTONS AND LINKS
    ========================================================================== */
