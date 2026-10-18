@@ -7,6 +7,7 @@ import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { getExperienceBySlug, getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
 import { normaliseOutfits, outfitAllowance, selectOutfits } from "@/lib/booking/outfits";
 import { quoteDeposit } from "@/lib/booking/quote";
+import { NO_GUIDE, guideEligible, readGuideSelection } from "@/lib/booking/guide";
 import { createAttempt } from "@/lib/booking/attempts";
 import { composePhone } from "@/lib/booking/phone";
 import type { PaymentMode } from "@/lib/booking/wording";
@@ -73,6 +74,8 @@ type Body = {
   phoneNational?: unknown;
   extras?: unknown;
   outfits?: unknown;
+  /** { selected, language: "english" | "other", otherLanguage } — never a price. */
+  guide?: unknown;
   notes?: unknown;
 };
 
@@ -232,7 +235,12 @@ export async function POST(request: NextRequest) {
   // then used everywhere — the row, the link response and the payment attempt.
   // Computing it more than once is how a figure on one surface stops matching
   // a figure on another.
-  const quoted = quoteDeposit(product, productType, { people, extras: body.extras }, settings.defaultDepositPercent);
+  const quoted = quoteDeposit(
+    product,
+    productType,
+    { people, extras: body.extras, guide: body.guide },
+    settings.defaultDepositPercent
+  );
   if (!quoted.ok) {
     // depositOffer already said a deposit was possible, so this is a real
     // disagreement rather than an unconfigured product — worth a loud log.
@@ -257,6 +265,19 @@ export async function POST(request: NextRequest) {
     priceUsd: line.amountCents / 100,
   }));
   const extrasSum = extraLines.reduce((sum, line) => sum + line.amountCents, 0) / 100;
+
+  // Which language the guide works in.
+  //
+  // Read through the same eligibility gate the quote used, so a request that
+  // names a guide on a product which does not offer one cannot leave a
+  // language on the booking for a guide nobody is sending. The guide's FEE is
+  // a quote line; this is the part of it that costs nothing, which is why it
+  // is resolved here and not in quote.ts \u2014 the same separation outfits have.
+  //
+  // A non-English choice is stored as status "requested". It is not a promise
+  // and the confirmation email says so: the team confirms the language or
+  // offers English back.
+  const guideChoice = guideEligible(productSlug) ? readGuideSelection(body.guide) : NO_GUIDE;
 
   // What the customer will wear.
   //
@@ -327,6 +348,11 @@ export async function POST(request: NextRequest) {
           people,
           extras: chosenExtras,
           outfits: chosenOutfits,
+          // Snapshotted beside the rest. The fee itself is already in
+          // `extras` and `addons` because it is a quote line; this records
+          // the language and whether it still needs confirming, which the
+          // fee alone cannot say.
+          guide: guideChoice.selected ? guideChoice : null,
         },
       ],
       // Snapshotted, not referenced. The product's prices can change after a

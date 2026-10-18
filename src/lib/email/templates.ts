@@ -9,6 +9,7 @@ import {
 import { HUMAN_CONFIRMS, moneyState, replyPromise, type PaymentMode } from "@/lib/booking/wording";
 import { extrasTotal, formatUsd, type BookingExtra } from "@/lib/booking/extras";
 import { describeOutfits, OUTFIT_PREFERENCE_NOTE, type OutfitChoice } from "@/lib/booking/outfits";
+import { describeGuide, type GuideSelection } from "@/lib/booking/guide";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 
@@ -164,6 +165,7 @@ export function reservationTeamEmail({
   preferences,
   accountState,
   reviewUrl,
+  guide,
 }: {
   reference: string;
   guestName: string;
@@ -180,6 +182,15 @@ export function reservationTeamEmail({
   preferences?: string | null;
   accountState: "signed-in" | "guest";
   reviewUrl: string;
+  /**
+   * The Egyptologist guide, when one was taken.
+   *
+   * This is the half of the booking the desk has to ACT on: a language other
+   * than English is a request nobody has agreed to yet, and it is on this
+   * email or it is nowhere. It sits high in the table, above the contact
+   * details, for that reason.
+   */
+  guide?: GuideSelection | null;
 }) {
   const date = (value: string | null) =>
     value ? new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : null;
@@ -207,6 +218,16 @@ export function reservationTeamEmail({
           ["Estimate", total === null ? "—" : money(total)],
         ] as [string, string][])
       : ([["Estimate", "No priced items — quote required"]] as [string, string][])),
+    ...(guide && guide.selected
+      ? ([
+          [
+            "Tour guide",
+            guide.isRequest
+              ? `YES \u2014 ${guide.language} REQUESTED, needs confirming (English available)`
+              : `Yes \u2014 ${guide.language}`,
+          ],
+        ] as [string, string][])
+      : []),
     ["Name", guestName],
     ["Email", guestEmail],
     ["Phone", guestPhone || "Not provided"],
@@ -1090,6 +1111,7 @@ export function bookingRequestCustomerEmail({
   moneyMode,
   extras,
   outfits,
+  guide,
 }: {
   reference: string;
   guestName: string;
@@ -1112,6 +1134,12 @@ export function bookingRequestCustomerEmail({
   extras?: readonly BookingExtra[];
   /** What they chose to wear. Empty on every product without a collection. */
   outfits?: readonly OutfitChoice[];
+  /**
+   * The Egyptologist guide, when one was taken. Its FEE already appears in
+   * `extras` because it is a quote line; what this adds is the language and,
+   * for anything other than English, the fact that it is still a request.
+   */
+  guide?: GuideSelection | null;
 }) {
   const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
   const when = formatSlot(startsAt, slotLabel);
@@ -1147,6 +1175,21 @@ export function bookingRequestCustomerEmail({
       ? `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Wearing</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(describeOutfits(wearing))}</strong></td></tr>`
       : "";
 
+  // Named on its own row rather than left to the extras table, because the
+  // LANGUAGE is the part the customer needs to see confirmed back to them,
+  // and the extras table only carries labels and prices.
+  const guideBlock =
+    guide && guide.selected
+      ? `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Tour guide</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(describeGuide(guide))}</strong></td></tr>`
+      : "";
+  // A language other than English is a REQUEST. Saying so here, in the
+  // customer's own confirmation, is the difference between managing an
+  // expectation and breaking a promise on the day.
+  const guideNote =
+    guide && guide.selected && guide.isRequest
+      ? `<p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">Your guide is booked. We have asked for ${escapeHtml(guide.language)} and will confirm whether we can cover it \u2014 if we cannot, your guide will work in English and we will tell you before the day.</p>`
+      : "";
+
   const chosen = extras ?? [];
   const extrasBlock =
     chosen.length > 0
@@ -1173,6 +1216,7 @@ export function bookingRequestCustomerEmail({
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">When</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(when)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">For</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(who)}</strong></td></tr>
         ${outfitBlock}
+        ${guideBlock}
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Reference</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(reference)}</strong></td></tr>
       </table>
       ${
@@ -1181,6 +1225,7 @@ export function bookingRequestCustomerEmail({
           : ""
       }
       ${extrasBlock}
+      ${guideNote}
       ${moneyLine}
       <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
       ${ctaButton("See your booking", `${SITE_URL}/account`)}
@@ -1197,6 +1242,7 @@ export function bookingRequestCustomerEmail({
     `What: ${productTitle}`,
     `When: ${when}`,
     `For: ${who}`,
+    ...(guide && guide.selected ? [`Tour guide: ${describeGuide(guide)}`] : []),
     `Reference: ${reference}`,
     wearing.length > 0 ? `Wearing: ${describeOutfits(wearing)}` : "",
     wearing.length > 0 ? OUTFIT_PREFERENCE_NOTE : "",
@@ -1519,6 +1565,12 @@ export type BookingFacts = {
    * Studio collection changed between booking and payment.
    */
   outfits?: OutfitChoice[];
+  /**
+   * The Egyptologist guide, read back off the booking rather than recomputed.
+   * Its fee is already one of `extras`; this carries the language and whether
+   * a non-English request is still awaiting confirmation.
+   */
+  guide?: GuideSelection | null;
 };
 
 function whenText(booking: BookingFacts): string {
@@ -1552,6 +1604,17 @@ export function paymentReceivedCustomerEmail({
   const first = booking.guestName.split(" ")[0] || booking.guestName;
   const when = whenText(booking);
   const who = `${booking.people} ${booking.people === 1 ? "person" : "people"}`;
+  // The guide's fee is a priced line in the breakdown already. This repeats
+  // only the part a price cannot say: which language, and whether we have
+  // actually agreed to it yet.
+  const guideLine =
+    booking.guide && booking.guide.selected
+      ? `<p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">${escapeHtml(describeGuide(booking.guide))}.${
+          booking.guide.isRequest
+            ? " We will confirm that language before the day, or your guide will work in English."
+            : ""
+        }</p>`
+      : "";
 
   // No separate extras paragraph: every extra is already a priced line in the
   // breakdown above. The sentence that used to sit here said extras were
@@ -1581,6 +1644,7 @@ export function paymentReceivedCustomerEmail({
         ${breakdownRows(quote)}
       </table>
       ${extrasHtml}
+      ${guideLine}
       <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
       ${ctaButton("See your booking", `${SITE_URL}/account`)}
       <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:12px;color:#6b7d70;">PayPal order ${escapeHtml(
@@ -1601,6 +1665,7 @@ export function paymentReceivedCustomerEmail({
     `When: ${when}`,
     `For: ${who}`,
     outfitTextLine(booking),
+    ...(booking.guide && booking.guide.selected ? [describeGuide(booking.guide)] : []),
     `Reference: ${payment.reference}`,
     "",
     "How your deposit was worked out:",
@@ -1650,6 +1715,16 @@ export function paymentReceivedTeamEmail({
         ${row("When", when)}
         ${row("People", String(booking.people))}
         ${outfitFactsRow(booking)}
+        ${
+          booking.guide && booking.guide.selected
+            ? row(
+                "Tour guide",
+                booking.guide.isRequest
+                  ? `YES \u2014 ${booking.guide.language} REQUESTED, needs confirming`
+                  : `Yes \u2014 ${booking.guide.language}`
+              )
+            : ""
+        }
         ${row("Name", booking.guestName)}
         ${booking.guestPhone ? row("Phone", booking.guestPhone) : ""}
         ${row("Email", booking.guestEmail || "None — guest booking, reply by phone")}

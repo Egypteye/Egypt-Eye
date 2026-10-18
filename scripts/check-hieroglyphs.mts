@@ -37,6 +37,8 @@ const EXPECTED: ReadonlyArray<readonly [string, number]> = [
   ["G1", 0x1313F],
   ["M17", 0x131CB],
   ["M17a", 0x131CC],
+  // The card's I: two plain strokes, distinct from the reeds it draws for Y.
+  ["Z4", 0x133ED],
   ["G43", 0x13171],
   ["D58", 0x130C0],
   ["Q3", 0x132AA],
@@ -166,12 +168,28 @@ ok("a digraph is reported as one letter", spellName("Sharon").letters[0]?.mappin
 ok("the S in Sahar is still a plain S", spellName("Sahar").letters[0]?.mapping?.letter === "S");
 ok("a trailing S is not left waiting for an H", spellName("as").signCount === 2);
 
-// The card's O is the lasso and its I is the doubled reed. Both differ from
-// what a textbook alone would give, and the card is what gets engraved.
+// The card's O is the lasso, and it draws I and Y as two different pictures.
+// Both differ from what a textbook alone would give, and the card is what
+// gets engraved.
 ok("O is the lasso", glyphString(spellName("o")) === "\u{1336F}");
 ok("O is not the quail chick", glyphString(spellName("o")) !== "\u{13171}");
-ok("I is the doubled reed", glyphString(spellName("i")) === "\u{131CC}");
-ok("I and Y draw the same sign, as the card shows", glyphString(spellName("i")) === glyphString(spellName("y")));
+
+// These two assertions used to say the opposite — "I is the doubled reed"
+// and "I and Y draw the same sign, as the card shows". They were wrong about
+// the card. Read at magnification, the I cell holds two plain pale strokes
+// with no flowering top; the Y cell holds two green reeds, the same reed the
+// E cell draws once. Two pictures, two signs. The assertions encoded the
+// misreading, so correcting the data made them fail — which is the check
+// doing its job, not a regression.
+ok("I is the two plain strokes", glyphString(spellName("i")) === "\u{133ED}");
+ok("Y is the doubled reed", glyphString(spellName("y")) === "\u{131CC}");
+ok(
+  "I and Y draw different signs, as the card shows",
+  glyphString(spellName("i")) !== glyphString(spellName("y")),
+);
+// Y's sign must still be the E reed doubled — that is what makes it the Y
+// cell rather than some third thing.
+ok("Y is E's reed, twice", glyphString(spellName("y")) !== glyphString(spellName("e")));
 ok("E is still the single reed", glyphString(spellName("e")) === "\u{131CB}");
 
 // The workshop's own readings are quoted, never invented. Their card has no
@@ -184,7 +202,25 @@ ok("M quotes the card verbatim, typo and all", spellName("m").letters[0]?.mappin
 ok("every mapping records that it came from the card", everyLetter.every((c) => spellName(c).letters[0]?.mapping?.source === "workshop-card"));
 
 // The one sign on the card that could not be read is named, not guessed.
-ok("the unreadable sign is declared", UNREADABLE.some((u) => u.label === "CH"));
+// What the card shows but this file does not write. The point of the list is
+// that an unidentified sign stays unidentified: the failure mode it guards
+// against is somebody closing the gap with a plausible-looking Gardiner code
+// rather than asking the workshop.
+ok("the unreadable CH is declared", UNREADABLE.some((u) => u.label === "CH"));
+ok(
+  "the card's second S sign is declared",
+  UNREADABLE.some((u) => u.label.startsWith("S")),
+);
+for (const entry of UNREADABLE) {
+  ok(`${entry.label} says why it is unread`, entry.why.length > 60);
+  // A Gardiner code in a "could not identify this" note means it was, in
+  // fact, identified — in which case it belongs in SIGNS with a codepoint
+  // the table above checks, not in prose nothing verifies.
+  ok(
+    `${entry.label} does not quietly claim a Gardiner sign`,
+    !/\bGardiner [A-Z]{1,2}\d/.test(entry.why),
+  );
+}
 ok("CH falls back to two signs rather than inventing one", spellName("ch").signCount === 2);
 // Symbols are added deliberately, never by typing their name: "ankh" in the
 // name box is the letters A-N-K-H, not the sign.

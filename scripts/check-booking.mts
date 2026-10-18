@@ -15,6 +15,7 @@ import { readFileSync, readdirSync } from "node:fs";
 import { breakdownRows, breakdownText, financials } from "../src/lib/email/breakdown";
 import { payPalLink } from "../src/lib/booking/deposit";
 import { isInstantBookable, quoteDeposit, type QuotableProduct } from "../src/lib/booking/quote";
+import { DEFAULT_GUIDE_LANGUAGE, GUIDE_LABEL, readGuideSelection } from "../src/lib/booking/guide";
 import { photoshoots } from "../src/content/photoshoots";
 import { experiences } from "../src/content/experiences";
 import { disabledProvider, chooseProvider } from "../src/lib/booking/paymentProvider";
@@ -1115,6 +1116,110 @@ const emails = readFileSync("src/lib/email/templates.ts", "utf8");
 ok("both paid emails show the outfits in HTML", (emails.match(/outfitFactsRow\(booking\)/g) ?? []).length === 2);
 ok("both paid emails show them in plain text", (emails.match(/outfitTextLine\(booking\)/g) ?? []).length === 2);
 
+// ===========================================================================
+// The Egyptologist tour guide.
+//
+// The money assertions come first because they are the ones that cost real
+// money if they drift: the fee is once per BOOKING, and it is priced from
+// one constant on the server rather than from anything the browser sends.
+// ===========================================================================
+const CAMEL = {
+  slug: "camel-ride-giza-pyramids",
+  title: "Camel Ride",
+  bookable: true,
+  price: { amount: 125 },
+  extras: [{ label: "Photos", priceUsd: 20 }],
+};
+const FELUCCA = { slug: "quiet-nile-felucca-tour", title: "Felucca", bookable: true, price: { amount: 40 }, extras: [] };
+const guideQuote = (product: typeof CAMEL | typeof FELUCCA, selection: Record<string, unknown>) => {
+  const r = quoteDeposit(product, "experience", selection as never, 25);
+  return r.ok ? r.quote : null;
+};
+
+const plain = guideQuote(CAMEL, { people: 2, extras: [] })!;
+const withGuide = guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: true } })!;
+ok("a guide adds exactly $40 to the booking total", withGuide.bookingTotalCents - plain.bookingTotalCents === 4000);
+ok("no guide means no change at all", guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: false } })!.bookingTotalCents === plain.bookingTotalCents);
+ok("an absent guide key means no change", guideQuote(CAMEL, { people: 2, extras: [] })!.bookingTotalCents === plain.bookingTotalCents);
+
+// The whole point of the flag: one guide walks the group.
+const five = guideQuote(CAMEL, { people: 5, extras: [], guide: { selected: true } })!;
+const fivePlain = guideQuote(CAMEL, { people: 5, extras: [] })!;
+ok("the fee is once per booking, not per guest", five.bookingTotalCents - fivePlain.bookingTotalCents === 4000);
+const guideLine = withGuide.lines.find((l) => l.label === GUIDE_LABEL);
+ok("the guide line exists", guideLine !== undefined);
+ok("the guide line is quantity 1", guideLine?.quantity === 1);
+ok("the guide line is $40", guideLine?.amountCents === 4000);
+
+// A forged request cannot buy more guide, cheaper guide, or any guide at all
+// on a product that does not offer one.
+ok(
+  "a forged quantity cannot multiply the fee",
+  guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: true, quantity: 9 } })!.bookingTotalCents === withGuide.bookingTotalCents,
+);
+ok(
+  "a forged price in the request is ignored",
+  guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: true, priceUsd: 0 } })!.bookingTotalCents === withGuide.bookingTotalCents,
+);
+ok(
+  "an ineligible product refuses the guide",
+  guideQuote(FELUCCA, { people: 2, extras: [], guide: { selected: true } })!.bookingTotalCents ===
+    guideQuote(FELUCCA, { people: 2, extras: [] })!.bookingTotalCents,
+);
+ok("the guide is recorded in the quote's evidence", withGuide.rules.extras.some((e) => e.label === GUIDE_LABEL));
+ok("the deposit grows with it", withGuide.totalCents > plain.totalCents);
+
+// The language. English is the default and needs no confirmation; anything
+// else is a REQUEST, which is the distinction the customer is promised.
+ok("selecting a guide defaults to English", readGuideSelection({ selected: true }).language === DEFAULT_GUIDE_LANGUAGE);
+ok("English needs no confirming", readGuideSelection({ selected: true }).status === "included");
+ok(
+  "another language is stored as a request",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "Spanish" }).status === "requested",
+);
+ok(
+  "a request keeps the language asked for",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "Spanish" }).language === "Spanish",
+);
+ok("an unticked guide is never selected", readGuideSelection({ selected: false }).selected === false);
+ok("a non-boolean selected is refused", readGuideSelection({ selected: "yes" }).selected === false);
+ok(
+  "a blank requested language falls back to English rather than a request nobody can confirm",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "   " }).status === "included",
+);
+ok(
+  "a language is length-capped",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "x".repeat(400) }).language.length <= 60,
+);
+
+// The price is stated in one place. A second copy is a second answer.
+const guideModule = readFileSync("src/lib/booking/guide.ts", "utf8");
+ok("the fee is a named constant", /GUIDE_PRICE_USD = 40/.test(guideModule));
+ok(
+  "the quote reads the constant rather than a literal",
+  /GUIDE_PRICE_USD/.test(readFileSync("src/lib/booking/quote.ts", "utf8")),
+);
+const sheet = readFileSync("src/components/SecureDateButton.tsx", "utf8");
+ok("the sheet shows the fee from the same constant", /GUIDE_PRICE_USD/.test(sheet));
+ok("the sheet sends no price", !/guide:\s*\{[^}]*price/i.test(sheet));
+ok("the sheet re-checks eligibility before offering it", /guideEligible\(productSlug\)/.test(sheet));
+
+// It has to survive to the people who act on it.
+ok("the booking route quotes with the guide", /guide: body\.guide/.test(bookingRoute));
+ok("the booking route re-checks eligibility server side", /guideEligible\(productSlug\)/.test(bookingRoute));
+ok("the guide is persisted on the booking", /guide: guideChoice\.selected \? guideChoice : null/.test(bookingRoute));
+ok("fulfilment reads the snapshot back", /journey_snapshot/.test(fulfilment));
+ok("fulfilment passes the guide to the emails", /guide: reservation\.journey_snapshot/.test(fulfilment));
+ok("the paid emails can show a guide", /booking\.guide/.test(emails));
+ok(
+  "a requested language is flagged to the team as needing confirmation",
+  /REQUESTED, needs confirming/.test(emails),
+);
+ok(
+  "the customer is told a non-English guide is not yet promised",
+  /confirm that language before the day|will confirm whether we can cover it/.test(emails),
+);
+
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -1124,5 +1229,7 @@ if (errors.length > 0) {
 console.log(
   "check-booking: ok — no payment event can confirm a booking, every pre-capture state says nothing is charged, " +
     "a product with no deposit figure shows no button, no booking surface promises a reply window, " +
-    "and an outfit can neither carry a price nor be invented by a request."
+    "an outfit can neither carry a price nor be invented by a request, " +
+    "and the Egyptologist guide costs $40 once per booking \u2014 never per guest, never from the browser, " +
+    "never on a product that does not offer one \u2014 with any language but English stored as a request."
 );

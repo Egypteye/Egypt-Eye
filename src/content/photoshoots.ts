@@ -291,7 +291,7 @@ export const photoshoots: Photoshoot[] = [
     imageTone: "giza",
     image: "https://images.unsplash.com/photo-1778402634289-f434588c4e68?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1600",
     description:
-      "The Jumping Horse Photoshoot at the Nine Pyramids View, paired with a cinematic running-horse video — the horse in full gallop with the Pyramids in the background, filmed and directed by our team.",
+      "The Jumping Horse Photoshoot at the Nine Pyramids View, paired with a cinematic running-horse video — the horse galloping at full stride with the Pyramids in the background, filmed and directed by our team.",
     goodFor: ["Solo travelers", "Couples", "Equestrians", "Influencers & content creators"],
     included: [
       "Private transfer to the Pyramids area",
@@ -302,6 +302,21 @@ export const photoshoots: Photoshoot[] = [
       "Edited images",
     ],
     addOns: ["Running horse video experience with the Pyramids in the background"],
+    // "Horse galloping" is the phrase people are searching for; "Running
+    // Horse" is the phrase this product has always been sold under and is
+    // referenced by in half a dozen articles. Both are carried, neither is
+    // repeated for its own sake.
+    //
+    // Set in BOTH places on purpose. hardenPhotoshoot() gap-fills the arrays
+    // and mergePhotoshootWithLocal() gap-fills the image, but nothing
+    // gap-fills `seo` — so for a slug that has a Studio document, the value
+    // that reaches the page is Sanity's, and this copy is the fallback and
+    // the string the i18n pipeline extracts.
+    seo: {
+      seoTitle: "Horse Galloping at the Pyramids \u2014 Running Horse Video | Egypt Eye",
+      seoDescription:
+        "A cinematic horse galloping video at the Nine Pyramids View, paired with the Jumping Horse Photoshoot \u2014 a running horse at full stride with the Giza Pyramids behind it, filmed by our team.",
+    },
     delivery: ["Professionally edited image gallery", "Raw, unedited photos the same day"],
     faqs: [
       {

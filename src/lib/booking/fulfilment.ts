@@ -10,6 +10,7 @@ import { boutiqueOrderCustomerEmail, boutiqueOrderTeamEmail } from "@/lib/email/
 import type { CartoucheQuote } from "@/lib/boutique/cartoucheOrder";
 import type { Quote } from "./quote";
 import type { OutfitChoice } from "@/lib/booking/outfits";
+import type { GuideSelection } from "@/lib/booking/guide";
 
 // Telling people a payment arrived.
 //
@@ -50,6 +51,12 @@ type ReservationRow = {
   addons: { label: string; priceUsd: number }[] | null;
   addons_total: number | null;
   outfits: OutfitChoice[] | null;
+  /**
+   * The booking snapshot. Read here only for the guide's LANGUAGE: the
+   * guide's fee is already in `addons`, because it is a quote line, but the
+   * language it was booked in lives nowhere else.
+   */
+  journey_snapshot: { guide?: GuideSelection | null }[] | null;
   customer_id: string | null;
 };
 
@@ -81,7 +88,7 @@ export async function fulfilAttempt(attempt: AttemptRow): Promise<FulfilResult> 
     .from("reservations")
     .select(
       "id, reference, guest_name, guest_email, guest_phone, starts_at, slot_label, " +
-        "travelers_adults, product_type, addons, addons_total, outfits, customer_id"
+        "travelers_adults, product_type, addons, addons_total, outfits, journey_snapshot, customer_id"
     )
     .eq("id", attempt.reservation_id)
     .maybeSingle();
@@ -117,6 +124,9 @@ export async function fulfilAttempt(attempt: AttemptRow): Promise<FulfilResult> 
     // a dress renamed in the Studio afterwards does not rewrite what this
     // customer was told they chose.
     outfits: reservation.outfits ?? [],
+    // The guide's language, if one was taken. The fee is already in `extras`
+    // above; this is the half that cannot be read off a price.
+    guide: reservation.journey_snapshot?.[0]?.guide ?? null,
   };
 
   const key = attempt.capture_id ?? attempt.id;

@@ -20,9 +20,10 @@
 //   * CH has its own sign (a red starburst with a tapered tail). It could
 //     not be identified, so CH is written as C then H and `UNREADABLE`
 //     below says so. It must not be guessed.
-//   * The card shows TWO signs for H (twisted flax and reed shelter) and
-//     TWO for N (red crown and water ripple). Only one of each is written;
-//     the other is named in the note so nothing is hidden.
+//   * The card shows TWO signs for H (twisted flax and reed shelter), TWO
+//     for N (red crown and water ripple) and TWO for S (the hooked cloth and
+//     a crossed horizontal bar). Only one of each is written; the others are
+//     named in the notes or in UNREADABLE so nothing is hidden.
 //   * ANKH, LOTOS, SCARAB and EYE are on the card as symbols rather than
 //     letters. They are listed in SYMBOLS for reference but are never
 //     added to a name on their own — whether a customer may add one, and
@@ -89,7 +90,14 @@ export type LetterMapping = {
 const SIGNS = {
   vulture:   { gardiner: "G1",  glyph: "\u{1313F}", sound: "ꜣ", depicts: "an Egyptian vulture", note: "A breathy sound English does not have. Stands in for A.", confidence: "documented" },
   reed:      { gardiner: "M17", glyph: "\u{131CB}", sound: "j / i", depicts: "a flowering reed", note: "A y-like sound. The card uses the single reed for E.", confidence: "documented" },
-  twoReeds:  { gardiner: "M17a",glyph: "\u{131CC}", sound: "y", depicts: "two flowering reeds", note: "The doubled reed. The card uses it for both I and Y.", confidence: "documented" },
+  twoReeds:  { gardiner: "M17a",glyph: "\u{131CC}", sound: "y", depicts: "two flowering reeds", note: "The doubled reed. The card's sign for Y \u2014 two green reeds, the E reed drawn twice.", confidence: "documented" },
+  // The card draws I and Y as DIFFERENT pictures, and this file used to say
+  // otherwise: "the card uses it for both I and Y". Re-reading the card at
+  // magnification, the I cell holds two plain pale strokes with no flowering
+  // top, while the Y cell holds two green reeds matching the single green
+  // reed in the E cell. Two pictures, two signs. The card is the authority
+  // here, so I follows the card rather than the convenient reading.
+  dualStrokes:{ gardiner: "Z4",  glyph: "\u{133ED}", sound: "y", depicts: "two diagonal strokes", note: "The card's sign for I \u2014 two plain strokes, not the flowering reeds it uses for Y.", confidence: "documented" },
   quail:     { gardiner: "G43", glyph: "\u{13171}", sound: "w", depicts: "a quail chick", note: "One sign for both U and W, as the card shows them together.", confidence: "documented" },
   lasso:     { gardiner: "V4",  glyph: "\u{1336F}", sound: "wꜣ", depicts: "a lasso", note: "The card's sign for O.", confidence: "convention" },
   foot:      { gardiner: "D58", glyph: "\u{130C0}", sound: "b", depicts: "a lower leg and foot", note: "Read as B.", confidence: "documented" },
@@ -175,14 +183,18 @@ export function isSymbolKey(value: unknown): value is SymbolKey {
 export const UNREADABLE = [
   {
     label: "CH",
-    why: "The card gives CH its own sign — a red starburst with a tapered tail — which could not be identified from the photograph. CH is written here as C then H until the workshop confirms it.",
+    why: "The card gives CH its own sign \u2014 a spiked star with a thick tapered tail running off to the right, drawn as one object in red-brown \u2014 which could not be matched to a Gardiner sign even at magnification. CH is written here as C then H until the workshop confirms it.",
+  },
+  {
+    label: "S (second sign)",
+    why: "The card's S cell holds two things: the hooked folded cloth, which is what this file writes, and beneath it a horizontal bar crossed by two short strokes. The card does the same doubling for H and for N, where both signs are known to be read alike \u2014 but this second S could not be identified, so only the cloth is written. Nothing is lost: S still spells.",
   },
 ] as const;
 
 const CONVENTION = {
   c: "Egyptian had no C. The card writes C, K and X with the same basket.",
   e: "Egyptian wrote almost no vowels. The card writes E with the single reed, the closest available sound.",
-  i: "The card writes I with the doubled reed — the same sign it uses for Y.",
+  i: "The card writes I with two plain strokes, and Y with two flowering reeds \u2014 different signs for the two letters.",
   o: "Egyptian had no O. The card uses the lasso for it.",
   v: "Egyptian had no V. The card writes V with the horned viper, the same sign as F — closely related sounds.",
   x: "The card writes X with the basket, the same sign as C and K.",
@@ -219,7 +231,7 @@ const MAP: Record<string, LetterMapping> = {
   f: { letter: "F", signs: [SIGNS.viper],    meaning: "Clever Person",              source: "workshop-card" },
   g: { letter: "G", signs: [SIGNS.jarStand], meaning: "Stable",                     source: "workshop-card" },
   h: { letter: "H", signs: [SIGNS.shelter],  meaning: "Diplomatic Person",          source: "workshop-card" },
-  i: { letter: "I", signs: [SIGNS.twoReeds], meaning: "Like the Straight Way", caveat: CONVENTION.i, source: "workshop-card" },
+  i: { letter: "I", signs: [SIGNS.dualStrokes], meaning: "Like the Straight Way", caveat: CONVENTION.i, source: "workshop-card" },
   j: { letter: "J", signs: [SIGNS.cobra],    meaning: "Intelligent & Bossy",        source: "workshop-card" },
   k: { letter: "K", signs: [SIGNS.basket],   meaning: "Full of Good Qualities",     source: "workshop-card" },
   l: { letter: "L", signs: [SIGNS.lion],     meaning: "Controlling & bossy", caveat: CONVENTION.l, source: "workshop-card" },
