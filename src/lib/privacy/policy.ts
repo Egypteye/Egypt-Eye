@@ -269,6 +269,29 @@ export function missingLegalIdentity(legal: LegalIdentity = {}): string[] {
 }
 
 /**
+ * Every string on the policy page, flattened for the i18n extractor.
+ *
+ * scripts/i18n-extract.mts walks a fixed list of modules. A string it never
+ * sees is never sent for translation, and renders in English — which is how
+ * the first version of this file shipped a privacy policy that the French
+ * and Spanish sites would have served in English to the very readers whose
+ * law the page exists to satisfy. Same reason cancellationPolicy.ts exports
+ * cancellationPolicyStrings, and the reason check-privacy asserts the two
+ * stay in step.
+ *
+ * The placeholder arguments are deliberate: the extractor wants the FIXED
+ * prose, and the sentences that interpolate a contact address or an operator
+ * name are assembled per-request anyway.
+ */
+export const privacyPolicyStrings: string[] = policySections(
+  { email: "", whatsapp: "" },
+).flatMap((section) => [
+  section.title,
+  ...section.body,
+  ...(section.items ?? []).flatMap((item) => [item.label, item.text]),
+]);
+
+/**
  * Wording that must never appear on the page again.
  *
  * These are fragments of the placeholder version that was live. The check

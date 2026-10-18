@@ -40,6 +40,10 @@ import { agencyTrips } from "../src/content/aboutCredibility.js";
 // sees the structural `kind`/`id` fields that carry no prose.
 import { cancellationPolicyStrings } from "../src/content/cancellationPolicy.js";
 import { egyptCities } from "../src/content/egyptCities.js";
+// Lives in lib/privacy rather than content/ because check-privacy.mts has to
+// read it offline, which `server-only` would prevent. Flattened the same way
+// cancellationPolicyStrings is.
+import { privacyPolicyStrings } from "../src/lib/privacy/policy.js";
 
 const MANIFEST = "src/i18n/generated/manifest.json";
 const UI_MANIFEST = "src/i18n/generated/ui-manifest.json";
@@ -66,6 +70,7 @@ const sources: [string, unknown][] = [
   // an array inherits its parent's key, so a bare top-level array of
   // strings is collected as nothing.
   ["cancellationPolicy", { body: cancellationPolicyStrings }],
+  ["privacyPolicy", { body: privacyPolicyStrings }],
   ["egyptCities", egyptCities],
 ];
 

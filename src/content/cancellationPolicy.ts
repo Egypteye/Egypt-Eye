@@ -255,6 +255,10 @@ export const cancellationSections: PolicySection[] = [
  */
 export const cancellationPolicyStrings: string[] = [
   cancellationIntro,
+  // Shown above the cartouche order button rather than on this page, but it
+  // is legal text a customer has to be able to read before paying — so it
+  // belongs in the same extraction as everything else here.
+  personalisedItemNotice,
   ...cancellationSections.flatMap((s) => [
     s.title,
     ...s.blocks.flatMap((b) => (b.kind === "p" ? [b.text] : b.items)),

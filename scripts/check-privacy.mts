@@ -2,6 +2,7 @@ import { execSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
 import {
   BANNED_PLACEHOLDER_PHRASES,
+  privacyPolicyStrings,
   POLICY_UPDATED,
   PROCESSORS,
   RETENTION,
@@ -436,6 +437,47 @@ ok(
 ok(
   "every table the job touches records that it happened",
   (retentionSql.match(/anonymised_at = now\(\)/g) ?? []).length >= 6,
+);
+
+// --- The policy has to be translatable. ----------------------------------
+//
+// The site serves French and Spanish. scripts/i18n-extract.mts walks a fixed
+// list of modules, and a string it never sees is never translated — it just
+// renders in English. The first version of this policy was invisible to the
+// extractor, which would have served an English-only privacy policy to
+// exactly the readers whose law the page exists to satisfy. In English
+// nothing looks wrong, which is why this is asserted rather than eyeballed.
+const extractor = readFileSync("scripts/i18n-extract.mts", "utf8");
+// The IMPORT is not enough: a module can be imported and never walked. What
+// matters is the entry in the `sources` list, which is what the extractor
+// iterates. Asserting on the import alone passed with the entry deleted.
+ok(
+  "the policy is in the extractor's sources list",
+  /\["privacyPolicy", \{ body: privacyPolicyStrings \}\]/.test(extractor),
+);
+ok(
+  "the extractor imports them from where they live",
+  /import \{ privacyPolicyStrings \} from "\.\.\/src\/lib\/privacy\/policy\.js"/.test(extractor),
+);
+
+// privacyPolicyStrings is DERIVED from policySections(), so a clause added to
+// the page is in the extraction by construction — there is no divergence to
+// assert, and an assertion comparing the two would be vacuous. What can still
+// go wrong is the flattening losing a level (bullets dropped, items ignored),
+// so the shape is what gets checked: every section contributes its title, its
+// paragraphs and both halves of each bullet.
+const expected = sections.reduce(
+  (n, sec) => n + 1 + sec.body.length + (sec.items?.length ?? 0) * 2,
+  0,
+);
+ok(
+  `the flattening keeps every level (${privacyPolicyStrings.length} of ${expected})`,
+  privacyPolicyStrings.length === expected && expected > 40,
+);
+
+ok(
+  "the personalised-goods notice is extractable too",
+  readFileSync("src/content/cancellationPolicy.ts", "utf8").includes("  personalisedItemNotice,"),
 );
 
 // --- No claim to a licence we do not hold. -------------------------------
