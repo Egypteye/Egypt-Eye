@@ -1833,6 +1833,53 @@ textarea {
   }
 }
 
+/* The shoot in order. A numbered sequence rather than a bulleted set, because
+   the order is the information: a visitor is asking what happens first.
+   The marker is drawn rather than relying on the list's own counter, so the
+   time label can sit on the same line as the number without the browser's
+   marker box deciding the indent. */
+.fd-timeline {
+  counter-reset: fd-step;
+  gap: 2rem;
+}
+
+.fd-timeline > li {
+  counter-increment: fd-step;
+  position: relative;
+  padding-left: 3rem;
+}
+
+/* .fd-list draws a small gold rule before every h3. On a numbered sequence
+   that is a second marker next to the first, and it reads as a stray dash
+   beside each step. The number is the marker here.
+   `ol.fd-timeline` rather than `.fd-timeline`: .fd-list h3::before is the same
+   specificity and sits LATER in this file, so a plain class selector loses on
+   source order. The element qualifier buys the one point that settles it, and
+   `display: none` removes the box rather than only its (already empty)
+   content. Checked in a screenshot, not in getComputedStyle: both rules
+   compute `content: ""`, so the measurement looked identical while the page
+   still showed the dash. */
+ol.fd-timeline h3::before {
+  display: none;
+}
+
+.fd-timeline > li::before {
+  content: counter(fd-step);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fd-r-pill);
+  background: var(--fd-gold-ink);
+  color: var(--fd-ivory);
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  font-variant-numeric: tabular-nums;
+}
+
 .fd-list h3 a {
   display: inline-block;
   min-height: 2.75rem;

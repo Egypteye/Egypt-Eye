@@ -326,6 +326,28 @@ export type FlyingDressPackage = {
   /** Tone for the gradient shown when `image` is null. */
   tone: "dunes" | "rooftop" | "fayoum";
   faqs: { question: string; answer: string }[];
+  /**
+   * WHY THIS ONE COSTS WHAT IT COSTS, said where the price is read.
+   *
+   * Optional, because only a price that looks surprising needs defending.
+   * Fayoum is $349 against $179 and $199 and the reason was buried in an FAQ
+   * near the foot of the page, which is three screens below the number it
+   * explains. A figure a visitor cannot account for reads as a mistake or as
+   * greed, and either way they leave before reaching the answer.
+   *
+   * It may never introduce a new figure. The only price on this page is
+   * `priceUsd`, and scripts/check-flying-dresses.mts holds that line.
+   */
+  priceStory?: { heading: string; body: string[] };
+  /**
+   * The shoot in order, for the visitor who wants to know what they are
+   * actually signing up for before they enquire.
+   *
+   * Only confirmed facts: the hours come from the brochure and from what the
+   * business has stated about its own sessions. Anything unverified belongs in
+   * `confirm`, not here.
+   */
+  timeline?: { when: string; what: string }[];
   /** Anything about this package the owner still has to confirm. */
   confirm: string[];
 };
@@ -416,6 +438,28 @@ export const packages: FlyingDressPackage[] = [
           "Afternoon sessions run, but the roof closes before the earliest sunset of the year, so sunset itself is not something to promise. Ask us for your date and we will tell you what is actually possible.",
       },
     ],
+    timeline: [
+      {
+        when: "Before first light",
+        what: "A car collects you from your hotel. Door-to-door is in the price, so there is nothing to arrange and nothing to find in the dark.",
+      },
+      {
+        when: "About an hour before the gates open",
+        what: "You arrive on a private roof rather than at the archaeological site, so there is no ticket queue to stand in and no opening time to wait for. The dress is already there, in the colour you chose.",
+      },
+      {
+        when: "The first hour of light",
+        what: "The pyramids are catching the low sun and the plateau below is still closed, which is why this hour exists as a product at all. Nobody shooting inside the complex can be there yet.",
+      },
+      {
+        when: "Thirty to forty-five minutes",
+        what: "The shoot itself. You are directed the whole way through, so you do not need to know how to pose. An assistant stays out of frame and moves the dress, because a flying dress is not the wind doing it; it is a person throwing several kilos of fabric, over and over, until one throw is the photograph.",
+      },
+      {
+        when: "Six to ten days later",
+        what: "More than a hundred colour-graded photographs arrive. Not a handful of favourites, and not proofs you then pay to unlock.",
+      },
+    ],
     confirm: [
       "Current price: brochure and the live sister-brand page both say $199 per person.",
       "The booking window and last session time for this roof, as they stand now.",
@@ -458,6 +502,14 @@ export const packages: FlyingDressPackage[] = [
           "Distance. It is the same shoot and the same inclusions, with six hours of driving around it.",
       },
     ],
+    priceStory: {
+      heading: "Why this one is the most expensive",
+      body: [
+        "It is the same photoshoot. The same dress, the same assistant, the same 30 to 45 minutes in front of the camera, the same hundred-plus colour-graded photographs afterwards. Nothing about the session is larger.",
+        "What is larger is the day around it. Fayoum is about three hours from central Cairo, so there is roughly six hours of driving wrapped around the shoot, and the car and the driver are yours for all of it. The other two locations give you your afternoon back. This one does not.",
+        "What you get for the day is a landscape neither of the others can offer: pale sand instead of gold, and water in the frame. Dark and jewel colours read completely differently against it, and the panoramas are the widest of the three.",
+      ],
+    },
     confirm: [
       "Current price: brochure says $349 per person.",
       "THE NAME. The brochure calls this \"White Desert / Fayoum\" and then describes Fayoum: three hours from Cairo, white dunes, waterfalls, lakes. Egypt's White Desert is at Farafra, far beyond Fayoum and a different trip entirely. This page says Fayoum, because the brochure's own description is Fayoum. If the product really does run to the White Desert, the distance, the duration and the price all need revisiting.",

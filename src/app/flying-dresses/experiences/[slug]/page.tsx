@@ -154,6 +154,48 @@ export default async function ExperiencePage({
       </section>
 
       {/* Why this one, and how the photographs look. */}
+      {/* WHY THE PRICE IS THE PRICE, read where the price is read.
+          Only Fayoum carries one. It is $349 against $179 and $199, and the
+          reason sat in an FAQ three screens below the number it explains. */}
+      {pkg.priceStory ? (
+        <section className="fd-section-tight" aria-labelledby="fd-price-story">
+          <div className="fd-shell fd-shell-narrow">
+            <p className="fd-eyebrow">The price</p>
+            <h2 id="fd-price-story" className="fd-display fd-h3" style={{ marginBottom: "1.5rem" }}>
+              {pkg.priceStory.heading}
+            </h2>
+            <div className="fd-prose fd-muted">
+              {pkg.priceStory.body.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* THE SHOOT IN ORDER. What a visitor actually wants before enquiring,
+          and the thing no marketplace listing for this category bothers to
+          write down. Confirmed hours only; anything unverified is in
+          `confirm`, not here. */}
+      {pkg.timeline ? (
+        <section className="fd-section-tight fd-sand" aria-labelledby="fd-timeline">
+          <div className="fd-shell fd-shell-narrow">
+            <p className="fd-eyebrow">What actually happens</p>
+            <h2 id="fd-timeline" className="fd-display fd-h3" style={{ marginBottom: "2rem" }}>
+              The morning, in order
+            </h2>
+            <ol className="fd-list fd-timeline">
+              {pkg.timeline.map((step) => (
+                <li key={step.when}>
+                  <h3>{step.when}</h3>
+                  <p>{step.what}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+      ) : null}
+
       <section className="fd-section-tight fd-sand">
         <div className="fd-shell fd-split">
           <div>

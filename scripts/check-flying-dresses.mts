@@ -1216,6 +1216,41 @@ for (const file of brandTsx) {
 }
 
 // ---------------------------------------------------------------------------
+// A PRICE STORY MAY NOT INTRODUCE A PRICE
+//
+// `priceStory` exists to defend a number a visitor finds surprising, and the
+// temptation when writing one is to reach for the comparison: "only $150 more
+// than the rooftop", "about $60 an hour". Every one of those is a second
+// figure about money living in prose, where CLAUDE.md section 5's rule that
+// money has one authority cannot reach it, and where it will not be updated
+// when the brochure changes.
+//
+// So the only dollar amount allowed anywhere in a package's priceStory is that
+// package's own `priceUsd`. The Fayoum copy is written around this: it says
+// "the same photoshoot" and "about three hours", and names no figure at all.
+//
+// A timeline is held to the same rule, for the same reason.
+//
+// Proven by adding "only $150 more than the rooftop" to the Fayoum story
+// (red, naming the stray figure) and by writing "$349" into it (green, since
+// that is its own price). Restored: green.
+// ---------------------------------------------------------------------------
+for (const pkg of packages) {
+  const prose = [
+    ...(pkg.priceStory ? [pkg.priceStory.heading, ...pkg.priceStory.body] : []),
+    ...(pkg.timeline ?? []).flatMap((step) => [step.when, step.what]),
+  ].join(" ");
+
+  for (const match of prose.matchAll(/\$\s?([\d,]+)/g)) {
+    const figure = Number(match[1]!.replace(/,/g, ""));
+    ok(
+      `the ${pkg.slug} price story or timeline names $${match[1]}, which is not its own price of $${pkg.priceUsd} — money has one authority and prose is not it`,
+      figure === pkg.priceUsd
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
