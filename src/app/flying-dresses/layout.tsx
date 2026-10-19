@@ -5,6 +5,7 @@ import { brand } from "@/content/flyingDresses";
 import { FlyingDressesHeader } from "./_components/Header";
 import { FlyingDressesFooter } from "./_components/Footer";
 import { StickyEnquire } from "./_components/StickyEnquire";
+import { Analytics } from "./_components/Analytics";
 import { brandCover, brandLogo } from "./_lib/logo";
 import { fdJsonLd, fdMetadata, fdOrganizationJsonLd, fdSiteUrl } from "./_lib/seo";
 
@@ -143,6 +144,8 @@ export default function FlyingDressesLayout({
         </main>
         <FlyingDressesFooter logo={logo.light} />
         <StickyEnquire />
+        {/* Renders nothing at all until a measurement ID is configured. */}
+        <Analytics />
         <script
           type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: fdJsonLd(fdOrganizationJsonLd()) }}

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
+import { track } from "../_lib/analytics";
 import {
   RENTAL_DELIVERY_LABELS,
   addOns,
@@ -165,6 +166,21 @@ export function EnquiryForm({
         return;
       }
       setStatus("sent");
+
+      // AFTER the server confirmed it, and only then.
+      //
+      // The brief's rule, and the right one: do not record an outcome the
+      // system has not verified. A lead counted on submit rather than on a
+      // 2xx counts the sends that failed, and a conversion number that is
+      // quietly too high is worse than none — it is the number someone
+      // spends money against.
+      //
+      // The subject is a product slug or nothing. No name, no email, no
+      // message: see the note at the top of _lib/analytics.ts.
+      track("generate_lead", {
+        method: "form",
+        item: pkg || service || experience || undefined,
+      });
     } catch {
       setErrors({
         form: "We could not reach the server. Please message us on WhatsApp instead.",

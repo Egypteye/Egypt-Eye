@@ -1659,6 +1659,124 @@ for (const section of ["celebrations", "creative"]) {
 }
 
 // ---------------------------------------------------------------------------
+// A PUBLISHED URL NEVER CARRIES THE /flying-dresses SEGMENT
+//
+// The app serves its pages at /flying-dresses/*, and every internal link uses
+// that path because it works on every host. But the brand domain is attached
+// now, and on it the short form resolves too — so the same page has two
+// working URLs and only one of them should ever be PUBLISHED.
+//
+// Canonicals, Open Graph urls, JSON-LD and the sitemap all go through
+// fdUrl(). This checks that fdUrl is the only thing that builds a public URL,
+// and that it does not simply concatenate fdPath() — which is what it used to
+// do, and what would silently restore the long form.
+//
+// Getting this wrong is not a cosmetic fault. A sitemap listing one URL while
+// the page canonicalises to another is a conflict the crawler resolves by
+// discarding one of them, and CLAUDE.md records that this project has already
+// had one duplicate-canonical incident.
+//
+// Proven by restoring `return `${fdSiteUrl}${fdPath(path)}`;`: red.
+// ---------------------------------------------------------------------------
+{
+  const seo = read("src/app/flying-dresses/_lib/seo.ts");
+  ok(
+    "fdUrl() builds the absolute URL from fdPath(), which puts /flying-dresses back into every canonical and sitemap entry",
+    !/return\s*`\$\{fdSiteUrl\}\$\{fdPath\(/.test(seo)
+  );
+
+  // And nothing else may assemble one by hand.
+  const brandFiles = execSync("find src/app/flying-dresses -name '*.ts' -o -name '*.tsx'", {
+    encoding: "utf8",
+  })
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of brandFiles) {
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => "\n".repeat((m.match(/\n/g) ?? []).length))
+      .replace(/^\s*\/\/.*$/gm, "");
+    source.split("\n").forEach((line, index) => {
+      ok(
+        `${file}:${index + 1} builds a public URL with the /flying-dresses segment in it — use fdUrl(): ${line.trim().slice(0, 70)}`,
+        !/https?:\/\/[^"'`\s]*\/flying-dresses/.test(line)
+      );
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ANALYTICS MAY NOT CARRY PERSONAL DATA, AND MAY NOT COUNT TWICE
+//
+// Two failures, both of which produce a site that looks fine.
+//
+// 1. PII. Google's terms forbid sending names, email addresses and phone
+//    numbers, and an account found carrying them can be purged — taking the
+//    history with it. The enquiry form sits one line away from `track()` and
+//    holds exactly those variables, so passing one is a single careless
+//    autocomplete away.
+//
+// 2. DOUBLE COUNTING. GA4 sends its own page_view the moment `config` runs.
+//    If that is left on while the app also sends one per route change, every
+//    landing page is counted twice and every derived figure — bounce rate,
+//    conversion rate, cost per enquiry — is wrong in a direction nobody
+//    notices. The first version of Analytics.tsx did double-count; a browser
+//    test caught it, and this keeps it caught.
+//
+// Proven on both: passing `email` into the generate_lead call, and deleting
+// `send_page_view: false`. Each one red. Restored: green.
+// ---------------------------------------------------------------------------
+{
+  // COMMENTS STRIPPED FIRST, and this is not a precaution — the first
+  // version of this check read the raw file and passed while the code was
+  // broken, because the doc comment at the top of Analytics.tsx explains
+  // `send_page_view: false` in prose. Deleting the real setting left the
+  // sentence describing it, and the check went on agreeing with itself.
+  //
+  // CLAUDE.md records this exact failure happening before in this project.
+  // It happened again here, in a check written by someone who had just read
+  // that warning, which is the best argument there is for stripping comments
+  // by default rather than when it occurs to you.
+  const analyticsComponent = read("src/app/flying-dresses/_components/Analytics.tsx")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
+  ok(
+    "Analytics.tsx no longer disables GA4's automatic page_view (`send_page_view: false`) while also sending its own — every landing page would be counted twice",
+    /send_page_view:\s*false/.test(analyticsComponent)
+  );
+
+  const PII = ["name", "email", "phone", "message", "hotel", "notes"];
+  const brandFiles = execSync(
+    "grep -rl 'track(' src/app/flying-dresses --include='*.tsx' --include='*.ts' || true",
+    { encoding: "utf8" }
+  )
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of brandFiles) {
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => "\n".repeat((m.match(/\n/g) ?? []).length))
+      .replace(/^\s*\/\/.*$/gm, "");
+    // Each track(...) call's argument text, up to the closing brace.
+    for (const match of source.matchAll(/\btrack\(\s*"[^"]*"\s*,\s*\{([\s\S]*?)\}\s*\)/g)) {
+      // String LITERALS are stripped first. `method: "email"` is a label for
+      // which button was pressed, not an address — and a check that fires on
+      // correct code is a check people switch off. What must not appear is
+      // the IDENTIFIER: a variable called email, holding one.
+      const args = (match[1] ?? "").replace(/"[^"]*"|'[^']*'|`[^`]*`/g, '""');
+      for (const field of PII) {
+        ok(
+          `${file} sends \`${field}\` to analytics — personal data must never leave in an event parameter`,
+          !new RegExp(`(^|[^\\w.])${field}\\b`).test(args)
+        );
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
