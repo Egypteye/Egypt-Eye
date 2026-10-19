@@ -16,7 +16,7 @@ removing a claim is as useful as confirming one, and faster.
 
 ---
 
-## 1. Prices — blocks all eleven pages
+## 1. Prices — blocks all eleven pages  ← THE REMAINING BLOCKER
 
 Every experience is currently priced "enquire". That is honest, and it is also
 the reason none of these pages can rank for a commercial search or answer the
@@ -71,13 +71,15 @@ reliably call, or remove it from the site?
 
 "Remove it" is a perfectly good answer for any of these.
 
-## 4. Dress sizing — blocks maternity entirely
+## 4. Dress sizing — ANSWERED, October 2026
 
-**Which sizes does the collection actually run to, and does any dress fit a
-pregnant customer?**
+**The collection is cut to fit all sizes.** Individual fit and colour
+availability are still confirmed with the customer before the date.
 
-This is the one question that decides whether maternity sessions can be sold at
-all. Everything else on that page is written and waiting.
+Applied to the maternity page: the FAQ now answers the question confidently
+instead of deferring it, the inclusion says the dress is cut to fit all sizes,
+and the dependency no longer reads as doubt about whether a dress exists. The
+page is no longer blocked by sizing — only by price.
 
 ## 5. Delivery standard
 
@@ -90,13 +92,20 @@ The home page already claims "more than a hundred colour-graded photographs"
 for the photoshoot packages. If that figure applies elsewhere, say so; if it
 doesn't, the experience pages need their own.
 
-## 6. Commercial licence
+## 6. Commercial licence — DECIDED, October 2026
 
-There is currently no licence to sell. A brand campaign or a commercial shoot
-needs one: what usage does the client get, for how long, in what territories,
-and at what price?
+**Not advertised as a standard offering.** These enquiries are handled one at a
+time.
 
-Without this, the creators page cannot honestly take a commercial booking.
+Applied: the commercial licence has been removed from the creators page's
+extras, where it sat alongside "additional edited images" as though it were
+something handed over on request. The FAQ still answers a commercial question,
+because someone planning a paid campaign deserves to know it is a different
+conversation — it now describes that conversation rather than a product. A
+check fails if it is ever listed as a bookable extra again.
+
+STILL WORTH DOING, lower priority: drafting standard usage terms internally, so
+the case-by-case answer starts from a position rather than from nothing.
 
 ## 7. The music and DJ model
 

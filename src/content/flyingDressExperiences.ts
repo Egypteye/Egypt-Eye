@@ -516,7 +516,7 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       "Anyone announcing a pregnancy and wanting the picture to carry it.",
     ],
     included: [
-      "A dress from our collection, in the colour you choose, fitted for the session.",
+      "A dress from our collection, cut to fit all sizes, in the colour you choose.",
       "A rooftop or outdoor location with a view of the pyramids, confirmed for your date.",
       "A directed session at a pace that suits whoever is in it.",
       "Colour-graded photographs delivered afterwards.",
@@ -536,13 +536,13 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     leadTimeNote: "A week or two, and earlier in a pregnancy is easier to schedule than later.",
     dependencies: [
       VENUE_DEPENDENCY,
-      "Dress sizing for a maternity session is confirmed with you before the date rather than on the day.",
+      "The dresses are cut to fit all sizes. We still confirm the fit and the colour for your stage of pregnancy before the date rather than on the day.",
     ],
     faqs: [
       {
         question: "Will a dress fit at any stage of pregnancy?",
         answer:
-          "Tell us how far along you will be on the date when you enquire, and we will tell you which colours we can fit. That is a question we answer before you book, not on the morning.",
+          "The collection is cut to fit all sizes, so a maternity session is not a question of whether we have your size. Tell us how far along you will be on the date and we will confirm the fit and the colours available for it before you book, rather than on the morning.",
       },
       {
         question: "How early in the day is it?",
@@ -552,7 +552,6 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     ],
     confirm: [
       "PRICE. Nothing set for maternity or family sessions.",
-      "WHICH DRESS SIZES exist. This is the question that decides whether a maternity session can be sold at all, and it is still unanswered.",
       "Whether hair and makeup is a supplier we can reliably call on.",
     ],
   },
@@ -637,7 +636,6 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "Additional edited images beyond the standard delivery", delivery: "in-house" },
       { label: "A half-day or full-day content block", delivery: "in-house" },
       { label: "Hair, makeup and styling", delivery: "partner" },
-      { label: "A commercial licence for brand campaign usage", delivery: "in-house" },
     ],
     delivery: ["in-house", "venue", "partner", "permissions"],
     pricing: { kind: "enquire" },
@@ -648,14 +646,14 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       "Two weeks for a straightforward session. Longer for a brand campaign, which may need usage terms agreed first.",
     dependencies: [
       VENUE_DEPENDENCY,
-      "A commercial shoot is a different conversation from a personal one. Tell us which it is when you enquire, because it changes the venue's terms and the licence you need.",
+      "A commercial shoot is a different conversation from a personal one. Tell us which it is when you enquire: it changes the venue's terms and the usage we agree, and both are settled before the shoot rather than after it.",
       "We do not fly drones and do not arrange drone filming. Egypt restricts it, and we are not going to put your shoot or our equipment at risk.",
     ],
     faqs: [
       {
         question: "Can I use the photographs for a paid brand campaign?",
         answer:
-          "That needs a commercial licence agreed in advance, and the venue may have its own terms about commercial shoots on their roof. Tell us it is commercial when you enquire. It is a different quote, not a surcharge sprung on you afterwards.",
+          "Tell us it is commercial when you enquire and we will handle it as its own conversation. Usage for a paid campaign is agreed case by case, in writing, before the shoot, and the venue may have its own terms about commercial work on their roof. It is a different quote rather than a surcharge sprung on you afterwards.",
       },
       {
         question: "Do you guarantee the content will perform?",
@@ -671,7 +669,7 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     confirm: [
       "PRICE. Nothing set for sessions, half-days or full days.",
       "What the standard delivery actually is: how many edited images, and in what time.",
-      "COMMERCIAL LICENCE TERMS. There is currently no licence to sell, and a brand campaign needs one.",
+      "COMMERCIAL USAGE is deliberately not advertised as a standard offering (owner's rule, October 2026): these enquiries are handled individually. Standard usage terms could still be drafted so the case-by-case answer starts from something rather than nothing.",
       "Whether hair and makeup is a reliable supplier.",
     ],
   },

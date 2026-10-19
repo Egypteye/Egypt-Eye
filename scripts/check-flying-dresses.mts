@@ -484,6 +484,32 @@ for (const [key, slot] of Object.entries(allSlots)) {
   );
 }
 
+// COMMERCIAL LICENSING IS NOT A SHELF PRODUCT HERE.
+//
+// The owner's rule, October 2026: do not advertise commercial licensing as an
+// established website offering; handle those enquiries individually. It had
+// been listed in the creators page's `extras` as delivery:"in-house" — the
+// same shape as "additional edited images" — which presents it as something
+// we hand over on request rather than something negotiated per campaign.
+//
+// An FAQ may still ANSWER a commercial question, and should: someone planning
+// a paid campaign deserves to know it is a different conversation. What this
+// forbids is listing it as an extra alongside the ones we do supply.
+//
+// Proven by putting the extra back: red. Then removed again.
+{
+  const offered = flyingDressExperiences.flatMap((e) =>
+    e.extras
+      .filter((x) => /commercial licen[cs]e|licen[cs]ing/i.test(x.label))
+      .map((x) => `${e.slug}: "${x.label}"`)
+  );
+  ok(
+    `commercial licensing is listed as a bookable extra (${offered.join("; ")}). The owner's rule ` +
+      "is that it is not an advertised offering: these enquiries are handled one at a time.",
+    offered.length === 0
+  );
+}
+
 // HORSE.
 //
 // Horseback riding at Giza is an Egypt Eye Travel product. It is not a Flying
