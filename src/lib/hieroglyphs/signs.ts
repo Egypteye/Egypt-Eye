@@ -183,11 +183,7 @@ export function isSymbolKey(value: unknown): value is SymbolKey {
 export const UNREADABLE = [
   {
     label: "CH",
-    why: "The card gives CH its own sign \u2014 a spiked star with a thick tapered tail running off to the right, drawn as one object in red-brown \u2014 which could not be matched to a Gardiner sign even at magnification. CH is written here as C then H until the workshop confirms it.",
-  },
-  {
-    label: "S (second sign)",
-    why: "The card's S cell holds two things: the hooked folded cloth, which is what this file writes, and beneath it a horizontal bar crossed by two short strokes. The card does the same doubling for H and for N, where both signs are known to be read alike \u2014 but this second S could not be identified, so only the cloth is written. Nothing is lost: S still spells.",
+    why: "The card gives CH its own sign \u2014 a spiked star with a thick tapered tail, drawn as one object in red-brown \u2014 which could not be matched to a Gardiner sign even at magnification. The owner confirmed on 19 October 2026 that writing CH as C then H is correct and is what the workshop engraves, so this is a settled decision rather than an open question. The card's own CH sign is deliberately not drawn.",
   },
 ] as const;
 
@@ -266,6 +262,35 @@ const DIGRAPHS = Object.keys(MAP).filter((k) => k.length === 2);
  */
 export const CARTOUCHE_CAPACITY = 4;
 
+/**
+ * Which sign to write S with.
+ *
+ * The card's S cell holds two: the hooked folded cloth and, beneath it, the
+ * door bolt. This file used to list the second as unidentified; the owner
+ * confirmed (19 October 2026) that it is the bolt and that EITHER may be
+ * engraved — it is the customer's preference, not a correction.
+ *
+ * Both are genuinely read "s" in Egyptian, which is why the card groups them:
+ * S29 and O34 merged in sound, and the workshop treats them as a choice. Z
+ * keeps the bolt regardless, as the card shows it there too.
+ *
+ * SH is untouched by this. It is one sign on the card (the pool) and is
+ * matched as a digraph before S is ever reached.
+ */
+export const S_VARIANTS = ["cloth", "bolt"] as const;
+export type SVariant = (typeof S_VARIANTS)[number];
+export const DEFAULT_S_VARIANT: SVariant = "cloth";
+
+export function isSVariant(value: unknown): value is SVariant {
+  return typeof value === "string" && (S_VARIANTS as readonly string[]).includes(value);
+}
+
+/** What each choice looks like, for the toggle's own labels. */
+export const S_VARIANT_LABELS: Record<SVariant, { label: string; glyph: string; note: string }> = {
+  cloth: { label: "Folded cloth", glyph: SIGNS.cloth.glyph, note: "The upright hooked sign." },
+  bolt: { label: "Door bolt", glyph: SIGNS.bolt.glyph, note: "The flat barred sign, also used for Z." },
+};
+
 export type SpelledLetter = {
   input: string;
   mapping: LetterMapping | null;
@@ -296,7 +321,15 @@ export type Spelling = {
  * Unsupported characters are REPORTED, never dropped silently. A customer
  * whose name quietly lost a letter would find out when the pendant arrived.
  */
-export function spellName(input: string, capacity: number = CARTOUCHE_CAPACITY): Spelling {
+export function spellName(
+  input: string,
+  capacity: number = CARTOUCHE_CAPACITY,
+  sVariant: SVariant = DEFAULT_S_VARIANT
+): Spelling {
+  // Swapped at the mapping, not at the glyph, so the letter keeps its
+  // workshop meaning and its caveat and only the sign drawn changes.
+  const sMapping: LetterMapping =
+    sVariant === "bolt" ? { ...MAP.s, signs: [SIGNS.bolt] } : MAP.s;
   const letters: SpelledLetter[] = [];
   const signs: Hieroglyph[] = [];
   const unsupported: string[] = [];
@@ -336,7 +369,8 @@ export function spellName(input: string, capacity: number = CARTOUCHE_CAPACITY):
       continue;
     }
 
-    const mapping = MAP[fold(raw)];
+    const key = fold(raw);
+    const mapping = key === "s" ? sMapping : MAP[key];
     if (mapping) {
       letters.push({ input: raw.toUpperCase(), mapping });
       signs.push(...mapping.signs);
@@ -389,9 +423,10 @@ export function describeSpelling(name: string, spelling: Spelling): string {
 export function composeCartouche(
   name: string,
   symbols: readonly SymbolKey[] = [],
-  capacity: number = CARTOUCHE_CAPACITY
+  capacity: number = CARTOUCHE_CAPACITY,
+  sVariant: SVariant = DEFAULT_S_VARIANT
 ): Spelling {
-  const spelled = spellName(name, capacity);
+  const spelled = spellName(name, capacity, sVariant);
 
   const chosen: SymbolKey[] = [];
   for (const key of symbols) {

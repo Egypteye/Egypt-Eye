@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import { PayPalDepositButtons } from "@/components/PayPalDepositButtons";
 import { personalisedItemAnchor, personalisedItemNotice } from "@/content/cancellationPolicy";
 import { formatCents } from "@/lib/booking/quote";
-import type { Spelling, SymbolKey } from "@/lib/hieroglyphs/signs";
+import type { SVariant, Spelling, SymbolKey } from "@/lib/hieroglyphs/signs";
 
 // Buying a cartouche, rather than asking about one.
 //
@@ -38,12 +38,19 @@ export function CartoucheOrderPanel({
   spelling,
   engravedName,
   symbols,
+  sVariant,
   onAskInstead,
 }: {
   choices: OrderableChoice[];
   spelling: Spelling;
   engravedName: string;
   symbols: SymbolKey[];
+  /**
+   * Which sign S is written with. A KEY, like `symbols` — the server looks
+   * up the glyph and re-spells the name itself, so this cannot smuggle a
+   * sign that is not on the card.
+   */
+  sVariant: SVariant;
   onAskInstead: () => void;
 }) {
   const ids = useId();
@@ -76,6 +83,7 @@ export function CartoucheOrderPanel({
           name: engravedName,
           // Keys, not glyphs. The server looks up what each one means.
           symbols,
+          sVariant,
           quantity,
           fulfilment: "collect-in-egypt",
           customerName,

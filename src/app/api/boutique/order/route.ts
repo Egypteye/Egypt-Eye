@@ -38,6 +38,8 @@ type Body = {
   name?: unknown;
   /** Symbol KEYS only — "ankh", "lotus", "scarab", "eye". Never glyphs. */
   symbols?: unknown;
+  /** "cloth" or "bolt" — which sign to write S with. A key, never a glyph. */
+  sVariant?: unknown;
   quantity?: unknown;
   fulfilment?: unknown;
   customerName?: unknown;
@@ -112,6 +114,9 @@ export async function POST(request: NextRequest) {
     // Capped before it reaches the quote, which filters unknown keys anyway —
     // a request cannot make the list long enough to be worth iterating.
     symbols: Array.isArray(body.symbols) ? body.symbols.slice(0, 8).map((v) => String(v)) : [],
+    // Validated inside the quote with isSVariant; anything else falls back to
+    // the default rather than refusing the order.
+    sVariant: body.sVariant,
     quantity,
     fulfilment,
   });

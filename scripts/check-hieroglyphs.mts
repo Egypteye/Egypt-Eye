@@ -10,6 +10,9 @@ import {
   ALL_SIGNS,
   CARTOUCHE_CAPACITY,
   SYMBOLS,
+  DEFAULT_S_VARIANT,
+  S_VARIANTS,
+  isSVariant,
   UNREADABLE,
   composeCartouche,
   glyphString,
@@ -207,10 +210,41 @@ ok("every mapping records that it came from the card", everyLetter.every((c) => 
 // against is somebody closing the gap with a plausible-looking Gardiner code
 // rather than asking the workshop.
 ok("the unreadable CH is declared", UNREADABLE.some((u) => u.label === "CH"));
+// The card's second S sign is no longer an open question: the owner
+// identified it as the door bolt and confirmed the workshop engraves either,
+// so it moved out of UNREADABLE and became a customer choice.
+ok("S defaults to the folded cloth", glyphString(spellName("s")) === "\u{132F4}");
+ok("S can be written with the bolt instead", glyphString(spellName("s", 4, "bolt")) === "\u{13283}");
 ok(
-  "the card's second S sign is declared",
-  UNREADABLE.some((u) => u.label.startsWith("S")),
+  "the two S signs are genuinely different",
+  glyphString(spellName("s", 4, "cloth")) !== glyphString(spellName("s", 4, "bolt")),
 );
+ok("the default is the cloth", DEFAULT_S_VARIANT === "cloth");
+ok("both variants are offered", S_VARIANTS.length === 2 && S_VARIANTS.includes("bolt"));
+
+// SH is one sign on the card and is matched as a digraph BEFORE S, so the
+// choice must not reach it. If it did, "Sasha" would lose its SH.
+ok(
+  "SH is untouched by the S choice",
+  glyphString(spellName("sh", 4, "cloth")) === glyphString(spellName("sh", 4, "bolt")),
+);
+ok("SH is still the pool", glyphString(spellName("sh")) === "\u{13219}");
+ok(
+  "a name's SH survives while its S changes",
+  glyphString(spellName("sasha", 5, "bolt")).startsWith("\u{13283}") &&
+    glyphString(spellName("sasha", 5, "bolt")).includes("\u{13219}"),
+);
+
+// Z is the bolt on the card regardless of what S is set to.
+ok("Z stays the bolt on cloth", glyphString(spellName("z", 4, "cloth")) === "\u{13283}");
+ok("Z stays the bolt on bolt", glyphString(spellName("z", 4, "bolt")) === "\u{13283}");
+
+// A forged variant must fall back rather than throw or draw something else.
+ok(
+  "an unknown variant is refused by the type guard",
+  !isSVariant("nonsense") && !isSVariant(42) && !isSVariant(undefined),
+);
+ok("both real variants pass the guard", isSVariant("cloth") && isSVariant("bolt"));
 for (const entry of UNREADABLE) {
   ok(`${entry.label} says why it is unread`, entry.why.length > 60);
   // A Gardiner code in a "could not identify this" note means it was, in

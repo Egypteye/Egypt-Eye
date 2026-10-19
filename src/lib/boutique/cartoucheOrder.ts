@@ -3,6 +3,9 @@ import { usdToCents } from "@/lib/booking/quote";
 import {
   CARTOUCHE_CAPACITY,
   composeCartouche,
+  DEFAULT_S_VARIANT,
+  isSVariant,
+  type SVariant,
   describeSpelling,
   glyphString,
   isSymbolKey,
@@ -73,6 +76,14 @@ export type QuoteInput = {
   quantity: number;
   fulfilment: Fulfilment;
   capacity?: number;
+  /**
+   * Which sign to write S with — the card offers the folded cloth or the
+   * door bolt and the workshop engraves either. A KEY only, like `symbols`,
+   * validated below: a request cannot send a glyph of its own choosing.
+   * Anything unrecognised falls back to the default rather than refusing,
+   * because a stale tab should still produce an order.
+   */
+  sVariant?: unknown;
 };
 
 /**
@@ -91,6 +102,8 @@ export type CartoucheQuote = {
   signCodes: string[];
   /** The symbols chosen, in order, as keys. */
   symbols: SymbolKey[];
+  /** Which sign S was written with — the card offers cloth or bolt. */
+  sVariant: SVariant;
   /** The signs themselves, for the email and the record. */
   glyphs: string;
   signCount: number;
@@ -187,7 +200,8 @@ export function quoteCartouche(input: QuoteInput): QuoteResult {
   // Keys the request sent that are not on the card are dropped rather than
   // guessed at; composeCartouche also collapses a repeat.
   const symbols = (input.symbols ?? []).filter(isSymbolKey) as SymbolKey[];
-  const spelling = composeCartouche(engravedName, symbols, capacity);
+  const sVariant: SVariant = isSVariant(input.sVariant) ? input.sVariant : DEFAULT_S_VARIANT;
+  const spelling = composeCartouche(engravedName, symbols, capacity, sVariant);
   if (!spelling.hasContent) return refuse("name-unwritable");
   // A name that would lose a character is never quietly engraved without it.
   if (spelling.unsupported.length > 0) return refuse("name-unwritable");
@@ -206,6 +220,10 @@ export function quoteCartouche(input: QuoteInput): QuoteResult {
       engravedName,
       signCodes: spelling.signs.map((s) => s.gardiner),
       symbols,
+      // Recorded on the quote so the workshop engraves what the customer
+      // saw. signCodes already differ (S29 vs O34), but naming the choice
+      // makes the order readable without decoding Gardiner numbers.
+      sVariant,
       glyphs: glyphString(spelling),
       signCount: spelling.signCount,
       capacity: spelling.capacity,

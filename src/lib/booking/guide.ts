@@ -44,8 +44,16 @@ export const MAX_LANGUAGE_LENGTH = 60;
  * confirm it. Adding a product is one line; nothing else needs to change.
  */
 export const GUIDE_ELIGIBLE_SLUGS: readonly string[] = [
+  // Confirmed by the owner, 19 October 2026. The common thread is the Giza
+  // plateau: every one of these puts the customer in front of the Pyramids,
+  // where an Egyptologist has something to add. The photoshoots qualify for
+  // the same reason the camel ride does — people stand on the site for an
+  // hour or more and ask what they are looking at.
   "camel-ride-giza-pyramids",
   "atv-quad-bikes-sahara",
+  "exclusive-pyramids-photoshoot",
+  "jumping-horse-photoshoot",
+  "running-horse-video-jumping-horse-photoshoot",
 ];
 
 /** Whether this product offers the guide at all. */

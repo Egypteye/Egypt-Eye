@@ -24,6 +24,7 @@ import {
   HEADER_PRIMARY,
   footerHrefs,
 } from "../src/content/navGroups";
+import { readFileSync, readdirSync } from "node:fs";
 import { site } from "../src/content/site";
 import { canonicalNavHref } from "../src/content/navGroups";
 import { redirectRules } from "../src/content/redirectRules";
@@ -206,6 +207,40 @@ for (const [from, to] of literalRedirects) {
 ok(
   "canonicalNavHref leaves a path with no redirect alone",
   canonicalNavHref("/photoshoots") === "/photoshoots"
+);
+
+// ---------------------------------------------------------------------------
+// No page may put the brand in its own SEO title.
+//
+// [locale]/layout.tsx sets `template: "%s | ${site.shortName}"`, so Next
+// appends the brand to every title already. A seoTitle that also ends in
+// "| Egypt Eye" renders as "... | Egypt Eye | Egypt Eye" — which is exactly
+// what seventeen pages were serving, including shopping-tours and fifteen
+// articles. I shipped the seventeenth myself on the horse photoshoot and
+// only caught it by reading the live <title>, which is why this now fails
+// the build instead of waiting for someone to notice.
+// ---------------------------------------------------------------------------
+const localeLayout = readFileSync("src/app/[locale]/layout.tsx", "utf8");
+ok(
+  "the layout still appends the brand to every title",
+  /template: `%s \| \$\{site\.shortName\}`/.test(localeLayout),
+);
+
+const contentFiles = readdirSync("src/content")
+  .filter((f) => f.endsWith(".ts"))
+  .map((f) => `src/content/${f}`);
+const doubled: string[] = [];
+for (const file of contentFiles) {
+  for (const m of readFileSync(file, "utf8").matchAll(/seoTitle: "([^"]*)"/g)) {
+    // Matches the brand at the END, where the template would double it.
+    if (new RegExp(`\\|\\s*${site.shortName}\\s*$`).test(m[1])) {
+      doubled.push(`${file.split("/").pop()}: ${m[1].slice(-46)}`);
+    }
+  }
+}
+ok(
+  `no seoTitle repeats the brand the template already adds${doubled.length ? ` (${doubled.length}: ${doubled[0]})` : ""}`,
+  doubled.length === 0,
 );
 
 if (errors.length > 0) {

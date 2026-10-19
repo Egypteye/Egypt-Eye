@@ -287,6 +287,51 @@ ok("the panel sends no glyphs", !/glyph/i.test(panelBody));
 ok("the route caps how many it will read", /body\.symbols\.slice\(0, 8\)/.test(route));
 ok("the stored symbols come from the quote", /symbols: quote\.symbols/.test(route));
 
+// ---------------------------------------------------------------------------
+// The S choice travels to the order, and only as a key.
+// ---------------------------------------------------------------------------
+const S_PRODUCT = {
+  slug: "khufu-cartouche",
+  name: "Khufu Cartouche",
+  status: "available" as const,
+  price: { amount: 99, currency: "USD" as const },
+};
+const sQuote = (variant: unknown) =>
+  quoteCartouche({
+    product: S_PRODUCT,
+    name: "SARA",
+    quantity: 1,
+    fulfilment: "collect-in-egypt",
+    sVariant: variant,
+  });
+
+const cloth = sQuote("cloth");
+const bolt = sQuote("bolt");
+ok("a cloth order quotes", cloth.ok);
+ok("a bolt order quotes", bolt.ok);
+if (cloth.ok && bolt.ok) {
+  ok("the two orders engrave different signs", cloth.quote.glyphs !== bolt.quote.glyphs);
+  ok("the cloth order records S29", cloth.quote.signCodes[0] === "S29");
+  ok("the bolt order records O34", bolt.quote.signCodes[0] === "O34");
+  ok("the choice is named on the quote", cloth.quote.sVariant === "cloth" && bolt.quote.sVariant === "bolt");
+  ok("the price is identical either way", cloth.quote.totalCents === bolt.quote.totalCents);
+}
+
+// A forged variant falls back to the default rather than refusing the order
+// or drawing something that is not on the card.
+for (const forged of ["nonsense", 42, null, { s: "bolt" }, "CLOTH"]) {
+  const q = sQuote(forged);
+  ok(`a forged sVariant (${JSON.stringify(forged)}) still quotes`, q.ok);
+  if (q.ok) ok(`a forged sVariant falls back to the default`, q.quote.sVariant === "cloth");
+}
+
+// The browser sends the key and nothing else.
+const sPanel = readFileSync("src/components/CartoucheOrderPanel.tsx", "utf8");
+ok("the panel sends the variant as a key", /sVariant,/.test(sPanel));
+ok("the panel sends no glyph for it", !/sVariant:\s*["'\u{1300}-\u{1342F}]/u.test(sPanel));
+const orderRoute = readFileSync("src/app/api/boutique/order/route.ts", "utf8");
+ok("the route forwards it to the quote", /sVariant: body\.sVariant/.test(orderRoute));
+
 if (errors.length > 0) {
   console.error(`\ncheck-boutique: ${errors.length} failure(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

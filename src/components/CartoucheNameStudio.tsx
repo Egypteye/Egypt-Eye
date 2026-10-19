@@ -7,6 +7,10 @@ import {
   CARTOUCHE_CAPACITY,
   SYMBOLS,
   composeCartouche,
+  DEFAULT_S_VARIANT,
+  S_VARIANTS,
+  S_VARIANT_LABELS,
+  type SVariant,
   type SymbolKey,
   spellName,
   type SpelledLetter,
@@ -38,10 +42,20 @@ export function CartoucheNameStudio({
 }) {
   const [name, setName] = useState("");
   const [symbols, setSymbols] = useState<SymbolKey[]>([]);
+  // Which sign to write S with. The workshop engraves either, so this is a
+  // preference rather than a correction — see S_VARIANTS in signs.ts.
+  const [sVariant, setSVariant] = useState<SVariant>(DEFAULT_S_VARIANT);
   const [applied, setApplied] = useState(false);
   const inputId = useId();
 
-  const spelling = useMemo(() => composeCartouche(name, symbols, capacity), [name, symbols, capacity]);
+  const spelling = useMemo(
+    () => composeCartouche(name, symbols, capacity, sVariant),
+    [name, symbols, capacity, sVariant]
+  );
+  // Only offered when the name actually contains a standalone S. SH is one
+  // sign on the card and is matched before S, so "Sasha" offers the choice
+  // for its first letter and not for its SH.
+  const hasChoosableS = spelling.letters.some((l) => l.input === "S");
   const { signCount, unsupported, hasContent } = spelling;
   const over = hasContent && signCount > capacity;
 
@@ -131,6 +145,45 @@ export function CartoucheNameStudio({
               </button>
             )}
           </div>
+
+          {/* The card's S cell holds two signs and the workshop engraves
+              either, so this is the customer's choice. Shown only when the
+              name has an S to write — an empty toggle on every other name
+              would be a question nobody asked. */}
+          {hasChoosableS && (
+            <fieldset className="border-t border-black/5 pt-4">
+              <legend className="text-sm font-semibold text-ink">Your S</legend>
+              <p className="mt-1 text-xs leading-relaxed text-ink-soft/85">
+                The workshop&apos;s card gives S two signs and engraves either. Pick the one you prefer.
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {S_VARIANTS.map((variant) => {
+                  const on = sVariant === variant;
+                  const info = S_VARIANT_LABELS[variant];
+                  return (
+                    <button
+                      key={variant}
+                      type="button"
+                      aria-pressed={on}
+                      onClick={() => {
+                        setSVariant(variant);
+                        setApplied(false);
+                      }}
+                      className={`flex min-h-[44px] items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition ${
+                        on
+                          ? "border-gold/60 bg-gold/15 text-ink"
+                          : "border-black/10 bg-cream text-ink-soft hover:border-gold/30"
+                      }`}
+                    >
+                      <span className="font-hieroglyph text-xl leading-none">{info.glyph}</span>
+                      <span className="font-semibold">{info.label}</span>
+                      <span className="text-xs text-ink-soft/80">{info.note}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </fieldset>
+          )}
 
           {/* The four symbols on the workshop's card. Each one takes a place
               in the cartouche, so adding one to a four-sign name makes five
@@ -241,6 +294,7 @@ export function CartoucheNameStudio({
             spelling={spelling}
             engravedName={name.trim()}
             symbols={symbols}
+            sVariant={sVariant}
             onAskInstead={useInEnquiry}
           />
         </div>

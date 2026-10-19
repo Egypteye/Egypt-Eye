@@ -66,7 +66,7 @@ export const shoppingToursPage = {
     },
   ],
   seo: {
-    seoTitle: "Private Shopping Tours in Cairo — Giza and Old Cairo | Egypt Eye",
+    seoTitle: "Private Shopping Tours in Cairo — Giza and Old Cairo",
     seoDescription:
       "A private shopping day in Cairo's craft quarters — Giza and Old Cairo — with someone who knows the workshops, the prices and the language. Arranged around your trip.",
   } satisfies PageSeo,
