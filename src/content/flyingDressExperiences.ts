@@ -106,6 +106,24 @@ export type ExperienceCategory = {
   name: string;
   title: string;
   intro: string;
+  /**
+   * The <meta name="description">, when the intro should not be it.
+   *
+   * These routes used `intro` for both, and the two have different jobs. An
+   * intro is the first thing a visitor reads once they have already arrived,
+   * so it can be short and can assume the page around it. A description is
+   * read in a result list with no page around it, by someone deciding whether
+   * to click, and Google renders roughly 110 to 160 characters of it. Five of
+   * these intros came in at 91 to 105: not wrong, just leaving half the line
+   * empty where the location and what is actually included could have been.
+   *
+   * Padding the intro to fix the description would have damaged the page to
+   * serve the result, so the two are separate fields now. Every one of these
+   * is assembled from facts already on its own page — the rooftop above Giza,
+   * the sitting, what is photographed. None adds a claim the page does not
+   * already make, and none carries a price, because no price is confirmed.
+   */
+  metaDescription?: string;
 };
 
 export const experienceCategories: ExperienceCategory[] = [
@@ -126,6 +144,8 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Gender reveals with a view",
     intro:
       "The moment itself, photographed and filmed, with the family in the frame and the pyramids behind them.",
+    metaDescription:
+      "The moment you both find out, photographed and filmed on a rooftop above Giza, with your family in the frame and the pyramids behind them.",
   },
   {
     id: "celebrations",
@@ -135,6 +155,8 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Birthdays and private celebrations",
     intro:
       "A milestone birthday, a graduation, a reunion, or an evening that simply deserved more than a restaurant.",
+    metaDescription:
+      "A milestone birthday, a graduation or a reunion, photographed on a private rooftop above the Pyramids of Giza instead of in a restaurant.",
   },
   {
     id: "romance",
@@ -144,6 +166,8 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Anniversaries and romantic evenings",
     intro:
       "For couples who are not proposing and still want the evening to be the one they talk about.",
+    metaDescription:
+      "For couples who are not proposing: an anniversary or a romantic evening on a rooftop above the Pyramids of Giza, photographed properly.",
   },
   {
     id: "maternity-family",
@@ -153,6 +177,8 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Maternity and family portraits",
     intro:
       "A pregnancy announcement, a maternity session in a flowing dress, or three generations in one frame.",
+    metaDescription:
+      "A pregnancy announcement, a maternity session in a flowing dress, or three generations in one frame, on a rooftop above the Pyramids of Giza.",
   },
   {
     id: "vows-engagement",
@@ -162,6 +188,8 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Vow renewals and engagement celebrations",
     intro:
       "A symbolic ceremony and the photographs to go with it. A celebration, not a legal marriage.",
+    metaDescription:
+      "A symbolic vow renewal or engagement celebration on a rooftop above the Pyramids of Giza, with the photographs to go with it. Not a legal marriage.",
   },
   {
     id: "creators",
@@ -171,6 +199,8 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Creator, editorial and brand shoots",
     intro:
       "For people whose work is the picture: creators, models, fashion labels and personal brands.",
+    metaDescription:
+      "Rooftop and desert shoots near Giza for creators, models, fashion labels and personal brands, with the pyramids on the skyline behind you.",
   },
   {
     id: "music-production",
@@ -180,6 +210,8 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "DJ, music and rooftop production",
     intro:
       "A set filmed at golden hour with the pyramids on the skyline, planned properly rather than improvised.",
+    metaDescription:
+      "A DJ set or music session filmed at golden hour on a rooftop above Giza, with the pyramids on the skyline. Planned with the venue, not improvised.",
   },
 ];
 

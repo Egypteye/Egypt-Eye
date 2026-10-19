@@ -34,7 +34,10 @@ export async function generateMetadata({
   }
   return fdMetadata({
     title: category.title,
-    description: category.intro,
+    // The intro is what a visitor reads once they are here; the description is
+    // what decides whether they come. Separate fields, with the intro as the
+    // fallback for any category that has not needed its own yet.
+    description: category.metaDescription ?? category.intro,
     path: `/${SECTION}/${category.slug}`,
   });
 }

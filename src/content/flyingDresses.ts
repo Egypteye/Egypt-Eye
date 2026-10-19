@@ -273,6 +273,14 @@ export const packageIncludesConfidence: Confidence = "confirm";
 // ---------------------------------------------------------------------------
 
 export type FlyingDressPackage = {
+  /**
+   * The <meta name="description"> when the intro is the wrong length for one.
+   * These intros run 212 to 240 characters because they are editorial openings;
+   * a description is read in a result list and Google renders about 110 to 160.
+   * Appending the inclusions to the intro produced 334 to 359, so the back half
+   * — the part naming the price and what you get — was always cut off.
+   */
+  metaDescription?: string;
   slug: string;
   /**
    * The Egypt Eye photoshoot document this shoot IS.
@@ -355,6 +363,8 @@ export type FlyingDressPackage = {
 export const packages: FlyingDressPackage[] = [
   {
     slug: "sand-dunes",
+    metaDescription:
+      "A flying dress photoshoot in open dune country outside Cairo, shot at first light. $179 per person, including the dress, transport and 100+ edited photographs.",
     eyeSlug: "flying-dress-photoshoot",
     name: "Sand Dunes",
     title: "Sand Dunes",
@@ -398,6 +408,8 @@ export const packages: FlyingDressPackage[] = [
   },
   {
     slug: "pyramids-rooftop",
+    metaDescription:
+      "A flying dress photoshoot on a Giza rooftop at seven, before the site opens. $199 per person, including the dress, transport and 100+ edited photographs.",
     eyeSlug: "pyramids-rooftop-flying-dress-photoshoot",
     name: "Pyramids Rooftop",
     title: "The Pyramids Rooftop",
@@ -467,6 +479,8 @@ export const packages: FlyingDressPackage[] = [
   },
   {
     slug: "fayoum",
+    metaDescription:
+      "A flying dress photoshoot on the pale dunes and still lakes of Fayoum. $349 per person, including the dress, door-to-door transport and 100+ photographs.",
     eyeSlug: "fayoum-flying-dress-photoshoot",
     name: "Fayoum",
     title: "Fayoum: the Lakes and the White Dunes",

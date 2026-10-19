@@ -57,9 +57,17 @@ export async function generateMetadata({
   const pkg = packageBySlug(slug);
   if (!pkg) return fdMetadata({ title: "Not found", description: "", noindex: true });
 
+  /* TITLE LENGTH IS A BUDGET, AND THE BRAND SUFFIX SPENDS 23 OF IT.
+     fdMetadata appends " | Flying Dresses Egypt" to every page title, so a
+     result truncating at about 60 characters leaves 37 for the page's own.
+     These were built from `pkg.title` (up to 37 characters by itself) plus
+     " Flying Dress Photoshoot: $349 per person", which ran to 101 on Fayoum
+     and cut off mid-phrase. Using the short `name`, and letting the suffix
+     carry "Flying Dresses", keeps the price visible, which is the part a
+     visitor is scanning for. */
   return fdMetadata({
-    title: `${pkg.title} Flying Dress Photoshoot: $${pkg.priceUsd} per person`,
-    description: `${pkg.intro} Includes the dress, door-to-door transport, an assistant and 100+ colour-graded photographs delivered in 6 to 10 days.`,
+    title: `${pkg.name} Photoshoot: $${pkg.priceUsd}`,
+    description: pkg.metaDescription ?? pkg.intro,
     path: `/experiences/${pkg.slug}`,
     image: shootShareImages[pkg.slug],
   });
