@@ -1230,13 +1230,19 @@ ol.fd-beats h3::before {
    wide, 3.5rem is 157px. Both clear the 320px header with the menu button. */
 .fd-wordmark-img {
   width: auto;
-  height: 2.75rem;
+  height: 2.5rem;
   object-fit: contain;
 }
 
+/* Measured, not guessed. At 3.5rem the logo was 56px tall inside a 66px
+   capsule: 5px of air above and below, while the nav text beside it had 27px.
+   It read as jammed into the bar rather than set in it. At 3rem it is 48px
+   with 9px either side, and the capitals still clear the nav's x-height. The
+   anchor around it keeps min-height: 2.75rem, so the tap target stays 44px
+   even though the picture is smaller than that. */
 @media (min-width: 64rem) {
   .fd-wordmark-img {
-    height: 3.5rem;
+    height: 3rem;
   }
 }
 
@@ -3100,7 +3106,20 @@ ol.fd-timeline h3::before {
   box-shadow: 0 1px 2px rgba(20, 20, 20, 0.03), 0 8px 24px -16px rgba(20, 20, 20, 0.18);
 }
 
+/* THE BAR LOOKED EMPTY ON A LARGE MONITOR, and the capsule was not the
+   reason — its contents were. `.fd-header-inner` carries `.fd-shell`, whose
+   max-width is 82rem, so while the capsule stretched with the viewport the
+   row inside it stopped at 1312px and centred. Measured: the logo sat 29px
+   inside the capsule at 1280, 132px at 1600, 292px at 1920 and 612px at 2560,
+   with the same dead band mirrored on the right of the call to action.
+
+   A reading column is capped so that lines of text do not run too long. A
+   header row is a logo, a nav and a button pinned to the ends of a bar; it
+   has no line length to protect, and capping it only pulls both ends inward.
+   So this one opts out and fills its capsule, leaving the capsule's own
+   padding as the inset at every width. */
 .fd-header-inner {
+  max-width: none;
   min-height: 3.5rem;
 }
 
