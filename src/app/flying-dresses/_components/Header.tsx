@@ -92,8 +92,8 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
             <Image
               src={logo}
               alt={brand.name}
-              width={320}
-              height={120}
+              width={956}
+              height={341}
               priority
               className="fd-wordmark-img"
             />
