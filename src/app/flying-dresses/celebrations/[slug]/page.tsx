@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExperienceDetail } from "../../_components/ExperienceDetail";
+import { Scene } from "../../_components/Scene";
+import { categoryPhoto } from "../../_lib/assets";
 import {
   experienceCategories,
   experienceCategoryBySlug,
@@ -48,6 +50,7 @@ export default async function ExperienceCategoryPage({
   // one canonical URL per category, so the two sections cannot both answer.
   if (!category || category.section !== SECTION) notFound();
 
+  const photo = categoryPhoto[category.id];
   const experiences = experiencesInCategory(category.id);
   const siblings = experienceCategories.filter(
     (c) => c.section === SECTION && c.id !== category.id
@@ -94,6 +97,23 @@ export default async function ExperienceCategoryPage({
               {category.intro}
             </p>
           </div>
+
+          {/* A photograph only where we have one OF THIS. See categoryPhoto:
+              five of the eight categories have none, and show the designed
+              card instead rather than borrowing someone else's occasion. */}
+          {photo ? (
+            <figure style={{ margin: "2.5rem 0 0" }}>
+              <Scene
+                src={photo.src}
+                alt={photo.alt}
+                width={photo.width}
+                height={photo.height}
+                ratio="fd-ratio-landscape"
+                sizes="(min-width: 60rem) 72rem, 94vw"
+                priority
+              />
+            </figure>
+          ) : null}
         </div>
       </section>
 

@@ -120,6 +120,57 @@ export const agency = {
     height: 1067,
     credit: "Milya shoot. The assistant is visible at the right of the frame.",
   }),
+
+  /* ---------------------------------------------------------------------
+     SUPPLIED OCTOBER 2026, from the owner's photo library.
+
+     These five do the same job the four `location` slots below were doing
+     with licensed travel photography and stock: they show the place, the
+     horse and the celebrations. The difference is that they are OUR work,
+     with our clients in them, which is the claim the rest of the site
+     makes and the one the pictures should support.
+     --------------------------------------------------------------------- */
+
+  couplesTrain: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/couple-rooftop-train.jpg",
+    alt: "A couple on the Giza rooftop, mid-kiss, a long bronze train swept out across the deck behind them and the pyramids on the skyline",
+    width: 2000,
+    height: 1333,
+    credit: "Elleena shoot, supplied October 2026",
+  }),
+  couplesVows: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/couple-vows-rooftop.jpg",
+    alt: "A couple in formal dress on the Giza rooftop at golden hour, her train laid out behind her, two pyramids clear on the horizon",
+    width: 2000,
+    height: 1333,
+    credit: "Alessandra shoot, supplied October 2026",
+  }),
+  genderReveal: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/gender-reveal-rooftop.jpg",
+    alt: "Parents and a guest with arms thrown wide beside lit BABY letters and a pink and blue balloon arch, the pyramids behind them at sunset",
+    width: 2000,
+    height: 1333,
+    credit: "Kayan shoot, supplied October 2026",
+  }),
+  gizaHorse: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/giza-horseback.jpg",
+    alt: "A rider with arms outstretched on a dark Arabian horse in decorated tack, two pyramids behind them on the sand",
+    width: 933,
+    height: 1400,
+    credit: "Luis shoot, supplied October 2026",
+  }),
+  gizaSand: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/giza-plateau.jpg",
+    alt: "A visitor standing on the sand at Giza in warm afternoon light, two pyramids filling the frame behind her",
+    width: 933,
+    height: 1400,
+    credit: "Luis shoot, supplied October 2026",
+  }),
 };
 
 /**
@@ -131,30 +182,34 @@ export const agency = {
  * different claim from "here is a photograph we took of a customer".
  */
 export const location = {
-  gizaPlateau: slot({
-    kind: "location",
-    src: "/photos/pexels-10124763.jpg",
-    alt: "The Pyramids of Giza in low morning light",
-    width: 1880,
-    height: 1253,
-    credit: "Pexels, already in use on egypteyetravel.com",
-  }),
+  /* Was a Pexels photograph of the plateau. It is now our own, with our
+     own client in it — the same place, photographed by us. */
+  gizaPlateau: agency.gizaSand,
+  /* THIS SLOT USED TO BE A PHOTOGRAPH OF PARKED QUAD BIKES.
+     ------------------------------------------------------------------
+     `/photos/pexels-20189345.jpg` is a row of rental ATVs under sun
+     umbrellas on a beach. Its alt text read "Sahara sand dunes at golden
+     hour outside Cairo", and it was the picture illustrating the Sand
+     Dunes photoshoot — the $179 product — on the home page, on
+     /experiences and on the shoot's own page. Three places where a
+     customer deciding between three shoots was shown hired ATVs.
+
+     Nothing in the owner's photo library is a dune: it is rooftop and
+     pyramid work. So this now points at the one genuine dune photograph
+     the brand has — a real flying dress, on a real dune, ours. It is
+     small (800px), which is why the asset checklist still asks for a
+     high-resolution dune frame; small and true beats large and wrong. */
   saharaDunes: slot({
-    kind: "location",
-    src: "/photos/pexels-20189345.jpg",
-    alt: "Sahara sand dunes at golden hour outside Cairo",
-    width: 1880,
-    height: 1253,
-    credit: "Pexels, already in use on egypteyetravel.com",
+    kind: "agency",
+    src: "/photos/about/cherry-travel-flying-dress.jpg",
+    alt: "A flying-dress photoshoot in a white gown on a desert dune, the train thrown out across the sand",
+    width: 800,
+    height: 533,
+    credit: "Cherry Travel collaboration, July 2023",
   }),
-  gizaHorseback: slot({
-    kind: "location",
-    src: "/photos/about/distinctions-travel-giza-horseback.jpg",
-    alt: "A traveller on horseback in front of the Giza pyramids",
-    width: 576,
-    height: 720,
-    credit: "Distinctions Travel collaboration",
-  }),
+  /* Was a Distinctions Travel collaboration frame. Replaced by our own
+     horse-at-Giza photograph, which is sharper, larger and ours. */
+  gizaHorseback: agency.gizaHorse,
   fayoumArchway: slot({
     kind: "location",
     src: "/photos/about/wandee-travel-fayoum.jpg",
@@ -174,6 +229,29 @@ export const location = {
  * are still missing, and no stock image is ever mistaken for the agency's
  * work.
  */
+/**
+ * THE PHOTOGRAPH FOR AN EXPERIENCE CATEGORY, where one honestly exists.
+ *
+ * Eight categories; three photographs. That ratio is the point of this map
+ * rather than an embarrassment to be padded out. There is a real gender
+ * reveal, a real couple on the rooftop and a real couple in formal dress, so
+ * those three categories get a picture. There is no proposal, no birthday,
+ * no maternity session, no creator shoot and no DJ set in the library, so
+ * those five get none — and they render the designed card they rendered
+ * before, which says what the experience is in words.
+ *
+ * The alternative was to illustrate "Proposals above the pyramids" with the
+ * wedding couple, who are not proposing. A visitor cannot tell the
+ * difference, which is exactly why it would be a lie rather than a liberty.
+ *
+ * Keyed by ExperienceCategoryId. Missing is the normal case.
+ */
+export const categoryPhoto: Partial<Record<string, ImageSlot>> = {
+  "gender-reveal": agency.genderReveal,
+  romance: agency.couplesTrain,
+  "vows-engagement": agency.couplesVows,
+};
+
 export const empty = {
   couple: slot({
     kind: "empty",

@@ -356,6 +356,25 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/assistant.jpg",
   "/photos/flying-dresses/wardrobe-lineup.jpg",
   "/photos/flying-dresses/fayoum-black.jpg",
+
+  // Supplied October 2026 by the owner, from the agency's own Google Drive
+  // library (Photos/). Each one is a frame from a named client shoot in that
+  // library, downloaded from it and installed here:
+  //
+  //   couple-rooftop-train     Elleena shoot    rooftop, bronze train
+  //   couple-vows-rooftop      Alessandra shoot rooftop, formal dress
+  //   gender-reveal-rooftop    Kayan shoot      rooftop, balloon arch
+  //   giza-horseback           Luis shoot       horse on the plateau
+  //   giza-plateau             Luis shoot       the plateau itself
+  //
+  // The last two REPLACE a Pexels stock photograph and a third-party
+  // collaboration frame respectively, which is the point: the place is now
+  // shown in our own pictures.
+  "/photos/flying-dresses/couple-rooftop-train.jpg",
+  "/photos/flying-dresses/couple-vows-rooftop.jpg",
+  "/photos/flying-dresses/gender-reveal-rooftop.jpg",
+  "/photos/flying-dresses/giza-horseback.jpg",
+  "/photos/flying-dresses/giza-plateau.jpg",
 ]);
 
 for (const [key, slot] of Object.entries(allSlots)) {
@@ -1773,6 +1792,50 @@ for (const section of ["celebrations", "creative"]) {
         );
       }
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// THE QUAD BIKES DO NOT COME BACK
+//
+// /photos/pexels-20189345.jpg is a row of hired ATVs parked under sun
+// umbrellas on a beach. It sat in the `saharaDunes` slot, under the alt text
+// "Sahara sand dunes at golden hour outside Cairo", and it was the
+// photograph illustrating the Sand Dunes photoshoot in three places: the
+// home page, /experiences, and the shoot's own page.
+//
+// Nothing caught it because every check that touched it was a check about
+// STRUCTURE — does the file exist, does the slot have alt text, is the alt
+// text non-empty. All true. No check can read a photograph and say "that is
+// not a dune", which is the real lesson: the structural checks in this file
+// prove that a slot is wired up, never that it shows what it says.
+//
+// So this names the file. It is the one fault of its kind we have actually
+// found, and naming it is cheap.
+//
+// Proven by pointing saharaDunes back at it: red.
+// ---------------------------------------------------------------------------
+{
+  const brandFiles = execSync(
+    "find src/app/flying-dresses src/content/flyingDresses.ts -type f \\( -name '*.ts' -o -name '*.tsx' \\)",
+    { encoding: "utf8" }
+  )
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of brandFiles) {
+    // Comments stripped, for the third time in this file and for the same
+    // reason each time: the note in assets.ts explaining WHY that photograph
+    // was removed names the file, and the first version of this check went
+    // red on its own explanation.
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/^\s*\/\/.*$/gm, "");
+    ok(
+      `${file} references pexels-20189345.jpg — that photograph is a row of parked quad bikes, not sand dunes`,
+      !source.includes("pexels-20189345")
+    );
   }
 }
 
