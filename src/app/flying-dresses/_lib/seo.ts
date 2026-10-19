@@ -26,8 +26,38 @@ import { FLYING_DRESSES_PATH, brand, contact, packages } from "@/content/flyingD
  * flyingdressesegypt.com/wardrobe reaches the wardrobe for anyone who types
  * or shares it.
  *
- * Switching to short canonical URLs once DNS is pointed is a deliberate,
- * separately reviewable change — see docs/FLYING-DRESSES-OWNER-CONFIRMATIONS.md.
+ * -------------------------------------------------------------------------
+ * THE SWITCH TO SHORT CANONICALS HAS NOW HAPPENED
+ * -------------------------------------------------------------------------
+ * The paragraph above described the state before DNS was pointed. The brand
+ * domain is now attached and verified, and that changes the right answer.
+ *
+ * On flyingdressesegypt.com, src/proxy.ts rewrites /wardrobe to
+ * /flying-dresses/wardrobe, so BOTH forms serve the same page. That is two
+ * working URLs per page on the domain we are about to submit to Search
+ * Console, and the canonical was pointing at the longer, uglier one:
+ *
+ *     https://flyingdressesegypt.com/flying-dresses/wardrobe
+ *
+ * on a domain whose entire name is already "flying dresses". The duplication
+ * was resolved correctly — one canonical, every URL agreeing on it — but it
+ * was resolved in favour of the worse URL.
+ *
+ * So canonicals and the sitemap now emit the SHORT form. The cost the old
+ * note worried about does not apply: stripping a known constant prefix needs
+ * no `headers()` call, so every page stays statically prerendered.
+ *
+ * WHY NOW AND NOT LATER. URLs are cheap to change before a search engine has
+ * seen them and expensive afterwards — a later switch means redirects,
+ * re-crawling and a period of split signals. The domain went live minutes
+ * ago and Search Console has not been connected yet. This is the only free
+ * moment this decision will ever have.
+ *
+ * INTERNAL LINKS ARE UNCHANGED. `fdPath()` still returns /flying-dresses/...,
+ * which is what the app actually serves and what works on every host,
+ * including the vercel.app review deployments where the short form does not
+ * exist. Only the ABSOLUTE url changes, and only because it is always the
+ * brand domain, where the short form is guaranteed to resolve.
  */
 
 /** Overridable per deployment; defaults to the brand's own domain. */
@@ -39,9 +69,22 @@ export function fdPath(path = ""): string {
   return `${FLYING_DRESSES_PATH}${path.startsWith("/") ? path : `/${path}`}`;
 }
 
-/** The absolute URL of a page, for canonicals and structured data. */
+/**
+ * The absolute URL of a page, for canonicals, structured data and the sitemap.
+ *
+ * Short form on purpose — see the note at the top of this file. The
+ * /flying-dresses segment is what the app serves internally; it is not part
+ * of the address this brand publishes.
+ *
+ * Everything that states a public URL goes through here, so the canonical
+ * tag, the Open Graph url, the JSON-LD and every <loc> in the sitemap cannot
+ * disagree about what a page's address is. A sitemap that lists one URL while
+ * the page canonicalises to another is a conflict a crawler resolves by
+ * ignoring one of them, and which one is not up to us.
+ */
 export function fdUrl(path = ""): string {
-  return `${fdSiteUrl}${fdPath(path)}`;
+  const clean = path === "" || path === "/" ? "" : path.startsWith("/") ? path : `/${path}`;
+  return `${fdSiteUrl}${clean}`;
 }
 
 /**
@@ -66,9 +109,9 @@ export type FdShareImage = { src: string; width: number; height: number; alt?: s
 
 export const FD_DEFAULT_SHARE_IMAGE: FdShareImage = {
   src: "/brand/flying-dresses/hero-poster.jpg",
-  width: 1600,
-  height: 900,
-  alt: "A flying dress on a rooftop above the Pyramids of Giza at first light",
+  width: 1440,
+  height: 960,
+  alt: "A red flying dress on a rooftop above the Pyramids of Giza, its train thrown out across the frame",
 };
 
 /**

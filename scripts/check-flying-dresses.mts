@@ -16,7 +16,7 @@
  * records three separate guards in this project that passed on the broken
  * version. The notes under each section say what was broken to prove it.
  */
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import {
   addOns,
@@ -356,6 +356,27 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/assistant.jpg",
   "/photos/flying-dresses/wardrobe-lineup.jpg",
   "/photos/flying-dresses/fayoum-black.jpg",
+
+  // Supplied October 2026 by the owner, from the agency's own Google Drive
+  // library (Photos/). Each one is a frame from a named client shoot in that
+  // library, downloaded from it and installed here:
+  //
+  //   couple-romance-rooftop   Alessandra shoot rooftop, black tie and lace
+  //   couple-vows-rooftop      Alessandra shoot rooftop, formal dress
+  //   gender-reveal-rooftop    Kayan shoot      rooftop, balloon arch
+  //   giza-plateau             Luis shoot       the plateau itself
+  //
+  // giza-plateau REPLACES a Pexels stock photograph of the same place. It
+  // carries no flying dress and sits in a kind:"location" slot, whose whole
+  // contract is that it shows WHERE YOU WILL BE STANDING rather than claiming
+  // to be one of our dress shoots.
+  //
+  // A fifth frame from that library, giza-horseback, was installed here and
+  // has been removed: see HORSE below.
+  "/photos/flying-dresses/couple-romance-rooftop.jpg",
+  "/photos/flying-dresses/couple-vows-rooftop.jpg",
+  "/photos/flying-dresses/gender-reveal-rooftop.jpg",
+  "/photos/flying-dresses/giza-plateau.jpg",
 ]);
 
 for (const [key, slot] of Object.entries(allSlots)) {
@@ -397,6 +418,34 @@ for (const [key, slot] of Object.entries(allSlots)) {
       slot.src !== null && AGENCY_WORK.has(slot.src)
     );
   }
+}
+
+// HORSE.
+//
+// Horseback riding at Giza is an Egypt Eye Travel product. It is not a Flying
+// Dresses one. A horse photograph on this brand tells a visitor we sell
+// something we do not, and one did: a rider in black on a decorated Arabian
+// illustrated the home page's rooftop panel, installed from the owner's photo
+// library in good faith and caught by the owner, not by this file.
+//
+// Checked over the registry's own src and alt values rather than over prose,
+// so the paragraph you are reading cannot satisfy it. Proven by repointing a
+// slot at giza-horseback.jpg: red on both halves. Then restored.
+{
+  const horsey = /horse|horseback|equestrian|stallion/i;
+  for (const [key, slot] of Object.entries(allSlots)) {
+    ok(
+      `asset slot ${key} refers to a horse. Horseback riding is an Egypt Eye ` +
+        "Travel product; this is the Flying Dresses brand.",
+      !horsey.test(`${slot.src ?? ""} ${slot.alt ?? ""}`)
+    );
+  }
+  const strays = readdirSync("public/photos/flying-dresses").filter((f) => horsey.test(f));
+  ok(
+    `public/photos/flying-dresses holds ${strays.length} horse photograph(s) (${strays.join(", ")}). ` +
+      "Unreferenced, but still published at a guessable URL.",
+    strays.length === 0
+  );
 }
 
 ok(
@@ -1548,6 +1597,52 @@ for (const file of brandTsx) {
     'the home page uses the .fd-price class again — that class exists to set a price in the display face, so its presence here means a figure is being shown',
     !/className="fd-price"/.test(home)
   );
+
+  // THE FIRST VERSION OF THIS CHECK WAS NOT ENOUGH, and the owner found the
+  // gap before it did: the rooftop story's button read "The rooftop shoot:
+  // $199" as a HARD-CODED STRING. It referenced neither `priceUsd` nor
+  // `.fd-price`, so both tests above passed over it while a price sat on the
+  // home page in a filled capsule on a dark panel — about as prominent as a
+  // price can be.
+  //
+  // A figure typed into a sentence is the form this will keep coming back
+  // in, because it is the form that does not look like pricing code. So the
+  // check is now on the CHARACTER: a dollar followed by a digit, anywhere in
+  // the page's comment-stripped source. `${pkg.priceUsd}` is caught by this
+  // too, which is the point — one rule, no way around it that is not also
+  // obvious to read.
+  //
+  // Proven by typing "$199" back into that button: red, with the line.
+  home.split("\n").forEach((line, index) => {
+    ok(
+      `the home page shows a price on line ${index + 1}: ${line.trim().slice(0, 80)}`,
+      !/\$\s?\d/.test(line)
+    );
+  });
+
+  // AND THE SAME TEST ON THE VALUES, not just the markup.
+  //
+  // The source check above passed while the home page displayed "$35" and
+  // "$45", because the figures were not in the page at all — they were in
+  // the add-on DESCRIPTIONS in content/flyingDresses.ts, which the page
+  // rendered in a column. A guard that reads only the file it is suspicious
+  // of will keep missing the data that file pulls in.
+  //
+  // So: every add-on string the home page actually renders is checked for a
+  // currency figure. `detail` is deliberately NOT checked — it carries the
+  // prices on purpose, for /packages — which is exactly why the home page
+  // must not be the thing that renders it.
+  ok(
+    "the home page renders addOn.detail, which carries the prices — it should render addOn.homeNote",
+    !/addOn\.detail/.test(home)
+  );
+  for (const addOn of addOns) {
+    ok(
+      `addOn "${addOn.id}" has a price in its homeNote, which the home page displays: ${addOn.homeNote}`,
+      !/\$\s?\d/.test(addOn.homeNote)
+    );
+    ok(`addOn "${addOn.id}" has an empty homeNote`, addOn.homeNote.trim().length > 0);
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1571,6 +1666,207 @@ for (const section of ["celebrations", "creative"]) {
     `${file} renders ExperienceDetail without \`headless\` — a category holding one experience would print its title and intro twice`,
     /headless=\{experiences\.length === 1\}/.test(source)
   );
+}
+
+// ---------------------------------------------------------------------------
+// EVERY GENUINE SERVICE IS REACHABLE FROM THE HOME PAGE
+//
+// The home page linked to the two hub pages and to none of the eight
+// experiences behind them, so half the catalogue was two clicks deep behind a
+// one-word label a visitor had to guess the meaning of. Nothing was broken,
+// which is why nothing reported it: the pages existed, they were in the
+// sitemap, and they were invisible to the page that gets the traffic.
+//
+// This is the kind of gap that reopens every time something is added to the
+// catalogue, because adding a category and adding it to the home page are two
+// separate edits and only one of them is obviously required. So the check
+// reads the catalogue and the home page's source and insists they agree.
+//
+// Proven by deleting one category's card loop from the home page: red, naming
+// the category. Restored: green.
+// ---------------------------------------------------------------------------
+{
+  const home = read("src/app/flying-dresses/page.tsx");
+  // The cards are rendered from `experienceCategories`, so what has to be
+  // true is that the page iterates it — a hard-coded subset would pass a
+  // link-by-link test while silently dropping whatever was added last.
+  ok(
+    "the home page no longer renders the experience catalogue, so the celebration and creative experiences are two clicks deep behind a hub label",
+    /experienceCategories\.map\(/.test(home)
+  );
+  ok(
+    "the home page imports experienceCategories but never links each one to its own page",
+    /\$\{category\.section\}\/\$\{category\.slug\}/.test(home)
+  );
+
+  for (const service of rentalServices) {
+    ok(
+      `the home page does not link the hire service "${service.slug}"`,
+      home.includes("rentalServices.map(") || home.includes(service.slug)
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// A PUBLISHED URL NEVER CARRIES THE /flying-dresses SEGMENT
+//
+// The app serves its pages at /flying-dresses/*, and every internal link uses
+// that path because it works on every host. But the brand domain is attached
+// now, and on it the short form resolves too — so the same page has two
+// working URLs and only one of them should ever be PUBLISHED.
+//
+// Canonicals, Open Graph urls, JSON-LD and the sitemap all go through
+// fdUrl(). This checks that fdUrl is the only thing that builds a public URL,
+// and that it does not simply concatenate fdPath() — which is what it used to
+// do, and what would silently restore the long form.
+//
+// Getting this wrong is not a cosmetic fault. A sitemap listing one URL while
+// the page canonicalises to another is a conflict the crawler resolves by
+// discarding one of them, and CLAUDE.md records that this project has already
+// had one duplicate-canonical incident.
+//
+// Proven by restoring `return `${fdSiteUrl}${fdPath(path)}`;`: red.
+// ---------------------------------------------------------------------------
+{
+  const seo = read("src/app/flying-dresses/_lib/seo.ts");
+  ok(
+    "fdUrl() builds the absolute URL from fdPath(), which puts /flying-dresses back into every canonical and sitemap entry",
+    !/return\s*`\$\{fdSiteUrl\}\$\{fdPath\(/.test(seo)
+  );
+
+  // And nothing else may assemble one by hand.
+  const brandFiles = execSync("find src/app/flying-dresses -name '*.ts' -o -name '*.tsx'", {
+    encoding: "utf8",
+  })
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of brandFiles) {
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => "\n".repeat((m.match(/\n/g) ?? []).length))
+      .replace(/^\s*\/\/.*$/gm, "");
+    source.split("\n").forEach((line, index) => {
+      ok(
+        `${file}:${index + 1} builds a public URL with the /flying-dresses segment in it — use fdUrl(): ${line.trim().slice(0, 70)}`,
+        !/https?:\/\/[^"'`\s]*\/flying-dresses/.test(line)
+      );
+    });
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ANALYTICS MAY NOT CARRY PERSONAL DATA, AND MAY NOT COUNT TWICE
+//
+// Two failures, both of which produce a site that looks fine.
+//
+// 1. PII. Google's terms forbid sending names, email addresses and phone
+//    numbers, and an account found carrying them can be purged — taking the
+//    history with it. The enquiry form sits one line away from `track()` and
+//    holds exactly those variables, so passing one is a single careless
+//    autocomplete away.
+//
+// 2. DOUBLE COUNTING. GA4 sends its own page_view the moment `config` runs.
+//    If that is left on while the app also sends one per route change, every
+//    landing page is counted twice and every derived figure — bounce rate,
+//    conversion rate, cost per enquiry — is wrong in a direction nobody
+//    notices. The first version of Analytics.tsx did double-count; a browser
+//    test caught it, and this keeps it caught.
+//
+// Proven on both: passing `email` into the generate_lead call, and deleting
+// `send_page_view: false`. Each one red. Restored: green.
+// ---------------------------------------------------------------------------
+{
+  // COMMENTS STRIPPED FIRST, and this is not a precaution — the first
+  // version of this check read the raw file and passed while the code was
+  // broken, because the doc comment at the top of Analytics.tsx explains
+  // `send_page_view: false` in prose. Deleting the real setting left the
+  // sentence describing it, and the check went on agreeing with itself.
+  //
+  // CLAUDE.md records this exact failure happening before in this project.
+  // It happened again here, in a check written by someone who had just read
+  // that warning, which is the best argument there is for stripping comments
+  // by default rather than when it occurs to you.
+  const analyticsComponent = read("src/app/flying-dresses/_components/Analytics.tsx")
+    .replace(/\/\*[\s\S]*?\*\//g, "")
+    .replace(/^\s*\/\/.*$/gm, "");
+  ok(
+    "Analytics.tsx no longer disables GA4's automatic page_view (`send_page_view: false`) while also sending its own — every landing page would be counted twice",
+    /send_page_view:\s*false/.test(analyticsComponent)
+  );
+
+  const PII = ["name", "email", "phone", "message", "hotel", "notes"];
+  const brandFiles = execSync(
+    "grep -rl 'track(' src/app/flying-dresses --include='*.tsx' --include='*.ts' || true",
+    { encoding: "utf8" }
+  )
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of brandFiles) {
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, (m) => "\n".repeat((m.match(/\n/g) ?? []).length))
+      .replace(/^\s*\/\/.*$/gm, "");
+    // Each track(...) call's argument text, up to the closing brace.
+    for (const match of source.matchAll(/\btrack\(\s*"[^"]*"\s*,\s*\{([\s\S]*?)\}\s*\)/g)) {
+      // String LITERALS are stripped first. `method: "email"` is a label for
+      // which button was pressed, not an address — and a check that fires on
+      // correct code is a check people switch off. What must not appear is
+      // the IDENTIFIER: a variable called email, holding one.
+      const args = (match[1] ?? "").replace(/"[^"]*"|'[^']*'|`[^`]*`/g, '""');
+      for (const field of PII) {
+        ok(
+          `${file} sends \`${field}\` to analytics — personal data must never leave in an event parameter`,
+          !new RegExp(`(^|[^\\w.])${field}\\b`).test(args)
+        );
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// THE QUAD BIKES DO NOT COME BACK
+//
+// /photos/pexels-20189345.jpg is a row of hired ATVs parked under sun
+// umbrellas on a beach. It sat in the `saharaDunes` slot, under the alt text
+// "Sahara sand dunes at golden hour outside Cairo", and it was the
+// photograph illustrating the Sand Dunes photoshoot in three places: the
+// home page, /experiences, and the shoot's own page.
+//
+// Nothing caught it because every check that touched it was a check about
+// STRUCTURE — does the file exist, does the slot have alt text, is the alt
+// text non-empty. All true. No check can read a photograph and say "that is
+// not a dune", which is the real lesson: the structural checks in this file
+// prove that a slot is wired up, never that it shows what it says.
+//
+// So this names the file. It is the one fault of its kind we have actually
+// found, and naming it is cheap.
+//
+// Proven by pointing saharaDunes back at it: red.
+// ---------------------------------------------------------------------------
+{
+  const brandFiles = execSync(
+    "find src/app/flying-dresses src/content/flyingDresses.ts -type f \\( -name '*.ts' -o -name '*.tsx' \\)",
+    { encoding: "utf8" }
+  )
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of brandFiles) {
+    // Comments stripped, for the third time in this file and for the same
+    // reason each time: the note in assets.ts explaining WHY that photograph
+    // was removed names the file, and the first version of this check went
+    // red on its own explanation.
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/^\s*\/\/.*$/gm, "");
+    ok(
+      `${file} references pexels-20189345.jpg — that photograph is a row of parked quad bikes, not sand dunes`,
+      !source.includes("pexels-20189345")
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

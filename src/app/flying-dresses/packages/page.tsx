@@ -9,7 +9,7 @@ import {
   payment,
   rentalServices,
 } from "@/content/flyingDresses";
-import { BookingRail } from "../_components/BookingRail";
+import { BookingRail, anyPackageTakesPaymentOnline } from "../_components/BookingRail";
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 
@@ -20,7 +20,10 @@ export const metadata: Metadata = fdMetadata({
   path: "/packages",
 });
 
-export default function PackagesPage() {
+export default async function PackagesPage() {
+  // Asked, not assumed. See anyPackageTakesPaymentOnline.
+  const onlinePaymentIsOpen = await anyPackageTakesPaymentOnline(packages);
+
   return (
     <>
       <section className="fd-section-tight">
@@ -116,14 +119,16 @@ export default function PackagesPage() {
       <section className="fd-section-tight" aria-labelledby="fd-book-heading">
         <div className="fd-shell">
           <div style={{ maxWidth: "44rem", marginBottom: "2.5rem" }}>
-            <p className="fd-eyebrow">Book online</p>
+            <p className="fd-eyebrow">{onlinePaymentIsOpen ? "Book online" : "Reserve your date"}</p>
             <h2 id="fd-book-heading" className="fd-display fd-h3">
-              Pay a deposit and choose your date now
+              {onlinePaymentIsOpen
+                ? "Pay a deposit and choose your date now"
+                : "Tell us your date and we will confirm it with you"}
             </h2>
             <p className="fd-muted" style={{ marginTop: "1.25rem" }}>
-              Booking runs on the same secure PayPal checkout our team has used for every
-              photoshoot. You pay a deposit online; the rest is settled with us and is never
-              charged over the web.
+              {onlinePaymentIsOpen
+                ? "Booking runs on the same secure PayPal checkout our team has used for every photoshoot. You pay a deposit online; the rest is settled with us and is never charged over the web."
+                : "Online deposits are closed at the moment, so nothing is charged on this page. Send us the date you want and we will confirm availability and arrange payment with you directly. You will have the figures in writing before you pay anything."}
             </p>
           </div>
 

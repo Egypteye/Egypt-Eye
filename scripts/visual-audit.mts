@@ -50,6 +50,14 @@ const DEFAULT_PAGES = [
 ];
 
 const VIEWPORTS = [
+  // 320px IS NOT A LEGACY WIDTH. It is an iPhone SE, and it is what any
+  // phone becomes when its owner turns text size up or zooms — which the
+  // audience for this site, people reading a foreign website on holiday,
+  // does constantly. It was missing from this list, and the header spent a
+  // release overflowing its own viewport by 37px there: the capsule ran off
+  // the right edge and took the menu button with it. Nothing caught it
+  // because nothing looked at a screen that narrow.
+  { name: "narrow", width: 320, height: 760 },
   { name: "mobile", width: 390, height: 844 },
   { name: "tablet", width: 768, height: 1024 },
   { name: "desktop", width: 1440, height: 900 },
@@ -610,6 +618,20 @@ for (const path of PAGES) {
           const cs = getComputedStyle(el);
           // An element that scrolls itself is MEANT to be wider than its box.
           if (cs.overflowX === "auto" || cs.overflowX === "scroll") return;
+          // AND NEITHER IS ANYTHING INSIDE ONE. A wide table in a scrolling
+          // wrapper is correct and is not why the page slid; reporting it
+          // sends the reader to the wrong element. This cost a real
+          // diagnosis: /packages was named as "table.fd-table, div" when the
+          // actual culprit was a grid cell with a 20rem minimum.
+          //
+          // The walk stops at <body> ON PURPOSE. `body` here carries
+          // `overflow-x: hidden` while `html` does not, so the page scrolls
+          // even though body clips what sticks out — treat body as a clipper
+          // and every culprit on the page disappears while the error stays.
+          for (let a: HTMLElement | null = parent; a && a !== document.body; a = a.parentElement) {
+            const ao = getComputedStyle(a).overflowX;
+            if (ao === "auto" || ao === "scroll" || ao === "hidden") return;
+          }
           const cls = typeof el.className === "string" ? el.className.trim() : "";
           const name = el.tagName.toLowerCase() + (cls ? "." + cls.split(/\s+/).join(".") : "");
           if (culprits.length < 4 && !culprits.includes(name)) culprits.push(name);

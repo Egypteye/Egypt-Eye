@@ -507,7 +507,23 @@ textarea {
 .fd-grid {
   display: grid;
   gap: clamp(0.75rem, 0.4rem + 1.4vw, 1.75rem);
-  grid-template-columns: repeat(auto-fill, minmax(var(--fd-min, 14rem), 1fr));
+  /* `min(..., 100%)` IS LOAD-BEARING, not a flourish.
+     A bare `minmax(20rem, 1fr)` is a PROMISE THAT EVERY COLUMN IS AT LEAST
+     20rem, which the grid keeps even when its container is narrower — so it
+     overflows rather than shrinking. /packages sets --fd-min: 20rem for the
+     booking rails, and at 320px, inside a 288px shell, each cell rendered
+     320px wide and pushed the page 16px sideways.
+
+     It took the 320px viewport being added to the visual audit to see it,
+     and then a second look to find it: `body` carries `overflow-x: hidden`
+     while `html` does not, so the elements all reported as clipped while
+     the document scrolled anyway. Nothing was visibly broken; the page just
+     slid under your thumb.
+
+     Capping the minimum at 100% of the track means "20rem, or as much as
+     there is, whichever is smaller", which is what was meant everywhere
+     this variable is set. */
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--fd-min, 14rem), 100%), 1fr));
 }
 
 /* The work gallery, section 8 of the home page.
@@ -1204,21 +1220,29 @@ ol.fd-beats h3::before {
 }
 
 /* The supplied logo, sized by height so either file's aspect ratio works. */
+/* THE SUPPLIED LOGO IS A TWO-LINE LOCKUP, not a single-line wordmark.
+   "FLYING DRESS" sits above a script "Egypt", so only about a third of the
+   image's height is the line a visitor actually reads. Sized at the height
+   the typeset fallback used, the words came out smaller than the body copy
+   beneath them. These heights are set so the capitals read at roughly the
+   size the typeset wordmark did, which means the image is taller.
+   Aspect is 956x341 (2.8:1), so height h gives width 2.8h: 2.75rem is 123px
+   wide, 3.5rem is 157px. Both clear the 320px header with the menu button. */
 .fd-wordmark-img {
   width: auto;
-  height: 2.25rem;
+  height: 2.75rem;
   object-fit: contain;
 }
 
 @media (min-width: 64rem) {
   .fd-wordmark-img {
-    height: 2.75rem;
+    height: 3.5rem;
   }
 }
 
 .fd-footer-logo {
   width: auto;
-  height: 3.25rem;
+  height: 4.25rem;
   object-fit: contain;
   margin-bottom: 1rem;
 }
@@ -3195,4 +3219,33 @@ ol.fd-timeline h3::before {
   display: inline-block;
   min-height: 2.75rem;
   padding-block: 0.75rem;
+}
+
+/* ---- The narrowest phone ----------------------------------------------
+   At 320px — an iPhone SE, or any phone with text size turned up — the
+   wordmark plus the menu button were 331px wide inside a 294px bar, so the
+   capsule ran 37px off the right edge of the screen and took the burger
+   with it. Measured, not guessed.
+
+   The tracking is where the width was: 0.22em across fourteen capitals is
+   about 30px of pure air. It buys the mark its fashion-masthead character
+   at every size that can afford it, and gives it back at the one that
+   cannot. */
+@media (max-width: 24.5rem) {
+  .fd-mark {
+    --fd-mark-size: 0.8rem;
+  }
+
+  .fd-mark-inline .fd-mark-name {
+    letter-spacing: 0.1em;
+  }
+
+  .fd-mark-inline {
+    gap: 0.3em;
+  }
+
+  .fd-header-inner {
+    gap: 0.5rem;
+    padding-inline: 0.85rem;
+  }
 }
