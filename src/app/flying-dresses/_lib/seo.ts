@@ -109,9 +109,9 @@ export type FdShareImage = { src: string; width: number; height: number; alt?: s
 
 export const FD_DEFAULT_SHARE_IMAGE: FdShareImage = {
   src: "/brand/flying-dresses/hero-poster.jpg",
-  width: 1600,
-  height: 900,
-  alt: "A flying dress on a rooftop above the Pyramids of Giza at first light",
+  width: 1440,
+  height: 960,
+  alt: "A red flying dress on a rooftop above the Pyramids of Giza, its train thrown out across the frame",
 };
 
 /**

@@ -101,7 +101,7 @@ export function HeroVideo({
           as fallback content, and the optimizer would be fetching a file for a
           case that modern browsers never reach. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={poster} alt={alt} width={1600} height={900} />
+      <img src={poster} alt={alt} width={1440} height={960} />
     </video>
   );
 }

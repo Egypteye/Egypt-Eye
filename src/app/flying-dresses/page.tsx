@@ -99,7 +99,7 @@ export default async function FlyingDressesHome() {
             src="/brand/flying-dresses/hero.mp4"
             srcSmall="/brand/flying-dresses/hero-small.mp4"
             srcWebm="/brand/flying-dresses/hero.webm"
-            alt="A gold flying dress turning on a rooftop above Giza, the pyramids on the skyline behind"
+            alt="A red flying dress on a rooftop above Giza, its train swept out behind her, two pyramids on the skyline"
           />
         </div>
         <div className="fd-hero-scrim" aria-hidden="true" />
