@@ -19,6 +19,7 @@ import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { agency, location } from "../../_lib/assets";
 import { shootShareImages } from "../../_lib/shareImages";
+import { dressPhotos } from "../../_lib/dressPhotos";
 import {
   fdBreadcrumbJsonLd,
   fdFaqJsonLd,
@@ -45,7 +46,7 @@ export const dynamicParams = false;
 const ART = {
   "sand-dunes": { hero: location.saharaDunes, detail: agency.fayoumDress },
   "pyramids-rooftop": { hero: agency.rooftopPortrait, detail: location.gizaPlateau },
-  fayoum: { hero: location.fayoumArchway, detail: agency.fayoumDress },
+  fayoum: { hero: location.fayoumLake, detail: agency.fayoumDress },
 } as const;
 
 export async function generateMetadata({
@@ -299,40 +300,83 @@ export default async function ExperiencePage({
             </div>
           </div>
 
+          {/* TWELVE PHOTOGRAPHS, NOT TWELVE RECTANGLES OF COLOUR.
+              This grid rendered `background: dress.hex` for all twelve and
+              never asked whether a photograph existed. Every one of them had
+              been supplied and was already on /wardrobe and on the home page
+              rail, so the three pages where somebody is deciding whether to
+              spend $179 were the only places still showing paint chips.
+
+              That is the third time this exact fault has been found on this
+              brand: content owned, valid, and never reaching the browser.
+
+              The swatch stays as the fallback, which is still correct for
+              anything unphotographed. The tile is 3/4 rather than the old
+              2/3, because the frames are landscape at 1600x1067 and a tall
+              crop of a wide photograph throws away the dress.
+
+              --fd-min goes from 5rem to 7rem for the same reason: a
+              photograph at 80px is a smudge, where a flat colour at 80px was
+              perfectly legible. Fewer, larger tiles. */}
           <ul
             className="fd-grid"
-            style={{ ["--fd-min" as string]: "5rem", listStyle: "none", margin: 0, padding: 0 }}
+            style={{ ["--fd-min" as string]: "7rem", listStyle: "none", margin: 0, padding: 0 }}
           >
-            {dresses.map((dress) => (
-              <li key={dress.id}>
-                <Link
-                  href={fdPath(`/enquire?package=${pkg.slug}&dress=${dress.id}`)}
-                  title={`Enquire with the ${dress.name} dress`}
-                  style={{ display: "block", textDecoration: "none", color: "inherit" }}
-                >
-                  <span
-                    style={{
-                      display: "block",
-                      aspectRatio: "2 / 3",
-                      background: dress.hex,
-                      boxShadow: "inset 0 0 0 1px rgba(248,244,237,0.25)",
-                    }}
-                  />
-                  <span
-                    style={{
-                      display: "block",
-                      marginTop: "0.4rem",
-                      fontSize: "var(--fd-step--1)",
-                      letterSpacing: "0.1em",
-                      textTransform: "uppercase",
-                      color: "var(--fd-ivory-dim)",
-                    }}
+            {dresses.map((dress) => {
+              const photo = dressPhotos[dress.id];
+              return (
+                <li key={dress.id}>
+                  <Link
+                    href={fdPath(`/enquire?package=${pkg.slug}&dress=${dress.id}`)}
+                    title={`Enquire with the ${dress.name} dress`}
+                    style={{ display: "block", textDecoration: "none", color: "inherit" }}
                   >
-                    {dress.name}
-                  </span>
-                </Link>
-              </li>
-            ))}
+                    {photo ? (
+                      <span
+                        style={{
+                          display: "block",
+                          aspectRatio: "3 / 4",
+                          overflow: "hidden",
+                          boxShadow: "inset 0 0 0 1px rgba(248,244,237,0.25)",
+                        }}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photo.src}
+                          alt={photo.alt}
+                          loading="lazy"
+                          decoding="async"
+                          width={1600}
+                          height={1067}
+                          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                        />
+                      </span>
+                    ) : (
+                      <span
+                        style={{
+                          display: "block",
+                          aspectRatio: "3 / 4",
+                          background: dress.hex,
+                          boxShadow: "inset 0 0 0 1px rgba(248,244,237,0.25)",
+                        }}
+                      />
+                    )}
+                    <span
+                      style={{
+                        display: "block",
+                        marginTop: "0.4rem",
+                        fontSize: "var(--fd-step--1)",
+                        letterSpacing: "0.1em",
+                        textTransform: "uppercase",
+                        color: "var(--fd-ivory-dim)",
+                      }}
+                    >
+                      {dress.name}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </section>

@@ -3288,3 +3288,87 @@ ol.fd-timeline h3::before {
     padding-inline: 0.85rem;
   }
 }
+
+/* ---- The hero on a phone: a band, not a slab -------------------------- */
+/*
+   THE FILM IS COMPOSED WIDE AND THE PHONE WAS SHOWING A THIRD OF IT.
+
+   The hero is one layout at every width: the video absolutely positioned
+   behind the headline, object-fit: cover, min-height min(92svh, 56rem). On a
+   desktop that is right — the box is wider than the film's 3:2, so the crop
+   takes a little off the top and bottom and the composition survives.
+
+   On a phone it is the opposite shape, and the numbers are brutal. Measured
+   in Chromium:
+
+       390x844   hero box 390x776   28% taller than the film is wide
+                 visible frame width: 34%
+       430x932   hero box 430x857   visible frame width: 33%
+       360x800   hero box 360x736   visible frame width: 33%
+
+   Two thirds of every frame was being decoded and thrown away. Worse, the
+   third that survived was then stretched: the phone file is 960px wide, 34%
+   of it is 326px, and that was being painted across 390 CSS pixels — about
+   1170 device pixels on a modern phone. A 3.6x upscale of an already
+   compressed frame. That is what the owner saw and called low quality, and no
+   amount of bitrate fixes a 3.6x upscale.
+
+   It is also a composition problem, which is why the obvious fix is wrong.
+   The temptation is to crop a portrait version for phones. A contact sheet of
+   the film says no: across its nine scenes the subject sits hard left in one,
+   hard right in two, and three women span the full width in two more. A
+   centre crop to the phone's shape removes a person from five of nine shots.
+
+   SO THE PHONE GETS A DIFFERENT LAYOUT. The media stops being a background
+   and becomes a 3:2 band at the top of the section, at its native shape, with
+   the copy below it on ink. The whole frame is visible, nothing is upscaled —
+   960 source pixels now paint 390 CSS pixels instead of 326 — and the film
+   can be seen rather than glimpsed.
+
+   What it costs: the section gets taller, because the copy no longer sits on
+   top of the picture. That is the trade and it is the right way round. A
+   shorter section that shows a third of a frame is not a better first
+   impression than a taller one that shows all of it.
+
+   The negative margin is the same trick the section already uses: it pulls
+   the band up under the floating header so the header still sits over the
+   film, exactly as it does now. The scrim goes away because there is no
+   longer any type over the picture to protect.
+
+   Above 48rem nothing in here applies and the hero is untouched.
+*/
+@media (max-width: 47.99rem) {
+  .fd-hero {
+    display: block;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .fd-hero-media {
+    position: relative;
+    inset: auto;
+    z-index: 0;
+    /* Cancels .fd-hero's padding-top so the band starts at the very top of
+       the section and the header floats over it, as before. */
+    margin-top: -5rem;
+    aspect-ratio: 3 / 2;
+    width: 100%;
+  }
+
+  /* The art-directed 32% crop was for a tall box that had to choose a slice.
+     The band is the film's own shape, so there is nothing to choose. */
+  .fd-hero-media img,
+  .fd-hero-video,
+  .fd-hero-video img {
+    object-position: 50% 50%;
+  }
+
+  /* No type over the picture, so nothing to darken. */
+  .fd-hero-scrim {
+    display: none;
+  }
+
+  .fd-hero-body {
+    padding-block: 2rem 2.5rem;
+  }
+}

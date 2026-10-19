@@ -259,7 +259,7 @@ export default async function FlyingDressesHome() {
                 ? location.saharaDunes
                 : pkg.slug === "pyramids-rooftop"
                   ? agency.rooftopPortrait
-                  : location.fayoumArchway;
+                  : location.fayoumLake;
 
             return (
               <article

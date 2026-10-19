@@ -213,13 +213,34 @@ export const location = {
      rooftop at seven in the morning, so it now shows the rooftop.
      `scripts/check-flying-dresses.mts` fails if a horse photograph is
      referenced from this brand again. */
-  fayoumArchway: slot({
-    kind: "location",
-    src: "/photos/about/wandee-travel-fayoum.jpg",
-    alt: "A traveller seated in a sunlit ochre archway in Fayoum",
-    width: 427,
-    height: 640,
-    credit: "Wandee Travel collaboration",
+  /* THE FAYOUM CARD SHOWED A BUILDING.
+     ------------------------------------------------------------------
+     This slot held a Wandee Travel frame of a traveller sitting in an
+     ochre archway. A real photograph, really taken in Fayoum, and the
+     wrong one for this panel: the Fayoum shoot is sold as the lakes and
+     the white dunes, and the card illustrating it showed masonry and no
+     flying dress. The owner spotted it on a phone and said so.
+
+     It is the same fault as the quad bikes on the dunes card, in a
+     milder form: the picture does not show the product. A visitor
+     choosing between three shoots sees a dress on a dune, a dress on a
+     rooftop, and then a woman in an archway.
+
+     `fayoum-black.jpg` was already in the library and used nowhere: a
+     black flying dress with the train thrown out across the ground,
+     Lake Qarun behind it. Landscape at 1600x1067, so it fills
+     fd-ratio-landscape without the upright crop the archway needed.
+
+     The archway photograph is not deleted. It is still the right frame
+     for the credibility rail on the About page, where the subject is
+     the collaboration and not the shoot. */
+  fayoumLake: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/fayoum-black.jpg",
+    alt: "A black flying dress on the desert shore at Fayoum, its train thrown out along the ground with Lake Qarun behind",
+    width: 1600,
+    height: 1067,
+    credit: "Fayoum shoot",
   }),
 };
 

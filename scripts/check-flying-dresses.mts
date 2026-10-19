@@ -38,7 +38,7 @@ import {
 } from "../src/content/outfitCollection.js";
 import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
-import { allSlots } from "../src/app/flying-dresses/_lib/assets.js";
+import { allSlots, location } from "../src/app/flying-dresses/_lib/assets.js";
 import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
 import {
@@ -2211,6 +2211,100 @@ for (const section of ["celebrations", "creative"]) {
 
   const footerSource = read("src/app/flying-dresses/_components/Footer.tsx");
   ok("the footer has no Stories link", footerSource.includes('fdPath("/stories")'));
+}
+
+// ---------------------------------------------------------------------------
+// THE PICTURE HAS TO BE OF THE THING.
+//
+// Three faults of one shape have now been found on this brand, all of them
+// reported by the owner rather than by any check:
+//
+//   1. the dunes card showed hired quad bikes
+//   2. the home page rail showed colour swatches for twelve photographed
+//      dresses
+//   3. the Fayoum card showed a traveller sitting in an ochre archway, and
+//      the three photoshoot pages showed paint chips
+//
+// None of them is a crash, a broken link or a missing file. Every one renders
+// a page that looks finished and sells the wrong thing. These guards are the
+// structural half of that problem: they cannot tell you a photograph is good,
+// only that a page is not showing a flat colour when a photograph exists, and
+// not showing the archway on a panel about the lakes.
+//
+// Proven by reverting each one: red.
+// ---------------------------------------------------------------------------
+{
+  // A swatch is the correct fallback for an unphotographed garment and the
+  // wrong default for a photographed one. Every dress currently has a
+  // photograph, so any page that maps the collection into a flat `dress.hex`
+  // background WITHOUT consulting dressPhotos is showing paint chips.
+  //
+  // Proven by deleting the dressPhotos lookup from the experience page: red.
+  const everyDressPhotographed = dresses.every((d) => Boolean(dressPhotos[d.id]));
+  ok(
+    "not every dress has a photograph any more — the swatch guard below assumes they all do",
+    everyDressPhotographed
+  );
+
+  if (everyDressPhotographed) {
+    const brandPages = execSync("find src/app/flying-dresses -name '*.tsx' -type f", {
+      encoding: "utf8",
+    })
+      .trim()
+      .split("\n")
+      .filter(Boolean);
+
+    for (const file of brandPages) {
+      const source = read(file)
+        .replace(/\/\*[\s\S]*?\*\//g, "")
+        .replace(/^\s*\/\/.*$/gm, "");
+      // Only a file that actually paints a swatch from the collection.
+      if (!/background:\s*dress\.hex/.test(source)) continue;
+      ok(
+        `${file} paints dress.hex as a tile background and never reads dressPhotos — twelve photographs exist and this page is showing colour rectangles`,
+        source.includes("dressPhotos[")
+      );
+    }
+  }
+
+  // The Fayoum panels are about the lakes and the white dunes. The frame that
+  // used to sit there was architecture, with no dress in it.
+  //
+  // Proven by pointing fayoumLake back at wandee-travel-fayoum.jpg: red.
+  // `src` is nullable on an ImageSlot: an empty slot has none. Read it once,
+  // and treat "no photograph at all" as its own failure rather than letting
+  // an optional chain quietly satisfy both assertions.
+  const fayoumSrc = location.fayoumLake.src ?? "";
+  ok("the Fayoum slot has no photograph at all", fayoumSrc !== "");
+  ok(
+    "the Fayoum slot points at the Wandee archway again — that frame is a building, and the panel it illustrates sells a landscape with water in it",
+    !fayoumSrc.includes("wandee-travel-fayoum")
+  );
+  ok(
+    "the Fayoum slot no longer points at a Fayoum photograph",
+    fayoumSrc.includes("fayoum")
+  );
+
+  // THE PHONE HERO.
+  //
+  // The film is 1440x960 and the phone hero box was 390x776, so object-fit:
+  // cover threw away two thirds of every frame and upscaled the rest 3.6x.
+  // The fix is a layout, not a bitrate: below 48rem the media becomes a 3:2
+  // band with the copy beneath it. If that media query is ever removed the
+  // hero silently goes back to showing a third of the picture, and nothing
+  // else in this repository would notice.
+  //
+  // Proven by deleting the block from brand.css: red.
+  {
+    const css = read("src/app/flying-dresses/brand.css");
+    const phoneHero = /@media\s*\(max-width:\s*47\.99rem\)\s*\{[\s\S]*?\.fd-hero-media\s*\{[\s\S]*?aspect-ratio:\s*3\s*\/\s*2/.test(
+      css
+    );
+    ok(
+      "brand.css no longer gives .fd-hero-media its 3:2 band below 48rem — the phone hero is back to cropping the film to a third of its width",
+      phoneHero
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

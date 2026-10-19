@@ -16,7 +16,7 @@ export const metadata: Metadata = fdMetadata({
 const ART = {
   "sand-dunes": location.saharaDunes,
   "pyramids-rooftop": agency.rooftopPortrait,
-  fayoum: location.fayoumArchway,
+  fayoum: location.fayoumLake,
 } as const;
 
 export default function ExperiencesPage() {
