@@ -420,6 +420,43 @@ for (const [key, slot] of Object.entries(allSlots)) {
   }
 }
 
+// THE HEADER'S THREE BREAKPOINTS ARE ONE DECISION.
+//
+// .fd-nav appears at X. .fd-burger (which opens the drawer) disappears at X.
+// .fd-drawer (what the burger opens) disappears at X. If the drawer's X is
+// smaller than the burger's, every width in between shows a menu button whose
+// panel is display:none — it sets aria-expanded="true" and nothing happens.
+//
+// That shipped. The nav moved from 64rem to 90rem and the burger moved with
+// it; the drawer's rule was left at 64rem, so from 1024px to 1440px — 1280px
+// included — the menu button was dead. Found by the owner, not by this file.
+//
+// Read out of the CSS with comments stripped, so the paragraph above cannot
+// satisfy it. Proven by setting the drawer's rule back to 64rem: red.
+{
+  const css = stripComments(read("src/app/flying-dresses/brand.css"));
+  const widthOf = (selector: string): string | null => {
+    // The @media that opens onto this selector's rule. Escaped for the dot in
+    // the class name, which would otherwise match any character.
+    const escaped = selector.replace(/[.]/g, "\\$&");
+    const re = new RegExp(
+      "@media\\s*\\(min-width:\\s*([0-9.]+rem)\\s*\\)\\s*\\{\\s*" + escaped + "\\s*\\{",
+      "m"
+    );
+    const m = css.match(re);
+    return m ? m[1] : null;
+  };
+  const nav = widthOf(".fd-nav");
+  const burger = widthOf(".fd-burger");
+  const drawer = widthOf(".fd-drawer");
+  ok(
+    `the header's three breakpoints disagree — .fd-nav at ${nav}, .fd-burger at ${burger}, ` +
+      `.fd-drawer at ${drawer}. Any width where the burger shows but the drawer is hidden ` +
+      "is a menu button that does nothing when clicked.",
+    nav !== null && nav === burger && burger === drawer
+  );
+}
+
 // HORSE.
 //
 // Horseback riding at Giza is an Egypt Eye Travel product. It is not a Flying
