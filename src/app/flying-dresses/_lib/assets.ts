@@ -124,20 +124,25 @@ export const agency = {
   /* ---------------------------------------------------------------------
      SUPPLIED OCTOBER 2026, from the owner's photo library.
 
-     These five do the same job the four `location` slots below were doing
-     with licensed travel photography and stock: they show the place, the
-     horse and the celebrations. The difference is that they are OUR work,
+     These four do the same job the four `location` slots below were doing
+     with licensed travel photography and stock: they show the place and
+     the celebrations. The difference is that they are OUR work,
      with our clients in them, which is the claim the rest of the site
      makes and the one the pictures should support.
      --------------------------------------------------------------------- */
 
-  couplesTrain: slot({
+  /* The romance panel was an Elleena frame: a real couple, a real bronze
+     train, three pyramids — and the man barefoot in board shorts and a
+     printed shirt. Authentic, and the wrong single image to represent
+     "Romance" on a brand selling a luxury morning. This is the same
+     rooftop and our own work, dressed the way the page promises. */
+  couplesRomance: slot({
     kind: "agency",
-    src: "/photos/flying-dresses/couple-rooftop-train.jpg",
-    alt: "A couple on the Giza rooftop, mid-kiss, a long bronze train swept out across the deck behind them and the pyramids on the skyline",
+    src: "/photos/flying-dresses/couple-romance-rooftop.jpg",
+    alt: "A couple on the Giza rooftop at sunrise, he in black tie with his arm around her waist, she laughing in a long lace gown, three pyramids across the horizon behind them",
     width: 2000,
     height: 1333,
-    credit: "Elleena shoot, supplied October 2026",
+    credit: "Alessandra shoot, supplied October 2026",
   }),
   couplesVows: slot({
     kind: "agency",
@@ -154,14 +159,6 @@ export const agency = {
     width: 2000,
     height: 1333,
     credit: "Kayan shoot, supplied October 2026",
-  }),
-  gizaHorse: slot({
-    kind: "agency",
-    src: "/photos/flying-dresses/giza-horseback.jpg",
-    alt: "A rider with arms outstretched on a dark Arabian horse in decorated tack, two pyramids behind them on the sand",
-    width: 933,
-    height: 1400,
-    credit: "Luis shoot, supplied October 2026",
   }),
   gizaSand: slot({
     kind: "agency",
@@ -207,9 +204,15 @@ export const location = {
     height: 533,
     credit: "Cherry Travel collaboration, July 2023",
   }),
-  /* Was a Distinctions Travel collaboration frame. Replaced by our own
-     horse-at-Giza photograph, which is sharper, larger and ours. */
-  gizaHorseback: agency.gizaHorse,
+  /* THERE IS NO HORSE SLOT ON THIS BRAND.
+     ------------------------------------------------------------------
+     A horse-at-Giza frame briefly lived here. Horseback riding is an
+     Egypt Eye Travel product, not a Flying Dresses one, and a rider in
+     black on a decorated horse tells a visitor on this site that we sell
+     something we do not. The home-page panel it illustrated is about the
+     rooftop at seven in the morning, so it now shows the rooftop.
+     `scripts/check-flying-dresses.mts` fails if a horse photograph is
+     referenced from this brand again. */
   fayoumArchway: slot({
     kind: "location",
     src: "/photos/about/wandee-travel-fayoum.jpg",
@@ -248,7 +251,7 @@ export const location = {
  */
 export const categoryPhoto: Partial<Record<string, ImageSlot>> = {
   "gender-reveal": agency.genderReveal,
-  romance: agency.couplesTrain,
+  romance: agency.couplesRomance,
   "vows-engagement": agency.couplesVows,
 };
 

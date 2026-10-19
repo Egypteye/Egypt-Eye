@@ -16,7 +16,7 @@
  * records three separate guards in this project that passed on the broken
  * version. The notes under each section say what was broken to prove it.
  */
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import {
   addOns,
@@ -361,19 +361,21 @@ const AGENCY_WORK = new Set([
   // library (Photos/). Each one is a frame from a named client shoot in that
   // library, downloaded from it and installed here:
   //
-  //   couple-rooftop-train     Elleena shoot    rooftop, bronze train
+  //   couple-romance-rooftop   Alessandra shoot rooftop, black tie and lace
   //   couple-vows-rooftop      Alessandra shoot rooftop, formal dress
   //   gender-reveal-rooftop    Kayan shoot      rooftop, balloon arch
-  //   giza-horseback           Luis shoot       horse on the plateau
   //   giza-plateau             Luis shoot       the plateau itself
   //
-  // The last two REPLACE a Pexels stock photograph and a third-party
-  // collaboration frame respectively, which is the point: the place is now
-  // shown in our own pictures.
-  "/photos/flying-dresses/couple-rooftop-train.jpg",
+  // giza-plateau REPLACES a Pexels stock photograph of the same place. It
+  // carries no flying dress and sits in a kind:"location" slot, whose whole
+  // contract is that it shows WHERE YOU WILL BE STANDING rather than claiming
+  // to be one of our dress shoots.
+  //
+  // A fifth frame from that library, giza-horseback, was installed here and
+  // has been removed: see HORSE below.
+  "/photos/flying-dresses/couple-romance-rooftop.jpg",
   "/photos/flying-dresses/couple-vows-rooftop.jpg",
   "/photos/flying-dresses/gender-reveal-rooftop.jpg",
-  "/photos/flying-dresses/giza-horseback.jpg",
   "/photos/flying-dresses/giza-plateau.jpg",
 ]);
 
@@ -416,6 +418,34 @@ for (const [key, slot] of Object.entries(allSlots)) {
       slot.src !== null && AGENCY_WORK.has(slot.src)
     );
   }
+}
+
+// HORSE.
+//
+// Horseback riding at Giza is an Egypt Eye Travel product. It is not a Flying
+// Dresses one. A horse photograph on this brand tells a visitor we sell
+// something we do not, and one did: a rider in black on a decorated Arabian
+// illustrated the home page's rooftop panel, installed from the owner's photo
+// library in good faith and caught by the owner, not by this file.
+//
+// Checked over the registry's own src and alt values rather than over prose,
+// so the paragraph you are reading cannot satisfy it. Proven by repointing a
+// slot at giza-horseback.jpg: red on both halves. Then restored.
+{
+  const horsey = /horse|horseback|equestrian|stallion/i;
+  for (const [key, slot] of Object.entries(allSlots)) {
+    ok(
+      `asset slot ${key} refers to a horse. Horseback riding is an Egypt Eye ` +
+        "Travel product; this is the Flying Dresses brand.",
+      !horsey.test(`${slot.src ?? ""} ${slot.alt ?? ""}`)
+    );
+  }
+  const strays = readdirSync("public/photos/flying-dresses").filter((f) => horsey.test(f));
+  ok(
+    `public/photos/flying-dresses holds ${strays.length} horse photograph(s) (${strays.join(", ")}). ` +
+      "Unreferenced, but still published at a guessable URL.",
+    strays.length === 0
+  );
 }
 
 ok(

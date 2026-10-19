@@ -221,10 +221,10 @@ export default async function FlyingDressesHome() {
 
           <figure style={{ margin: 0 }}>
             <Scene
-              src={location.gizaHorseback.src}
-              alt={location.gizaHorseback.alt}
-              width={location.gizaHorseback.width}
-              height={location.gizaHorseback.height}
+              src={agency.heroRooftop.src}
+              alt={agency.heroRooftop.alt}
+              width={agency.heroRooftop.width}
+              height={agency.heroRooftop.height}
               ratio="fd-ratio-landscape"
               sizes="(min-width: 60rem) 45vw, 92vw"
             />
