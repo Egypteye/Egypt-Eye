@@ -1584,15 +1584,27 @@ ol.fd-beats h3::before {
 }
 
 .fd-hero h1 {
-  /* NOT --fd-step-6, which is the display maximum.
-     At step-6 this headline rendered at ~53px on a 390px phone and ran to
-     four lines, which pushed the photograph up until only the top third of it
-     was visible — on a photography brand's first viewport. The type was
-     winning an argument with the image that it should not have been having.
-     ~40px on a phone keeps it to three lines and gives the frame back about a
-     quarter of the screen; the desktop end comes down from 144px to ~105px,
-     which also stops the second line crowding the pyramids. */
-  font-size: clamp(2.5rem, 1rem + 6.2vw, 7.5rem);
+  /* NOT --fd-step-6, which is the display maximum. This headline sits over
+     the film, so its job is to be read across it, not to compete with it.
+
+     MEASURED, because the previous version of this rule was not. Its comment
+     claimed a desktop end of "~105px" while its own clamp capped at 7.5rem,
+     which is 120px — the stated intent and the number never matched, and a
+     1920px screen got the 120px the comment did not mention. At that size the
+     headline block ran 353px tall: 39% of the viewport, on the one screen a
+     photography brand has to win.
+
+     What it renders at now, against what it rendered at before:
+
+         390px    40px -> 36px
+         768px    64px -> 46px
+        1280px    95px -> 66px
+        1440px   105px -> 72px
+        1920px   120px -> 84px   (block 353px -> about 150px)
+
+     The cap is 5.25rem and the fluid term reaches it at about 1800px, so the
+     number in this comment is the number the browser uses. */
+  font-size: clamp(2.25rem, 1rem + 3.9vw, 5.25rem);
   max-width: 20ch;
 }
 
