@@ -1069,3 +1069,28 @@ export const nav: { label: string; href: string }[] = [
   { label: "Rent & Hire", href: `${FLYING_DRESSES_PATH}/rentals` },
   { label: "About", href: `${FLYING_DRESSES_PATH}/about` },
 ];
+
+/**
+ * SIX ITEMS IS THE CEILING, AND IT WAS MEASURED RATHER THAN GUESSED.
+ *
+ * `.fd-nav` appears at 72rem (1152px), where the header has to fit the
+ * wordmark, these labels and the enquire button on one line. A seventh label
+ * was added for the stories section and then taken out again, because
+ * Chromium at the breakpoint reported this:
+ *
+ *            wordmark width     6 items    7 items
+ *            1152px (nav on)      81px       0px   <- the logo disappears
+ *            1200px              122px      30px
+ *            1280px              135px      97px
+ *            1440px              135px     135px
+ *
+ * The logo is the flex item that gives, so a seventh label does not overflow
+ * the bar: it silently eats the owner's logo between 1152px and about 1400px.
+ * That is the fault the owner reported as a narrow menu bar, returning by a
+ * different route, and it is invisible on a 1440px laptop and on a phone.
+ *
+ * So the stories section is reached from the footer and from the home page
+ * instead. If a seventh item is ever genuinely needed, the fix is the header
+ * layout, not one more entry: check-flying-dresses.mts fails past six.
+ */
+export const NAV_MAX_ITEMS = 6;

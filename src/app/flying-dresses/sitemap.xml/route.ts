@@ -1,5 +1,6 @@
 import { packages, rentalServices } from "@/content/flyingDresses";
 import { categoryPath, experienceCategories } from "@/content/flyingDressExperiences";
+import { flyingDressStories } from "@/content/flyingDressStories";
 import { fdUrl } from "../_lib/seo";
 
 /**
@@ -43,6 +44,11 @@ export function GET() {
     })),
     { path: "/wardrobe", priority: "0.8" },
     { path: "/packages", priority: "0.8" },
+    // The stories. Below the products on purpose: these exist to be found by
+    // someone who is not yet searching for a photoshoot by name, and to
+    // answer them once they are here. They are not what the business sells.
+    { path: "/stories", priority: "0.7" },
+    ...flyingDressStories.map((s) => ({ path: `/stories/${s.slug}`, priority: "0.6" })),
     { path: "/collaborate", priority: "0.7" },
     { path: "/faq", priority: "0.6" },
     { path: "/about", priority: "0.5" },

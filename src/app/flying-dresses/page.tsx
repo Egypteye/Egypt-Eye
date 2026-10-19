@@ -20,6 +20,7 @@ import { HeroVideo } from "./_components/HeroVideo";
 import { agency, empty, location } from "./_lib/assets";
 import { ItemActions } from "./_components/ItemActions";
 import { experienceCategories } from "@/content/flyingDressExperiences";
+import { flyingDressStories, storyReadingMinutes } from "@/content/flyingDressStories";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
 import { dressPhotos } from "./_lib/dressPhotos";
 
@@ -653,6 +654,53 @@ export default async function FlyingDressesHome() {
               See what each of these costs
             </Link>, or ask us for
             the ones you want and we will put them in your quote.
+          </p>
+        </div>
+      </section>
+
+      {/* ================================================================
+          9b. THE STORIES
+          The section's entry point, and the reason it is here rather than in
+          the header: a seventh item in `.fd-nav` eats the wordmark between
+          1152px and 1400px. See the measurement recorded beside
+          NAV_MAX_ITEMS in content/flyingDresses.ts.
+
+          Three articles, not six. This is a doorway, not the index.
+          ================================================================ */}
+      <section className="fd-section-tight fd-sand" aria-labelledby="fd-stories-heading">
+        <div className="fd-shell">
+          <p className="fd-eyebrow">Before you book</p>
+          <h2 id="fd-stories-heading" className="fd-display fd-h3" style={{ marginBottom: "1rem" }}>
+            What nobody tells you about a flying dress
+          </h2>
+          <p className="fd-muted" style={{ maxWidth: "40rem", marginBottom: "2rem" }}>
+            Someone throws the dress. The colour matters more than you think.
+            A rooftop with a view of the pyramids is not the pyramids. Written
+            from running these, not from a brochure.
+          </p>
+
+          <div className="fd-card-grid fd-reveal-group">
+            {flyingDressStories.slice(0, 3).map((story) => (
+              <Link
+                key={story.slug}
+                className="fd-tile fd-experience-card"
+                href={fdPath(`/stories/${story.slug}`)}
+              >
+                <span className="fd-tile-body">
+                  <span className="fd-tile-title fd-display">{story.title}</span>
+                  <span className="fd-tile-meta">{story.excerpt}</span>
+                  <span className="fd-arrow-link" aria-hidden="true">
+                    Read · {storyReadingMinutes(story)} min
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
+
+          <p className="fd-muted" style={{ marginTop: "1.5rem", fontSize: "var(--fd-step--1)" }}>
+            <Link className="fd-inline-link" href={fdPath("/stories")}>
+              All {flyingDressStories.length} stories
+            </Link>
           </p>
         </div>
       </section>

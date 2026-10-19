@@ -278,3 +278,54 @@ export function fdBreadcrumbJsonLd(trail: { name: string; path: string }[]) {
 export function fdJsonLd(data: unknown) {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
+
+/**
+ * A stories article, as structured data.
+ *
+ * `author` and `publisher` are both the business rather than a named person,
+ * because no named person wrote these: they are the operating knowledge of the
+ * people running the sessions, written up. Inventing a byline to satisfy a
+ * schema field is how a fake author profile ends up with a fake biography and
+ * a fake photograph.
+ *
+ * `citation` carries the SOURCE URLS of an article that leans on anything
+ * outside the business. An article that rests only on running these shoots
+ * passes none, and emits none — an empty citation array would claim a
+ * provenance that does not exist.
+ */
+export function fdArticleJsonLd({
+  title,
+  description,
+  path,
+  publishedAt,
+  updatedAt,
+  image = FD_DEFAULT_SHARE_IMAGE,
+  citations = [],
+}: {
+  title: string;
+  description: string;
+  path: string;
+  publishedAt: string;
+  updatedAt?: string;
+  image?: FdShareImage;
+  citations?: string[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description,
+    url: fdUrl(path),
+    mainEntityOfPage: { "@type": "WebPage", "@id": fdUrl(path) },
+    datePublished: publishedAt,
+    // `dateModified` falls back to the publication date rather than to today.
+    // A dateModified of "now", regenerated on every build, is a freshness
+    // claim about a file nobody has touched.
+    dateModified: updatedAt ?? publishedAt,
+    author: { "@type": "Organization", name: brand.name, url: fdUrl() },
+    publisher: { "@type": "Organization", name: brand.name, url: fdUrl() },
+    image: [fdAbsolute(image.src)],
+    inLanguage: "en",
+    ...(citations.length > 0 ? { citation: citations } : {}),
+  };
+}

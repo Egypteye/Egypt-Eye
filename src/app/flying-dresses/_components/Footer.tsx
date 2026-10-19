@@ -127,6 +127,9 @@ export function FlyingDressesFooter({ logo }: { logo?: string | null }) {
             <Link href={fdPath("/packages")} style={{ color: "inherit" }}>
               Prices
             </Link>
+            <Link href={fdPath("/stories")} style={{ color: "inherit" }}>
+              Stories
+            </Link>
             <Link href={fdPath("/faq")} style={{ color: "inherit" }}>
               Questions
             </Link>

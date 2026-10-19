@@ -25,6 +25,7 @@
  */
 import { flyingDressExperiences, experienceCategories } from "../src/content/flyingDressExperiences.js";
 import { packages, rentalServices } from "../src/content/flyingDresses.js";
+import { flyingDressStories } from "../src/content/flyingDressStories.js";
 
 const BASE = process.env.BASE ?? "http://localhost:3000/flying-dresses";
 
@@ -40,7 +41,12 @@ const findings: Finding[] = [];
 
 /** Every service and experience URL, derived from the data rather than typed. */
 function inventory(): string[] {
-  const out = ["", "/experiences", "/celebrations", "/creative", "/rentals", "/packages", "/wardrobe"];
+  const out = ["", "/experiences", "/celebrations", "/creative", "/rentals", "/packages", "/wardrobe", "/stories"];
+  // The stories are audited by the same rules as the service pages. They are
+  // not service pages, but every fault this script catches is a fault they can
+  // have: a duplicate description, an unparseable JSON-LD block, questions
+  // rendered with no FAQPage around them.
+  for (const s of flyingDressStories) out.push(`/stories/${s.slug}`);
   for (const p of packages) out.push(`/experiences/${p.slug}`);
   for (const c of experienceCategories) out.push(`/${c.section}/${c.slug}`);
   for (const r of rentalServices) out.push(`/rentals/${r.slug}`);

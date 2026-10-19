@@ -19,6 +19,7 @@
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { execSync } from "node:child_process";
 import {
+  NAV_MAX_ITEMS,
   addOns,
   brand,
   cancellation,
@@ -46,6 +47,12 @@ import {
   experienceCategories,
   flyingDressExperiences,
 } from "../src/content/flyingDressExperiences.js";
+import {
+  EGYPT_EYE_FLYING_DRESS_STORIES,
+  flyingDressStories,
+  storyClusters,
+  storyWordCount,
+} from "../src/content/flyingDressStories.js";
 import { hardenFlyingDressGallery } from "../src/lib/sanityShape.js";
 import type { FlyingDressGallery } from "../src/content/types.js";
 
@@ -1645,6 +1652,12 @@ for (const file of brandTsx) {
       "src/content/flyingDresses.ts",
       "src/content/flyingDressExperiences.ts",
       "src/content/flyingDressCollaborations.ts",
+      // Added with the stories section, and it mattered immediately: the
+      // first draft of those six articles carried 28 lines of em dashes and
+      // this guard was green, because the list above did not name the file
+      // they were in. A copy check that does not cover a copy file is the
+      // exact shape CLAUDE.md §4 is about.
+      "src/content/flyingDressStories.ts",
     ]);
 
   for (const file of copyFiles) {
@@ -1960,6 +1973,247 @@ for (const section of ["celebrations", "creative"]) {
 }
 
 // ---------------------------------------------------------------------------
+// THE STORIES.
+//
+// A content section fails differently from a product page. Nothing crashes; an
+// article simply ends up unfindable, or duplicating one the owner already
+// publishes on their OTHER domain, or quoting a price nobody confirmed. All
+// three are invisible from the page itself, which is why they are here.
+//
+// Each assertion below was proven by breaking the thing it guards and watching
+// it go red — the notes say what was broken.
+// ---------------------------------------------------------------------------
+{
+  // The <title> budget. fdMetadata renders `${seoTitle} | ${brand.name}`, and
+  // a result list shows roughly 60 characters, so the brand suffix is a fixed
+  // tax on every one of these. Measured rather than assumed: the suffix length
+  // is read from `brand.name` so renaming the brand moves the budget.
+  const SUFFIX = ` | ${brand.name}`.length;
+  const TITLE_MAX = 60;
+
+  // Proven by lengthening one seoTitle past the budget: red.
+  for (const story of flyingDressStories) {
+    const rendered = story.seoTitle.length + SUFFIX;
+    ok(
+      `story ${story.slug}: <title> renders ${rendered} chars with the brand suffix, past the ${TITLE_MAX} a result list shows`,
+      rendered <= TITLE_MAX
+    );
+    // Proven by trimming one description to 90 characters: red.
+    ok(
+      `story ${story.slug}: metaDescription is ${story.metaDescription.length} chars, outside 110-160`,
+      story.metaDescription.length >= 110 && story.metaDescription.length <= 160
+    );
+    // Not an editorial judgement — a floor. Under this, an article is a
+    // stub competing with the commercial pages for the same query.
+    // Proven by deleting four sections from one article: red.
+    const words = storyWordCount(story);
+    ok(`story ${story.slug}: ${words} words, thin for a reference article`, words >= 600);
+
+    ok(
+      `story ${story.slug}: cluster "${story.cluster}" is not in storyClusters`,
+      storyClusters.some((c) => c.id === story.cluster)
+    );
+
+    // `basis` has to mean something in both directions. A cited article with
+    // no sources is the failure this catches; a first-party article WITH
+    // sources is mislabelled, and the page would then render a "where this
+    // came from" block under prose claiming to need none.
+    // Proven by flipping one article's basis in each direction: red both ways.
+    if (story.basis === "cited") {
+      ok(
+        `story ${story.slug}: basis is "cited" and it has no sources`,
+        (story.sources ?? []).length > 0
+      );
+      for (const source of story.sources ?? []) {
+        ok(
+          `story ${story.slug}: source ${source.url} has no accessed date or no "supports" note`,
+          Boolean(source.accessed) && Boolean(source.supports)
+        );
+        ok(
+          `story ${story.slug}: source ${source.url} is not an absolute http(s) URL`,
+          /^https?:\/\//.test(source.url)
+        );
+      }
+    } else {
+      ok(
+        `story ${story.slug}: basis is "first-party" but it carries sources — one of the two is wrong`,
+        (story.sources ?? []).length === 0
+      );
+    }
+  }
+
+  // Unique slugs. Two articles on one URL is one article.
+  const slugs = flyingDressStories.map((s) => s.slug);
+  ok("story slugs are not unique", new Set(slugs).size === slugs.length);
+
+  // -------------------------------------------------------------------------
+  // THE CANNIBALISATION GUARD, which is the reason this block exists.
+  //
+  // The owner's other site, egypteyetravel.com, already publishes seven
+  // articles about flying-dress photoshoots, including a pillar guide of over
+  // twenty thousand characters. Writing any of those again on this domain
+  // would split one business's own signal across two hosts, one of which has
+  // years of history and one of which had its DNS pointed this month.
+  //
+  // This does NOT read the curated list below and trust it. It reads the
+  // travel site's content file and fails on any slug that appears in both,
+  // so a story added to EITHER domain cannot create a duplicate quietly.
+  //
+  // Proven by renaming one story to `what-to-wear-flying-dress-photoshoot`,
+  // which is a real slug on the travel site: red.
+  // -------------------------------------------------------------------------
+  // THE WHOLE CORPUS, not stories.ts alone. The travel site's articles are
+  // split across stories.ts and src/content/storyBatches/*, and reading only
+  // the first reported `abby-zoobi-midnight-flying-dress-booking` as missing
+  // when it is in batch16.ts. A guard that reads half the data answers a
+  // different question from the one it claims to.
+  const travelStoryFiles = [
+    "src/content/stories.ts",
+    "src/content/retiredStories.ts",
+    "src/content/redirectedStories.ts",
+    ...readdirSync("src/content/storyBatches")
+      .filter((f) => f.endsWith(".ts"))
+      .map((f) => `src/content/storyBatches/${f}`),
+  ].filter((f) => existsSync(f));
+  const travelStories = travelStoryFiles.map(read).join("\n");
+  for (const slug of slugs) {
+    ok(
+      `story ${slug} also exists on egypteyetravel.com (src/content/stories.ts) — one topic, two domains, split signal`,
+      !travelStories.includes(`"${slug}"`)
+    );
+  }
+
+  // And the other direction: the recorded list of the travel site's
+  // flying-dress articles has to still be true, or the comment explaining why
+  // this section avoids those topics is describing a site that changed.
+  // Proven by adding a made-up slug to the constant: red.
+  for (const slug of EGYPT_EYE_FLYING_DRESS_STORIES) {
+    ok(
+      `EGYPT_EYE_FLYING_DRESS_STORIES names "${slug}", which is no longer in src/content/stories.ts`,
+      travelStories.includes(`"${slug}"`)
+    );
+  }
+
+  // -------------------------------------------------------------------------
+  // Internal links have to land somewhere. A "related" rail is the one place
+  // a path is typed by hand rather than derived, so it is the one place a
+  // renamed category produces a 404 nobody clicks in development.
+  //
+  // Proven by pointing one related link at /celebrations/proposals, which is
+  // the category ID and not its slug: red.
+  // -------------------------------------------------------------------------
+  const validPaths = new Set<string>([
+    "",
+    "/experiences",
+    "/celebrations",
+    "/creative",
+    "/rentals",
+    "/packages",
+    "/wardrobe",
+    "/faq",
+    "/about",
+    "/enquire",
+    "/collaborate",
+    "/stories",
+    ...packages.map((p) => `/experiences/${p.slug}`),
+    ...rentalServices.map((r) => `/rentals/${r.slug}`),
+    ...experienceCategories.map((c) => `/${c.section}/${c.slug}`),
+    ...slugs.map((slug) => `/stories/${slug}`),
+  ]);
+
+  for (const story of flyingDressStories) {
+    for (const link of story.related) {
+      ok(
+        `story ${story.slug}: related link "${link.path}" is not a route this site serves`,
+        validPaths.has(link.path)
+      );
+      ok(`story ${story.slug}: related link "${link.path}" points at itself`, link.path !== `/stories/${story.slug}`);
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // NO PRICE AN ARTICLE INVENTED.
+  //
+  // Prose is where a figure gets rounded, remembered or guessed. Only the
+  // confirmed numbers — the three photoshoot prices and the add-ons that
+  // already carry one — may appear as a dollar amount in a story.
+  //
+  // Proven by writing "$250" into one paragraph: red.
+  // -------------------------------------------------------------------------
+  const confirmedPrices = new Set<number>([
+    ...packages.map((p) => p.priceUsd),
+    ...addOns.map((a) => a.priceUsd).filter((v): v is number => typeof v === "number"),
+  ]);
+
+  for (const story of flyingDressStories) {
+    const prose = [
+      story.title,
+      story.excerpt,
+      story.metaDescription,
+      ...story.sections.flatMap((s) => [s.heading, ...s.body, ...(s.list ?? [])]),
+      ...story.faqs.flatMap((f) => [f.question, f.answer]),
+    ].join(" ");
+
+    for (const match of prose.matchAll(/\$(\d[\d,]*)/g)) {
+      const value = Number(match[1].replace(/,/g, ""));
+      ok(
+        `story ${story.slug} states $${match[1]}, which is not a confirmed price`,
+        confirmedPrices.has(value)
+      );
+    }
+  }
+
+  // -------------------------------------------------------------------------
+  // REACHABLE AND CRAWLABLE. This is the fault pattern named in
+  // scripts/audit-service-pages.mts: content that is owned, valid, and never
+  // reaches the browser. A story nobody links to and no sitemap lists is a
+  // file, not a page.
+  //
+  // Proven by removing the nav entry, and separately by removing the sitemap
+  // mapping: red each time.
+  // -------------------------------------------------------------------------
+  // NOT the main nav, deliberately, and this is the interesting half.
+  //
+  // The obvious guard here was "the header links to /stories". It was written,
+  // it passed, and the header was wrong: Chromium at the 72rem breakpoint
+  // showed a seventh nav label squeezing the owner's wordmark to ZERO pixels,
+  // and to 97px at 1280. The flex item that gives is the logo, so the bar
+  // never overflows and nothing in any offline check can see it. That is the
+  // narrow menu bar the owner already reported once, arriving by a new route.
+  //
+  // So the constraint is the item ceiling, and the section is reached from the
+  // home page and the footer instead.
+  //
+  // Proven by adding a seventh nav entry: red.
+  ok(
+    `the main nav has ${nav.length} items; six is what fits at 72rem before the wordmark is squeezed (see NAV_MAX_ITEMS)`,
+    nav.length <= NAV_MAX_ITEMS
+  );
+
+  // Reachable without typing the URL. Two routes in, because one of them is
+  // the footer, which is where links go to be ignored.
+  // Proven by removing the home page section: red.
+  const homeSource = read("src/app/flying-dresses/page.tsx");
+  ok(
+    "the home page does not link to /stories — the footer would be the only way in",
+    homeSource.includes('fdPath("/stories")')
+  );
+
+  const sitemapSource = read("src/app/flying-dresses/sitemap.xml/route.ts");
+  ok(
+    "the sitemap does not list /stories",
+    sitemapSource.includes('path: "/stories"')
+  );
+  ok(
+    "the sitemap does not map over flyingDressStories, so new articles would never be submitted",
+    sitemapSource.includes("flyingDressStories.map")
+  );
+
+  const footerSource = read("src/app/flying-dresses/_components/Footer.tsx");
+  ok("the footer has no Stories link", footerSource.includes('fdPath("/stories")'));
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
@@ -1975,5 +2229,6 @@ console.log(
     `${FLYING_DRESS_COLLECTION.length} dresses and ${MENS_OUTFITS.length} gawns from one shared wardrobe, ` +
     `${Object.values(allSlots).filter((s) => s.kind !== "empty").length} real images all present and ` +
     `${Object.values(allSlots).filter((s) => s.kind === "empty").length} labelled gaps, ` +
+    `${flyingDressStories.length} stories none of which duplicate a slug on egypteyetravel.com, ` +
     "reduced motion disables the timelines, and no enquiry claims to be a booking."
 );
