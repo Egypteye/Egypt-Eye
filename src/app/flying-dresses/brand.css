@@ -1332,21 +1332,25 @@ ol.fd-beats h3::before {
   display: none;
 }
 
-/* THE DESKTOP NAV ONLY APPEARS WHERE IT FITS.
-   It used to switch on at 64rem (1024px) with seven links, a wordmark and a
-   button beside it, and that content needs about 1400px. Between 1024 and
-   1400 the header simply ran off the side of the screen: 312px of horizontal
-   page scroll at 1024, 86px at 1280. Every 1366px laptop was affected.
-   The gap and tracking are tightened and it still did not fit: measured at
-   every width, the overflow was 312px at 1024, 174 at 1180, 86 at 1280 and
-   11 at 1366. Seven links, a wordmark and a button need about 1440px, so
-   that is where the switch is, and the number comes from the measurement
-   rather than from a guess.
+/* THE DESKTOP NAV ONLY APPEARS WHERE IT FITS — AND --fd-nav-at IS THE ONE
+   PLACE THAT DECIDES WHERE.
+   ------------------------------------------------------------------------
+   This number was 90rem, measured when the brand name was typeset in caps at
+   0.22em tracking. The owner's logo replaced that with an image, which is
+   narrower, and re-measuring with it in place the header content fits from
+   about 1100px: it overflows by 30px at 1024 and by nothing at 1100, 1180,
+   1280, 1366 or 1440. 72rem (1152px) is the switch, chosen with headroom over
+   the 1100 where it starts fitting rather than sat on it.
 
-   The trade is deliberate: a 1366px laptop now gets the burger menu, which
-   is a smaller loss than a header that runs off the side of the screen and
-   drags the whole page with it. The burger already carries every link. */
-@media (min-width: 90rem) {
+   THE THREE RULES BELOW MUST ALL USE THE SAME WIDTH, and a check enforces it.
+   They did not, and that was a real bug the owner hit: the nav moved to 90rem
+   and the burger moved with it, but `.fd-drawer`'s hide rule was left behind
+   at 64rem. From 1024px to 1440px the burger was therefore visible with its
+   drawer set to `display: none` — clicking it set aria-expanded="true" and
+   nothing appeared. 1280px, the commonest laptop width there is, sat squarely
+   in that dead zone. A media query is not a local edit: these three are one
+   decision written in three places. */
+@media (min-width: 72rem) {
   .fd-nav {
     display: flex;
     align-items: center;
@@ -1410,7 +1414,8 @@ ol.fd-beats h3::before {
   align-items: center;
 }
 
-@media (min-width: 90rem) {
+/* Same width as the nav above: see --fd-nav-at note. */
+@media (min-width: 72rem) {
   .fd-burger {
     display: none;
   }
@@ -1461,7 +1466,10 @@ ol.fd-beats h3::before {
   }
 }
 
-@media (min-width: 64rem) {
+/* THIS IS THE ONE THAT WAS WRONG. Same width as the burger that opens it:
+   hiding the drawer anywhere the burger is still on screen makes the button
+   dead. See the note above the nav. */
+@media (min-width: 72rem) {
   .fd-drawer {
     display: none;
   }
