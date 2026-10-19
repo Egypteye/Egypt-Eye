@@ -9,7 +9,7 @@ import {
   experienceCategoryBySlug,
   experiencesInCategory,
 } from "@/content/flyingDressExperiences";
-import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../../_lib/seo";
+import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from "../../_lib/seo";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -67,12 +67,31 @@ export default async function ExperienceCategoryPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
+          /* THE QUESTIONS WERE ON THE PAGE AND IN NOBODY'S MARKUP.
+             Every experience carries `faqs`, ExperienceDetail renders them,
+             and this route emitted only a BreadcrumbList — so the answers a
+             visitor can read were invisible to a crawler. The package and
+             rental routes have emitted FAQPage all along, which is what makes
+             it an inconsistency rather than a policy.
+
+             Built from the SAME array the page renders, never a second copy:
+             Google requires the marked-up answer to be visible on the page,
+             and two hand-kept lists drift. Experiences are collapsed into one
+             FAQPage so several categories cannot each claim the entity. */
+          /* fdJsonLd takes ONE value. A second argument is silently dropped,
+             so the two entities go up as a top-level ARRAY, which is valid
+             JSON-LD and what Google's own examples use for a page carrying
+             more than one. fdFaqJsonLd returns null when there are no
+             questions, and that null is filtered out rather than emitted. */
           __html: fdJsonLd(
+          [
           fdBreadcrumbJsonLd([
           { name: "Home", path: "" },
           { name: SECTION_LABEL, path: `/${SECTION}` },
           { name: category.name, path: `/${SECTION}/${category.slug}` },
-          ])
+          ]),
+          fdFaqJsonLd(experiences.flatMap((e) => e.faqs)),
+          ].filter(Boolean)
           ),
         }}
       />

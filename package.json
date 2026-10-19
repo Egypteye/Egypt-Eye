@@ -34,7 +34,8 @@
     "check:links": "tsx scripts/check-links.mts",
     "check:faqs": "tsx scripts/check-faqs.mts",
     "check:treasures": "tsx scripts/check-treasures.mts",
-    "check:flyingdresses": "tsx scripts/check-flying-dresses.mts"
+    "check:flyingdresses": "tsx scripts/check-flying-dresses.mts",
+    "audit:services": "tsx scripts/audit-service-pages.mts"
   },
   "dependencies": {
     "@portabletext/react": "^8.0.0",
