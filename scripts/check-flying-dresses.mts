@@ -38,6 +38,7 @@ import {
 import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
 import { allSlots } from "../src/app/flying-dresses/_lib/assets.js";
+import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
 import {
   ROOFTOP_LOCATION_NOTE,
@@ -454,6 +455,32 @@ for (const [key, slot] of Object.entries(allSlots)) {
       `.fd-drawer at ${drawer}. Any width where the burger shows but the drawer is hidden ` +
       "is a menu button that does nothing when clicked.",
     nav !== null && nav === burger && burger === drawer
+  );
+}
+
+// A PHOTOGRAPH THE SITE OWNS AND DOES NOT SHOW IS A PHOTOGRAPH IT DOES NOT HAVE.
+//
+// The home page's dress rail rendered `background: dress.hex` and the words
+// "Photo coming soon" unconditionally. All twelve dresses had real photographs
+// by then, already live on /wardrobe, so the home page was advertising colour
+// swatches for a collection it had pictures of. Nothing was broken, nothing
+// 404'd, and no existing check noticed, because the markup was valid and the
+// files were present — just never referenced from this page.
+//
+// Matched on the page source with comments stripped, so this note cannot
+// satisfy it. Proven by deleting the dressPhotos import and lookup: red.
+{
+  const page = stripComments(read("src/app/flying-dresses/page.tsx"));
+  const photographed = Object.keys(dressPhotos).length;
+  ok(
+    `${photographed} dresses have photographs in dressPhotos, but the home page never reads ` +
+      "that map — it is rendering colour swatches for pictures the site already owns.",
+    photographed === 0 || /dressPhotos\[/.test(page)
+  );
+  ok(
+    'the home page still says "Photo coming soon" unconditionally. It must say that only ' +
+      "where there is genuinely no photograph.",
+    !/Photo coming soon/.test(page) || /photo \?/.test(page) || /\bphoto\b[\s\S]{0,120}\?/.test(page)
   );
 }
 

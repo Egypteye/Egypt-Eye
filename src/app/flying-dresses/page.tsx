@@ -21,6 +21,7 @@ import { agency, empty, location } from "./_lib/assets";
 import { ItemActions } from "./_components/ItemActions";
 import { experienceCategories } from "@/content/flyingDressExperiences";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
+import { dressPhotos } from "./_lib/dressPhotos";
 
 /**
  * The home page.
@@ -365,30 +366,56 @@ export default async function FlyingDressesHome() {
             aria-label="The dress collection: scroll sideways to see all twelve"
           >
           <ul className="fd-rail" style={{ listStyle: "none", margin: 0 }}>
-            {dresses.map((dress) => (
-              <li key={dress.id}>
-                <Link className="fd-tile" href={fdPath(`/wardrobe?dress=${dress.id}`)}>
-                  <span
-                    className="fd-tile-media fd-ratio-landscape"
-                    style={{ display: "block", background: dress.hex }}
-                  />
-                  <span className="fd-tile-body" style={{ display: "block" }}>
-                    <span className="fd-tile-title" style={{ display: "block" }}>
-                      {dress.name}
+            {dresses.map((dress) => {
+              /* THE PHOTOGRAPH, WHEN THERE IS ONE.
+                 This rail used to render `background: dress.hex` and the words
+                 "Photo coming soon" unconditionally — it never asked whether a
+                 photograph existed. All twelve had arrived and were already on
+                 /wardrobe, so the home page was showing colour swatches for a
+                 collection it had real pictures of. The swatch is still the
+                 fallback, and still correct for anything unphotographed. */
+              const photo = dressPhotos[dress.id];
+              return (
+                <li key={dress.id}>
+                  <Link className="fd-tile" href={fdPath(`/wardrobe?dress=${dress.id}`)}>
+                    {photo ? (
+                      <span className="fd-tile-media fd-ratio-landscape" style={{ display: "block" }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={photo.src}
+                          alt={photo.alt}
+                          loading="lazy"
+                          decoding="async"
+                          width={1200}
+                          height={800}
+                        />
+                      </span>
+                    ) : (
+                      <span
+                        className="fd-tile-media fd-ratio-landscape"
+                        style={{ display: "block", background: dress.hex }}
+                      />
+                    )}
+                    <span className="fd-tile-body" style={{ display: "block" }}>
+                      <span className="fd-tile-title" style={{ display: "block" }}>
+                        {dress.name}
+                      </span>
+                      <span className="fd-tile-meta">
+                        {photo ? "View larger" : "Photo coming soon"}
+                      </span>
                     </span>
-                    <span className="fd-tile-meta">Photo coming soon</span>
-                  </span>
-                </Link>
-              </li>
-            ))}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
           </div>
         </div>
 
         <div className="fd-shell">
           <p className="fd-rail-hint fd-muted" style={{ color: "var(--fd-ivory-dim)" }}>
-            <span aria-hidden="true">→</span> Scroll sideways · colour swatches until the
-            photographs are shot
+            <span aria-hidden="true">→</span> Scroll sideways · twelve dresses, every one
+            photographed on the rooftop
           </p>
           <div className="fd-actions" style={{ marginTop: "1.5rem" }}>
             <Link className="fd-btn" href={fdPath("/wardrobe")}>
