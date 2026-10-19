@@ -93,24 +93,29 @@ export const metadata: Metadata = {
         twitter: { card: "summary_large_image", images: [cover] },
       }
     : {}),
-  icons: {
-    // Inline SVG favicon: a hairline "F" in the brand gold on ink. Data URI
-    // rather than a file so this brand does not borrow Egypt Eye's icon.png,
-    // which sits at the app root and would otherwise be inherited.
-    icon: [
-      {
-        url:
-          "data:image/svg+xml," +
-          encodeURIComponent(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">' +
-              '<rect width="32" height="32" fill="#3a2e1c"/>' +
-              '<text x="16" y="23" font-family="Didot,Georgia,serif" font-size="20" fill="#c9a85f" text-anchor="middle">F</text>' +
-              "</svg>"
-          ),
-        type: "image/svg+xml",
-      },
-    ],
-  },
+  /* NO `icons` KEY HERE ANY MORE — ON PURPOSE.
+     ----------------------------------------------------------------------
+     This used to be an inline SVG data URI: a brown square with a gold "F"
+     set in `font-family="Didot,Georgia,serif"`. Two things were wrong with
+     it. Didot is not installed on most machines and the brand's display face
+     is Bodoni Moda, so nearly every visitor saw the letter in whatever serif
+     their device fell back to — a typeface belonging to no one. And it was
+     a stand-in written before the owner had sent any logo files, which then
+     stayed after they arrived.
+
+     `icon.png` and `apple-icon.png` now sit beside this file, and Next's file
+     convention picks them up without a metadata key. They are cut from the
+     owner's own logo: the capital F is the real letterform from the supplied
+     artwork, not a letter re-set in a substitute font, and the Apple icon is
+     the full two-line lockup, which has the room to be read at 180px.
+
+     A single wide lockup cannot do both jobs — at 32px a two-line wordmark is
+     a smudge — which is why the small icon is one glyph from it. Checked by
+     rendering at 16, 32 and 48px before committing.
+
+     Removing the key rather than pointing it at the files matters: a metadata
+     `icons` entry overrides the file convention, so leaving it would have kept
+     the old SVG winning over the new PNGs. */
 };
 
 export const viewport: Viewport = {
