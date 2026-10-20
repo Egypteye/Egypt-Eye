@@ -3254,10 +3254,52 @@ ol.fd-timeline h3::before {
   margin-inline: -0.2rem;
 }
 
+/* AN INLINE LINK HAD NO COLOUR, SO IT WAS BROWSER-DEFAULT BLUE.
+   This rule sized the tap target and stopped there, which meant every link
+   inside running prose on this site rendered #0000EE, and purple once
+   visited. On a brand whose entire palette is ink, ivory, sand and one red,
+   that is the single most out-of-place colour available, and it was on the
+   home page ("See what each of these costs"), under the photo ribbon, and on
+   every source citation in the stories section.
+
+   Nobody had noticed because the site is almost entirely buttons and cards,
+   which all set their own colour. Prose links are rare here, which is
+   exactly why the gap survived.
+
+   Ink with a red underline, rather than red text: red is the brand's accent
+   and a paragraph with three red words in it reads as a warning. The offset
+   keeps the rule off the descenders. */
 .fd-inline-link {
   display: inline-block;
   min-height: 2.75rem;
   padding-block: 0.75rem;
+  color: var(--fd-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--fd-gold);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: color var(--fd-fast, 160ms) var(--fd-ease-soft, ease);
+}
+
+.fd-inline-link:hover,
+.fd-inline-link:focus-visible {
+  color: var(--fd-gold-ink);
+  text-decoration-thickness: 2px;
+}
+
+/* The dark sections invert it: ivory text, and the accent still carries the
+   underline, which holds contrast against ink where ink obviously cannot. */
+.fd-on-dark .fd-inline-link,
+.fd-dark .fd-inline-link {
+  color: var(--fd-ivory);
+}
+
+.fd-on-dark .fd-inline-link:hover,
+.fd-on-dark .fd-inline-link:focus-visible,
+.fd-dark .fd-inline-link:hover,
+.fd-dark .fd-inline-link:focus-visible {
+  color: var(--fd-ivory);
+  text-decoration-thickness: 2px;
 }
 
 /* ---- The narrowest phone ----------------------------------------------
@@ -3371,4 +3413,154 @@ ol.fd-timeline h3::before {
   .fd-hero-body {
     padding-block: 2rem 2.5rem;
   }
+}
+
+/* ---- The photo ribbon ------------------------------------------------- */
+/*
+   Two rows of the agency's own frames, travelling in opposite directions.
+   Asked for directly: "photos animated slider with variety of photos moving".
+
+   THE MOTION IS A SINGLE TRANSLATE AND NOTHING ELSE. No width, no left, no
+   margin, so it runs on the compositor and never triggers layout. The strip
+   holds each row twice and moves exactly -50%, which puts the second copy
+   where the first began: the loop closes with no measurement, no JavaScript
+   and no visible seam, at any number of frames and any screen width.
+
+   REDUCED MOTION NEEDED ITS OWN RULE, AND THIS IS THE INTERESTING PART.
+   The global block near the top of this file sets animation-duration: 1ms
+   and animation-iteration-count: 1 on everything. For a fade that is exactly
+   right: it lands on its end state, which is the visible one. For an infinite
+   marquee it is exactly wrong — the end state is translateX(-50%), so the
+   blanket rule does not stop the ribbon, it FAST-FORWARDS it and parks it
+   half a strip to the left, with the first few frames gone off the edge.
+   A visitor who asked for less motion would get fewer photographs.
+
+   Verified in Chromium with reducedMotion: "reduce": animation-name none,
+   transform none, first cell at x=0 inside its ribbon.
+
+   So the ribbon is parked at 0 explicitly, and then overflows as a normal
+   horizontal scroller, which is the honest fallback: everything is still
+   reachable, by hand, without anything moving.
+*/
+
+.fd-ribbon {
+  overflow: hidden;
+  /* The band is decoration below the fold; let the browser skip it until it
+     is near the viewport. contain-intrinsic-size keeps the scrollbar honest
+     while it is skipped. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 13rem;
+}
+
+.fd-ribbon + .fd-ribbon {
+  margin-top: clamp(0.5rem, 0.3rem + 0.8vw, 1rem);
+}
+
+.fd-ribbon-track {
+  display: flex;
+  gap: clamp(0.5rem, 0.3rem + 0.8vw, 1rem);
+  width: max-content;
+  will-change: transform;
+  animation: fd-ribbon-slide var(--fd-ribbon-duration, 70s) linear infinite;
+}
+
+.fd-ribbon-reverse {
+  animation-direction: reverse;
+}
+
+/* Hovering one, or tabbing to anything inside it, holds it still. */
+.fd-ribbon:hover .fd-ribbon-track,
+.fd-ribbon:focus-within .fd-ribbon-track {
+  animation-play-state: paused;
+}
+
+.fd-ribbon-cell {
+  margin: 0;
+  flex: none;
+  /* Height is fixed and width is free, so the frames keep their own
+     proportions. A uniform cell would crop a landscape and a portrait to the
+     same box and the row would stop looking like a photographer's wall. */
+  height: clamp(8rem, 5rem + 12vw, 15rem);
+  border-radius: var(--fd-r-md, 0.75rem);
+  overflow: hidden;
+  background: var(--fd-sand-deep);
+}
+
+.fd-ribbon-cell img {
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: cover;
+}
+
+@keyframes fd-ribbon-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fd-ribbon-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Parked, so make it reachable by hand instead. */
+  .fd-ribbon {
+    overflow-x: auto;
+  }
+}
+
+/* ---- Links that are headings, and links that are navigation ----------- */
+/*
+   EIGHTEEN BROWSER-DEFAULT LINKS, FOUND BY SWEEPING THE RENDERED PAGES.
+
+   The inline-link fix above covered running prose. It did not cover two other
+   places where an <a> carries no class and therefore no colour, so Chromium
+   painted them #0000EE and, once visited, #551A8B:
+
+     ul.fd-list.fd-list-2 > li > h3 > a   the "other experiences" and
+                                          "next" rails on /celebrations/*,
+                                          /creative/* and /stories/*
+     nav > ul.fd-swatch-row > li > a      the jump links at the top of /faq
+
+   Every other link on this site sits inside a button, a tile or the footer,
+   all of which set their own colour. These two were the remainder, and they
+   had been live on the celebration and FAQ pages since those pages were
+   built. Nobody reported them because a blue link does not look broken; it
+   looks like a link. It is simply not this brand's link.
+
+   A heading that is a link is still a heading, so it takes the ink it would
+   have had and earns an underline on hover rather than wearing one, which is
+   the same treatment .fd-arrow-link already gets.
+
+   scripts/visual-audit.mts now fails on any link left in the User-Agent's
+   blue or purple, which is the only kind of check that can see this: the
+   markup is a perfectly ordinary <a> and every source-reading guard in this
+   repository passes on it.
+*/
+.fd-list a,
+.fd-swatch-row a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.fd-list a:hover,
+.fd-list a:focus-visible,
+.fd-swatch-row a:hover,
+.fd-swatch-row a:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: var(--fd-gold);
+  text-underline-offset: 0.25em;
+}
+
+/* The stories source list is prose inside a .fd-list, so its citations keep
+   the inline-link treatment rather than inheriting the heading one. */
+.fd-list a.fd-inline-link {
+  color: var(--fd-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--fd-gold);
 }

@@ -132,6 +132,39 @@ async function inspectStructure(page: Page, path: string) {
       .filter((img) => !img.hasAttribute("alt"))
       .map((img) => (img.getAttribute("src") ?? "").slice(0, 120));
 
+    // LINKS NOBODY GAVE A COLOUR.
+    //
+    // #0000EE and #551A8B are the User-Agent stylesheet's link and visited
+    // colours. A link rendering in either of them is a link no stylesheet
+    // reached, and it is invisible to every source-reading check in this
+    // repository: the markup is a perfectly ordinary <a>.
+    //
+    // Eighteen of them were live across the Flying Dresses brand when this
+    // check was written, on the celebration pages, the creative pages and
+    // the FAQ, in two patterns nobody had classed. They do not look broken.
+    // They look like links. They are simply not the brand's.
+    //
+    // Reported with the ancestor chain rather than the text, because the fix
+    // is always a selector and never one link.
+    const defaultColouredLinks = Array.from(document.querySelectorAll("a"))
+      .filter((a) => {
+        const c = getComputedStyle(a).color;
+        return c === "rgb(0, 0, 238)" || c === "rgb(85, 26, 139)";
+      })
+      .map((a) => {
+        const chain: string[] = [];
+        let el: Element | null = a.parentElement;
+        while (el && chain.length < 3) {
+          const cls =
+            typeof el.className === "string" && el.className.trim()
+              ? "." + el.className.trim().split(/\s+/).join(".")
+              : "";
+          chain.unshift(el.tagName.toLowerCase() + cls);
+          el = el.parentElement;
+        }
+        return chain.join(" > ") + " > a";
+      });
+
     // Interactive things too small to hit reliably on a phone. Measured from
     // the rendered box, so it accounts for padding, not just font size.
     //
@@ -373,6 +406,8 @@ async function inspectStructure(page: Page, path: string) {
       ogImage: document.querySelector('meta[property="og:image"]')?.getAttribute("content") ?? null,
       headings,
       imagesWithoutAlt,
+
+      defaultColouredLinks,
       smallTargets,
       topTargetGroups,
       collisions,
@@ -425,6 +460,17 @@ async function inspectStructure(page: Page, path: string) {
     add("warning", path, "a11y", `${info.imagesWithoutAlt.length} <img> without alt, e.g. ${info.imagesWithoutAlt[0]}`);
   }
   if (info.jsonLdBlocks === 0) add("note", path, "seo", "No JSON-LD structured data on this page.");
+
+  // --- Links the stylesheet never reached
+  if (info.defaultColouredLinks.length) {
+    const patterns = Array.from(new Set(info.defaultColouredLinks));
+    add(
+      "error",
+      path,
+      "brand",
+      `${info.defaultColouredLinks.length} link(s) rendering in the browser's default blue/purple, in ${patterns.length} pattern(s): ${patterns.join(" | ")}`
+    );
+  }
 
   return info;
 }

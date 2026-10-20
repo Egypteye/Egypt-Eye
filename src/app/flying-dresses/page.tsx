@@ -23,6 +23,8 @@ import { experienceCategories } from "@/content/flyingDressExperiences";
 import { flyingDressStories, storyReadingMinutes } from "@/content/flyingDressStories";
 import { fdJsonLd, fdMetadata, fdPackagesJsonLd, fdPath } from "./_lib/seo";
 import { dressPhotos } from "./_lib/dressPhotos";
+import { PhotoRibbon } from "./_components/PhotoRibbon";
+import { marqueeColours, marqueePlaces } from "./_lib/marquee";
 
 /**
  * The home page.
@@ -127,6 +129,58 @@ export default async function FlyingDressesHome() {
             <span className="fd-cue-line" />
             <span>Scroll</span>
           </div>
+        </div>
+      </section>
+
+      {/* ================================================================
+          1b. THE RIBBON
+          Asked for directly: an animated slider with a variety of photos
+          moving. Two rows of the agency's own frames, opposite directions,
+          different speeds, immediately under the hero — which is where a
+          photography brand has to prove it can photograph, before it has
+          asked for anything.
+
+          Full bleed on purpose. A ribbon inside a shell with a gutter either
+          side reads as a component; running it to both edges reads as a wall
+          of work, which is the thing being claimed.
+          ================================================================ */}
+      <section className="fd-section-tight" aria-labelledby="fd-ribbon-heading">
+        <div className="fd-shell">
+          <p className="fd-eyebrow">Real mornings</p>
+          <h2
+            id="fd-ribbon-heading"
+            className="fd-display fd-h3"
+            style={{ marginBottom: "0.75rem" }}
+          >
+            {marqueePlaces.length + marqueeColours.length} frames, every one ours
+          </h2>
+          <p className="fd-muted" style={{ maxWidth: "40rem", marginBottom: "2rem" }}>
+            Rooftops above Giza, the dunes and the lakes of Fayoum, and the
+            twelve colours of the collection. No stock photographs: if we have
+            not shot it, it is not here.
+          </p>
+        </div>
+
+        <PhotoRibbon
+          frames={marqueePlaces}
+          direction="left"
+          speedSeconds={80}
+          label="Photographs from client sessions: rooftops, dunes and Fayoum"
+        />
+        <PhotoRibbon
+          frames={marqueeColours}
+          direction="right"
+          speedSeconds={95}
+          label="The twelve dress colours, photographed on the rooftop"
+        />
+
+        <div className="fd-shell">
+          <p className="fd-muted" style={{ marginTop: "1.75rem", fontSize: "var(--fd-step--1)" }}>
+            <Link className="fd-inline-link" href={fdPath("/wardrobe")}>
+              Open the wardrobe
+            </Link>{" "}
+            to see each colour at full size.
+          </p>
         </div>
       </section>
 

@@ -40,6 +40,7 @@ import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
 import { allSlots, location } from "../src/app/flying-dresses/_lib/assets.js";
 import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
+import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
 import {
   ROOFTOP_LOCATION_NOTE,
@@ -2308,6 +2309,98 @@ for (const section of ["celebrations", "creative"]) {
 }
 
 // ---------------------------------------------------------------------------
+// THE PHOTO RIBBON.
+//
+// Two rows of the agency's own frames, moving in opposite directions, asked
+// for directly: "photos animated slider with variety of photos moving".
+//
+// Three things about it can break silently, and all three were found by
+// building it rather than by imagining it.
+//
+// Proven by breaking each: red.
+// ---------------------------------------------------------------------------
+{
+  // The ribbon's whole claim is "every one ours". A frame with no file behind
+  // it renders as a gap in a moving row, which is worse than a short row.
+  // Proven by pointing one marquee entry at a missing file: red.
+  for (const frame of [...marqueePlaces, ...marqueeColours]) {
+    ok(
+      `the photo ribbon references ${frame.src}, which is not in public/`,
+      existsSync(`public${frame.src}`)
+    );
+    ok(`the photo ribbon frame ${frame.src} has no alt text`, frame.alt.trim().length > 0);
+  }
+
+  // Two rows of three photographs is not a wall of work, it is a gap with
+  // pictures in it. The loop duplicates the strip, so a short row also makes
+  // the repeat obvious within one screen width.
+  // Proven by truncating marqueePlaces to two entries: red.
+  ok(
+    `the photo ribbon's first row has ${marqueePlaces.length} frames; under 6 the loop repeats inside one screen`,
+    marqueePlaces.length >= 6
+  );
+  ok(
+    `the photo ribbon's colour row has ${marqueeColours.length} frames but the collection has ${dresses.length}`,
+    marqueeColours.length === dresses.length
+  );
+
+  const css = read("src/app/flying-dresses/brand.css");
+
+  // THE ONE THAT MATTERS.
+  //
+  // The global reduced-motion block sets animation-duration: 1ms and
+  // iteration-count: 1 on everything. For a fade that is correct: it lands on
+  // its end state, which is the visible one. For an INFINITE MARQUEE it is
+  // exactly wrong — the end state is translateX(-50%), so the blanket rule
+  // does not stop the ribbon, it fast-forwards it and parks it half a strip
+  // to the left with the first frames off the edge. A visitor who asked for
+  // less motion would get fewer photographs.
+  //
+  // Verified in Chromium with reducedMotion: "reduce": animationName none,
+  // transform none, first cell at x=0 inside its ribbon, overflow-x auto.
+  //
+  // Proven by deleting the rule: red.
+  ok(
+    "brand.css does not park .fd-ribbon-track under reduced motion — the blanket 1ms rule would fast-forward the marquee to translateX(-50%) and hide the first frames",
+    /@media\s*\(prefers-reduced-motion:\s*reduce\)\s*\{[\s\S]*?\.fd-ribbon-track\s*\{[\s\S]*?transform:\s*none/.test(css)
+  );
+
+  // AN INLINE LINK WITH NO COLOUR IS BROWSER-DEFAULT BLUE.
+  //
+  // .fd-inline-link sized its tap target and set no colour, so every link in
+  // running prose on this site rendered #0000EE, and purple once visited, on
+  // a palette of ink, ivory, sand and one red. It was on the home page, under
+  // the ribbon and on every source citation in the stories section.
+  //
+  // Proven by removing the colour declaration: red.
+  //
+  // THE FIRST VERSION OF THIS ASSERTION PASSED ON THE BROKEN CODE.
+  // It was /\.fd-inline-link\s*\{[^}]*\bcolor:/ — and `text-decoration-color`
+  // ENDS IN `color:` with a hyphen before it, which \b treats as a word
+  // boundary. So the rule could lose its `color` declaration entirely and the
+  // guard stayed green, which is the exact failure CLAUDE.md §4 is about and
+  // the reason every assertion here gets broken on purpose before it counts.
+  //
+  // This one reads the declarations instead of grepping the block.
+  {
+    const body = css.match(/\.fd-inline-link\s*\{([^}]*)\}/)?.[1] ?? "";
+    const declaresColour = body
+      .split(";")
+      .map((d) => d.trim())
+      .some((d) => /^color\s*:/.test(d));
+    ok(
+      ".fd-inline-link declares no colour — prose links fall back to browser-default blue",
+      declaresColour
+    );
+  }
+
+  // And the ribbon has to actually be on the page.
+  // Proven by removing the component from page.tsx: red.
+  const homeSource = read("src/app/flying-dresses/page.tsx");
+  ok("the home page no longer renders the photo ribbon", homeSource.includes("<PhotoRibbon"));
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
@@ -2324,5 +2417,6 @@ console.log(
     `${Object.values(allSlots).filter((s) => s.kind !== "empty").length} real images all present and ` +
     `${Object.values(allSlots).filter((s) => s.kind === "empty").length} labelled gaps, ` +
     `${flyingDressStories.length} stories none of which duplicate a slug on egypteyetravel.com, ` +
+    `${marqueePlaces.length + marqueeColours.length} ribbon frames all present and parked under reduced motion, ` +
     "reduced motion disables the timelines, and no enquiry claims to be a booking."
 );
