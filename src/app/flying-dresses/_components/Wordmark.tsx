@@ -1,4 +1,4 @@
-import { brand } from "@/content/flyingDresses";
+import { brand as localBrand } from "@/content/flyingDresses";
 
 /**
  * THE WORDMARK — set in live text, not an image.
@@ -52,10 +52,13 @@ export function Wordmark({
    */
   layout = "stacked",
   className = "",
+  /** The business name, so a rename in the Studio reaches the logo too. */
+  name = localBrand.name,
 }: {
   tone?: "dark" | "light";
   layout?: "stacked" | "inline";
   className?: string;
+  name?: string;
 }) {
   return (
     <span
@@ -68,7 +71,7 @@ export function Wordmark({
             wrap between them on a very narrow phone rather than overflowing. */}
         <span>Flying</span> <span>Dresses</span>
       </span>
-      <span className="fd-sr">{brand.name}</span>
+      <span className="fd-sr">{name}</span>
     </span>
   );
 }

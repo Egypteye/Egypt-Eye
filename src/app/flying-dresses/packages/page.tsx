@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  addOns,
-  cancellation,
-  dresses,
-  packageIncludes,
-  packages,
-  payment,
-  rentalServices,
-} from "@/content/flyingDresses";
+  fdAddOns,
+  fdPackages,
+  fdRentals,
+  fdSettings,
+  fdWardrobe,
+} from "../_lib/content";
 import { BookingRail, anyPackageTakesPaymentOnline } from "../_components/BookingRail";
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
@@ -21,6 +19,17 @@ export const metadata: Metadata = fdMetadata({
 });
 
 export default async function PackagesPage() {
+  // Everything on this page is editable in the Studio. The content files
+  // remain the fallback when no document has been published yet.
+  const [settings, packages, addOns, rentalServices, wardrobe] = await Promise.all([
+    fdSettings(),
+    fdPackages(),
+    fdAddOns(),
+    fdRentals(),
+    fdWardrobe(),
+  ]);
+  const { packageIncludes, payment, cancellation } = settings;
+  const dresses = wardrobe.dresses;
   // Asked, not assumed. See anyPackageTakesPaymentOnline.
   const onlinePaymentIsOpen = await anyPackageTakesPaymentOnline(packages);
 

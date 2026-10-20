@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Bodoni_Moda, Jost, Sacramento } from "next/font/google";
 import "./brand.css";
-import { brand } from "@/content/flyingDresses";
+import { flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
+import { fdSettings } from "./_lib/content";
 import { FlyingDressesHeader } from "./_components/Header";
 import { FlyingDressesFooter } from "./_components/Footer";
 import { StickyEnquire } from "./_components/StickyEnquire";
@@ -71,7 +72,17 @@ const sacramento = Sacramento({
 
 const cover = brandCover();
 
-export const metadata: Metadata = {
+/**
+ * ASYNC NOW, because the business name, tagline and description are editable.
+ *
+ * This was `export const metadata`, evaluated at module load from the content
+ * file — which meant renaming the business in the Studio changed every page
+ * EXCEPT the title and the share card, the two places a rename is most
+ * visible. A static export cannot await a fetch, so it became a function.
+ */
+export async function generateMetadata(): Promise<Metadata> {
+  const { brand } = await fdSettings();
+  return {
   metadataBase: new URL(fdSiteUrl),
   ...fdMetadata({
     title: `${brand.name} | ${brand.tagline}`,
@@ -116,7 +127,8 @@ export const metadata: Metadata = {
      Removing the key rather than pointing it at the files matters: a metadata
      `icons` entry overrides the file convention, so leaving it would have kept
      the old SVG winning over the new PNGs. */
-};
+  };
+}
 
 export const viewport: Viewport = {
   themeColor: "#3a2e1c",
@@ -127,7 +139,7 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function FlyingDressesLayout({
+export default async function FlyingDressesLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -135,13 +147,20 @@ export default function FlyingDressesLayout({
   // Resolved here, in a Server Component, because it reads the filesystem.
   const logo = brandLogo();
 
+  // The header is a client component (it owns the drawer's open/closed
+  // state), so it cannot fetch. Everything editable it displays — the menu,
+  // the business name, the WhatsApp number behind its button — is read here
+  // and handed down.
+  const settings = await fdSettings();
+  const whatsappUrl = whatsappHref(flyingDressEnquiry(), settings.contact.whatsappNumber);
+
   return (
     <html lang="en" className={`${bodoni.variable} ${jost.variable} ${sacramento.variable}`}>
       <body>
         <a className="fd-skip" href="#fd-main">
           Skip to content
         </a>
-        <FlyingDressesHeader logo={logo.dark} />
+        <FlyingDressesHeader logo={logo.dark} settings={settings} whatsappUrl={whatsappUrl} />
         {/* The bottom padding class makes room for the phone-only sticky
             action bar, so it never covers the footer's last row. */}
         <main id="fd-main" className="fd-has-sticky-cta">

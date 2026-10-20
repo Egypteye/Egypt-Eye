@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { flyingDressEnquiry, mailtoHref, whatsappHref } from "@/content/flyingDresses";
 import {
-  addOns,
-  cancellation,
-  dresses,
-  flyingDressEnquiry,
-  mailtoHref,
-  mensOutfits,
-  packageBySlug,
-  packageIncludes,
-  packages,
-  payment,
-  whatsappHref,
-} from "@/content/flyingDresses";
+  fdAddOns,
+  fdPackageBySlug,
+  fdPackages,
+  fdSettings,
+  fdWardrobe,
+} from "../../_lib/content";
 import { BookingRail } from "../../_components/BookingRail";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
@@ -36,8 +31,11 @@ import {
  * actually needs.
  */
 
-export function generateStaticParams() {
-  return packages.map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  // Async because the shoots are Studio-managed now. A shoot added in the
+  // Studio gets its own statically generated page on the next build without
+  // anyone touching this file.
+  return (await fdPackages()).map((p) => ({ slug: p.slug }));
 }
 
 /** A slug that is not one of the three 404s rather than rendering empty. */
@@ -55,7 +53,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const pkg = packageBySlug(slug);
+  const pkg = await fdPackageBySlug(slug);
   if (!pkg) return fdMetadata({ title: "Not found", description: "", noindex: true });
 
   /* TITLE LENGTH IS A BUDGET, AND THE BRAND SUFFIX SPENDS 23 OF IT.
@@ -80,10 +78,18 @@ export default async function ExperiencePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const pkg = packageBySlug(slug);
+  const pkg = await fdPackageBySlug(slug);
   if (!pkg) notFound();
 
   const art = ART[pkg.slug as keyof typeof ART];
+  const [settings, addOns, wardrobe, packages] = await Promise.all([
+    fdSettings(),
+    fdAddOns(),
+    fdWardrobe(),
+    fdPackages(),
+  ]);
+  const { packageIncludes, payment, cancellation } = settings;
+  const { dresses, mensOutfits } = wardrobe;
   const others = packages.filter((p) => p.slug !== pkg.slug);
   const enquiryMessage = flyingDressEnquiry({
     subject: pkg.title,

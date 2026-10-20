@@ -58,10 +58,31 @@ export const structure: StructureResolver = (S) =>
       S.documentTypeListItem("treasureCategory").title("✦ The Boutique — Categories"),
       S.documentTypeListItem("treasureProduct").title("✦ The Boutique — Products"),
       S.divider(),
-      // Flying Dresses Egypt. A second brand on its own domain, whose content
-      // otherwise lives entirely in code — these galleries are the one part
-      // the owner can change without a developer, which is the whole reason
-      // they are here rather than in src/content.
+      // ------------------------------------------------------------------
+      // FLYING DRESSES EGYPT — a second brand on its own domain.
+      //
+      // The comment that used to sit here said this brand's content "lives
+      // entirely in code" and that the galleries were "the one part the owner
+      // can change without a developer". Both were true, and a query of the
+      // production dataset found ZERO gallery documents — so in practice it
+      // was not one part, it was none. Every price, photograph and sentence
+      // on that site needed a developer and a deploy.
+      //
+      // Settings first, because it is the singleton holding the hero, the
+      // contact details, the inclusions and the menu; then the things that
+      // cost money; then the wardrobe.
+      // ------------------------------------------------------------------
+      S.listItem()
+        .title("✿ Flying Dresses — Settings")
+        .child(
+          S.document()
+            .schemaType("flyingDressSettings")
+            .documentId("flyingDressSettings")
+        ),
+      S.documentTypeListItem("flyingDressPackage").title("✿ Flying Dresses — Photoshoots"),
+      S.documentTypeListItem("flyingDressAddOn").title("✿ Flying Dresses — Extras"),
+      S.documentTypeListItem("flyingDressRental").title("✿ Flying Dresses — Hire services"),
+      S.documentTypeListItem("flyingDressOutfit").title("✿ Flying Dresses — Wardrobe"),
       S.documentTypeListItem("flyingDressGallery").title("✿ Flying Dresses — Galleries"),
       S.divider(),
       S.documentTypeListItem("tour").title("Tours"),

@@ -1078,3 +1078,106 @@ export async function getFlyingDressGallery(
     })),
   };
 }
+
+import type {
+  FdAddOnDoc,
+  FdOutfitDoc,
+  FdPackageDoc,
+  FdRentalDoc,
+  FdSettingsDoc,
+} from "@/app/flying-dresses/_lib/contentMerge";
+
+/* ==========================================================================
+   FLYING DRESSES EGYPT
+   ==========================================================================
+   The second brand. Until these existed it had one schema and no documents
+   of it, so everything on that site — three prices, twelve dresses, every
+   headline — could only change by editing TypeScript and redeploying.
+
+   Each of these follows the same contract as the rest of this file and as
+   .claude/skills/sanity-content:
+
+     - a published document REPLACES its content-file entry wholesale,
+     - `safeFetch` returns null when Sanity is unreachable or unconfigured,
+       and the caller falls back to the content file,
+     - arrays are hardened in lib/sanityShape.ts, where [] is kept as a
+       deliberate clearing and null falls back.
+
+   The projections return plain data, never Sanity image objects: `asset->url`
+   is resolved here so nothing downstream has to know what a Sanity image is.
+   ========================================================================== */
+
+
+export async function getFlyingDressSettings(): Promise<FdSettingsDoc | null> {
+  return safeFetch<FdSettingsDoc>(
+    `*[_type == "flyingDressSettings"][0]{
+      name, shortName, tagline, description,
+      heroHeadline, heroHeadlineAccent, heroSupport,
+      email, phoneDisplay, location,
+      socials[]{platform, handle, profileUrl},
+      packageIncludes[]{title, detail},
+      paymentNote,
+      paymentMethods[]{label, detail},
+      cancellationPublished, cancellationSummary,
+      nav[]{label, href}
+    }`
+  );
+}
+
+
+const FD_PACKAGE_PROJECTION = `{
+  "slug": slug.current,
+  name, title, eyebrow, order, priceUsd, eyeSlug,
+  priceStoryHeading, priceStoryBody,
+  intro, metaDescription, whyThis, gettingThere, visualDirection,
+  "imageUrl": image.asset->url,
+  imageAlt, tone,
+  timeline[]{when, what},
+  faqs[]{question, answer}
+}`;
+
+export async function getFlyingDressPackages(): Promise<FdPackageDoc[] | null> {
+  return safeFetch<FdPackageDoc[]>(
+    `*[_type == "flyingDressPackage" && defined(slug.current)] | order(order asc) ${FD_PACKAGE_PROJECTION}`
+  );
+}
+
+
+export async function getFlyingDressAddOns(): Promise<FdAddOnDoc[] | null> {
+  return safeFetch<FdAddOnDoc[]>(
+    `*[_type == "flyingDressAddOn" && defined(addOnId.current)] | order(order asc){
+      "addOnId": addOnId.current,
+      label, priceUsd, priceIsFrom, homeNote, detail, order
+    }`
+  );
+}
+
+
+export async function getFlyingDressRentals(): Promise<FdRentalDoc[] | null> {
+  return safeFetch<FdRentalDoc[]>(
+    `*[_type == "flyingDressRental" && defined(slug.current)] | order(order asc){
+      "slug": slug.current,
+      name, title, eyebrow, order, priceUsd, intro, summary,
+      howItWorks[]{title, detail},
+      youGet, notIncluded,
+      faqs[]{question, answer}
+    }`
+  );
+}
+
+
+/**
+ * `retired != true` rather than `!retired`, deliberately: a document saved
+ * before the field existed has no `retired` at all, and GROQ's `!null` is not
+ * true. Written the other way round, the whole wardrobe would vanish from the
+ * site the moment the first garment was published.
+ */
+export async function getFlyingDressOutfits(): Promise<FdOutfitDoc[] | null> {
+  return safeFetch<FdOutfitDoc[]>(
+    `*[_type == "flyingDressOutfit" && defined(outfitId) && retired != true] | order(order asc){
+      outfitId, name, category,
+      "photoUrl": photo.asset->url,
+      alt, hex, shoot, order
+    }`
+  );
+}

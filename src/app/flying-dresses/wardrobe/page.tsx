@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { dresses, mensOutfits } from "@/content/flyingDresses";
+import { fdWardrobe } from "../_lib/content";
 import { FaqList } from "../_components/FaqList";
 import { Wardrobe } from "../_components/Wardrobe";
 import { Scene } from "../_components/Scene";
@@ -44,7 +44,8 @@ const WARDROBE_FAQS = [
   },
 ];
 
-export default function WardrobePage() {
+export default async function WardrobePage() {
+  const { dresses, mensOutfits } = await fdWardrobe();
   return (
     <>
       <section className="fd-section-tight">

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { brand, contact, dresses, mensOutfits, packages } from "@/content/flyingDresses";
+import { fdPackages, fdSettings, fdWardrobe } from "../_lib/content";
 import { Scene } from "../_components/Scene";
 import { agency } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
@@ -36,7 +36,14 @@ export const metadata: Metadata = fdMetadata({
   path: "/about",
 });
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const [settings, packages, wardrobe] = await Promise.all([
+    fdSettings(),
+    fdPackages(),
+    fdWardrobe(),
+  ]);
+  const { brand, contact } = settings;
+  const { dresses, mensOutfits } = wardrobe;
   return (
     <>
       <section className="fd-section-tight">

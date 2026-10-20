@@ -1,0 +1,98 @@
+{
+ "name": "Flying Dresses Egypt",
+ "shortName": "Flying Dresses",
+ "tagline": "Editorial flying-dress photography in Egypt",
+ "description": "Flying-dress photoshoots in Egypt: a rooftop above the Pyramids of Giza, the sand dunes outside Cairo, and the lakes and white dunes of Fayoum. Twelve dresses, traditional Egyptian attire for men, door-to-door transport and 100+ colour-graded photographs. Dress rental without a photoshoot is available separately.",
+ "heroHeadline": "Wear the Wind",
+ "heroHeadlineAccent": "Remember Egypt Forever",
+ "heroSupport": "A flowing dress above Giza an hour before the gates open, or out in the dunes with nobody else in the frame. You leave with more than a hundred colour-graded photographs, not a handful.",
+ "email": "info@flyingdressesegypt.com",
+ "phoneDisplay": "+20 109 761 6533",
+ "location": "Cairo, Egypt",
+ "socials": [
+  {
+   "platform": "Instagram",
+   "handle": "flying_dresses_egypt",
+   "profileUrl": "https://www.instagram.com/flying_dresses_egypt/"
+  },
+  {
+   "platform": "TikTok",
+   "handle": "flying.dresses.eg",
+   "profileUrl": "https://www.tiktok.com/@flying.dresses.eg"
+  },
+  {
+   "platform": "Facebook",
+   "handle": "FlyingDressesEg",
+   "profileUrl": "https://www.facebook.com/FlyingDressesEg"
+  }
+ ],
+ "packageIncludes": [
+  {
+   "title": "Door-to-door transportation",
+   "detail": "Collected from your hotel or address and brought back afterwards. Nothing to arrange and nothing to find."
+  },
+  {
+   "title": "100+ colour-graded photographs",
+   "detail": "Not a handful of selects. More than a hundred edited frames from one session."
+  },
+  {
+   "title": "One flying dress, yours for the session",
+   "detail": "Rented from the collection for the shoot, in the colour you choose. Included in the price. Choosing one does not change what you pay."
+  },
+  {
+   "title": "An assistant for the dress",
+   "detail": "One person whose whole job is the fabric: holding the train, throwing it, keeping it out of the sand between frames."
+  },
+  {
+   "title": "A 30 to 45 minute photoshoot",
+   "detail": "Directed throughout. You do not need to know how to pose. That is the photographer's job and the dress does the rest."
+  },
+  {
+   "title": "Delivered in 6 to 10 days",
+   "detail": "Your edited gallery, within six to ten days of the shoot."
+  }
+ ],
+ "paymentNote": "No payment is taken on this website. Nothing on these pages charges a card, and we will never ask you to type card details into a form here.",
+ "paymentMethods": [
+  {
+   "label": "Visa and MasterCard",
+   "detail": "On the day of the shoot, on request."
+  },
+  {
+   "label": "PayPal",
+   "detail": null
+  },
+  {
+   "label": "Bank transfer",
+   "detail": null
+  }
+ ],
+ "cancellationPublished": false,
+ "cancellationSummary": "Deposits are non-refundable, and can usually be moved to another date or held as credit rather than lost. The exact notice periods and charges are confirmed in writing when we hold your date.",
+ "nav": [
+  {
+   "label": "Photoshoots",
+   "href": "/flying-dresses/experiences"
+  },
+  {
+   "label": "Celebrations",
+   "href": "/flying-dresses/celebrations"
+  },
+  {
+   "label": "Creative",
+   "href": "/flying-dresses/creative"
+  },
+  {
+   "label": "The Wardrobe",
+   "href": "/flying-dresses/wardrobe"
+  },
+  {
+   "label": "Rent & Hire",
+   "href": "/flying-dresses/rentals"
+  },
+  {
+   "label": "About",
+   "href": "/flying-dresses/about"
+  }
+ ]
+}

@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
 import {
-  addOns,
-  brand,
-  flyingDressEnquiry,
-  packageIncludes,
-  packages,
-  rentalServices,
-  whatsappHref,
-} from "@/content/flyingDresses";
-import { dresses, mensOutfits } from "@/content/flyingDresses";
+  fdAddOns,
+  fdPackages,
+  fdRentals,
+  fdSettings,
+  fdWardrobe,
+} from "./_lib/content";
 import { Scene } from "./_components/Scene";
 import { Gallery, galleryTally } from "./_components/Gallery";
 import { flyingDressGalleryById } from "@/content/flyingDressGalleries";
@@ -50,10 +48,16 @@ import { marqueeColours, marqueePlaces } from "./_lib/marquee";
  * instead, and says plainly that the reviews are not up yet.
  */
 
-export const metadata: Metadata = fdMetadata({
-  title: `${brand.name} | ${brand.tagline}`,
-  description: brand.description,
-});
+export async function generateMetadata(): Promise<Metadata> {
+  // A function, not a constant, for the same reason as the layout's: the
+  // business name, tagline and description are editable now, and a static
+  // export is resolved at build time from the content file.
+  const { brand } = await fdSettings();
+  return fdMetadata({
+    title: `${brand.name} | ${brand.tagline}`,
+    description: brand.description,
+  });
+}
 
 /**
  * THE WORK GALLERY, section 8.
@@ -77,7 +81,19 @@ async function workGallery(): Promise<FlyingDressGallery> {
 }
 
 export default async function FlyingDressesHome() {
-  const gallery = await workGallery();
+  // One await for everything the page renders. Next dedupes identical fetches
+  // within a render pass, so the five accessors cost one request per kind.
+  const [gallery, settings, packages, addOns, rentalServices, wardrobe] =
+    await Promise.all([
+      workGallery(),
+      fdSettings(),
+      fdPackages(),
+      fdAddOns(),
+      fdRentals(),
+      fdWardrobe(),
+    ]);
+  const { brand, packageIncludes } = settings;
+  const { dresses, mensOutfits } = wardrobe;
   const { ours: galleryOurs, total: galleryTotal } = galleryTally(gallery.frames);
 
   return (

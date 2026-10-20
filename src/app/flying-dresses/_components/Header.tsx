@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useState } from "react";
-import { brand, flyingDressEnquiry, nav, whatsappHref } from "@/content/flyingDresses";
+import type { FdSettings } from "../_lib/content";
 import { Wordmark } from "./Wordmark";
 import { fdPath } from "../_lib/seo";
 
@@ -41,7 +41,16 @@ import { fdPath } from "../_lib/seo";
  *   changes the page underneath an overlay that is still covering it, which
  *   reads as a broken link.
  */
-export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
+/**
+ * The menu, the business name and the WhatsApp link all arrive as props.
+ *
+ * They used to be imported straight from content/flyingDresses.ts, which
+ * made them uneditable: this is a client component, it cannot await a
+ * Sanity fetch, and a module-scope import is resolved at build time. So the
+ * layout — a server component — reads the Studio settings and hands them
+ * down. That is the whole reason this signature changed.
+ */
+export function FlyingDressesHeader({ logo , settings, whatsappUrl }: { logo?: string | null ; settings: FdSettings; whatsappUrl: string }) {
   const pathname = usePathname();
   const drawerId = useId();
 
@@ -87,11 +96,11 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
             wordmark otherwise. See _lib/logo.ts — dropping the file in is the
             whole switch. `priority` because this is in the first viewport on
             every page and is part of what the brand is recognised by. */}
-        <Link className="fd-wordmark" href={fdPath()} aria-label={`${brand.name} home`}>
+        <Link className="fd-wordmark" href={fdPath()} aria-label={`${settings.brand.name} home`}>
           {logo ? (
             <Image
               src={logo}
-              alt={brand.name}
+              alt={settings.brand.name}
               width={956}
               height={341}
               priority
@@ -103,7 +112,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
         </Link>
 
         <nav className="fd-nav" aria-label="Main">
-          {nav.map((item) => (
+          {settings.nav.map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -137,7 +146,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
       {open ? (
         <nav className="fd-drawer" id={drawerId} aria-label="Main">
           <ul>
-            {nav.map((item) => (
+            {settings.nav.map((item) => (
               <li key={item.href}>
                 <Link href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
                   {item.label}
@@ -151,7 +160,7 @@ export function FlyingDressesHeader({ logo }: { logo?: string | null }) {
             </Link>
             <a
               className="fd-btn fd-btn-ghost fd-btn-sm fd-btn-block"
-              href={whatsappHref(flyingDressEnquiry())}
+              href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
             >

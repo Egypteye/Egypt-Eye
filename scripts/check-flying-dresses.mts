@@ -22,6 +22,7 @@ import {
   NAV_MAX_ITEMS,
   addOns,
   brand,
+  packageIncludes,
   cancellation,
   contact,
   dresses,
@@ -54,6 +55,15 @@ import {
   storyClusters,
   storyWordCount,
 } from "../src/content/flyingDressStories.js";
+// The PURE merge module, deliberately — content.ts reaches the Sanity client,
+// which reaches env.ts, which throws here. CLAUDE.md §6.
+import {
+  mergeAddOns,
+  mergePackages,
+  mergeRentals,
+  mergeSettings,
+  type FdSettingsDoc,
+} from "../src/app/flying-dresses/_lib/contentMerge.js";
 import { hardenFlyingDressGallery } from "../src/lib/sanityShape.js";
 import type { FlyingDressGallery } from "../src/content/types.js";
 
@@ -2398,6 +2408,119 @@ for (const section of ["celebrations", "creative"]) {
   // Proven by removing the component from page.tsx: red.
   const homeSource = read("src/app/flying-dresses/page.tsx");
   ok("the home page no longer renders the photo ribbon", homeSource.includes("<PhotoRibbon"));
+}
+
+// ---------------------------------------------------------------------------
+// THE STUDIO: DOES AN EDIT ACTUALLY REACH THE PAGE, AND DOES PUBLISHING THE
+// SEED CHANGE ANYTHING?
+//
+// This brand just became editable in Sanity. Two things can go wrong, neither
+// of them loudly:
+//
+//   1. The merge rules are subtly wrong — a `||` where `??` was needed turns a
+//      real 0 into last week's value, an `arr()` that collapses [] onto the
+//      fallback resurrects content an editor deliberately deleted.
+//   2. The SEED is wrong. The first documents were generated from the content
+//      files so that publishing them is a no-op. If that is not true, the day
+//      the owner clicks Publish the live site changes in ways nobody intended.
+//
+// The fixture is the EXACT payload the live GROQ projection returned from the
+// production dataset, captured verbatim rather than hand-written, so this
+// tests the real contract and not a guess about it.
+//
+// Proven by changing one value in the fixture: red.
+// ---------------------------------------------------------------------------
+{
+  const fixture = JSON.parse(read("scripts/fixtures/fd-settings-from-sanity.json")) as FdSettingsDoc;
+  const merged = mergeSettings(fixture);
+
+  // Publishing the seed must be invisible.
+  ok(
+    `settings seed would change the business name on publish: "${merged.brand.name}" vs "${brand.name}"`,
+    merged.brand.name === brand.name
+  );
+  ok("settings seed would change the hero headline on publish", merged.brand.heroHeadline === brand.heroHeadline);
+  ok("settings seed would change the hero support line on publish", merged.brand.heroSupport === brand.heroSupport);
+  ok("settings seed would change the description on publish", merged.brand.description === brand.description);
+  ok("settings seed would change the email on publish", merged.contact.email === contact.email);
+  ok(
+    `settings seed would change the WhatsApp number on publish: ${merged.contact.whatsappNumber} vs ${contact.whatsappNumber}`,
+    merged.contact.whatsappNumber === contact.whatsappNumber
+  );
+  ok(
+    `settings seed would change the menu on publish (${merged.nav.length} items vs ${nav.length})`,
+    merged.nav.length === nav.length &&
+      merged.nav.every((n, i) => n.label === nav[i]!.label && n.href === nav[i]!.href)
+  );
+  ok(
+    "settings seed would change what every photoshoot includes on publish",
+    merged.packageIncludes.length === packageIncludes.length &&
+      merged.packageIncludes.every((inc, i) => inc.title === packageIncludes[i]!.title)
+  );
+  ok(
+    "settings seed would publish a cancellation policy nobody has written",
+    merged.cancellation.published === false
+  );
+
+  // THE FALLBACK. No document means the content file, unchanged.
+  const empty = mergeSettings(null);
+  ok("with no Studio document the settings do not fall back to the content file", empty.brand.name === brand.name);
+  ok("with no Studio document the menu is lost", empty.nav.length === nav.length);
+  ok("with no Studio document the packages are lost", mergePackages(null).length === packages.length);
+  // AN EMPTY LIST IS NOT A CLEARED LIST, for documents.
+  //
+  // The three-case rule above is about a FIELD an editor emptied, which is a
+  // real edit worth honouring. "No photoshoot documents exist" is a different
+  // statement: it means nobody has created them yet, and a brand showing no
+  // products at all is not a state worth rendering faithfully.
+  //
+  // The first version of this section only tested null, so a merge that
+  // treated [] as "the business has no photoshoots" passed. Found by breaking
+  // the guard and watching it stay green.
+  ok(
+    "an empty Studio list empties the site — a brand with no photoshoots is not an edit, it is an unfinished migration",
+    mergePackages([]).length === packages.length
+  );
+  ok("an empty Studio list empties the extras", mergeAddOns([]).length === addOns.length);
+  ok("an empty Studio list empties the hire services", mergeRentals([]).length === rentalServices.length);
+  ok("with no Studio document the extras are lost", mergeAddOns(null).length === addOns.length);
+  ok("with no Studio document the hire services are lost", mergeRentals(null).length === rentalServices.length);
+
+  // THE THREE-CASE ARRAY RULE, which is the one every CMS integration in this
+  // repository gets wrong eventually. An editor who empties a list means it.
+  // Proven by changing `arr()` to treat [] as missing: red.
+  const cleared = mergeSettings({ ...fixture, nav: [], socials: [] });
+  ok(
+    "emptying the menu in the Studio silently restores the one in the content file — a deliberate edit being overruled",
+    cleared.nav.length === 0
+  );
+
+  // And null means "Studio never set this", which is not the same thing.
+  const unset = mergeSettings({ ...fixture, nav: null });
+  ok(
+    "a menu the Studio never set should fall back to the content file, not render empty",
+    unset.nav.length === nav.length
+  );
+
+  // A PRICE OF ZERO IS A PRICE. `??` not `||`: the bug this catches is a
+  // genuine edit to 0 being read as "unset" and silently showing the old
+  // figure, which is the worst possible failure for a number on a price page.
+  // Proven by changing `??` to `||` in mergeAddOns: red.
+  const zeroPriced = mergeAddOns([
+    {
+      addOnId: "light-makeup",
+      label: "Light makeup",
+      priceUsd: 0,
+      priceIsFrom: false,
+      homeNote: "x",
+      detail: "y",
+      order: 10,
+    },
+  ]);
+  ok(
+    "an extra priced at 0 in the Studio comes back as something else — a real edit being overruled by a falsy check",
+    zeroPriced[0]?.priceUsd === 0
+  );
 }
 
 // ---------------------------------------------------------------------------

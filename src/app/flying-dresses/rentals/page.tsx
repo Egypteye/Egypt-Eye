@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { RENTAL_DELIVERY_LABELS, rentalServices } from "@/content/flyingDresses";
+import { RENTAL_DELIVERY_LABELS } from "@/content/flyingDresses";
+import { fdRentals } from "../_lib/content";
 import { Scene } from "../_components/Scene";
 import { empty } from "../_lib/assets";
 import { ItemActions } from "../_components/ItemActions";
@@ -30,7 +31,8 @@ const ART = {
   "mens-wear": empty.mensGawn,
 } as const;
 
-export default function RentalsPage() {
+export default async function RentalsPage() {
+  const rentalServices = await fdRentals();
   return (
     <>
       <section className="fd-section-tight">

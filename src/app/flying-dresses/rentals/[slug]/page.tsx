@@ -1,15 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  RENTAL_DELIVERY_LABELS,
-  flyingDressEnquiry,
-  mailtoHref,
-  payment,
-  rentalServiceBySlug,
-  rentalServices,
-  whatsappHref,
-} from "@/content/flyingDresses";
+import { RENTAL_DELIVERY_LABELS, flyingDressEnquiry, mailtoHref, whatsappHref } from "@/content/flyingDresses";
+import { fdRentals, fdSettings } from "../../_lib/content";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { Wardrobe } from "../../_components/Wardrobe";
@@ -22,8 +15,8 @@ import {
   fdPath,
 } from "../../_lib/seo";
 
-export function generateStaticParams() {
-  return rentalServices.map((s) => ({ slug: s.slug }));
+export async function generateStaticParams() {
+  return (await fdRentals()).map((s) => ({ slug: s.slug }));
 }
 
 export const dynamicParams = false;
@@ -40,7 +33,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const service = rentalServiceBySlug(slug);
+  const service = (await fdRentals()).find((s) => s.slug === slug);
   if (!service) return fdMetadata({ title: "Not found", description: "", noindex: true });
 
   return fdMetadata({
@@ -56,10 +49,11 @@ export default async function RentalServicePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = rentalServiceBySlug(slug);
+  const service = (await fdRentals()).find((s) => s.slug === slug);
   if (!service) notFound();
 
   const art = ART[service.slug as keyof typeof ART];
+  const [{ payment }, rentalServices] = await Promise.all([fdSettings(), fdRentals()]);
   const others = rentalServices.filter((s) => s.slug !== service.slug);
 
   // The garments this service draws on. Empty for accessories, deliberately —

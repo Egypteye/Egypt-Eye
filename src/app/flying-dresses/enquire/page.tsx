@@ -1,12 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  contact,
-  dresses,
-  mensOutfits,
-  packageBySlug,
-  rentalServiceBySlug,
-} from "@/content/flyingDresses";
+  fdPackageBySlug,
+  fdRentalBySlug,
+  fdSettings,
+  fdWardrobe,
+} from "../_lib/content";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
 import { EnquiryForm } from "../_components/EnquiryForm";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
@@ -46,9 +45,19 @@ export default async function EnquirePage({
   const one = (value: string | string[] | undefined): string =>
     Array.isArray(value) ? (value[0] ?? "") : (value ?? "");
 
+  // Everything the form offers is Studio-managed now, so it is fetched here
+  // rather than imported.
+  const [{ contact }, wardrobe, chosenPackage, chosenService] = await Promise.all([
+    fdSettings(),
+    fdWardrobe(),
+    fdPackageBySlug(one(params.package)),
+    fdRentalBySlug(one(params.service)),
+  ]);
+  const { dresses, mensOutfits } = wardrobe;
+
   // Resolved, never trusted. An unknown id becomes "" and selects nothing.
-  const pkg = packageBySlug(one(params.package))?.slug ?? "";
-  const service = rentalServiceBySlug(one(params.service))?.slug ?? "";
+  const pkg = chosenPackage?.slug ?? "";
+  const service = chosenService?.slug ?? "";
   // Resolved against the catalogue exactly like the two above. An unknown
   // slug selects nothing, so a stale link from a retired experience still
   // opens a working form rather than a broken one.

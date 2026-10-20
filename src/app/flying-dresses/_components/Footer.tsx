@@ -1,13 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  brand,
-  contact,
-  flyingDressEnquiry,
-  packages,
-  rentalServices,
-  whatsappHref,
-} from "@/content/flyingDresses";
+import { flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
+import { fdPackages, fdRentals, fdSettings } from "../_lib/content";
 import { Wordmark } from "./Wordmark";
 import { fdPath } from "../_lib/seo";
 
@@ -22,7 +16,15 @@ import { fdPath } from "../_lib/seo";
  * because the real TikTok account turned out not to match the handle the
  * brochure gave.
  */
-export function FlyingDressesFooter({ logo }: { logo?: string | null }) {
+// Async now: it reads the business details, the photoshoot list and the
+// hire list from the Studio, with the content files as the fallback.
+export async function FlyingDressesFooter({ logo }: { logo?: string | null }) {
+  const [settings, packages, rentalServices] = await Promise.all([
+    fdSettings(),
+    fdPackages(),
+    fdRentals(),
+  ]);
+  const { brand, contact } = settings;
   const year = new Date().getFullYear();
 
   return (

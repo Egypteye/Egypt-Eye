@@ -205,8 +205,18 @@ export const contact = {
   location: "Cairo, Egypt",
 } as const;
 
-export function whatsappHref(message: string): string {
-  return `https://wa.me/${contact.whatsappNumber}?text=${encodeURIComponent(message)}`;
+/**
+ * The WhatsApp deep link.
+ *
+ * `number` is optional and overrides the value in this file. It exists
+ * because the phone number became editable in the Studio: a caller that has
+ * already read the settings passes the live number, and a caller that has not
+ * — a check script, a test — gets the content file's. One function, so the
+ * message encoding cannot differ between the two.
+ */
+export function whatsappHref(message: string, number?: string): string {
+  const to = (number ?? contact.whatsappNumber).replace(/\D/g, "");
+  return `https://wa.me/${to}?text=${encodeURIComponent(message)}`;
 }
 
 // ---------------------------------------------------------------------------

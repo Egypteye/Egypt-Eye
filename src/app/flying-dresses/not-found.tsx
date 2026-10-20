@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { nav } from "@/content/flyingDresses";
+import { fdSettings } from "./_lib/content";
 import { fdPath } from "./_lib/seo";
 
 /**
@@ -13,7 +13,9 @@ import { fdPath } from "./_lib/seo";
  * It sends people somewhere useful rather than just apologising: the nav, plus
  * the two things most 404s here are reaching for.
  */
-export default function FlyingDressesNotFound() {
+export default async function FlyingDressesNotFound() {
+  const { nav } = await fdSettings();
+
   return (
     <section className="fd-section">
       <div className="fd-shell fd-shell-narrow">

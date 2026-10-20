@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { packageIncludes, packages } from "@/content/flyingDresses";
+import { fdPackages, fdSettings } from "../_lib/content";
 import { Scene } from "../_components/Scene";
 import { agency, location } from "../_lib/assets";
 import { ItemActions } from "../_components/ItemActions";
@@ -19,7 +19,9 @@ const ART = {
   fayoum: location.fayoumLake,
 } as const;
 
-export default function ExperiencesPage() {
+export default async function ExperiencesPage() {
+  const [settings, packages] = await Promise.all([fdSettings(), fdPackages()]);
+  const { packageIncludes } = settings;
   return (
     <>
       <section className="fd-section-tight">
