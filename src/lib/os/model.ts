@@ -233,49 +233,39 @@ export function describeFollowUp(nextFollowUpOn: string | null, today: string): 
 // so the UI offers the known ones and accepts anything.
 // ---------------------------------------------------------------------------
 
-export const PLATFORM_SUGGESTIONS = [
-  "WhatsApp",
-  "Email",
-  "Instagram",
-  "TikTok",
-  "Booking.com",
-  "Airbnb",
-  "Referral",
-  "Website",
-] as const;
+// Every value below was read off the team's own sheets. Nothing here is
+// invented, because a suggestion is not neutral: a staff member picking
+// "Lunch" from a list puts "Includes: Lunch" into the message that goes to
+// the guest and the crew, and an inclusion the company does not actually sell
+// becomes a promise the moment somebody taps it. An earlier version of this
+// file also offered "Booking.com", which was nothing but a guess at what the
+// letter "B" means in the follow-up list's platform column — a guess
+// promoted to a suggested fact. Adding to any of these lists means confirming
+// with the team first, and scripts/check-os.mts pins them so it cannot happen
+// by accident.
+//
+// All five fields are free text in the database, so none of this constrains
+// what anyone can actually record. The list is a typing aid, not a menu.
 
-export const SOURCE_SUGGESTIONS = ["Egypt Eye", "Airbnb", "Booking.com", "Referral", "Other"] as const;
+/** The follow-up list writes "Ig" and "TikTok"; requests also arrive by email and WhatsApp. */
+export const PLATFORM_SUGGESTIONS = ["WhatsApp", "Email", "Instagram", "TikTok"] as const;
 
-export const SERVICE_TYPE_SUGGESTIONS = [
-  "Tour",
-  "Photoshoot",
-  "Flying dress",
-  "Tour + Photoshoot",
-  "Transfer",
-] as const;
+/** The operations sheet's "Organization" and the social sheet's "Platform". */
+export const SOURCE_SUGGESTIONS = ["Egypt Eye", "Airbnb"] as const;
 
-export const LOCATION_SUGGESTIONS = [
-  "Pyramids of Giza",
-  "Old Cairo",
-  "Luxor",
-  "Aswan",
-  "Alexandria",
-  "Dahshur",
-  "Saqqara",
-] as const;
+/** The operations sheet's "Service Type" and the social sheet's "Type". */
+export const SERVICE_TYPE_SUGGESTIONS = ["Tour", "Photoshoot", "Flying dress"] as const;
 
+/** The operations sheet's "Service Location". */
+export const LOCATION_SUGGESTIONS = ["Pyramids of Giza", "Old Cairo", "Luxor"] as const;
+
+/** The operations sheet's "Inclusions". */
 export const INCLUSION_SUGGESTIONS = [
   "Camel",
-  "Horse",
   "Jumping Horse",
   "Running Horse",
-  "Quad bike",
   "Pro Reels",
   "Private transportation",
-  "Entry tickets",
-  "Lunch",
-  "Tour guide",
-  "Felucca",
 ] as const;
 
 /**

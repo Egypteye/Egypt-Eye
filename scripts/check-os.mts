@@ -19,7 +19,12 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import {
+  INCLUSION_SUGGESTIONS,
+  LOCATION_SUGGESTIONS,
   MAX_BOOKING_DAYS,
+  PLATFORM_SUGGESTIONS,
+  SERVICE_TYPE_SUGGESTIONS,
+  SOURCE_SUGGESTIONS,
   addDays,
   compareFollowUps,
   daysBetween,
@@ -633,7 +638,62 @@ ok(describeFollowUp("2026-10-18", today) === "3 days overdue", "describeFollowUp
 ok(describeFollowUp(null, today) === "No follow-up set", "describeFollowUp invented a date for a lead that has none");
 
 // ---------------------------------------------------------------------------
-// 12. Small things that would corrupt the data quietly.
+// 12. No suggestion is an invented business fact.
+//
+// These lists feed <datalist>s on free-text fields, so they constrain nobody
+// — but they are not neutral either. Picking "Lunch" from a list puts
+// "Includes: Lunch" into the message that goes to the guest and the crew, so
+// an inclusion Egypt Eye does not sell becomes a promise the moment somebody
+// taps it. Every value is pinned to what the team's own sheets actually say.
+// Adding one means confirming it with the team first, which is the point:
+// this check going red is the question being asked.
+//
+// "Booking.com" is called out because it was once in here as nothing more
+// than a guess at what the letter "B" means in the follow-up list's platform
+// column. That question is still open, so it must not be suggested as if it
+// were answered.
+// ---------------------------------------------------------------------------
+const PINNED: [string, readonly string[], string][] = [
+  ["PLATFORM_SUGGESTIONS", PLATFORM_SUGGESTIONS, "WhatsApp|Email|Instagram|TikTok"],
+  ["SOURCE_SUGGESTIONS", SOURCE_SUGGESTIONS, "Egypt Eye|Airbnb"],
+  ["SERVICE_TYPE_SUGGESTIONS", SERVICE_TYPE_SUGGESTIONS, "Tour|Photoshoot|Flying dress"],
+  ["LOCATION_SUGGESTIONS", LOCATION_SUGGESTIONS, "Pyramids of Giza|Old Cairo|Luxor"],
+  [
+    "INCLUSION_SUGGESTIONS",
+    INCLUSION_SUGGESTIONS,
+    "Camel|Jumping Horse|Running Horse|Pro Reels|Private transportation",
+  ],
+];
+
+for (const [name, actual, expected] of PINNED) {
+  ok(
+    actual.join("|") === expected,
+    `${name} is "${actual.join("|")}" rather than "${expected}" — every suggestion must be a value the team's ` +
+      `sheets actually use, because tapping one puts it in front of a guest. If the new value is real, confirm ` +
+      `it with the team and update this check deliberately.`,
+  );
+}
+
+// The unanswered question must not reappear as an answer.
+for (const [name, actual] of PINNED.map(([n, a]) => [n, a] as const)) {
+  ok(
+    !actual.some((value) => /booking\.com/i.test(value)),
+    `${name} suggests Booking.com — nobody has confirmed that is what "B" means in the follow-up list`,
+  );
+}
+
+// And the columns they fill must stay free text, or a suggestion list becomes
+// a constraint and the desk cannot write down what actually happened.
+for (const column of ["platform", "source", "service_type", "service_location"]) {
+  ok(
+    !new RegExp(`${column} text[^,]*check \\(`).test(migration),
+    `os_* constrains ${column} to a fixed list — the desk writes "B" in that column every day and nobody yet ` +
+      `knows what it stands for, so the database must accept whatever is true`,
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 13. Small things that would corrupt the data quietly.
 // ---------------------------------------------------------------------------
 ok(
   formatDate("2026-10-19") === "Mon, 19 Oct 2026",
