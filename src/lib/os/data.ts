@@ -4,7 +4,7 @@ import { addDays, todayInCairo } from "./model";
 
 // Every read in the OS, in one place.
 //
-// The service-role client is used throughout, because os_* tables have RLS on
+// The service-role client is used throughout, because ops_* tables have RLS on
 // with no client policies at all (migration 0025) — the same arrangement as
 // newsletter_subscribers. That is only safe because nothing in this module is
 // reachable without a caller that has already passed requireOsStaff(): the
@@ -181,17 +181,17 @@ function toLead(row: Row): OsLead {
 export async function getDaySheet(date: string): Promise<DaySheetRow[]> {
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_booking_days")
-    .select(`${DAY_COLUMNS}, os_bookings!inner(${BOOKING_COLUMNS})`)
+    .from("ops_booking_days")
+    .select(`${DAY_COLUMNS}, ops_bookings!inner(${BOOKING_COLUMNS})`)
     .eq("service_date", date)
-    .neq("os_bookings.status", "cancelled")
+    .neq("ops_bookings.status", "cancelled")
     .order("pickup_time", { ascending: true, nullsFirst: false });
 
   if (error) throw new Error(`Could not load the day sheet: ${error.message}`);
 
   return (data ?? []).map((row) => {
-    const { os_bookings: booking, ...day } = row as unknown as Row & {
-      os_bookings: Row | Row[];
+    const { ops_bookings: booking, ...day } = row as unknown as Row & {
+      ops_bookings: Row | Row[];
     };
     return { ...toDay(day), booking: toBooking(embedded(booking)) };
   });
@@ -201,11 +201,11 @@ export async function getDaySheet(date: string): Promise<DaySheetRow[]> {
 export async function getUpcomingCounts(from: string, span: number): Promise<Record<string, number>> {
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_booking_days")
-    .select("service_date, os_bookings!inner(status)")
+    .from("ops_booking_days")
+    .select("service_date, ops_bookings!inner(status)")
     .gte("service_date", from)
     .lte("service_date", addDays(from, span - 1))
-    .neq("os_bookings.status", "cancelled");
+    .neq("ops_bookings.status", "cancelled");
 
   if (error) throw new Error(`Could not count upcoming days: ${error.message}`);
 
@@ -220,7 +220,7 @@ export async function getUpcomingCounts(from: string, span: number): Promise<Rec
 export async function listBookings(limit = 100): Promise<OsBooking[]> {
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_bookings")
+    .from("ops_bookings")
     .select(BOOKING_COLUMNS)
     .order("created_at", { ascending: false })
     .limit(limit);
@@ -234,7 +234,7 @@ export async function firstDates(bookingIds: string[]): Promise<Record<string, s
   if (bookingIds.length === 0) return {};
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_booking_days")
+    .from("ops_booking_days")
     .select("booking_id, service_date")
     .in("booking_id", bookingIds)
     .order("service_date", { ascending: true });
@@ -254,7 +254,7 @@ export async function getBookingByRef(
 ): Promise<{ booking: OsBooking; days: OsBookingDay[] } | null> {
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_bookings")
+    .from("ops_bookings")
     .select(BOOKING_COLUMNS)
     .eq("ref", ref)
     .maybeSingle();
@@ -264,7 +264,7 @@ export async function getBookingByRef(
 
   const booking = toBooking(data as Row);
   const { data: dayRows, error: dayError } = await supabase
-    .from("os_booking_days")
+    .from("ops_booking_days")
     .select(DAY_COLUMNS)
     .eq("booking_id", booking.id)
     .order("service_date", { ascending: true });
@@ -276,7 +276,7 @@ export async function getBookingByRef(
 
 export async function listLeads(includeClosed = false): Promise<OsLead[]> {
   const supabase = createAdminSupabaseClient();
-  let query = supabase.from("os_leads").select(LEAD_COLUMNS);
+  let query = supabase.from("ops_followups").select(LEAD_COLUMNS);
   if (!includeClosed) query = query.eq("outcome", "pending");
 
   const { data, error } = await query.order("next_follow_up_on", { ascending: true, nullsFirst: false }).limit(300);
@@ -286,7 +286,7 @@ export async function listLeads(includeClosed = false): Promise<OsLead[]> {
 
 export async function getLead(id: string): Promise<OsLead | null> {
   const supabase = createAdminSupabaseClient();
-  const { data, error } = await supabase.from("os_leads").select(LEAD_COLUMNS).eq("id", id).maybeSingle();
+  const { data, error } = await supabase.from("ops_followups").select(LEAD_COLUMNS).eq("id", id).maybeSingle();
   if (error) throw new Error(`Could not load that lead: ${error.message}`);
   return data ? toLead(data as Row) : null;
 }
@@ -298,12 +298,12 @@ export async function getHeadlineCounts(): Promise<{ today: number; dueFollowUps
 
   const [days, leads] = await Promise.all([
     supabase
-      .from("os_booking_days")
-      .select("id, os_bookings!inner(status)", { count: "exact", head: true })
+      .from("ops_booking_days")
+      .select("id, ops_bookings!inner(status)", { count: "exact", head: true })
       .eq("service_date", today)
-      .neq("os_bookings.status", "cancelled"),
+      .neq("ops_bookings.status", "cancelled"),
     supabase
-      .from("os_leads")
+      .from("ops_followups")
       .select("id", { count: "exact", head: true })
       .eq("outcome", "pending")
       .lte("next_follow_up_on", today),

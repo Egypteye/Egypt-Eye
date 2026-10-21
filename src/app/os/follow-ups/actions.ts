@@ -54,7 +54,7 @@ export async function createLead(formData: FormData): Promise<ActionResult> {
   }
 
   const supabase = createAdminSupabaseClient();
-  const { error } = await supabase.from("os_leads").insert({
+  const { error } = await supabase.from("ops_followups").insert({
     guest_name: guestName,
     platform: nullable(formData, "platform"),
     contact: nullable(formData, "contact"),
@@ -103,7 +103,7 @@ export async function updateLead(leadId: string, formData: FormData): Promise<Ac
 
   const supabase = createAdminSupabaseClient();
   const { error } = await supabase
-    .from("os_leads")
+    .from("ops_followups")
     .update({
       guest_name: guestName,
       platform: nullable(formData, "platform"),
@@ -143,7 +143,7 @@ export async function logFollowUp(leadId: string, inDays: number): Promise<Actio
   const today = todayInCairo();
   const supabase = createAdminSupabaseClient();
   const { error } = await supabase
-    .from("os_leads")
+    .from("ops_followups")
     .update({ last_follow_up_on: today, next_follow_up_on: addDays(today, inDays) })
     .eq("id", leadId);
 
@@ -160,7 +160,7 @@ export async function markItinerarySent(leadId: string): Promise<ActionResult> {
   }
 
   const supabase = createAdminSupabaseClient();
-  const { error } = await supabase.from("os_leads").update({ itinerary_status: "sent" }).eq("id", leadId);
+  const { error } = await supabase.from("ops_followups").update({ itinerary_status: "sent" }).eq("id", leadId);
   if (error) return { ok: false, error: error.message };
   done();
   return { ok: true };
@@ -183,11 +183,11 @@ export async function closeLead(leadId: string, outcome: "booked" | "lost", note
 
   const supabase = createAdminSupabaseClient();
   const trimmed = note.trim();
-  const { data: existing } = await supabase.from("os_leads").select("notes").eq("id", leadId).maybeSingle();
+  const { data: existing } = await supabase.from("ops_followups").select("notes").eq("id", leadId).maybeSingle();
   const previous = (existing?.notes as string | null) ?? null;
 
   const { error } = await supabase
-    .from("os_leads")
+    .from("ops_followups")
     .update({
       outcome,
       // Appended, never overwritten: the reason it was lost is added to what
@@ -212,7 +212,7 @@ export async function reopenLead(leadId: string): Promise<ActionResult> {
   const supabase = createAdminSupabaseClient();
   const today = todayInCairo();
   const { error } = await supabase
-    .from("os_leads")
+    .from("ops_followups")
     .update({ outcome: "pending", next_follow_up_on: addDays(today, 1) })
     .eq("id", leadId);
 

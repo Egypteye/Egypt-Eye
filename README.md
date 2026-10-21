@@ -258,6 +258,14 @@ three. The OS holds it once:
    `supabase/migrations/0025_os_simple.sql` once. It creates the three OS
    tables and widens the `profiles.role` constraint to allow the two new
    roles.
+
+   The tables are prefixed `ops_`, not `os_`, because this database already
+   holds 84 `os_*` tables from an earlier and much larger OS — including an
+   `os_leads` with a completely different shape. Nothing in this migration
+   reads, alters or drops any of them; that data is left exactly as it is. The
+   migration also refuses to run, loudly, if one of its own three names turns
+   out to be taken, because `create table if not exists` otherwise does
+   nothing and still reports success.
 2. Each person who needs the OS creates a normal account on the site, then
    you open Supabase → **Table Editor → profiles**, find their row and set
    `role`. A role can only be changed here, with the service key — a

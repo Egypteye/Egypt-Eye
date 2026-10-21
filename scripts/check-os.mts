@@ -239,15 +239,15 @@ ok(
 // ---------------------------------------------------------------------------
 const migration = readFileSync("supabase/migrations/0025_os_simple.sql", "utf8");
 
-const dayTableStart = migration.indexOf("create table if not exists public.os_booking_days");
-const dayTableEnd = migration.indexOf("create index if not exists os_booking_days_service_date_idx");
-ok(dayTableStart >= 0 && dayTableEnd > dayTableStart, "could not locate os_booking_days in the migration to inspect it");
+const dayTableStart = migration.indexOf("create table if not exists public.ops_booking_days");
+const dayTableEnd = migration.indexOf("create index if not exists ops_booking_days_service_date_idx");
+ok(dayTableStart >= 0 && dayTableEnd > dayTableStart, "could not locate ops_booking_days in the migration to inspect it");
 const dayTable = migration.slice(Math.max(dayTableStart, 0), dayTableEnd > dayTableStart ? dayTableEnd : undefined);
 
 for (const column of ["total_cents", "deposit_cents", "remaining_cents", "total_usd", "deposit_usd", "price"]) {
   ok(
     !new RegExp(`\\b${column}\\b`).test(dayTable),
-    `os_booking_days declares ${column} — money on a day row is the duplication this schema exists to remove`,
+    `ops_booking_days declares ${column} — money on a day row is the duplication this schema exists to remove`,
   );
 }
 
@@ -268,11 +268,11 @@ ok(
   "an OS money column is declared in dollars — every money column in this project is whole cents",
 );
 ok(
-  /constraint os_bookings_deposit_within_total check \(deposit_cents <= total_cents\)/.test(migration),
+  /constraint ops_bookings_deposit_within_total check \(deposit_cents <= total_cents\)/.test(migration),
   "nothing stops a deposit larger than the total, which makes remaining_cents negative on every screen",
 );
 ok(
-  /constraint os_booking_days_unique_date unique \(booking_id, service_date\)/.test(migration),
+  /constraint ops_booking_days_unique_date unique \(booking_id, service_date\)/.test(migration),
   "a booking can hold two rows for one date again — re-saving its days would send the crew out twice",
 );
 // The booking reference must not be able to collide. Postgres lpad truncates
@@ -289,13 +289,13 @@ ok(
 );
 
 ok(
-  /constraint os_bookings_cancelled_has_reason/.test(migration),
+  /constraint ops_bookings_cancelled_has_reason/.test(migration),
   "a booking can be cancelled with no reason, leaving an unexplained gap in the day sheet",
 );
 
 // RLS with no policies is the whole access model: these tables must be
 // unreachable with an anon key, whatever a browser claims about itself.
-for (const table of ["os_leads", "os_bookings", "os_booking_days"]) {
+for (const table of ["ops_followups", "ops_bookings", "ops_booking_days"]) {
   ok(
     new RegExp(`alter table public\\.${table} enable row level security`).test(migration),
     `${table} does not enable row level security — an anon key could read every guest's phone number`,
@@ -305,6 +305,45 @@ for (const table of ["os_leads", "os_bookings", "os_booking_days"]) {
     `${table} has a client RLS policy — OS data is server-only, reached through requireOsStaff() and the service role`,
   );
 }
+
+// The simplified OS must stay out of the os_ namespace, which an earlier and
+// much larger OS already occupies in the live database — 84 tables, including
+// an os_leads with a completely different shape and 10 rows in it. Name a
+// table os_leads again and `create table if not exists` silently does nothing,
+// the migration reports success, and the follow-up screen then fails at
+// runtime asking for a column that table has never had.
+for (const squatted of ["os_leads", "os_bookings", "os_booking_days"]) {
+  ok(
+    !new RegExp(`create table if not exists public\\.${squatted}\\b`).test(migration),
+    `the migration creates public.${squatted}, a name the existing OS already uses — use the ops_ prefix`,
+  );
+}
+ok(
+  !/create or replace function public\.os_/.test(migration),
+  "the migration redefines a public.os_* function — os_touch_updated_at already exists in the live database with 12 triggers depending on it",
+);
+// And it must never touch that data. The patterns allow for the optional
+// noise real SQL carries — `if exists`, a schema qualifier, `table` after
+// truncate — because a first attempt at this check matched none of
+// `drop table if exists public.os_leads` and so asserted nothing at all.
+const DESTRUCTIVE: [string, RegExp][] = [
+  ["drop table", /drop\s+table\s+(if\s+exists\s+)?(public\.)?os_/i],
+  ["truncate", /truncate\s+(table\s+)?(public\.)?os_/i],
+  ["delete from", /delete\s+from\s+(public\.)?os_/i],
+  ["alter table", /alter\s+table\s+(if\s+exists\s+)?(public\.)?os_/i],
+];
+for (const [label, pattern] of DESTRUCTIVE) {
+  ok(
+    !pattern.test(migration),
+    `the migration does "${label}" against an os_ table — the earlier OS's 84 tables and their data are not ours to touch`,
+  );
+}
+// The guard that makes a silently-skipped create impossible to mistake for
+// success. Remove it and a future name clash goes undetected again.
+ok(
+  /raise exception/.test(migration) && /has NOT been applied/.test(migration),
+  "the migration no longer refuses to run when one of its table names is already taken",
+);
 
 ok(
   /check \(role in \('customer', 'admin', 'reservations', 'operations', 'social'\)\)/.test(migration),
@@ -687,7 +726,7 @@ for (const [name, actual] of PINNED.map(([n, a]) => [n, a] as const)) {
 for (const column of ["platform", "source", "service_type", "service_location"]) {
   ok(
     !new RegExp(`${column} text[^,]*check \\(`).test(migration),
-    `os_* constrains ${column} to a fixed list — the desk writes "B" in that column every day and nobody yet ` +
+    `ops_* constrains ${column} to a fixed list — the desk writes "B" in that column every day and nobody yet ` +
       `knows what it stands for, so the database must accept whatever is true`,
   );
 }

@@ -100,7 +100,7 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_bookings")
+    .from("ops_bookings")
     .insert({
       guest_name: guestName,
       guest_phone: nullable(formData, "guest_phone"),
@@ -126,7 +126,7 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
   const serviceType = nullable(formData, "service_type");
   const serviceLocation = nullable(formData, "service_location");
 
-  const { error: daysError } = await supabase.from("os_booking_days").insert(
+  const { error: daysError } = await supabase.from("ops_booking_days").insert(
     dates.map((date) => ({
       booking_id: data.id,
       service_date: date,
@@ -139,7 +139,7 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
     // The booking exists but has no days, which would leave it invisible on
     // every day sheet. Removing it is the right repair: nothing else
     // references it yet, and a half-created booking is worse than none.
-    await supabase.from("os_bookings").delete().eq("id", data.id);
+    await supabase.from("ops_bookings").delete().eq("id", data.id);
     console.error("createBooking days failed:", daysError);
     return { ok: false, error: `The booking could not be scheduled: ${daysError.message}` };
   }
@@ -148,7 +148,7 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
   // rather than leaving the desk chasing someone who has already paid.
   const leadId = nullable(formData, "lead_id");
   if (leadId) {
-    await supabase.from("os_leads").update({ outcome: "booked" }).eq("id", leadId);
+    await supabase.from("ops_followups").update({ outcome: "booked" }).eq("id", leadId);
     revalidatePath("/os/follow-ups");
   }
 
@@ -174,7 +174,7 @@ export async function updateBookingDetails(bookingId: string, formData: FormData
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_bookings")
+    .from("ops_bookings")
     .update({
       guest_name: guestName,
       guest_phone: nullable(formData, "guest_phone"),
@@ -217,7 +217,7 @@ export async function updateBookingMoney(bookingId: string, formData: FormData):
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_bookings")
+    .from("ops_bookings")
     .update({ total_cents: totalCents, deposit_cents: depositCents })
     .eq("id", bookingId)
     .select("ref")
@@ -249,7 +249,7 @@ export async function updateDayLogistics(dayId: string, formData: FormData): Pro
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_booking_days")
+    .from("ops_booking_days")
     .update({
       service_type: nullable(formData, "service_type"),
       service_location: nullable(formData, "service_location"),
@@ -262,7 +262,7 @@ export async function updateDayLogistics(dayId: string, formData: FormData): Pro
       notes: nullable(formData, "notes"),
     })
     .eq("id", dayId)
-    .select("service_date, booking:os_bookings(ref)")
+    .select("service_date, booking:ops_bookings(ref)")
     .maybeSingle();
 
   if (error) return { ok: false, error: error.message };
@@ -287,7 +287,7 @@ export async function updateDayContent(dayId: string, formData: FormData): Promi
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_booking_days")
+    .from("ops_booking_days")
     .update({
       photographer: nullable(formData, "photographer"),
       assist: nullable(formData, "assist"),
@@ -298,7 +298,7 @@ export async function updateDayContent(dayId: string, formData: FormData): Promi
       photo_link: photoLink,
     })
     .eq("id", dayId)
-    .select("service_date, booking:os_bookings(ref)")
+    .select("service_date, booking:ops_bookings(ref)")
     .maybeSingle();
 
   if (error) return { ok: false, error: error.message };
@@ -320,7 +320,7 @@ export async function addBookingDay(bookingId: string, formData: FormData): Prom
   if (!isIsoDate(date)) return { ok: false, error: "Pick a valid date." };
 
   const supabase = createAdminSupabaseClient();
-  const { error } = await supabase.from("os_booking_days").insert({
+  const { error } = await supabase.from("ops_booking_days").insert({
     booking_id: bookingId,
     service_date: date,
     service_type: nullable(formData, "service_type"),
@@ -337,7 +337,7 @@ export async function addBookingDay(bookingId: string, formData: FormData): Prom
     };
   }
 
-  const { data } = await supabase.from("os_bookings").select("ref").eq("id", bookingId).maybeSingle();
+  const { data } = await supabase.from("ops_bookings").select("ref").eq("id", bookingId).maybeSingle();
   revalidateBooking(data?.ref as string | undefined, [date]);
   return { ok: true };
 }
@@ -351,7 +351,7 @@ export async function removeBookingDay(dayId: string): Promise<ActionResult> {
 
   const supabase = createAdminSupabaseClient();
   const { data: day } = await supabase
-    .from("os_booking_days")
+    .from("ops_booking_days")
     .select("service_date, booking_id")
     .eq("id", dayId)
     .maybeSingle();
@@ -360,7 +360,7 @@ export async function removeBookingDay(dayId: string): Promise<ActionResult> {
   // cannot be removed. Cancelling the booking is the action that was meant.
   if (day) {
     const { count } = await supabase
-      .from("os_booking_days")
+      .from("ops_booking_days")
       .select("id", { count: "exact", head: true })
       .eq("booking_id", day.booking_id as string);
     if ((count ?? 0) <= 1) {
@@ -368,11 +368,11 @@ export async function removeBookingDay(dayId: string): Promise<ActionResult> {
     }
   }
 
-  const { error } = await supabase.from("os_booking_days").delete().eq("id", dayId);
+  const { error } = await supabase.from("ops_booking_days").delete().eq("id", dayId);
   if (error) return { ok: false, error: error.message };
 
   const { data } = await supabase
-    .from("os_bookings")
+    .from("ops_bookings")
     .select("ref")
     .eq("id", (day?.booking_id as string) ?? "")
     .maybeSingle();
@@ -404,7 +404,7 @@ export async function setBookingStatus(
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
-    .from("os_bookings")
+    .from("ops_bookings")
     .update({
       status,
       cancellation_reason: status === "cancelled" ? trimmed : null,
@@ -416,7 +416,7 @@ export async function setBookingStatus(
   if (error) return { ok: false, error: error.message };
 
   const { data: days } = await supabase
-    .from("os_booking_days")
+    .from("ops_booking_days")
     .select("service_date")
     .eq("booking_id", bookingId);
 
