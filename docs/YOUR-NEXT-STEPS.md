@@ -1,288 +1,257 @@
-# What I need from you, and what to do in what order
+# What to do from your end
 
-Written 20 October 2026. Nothing below needs a terminal.
+Updated 21 October 2026, after your operating brief. This replaces the
+earlier version of this file.
 
-There are two kinds of item here and it matters which is which:
+Three kinds of item, and it matters which is which:
 
-- **Steps** — things to click, in order. About 30 minutes.
-- **Answers** — business facts only you have. I will not invent any of them,
-  which is why eleven pages still say "enquire" instead of a price.
+- **STEPS** — things to click, in order. About 30 minutes.
+- **DECISIONS** — questions where I need you to pick, not research.
+- **FACTS** — business information only you have. I will not invent any of it.
 
----
-
-# PART 1 — THE STEPS
-
-## Step 0 — Before anything: approve the deploy
-
-Five commits are sitting on the branch `claude/zealous-volta-ec0mvn` and
-**none of them are live**. Everything since the favicon is held:
-
-| Commit | What it does |
-|---|---|
-| `f617ec2` `3332941` `041aa72` | Service page audit, meta descriptions, your business rules |
-| `6c183e8` | Six Stories articles |
-| `e2c3eb3` | The phone hero fix, the Fayoum photo, the dress photos |
-| `1fa9d00` | The animated photo ribbon, eighteen blue links fixed |
-| `46410a1` `83af364` | The Studio |
-
-**What to do:** tell me to deploy, or merge the branch yourself in GitHub.
-Nothing in Part 1 past this point works until the site has been deployed,
-because the Studio reads its fields from the deployed app.
+Your brief answered six things that were on this list last time. Those are
+marked ✅ and removed from the asks.
 
 ---
 
-## Step 1 — Check two environment variables exist in Vercel
+# PART 1 — THE STEPS (about 30 minutes)
 
-Vercel → your project → Settings → Environment Variables. You are looking for:
+## Step 0 — Approve the deploy
 
-| Name | What it is | If it is missing |
+**Nothing since the favicon is live.** Everything below is sitting on the
+branch `claude/zealous-volta-ec0mvn`:
+
+| What |
+|---|
+| Service-page audit, meta descriptions, your 20 business rules |
+| Six Stories articles |
+| The phone hero fix, the Fayoum photo, the twelve dress photos |
+| The animated photo ribbon, eighteen browser-default blue links fixed |
+| The Studio: five new editable sections |
+| Your operating brief: the fourth experience, four real durations, six corrections |
+
+**Do:** tell me to deploy, or merge the branch in GitHub yourself.
+
+Nothing else in Part 1 works until this is done, because the Studio reads its
+fields from the deployed app.
+
+## Step 1 — Check two variables exist in Vercel
+
+Vercel → your project → Settings → Environment Variables.
+
+| Name | What it is | If missing |
 |---|---|---|
-| `SANITY_API_WRITE_TOKEN` | Lets the migration write to Sanity | Sanity → Manage → API → Tokens → Add token, **Editor** permission. Copy it once; it is never shown again. |
-| `MIGRATE_SECRET` | The password on the migration URL | Invent a long random string and add it. |
+| `SANITY_API_WRITE_TOKEN` | Lets the migration write to Sanity | Sanity → Manage → API → Tokens → Add token, **Editor** permission |
+| `MIGRATE_SECRET` | The password on the migration URL | Invent a long random string and add it |
 
-Both are probably already there — `/api/migrate` has been used before. You
-only need to confirm, and to know the value of `MIGRATE_SECRET` for Step 3.
+Both are probably already there. You only need to confirm, and to know the
+value of `MIGRATE_SECRET` for Step 3.
 
-**Do not send me either value.** I do not need them and they should not be in
-a chat log. If a token ever leaks, revoke it in Sanity and add a new one.
-
----
+**Do not send me either value.** They should not be in a chat log.
 
 ## Step 2 — Deploy
 
 Vercel deploys on its own once the branch is merged. Wait for the green tick.
 
----
-
 ## Step 3 — Fill the Studio (one URL, once)
-
-In your browser, visit:
 
 ```
 https://egypteyetravel.com/api/migrate?secret=YOUR_MIGRATE_SECRET&only=flyingDresses
 ```
 
-Replacing `YOUR_MIGRATE_SECRET` with the value from Step 1.
-
-You should see something like:
+Expect:
 
 ```json
-{ "ok": true, "migrated": 5, "revalidated": true,
-  "details": ["flyingDressSettings", "flyingDressPackage x3",
-              "flyingDressAddOn x8", "flyingDressRental x3",
-              "flyingDressOutfit x17"] }
+{ "ok": true, "details": ["flyingDressSettings", "flyingDressPackage x4",
+  "flyingDressAddOn x11", "flyingDressRental x3", "flyingDressOutfit x17"] }
 ```
 
-**This is safe to run twice.** It creates what is missing and never touches
-what is already there. There is no mode that overwrites your edits.
-
-**Nothing on the website will look different afterwards.** Every value came
-from the files the site already renders. That is checked automatically, not
-assumed.
-
----
+Safe to run twice — it creates what is missing and never overwrites your
+edits. **Nothing on the site will look different afterwards.**
 
 ## Step 4 — Look at it
 
-Go to `https://egypteyetravel.com/studio`. In the left sidebar, below the
-Boutique, you will see six new entries marked ✿:
+`https://egypteyetravel.com/studio` → six new ✿ entries in the sidebar:
+Settings, Photoshoots, Extras, Hire services, Wardrobe, Galleries.
 
-- **Flying Dresses — Settings**
-- **Flying Dresses — Photoshoots**
-- **Flying Dresses — Extras**
-- **Flying Dresses — Hire services**
-- **Flying Dresses — Wardrobe**
-- **Flying Dresses — Galleries**
+## Step 5 — Prove it works (two minutes)
 
----
+1. Open **Flying Dresses — Settings**, change the tagline, add a full stop.
+2. **Publish**.
+3. Open `/admin/paypal`, click **"Refresh the site from Sanity"**.
+4. Look at the browser tab title on flyingdressesegypt.com.
 
-## Step 5 — Prove it works (two minutes, and worth doing)
+If the full stop is there, you never need me for copy again. Take it back out
+the same way.
 
-1. Open **Flying Dresses — Settings**.
-2. Change the tagline slightly. Add a full stop.
-3. Click **Publish**.
-4. Open `https://egypteyetravel.com/admin/paypal` and click
-   **"Refresh the site from Sanity"**.
-5. Open `https://www.flyingdressesegypt.com` and look at the browser tab
-   title.
-
-If the full stop is there, the whole chain works and you never need me for
-copy again. Then take the full stop back out the same way.
-
-Without Step 4 the change still appears — it just waits up to an hour.
-
----
-
-## Step 6 — The first real edit: upload the dress photographs
+## Step 6 — The first real edit: the photographs
 
 The wardrobe documents have names and colours but **no photographs** — the
-site is still using the twelve files in the repo. That is on purpose, so
-nothing changed when you ran the migration.
+site is still using the files in the repo. Upload each dress photo in
+**Wardrobe**, write one line describing it, Publish.
 
-For each garment in **Wardrobe**: add the photograph, write one line
-describing it, Publish. From then on that dress's picture is yours to change.
-
-Same for the three **Photoshoots** and their hero images.
+Then the **Photoshoots** hero images. The **Red Sea Yacht has no photograph at
+all** and currently shows a labelled gap, which is the one place the site is
+visibly incomplete.
 
 ---
 
-# PART 2 — THE ANSWERS I NEED
+# PART 2 — DECISIONS (pick, don't research)
 
-Ranked by how much they unblock. Reply in any form — a voice note, a scribbled
-list. "We don't do that" is a perfectly good answer and is often the most
-useful one, because removing a claim is faster than confirming one.
+## 1. ⚠️ Does the website take payment or not? — the biggest one
 
-## Tier 1 — these unblock the most
+Your brief says customers pay via **website checkout, PayPal and payment
+links**. The site says, in four places:
 
-### 1. Prices for eleven pages
-Every experience and hire page says "enquire", which is honest and is also why
-none of them can answer the question a visitor arrived with. A *starting*
-price is enough: "from $X, depending on the decoration" can go live.
+> "No payment is taken on this website… we will never ask you to type card
+> details into a form here."
 
-| Page | Needs |
+Both can't stand. Pick one:
+
+- **A.** Payment happens on the Egypt Eye checkout, as it does today. The site
+  is accurate; I soften "never" to something friendlier. *Small change.*
+- **B.** Checkout moves onto flyingdressesegypt.com. *A second payment
+  integration — weeks, not minutes.*
+- **C.** Payment is by link and transfer, sent by your team. *Medium change —
+  the current wording is misleading in a different way.*
+
+**My recommendation: A**, until volume justifies B.
+
+## 2. Nine Pyramids: inside the complex, or overlooking it?
+
+Your brief says the Lounge is *"within the Giza pyramid area"*. Your earlier
+instruction said the Nine Pyramids rooftop *"is not inside the archaeological
+complex"*.
+
+These may be two different venues — a lounge inside and a rooftop outside is
+entirely plausible. But a whole Stories article rests on that distinction, and
+a session genuinely inside the site has ticketing implications.
+
+**Which is it?**
+
+## 3. Where is the cancellation policy published?
+
+Your brief says it is already on the website. It is not on
+flyingdressesegypt.com — because your brochure sets out **both** a 15-day and
+a 7-day provision and they overlap, so nobody could tell which applies at ten
+days out.
+
+Do you mean the Egypt Eye site? Or is there a policy that never reached this
+one? **Send the real notice periods and charges and I will publish them.**
+
+## 4. Solo / Couple / Maternity / VIP / Red Sea
+
+Your brief lists these as package names. The site sells by **location**. Are
+they a superseded scheme, or rates that sit *across* locations (a Couple rate
+at the rooftop, a VIP rate at Fayoum)? The second fits your per-person pricing
+and would be a real structural change.
+
+## 5. Delivery: one week, or six to ten days?
+
+Your brief says within one week. The site has promised **6 to 10 days** since
+launch. I did not tighten it — that binds every booking already taken.
+**Confirm and it changes everywhere in one edit.**
+
+## 6. The remaining four from before
+
+- **Cross-domain links.** The two sites don't link. Keep separate (current),
+  link them, or move the seven flying-dress articles across? *I recommend
+  keeping them separate; moving them is the only option that can lose
+  something that works.*
+- **Stock photos or labelled gaps** for the celebration and hire cards that
+  have no photograph.
+- **Your logo says "FLYING DRESS" singular; everything else says "Dresses".**
+  Which is the real name?
+- **PayPal shortcut:** if you just want the three priced shoots taking money
+  now, send **one payment link per package** and I'll wire them in.
+
+---
+
+# PART 3 — FACTS I STILL NEED
+
+## ✅ Answered by your brief — no longer asking
+
+| Was asked | Your answer |
 |---|---|
-| Marriage proposals | A starting price, and what it includes |
-| Gender reveals | A price with video, and one without |
-| Birthdays and celebrations | A starting price, or the basis you quote on |
-| Anniversaries and romance | A starting price |
-| Maternity and family | A price |
-| Vow renewals and engagements | A starting price |
-| Creators and editorial | Session, half-day, full-day |
-| DJ and music | See 5 — the model itself is undecided |
-| Rent a dress | Per-day |
-| Accessories | Price, or "priced with the dress" |
-| Men's wear (gawns) | Per-day |
+| Deposit percentage | 25%, balance after the experience |
+| Who supplies what | In-house photographers, video, stylists. Decorations via external supplier's catalogue |
+| DJ / music equipment | You provide your own |
+| Where special events happen | Rooftop only |
+| Rescheduling | First change free |
+| Durations | Rooftop 45 min · Desert 1.5h · Fayoum 4–6h · Yacht 6h |
 
-*Once you answer this you can type these in yourself — they are Studio fields
-now.*
+## Tier 1 — unblocks the most
 
-### 2. The venue matrix
-The rooftop is a hotel's, not ours, and six separate questions across the site
-are all asking the same thing. One table settles them. For each rooftop you
-have an arrangement with:
+### Prices
+Your brief says to use "the current approved pricing schedule" — which I don't
+have. Needed:
 
-- Its name, and whether the arrangement is standing or booked each time
-- Does it permit sessions **after dark**?
-- Does it permit **amplified music**, and on what conditions?
-- Maximum **group size**
-- Is **catering or private dining** genuinely available, and on what terms?
-- Which **reveal mechanisms** are allowed (confetti, smoke, balloons, none)?
+- **The eleven experience and hire pages** still saying "enquire": proposals,
+  gender reveals, birthdays, anniversaries, maternity, vow renewals, creators,
+  DJ/music, dress rental, accessories, men's wear. *A starting price is enough.*
+- **The Red Sea yacht**, plus what it includes (transport? the yacht? catering?)
+- **Companion fee** for someone attending but not photographed
+- **Male participant rate**
+- **Nine Pyramids Lounge**, **professional video**, **additional retouching**
 
-Until this exists the site cannot say an evening, a DJ set, a dinner or a
-particular reveal is available — only that it may be, subject to the venue.
+*Once you send these you can type them in yourself — they're Studio fields.*
 
-### 3. Suppliers: which are real, which are aspirational
-For each, a supplier you can reliably call, or remove it from the site?
-Live musician / DJ · cake, flowers, refreshments · transport to and from the
-hotel · hair and makeup · a celebrant for vow renewals · sound equipment and
-generators.
+### The venue matrix
+One table answers six questions across the site. For each rooftop:
+name · standing or per-booking arrangement · **after dark?** · **amplified
+music?** · **max group size** · **catering?** · **which reveal mechanisms**
+(confetti, smoke, balloons, none).
 
-## Tier 2 — decisions, no homework
+### Transport boundary
+Your brief says free "within the designated Giza service area" and a possible
+fee beyond. **Where is that boundary, and what are the rates past it?** The
+site now says a charge may apply; it can't say more without this.
 
-### 4. PayPal and instant booking
-Today the Book button hands over to `egypteyetravel.com/secure/...`, where the
-deposit is calculated. That is one payment integration and one authority for
-money, which is the right shape. Two options:
+## Tier 2 — rental terms
 
-- **A. Leave it.** Simplest, safest, already works. The customer briefly sees
-  the other brand's domain at checkout.
-- **B. Checkout on the Flying Dresses domain.** Better for the brand, and it
-  means a second PayPal integration to build and keep in step.
+Your brief lists these as unconfirmed and they're the gap stopping the hire
+pages being sellable: **security deposit amount · return deadline · damage
+assessment rules · late fees · delivery charges · rental-specific cancellation.**
 
-I recommend **A** until the volume justifies B. Your call, not mine.
+## Tier 3 — smaller, still needed
 
-*Alternatively*, if you just want the three photoshoots to take money now:
-send me **one PayPal payment link per package** ($179 / $199 / $349) and I
-will wire them in without building anything.
-
-### 5. The DJ and music model
-Not the number — the shape. A coordination fee on top of a shoot? An hourly
-production rate? A package? Custom quote only?
-Also: **the equipment inventory** — exactly which cameras and lights exist, so
-the page can be specific instead of saying "our equipment".
-
-### 6. Delivery standard for the experience pages
-The home page claims "more than a hundred colour-graded photographs" for the
-three photoshoots. Does that figure apply to the celebration and creative
-sessions too? If not, what does — how many images, within how many days?
-
-### 7. The two sites: should they link to each other?
-`egypteyetravel.com` already publishes seven flying-dress articles, including
-a 21,000-character guide. The sites currently do not link, because your rule
-is to keep them separate.
-
-- **A. Keep them separate** (current). Costs some search authority both ways.
-- **B. Linked in public.** A few honest links each way.
-- **C. Move the seven articles to the Flying Dresses domain with redirects.**
-  **Not recommended** — it moves established pages to a domain with no
-  history, and it is the only option that can lose something that works today.
-
-### 8. Photographs for the empty cards
-Several celebration and hire cards have no photograph and show a labelled gap.
-You said I may use Pexels or Unsplash if the Drive had nothing. I have not,
-because this brand's rule is that a visitor must never mistake a stock photo
-for your work — so I want you to pick:
-
-- **A. Use stock**, clearly credited and never captioned as your shoot.
-- **B. Keep the labelled gaps** until you shoot them.
-
-### 9. Your logo says "FLYING DRESS Egypt". The site says "Flying Dresses Egypt".
-Singular in the artwork, plural everywhere else — the domain, the brochure,
-every page. Which is the real name? If it is the plural, the logo needs a
-corrected export. If it is the singular, I change the site.
-
-## Tier 3 — needs a qualified eye, not a decision
-
-### 10. The cancellation policy
-Your brochure sets out **both** a 15-day and a 7-day provision for amendments
-and cancellations, and they overlap rather than nest. It is not determinable
-which applies to a cancellation made ten days out. The site currently says the
-terms are confirmed in writing when a date is held — true, useful, and commits
-you to nothing. To publish a real policy I need the actual notice periods and
-charges.
-
-Related: **the deposit percentage and deadline**, for the deposit-led model in
-your rule 10.
-
-### 11. Two sentences someone qualified should read
-- **Vow renewal wording.** The page distinguishes a symbolic ceremony from a
-  legal one. That is the sentence stopping a customer believing they are
-  legally married.
-- **Commercial music video permissions.** Whether anything beyond the venue's
-  permission is needed, confirmed against an authoritative source.
-
-### 12. Commercial licensing terms
-Per your rule 9 these are handled case by case and are not advertised. Worth
-drafting standard internal terms so the case-by-case answer starts from a
-position rather than from nothing. Low priority.
+- **Exact dress count.** The site says twelve, by name, with photographs. Your
+  brief says "approximately 12… exact inventory count remains to be
+  confirmed." If it isn't twelve, the wardrobe page is wrong in a way a
+  customer can count.
+- **Vow renewal wording** — the sentence distinguishing a symbolic ceremony
+  from a legal one should be read by someone qualified.
+- **Commercial music video permissions** — anything needed beyond the venue's.
+- **Commercial licensing terms** — drafted internally, so the case-by-case
+  answer starts from a position. Low priority.
 
 ---
 
-# PART 3 — WHAT I AM NOT ASKING FOR, AND WHY
+# PART 4 — NOT YOURS TO TOUCH (decided, not forgotten)
 
-So you know these are decided, not forgotten.
-
-| Thing | Why you do not need to touch it |
+| Thing | Why |
 |---|---|
-| The domain, the checkout origin | Technical. Wrong value takes the site down or kills every Book button. Kept out of the Studio deliberately. |
-| PayPal / Supabase credentials | Secrets. They live in Vercel's environment variables and must never appear in a CMS or a chat. |
-| The deposit percentage | One authority for money. It lives on the Egypt Eye side where the deposit is actually calculated. Two editable copies is two numbers that can disagree about what a customer owes. |
-| Layout numbers | Measured. The menu's six-item ceiling is surfaced as a warning with its reasoning, which is the part you can act on. |
-| Translations | The translation pipeline reads the code files, not Sanity. Copy written only in the Studio stays English on every locale. A real limit, and it applies to the travel site too. |
+| Domain, checkout origin | Wrong value takes the site down or kills every Book button |
+| PayPal / Supabase credentials | Secrets. Vercel environment variables only — never a CMS, never a chat |
+| Deposit percentage | One authority for money, on the Egypt Eye side where it's calculated. Two editable copies can disagree about what a customer owes |
+| Layout numbers | Measured. The menu's six-item ceiling is a warning with its reasoning |
+| Translations | The pipeline reads code files, not Sanity. Copy written only in the Studio stays English on every locale |
+
+**Two things from your brief that should NOT go on the site:** the ~90%
+availability figure (your brief calls it an estimate, not a guarantee — on a
+public page it reads as a promise about *their* date), and any dress count you
+haven't confirmed.
 
 ---
 
-# PART 4 — STILL IN CODE
+# PART 5 — STILL NEEDS A DEVELOPER
 
-Honest list of what still needs me. Scoped, not attempted, because a type that
-looks editable and is not is worse than one that is obviously missing.
-
-| Still needs a developer | Size | Priority |
+| What | Size | Priority |
 |---|---|---|
-| The eight celebration and creative categories | 784 lines | **Highest** — this is where the eleven unpriced pages live |
+| The eight celebration and creative categories | 784 lines | **Highest** — where the eleven unpriced pages live |
 | The six Stories articles | 734 lines | Medium |
 | The collaborate page | 125 lines | Low |
-| Experience photographs | — | Medium, pairs with the categories |
+| Experience photographs | — | Medium |
 
-Say the word and I will do the categories next, which would make Tier 1
-question 1 something you can answer directly in the Studio.
+Say the word and I'll do the categories next — that turns the Tier 1 price
+question into something you answer in the Studio yourself.
