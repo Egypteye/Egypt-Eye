@@ -106,11 +106,15 @@ export const activities: Experience[] = [
     physicalLevel: {
       tier: "moderate",
       note:
-        "A full day of village walking on dirt paths and farm ground. Going down inside the Red Pyramid is steep, low-ceilinged and warm — and completely optional.",
+        "A full day of village walking on dirt paths and farm ground, with hands-on work at a real farm. Going down inside the Red Pyramid is steep, low-ceilinged and warm — and completely optional.",
     },
     title: "Village & Farm Experience in Dahshur",
-    duration: "Full day (about 8 hours)",
-    location: "Dahshur, Giza Governorate",
+    // Deliberately no hour count. The day can end at the farmhouse in the
+    // afternoon or run through the sunset outing and the evening gathering,
+    // and those depend on the season and the farm's own programme — so an
+    // "about 8 hours" here would be wrong half the time. See goodToKnow.
+    duration: "Full day",
+    location: "Saqqara Tourist Road, Dahshur, near the Dahshur Pyramid entrance",
     price: { amount: null },
     imageTone: "nile",
     image: unsplash("photo-1725958242753-34e7fe712c56"),
@@ -119,51 +123,87 @@ export const activities: Experience[] = [
       "https://unsplash.com/photos/a-field-of-green-plants-in-a-muddy-area-vS_tzihh-e0"
     ),
     description:
-      "A day in the farmland south of Cairo, in the village that sits beneath Sneferu's Bent and Red Pyramids. Tea on arrival, a walk through the fields, hands in the work, a home-cooked lunch at a family table — and two of Egypt's most important pyramids with almost nobody else at them.",
+      "A full day of rural Egyptian life in the farming village beneath Sneferu's Bent and Red Pyramids. Bread baked in a wood-fired oven, a guided walk through the crops and the date palms, hands in the work — planting, pottery, a donkey ride — and a long countryside meal at a family table. It can be run on its own, or combined with Dahshur's two pyramids and the necropolis of Saqqara as one private day.",
     steps: [
       {
-        title: "8:00am pickup in Cairo",
-        description: "Private transfer out through the southern suburbs into open farmland — about 40 minutes from Giza.",
+        title: "Early pickup in Cairo or Giza",
+        description:
+          "Private transfer from your hotel out through the southern suburbs into open farmland. The day starts early on purpose: the drive, the farm's own programme and the sites' opening hours all have to line up, so we fix the running order with you beforehand.",
       },
       {
-        title: "Tea, and a walk through the fields",
+        title: "Baladi bread, in the morning",
         description:
-          "You're welcomed with Egyptian tea, then walked out through the crops and date palms to see how the land is actually worked.",
+          "The morning opens at the oven — mixing, shaping and baking traditional Egyptian baladi bread, then eating it warm.",
       },
       {
-        title: "Time on the farm",
+        title: "A guided walk through the farm",
         description:
-          "Meet the animals, learn how the date harvest works, and try your hand at the local crafts — palm-leaf weaving is the one everyone ends up doing.",
+          "An introduction to how the land is actually worked, crop by crop, and to the date varieties grown here — including how the palms are climbed and how the harvest is traditionally taken. The fresh harvest itself is an August event; outside it, this is the explanation and a tasting of the farm's date products rather than fruit off the tree.",
       },
       {
-        title: "Lunch at the farmhouse",
+        title: "Hands in the work",
         description:
-          "A home-cooked countryside meal at a family table: roast chicken or duck, seasonal mahshi, rice, salads and fruit. This is the part guests write to us about.",
+          "Planting and whatever the season's work happens to be, pottery and traditional handicrafts at the wheel and the bench, and a donkey ride through the lanes. Which of these run on your day depends on the season and the farm's work that week.",
+      },
+      {
+        title: "At the family table",
+        description:
+          "A full countryside breakfast or lunch, cooked at the farmhouse — tell us which suits your day. Breakfast runs to feteer meshaltet, bread straight from the oven, bee honey and blackstrap molasses, fresh and aged farmhouse cheese, fried potatoes, boiled eggs, ful medames and falafel, with seasonal vegetables and salad. Lunch runs to assorted mahshi — grape leaves, cabbage, eggplant, zucchini — vermicelli rice, oven-baked dishes, molokhia and soup, with chicken, meat and kofta. These are examples of what the kitchen cooks, not a fixed menu: the day's table depends on the season and is confirmed with the farm.",
       },
       {
         title: "The Bent and Red Pyramids",
         description:
-          "Dahshur's two great pyramids — Sneferu's failed experiment and the correction that made Giza possible — usually with a fraction of Giza's crowd.",
+          "Sneferu's failed experiment and the correction that made Giza possible, usually with a fraction of Giza's crowd. Going down inside the Red Pyramid is optional.",
       },
       {
-        title: "Back in Cairo by around 4:00pm",
-        description: "Return transfer to your hotel.",
+        title: "Sunset from the mountain",
+        description:
+          "An outing up to the high ground for the last of the light, with the pyramids on the horizon. Weather and timing dependent.",
+      },
+      {
+        title: "Tea around the fire",
+        description:
+          "A traditional evening gathering to close the day — singing, and tea made over a wood fire. This runs subject to the season and the farm's arrangements for that evening.",
+      },
+      {
+        title: "Return transfer",
+        description:
+          "Private transfer back to your hotel in Cairo or Giza. The return time depends on how much of the day you take — an afternoon finish at the farmhouse and a stay through the evening gathering are very different endings.",
       },
     ],
     included: [
       "Private air-conditioned transport from and back to Cairo or Giza",
       "English-speaking guide for the day",
-      "Tea on arrival and the farm visit",
-      "Hands-on activities with the family",
-      "Home-cooked farmhouse lunch",
+      "Tea on arrival and the guided farm tour",
+      "Hands-on farm activities, bread baking and handicrafts",
+      "A traditional countryside meal at the family table",
       "Dahshur site entrance fees",
     ],
     goodToKnow: [
-      "Dahshur is around 40 minutes from Giza — this is a real day out, not a stop on the way to somewhere else.",
+      // The seasonal line the owner asked for, close to verbatim. It is first
+      // because it is the one expectation this product used to set wrongly:
+      // the page previously implied the date harvest was simply part of the
+      // visit, in any month.
+      "The farm's fresh date harvest takes place annually in August. Outside the harvest season, guests can learn about the date varieties grown on the farm and sample a selection of the farm's date products. Fresh dates on the palms and direct harvesting experiences are seasonal and cannot be guaranteed outside August.",
+      "If seeing and tasting freshly harvested dates is your main reason for coming, August is the month to plan around.",
+      "Children under 12 years old are charged at half the adult rate for the farm experience.",
+      "The farm is on the Saqqara Tourist Road in Dahshur, near the Dahshur Pyramid entrance, roughly 5 km beyond Saqqara.",
+      "The farm day can be combined with the Bent Pyramid, the Red Pyramid and Saqqara in one private trip, with hotel pickup and drop-off in Cairo or Giza. It is a lot for one day and needs an early start, so we check opening hours, driving times and the farm's programme for your date before fixing the itinerary.",
+      "Which activities run depends on the season, the weather and the farm's own work that day — planting, the sunset outing and the evening gathering in particular. We confirm the day's programme with the farm before your visit.",
       "You can go down inside the Red Pyramid. The descent is steep, low-ceilinged and warm; it is entirely optional.",
       "This is a working village, so modest dress is appreciated.",
       "October to April is the comfortable season for a day spent mostly outdoors.",
       "Vegetarian and other dietary requirements are easy — tell us when you book so the family can cook for them.",
+    ],
+    // What the reservations team otherwise has to write back and ask. None of
+    // these selects or prices anything — they are preferences, passed through
+    // to the enquiry email in the guest's own words.
+    enquiryOptions: [
+      "Breakfast at the farm",
+      "Lunch at the farm",
+      "Add the Bent and Red Pyramids",
+      "Add Saqqara",
+      "I'd like a tailored itinerary",
     ],
     destinations: ["Dahshur", "Giza", "Cairo"],
   },

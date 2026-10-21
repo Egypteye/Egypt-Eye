@@ -17,21 +17,57 @@ function Field({ label, htmlFor, children }: { label: string; htmlFor: string; c
   );
 }
 
+/**
+ * One "2 adults, 1 child" string out of the two counts the form collects.
+ *
+ * The enquiry API and the reservations email have always taken a single
+ * `travelers` value, and they still do — splitting the control in the UI did
+ * not need a second shape flowing through the route and the template. Zero
+ * children is left out entirely rather than written as "0 children", which
+ * reads as a correction nobody made.
+ */
+function travelersSummary(adults: FormDataEntryValue | null, children: FormDataEntryValue | null): string {
+  const a = Math.max(1, Number(adults) || 1);
+  const c = Math.max(0, Number(children) || 0);
+  const adultPart = `${a} ${a === 1 ? "adult" : "adults"}`;
+  if (c === 0) return adultPart;
+  return `${adultPart}, ${c} ${c === 1 ? "child" : "children"}`;
+}
+
+/**
+ * Folds the ticked options into the free-text message.
+ *
+ * The message is capped at 2000 characters by the API, and the guest's own
+ * words are the part worth keeping, so the options go first and the message
+ * follows — a truncation then loses the end of a sentence rather than the
+ * preferences the team needs to quote.
+ */
+function withOptions(message: FormDataEntryValue | null, picked: string[]): string {
+  const typed = typeof message === "string" ? message.trim() : "";
+  if (picked.length === 0) return typed;
+  const header = `Interested in: ${picked.join(", ")}`;
+  return typed ? `${header}\n\n${typed}` : header;
+}
+
 export function EnquiryModal({
   itemType,
   itemTitle,
   itemSlug,
+  options,
   onClose,
 }: {
   itemType: ItemType;
   itemTitle: string;
   itemSlug: string;
+  /** Product-specific things a guest can tick. Absent on most products. */
+  options?: string[];
   onClose: () => void;
 }) {
   const tr = useTr();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [error, setError] = useState("");
   const [flexibleDates, setFlexibleDates] = useState(false);
+  const [picked, setPicked] = useState<string[]>([]);
 
   const ITEM_LABELS: Record<ItemType, string> = {
     tour: tr("Tour"),
@@ -74,11 +110,15 @@ export function EnquiryModal({
       startDate: form.get("startDate"),
       endDate: form.get("endDate"),
       flexibleDates,
-      travelers: form.get("travelers"),
+      travelers: travelersSummary(form.get("adults"), form.get("children")),
       hotel: form.get("hotel"),
       pickupLocation: form.get("pickupLocation"),
       preferredTime: form.get("preferredTime"),
-      message: form.get("message"),
+      // The ticked options ride in the message rather than in a field of
+      // their own: they are free text the team reads, the API and the email
+      // already carry a message, and a new field would have needed a shape
+      // agreed in three more places to say the same sentence.
+      message: withOptions(form.get("message"), picked),
     };
 
     try {
@@ -166,19 +206,37 @@ export function EnquiryModal({
               </Field>
             </div>
 
+            <Field label={tr("Nationality")} htmlFor="enq-nationality">
+              <input id="enq-nationality" name="nationality" type="text" required maxLength={100} className={inputClass} />
+            </Field>
+
+            {/* Adults and children are counted separately rather than as one
+                "Travelers" number. Several products price a child differently
+                from an adult, so a single headcount made the reservations team
+                write back to ask — and the customer could not state the thing
+                the policy actually turns on. The two are still sent as the one
+                `travelers` string the API and the email already understand. */}
             <div className="grid grid-cols-2 gap-3">
-              <Field label={tr("Nationality")} htmlFor="enq-nationality">
-                <input id="enq-nationality" name="nationality" type="text" required maxLength={100} className={inputClass} />
-              </Field>
-              <Field label={tr("Travelers")} htmlFor="enq-travelers">
+              <Field label={tr("Adults")} htmlFor="enq-adults">
                 <input
-                  id="enq-travelers"
-                  name="travelers"
+                  id="enq-adults"
+                  name="adults"
                   type="number"
                   min={1}
                   max={50}
                   defaultValue={2}
                   required
+                  className={inputClass}
+                />
+              </Field>
+              <Field label={tr("Children (under 12)")} htmlFor="enq-children">
+                <input
+                  id="enq-children"
+                  name="children"
+                  type="number"
+                  min={0}
+                  max={50}
+                  defaultValue={0}
                   className={inputClass}
                 />
               </Field>
@@ -231,6 +289,39 @@ export function EnquiryModal({
                 className={inputClass}
               />
             </Field>
+
+            {/* Product-specific questions. Rendered only when the product
+                carries them, so every other enquiry form is unchanged. */}
+            {options && options.length > 0 && (
+              <fieldset>
+                <legend className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">
+                  {tr("I'm interested in")}
+                </legend>
+                <div className="mt-2 flex flex-col gap-2">
+                  {options.map((option) => {
+                    const on = picked.includes(option);
+                    return (
+                      <label
+                        key={option}
+                        className="flex min-h-[44px] cursor-pointer items-center gap-2.5 text-sm text-ink-soft"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() =>
+                            setPicked((prev) =>
+                              on ? prev.filter((p) => p !== option) : [...prev, option]
+                            )
+                          }
+                          className="h-4 w-4 rounded border-black/20 accent-gold-dark"
+                        />
+                        {tr(option)}
+                      </label>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            )}
 
             <Field label={tr("Additional Questions or Requests")} htmlFor="enq-message">
               <textarea

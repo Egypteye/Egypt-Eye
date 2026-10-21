@@ -299,7 +299,13 @@ export default async function ExperienceDetailPage({
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}
             className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Book on WhatsApp</T></WhatsAppBookButton>
-          <EnquiryButton itemType="experience" itemTitle={experience.title} itemSlug={experience.slug} className="mt-3" />
+          <EnquiryButton
+            itemType="experience"
+            itemTitle={experience.title}
+            itemSlug={experience.slug}
+            options={experience.enquiryOptions}
+            className="mt-3"
+          />
 
           <div className="mt-4 border-t border-black/5 pt-4">
             <AddToJourneyButton

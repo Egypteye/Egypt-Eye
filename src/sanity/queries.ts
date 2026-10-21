@@ -63,7 +63,7 @@ export const experiencesQuery = groq`*[_type == "experience"] | order(order asc)
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
-  steps[]{title, description}, included, goodToKnow, destinations,
+  steps[]{title, description}, included, goodToKnow, enquiryOptions, destinations,
   physicalLevel, mapStops, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, outfits[]{id, name, category, image, hex, note, active},
   relatedTours[]->{${relatedTourFields}},
   seo
