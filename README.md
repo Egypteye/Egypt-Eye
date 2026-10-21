@@ -229,6 +229,100 @@ a real checkout (Stripe, using its Coupons/Promotion Codes API rather than a
 second parallel discount system) can be added later without a rework — see
 `supabase/migrations/0001_init.sql`'s comments.
 
+## Egypt Eye OS
+
+`/os` is the internal workspace for the three teams that currently pass a
+booking between them by re-typing it:
+
+- **Reservations** keep a handwritten follow-up list — name, where the request
+  came in, how many people, whether the itinerary went out, and the date of
+  the next chase.
+- **Operations** keep a spreadsheet with one tab per excursion date — guest,
+  pick-up time, pick-up point, driver, guide, inclusions, and the money.
+- **Social media** keep a third sheet with the photographer, whether the
+  content data was collected, and where the photos went.
+
+The same booking is therefore written down three times, which is why a
+changed pick-up time or a collected deposit is only ever right in one of the
+three. The OS holds it once:
+
+| Screen | What it is |
+| --- | --- |
+| **Today** (`/os`) | Every service happening today, sorted by pick-up time, with a date strip for the fortnight ahead. This is the operations day sheet, without anyone creating a tab. |
+| **Bookings** (`/os/bookings`) | The register. One booking holds the guest, the money and one row per day of service — so a four-day trip appears on four day sheets while its price is stored once. |
+| **Follow-ups** (`/os/follow-ups`) | The handwritten list, sorted by urgency. Overdue first, then today. "Chased — again in 7d" writes both dates in one click. |
+
+### Setting it up
+
+1. Open Supabase → **SQL Editor** and run
+   `supabase/migrations/0025_os_simple.sql` once. It creates the three OS
+   tables and widens the `profiles.role` constraint to allow the two new
+   roles.
+2. Each person who needs the OS creates a normal account on the site, then
+   you open Supabase → **Table Editor → profiles**, find their row and set
+   `role`. A role can only be changed here, with the service key — a
+   signed-in user cannot promote themselves by editing their own profile
+   (migration `0001_init.sql` has a trigger that silently discards the
+   attempt).
+3. They sign in and go to `/os`.
+
+### What each role can do
+
+Everyone in the OS sees all three screens. What differs is what they can
+**change**, and that is enforced in the server actions — not by hiding
+buttons, which anybody can post past.
+
+| | Reservations | Operations | Social |
+| --- | --- | --- | --- |
+| Create / cancel a booking | ✅ | — | — |
+| Set the price and deposit | ✅ | see only | — |
+| Pick-up time, driver, guide, inclusions | ✅ | ✅ | — |
+| Photographer, content data, photo link | ✅ | — | ✅ |
+| The follow-up list | ✅ | — | — |
+
+`admin` can do everything. Operations can **see** the money because the
+driver collects the outstanding balance in cash and needs the figure; social
+cannot, because nothing in their job needs it. `customer` — the role every
+visitor who signs up on the website has — cannot reach `/os` at all.
+
+### The WhatsApp hand-off
+
+Each booking has a **Hand-off to the crew** panel that builds the message for
+the WhatsApp group: guest, number, every day with its pick-up and crew, and
+what to collect. It is a **Copy** button, not a Send button, because posting
+into a WhatsApp group needs the paid WhatsApp Business Cloud API, with a
+registered number and Meta-approved message templates. None of that is set
+up, so a Send button would be a button that quietly does nothing. The message
+itself is composed in `whatsappMessage()`; if that API is ever configured,
+only the transport changes.
+
+### Deliberately not in this version
+
+- **A tours calculator.** It needs the real pricing rules — per-person rates,
+  what a camel or a jumping horse adds, where the operator's cut sits — and
+  guessing them would produce confident wrong numbers in front of a customer.
+- **An itineraries bank.** It needs a real itinerary as written today, so the
+  stored shape matches what actually gets sent, rather than a format nobody
+  will use.
+
+Both are additive: a booking already knows its days, its guests and its
+inclusions, which is what either would read from.
+
+### Notes
+
+- Photos and videos are **never** stored in the database — the content fields
+  hold a link to the gallery.
+- A booking is never deleted. Cancelling keeps the row, its reason and its
+  payment history, so an empty day on the sheet can still be explained a week
+  later.
+- `/os` is excluded from `robots.txt` and every page is `noindex`, but that
+  only keeps the URLs out of search results. What keeps people out is the
+  server-side role check on every page and every action.
+- `npm run check:os` asserts the rules that do not show on screen when
+  broken: money counted once per booking rather than once per day, dates that
+  mean the same thing in Cairo as on the server (the day sheet is read at 6am,
+  and the server runs in UTC), and no role writing past its remit.
+
 ## Languages
 
 The site is published in seven languages: English (the default), Arabic,

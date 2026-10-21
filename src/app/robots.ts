@@ -7,7 +7,11 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/studio", "/api/"],
+        // /os is the internal workspace: guest names, phone numbers and what
+        // each booking was sold for. It is gated server-side, so this only
+        // keeps the URLs out of search results — it is not the thing keeping
+        // anyone out.
+        disallow: ["/studio", "/api/", "/os"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
