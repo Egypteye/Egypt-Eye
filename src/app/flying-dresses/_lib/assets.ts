@@ -305,6 +305,18 @@ export const empty = {
     height: 1200,
     wanted: "The accessory collection: nothing has been named yet",
   }),
+  redSeaYacht: slot({
+    kind: "empty",
+    src: null,
+    alt: "A flying dress photographed on a yacht on the Red Sea at Ain Sokhna",
+    width: 1800,
+    height: 1200,
+    // The October 2026 operating brief confirms this experience exists and
+    // the website did not mention it at all. There is no photograph of it in
+    // the library yet, so it renders as a labelled gap rather than borrowing
+    // a dune or a rooftop — which would show a customer the wrong sea.
+    wanted: "The yacht at Ain Sokhna: the only one of the four on water",
+  }),
   dressRental: slot({
     kind: "empty",
     src: null,

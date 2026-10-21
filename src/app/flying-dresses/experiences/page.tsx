@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fdPackages, fdSettings } from "../_lib/content";
 import { Scene } from "../_components/Scene";
-import { agency, location } from "../_lib/assets";
+import { agency, empty, location, type ImageSlot } from "../_lib/assets";
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
+import { packagePriceLabel } from "@/content/flyingDresses";
 
 export const metadata: Metadata = fdMetadata({
   title: "The Experiences",
@@ -13,11 +14,22 @@ export const metadata: Metadata = fdMetadata({
   path: "/experiences",
 });
 
-const ART = {
+// A PRODUCT WITH NO ENTRY HERE USED TO CRASH THE PAGE.
+//
+// This was `as const` and read with `ART[pkg.slug]`, which TypeScript is
+// happy with and which returns undefined for any slug not listed. Adding the
+// Red Sea yacht — a product the business has been selling and the site never
+// mentioned — took /experiences and the shoot's own page to a 500 reading
+// "Cannot read properties of undefined (reading 'src')".
+//
+// Typed as a partial record and read through a fallback, so the next product
+// added in the Studio renders a labelled gap instead of an error page.
+const ART: Partial<Record<string, ImageSlot>> = {
   "sand-dunes": location.saharaDunes,
   "pyramids-rooftop": agency.rooftopPortrait,
   fayoum: location.fayoumLake,
-} as const;
+  "red-sea-yacht": empty.redSeaYacht,
+};
 
 export default async function ExperiencesPage() {
   const [settings, packages] = await Promise.all([fdSettings(), fdPackages()]);
@@ -47,7 +59,7 @@ export default async function ExperiencesPage() {
 
       <div className="fd-shell" style={{ display: "grid", gap: "var(--fd-section)" }}>
         {packages.map((pkg, index) => {
-          const art = ART[pkg.slug as keyof typeof ART];
+          const art = ART[pkg.slug] ?? empty.redSeaYacht;
           return (
             <article
               key={pkg.slug}
@@ -65,9 +77,9 @@ export default async function ExperiencesPage() {
                 </p>
 
                 <div className="fd-tile-meta" style={{ margin: "1.75rem 0" }}>
-                  <span className="fd-price">${pkg.priceUsd}</span>
-                  <span>per person</span>
-                  <span>30 to 45 min shoot</span>
+                  <span className="fd-price">{packagePriceLabel(pkg)}</span>
+                  {pkg.priceUsd === null ? null : <span>per person</span>}
+                  <span>{pkg.durationNote}</span>
                   <span>100+ photographs</span>
                 </div>
 

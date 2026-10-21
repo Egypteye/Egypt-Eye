@@ -23,6 +23,7 @@ import {
   addOns,
   brand,
   packageIncludes,
+  packagePriceLabel,
   cancellation,
   contact,
   dresses,
@@ -136,9 +137,16 @@ for (const pkg of packages) {
   ok(`package "${pkg.slug}" has an empty confirm list`, pkg.confirm.length > 0);
   ok(`package "${pkg.slug}" has no FAQs`, pkg.faqs.length > 0);
   ok(`package "${pkg.slug}" has no "why this one" reasons`, pkg.whyThis.length > 0);
+  // NULL IS A LEGITIMATE PRICE STATE and means "on request" — the Red Sea
+  // yacht is a confirmed product whose price the October 2026 brief
+  // deliberately does not confirm. Zero is not: it renders as free.
   ok(
-    `package "${pkg.slug}" has a price of ${pkg.priceUsd}, which is not a positive whole number of dollars`,
-    Number.isInteger(pkg.priceUsd) && pkg.priceUsd > 0
+    `package "${pkg.slug}" has a price of ${pkg.priceUsd}, which is neither a positive whole number of dollars nor a deliberate "on request"`,
+    pkg.priceUsd === null || (Number.isInteger(pkg.priceUsd) && pkg.priceUsd > 0)
+  );
+  ok(
+    `package "${pkg.slug}" has no durationNote — the site would have nothing to print where it used to say "30 to 45 minutes"`,
+    pkg.durationNote.trim().length > 0
   );
   ok(
     `package "${pkg.slug}" has no priceConfidence, so the page cannot tell a confirmed price from a brochure one`,
@@ -219,6 +227,18 @@ for (const addOn of addOns) {
 // ---------------------------------------------------------------------------
 const photoshootSlugs = new Set(photoshoots.map((p) => p.slug));
 for (const pkg of packages) {
+  // AN EMPTY eyeSlug IS NOT A BROKEN ONE. The Red Sea yacht has no Egypt Eye
+  // counterpart to take a deposit against, so the Book button does not render
+  // and the page offers an enquiry. That is the intended path for a product
+  // with no confirmed price. What this guard is for is a slug that was filled
+  // in and then stopped matching, which looks fine and 404s on click.
+  if (pkg.eyeSlug === "") {
+    ok(
+      `package "${pkg.slug}" has no Egypt Eye product AND a price, so it would offer a Book button with nothing behind it`,
+      pkg.priceUsd === null
+    );
+    continue;
+  }
   ok(
     `package "${pkg.slug}" books Egypt Eye product "${pkg.eyeSlug}", which is not a photoshoot in this repo — ` +
       "the deposit button would 404",
@@ -2152,7 +2172,7 @@ for (const section of ["celebrations", "creative"]) {
   // Proven by writing "$250" into one paragraph: red.
   // -------------------------------------------------------------------------
   const confirmedPrices = new Set<number>([
-    ...packages.map((p) => p.priceUsd),
+    ...packages.map((p) => p.priceUsd).filter((v): v is number => typeof v === "number"),
     ...addOns.map((a) => a.priceUsd).filter((v): v is number => typeof v === "number"),
   ]);
 
@@ -2520,6 +2540,52 @@ for (const section of ["celebrations", "creative"]) {
   ok(
     "an extra priced at 0 in the Studio comes back as something else — a real edit being overruled by a falsy check",
     zeroPriced[0]?.priceUsd === 0
+  );
+}
+
+// ---------------------------------------------------------------------------
+// NO PAGE MAY INTERPOLATE A PACKAGE PRICE DIRECTLY.
+//
+// `priceUsd` became nullable when the Red Sea yacht arrived: a product the
+// October 2026 brief confirms, with a price it deliberately does not. Eleven
+// render sites were writing `${pkg.priceUsd}` straight into the markup, and
+// every one of them would have printed the string "$null" — no crash, no
+// build error, just a price-shaped lie on the page a customer reads to decide
+// whether to spend money.
+//
+// So there is one function, packagePriceLabel(), and this fails if any page
+// goes back to the raw field.
+//
+// Proven by restoring `${pkg.priceUsd}` on the packages page: red.
+// ---------------------------------------------------------------------------
+{
+  const pageFiles = execSync("find src/app/flying-dresses -name '*.tsx' -type f", {
+    encoding: "utf8",
+  })
+    .trim()
+    .split("\n")
+    .filter(Boolean);
+
+  for (const file of pageFiles) {
+    const source = read(file)
+      .replace(/\/\*[\s\S]*?\*\//g, "")
+      .replace(/^\s*\/\/.*$/gm, "");
+    // `$` immediately before an interpolation of a package price.
+    const raw = source.match(/\$\{?\s*(pkg|p|other)\.priceUsd\s*\}?/g) ?? [];
+    ok(
+      `${file} writes a package price straight into the page (${raw[0] ?? ""}) — a shoot with no price renders "$null". Use packagePriceLabel().`,
+      raw.length === 0
+    );
+  }
+
+  // And the helper has to actually handle it.
+  ok(
+    "packagePriceLabel() renders a null price as a figure rather than a request",
+    packagePriceLabel({ priceUsd: null }) === "Price on request"
+  );
+  ok(
+    "packagePriceLabel() mangles a real price",
+    packagePriceLabel({ priceUsd: 199 }) === "$199"
   );
 }
 

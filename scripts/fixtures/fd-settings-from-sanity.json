@@ -29,7 +29,7 @@
  "packageIncludes": [
   {
    "title": "Door-to-door transportation",
-   "detail": "Collected from your hotel or address and brought back afterwards. Nothing to arrange and nothing to find."
+   "detail": "Collected from your hotel or address and brought back afterwards. Free within our Giza service area; from further out in Cairo, including New Cairo, there may be a transport charge, which we confirm with you before you book."
   },
   {
    "title": "100+ colour-graded photographs",
@@ -40,12 +40,20 @@
    "detail": "Rented from the collection for the shoot, in the colour you choose. Included in the price. Choosing one does not change what you pay."
   },
   {
-   "title": "An assistant for the dress",
-   "detail": "One person whose whole job is the fabric: holding the train, throwing it, keeping it out of the sand between frames."
+   "title": "A stylist for the dress",
+   "detail": "One person whose whole job is the garment: dressing and fitting you, then holding the train, throwing it, and keeping it out of the sand between frames."
   },
   {
-   "title": "A 30 to 45 minute photoshoot",
+   "title": "A directed session",
    "detail": "Directed throughout. You do not need to know how to pose. That is the photographer's job and the dress does the rest."
+  },
+  {
+   "title": "A Reel from the session",
+   "detail": "A short vertical edit is included with every experience. Longer or more involved video is a separate, paid piece of work."
+  },
+  {
+   "title": "Your unedited images, if you want them",
+   "detail": "Ask and we will send the originals as well, at no charge. They come as compressed JPGs rather than camera RAW files."
   },
   {
    "title": "Delivered in 6 to 10 days",

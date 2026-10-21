@@ -117,7 +117,17 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
     return (
       <div className="fd-note">
         <p style={{ margin: "0 0 0.75rem", fontWeight: 500, color: "var(--fd-ink)" }}>
-          Online deposits are not open for this date right now
+          {/* TWO DIFFERENT SITUATIONS, AND THEY SHOULD NOT READ THE SAME.
+              "not open for this date right now" implies a temporary,
+              date-specific state somebody could wait out. That is true for a
+              shoot whose deposit happens to be switched off, and false for a
+              shoot that is quoted rather than listed — the Red Sea yacht has
+              no price and no Egypt Eye product behind it, so there is nothing
+              to wait for. A customer who waits for a button that is never
+              coming is a customer who does not enquire. */}
+          {pkg.priceUsd === null
+            ? "This one is quoted rather than listed"
+            : "Online deposits are not open for this date right now"}
         </p>
         <p style={{ margin: "0 0 1.25rem" }}>
           Nothing will be charged here. Send us your dates and we will confirm availability and

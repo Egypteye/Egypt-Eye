@@ -10,6 +10,7 @@ import {
 import { BookingRail, anyPackageTakesPaymentOnline } from "../_components/BookingRail";
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
+import { packagePriceLabel } from "@/content/flyingDresses";
 
 export const metadata: Metadata = fdMetadata({
   title: "Prices",
@@ -97,13 +98,13 @@ export default async function PackagesPage() {
                       </span>
                     </th>
                     <td>
-                      <span className="fd-price">${pkg.priceUsd}</span>
+                      <span className="fd-price">{packagePriceLabel(pkg)}</span>
                     </td>
                     <td className="fd-muted" style={{ fontSize: "var(--fd-step--1)" }}>
                       {pkg.gettingThere}
                     </td>
                     <td className="fd-muted" style={{ fontSize: "var(--fd-step--1)" }}>
-                      30 to 45 min · 100+ photographs · delivered in 6 to 10 days
+                      {pkg.durationNote} · 100+ photographs · delivered in 6 to 10 days
                     </td>
                     <td>
                       <Link className="fd-arrow-link" href={fdPath(`/experiences/${pkg.slug}`)}>

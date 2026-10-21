@@ -1127,7 +1127,7 @@ export async function getFlyingDressSettings(): Promise<FdSettingsDoc | null> {
 
 const FD_PACKAGE_PROJECTION = `{
   "slug": slug.current,
-  name, title, eyebrow, order, priceUsd, eyeSlug,
+  name, title, eyebrow, order, priceUsd, durationNote, eyeSlug,
   priceStoryHeading, priceStoryBody,
   intro, metaDescription, whyThis, gettingThere, visualDirection,
   "imageUrl": image.asset->url,

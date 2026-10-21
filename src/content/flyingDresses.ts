@@ -252,7 +252,13 @@ export type Inclusion = { title: string; detail: string };
 export const packageIncludes: Inclusion[] = [
   {
     title: "Door-to-door transportation",
-    detail: "Collected from your hotel or address and brought back afterwards. Nothing to arrange and nothing to find.",
+    // QUALIFIED, because the unqualified version could cost a customer money
+    // on the day. The October 2026 brief: transport within the designated Giza
+    // service area is free; from further out in Cairo, including New Cairo, it
+    // "may incur an additional fee", calculated per booking rather than at a
+    // flat rate. "Door-to-door transportation" with no conditions attached
+    // promised a free pickup from anywhere.
+    detail: "Collected from your hotel or address and brought back afterwards. Free within our Giza service area; from further out in Cairo, including New Cairo, there may be a transport charge, which we confirm with you before you book.",
   },
   {
     title: "100+ colour-graded photographs",
@@ -263,12 +269,31 @@ export const packageIncludes: Inclusion[] = [
     detail: "Rented from the collection for the shoot, in the colour you choose. Included in the price. Choosing one does not change what you pay.",
   },
   {
-    title: "An assistant for the dress",
-    detail: "One person whose whole job is the fabric: holding the train, throwing it, keeping it out of the sand between frames.",
+    // "Stylist" is the business's own word for this role, from the October
+    // 2026 operating brief, and it is the more accurate one: the job is
+    // dressing, fitting, tying and adjusting as well as throwing the fabric.
+    title: "A stylist for the dress",
+    detail: "One person whose whole job is the garment: dressing and fitting you, then holding the train, throwing it, and keeping it out of the sand between frames.",
   },
   {
-    title: "A 30 to 45 minute photoshoot",
+    // NO CLOCK IN THIS LINE ANY MORE. It read "A 30 to 45 minute photoshoot"
+    // and was printed on five pages for all three products. The October 2026
+    // brief says that was right for the rooftop and wrong for everything else:
+    // the desert is about an hour and a half, Fayoum four to six hours, the
+    // yacht about six. Duration is `durationNote` on each product now.
+    title: "A directed session",
     detail: "Directed throughout. You do not need to know how to pose. That is the photographer's job and the dress does the rest.",
+  },
+  {
+    // Confirmed by the October 2026 brief. It was previously sold as a paid
+    // extra ("Two Instagram Reels", $25) with nothing saying one came free,
+    // so a customer could pay for something they already had.
+    title: "A Reel from the session",
+    detail: "A short vertical edit is included with every experience. Longer or more involved video is a separate, paid piece of work.",
+  },
+  {
+    title: "Your unedited images, if you want them",
+    detail: "Ask and we will send the originals as well, at no charge. They come as compressed JPGs rather than camera RAW files.",
   },
   {
     title: "Delivered in 6 to 10 days",
@@ -313,15 +338,54 @@ export type FlyingDressPackage = {
    * asserts all three still resolve, so a rename in the Studio is caught by a
    * check rather than by a customer finding a dead button.
    */
+  /**
+   * The Egypt Eye photoshoot document this shoot IS, or "" when there is none.
+   *
+   * EMPTY IS LEGITIMATE. The Ain Sokhna yacht experience has no counterpart on
+   * the travel site, so there is nothing to take a deposit against and the
+   * page offers an enquiry instead. That is the same graceful path a renamed
+   * slug already took; the difference is that this one is deliberate, so the
+   * check script verifies the slugs that EXIST rather than asserting there are
+   * three of them.
+   */
   eyeSlug: string;
   /** Short label for nav and cards. */
   name: string;
   /** Full editorial title. */
   title: string;
   eyebrow: string;
-  /** Per person, USD. Integer dollars — this brand has no checkout. */
-  priceUsd: number;
+  /**
+   * Per person, USD. Integer dollars.
+   *
+   * NULL MEANS NOBODY HAS SET A PRICE, and that is a real, publishable state
+   * rather than a bug. It arrived with the Ain Sokhna yacht experience: the
+   * October 2026 operating brief confirms the product, its location and its
+   * six-hour duration, and explicitly does not confirm a price. The honest
+   * rendering is "price on request", which is what the rental services have
+   * always done.
+   *
+   * It is deliberately NOT 0. A zero is a price, and it means free.
+   */
+  priceUsd: number | null;
   priceConfidence: Confidence;
+  /**
+   * HOW LONG THIS ONE ACTUALLY TAKES.
+   *
+   * This used to be a single shared inclusion reading "A 30 to 45 minute
+   * photoshoot", printed on the home page, the photoshoots index, every shoot
+   * page, the pricing page and in an FAQ answer. The October 2026 operating
+   * brief says it was right for exactly one of the four:
+   *
+   *     Giza rooftop      about 45 minutes
+   *     Giza desert       about 1.5 hours
+   *     Fayoum            4 to 6 hours, several locations
+   *     Ain Sokhna yacht  about 6 hours
+   *
+   * So a visitor comparing the desert shoot against the rooftop was told both
+   * take the same time, when one takes twice the other. Duration is per
+   * product now, and the shared inclusion no longer mentions a clock.
+   */
+  durationNote: string;
   /**
    * The brochure's own description of where it is. Reproduced rather than
    * rewritten, because "approximately 45 minutes from central Cairo towards
@@ -381,6 +445,7 @@ export const packages: FlyingDressPackage[] = [
     eyebrow: "45 minutes from Cairo",
     priceUsd: 179,
     priceConfidence: "confirm",
+    durationNote: "About an hour and a half out in the dunes.",
     gettingThere:
       "Approximately 45 minutes from central Cairo, towards New Cairo.",
     gettingThereConfidence: "confirm",
@@ -426,6 +491,7 @@ export const packages: FlyingDressPackage[] = [
     eyebrow: "An hour before the gates open",
     priceUsd: 199,
     priceConfidence: "verified",
+    durationNote: "About forty-five minutes on the roof.",
     gettingThere:
       "A private rooftop with views of the Pyramids of Giza. Door-to-door transport included; no entry ticket to the archaeological site is needed.",
     gettingThereConfidence: "verified",
@@ -497,6 +563,7 @@ export const packages: FlyingDressPackage[] = [
     eyebrow: "Three hours from Cairo",
     priceUsd: 349,
     priceConfidence: "confirm",
+    durationNote: "Four to six hours, including the driving between the locations.",
     gettingThere:
       "Approximately three hours from central Cairo. White sand dunes, waterfalls and lakes.",
     gettingThereConfidence: "confirm",
@@ -540,7 +607,100 @@ export const packages: FlyingDressPackage[] = [
       "Whether the exact sites are Wadi El Rayan and the Magic Lake, as the sister brand's page states.",
     ],
   },
+  // ---------------------------------------------------------------------------
+  // THE FOURTH EXPERIENCE, WHICH WAS NOT ON THE SITE AT ALL.
+  //
+  // Confirmed by the October 2026 operating brief, which lists it alongside the
+  // other three in its own comparison table. The brand was selling it and the
+  // website did not mention it existed.
+  //
+  // IT SHIPS WITHOUT A PRICE, on purpose. The brief confirms the location, the
+  // format and the six-hour duration, and says in terms that "the precise
+  // inclusions, including transportation, yacht arrangements, and other
+  // amenities, should be confirmed against the relevant package". So the page
+  // says what is known and asks, rather than inventing a figure to fill the
+  // slot where the other three have one.
+  //
+  // `eyeSlug` is empty because there is no Egypt Eye counterpart to take a
+  // deposit against. The Book button does not render and the page offers an
+  // enquiry, which is the right answer for a product with no confirmed price.
+  // ---------------------------------------------------------------------------
+  {
+    slug: "red-sea-yacht",
+    metaDescription:
+      "A flying dress photoshoot on a yacht off Ain Sokhna, an hour and a half from Cairo on the Red Sea. About six hours including the drive. Price on request.",
+    eyeSlug: "",
+    name: "Red Sea Yacht",
+    title: "The Red Sea Yacht Experience",
+    eyebrow: "Ain Sokhna, on the Red Sea",
+    priceUsd: null,
+    priceConfidence: "confirm",
+    durationNote: "About six hours for the whole experience, including the drive.",
+    gettingThere:
+      "Ain Sokhna, approximately an hour and a half from Cairo depending on where you set off from and the traffic.",
+    gettingThereConfidence: "confirm",
+    intro:
+      "The only one of the four that happens on water. A yacht off Ain Sokhna on the Red Sea, photographed across a day rather than a session, with the sea where the other three have sand or stone.",
+    whyThis: [
+      "A marine setting, which none of the other three can offer.",
+      "A day out rather than a shoot: the experience is the boat as much as the photographs.",
+      "The furthest from the desert palette, so colour behaves completely differently.",
+    ],
+    visualDirection:
+      "Open water, a high horizon, and fabric against blue rather than against sand. Light off the sea is harder and more directional than the dunes at dawn.",
+    image: null,
+    imageAlt:
+      "A flying dress photographed on a yacht on the Red Sea at Ain Sokhna",
+    imageIsPlaceholder: true,
+    tone: "fayoum",
+    faqs: [
+      {
+        question: "How long does the day take?",
+        answer:
+          "About six hours for the whole experience. Ain Sokhna is roughly an hour and a half from Cairo depending on your starting point and the traffic, so this is a day out rather than a morning.",
+      },
+      {
+        question: "What does it cost?",
+        answer:
+          "Ask us. This one is quoted rather than listed, because what it includes depends on the yacht arrangement for your date. We will give you the figure and what is in it before anything is held.",
+      },
+      {
+        question: "Is transport included?",
+        answer:
+          "That is one of the things confirmed per booking rather than assumed. Tell us where you are staying and we will tell you what the day includes and what it costs.",
+      },
+    ],
+    confirm: [
+      "The price, and the per-person basis it is charged on.",
+      "Exactly what the package includes: transport to Ain Sokhna, the yacht arrangement, catering, and any other amenity.",
+      "Whether the yacht is chartered per booking or a standing arrangement.",
+      "The maximum group size on the boat.",
+      "Whether the photoshoot portion has its own duration within the six hours.",
+    ],
+  },
 ];
+
+/**
+ * HOW A PACKAGE PRICE IS WRITTEN. ONE FUNCTION, EVERYWHERE.
+ *
+ * `priceUsd` became nullable when the Ain Sokhna yacht arrived with a
+ * confirmed product and no confirmed price. Every page that rendered
+ * `${pkg.priceUsd}` would have printed the string "$null" — not a crash, not
+ * a build error, just a price-shaped lie on a page a customer is reading to
+ * decide whether to spend money.
+ *
+ * There were eleven of those render sites. So there is one function, every
+ * page calls it, and scripts/check-flying-dresses.mts fails if any page
+ * interpolates the raw field again.
+ */
+export function packagePriceLabel(pkg: Pick<FlyingDressPackage, "priceUsd">): string {
+  return pkg.priceUsd === null ? "Price on request" : `$${pkg.priceUsd}`;
+}
+
+/** The same answer for a sentence: "$179 per person" / "priced on request". */
+export function packagePricePhrase(pkg: Pick<FlyingDressPackage, "priceUsd">): string {
+  return pkg.priceUsd === null ? "priced on request" : `$${pkg.priceUsd} per person`;
+}
 
 export function packageBySlug(slug: string): FlyingDressPackage | undefined {
   return packages.find((p) => p.slug === slug);
@@ -613,11 +773,58 @@ export const addOns: AddOn[] = [
   },
   {
     id: "two-reels",
-    label: "Two Instagram Reels",
+    // ONE REEL IS NOW INCLUDED FREE with every experience (October 2026
+    // brief), so this $25 item can no longer be described as "two Reels" with
+    // no mention of that: a customer could pay for something they already had.
+    // The price is unchanged; what it buys is stated relative to the free one.
+    label: "Extra Reels",
     priceUsd: 25,
     fromPrice: false,
-    detail: "Two short vertical edits from the session, cut for Reels and TikTok.",
-    homeNote: "Two short vertical edits from the session, cut for Reels and TikTok.",
+    detail: "A short vertical edit is already included with every experience. This adds two more, cut for Reels and TikTok.",
+    homeNote: "A Reel comes with every experience. This adds two more.",
+    confidence: "confirm",
+  },
+  {
+    // The brief confirms the service and the fact that a dedicated video
+    // specialist joins the team for it. It does not confirm a price, so there
+    // is none here — `priceUsd: null` renders as "price on request".
+    id: "professional-video",
+    label: "Professional video production",
+    priceUsd: null,
+    fromPrice: false,
+    detail: "A separate piece of work from the Reel included with your session: a video specialist joins the team for the day and the footage is produced properly. Price on request, because it is quoted per booking.",
+    homeNote: "A video specialist joins the team. A different thing from the Reel that comes free.",
+    confidence: "confirm",
+  },
+  {
+    // "Customers requesting specific additional edits may select approximately
+    // 7-10 preferred photographs. These specialized edits are charged
+    // separately." Price not confirmed.
+    id: "additional-editing",
+    label: "Additional retouching",
+    priceUsd: null,
+    fromPrice: false,
+    detail: "Basic editing is included on all hundred-plus images. If you want deeper work on a handful, choose roughly seven to ten frames. Price on request for those.",
+    homeNote: "Deeper retouching on seven to ten frames of your choosing.",
+    confidence: "confirm",
+  },
+  {
+    // "An additional photography session at Nine Pyramids Lounge, within the
+    // Giza pyramid area, can be added to an existing package. This is a
+    // separate photography service and does not require a flying dress."
+    //
+    // NOTE FOR REVIEW: the brief places this "within the Giza pyramid area",
+    // while an earlier instruction said the Nine Pyramids rooftop "offers
+    // pyramid views; it is not inside the archaeological complex". Those may
+    // be two different venues with similar names, or the same one described
+    // two ways. This copy deliberately says neither — see
+    // docs/FLYING-DRESSES-BRIEF-CONFLICTS.md.
+    id: "nine-pyramids-lounge",
+    label: "A session at Nine Pyramids Lounge",
+    priceUsd: null,
+    fromPrice: false,
+    detail: "A second, separate photography session at Nine Pyramids Lounge, added to an existing booking. No flying dress involved: it is ordinary portrait work in a different setting. Availability confirmed per date, price on request.",
+    homeNote: "A second session in a different setting. No flying dress; ordinary portraits.",
     confidence: "confirm",
   },
   {

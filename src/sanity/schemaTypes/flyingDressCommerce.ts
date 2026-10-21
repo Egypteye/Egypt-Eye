@@ -94,10 +94,9 @@ export const flyingDressPackage = defineType({
       type: "number",
       group: "price",
       description:
-        "⚠️ THE NUMBER A CUSTOMER READS. Whole dollars, no cents. Changing it changes what the site quotes immediately, on the home page, the photoshoots page, this page and the structured data Google reads. It does NOT change what a card is charged — the deposit is calculated on the Egypt Eye side from its own product.",
+        "⚠️ THE NUMBER A CUSTOMER READS. Whole dollars, no cents. Changing it changes what the site quotes immediately, on the home page, the photoshoots page, this page and the structured data Google reads. It does NOT change what a card is charged — the deposit is calculated on the Egypt Eye side from its own product.\n\nLEAVE IT EMPTY if nobody has set a price. Empty renders as \"Price on request\", which is honest, and the Book button steps aside for an enquiry. A zero would render as free.",
       validation: (r) =>
         r
-          .required()
           .integer()
           .min(1)
           .max(10000)
@@ -108,13 +107,21 @@ export const flyingDressPackage = defineType({
           ),
     }),
     defineField({
+      name: "durationNote",
+      title: "How long this one takes",
+      type: "string",
+      group: "main",
+      description:
+        "Shown next to the price everywhere this shoot is listed. Write it the way you would say it: \"About forty-five minutes on the roof\". The site used to print \"30 to 45 minutes\" for every shoot, which was right for the rooftop and wrong for the desert, Fayoum and the yacht.",
+      validation: (r) => r.required().max(80),
+    }),
+    defineField({
       name: "eyeSlug",
       title: "Which Egypt Eye photoshoot is this?",
       type: "string",
       group: "price",
       description:
-        "How the Book button finds the real product to take a deposit against. If this stops matching a published Egypt Eye photoshoot, the Book button quietly disappears and the page offers an enquiry instead. Nothing breaks visibly, which is exactly why it is checked.",
-      validation: (r) => r.required(),
+        "How the Book button finds the real product to take a deposit against. Leave it empty for a shoot with no Egypt Eye counterpart — the Red Sea yacht has none — and the page offers an enquiry instead. If it is filled in but stops matching a published photoshoot, the Book button quietly disappears, which is exactly why it is checked.",
     }),
     defineField({
       name: "priceStoryHeading",

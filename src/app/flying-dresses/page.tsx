@@ -350,7 +350,7 @@ export default async function FlyingDressesHome() {
                   </ul>
 
                   <div className="fd-tile-meta" style={{ marginBottom: "1.5rem" }}>
-                    <span>30 to 45 minutes</span>
+                    <span>{pkg.durationNote}</span>
                     <span>100+ photographs</span>
                   </div>
 

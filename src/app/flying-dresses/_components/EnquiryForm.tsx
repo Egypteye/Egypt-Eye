@@ -3,16 +3,7 @@
 import { useMemo, useState } from "react";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
 import { track } from "../_lib/analytics";
-import {
-  RENTAL_DELIVERY_LABELS,
-  addOns,
-  dresses,
-  flyingDressEnquiry,
-  mensOutfits,
-  packages,
-  rentalServices,
-  whatsappHref,
-} from "@/content/flyingDresses";
+import { RENTAL_DELIVERY_LABELS, addOns, dresses, flyingDressEnquiry, mensOutfits, packagePricePhrase, packages, rentalServices, whatsappHref } from "@/content/flyingDresses";
 
 /**
  * The enquiry form.
@@ -284,7 +275,7 @@ export function EnquiryForm({
             <option value="">Not sure yet, advise me</option>
             {packages.map((p) => (
               <option key={p.slug} value={p.slug}>
-                {p.name}: ${p.priceUsd} per person
+                {p.name}: {packagePricePhrase(p)}
               </option>
             ))}
           </select>

@@ -56,6 +56,7 @@ export type FdPackageDoc = {
   eyebrow: string | null;
   order: number | null;
   priceUsd: number | null;
+  durationNote: string | null;
   eyeSlug: string | null;
   priceStoryHeading: string | null;
   priceStoryBody: string[] | null;
@@ -336,7 +337,11 @@ export function mergePackages(docs: FdPackageDoc[] | null): FlyingDressPackage[]
         eyeSlug: str(d.eyeSlug, l?.eyeSlug),
         // A price is a number or it is not. `?? local` rather than `|| local`,
         // because 0 is falsy and would silently become the old price.
-        priceUsd: typeof d.priceUsd === "number" ? d.priceUsd : (l?.priceUsd ?? 0),
+        // The fallback is `?? null`, not `?? 0`: a product with no
+        // confirmed price renders "Price on request", and a zero renders
+        // as free. `??` not `||` because a genuine 0 is falsy.
+        priceUsd: typeof d.priceUsd === "number" ? d.priceUsd : (l?.priceUsd ?? null),
+        durationNote: str(d.durationNote, l?.durationNote),
         intro: str(d.intro, l?.intro),
         metaDescription: d.metaDescription?.trim() || l?.metaDescription,
         whyThis: arr(d.whyThis, l?.whyThis),

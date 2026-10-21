@@ -516,7 +516,7 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       "Anyone announcing a pregnancy and wanting the picture to carry it.",
     ],
     included: [
-      "A dress from our collection, cut to fit all sizes, in the colour you choose.",
+      "A dress from our collection in the colour you choose. They are adjustable and fit a wide range of sizes, including plus sizes; we confirm the right one with you before the date.",
       "A rooftop or outdoor location with a view of the pyramids, confirmed for your date.",
       "A directed session at a pace that suits whoever is in it.",
       "Colour-graded photographs delivered afterwards.",
@@ -536,13 +536,13 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     leadTimeNote: "A week or two, and earlier in a pregnancy is easier to schedule than later.",
     dependencies: [
       VENUE_DEPENDENCY,
-      "The dresses are cut to fit all sizes. We still confirm the fit and the colour for your stage of pregnancy before the date rather than on the day.",
+      "The dresses are adjustable and cover a wide range of sizes. We confirm which one suits you, and the colour, for your stage of pregnancy before the date rather than on the day.",
     ],
     faqs: [
       {
         question: "Will a dress fit at any stage of pregnancy?",
         answer:
-          "The collection is cut to fit all sizes, so a maternity session is not a question of whether we have your size. Tell us how far along you will be on the date and we will confirm the fit and the colours available for it before you book, rather than on the morning.",
+          "The collection is adjustable and covers a wide range of sizes, including plus sizes, so a maternity session is rarely a question of whether something will fit. We do not promise that every dress suits every body without checking, though. Tell us how far along you will be on the date and we will confirm which dresses work and in what colours before you book, rather than on the morning.",
       },
       {
         question: "How early in the day is it?",

@@ -443,7 +443,7 @@ export const flyingDressStories: FlyingDressStory[] = [
         heading: "Before the car: the two things we confirm",
         body: [
           "Nothing is held until a date is confirmed with you in writing. A message is the start of a conversation, not a booking. We are explicit about that because the alternative is somebody arriving at a rooftop on a morning nobody agreed to.",
-          "Once the date is fixed, two details get settled in advance rather than on the day: the dress colour, and fit. The collection is cut to fit all sizes, which removes most of the usual sizing anxiety, but availability is per date and the fit conversation is still worth having before you are standing on a roof.",
+          "Once the date is fixed, two details get settled in advance rather than on the day: the dress colour, and fit. The collection is adjustable and covers a wide range of sizes, which removes most of the usual anxiety, but the right dress for you is confirmed rather than assumed, and availability is per date. That conversation is worth having before you are standing on a roof.",
         ],
       },
       {
@@ -590,10 +590,10 @@ export const flyingDressStories: FlyingDressStory[] = [
   {
     slug: "one-size-cut-to-fit",
     cluster: "the-dress",
-    title: "Cut to fit all sizes: what that means when you put it on",
+    title: "Adjustable, and what that means when you put it on",
     seoTitle: "One Size, Cut to Fit",
     metaDescription:
-      "The flying dress collection is cut to fit all sizes. What that actually means for the bodice, the train, your height, and a maternity shoot.",
+      "The collection is adjustable and covers a wide range of sizes. What that means for the bodice, the train, your height, and a maternity shoot.",
     excerpt:
       "This is the question people are most reluctant to ask and most relieved to have answered, so here is the answer before you have to ask it.",
     publishedAt: "2026-10-19T00:00:00.000Z",
@@ -602,7 +602,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "What fit-all-size means here",
         body: [
-          "The collection is cut to fit all sizes. That is not a slogan smoothing over a narrow size range. It is how this kind of garment is constructed. The bodice closes adjustably rather than to a fixed measurement, and the part of the dress doing the work in the photograph is not fitted to anybody at all.",
+          "The collection is adjustable, and that is not a slogan smoothing over a narrow size range. It is how this kind of garment is constructed: the bodice closes adjustably rather than to a fixed measurement, and the part of the dress doing the work in the photograph is not fitted to anybody at all. Plus sizes are genuinely covered and regularly shot.",
           "The practical consequence is that the thing people worry about most before one of these sessions is, in the ordinary case, not a problem. You are not choosing between a dress that fits and a colour you want.",
         ],
       },
@@ -637,7 +637,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "The sentence to take away",
         body: [
-          "The dress is cut to fit all sizes. Fit and colour are confirmed with you before the date, because availability is per date and because a surprise at six in the morning is worth one message the week before.",
+          "The dresses are adjustable and cover a wide range of sizes. Which one suits you, and in what colour, is confirmed with you before the date rather than assumed, because availability is per date and because a surprise at six in the morning is worth one message the week before.",
         ],
       },
     ],
@@ -645,7 +645,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         question: "Do I need to know my dress size?",
         answer:
-          "No. The collection is cut to fit all sizes, with an adjustable closure rather than a fixed measurement. Your height is more useful to us than a size.",
+          "Not usually. The collection closes adjustably rather than to a fixed measurement and covers a wide range, plus sizes included. We still confirm which dress suits you rather than promising that any of them will. Your height is more useful to us than a size.",
       },
       {
         question: "Will a flying dress work for a maternity shoot?",

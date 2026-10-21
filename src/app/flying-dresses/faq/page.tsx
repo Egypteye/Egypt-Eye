@@ -9,6 +9,7 @@ import {
 } from "../_lib/content";
 import { FaqList } from "../_components/FaqList";
 import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
+import { packagePriceLabel } from "@/content/flyingDresses";
 
 /**
  * Every question, grouped.
@@ -62,7 +63,7 @@ function buildGroups({
   payment: Awaited<ReturnType<typeof fdSettings>>["payment"];
   cancellation: Awaited<ReturnType<typeof fdSettings>>["cancellation"];
 }) {
-  const priceList = packages.map((p) => `${p.name} $${p.priceUsd}`).join(", ");
+  const priceList = packages.map((p) => `${p.name} ${packagePriceLabel(p)}`).join(", ");
 
   const BOOKING: { question: string; answer: string }[] = [
     {

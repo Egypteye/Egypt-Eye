@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { flyingDressEnquiry, mailtoHref, whatsappHref } from "@/content/flyingDresses";
+import { flyingDressEnquiry, mailtoHref, packagePriceLabel, packagePricePhrase, whatsappHref } from "@/content/flyingDresses";
 import {
   fdAddOns,
   fdPackageBySlug,
@@ -12,7 +12,7 @@ import {
 import { BookingRail } from "../../_components/BookingRail";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
-import { agency, location } from "../../_lib/assets";
+import { agency, empty, location, type ImageSlot } from "../../_lib/assets";
 import { shootShareImages } from "../../_lib/shareImages";
 import { dressPhotos } from "../../_lib/dressPhotos";
 import {
@@ -41,11 +41,14 @@ export async function generateStaticParams() {
 /** A slug that is not one of the three 404s rather than rendering empty. */
 export const dynamicParams = false;
 
-const ART = {
+const ART: Partial<Record<string, { hero: ImageSlot; detail: ImageSlot }>> = {
   "sand-dunes": { hero: location.saharaDunes, detail: agency.fayoumDress },
   "pyramids-rooftop": { hero: agency.rooftopPortrait, detail: location.gizaPlateau },
   fayoum: { hero: location.fayoumLake, detail: agency.fayoumDress },
-} as const;
+  // No photographs of the yacht yet: both slots render the labelled gap, so
+  // the page says what is missing rather than showing the wrong water.
+  "red-sea-yacht": { hero: empty.redSeaYacht, detail: empty.redSeaYacht },
+};
 
 export async function generateMetadata({
   params,
@@ -65,7 +68,13 @@ export async function generateMetadata({
      carry "Flying Dresses", keeps the price visible, which is the part a
      visitor is scanning for. */
   return fdMetadata({
-    title: `${pkg.name} Photoshoot: $${pkg.priceUsd}`,
+    // A price in the title earns its place; "Price on request" does not —
+    // it spends 17 of the ~37 characters left after the brand suffix to
+    // say nothing a searcher can act on.
+    title:
+      pkg.priceUsd === null
+        ? `${pkg.name} Photoshoot`
+        : `${pkg.name} Photoshoot: ${packagePriceLabel(pkg)}`,
     description: pkg.metaDescription ?? pkg.intro,
     path: `/experiences/${pkg.slug}`,
     image: shootShareImages[pkg.slug],
@@ -81,7 +90,7 @@ export default async function ExperiencePage({
   const pkg = await fdPackageBySlug(slug);
   if (!pkg) notFound();
 
-  const art = ART[pkg.slug as keyof typeof ART];
+  const art = ART[pkg.slug] ?? { hero: empty.redSeaYacht, detail: empty.redSeaYacht };
   const [settings, addOns, wardrobe, packages] = await Promise.all([
     fdSettings(),
     fdAddOns(),
@@ -123,9 +132,9 @@ export default async function ExperiencePage({
               </p>
 
               <div className="fd-tile-meta" style={{ marginBottom: "1.75rem" }}>
-                <span className="fd-price">${pkg.priceUsd}</span>
-                <span>per person</span>
-                <span>30 to 45 minutes</span>
+                <span className="fd-price">{packagePriceLabel(pkg)}</span>
+                {pkg.priceUsd === null ? null : <span>per person</span>}
+                <span>{pkg.durationNote}</span>
                 <span>100+ photographs</span>
               </div>
 
@@ -269,7 +278,9 @@ export default async function ExperiencePage({
       <section className="fd-section-tight">
         <div className="fd-shell">
           <div style={{ maxWidth: "42rem", marginBottom: "2.5rem" }}>
-            <p className="fd-eyebrow">Included at ${pkg.priceUsd} per person</p>
+            <p className="fd-eyebrow">
+              Included {pkg.priceUsd === null ? "in this experience" : `at ${packagePricePhrase(pkg)}`}
+            </p>
             <h2 className="fd-display fd-h3">Everything in the price</h2>
           </div>
           <ul className="fd-list fd-list-2">
@@ -468,8 +479,8 @@ export default async function ExperiencePage({
                     {other.title}
                   </span>
                   <span className="fd-tile-meta">
-                    <span className="fd-price">${other.priceUsd}</span>
-                    <span>per person</span>
+                    <span className="fd-price">{packagePriceLabel(other)}</span>
+                    {other.priceUsd === null ? null : <span>per person</span>}
                   </span>
                 </span>
               </Link>
