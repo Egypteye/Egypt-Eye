@@ -142,6 +142,14 @@ export const experience = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "enquiryOptions",
+      title: "Enquiry form options",
+      description:
+        "Short things a guest can tick when they email an enquiry about this experience — e.g. 'Lunch at the farm', 'Add Saqqara', 'I'd like a tailored itinerary'. No prices: a ticked option is a preference passed to the team, not a purchase. Leave empty and the form does not ask.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
       name: "destinations",
       title: "Destinations",
       description: "E.g. 'Cairo', 'Giza' — connects this experience to the Explore Egypt map.",

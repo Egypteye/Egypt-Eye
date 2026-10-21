@@ -249,6 +249,20 @@ export type Experience = {
   included: string[];
   /** Practical expectations — timings, fitness, seasonality, what to bring. */
   goodToKnow?: string[];
+  /**
+   * Short, product-specific things a customer can tick in the enquiry form —
+   * "Lunch at the farm", "Add Saqqara", "I'd like a tailored itinerary".
+   *
+   * Prose, not products: an option here carries no price and selects nothing.
+   * The ticked labels are appended to the enquiry message so the reservations
+   * team gets the preference in writing instead of guessing it. Anything that
+   * costs money belongs in `extras`, which has a server-side quote behind it.
+   *
+   * Absent on almost every product, and the fieldset simply does not render
+   * when it is — a form that asks a question the product has no answer to is
+   * worse than one that does not ask.
+   */
+  enquiryOptions?: string[];
   destinations?: string[];
   relatedTours?: Tour[];
   physicalLevel?: PhysicalLevel;

@@ -100,6 +100,12 @@ export function hardenExperience(experience: Experience, local?: Experience): Ex
     // which is how a product stops offering outfits at all.
     outfits: arr(experience.outfits, local?.outfits),
     faqs: arr(experience.faqs, local?.faqs),
+    // Same three-case rule as every other array here: never set in Studio
+    // falls back to the repo's list, an editor who empties it gets an empty
+    // list back. Without this line a Studio document that predates the field
+    // projects null, nothing falls back, and the enquiry form quietly stops
+    // asking the product's own questions.
+    enquiryOptions: arr(experience.enquiryOptions, local?.enquiryOptions),
     relatedTours: experience.relatedTours?.map((t) => hardenTour(t)),
   };
 }
