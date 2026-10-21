@@ -110,10 +110,12 @@ export default async function FlyingDressesHome() {
       <section className="fd-hero fd-on-dark">
         <div className="fd-hero-media">
           {/* The owner's own footage: a gold dress on the Giza rooftop, the
-              pyramids behind it, from the Milya shoot. Twelve seconds, muted,
-              looping, and not fetched at all for anyone who asked for less
-              motion or turned Save-Data on — see HeroVideo. The poster is the
-              video's own first frame, so there is no visible swap. */}
+              pyramids behind it, from the Milya shoot. Fifty-four seconds —
+              it said twelve until this was checked, which was the length of
+              the clip this replaced — muted, looping, and not fetched at all
+              for anyone who asked for less motion or turned Save-Data on; see
+              HeroVideo, which also picks the cut by device pixels. The poster
+              is the video's own first frame, so there is no visible swap. */}
           <HeroVideo
             poster="/brand/flying-dresses/hero-poster.jpg"
             src="/brand/flying-dresses/hero.mp4"

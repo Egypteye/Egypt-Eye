@@ -229,14 +229,25 @@ for (const addOn of addOns) {
 const photoshootSlugs = new Set(photoshoots.map((p) => p.slug));
 for (const pkg of packages) {
   // AN EMPTY eyeSlug IS NOT A BROKEN ONE. The Red Sea yacht has no Egypt Eye
-  // counterpart to take a deposit against, so the Book button does not render
-  // and the page offers an enquiry. That is the intended path for a product
-  // with no confirmed price. What this guard is for is a slug that was filled
-  // in and then stopped matching, which looks fine and 404s on click.
+  // counterpart to take a deposit against, so BookingRail gets no product back
+  // and the Book button does not render; the page offers an enquiry instead.
+  //
+  // THIS USED TO ASSERT `priceUsd === null`, AND THAT WAS THE WRONG TEST.
+  // It stood in for "nothing here can offer a booking", on the assumption that
+  // an unbookable product would never carry a price. The owner then priced the
+  // yacht at $399 per person while it still has no Egypt Eye product, which is
+  // a perfectly coherent state — this whole brand takes no payment on its own
+  // site — and the guard failed a true thing.
+  //
+  // So it now checks the real failure instead: the rail looks the slug up, and
+  // the only way an empty one produces a button is if a photoshoot with an
+  // empty slug exists for it to match. That, not the price, is what would put
+  // a Book button in front of a customer with nothing behind it.
   if (pkg.eyeSlug === "") {
     ok(
-      `package "${pkg.slug}" has no Egypt Eye product AND a price, so it would offer a Book button with nothing behind it`,
-      pkg.priceUsd === null
+      `package "${pkg.slug}" has an empty eyeSlug and a photoshoot with an empty slug exists for it to match, ` +
+        "so the rail would offer a Book button with nothing behind it",
+      !photoshootSlugs.has("")
     );
     continue;
   }
@@ -2325,19 +2336,35 @@ for (const section of ["celebrations", "creative"]) {
   //
   // The film is 1440x960 and the phone hero box was 390x776, so object-fit:
   // cover threw away two thirds of every frame and upscaled the rest 3.6x.
-  // The fix is a layout, not a bitrate: below 48rem the media becomes a 3:2
-  // band with the copy beneath it. If that media query is ever removed the
-  // hero silently goes back to showing a third of the picture, and nothing
-  // else in this repository would notice.
+  // The fix is a layout, not a bitrate: below 48rem the media becomes a
+  // landscape band with the copy beneath it. If that media query is ever
+  // removed the hero silently goes back to showing a third of the picture,
+  // and nothing else in this repository would notice.
   //
-  // Proven by deleting the block from brand.css: red.
+  // IT USED TO PIN THE BAND TO EXACTLY 3/2, THE FILM'S OWN SHAPE. That was
+  // the right band the day it was written and the wrong test: the owner then
+  // asked for the film to dominate the phone screen, where the band was about
+  // a quarter of it, and 4/3 buys a third more height for a 5.5% crop off
+  // each side. The guard failed a change that moved in the direction it
+  // exists to protect.
+  //
+  // So it checks the band is still landscape and still close to the film's
+  // shape. 4/3 (1.333) is the floor: tighter than that and the crop starts
+  // taking the subject rather than the sand beside it, and by 1:1 we are back
+  // to throwing away a third of every frame.
+  //
+  // Proven by deleting the block from brand.css, and by setting the band to
+  // 9/16: both red.
   {
     const css = read("src/app/flying-dresses/brand.css");
-    const phoneHero = /@media\s*\(max-width:\s*47\.99rem\)\s*\{[\s\S]*?\.fd-hero-media\s*\{[\s\S]*?aspect-ratio:\s*3\s*\/\s*2/.test(
-      css
+    const bandMatch = css.match(
+      /@media\s*\(max-width:\s*47\.99rem\)\s*\{[\s\S]*?\.fd-hero-media\s*\{[\s\S]*?aspect-ratio:\s*(\d+(?:\.\d+)?)\s*\/\s*(\d+(?:\.\d+)?)/
     );
+    const bandRatio = bandMatch ? Number(bandMatch[1]) / Number(bandMatch[2]) : 0;
+    const phoneHero = bandRatio >= 4 / 3 - 0.001;
     ok(
-      "brand.css no longer gives .fd-hero-media its 3:2 band below 48rem — the phone hero is back to cropping the film to a third of its width",
+      `brand.css no longer gives .fd-hero-media a landscape band of at least 4/3 below 48rem (found ${bandRatio || "none"}), ` +
+        "so the phone hero is back to cropping the film",
       phoneHero
     );
   }
@@ -2683,6 +2710,79 @@ for (const section of ["celebrations", "creative"]) {
   ok(
     "the wardrobe page does not claim it has no photographs unless it has none",
     !claimsNoPhotography || /photographed\.length > 0/.test(wardrobePage),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// A PRICED PRODUCT MUST NOT STILL SAY ITS PRICE IS UNPUBLISHED.
+//
+// The Red Sea yacht shipped as "price on request" and was priced at $399 per
+// person by the owner later. The number lives in one field; the sentences that
+// said there was no number lived in three others — the meta description, the
+// cost FAQ and the confirm list. Changing the field alone would have left the
+// page quoting $399 beside copy telling the reader to ask, which is the same
+// class of mistake as the wardrobe's "not photographed yet" caption.
+// ---------------------------------------------------------------------------
+const NO_PRICE_PHRASES = ["price on request", "priced on request", "quoted rather than listed"];
+for (const pkg of packages) {
+  if (pkg.priceUsd === null) continue;
+  const copy = [
+    pkg.metaDescription ?? "",
+    pkg.intro,
+    ...pkg.faqs.flatMap((f) => [f.question, f.answer]),
+  ]
+    .join(" ")
+    .toLowerCase();
+  for (const phrase of NO_PRICE_PHRASES) {
+    ok(
+      `package "${pkg.slug}" costs $${pkg.priceUsd} but its own copy still says "${phrase}"`,
+      !copy.includes(phrase)
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// A PHONE NUMBER WITH NO COUNTRY CODE CANNOT BE RUNG OR FOUND ON WHATSAPP.
+//
+// Enquiries were arriving as bare Egyptian numbers ("01285343630"), which the
+// desk cannot dial from outside Egypt and WhatsApp cannot resolve at all. The
+// field stays optional; what is required is that a number which IS given
+// carries its country code.
+// ---------------------------------------------------------------------------
+{
+  const form = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+  ok(
+    "the enquiry form does not validate the phone number's country code",
+    /next\.phone\s*=/.test(form) && /\\\+\\d\{1,4\}/.test(form)
+  );
+  ok(
+    "the phone field does not tell the visitor to include a country code",
+    /country code/i.test(form)
+  );
+  ok(
+    "the phone field stopped being optional, which costs more enquiries than it saves",
+    /label="Phone or WhatsApp"[\s\S]{0,400}?Optional/.test(form)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// AN ENQUIRY IS NEVER LOST TO A SENDER THE PROVIDER REFUSES.
+//
+// Resend rejects any From on a domain it has not verified, so while
+// flyingdressesegypt.com is unverified every enquiry failed and the visitor
+// was sent to WhatsApp. The desk copy now retries from the platform's verified
+// sender. The customer's receipt deliberately does NOT, because writing to a
+// customer from the other brand's domain is worse than sending no receipt.
+// ---------------------------------------------------------------------------
+{
+  const route = read("src/app/api/flying-dresses-enquiry/route.ts");
+  ok(
+    "the enquiry route does not retry the desk copy when the brand sender is refused",
+    /sentFromFallbackSender/.test(route) && /let result = await sendEmail/.test(route)
+  );
+  ok(
+    "the customer receipt is not skipped when only the fallback sender worked, so it would come from the wrong brand",
+    /if \(sentFromFallbackSender\)[\s\S]{0,260}?return NextResponse\.json\(\{ ok: true \}\)/.test(route)
   );
 }
 

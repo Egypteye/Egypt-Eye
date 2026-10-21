@@ -79,7 +79,12 @@ export function EnquiryForm({
   const [company, setCompany] = useState(""); // honeypot
 
   const [status, setStatus] = useState<Status>("idle");
-  const [errors, setErrors] = useState<{ name?: string; email?: string; form?: string }>({});
+  const [errors, setErrors] = useState<{
+    name?: string;
+    email?: string;
+    phone?: string;
+    form?: string;
+  }>({});
 
   /** Delivery only makes sense when something is being handed over. */
   const needsDelivery = service !== "";
@@ -120,6 +125,26 @@ export function EnquiryForm({
     if (!name.trim()) next.name = "Please tell us your name.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       next.email = "Please give us an email address we can reply to.";
+    }
+    // A NUMBER WITHOUT A COUNTRY CODE IS NOT A NUMBER WE CAN RING.
+    //
+    // Asked for directly, and the reason is in the enquiries themselves: they
+    // arrive as "01285343630", which is dialable from inside Egypt and from
+    // nowhere else. The desk then cannot call it, and WhatsApp — the channel
+    // this brand actually runs on — cannot resolve it at all, because WhatsApp
+    // identifies an account by its full international number.
+    //
+    // The field STAYS OPTIONAL. Plenty of people would rather be emailed, and
+    // making a phone number mandatory to ask a question costs more enquiries
+    // than it saves. But a number that IS given has to be one we can use, so
+    // this checks only what was typed: leading +, 1-4 digits of country code,
+    // then at least six more digits, with spaces, dashes, dots and brackets
+    // allowed between them because people paste numbers in every shape.
+    const typedPhone = phone.trim();
+    if (typedPhone && !/^\+\d{1,4}[\d\s().-]{6,}$/.test(typedPhone)) {
+      next.phone = typedPhone.startsWith("+")
+        ? "That does not look like a complete number. Include the country code and the full number, like +20 100 123 4567."
+        : "Please start with your country code, like +20 for Egypt or +44 for the UK. Without it we cannot call or reach you on WhatsApp.";
     }
     setErrors(next);
     if (Object.keys(next).length > 0) {
@@ -245,15 +270,25 @@ export function EnquiryForm({
           />
         </Field>
 
-        <Field id="fd-phone" label="Phone or WhatsApp" hint="Optional, but it is the fastest way to reach you.">
+        <Field
+          id="fd-phone"
+          label="Phone or WhatsApp"
+          error={errors.phone}
+          hint="Optional, but it is the fastest way to reach you. Start with your country code: +20 for Egypt, +44 for the UK, +1 for the US."
+        >
           <input
             id="fd-phone"
             name="phone"
             type="tel"
             inputMode="tel"
             autoComplete="tel"
+            // The placeholder shows the shape rather than describing it, and
+            // the + is pre-filled so the keyboard starts where it should.
+            placeholder="+20 100 123 4567"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
+            aria-invalid={errors.phone ? true : undefined}
+            aria-describedby={errors.phone ? "fd-phone-error" : undefined}
           />
         </Field>
 

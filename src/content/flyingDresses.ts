@@ -628,12 +628,12 @@ export const packages: FlyingDressPackage[] = [
   {
     slug: "red-sea-yacht",
     metaDescription:
-      "A flying dress photoshoot on a yacht off Ain Sokhna, an hour and a half from Cairo on the Red Sea. About six hours including the drive. Price on request.",
+      "A flying dress photoshoot on a yacht off Ain Sokhna, an hour and a half from Cairo on the Red Sea. $399 per person, about six hours including the drive.",
     eyeSlug: "",
     name: "Red Sea Yacht",
     title: "The Red Sea Yacht Experience",
     eyebrow: "Ain Sokhna, on the Red Sea",
-    priceUsd: null,
+    priceUsd: 399,
     priceConfidence: "confirm",
     durationNote: "About six hours for the whole experience, including the drive.",
     gettingThere:
@@ -662,7 +662,7 @@ export const packages: FlyingDressPackage[] = [
       {
         question: "What does it cost?",
         answer:
-          "Ask us. This one is quoted rather than listed, because what it includes depends on the yacht arrangement for your date. We will give you the figure and what is in it before anything is held.",
+          "$399 per person. Groups are discounted. Tell us how many of you there are and we will quote it, because the saving depends on the size of the party and the yacht arrangement for your date. Nothing is held until you have the figure in writing.",
       },
       {
         question: "Is transport included?",
@@ -671,7 +671,7 @@ export const packages: FlyingDressPackage[] = [
       },
     ],
     confirm: [
-      "The price, and the per-person basis it is charged on.",
+      "The group discount: at what party size it starts and what it is worth. The $399 per person is confirmed; the saving is not yet a published figure.",
       "Exactly what the package includes: transport to Ain Sokhna, the yacht arrangement, catering, and any other amenity.",
       "Whether the yacht is chartered per booking or a standing arrangement.",
       "The maximum group size on the boat.",

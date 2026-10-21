@@ -54,9 +54,25 @@ export function HeroVideo({
     const conn = (navigator as { connection?: { saveData?: boolean } }).connection;
     if (conn?.saveData) return;
 
-    // Narrow viewport gets the 1024px cut: a quarter of the bytes for a file
-    // that will be scaled down to a phone's width anyway.
-    const narrow = window.matchMedia("(max-width: 48rem)").matches;
+    // Narrow viewport gets the smaller cut — but only when the screen cannot
+    // actually resolve more than it holds.
+    //
+    // THE BYTES ARGUMENT WAS RIGHT AND THE PIXEL ARGUMENT WAS MISSING. The
+    // 960px file was chosen because it "will be scaled down to a phone's
+    // width anyway", which is true in CSS pixels and false in real ones: a
+    // 390pt phone at devicePixelRatio 3 paints 1170 device pixels across, so
+    // the 960px cut is being scaled UP by a fifth on the hardware where this
+    // brand gets most of its traffic. That is the softness the owner saw on
+    // their phone, and it is not a bitrate problem — it is the wrong file.
+    //
+    // So the choice is made in device pixels. A 1x or 2x phone still gets the
+    // small file (720 and 780 device pixels, comfortably under 960); a 3x
+    // phone gets the full 1440 master, which it can resolve. Save-Data and
+    // reduced motion are both checked above, so nobody who asked to be spared
+    // the bytes reaches this line at all.
+    const narrowViewport = window.matchMedia("(max-width: 48rem)").matches;
+    const devicePx = window.innerWidth * (window.devicePixelRatio || 1);
+    const narrow = narrowViewport && devicePx <= 960;
 
     // H.264 is not universal. It is proprietary, so Chromium builds compiled
     // without it — some Linux distributions ship those, and so does the

@@ -1510,7 +1510,12 @@ ol.fd-beats h3::before {
   /* svh, not vh. On iOS the dynamic toolbar makes 100vh taller than the
      visible viewport, which pushes the CTA under the chrome on exactly the
      devices most of this traffic arrives on. */
-  min-height: min(92svh, 56rem);
+  /* Nearly the whole first screen. The film is the product here — it is the
+     only moving proof on the site that a flying dress does what the stills
+     imply — so it gets the room rather than sharing the fold with the
+     section beneath it. Capped in rem so a tall desktop monitor does not
+     stretch a 3:2 frame into something it has to crop away. */
+  min-height: min(100svh, 60rem);
   display: grid;
   align-items: end;
   overflow: hidden;
@@ -1541,8 +1546,8 @@ ol.fd-beats h3::before {
    =====================================================================
    The vertical scrim alone was written for a photograph whose bright areas
    were known. The hero is video now: the frame behind the headline changes
-   every second, and over twelve seconds it goes from pale sky to a sunlit
-   gold dress. A scrim that only darkens from the bottom leaves the headline
+   every second, and across the loop it goes from pale sky to a sunlit gold
+   dress. A scrim that only darkens from the bottom leaves the headline
    sitting on whatever happens to be there, and for part of the loop that is
    near-white silk under ivory type.
 
@@ -1553,6 +1558,21 @@ ol.fd-beats h3::before {
 
    Measured against the brightest frame of the loop with the headline over it:
    the ivory holds above 4.5:1 across the text column. */
+/* REWEIGHTED SO THE FILM IS THE SUBJECT, NOT THE BACKDROP.
+   =====================================================================
+   The owner's note was that the video looked transparent. It did, and this
+   was why: the old vertical scrim carried a stop at every height — 0.45 at
+   38%, 0.12 at 68% and 0.3 at the very TOP — so even the sky, where no type
+   ever sits, was behind a quarter-strength grey wash. Nothing needed
+   protecting up there. The film was being dimmed along its whole height to
+   solve a problem that only exists in the bottom-left corner.
+
+   So the ink is now concentrated where the words actually are and cleared
+   everywhere else: the vertical gradient reaches zero by 56% instead of
+   carrying a veil to the top, and the horizontal one fades out by 68%
+   instead of 78%. Behind the headline the darkness is essentially unchanged
+   — 0.86 against the old 0.88 at the floor — so this buys brightness in the
+   picture without spending contrast on the type. */
 .fd-hero-scrim {
   position: absolute;
   inset: 0;
@@ -1560,12 +1580,12 @@ ol.fd-beats h3::before {
   background:
     linear-gradient(
       to right,
-      rgba(20, 20, 20, 0.72) 0%,
+      rgba(20, 20, 20, 0.76) 0%,
       rgba(20, 20, 20, 0.52) 28%,
-      rgba(20, 20, 20, 0.12) 58%,
-      rgba(20, 20, 20, 0) 78%
+      rgba(20, 20, 20, 0.1) 54%,
+      rgba(20, 20, 20, 0) 70%
     ),
-    linear-gradient(to top, rgba(20, 20, 20, 0.88) 0%, rgba(20, 20, 20, 0.45) 38%, rgba(20, 20, 20, 0.12) 68%, rgba(20, 20, 20, 0.3) 100%);
+    linear-gradient(to top, rgba(20, 20, 20, 0.86) 0%, rgba(20, 20, 20, 0.4) 34%, rgba(20, 20, 20, 0) 66%);
 }
 
 /* On a phone the text column is the whole width, so a left-to-right scrim
@@ -1581,6 +1601,27 @@ ol.fd-beats h3::before {
 
 .fd-hero-body {
   padding-block: clamp(2.5rem, 1rem + 6vw, 6rem);
+  /* THE SCRIM GOT LIGHTER, SO THE TYPE CARRIES ITS OWN SHADOW.
+     =====================================================================
+     Lightening the scrim to let the film through cost the eyebrow its
+     background: it is set in the brand accent (#e04a5f), and measured against
+     a sunlit fold of silk behind it that came out at 1.1:1 — invisible. The
+     headline is ivory and survived; the eyebrow did not.
+
+     Re-darkening the whole frame to fix one line would undo the point of the
+     change, so the type is lifted off the picture instead. Two shadows: a
+     wide, soft one that pools enough ink behind a glyph to separate it from a
+     bright frame, and a tight one that sharpens the edge. This is what a film
+     title does over a moving image, and it costs the picture nothing. */
+  text-shadow:
+    0 1px 28px rgba(20, 20, 20, 0.55),
+    0 1px 3px rgba(20, 20, 20, 0.4);
+}
+
+/* The buttons are solid shapes with their own backgrounds; a shadow on their
+   label would only blur it. */
+.fd-hero-body .fd-btn {
+  text-shadow: none;
 }
 
 .fd-hero h1 {
@@ -1604,8 +1645,21 @@ ol.fd-beats h3::before {
 
      The cap is 5.25rem and the fluid term reaches it at about 1800px, so the
      number in this comment is the number the browser uses. */
-  font-size: clamp(2.25rem, 1rem + 3.9vw, 5.25rem);
-  max-width: 20ch;
+  /* Brought down again, on the same reasoning as the measurement above and
+     at the owner's direction: the visuals take priority and the type should
+     be read across the film rather than compete with it. Against the sizes
+     in the comment above:
+
+         390px    36px -> 32px
+         768px    46px -> 41px
+        1280px    66px -> 54px
+        1440px    72px -> 59px
+        1920px    84px -> 68px
+
+     The cap is 4.25rem and the fluid term reaches it at about 1750px. Still
+     a didone at 68px on a large screen, which is a masthead, not a caption. */
+  font-size: clamp(2rem, 0.9rem + 3.1vw, 4.25rem);
+  max-width: 22ch;
 }
 
 @media (max-width: 40rem) {
@@ -1623,10 +1677,33 @@ ol.fd-beats h3::before {
   }
 }
 
+
+/* THE HERO EYEBROW IS IVORY, NOT THE BRAND ACCENT, AND THAT IS ARITHMETIC.
+   =====================================================================
+   Everywhere else on the site the eyebrow is set in --fd-gold (#e04a5f, a
+   rose red) against a controlled ivory or ink background, where it is both
+   legible and the brand's signature. Over the film it is neither.
+
+   The accent's relative luminance is about 0.19. For small text to clear the
+   4.5:1 that WCAG asks, the background behind it has to sit near 0.003 —
+   effectively black. No scrim that still lets a film through gets there, and
+   a pale tint of the same hue tops out around 3.3:1. It was failing before
+   this work too; the heavier scrim only made the failure less obvious.
+
+   So on this one surface the eyebrow takes the ivory the rest of the hero
+   type uses. The accent is not lost: it is still the eyebrow colour on every
+   page whose background this site controls. */
+.fd-hero .fd-eyebrow {
+  color: var(--fd-ivory);
+}
+
 .fd-hero-support {
-  font-size: var(--fd-step-1);
-  line-height: 1.55;
-  max-width: 44ch;
+  /* step-0 rather than step-1: one notch down, so the standfirst supports the
+     headline instead of forming a second block of equal weight over the
+     picture. */
+  font-size: var(--fd-step-0);
+  line-height: 1.6;
+  max-width: 42ch;
   margin: 1.5rem 0 2rem;
   color: var(--fd-ivory);
 }
@@ -3051,6 +3128,25 @@ ol.fd-timeline h3::before {
   display: block;
 }
 
+/* A GRADE, NOT A SHARPEN — and the distinction is the honest one.
+   =====================================================================
+   The master is 1440x960 at 1.41 Mbps, which is a thin budget for fifty-four
+   seconds of moving silk, and no filter here can put back detail the encoder
+   already threw away. Re-encoding was measured rather than assumed: against a
+   lossless reference, lifting the phone cut from its current bitrate all the
+   way to CRF 21 moved SSIM from 0.9587 to 0.9647 — six thousandths, for 78%
+   more bytes. The source is the ceiling.
+
+   What a grade does do is make the picture read as deliberate: a little more
+   separation between the dress and the sand, a little more colour in the
+   silk. Kept deliberately small, because a hero that looks processed is worse
+   than one that looks soft, and the contrast is what makes a low-bitrate
+   frame show its blocking. Sharpening filters were tried and rejected on
+   exactly that: they find the compression before they find the dress. */
+.fd-hero-video {
+  filter: saturate(1.07) contrast(1.05);
+}
+
 /* ---- The header's horizontal lockup -----------------------------------
    The stacked mark writes "Egypt" across the capitals. That is the brand's
    signature and it needs vertical room to read as one mark; inside a 64px
@@ -3393,7 +3489,14 @@ ol.fd-timeline h3::before {
     /* Cancels .fd-hero's padding-top so the band starts at the very top of
        the section and the header floats over it, as before. */
     margin-top: -5rem;
-    aspect-ratio: 3 / 2;
+    /* 4/3 rather than the film's native 3/2: on a phone the band was about a
+       quarter of the screen with the copy stacked under it, which is not the
+       film leading the page. This is a third more height for an even crop off
+       each side, which a landscape frame of a dress in open space absorbs —
+       the subject is central and the edges are sand and sky. Not portrait:
+       a contact sheet of the real footage showed a 4/5 crop cutting a person
+       out of five frames in nine. */
+    aspect-ratio: 4 / 3;
     width: 100%;
   }
 

@@ -169,7 +169,29 @@ export async function POST(request: NextRequest) {
 
   const team = flyingDressesTeamEmail({ subject, rows, message, pageUrl });
 
-  const result = await sendEmail({
+  // THE DESK COPY IS TRIED TWICE, FROM TWO SENDERS, AND THE REASON IS A
+  // LOST-ENQUIRY INCIDENT.
+  // -------------------------------------------------------------------------
+  // The brand sends as info@flyingdressesegypt.com. Resend refuses to send
+  // from a domain it has not verified, so until that domain is verified — or
+  // FLYING_DRESSES_FROM_EMAIL names one that is — every send fails, and the
+  // visitor is told to go to WhatsApp. Some of them will. The rest are a
+  // customer the business never hears from, and nothing anywhere records that
+  // they tried.
+  //
+  // So a refusal by the first sender is not the end of it: the desk copy is
+  // retried from whatever sender the platform has verified (RESEND_FROM_EMAIL,
+  // via sendEmail's own default). The message is identical and replyTo still
+  // points at the customer, so the desk can answer normally; only the envelope
+  // differs, and an enquiry that arrives under the wrong From beats one that
+  // never arrives.
+  //
+  // The CUSTOMER's receipt is deliberately NOT given the same treatment below.
+  // A visitor who asked Flying Dresses a question should not receive mail from
+  // another company's domain — that is a brand the owner asked to keep
+  // separate, and a confused recipient is likelier to mark it as spam than to
+  // read it. The desk copy is internal; the receipt is not.
+  let result = await sendEmail({
     to: contact.email,
     from: FLYING_DRESSES_FROM,
     subject: team.subject,
@@ -179,6 +201,24 @@ export async function POST(request: NextRequest) {
     // to the brand's own inbox.
     replyTo: email,
   });
+
+  let sentFromFallbackSender = false;
+  if (!result.ok) {
+    console.error("flying dresses enquiry: brand sender refused:", result.error);
+    const retry = await sendEmail({
+      to: contact.email,
+      subject: `[via fallback sender] ${team.subject}`,
+      html: team.html,
+      text: team.text,
+      replyTo: email,
+    });
+    if (retry.ok) {
+      sentFromFallbackSender = true;
+      result = retry;
+    } else {
+      console.error("flying dresses enquiry: fallback sender refused too:", retry.error);
+    }
+  }
 
   if (!result.ok) {
     // The customer is told the form failed and pointed at WhatsApp by the
@@ -193,6 +233,14 @@ export async function POST(request: NextRequest) {
   // failing the whole submission because a receipt bounced would make them
   // send it twice.
   try {
+    // Skipped when the brand sender is the thing that failed: it would fail
+    // again, and the alternative — writing to a customer from another
+    // company's domain — is worse than no receipt. The desk already has the
+    // enquiry by this point, which is the part that earns the booking.
+    if (sentFromFallbackSender) {
+      console.error("flying dresses receipt skipped: brand sender unavailable");
+      return NextResponse.json({ ok: true });
+    }
     const receipt = flyingDressesCustomerEmail({ name, subject, hasPrice });
     await sendEmail({
       to: email,
