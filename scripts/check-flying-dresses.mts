@@ -63,6 +63,7 @@ import {
   mergePackages,
   mergeRentals,
   mergeSettings,
+  mergeWardrobe,
   type FdSettingsDoc,
 } from "../src/app/flying-dresses/_lib/contentMerge.js";
 import { hardenFlyingDressGallery } from "../src/lib/sanityShape.js";
@@ -1184,8 +1185,12 @@ for (const claim of NO_PHOTO_CLAIMS) {
     // covers the longest of them in this file with room to spare.
     const window = WARDROBE_SRC.slice(Math.max(0, at - 400), at);
     ok(
-      `Wardrobe.tsx says "${claim}" without testing dressPhotos first — it will say that over a real photograph`,
-      window.includes("dressPhotos[")
+      `Wardrobe.tsx says "${claim}" without testing the photo map first — it will say that over a real photograph`,
+      // `photos[`, not `dressPhotos[`: the component used to import that
+      // module and now receives the map as a prop, so the lookup it guards
+      // on is named for the prop. Keyed to the old name this read as five
+      // failures the moment the Studio field was wired up.
+      window.includes("photos[")
     );
   }
 }
@@ -2586,6 +2591,98 @@ for (const section of ["celebrations", "creative"]) {
   ok(
     "packagePriceLabel() mangles a real price",
     packagePriceLabel({ priceUsd: 199 }) === "$199"
+  );
+}
+
+// ---------------------------------------------------------------------------
+// A photograph in the Studio has to reach the page, and publishing a garment
+// must not take a photograph away.
+//
+// All three assertions below come from one incident. The wardrobe was seeded
+// into Sanity, and the merge built its photo map ONLY from documents carrying
+// an image — falling back to the local photographs just when there were no
+// documents at all. Seventeen garments were published, none with an image, so
+// the map went from twelve photographs to zero in a single publish. It did no
+// visible damage only because the component was importing the local module
+// directly, which was itself the second bug: the Studio's photo field was
+// decorative, and an owner uploading a dress photograph would have seen
+// nothing change. Fixing either one alone would have broken the page.
+// ---------------------------------------------------------------------------
+{
+  const outfitDocs = [...FLYING_DRESS_COLLECTION, ...MENS_OUTFITS].map((o, i) => ({
+    outfitId: o.id,
+    name: o.name,
+    category: o.category,
+    photoUrl: null,
+    alt: null,
+    hex: o.category === "mens-outfit" ? null : (o.hex ?? null),
+    shoot: null,
+    order: (i + 1) * 10,
+  }));
+
+  // The state the live dataset is actually in: every garment published, none
+  // of them photographed in the CMS yet.
+  const seeded = mergeWardrobe(outfitDocs);
+  ok(
+    `publishing the wardrobe keeps every local photograph (${Object.keys(seeded.photos).length} of ${Object.keys(dressPhotos).length})`,
+    Object.keys(seeded.photos).sort().join(",") === Object.keys(dressPhotos).sort().join(","),
+  );
+
+  // One upload must not cost the others. This is the shape of the bug that
+  // the all-or-nothing fallback would have produced on the owner's first edit.
+  const oneUploaded = mergeWardrobe(
+    outfitDocs.map((d) =>
+      d.outfitId === "cherry"
+        ? { ...d, photoUrl: "https://cdn.sanity.io/images/x/y/new-cherry.jpg", alt: "A new Cherry frame" }
+        : d,
+    ),
+  );
+  ok(
+    "photographing one dress in the Studio leaves the other eleven photographed",
+    Object.keys(oneUploaded.photos).length === Object.keys(dressPhotos).length,
+  );
+  ok(
+    "and the uploaded photograph is the one used",
+    oneUploaded.photos.cherry?.src === "https://cdn.sanity.io/images/x/y/new-cherry.jpg",
+  );
+  ok(
+    "a garment with no photograph anywhere stays absent rather than blank",
+    seeded.photos["saeedy-gawn-1"] === undefined,
+  );
+
+  // The component must take the photographs as data. Importing the module's
+  // VALUE here is what made the CMS field decorative; importing its TYPE is
+  // fine and is what the props are declared with.
+  const wardrobeSource = readFileSync("src/app/flying-dresses/_components/Wardrobe.tsx", "utf8");
+  const valueImport = /import\s+\{[^}]*\bdressPhotos\b[^}]*\}\s+from\s+"\.\.\/_lib\/dressPhotos"/.test(
+    wardrobeSource,
+  );
+  ok(
+    "the wardrobe component takes photographs as a prop rather than importing them",
+    !valueImport && /photos:\s*Record<string,\s*DressPhoto>/.test(wardrobeSource),
+  );
+
+  // And every page that renders it has to hand them over, or the grid shows
+  // nothing at all.
+  for (const page of [
+    "src/app/flying-dresses/wardrobe/page.tsx",
+    "src/app/flying-dresses/rentals/[slug]/page.tsx",
+  ]) {
+    const source = readFileSync(page, "utf8");
+    const renders = /<Wardrobe\b/.test(source);
+    ok(
+      `${page} passes photos into <Wardrobe>`,
+      !renders || /<Wardrobe[^>]*photos=\{photos\}/.test(source),
+    );
+  }
+
+  // The page must not tell a customer there are no photographs while showing
+  // some. Counted from the data, never asserted in prose.
+  const wardrobePage = readFileSync("src/app/flying-dresses/wardrobe/page.tsx", "utf8");
+  const claimsNoPhotography = /the photography for this page has not been shot yet/.test(wardrobePage);
+  ok(
+    "the wardrobe page does not claim it has no photographs unless it has none",
+    !claimsNoPhotography || /photographed\.length > 0/.test(wardrobePage),
   );
 }
 

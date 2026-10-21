@@ -488,12 +488,28 @@ export function mergeWardrobe(docs: FdOutfitDoc[] | null): FdWardrobe {
 
     (category === "mens-outfit" ? mens : dresses).push(outfit);
 
+    // PER GARMENT, NOT PER COLLECTION, and that distinction was a live bug.
+    //
+    // This used to fill `photos` only from documents that carry an image, and
+    // fall back to the local photographs solely when there were NO documents
+    // at all. Seeding the wardrobe therefore replaced twelve photographs with
+    // an empty map in one step — the "Sanity wins wholesale" rule (CLAUDE.md
+    // §3) biting a map instead of a field. It did no visible damage only
+    // because nothing was reading this map yet; the moment the wardrobe was
+    // wired to it, publishing the seed would have emptied the page.
+    //
+    // So each garment falls back on its own: a document with no photograph
+    // keeps the local one, and uploading a photograph for one dress cannot
+    // blank the other eleven.
+    const local = dressPhotos[d.outfitId];
     if (d.photoUrl) {
       photos[d.outfitId] = {
         src: d.photoUrl,
-        alt: str(d.alt, undefined, outfit.name),
-        shoot: str(d.shoot, undefined, "Agency shoot"),
+        alt: str(d.alt, local?.alt, outfit.name),
+        shoot: str(d.shoot, local?.shoot, "Agency shoot"),
       };
+    } else if (local) {
+      photos[d.outfitId] = local;
     }
   }
 

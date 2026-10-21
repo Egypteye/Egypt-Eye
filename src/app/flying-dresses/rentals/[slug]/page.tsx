@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { RENTAL_DELIVERY_LABELS, flyingDressEnquiry, mailtoHref, whatsappHref } from "@/content/flyingDresses";
-import { fdRentals, fdSettings } from "../../_lib/content";
+import { fdRentals, fdSettings, fdWardrobe } from "../../_lib/content";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { Wardrobe } from "../../_components/Wardrobe";
@@ -53,7 +53,11 @@ export default async function RentalServicePage({
   if (!service) notFound();
 
   const art = ART[service.slug as keyof typeof ART];
-  const [{ payment }, rentalServices] = await Promise.all([fdSettings(), fdRentals()]);
+  const [{ payment }, rentalServices, { photos }] = await Promise.all([
+    fdSettings(),
+    fdRentals(),
+    fdWardrobe(),
+  ]);
   const others = rentalServices.filter((s) => s.slug !== service.slug);
 
   // The garments this service draws on. Empty for accessories, deliberately —
@@ -215,6 +219,7 @@ export default async function RentalServicePage({
             <Wardrobe
               dresses={dressesForService}
               mensOutfits={mensForService}
+              photos={photos}
               showFilters={dressesForService.length > 4}
             />
           </div>

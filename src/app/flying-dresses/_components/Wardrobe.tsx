@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { Outfit } from "@/lib/booking/outfits";
 import Image from "next/image";
-import { dressPhotos } from "../_lib/dressPhotos";
+import type { DressPhoto } from "../_lib/dressPhotos";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -62,6 +62,18 @@ type Filter = "all" | "dresses" | "mens" | string;
 export function Wardrobe({
   dresses,
   mensOutfits,
+  /**
+   * Photographs keyed by outfit id, from the merge rather than from
+   * _lib/dressPhotos directly.
+   *
+   * It used to import that module here, which quietly made the Studio's
+   * photo field decorative: an owner could upload a photograph of a dress,
+   * publish it, and this grid would carry on showing the committed file.
+   * Passing them in is what makes the CMS field real. The merge still falls
+   * back to the local photograph per garment, so nothing disappears while
+   * the Studio is empty.
+   */
+  photos,
   /** Shown above the grid. Lets one component serve the full wardrobe page
       and the narrower men's-wear section. */
   showFilters = true,
@@ -69,6 +81,7 @@ export function Wardrobe({
 }: {
   dresses: Outfit[];
   mensOutfits: Outfit[];
+  photos: Record<string, DressPhoto>;
   showFilters?: boolean;
   initialFilter?: Filter;
 }) {
@@ -184,10 +197,10 @@ export function Wardrobe({
                 setOpenIndex(index);
               }}
             >
-              <OutfitMedia outfit={outfit} />
+              <OutfitMedia outfit={outfit} photos={photos} />
               <p className="fd-outfit-name">{outfit.name}</p>
               <p className="fd-outfit-note">
-                {dressPhotos[outfit.id]
+                {photos[outfit.id]
                   ? "View larger"
                   : outfit.category === "mens-outfit"
                     ? "Photo on request"
@@ -224,10 +237,10 @@ export function Wardrobe({
             </div>
 
             <div className="fd-lightbox-stage">
-              {dressPhotos[open.id] ? (
+              {photos[open.id] ? (
                 <Image
-                  src={dressPhotos[open.id].src}
-                  alt={dressPhotos[open.id].alt}
+                  src={photos[open.id].src}
+                  alt={photos[open.id].alt}
                   width={1600}
                   height={1067}
                   sizes="(min-width: 64rem) 70vw, 92vw"
@@ -260,8 +273,8 @@ export function Wardrobe({
                       them to request what is already on their screen. The
                       tile note below the thumbnail was conditional; this was
                       not, so the two disagreed in the same component. */}
-                  {dressPhotos[open.id]
-                    ? `From the ${dressPhotos[open.id].shoot} shoot. The dress is the one you would wear.`
+                  {photos[open.id]
+                    ? `From the ${photos[open.id].shoot} shoot. The dress is the one you would wear.`
                     : open.category === "mens-outfit"
                       ? "Traditional attire. Ask us for photographs of the actual garment."
                       : "A colour swatch, not the fabric. Ask us for photographs."}
@@ -337,8 +350,14 @@ function FilterChip({
  * sold by regional cut: there is no colour that "Bahary Gawn" means, so
  * inventing one would be inventing a product attribute.
  */
-function OutfitMedia({ outfit }: { outfit: Outfit }) {
-  const photo = dressPhotos[outfit.id];
+function OutfitMedia({
+  outfit,
+  photos,
+}: {
+  outfit: Outfit;
+  photos: Record<string, DressPhoto>;
+}) {
+  const photo = photos[outfit.id];
   return (
     <span className="fd-outfit-media">
       {photo ? (

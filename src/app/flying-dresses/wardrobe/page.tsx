@@ -45,7 +45,10 @@ const WARDROBE_FAQS = [
 ];
 
 export default async function WardrobePage() {
-  const { dresses, mensOutfits } = await fdWardrobe();
+  const { dresses, mensOutfits, photos } = await fdWardrobe();
+  const all = [...dresses, ...mensOutfits];
+  const photographed = all.filter((o) => photos[o.id]);
+  const missingPhotos = all.filter((o) => !photos[o.id]);
   return (
     <>
       <section className="fd-section-tight">
@@ -65,12 +68,24 @@ export default async function WardrobePage() {
               photoshoot price. Pick the one you want and tell us when you enquire, or rent one on
               its own.
             </p>
-            <p className="fd-note">
-              These are colour swatches, not photographs of the fabric. All twelve garments are
-              real and available; the photography for this page has not been shot yet, and we would
-              rather say so than show you a stock picture of a different dress. Ask us and we will
-              send you pictures of the one you are considering.
-            </p>
+            {/* THIS PARAGRAPH HAS TO AGREE WITH THE GRID BELOW IT, and for a
+                while it did not. It said the photography "has not been shot
+                yet" as a flat statement, written when that was true. Twelve
+                real photographs then landed and the sentence stayed, so the
+                page showed a customer twelve dresses and told them in the
+                same breath that it could not show them any — and invited
+                them to ask for what was already on their screen. The same
+                mistake the lightbox caption made, in the same component.
+
+                So it is counted, not asserted: what is missing is derived
+                from the photographs the page actually received. */}
+            {missingPhotos.length > 0 ? (
+              <p className="fd-note">
+                {photographed.length > 0
+                  ? `${photographed.length} of the ${all.length} garments are photographed here. The rest are shown as colour swatches rather than a stock picture of a different dress, and we would rather say so. Ask us and we will send you pictures of the one you are considering.`
+                  : "These are colour swatches, not photographs of the fabric. All the garments are real and available; the photography for this page has not been shot yet, and we would rather say so than show you a stock picture of a different dress. Ask us and we will send you pictures of the one you are considering."}
+              </p>
+            ) : null}
           </div>
         </div>
       </section>
@@ -80,7 +95,7 @@ export default async function WardrobePage() {
           <h2 id="fd-collection-heading" className="fd-sr">
             The collection
           </h2>
-          <Wardrobe dresses={dresses} mensOutfits={mensOutfits} />
+          <Wardrobe dresses={dresses} mensOutfits={mensOutfits} photos={photos} />
         </div>
       </section>
 
