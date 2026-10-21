@@ -33,6 +33,21 @@ export type PolicySection = {
 export const cancellationSummary =
   "Deposits and payments are non-refundable. Once you confirm, we commit funds to guides, drivers, hotels and permits on your behalf, and those costs stand whether or not you travel. If you cancel, we may be able to hold the recoverable value as travel credit or move it to another date — at our discretion and subject to what our suppliers release. For force majeure we charge no cancellation fee of our own, though supplier terms still apply.";
 
+/**
+ * The pre-purchase disclosure for a personalised item, shown above the order
+ * button on the cartouche panel.
+ *
+ * It is here rather than in the component because the law cares that the
+ * customer was told before ordering, and because this file is what the i18n
+ * pipeline reads — a disclosure that only exists in English is no disclosure
+ * to most of the people buying. Keep it short enough to actually be read.
+ */
+export const personalisedItemNotice =
+  "Engraved to your order: because this piece is made with the name you chose, the 14-day right to change your mind does not apply once the workshop has begun. Please check the spelling above before you pay. If it arrives damaged, faulty, or engraved with the wrong name, we remake it or refund you in full.";
+
+/** Deep link to the full clause, for the notice's "read more". */
+export const personalisedItemAnchor = "/cancellation-policy#personalised-items";
+
 /** Shown under the page title, before the numbered sections. */
 export const cancellationIntro =
   "We understand that travel plans change. Because we make arrangements in advance and commit non-refundable costs to guides, transport, hotels, attractions and permits, the following applies to every booking.";
@@ -41,7 +56,7 @@ export const cancellationIntro =
  * ISO date of the last substantive change. Shown on the policy page so a
  * traveler (or a dispute) can tell which version applied at booking time.
  */
-export const cancellationLastUpdated = "2026-09-22";
+export const cancellationLastUpdated = "2026-10-15";
 
 export const cancellationSections: PolicySection[] = [
   {
@@ -240,6 +255,10 @@ export const cancellationSections: PolicySection[] = [
  */
 export const cancellationPolicyStrings: string[] = [
   cancellationIntro,
+  // Shown above the cartouche order button rather than on this page, but it
+  // is legal text a customer has to be able to read before paying — so it
+  // belongs in the same extraction as everything else here.
+  personalisedItemNotice,
   ...cancellationSections.flatMap((s) => [
     s.title,
     ...s.blocks.flatMap((b) => (b.kind === "p" ? [b.text] : b.items)),

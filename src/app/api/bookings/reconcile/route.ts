@@ -3,6 +3,8 @@ import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { getCurrentUser } from "@/lib/auth/session";
 import { reconcilePayments } from "@/lib/booking/reconcile";
 import { pruneRateLimitHits } from "@/lib/rateLimit";
+import { applyDataRetention } from "@/lib/privacy/retention";
+import { deleteExpiredCommissionPhotos } from "@/lib/privacy/photoRetention";
 import { bearerMatches } from "@/lib/security/secrets";
 
 // Runs the payment sweep.
@@ -40,7 +42,24 @@ export async function POST(request: NextRequest) {
   // it: pruneRateLimitHits swallows its own errors.
   const { pruned } = await pruneRateLimitHits();
 
-  return NextResponse.json({ ok: true, ...report, rateLimitHitsPruned: pruned });
+  // And the retention sweep, for the same reason: one nightly job, one
+  // secret. It enforces the periods the privacy policy states in writing —
+  // contact details gone 12 months after the last contact, unconfirmed
+  // newsletter sign-ups gone after 30 days. It swallows its own errors, so
+  // it cannot fail the payment reconciliation it runs after.
+  const retention = await applyDataRetention();
+
+  // Photographs live in storage, not in a table, so they need their own
+  // sweep. Same nightly job, same swallow-your-own-errors rule.
+  const photos = await deleteExpiredCommissionPhotos();
+
+  return NextResponse.json({
+    ok: true,
+    ...report,
+    rateLimitHitsPruned: pruned,
+    retention: retention.report ?? { ok: retention.ok },
+    commissionPhotos: photos,
+  });
 }
 
 // Vercel's scheduler issues a GET.

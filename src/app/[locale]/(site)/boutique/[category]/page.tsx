@@ -6,10 +6,16 @@ import { SmartImage } from "@/components/SmartImage";
 import { Reveal } from "@/components/Reveal";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TreasureRequestForm } from "@/components/TreasureRequestForm";
+import { CartoucheNameStudio } from "@/components/CartoucheNameStudio";
+import { ScentFilter } from "@/components/ScentFilter";
+import { availableFamilies, familyCounts } from "@/lib/boutique/scentFamilies";
+import { isInstantlyOrderable, unitPriceCents } from "@/lib/boutique/cartoucheOrder";
 import { TourCard } from "@/components/TourCard";
 import { PhotoshootCard } from "@/components/PhotoshootCard";
 import { StoryCard } from "@/components/StoryCard";
 import { treasureCategories, TREASURES_PATH } from "@/content/treasures";
+import { SHOPPING_TOURS_PATH, visitAreas } from "@/content/shoppingTours";
+import { ShopVisitForm } from "@/components/ShopVisitForm";
 import { getTreasureCategories, getTreasureProducts } from "@/sanity/fetchers";
 import { availabilityLabel, cardPrice, ctaForStatus, isOrderable, statusLabel } from "@/lib/treasureDisplay";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata } from "@/content/seo";
@@ -153,6 +159,23 @@ export default async function TreasureCategoryPage({
         </Container>
       </section>
 
+      {/* Name studio — cartouches only, because it is the only category where
+          the piece is literally a name. It fills the enquiry's existing
+          "Name to be written" field rather than collecting the name twice. */}
+      {category.slug === "cartouches" && (
+        <section className="py-16">
+          <Container className="mx-auto max-w-5xl">
+            <Reveal>
+              <CartoucheNameStudio
+                orderable={products
+                  .filter((p) => isInstantlyOrderable(p))
+                  .map((p) => ({ slug: p.slug, name: p.name, unitCents: unitPriceCents(p) ?? 0 }))}
+              />
+            </Reveal>
+          </Container>
+        </section>
+      )}
+
       {/* The pieces */}
       {products.length > 0 && (
         <section className="py-16">
@@ -168,13 +191,22 @@ export default async function TreasureCategoryPage({
                 </T>
               </p>
             </Reveal>
+            <ScentFilter
+              families={availableFamilies(products)}
+              counts={familyCounts(products)}
+              total={products.length}
+            >
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {products.map((product, i) => {
                 const price = cardPrice(product);
                 const availability = availabilityLabel(product.availability);
                 const badge = statusLabel(product.status);
                 return (
-                  <Reveal key={product.slug} delay={i * 60}>
+                  // data-scent is what the CSS filter reads. It sits on a
+                  // wrapper rather than the card so the whole grid cell hides
+                  // and the layout closes up instead of leaving a hole.
+                  <div key={product.slug} data-scent={(product.scentFamily ?? []).join(" ")}>
+                  <Reveal delay={i * 60}>
                     <article className="flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-cream shadow-sm">
                       {product.image && (
                         <div className="relative aspect-[4/3] overflow-hidden">
@@ -189,7 +221,14 @@ export default async function TreasureCategoryPage({
                       )}
                       <div className="flex flex-1 flex-col p-6">
                         <div className="flex items-start justify-between gap-3">
-                          <h3 className="font-display text-lg font-semibold text-ink">{product.name}</h3>
+                          <h3 className="font-display text-lg font-semibold text-ink">
+                            <Link
+                              href={localePath(`${TREASURES_PATH}/${category.slug}/${product.slug}`, locale)}
+                              className="transition hover:text-gold-dark"
+                            >
+                              {product.name}
+                            </Link>
+                          </h3>
                           <div className="flex shrink-0 flex-col items-end gap-1">
                             {product.placeholder && (
                               <span className="rounded-full bg-black/5 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-ink-soft">
@@ -251,11 +290,15 @@ export default async function TreasureCategoryPage({
                             {availability && <p className="mt-0.5 text-xs text-ink-soft/80">{availability}</p>}
                           </div>
                           {isOrderable(product.status) ? (
+                            // One action per card. Four buttons on every tile
+                            // would wreck the collection for anyone browsing,
+                            // so the card opens the piece and the piece
+                            // carries the choices.
                             <Link
-                              href="#request"
+                              href={localePath(`${TREASURES_PATH}/${category.slug}/${product.slug}`, locale)}
                               className="shrink-0 rounded-full bg-gold px-4 py-2 text-xs font-semibold text-ink transition hover:bg-gold-light"
                             >
-                              {ctaForStatus(product.status)}
+                              <T>View details</T>
                             </Link>
                           ) : (
                             <span className="shrink-0 rounded-full bg-black/5 px-4 py-2 text-xs font-semibold text-ink-soft">
@@ -266,9 +309,11 @@ export default async function TreasureCategoryPage({
                       </div>
                     </article>
                   </Reveal>
+                  </div>
                 );
               })}
             </div>
+            </ScentFilter>
           </Container>
         </section>
       )}
@@ -359,6 +404,60 @@ export default async function TreasureCategoryPage({
           </Reveal>
         </Container>
       </section>
+
+      {/* Come and smell them. Offered only where the category has an
+          in-person path, which is where choosing in person is genuinely the
+          better answer rather than a second form. */}
+      {category.inEgypt && (
+        <section id="visit" className="scroll-mt-24 border-t border-black/5 py-16">
+          <Container className="mx-auto max-w-3xl">
+            <Reveal>
+              <p className="text-xs font-semibold uppercase tracking-[0.25em] text-gold-dark">
+                <T>In person</T>
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-semibold text-ink">
+                <T>Book a private shop visit</T>
+              </h2>
+              <p className="mt-3 leading-relaxed text-ink-soft">
+                <T>
+                  No description of a fragrance survives contact with your own nose. Tell us when you are free
+                  and we will arrange an hour with someone who knows the range.
+                </T>
+              </p>
+            </Reveal>
+            <div className="mt-8 rounded-3xl border border-black/5 bg-cream p-6 sm:p-8">
+              <ShopVisitForm areas={visitAreas.map((a) => ({ slug: a.slug, name: a.name, blurb: a.blurb }))} />
+            </div>
+          </Container>
+        </section>
+      )}
+
+      {/* Shopping tours — offered where the category is something you would
+          genuinely want to choose in person, and pointing at a real page
+          rather than a dead link. */}
+      {category.inEgypt && (
+        <section className="border-t border-black/5 bg-sand-dim py-14">
+          <Container className="mx-auto max-w-3xl text-center">
+            <Reveal>
+              <h2 className="font-display text-2xl font-semibold text-ink">
+                <T>Or make a day of it</T>
+              </h2>
+              <p className="mt-3 leading-relaxed text-ink-soft">
+                <T>
+                  A private shopping day through the craft quarters of Cairo, with someone who knows the workshops,
+                  the prices and the language. Discover Egyptian fragrances in person rather than from a page.
+                </T>
+              </p>
+              <Link
+                href={localePath(SHOPPING_TOURS_PATH, locale)}
+                className="mt-6 inline-block rounded-full border border-gold/50 px-7 py-3 text-sm font-semibold text-ink transition hover:bg-gold/10"
+              >
+                <T>Explore shopping tours</T>
+              </Link>
+            </Reveal>
+          </Container>
+        </section>
+      )}
 
       {/* Travel notes — oils only, and deliberately promises nothing */}
       {category.slug === "essence-oils" && (

@@ -86,6 +86,27 @@ body {
   font-weight: 500;
 }
 
+/* The scent-family filter.
+   Declarative on purpose: the cards stay in the HTML and CSS hides the ones
+   that do not match, so the collection is crawlable, works with JavaScript
+   off, and nothing re-renders mid-scroll. */
+[data-scent-filter][data-active="floral"] [data-scent]:not([data-scent~="floral"]) { display: none; }
+[data-scent-filter][data-active="fresh"] [data-scent]:not([data-scent~="fresh"]) { display: none; }
+[data-scent-filter][data-active="woody"] [data-scent]:not([data-scent~="woody"]) { display: none; }
+[data-scent-filter][data-active="amber"] [data-scent]:not([data-scent~="amber"]) { display: none; }
+[data-scent-filter][data-active="signature"] [data-scent]:not([data-scent~="signature"]) { display: none; }
+
+/* Hieroglyphs.
+   Noto Sans Egyptian Hieroglyphs is self-hosted via next/font; the names
+   after it are the only system faces known to cover U+13000, and Windows
+   users have one. Without this the cartouche preview is a row of tofu. */
+.font-hieroglyph {
+  font-family: var(--font-hieroglyph), "Segoe UI Historic", "Noto Sans Egyptian Hieroglyphs",
+    "Aegyptus", "JSesh", serif;
+  /* The block has no italic or bold cut; let nothing synthesise one. */
+  font-synthesis: none;
+}
+
 h1, h2, h3, h4, .font-display {
   font-family: var(--font-serif), Georgia, serif;
 }

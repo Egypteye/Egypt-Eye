@@ -1,11 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import type { PaymentMode } from "@/lib/booking/wording";
 import type { BookingExtra } from "@/content/types";
 import { OutfitPicker, type OutfitQuantities } from "@/components/OutfitPicker";
 import { describeOutfits, outfitAllowance, selectOutfits, type Outfit } from "@/lib/booking/outfits";
 import { formatUsd, normaliseExtras } from "@/lib/booking/extras";
+import {
+  DEFAULT_GUIDE_LANGUAGE,
+  GUIDE_LABEL,
+  GUIDE_PRICE_USD,
+  guideEligible,
+} from "@/lib/booking/guide";
 import { quoteDeposit, MAX_EXTRA_QUANTITY, type QuotableProduct } from "@/lib/booking/quote";
 import { DEFAULT_DIAL_ISO, DIAL_CODES, flagFor } from "@/lib/booking/countryCodes";
 import { composePhone } from "@/lib/booking/phone";
@@ -161,6 +167,18 @@ export function SecureDateButton({
   // priceless thing into the structure the quote reads.
   const [outfitChoice, setOutfitChoice] = useState<OutfitQuantities>({});
 
+  // The Egyptologist guide. Three pieces of state rather than one, because
+  // the language field only exists once "another language" is chosen and
+  // collapsing them would make an un-ticked guide carry a stale language.
+  // Stable ids so the select and the language field have real labels. The
+  // rest of this sheet wraps its inputs in their labels; a <select> is
+  // clearer with an explicit htmlFor.
+  const ids = useId();
+  const [guideOn, setGuideOn] = useState(false);
+  const [guideLang, setGuideLang] = useState<"english" | "other">("english");
+  const [guideOther, setGuideOther] = useState("");
+  const offersGuide = guideEligible(productSlug);
+
   // What happens to THIS visitor's money.
   //
   // `paymentMode` arrives from a statically rendered page, which is built once
@@ -254,6 +272,17 @@ export function SecureDateButton({
     [available, quantities]
   );
 
+  // Built once and used for both the live quote and the request, so the
+  // figure in the sheet and the figure the server computes cannot diverge.
+  // Carries no price — only whether a guide was taken and in what language.
+  const guidePayload = useMemo(
+    () =>
+      offersGuide && guideOn
+        ? { selected: true, language: guideLang, otherLanguage: guideOther }
+        : { selected: false },
+    [offersGuide, guideOn, guideLang, guideOther]
+  );
+
   // What this selection will actually cost, by the same rules the server will
   // apply. Shown, never sent: the request carries a headcount and labels.
   const liveQuote = useMemo(() => {
@@ -261,9 +290,10 @@ export function SecureDateButton({
     const result = quoteDeposit(quotable, productKind ?? productType, {
       people: form.people,
       extras: chosenExtras,
+      guide: guidePayload,
     });
     return result.ok ? result.quote : null;
-  }, [quotable, productKind, productType, form.people, chosenExtras]);
+  }, [quotable, productKind, productType, form.people, chosenExtras, guidePayload]);
 
   // The dialog's own figure, which moves with the headcount and the extras.
   // Null when the product cannot be quoted at all, which is also when no
@@ -353,6 +383,10 @@ export function SecureDateButton({
           // the product server-side, so a request cannot write "Cherry (free
           // upgrade)" onto a booking and into an email.
           outfits: chosenOutfits.map((o) => ({ id: o.id, quantity: o.quantity })),
+          // Whether a guide was taken and in what language. No price: the $40
+          // is read from lib/booking/guide.ts on the server, and eligibility
+          // is re-checked there against the slug.
+          guide: guidePayload,
         }),
       });
       const data = await response.json();
@@ -969,6 +1003,82 @@ export function SecureDateButton({
                             Extras are part of your booking total, so the deposit percentage applies to them
                             too. The full working is shown below.
                           </p>
+                        </fieldset>
+                      )}
+
+                      {/* The Egyptologist guide. One fee for the group, not
+                          per person, so it is a checkbox rather than the
+                          stepper the extras use — there is no quantity to
+                          choose. Renders only where the product offers one. */}
+                      {offersGuide && (
+                        <fieldset>
+                          <legend className={labelText}>Guide (optional)</legend>
+                          <div className="mt-2 overflow-hidden rounded-2xl border border-black/10 bg-white/60">
+                            <label
+                              className={`flex min-h-[44px] cursor-pointer items-center gap-3 px-4 py-3 transition ${
+                                guideOn ? "bg-sand/50" : ""
+                              }`}
+                            >
+                              <input
+                                type="checkbox"
+                                checked={guideOn}
+                                onChange={(e) => setGuideOn(e.target.checked)}
+                                className="h-5 w-5 shrink-0 accent-gold"
+                              />
+                              <span className="min-w-0 flex-1">
+                                <span className="block text-sm text-ink">
+                                  Add an {GUIDE_LABEL} (+{formatUsd(GUIDE_PRICE_USD)})
+                                </span>
+                                <span className="block text-xs tabular-nums text-ink-soft">
+                                  {formatUsd(GUIDE_PRICE_USD)} for the whole booking, however many of you
+                                  there are
+                                </span>
+                              </span>
+                            </label>
+
+                            {guideOn && (
+                              <div className="border-t border-black/5 px-4 py-3">
+                                <label className={labelText} htmlFor={`${ids}-guide-lang`}>
+                                  Tour guide language
+                                </label>
+                                <select
+                                  id={`${ids}-guide-lang`}
+                                  value={guideLang}
+                                  onChange={(e) => setGuideLang(e.target.value === "other" ? "other" : "english")}
+                                  className={`${field} mt-1`}
+                                >
+                                  <option value="english">{DEFAULT_GUIDE_LANGUAGE}</option>
+                                  <option value="other">Request another language</option>
+                                </select>
+
+                                {guideLang === "other" && (
+                                  <div className="mt-3">
+                                    <label className={labelText} htmlFor={`${ids}-guide-other`}>
+                                      Which language would you prefer?
+                                    </label>
+                                    <input
+                                      id={`${ids}-guide-other`}
+                                      type="text"
+                                      value={guideOther}
+                                      onChange={(e) => setGuideOther(e.target.value)}
+                                      maxLength={60}
+                                      autoComplete="off"
+                                      placeholder="Spanish, Italian, Japanese…"
+                                      className={`${field} mt-1`}
+                                    />
+                                    {/* Said before they pay, not after. We do
+                                        not know yet whether a guide in that
+                                        language is free on their date. */}
+                                    <p className="mt-2 text-xs leading-relaxed text-ink-soft">
+                                      We will try. Any language other than {DEFAULT_GUIDE_LANGUAGE} is a
+                                      request we confirm after booking — if we cannot cover it, your guide
+                                      works in {DEFAULT_GUIDE_LANGUAGE} and we tell you before the day.
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         </fieldset>
                       )}
 

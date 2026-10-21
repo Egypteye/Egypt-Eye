@@ -134,6 +134,52 @@ export const treasureProduct = defineType({
       type: "boolean",
       initialValue: false,
     }),
+    defineField({
+      name: "scentFamily",
+      title: "Scent family",
+      description:
+        "How the Boutique sorts fragrance. Tick every one that honestly applies — a rose-and-amber blend is both. This is what the filters on the collection page use.",
+      type: "array",
+      of: [{ type: "string" }],
+      options: {
+        list: [
+          { title: "Floral & Romantic", value: "floral" },
+          { title: "Fresh, Green & Citrus", value: "fresh" },
+          { title: "Woody, Resinous & Earthy", value: "woody" },
+          { title: "Amber, Musk & Warm", value: "amber" },
+          { title: "Signature Egyptian Blend", value: "signature" },
+        ],
+      },
+    }),
+    defineField({
+      name: "productType",
+      title: "What the liquid actually is",
+      description:
+        "LEAVE BLANK unless the supplier has told us in writing. A bottle labelled Sandalwood is not automatically a pure essential oil, and saying so without their word for it is a claim about composition we cannot support. Blank means the site shows no product type at all, which is the honest state.",
+      type: "string",
+      options: {
+        list: [
+          { title: "Pure essential oil", value: "essentialOil" },
+          { title: "Fragrance oil", value: "fragranceOil" },
+          { title: "Perfume oil", value: "perfumeOil" },
+          { title: "Blend", value: "blend" },
+        ],
+      },
+    }),
+    defineField({
+      name: "sourceUrl",
+      title: "Source for the facts on this product",
+      description: "Where a documented claim came from. Not shown to customers.",
+      type: "url",
+    }),
+    defineField({
+      name: "verificationNote",
+      title: "Still to confirm",
+      description:
+        "What the supplier has not told us yet — composition, sizes, allergens, price. Not shown to customers; it is the team's note to itself. See docs/oils-research.md.",
+      type: "text",
+      rows: 3,
+    }),
     defineField({ name: "featured", title: "Featured", type: "boolean", initialValue: false }),
     defineField({
       name: "order",

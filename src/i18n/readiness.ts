@@ -28,7 +28,36 @@ import coverage from "./generated/coverage.json";
  * quite finished — a handful of strings added since the last pipeline run
  * shouldn't pull a fully translated language back out of the index.
  */
-const PUBLISH_THRESHOLD = 0.9;
+const PUBLISH_THRESHOLD = 0.98;
+
+/**
+ * Which languages are actually offered to search engines right now.
+ *
+ * WHY THIS EXISTS AS WELL AS THE THRESHOLD, AND NOT INSTEAD OF IT
+ *
+ * A threshold alone cannot stage a rollout here, because the pipeline
+ * translates every language in lockstep: on 13 October 2026 all five sat at
+ * exactly 9517/10493 = 90.7%. So any threshold either publishes all five or
+ * none of them, and when they crossed 0.9 together the sitemap went from 291
+ * URLs to 1,746 in a single deploy.
+ *
+ * Google's response, measured in Search Console: indexed pages FELL from 37
+ * to 27 while the URL count rose 37x, 1,707 URLs sat in "Discovered -
+ * currently not indexed", and impressions did not move at all (mean 37/day
+ * across 46 days). The extra 1,455 URLs earned nothing and cost the English
+ * pages their crawl budget.
+ *
+ * So the list is the staging control and the threshold is the safety floor.
+ * To publish a language: add its code here. It still has to clear the
+ * threshold as well, so a half-translated language cannot be published by
+ * editing one line in a hurry.
+ *
+ * Empty means English only — which is the correct state until the English
+ * site is substantially indexed (it was 59 of 291 pages on 9 October 2026).
+ * Add ONE language at a time and watch impressions for a month before the
+ * next. That is the whole point of a list rather than a threshold.
+ */
+const PUBLISHED_LOCALES: readonly Locale[] = [];
 
 type CoverageFile = { total: number; locales: Record<string, number> };
 
@@ -46,7 +75,9 @@ export function localeCoverage(locale: Locale): number {
  * hreflang alternates.
  */
 export function isLocalePublished(locale: Locale): boolean {
-  return locale === DEFAULT_LOCALE || localeCoverage(locale) >= PUBLISH_THRESHOLD;
+  if (locale === DEFAULT_LOCALE) return true;
+  // Both gates, deliberately: on the staging list AND translated enough.
+  return PUBLISHED_LOCALES.includes(locale) && localeCoverage(locale) >= PUBLISH_THRESHOLD;
 }
 
 /** The languages currently offered to search engines. Always includes English. */
@@ -54,4 +85,4 @@ export function publishedLocales<T extends { code: Locale }>(all: readonly T[]):
   return all.filter((l) => isLocalePublished(l.code));
 }
 
-export { PUBLISH_THRESHOLD };
+export { PUBLISH_THRESHOLD, PUBLISHED_LOCALES };
