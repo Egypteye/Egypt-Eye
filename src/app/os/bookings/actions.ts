@@ -9,7 +9,7 @@ import {
   canManageBookings,
 } from "@/lib/auth/roles";
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
-import { expandDates, isIsoDate, parseInclusions } from "@/lib/os/model";
+import { expandDates, isIsoDate, parseInclusions, usdToCents } from "@/lib/os/model";
 
 // Every write to a booking.
 //
@@ -29,13 +29,24 @@ function nullable(form: FormData, key: string): string | null {
   return str(form, key) || null;
 }
 
-/** A money field: blank reads as zero, a non-number is refused. */
-function amount(form: FormData, key: string): number | null {
+/**
+ * A money field, typed in dollars, returned as whole cents.
+ *
+ * This is the ONE conversion between the two in the OS, and it defers to
+ * usdToCents() — the project's single authority on turning a typed price into
+ * money, which refuses a negative, a NaN and anything with sub-cent
+ * precision rather than rounding it into something nobody chose. Everything
+ * downstream of here is an integer, so nothing downstream can round.
+ *
+ * Blank reads as zero: a booking whose price has not been agreed yet is a
+ * real state, and it is not the same as a mistake.
+ */
+function centsFromDollars(form: FormData, key: string): number | null {
   const raw = str(form, key);
   if (!raw) return 0;
   const value = Number(raw);
-  if (!Number.isFinite(value) || value < 0) return null;
-  return Math.round(value * 100) / 100;
+  if (!Number.isFinite(value)) return null;
+  return usdToCents(value);
 }
 
 function revalidateBooking(ref?: string, dates: string[] = []) {
@@ -77,11 +88,13 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
     return { ok: false, error: error instanceof Error ? error.message : "Check the dates." };
   }
 
-  const totalUsd = amount(formData, "total_usd");
-  const depositUsd = amount(formData, "deposit_usd");
-  if (totalUsd === null) return { ok: false, error: "Enter the total as a number, or leave it blank." };
-  if (depositUsd === null) return { ok: false, error: "Enter the deposit as a number, or leave it blank." };
-  if (depositUsd > totalUsd) {
+  const totalCents = centsFromDollars(formData, "total_usd");
+  const depositCents = centsFromDollars(formData, "deposit_usd");
+  if (totalCents === null) return { ok: false, error: "Enter the total as an amount in dollars, or leave it blank." };
+  if (depositCents === null) {
+    return { ok: false, error: "Enter the deposit as an amount in dollars, or leave it blank." };
+  }
+  if (depositCents > totalCents) {
     return { ok: false, error: "The deposit is larger than the total — check both figures." };
   }
 
@@ -95,8 +108,8 @@ export async function createBooking(formData: FormData): Promise<ActionResult> {
       source: nullable(formData, "source"),
       service_type: nullable(formData, "service_type"),
       pax,
-      total_usd: totalUsd,
-      deposit_usd: depositUsd,
+      total_cents: totalCents,
+      deposit_cents: depositCents,
       reservation_owner: nullable(formData, "reservation_owner") ?? user.firstName ?? user.email,
       notes: nullable(formData, "notes"),
       lead_id: nullable(formData, "lead_id"),
@@ -194,18 +207,18 @@ export async function updateBookingMoney(bookingId: string, formData: FormData):
     return { ok: false, error: "Only the reservations desk can change what a booking is worth." };
   }
 
-  const totalUsd = amount(formData, "total_usd");
-  const depositUsd = amount(formData, "deposit_usd");
-  if (totalUsd === null) return { ok: false, error: "Enter the total as a number." };
-  if (depositUsd === null) return { ok: false, error: "Enter the deposit as a number." };
-  if (depositUsd > totalUsd) {
+  const totalCents = centsFromDollars(formData, "total_usd");
+  const depositCents = centsFromDollars(formData, "deposit_usd");
+  if (totalCents === null) return { ok: false, error: "Enter the total as an amount in dollars." };
+  if (depositCents === null) return { ok: false, error: "Enter the deposit as an amount in dollars." };
+  if (depositCents > totalCents) {
     return { ok: false, error: "The deposit is larger than the total — check both figures." };
   }
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
     .from("os_bookings")
-    .update({ total_usd: totalUsd, deposit_usd: depositUsd })
+    .update({ total_cents: totalCents, deposit_cents: depositCents })
     .eq("id", bookingId)
     .select("ref")
     .maybeSingle();

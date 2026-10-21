@@ -3,7 +3,7 @@ import { requireOsStaff } from "@/lib/auth/session";
 import { canManageBookings, canSeeMoney } from "@/lib/auth/roles";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { firstDates, listBookings } from "@/lib/os/data";
-import { formatDate, formatUsd } from "@/lib/os/model";
+import { formatDate, formatCents } from "@/lib/os/model";
 
 // Every booking, newest first. The register, not a dashboard.
 
@@ -78,15 +78,15 @@ export default async function OsBookingsPage() {
                   </td>
                   <td className="px-3 py-2.5 text-right tabular-nums text-ink">{booking.pax}</td>
                   {showMoney ? (
-                    <td className="px-3 py-2.5 text-right tabular-nums text-ink">{formatUsd(booking.totalUsd)}</td>
+                    <td className="px-3 py-2.5 text-right tabular-nums text-ink">{formatCents(booking.totalCents)}</td>
                   ) : null}
                   {showMoney ? (
                     <td
                       className={`px-3 py-2.5 text-right tabular-nums font-semibold ${
-                        booking.remainingUsd > 0 ? "text-terracotta" : "text-nile"
+                        booking.remainingCents > 0 ? "text-terracotta" : "text-nile"
                       }`}
                     >
-                      {booking.remainingUsd > 0 ? formatUsd(booking.remainingUsd) : "—"}
+                      {booking.remainingCents > 0 ? formatCents(booking.remainingCents) : "—"}
                     </td>
                   ) : null}
                   <td className="px-3 py-2.5">

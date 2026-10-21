@@ -147,13 +147,17 @@ create table if not exists public.os_bookings (
   service_type text,
   pax integer not null check (pax > 0),
 
-  total_usd numeric(10, 2) not null default 0 check (total_usd >= 0),
-  deposit_usd numeric(10, 2) not null default 0 check (deposit_usd >= 0),
+  -- Whole cents, like amount_cents in 0022 and every other money column
+  -- here. Not numeric(10,2): the figure crosses into JavaScript, where 0.1
+  -- and 0.2 do not add up, and an integer cannot acquire a rounding error on
+  -- the way through. Converted once, at the form, by usdToCents().
+  total_cents integer not null default 0 check (total_cents >= 0),
+  deposit_cents integer not null default 0 check (deposit_cents >= 0),
 
   -- Derived, so "remaining" cannot drift from the two numbers it comes from.
   -- The operations sheet keeps Remaining as a typed-in third column, which is
   -- exactly how a sheet ends up saying a guest owes money they have paid.
-  remaining_usd numeric(10, 2) generated always as (total_usd - deposit_usd) stored,
+  remaining_cents integer generated always as (total_cents - deposit_cents) stored,
 
   -- Status, never deletion. A cancelled booking that vanishes takes its
   -- payment history with it and leaves the day sheet unexplained.
@@ -176,8 +180,8 @@ create table if not exists public.os_bookings (
   updated_at timestamptz not null default now(),
 
   -- A deposit larger than the total is always a typo, and it would make
-  -- remaining_usd negative on every screen that shows it.
-  constraint os_bookings_deposit_within_total check (deposit_usd <= total_usd),
+  -- remaining_cents negative on every screen that shows it.
+  constraint os_bookings_deposit_within_total check (deposit_cents <= total_cents),
   -- Cancelling without saying why is what makes a day sheet unreadable a
   -- week later.
   constraint os_bookings_cancelled_has_reason

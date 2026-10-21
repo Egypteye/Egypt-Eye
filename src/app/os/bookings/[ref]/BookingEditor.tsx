@@ -10,8 +10,10 @@ import {
   LOCATION_SUGGESTIONS,
   SERVICE_TYPE_SUGGESTIONS,
   SOURCE_SUGGESTIONS,
+  formatCents,
   formatTime,
-  remainingUsd,
+  remainingCents,
+  usdToCents,
 } from "@/lib/os/model";
 import {
   addBookingDay,
@@ -80,11 +82,16 @@ export function BookingDetailsForm({ booking, editable }: { booking: OsBooking; 
 }
 
 export function BookingMoneyForm({ booking, editable }: { booking: OsBooking; editable: boolean }) {
-  // Previewed live so the person typing sees the consequence before saving.
-  // The stored value is the database's generated column, not this number.
-  const [total, setTotal] = useState(booking.totalUsd);
-  const [deposit, setDeposit] = useState(booking.depositUsd);
-  const due = remainingUsd(total, deposit);
+  // The inputs are in dollars, because that is what a person types and what
+  // an invoice says. They are converted to cents exactly once, server-side,
+  // by the action — so these two numbers are dollars and are only ever used
+  // for the preview line below, never saved.
+  const [totalDollars, setTotalDollars] = useState(booking.totalCents / 100);
+  const [depositDollars, setDepositDollars] = useState(booking.depositCents / 100);
+  const dueCents = remainingCents(
+    usdToCents(totalDollars) ?? 0,
+    usdToCents(depositDollars) ?? 0,
+  );
 
   return (
     <Panel
@@ -112,9 +119,9 @@ export function BookingMoneyForm({ booking, editable }: { booking: OsBooking; ed
               type="number"
               min={0}
               step="0.01"
-              defaultValue={booking.totalUsd}
+              defaultValue={booking.totalCents / 100}
               disabled={!editable}
-              onChange={(event) => setTotal(Number(event.target.value) || 0)}
+              onChange={(event) => setTotalDollars(Number(event.target.value) || 0)}
               className="mt-1 w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-ink shadow-sm disabled:bg-black/5 disabled:text-ink-soft"
             />
           </label>
@@ -127,18 +134,18 @@ export function BookingMoneyForm({ booking, editable }: { booking: OsBooking; ed
               type="number"
               min={0}
               step="0.01"
-              defaultValue={booking.depositUsd}
+              defaultValue={booking.depositCents / 100}
               disabled={!editable}
-              onChange={(event) => setDeposit(Number(event.target.value) || 0)}
+              onChange={(event) => setDepositDollars(Number(event.target.value) || 0)}
               className="mt-1 w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm text-ink shadow-sm disabled:bg-black/5 disabled:text-ink-soft"
             />
           </label>
         </div>
-        <p className={`mt-3 text-sm font-semibold ${due > 0 ? "text-terracotta" : due < 0 ? "text-terracotta" : "text-nile"}`}>
-          {due < 0
+        <p className={`mt-3 text-sm font-semibold ${dueCents === 0 ? "text-nile" : "text-terracotta"}`}>
+          {dueCents < 0
             ? "The deposit is more than the total — this won't save."
-            : due > 0
-              ? `To collect: $${due.toFixed(2)}`
+            : dueCents > 0
+              ? `To collect: ${formatCents(dueCents)}`
               : "Paid in full."}
         </p>
       </ActionForm>

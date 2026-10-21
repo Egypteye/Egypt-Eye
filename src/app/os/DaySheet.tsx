@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { DaySheetRow } from "@/lib/os/data";
 import { canSeeMoney, type UserRole } from "@/lib/auth/session";
-import { formatTime, formatUsd, totalsForDays } from "@/lib/os/model";
+import { formatTime, formatCents, totalsForDays } from "@/lib/os/model";
 
 // The day sheet — what the ground crew reads each morning.
 //
@@ -77,16 +77,16 @@ function DayCard({ row, role }: { row: DaySheetRow; role: UserRole }) {
         {showMoney ? (
           <>
             <span className="text-ink-soft">
-              Total <strong className="font-semibold text-ink">{formatUsd(row.booking.totalUsd)}</strong>
+              Total <strong className="font-semibold text-ink">{formatCents(row.booking.totalCents)}</strong>
             </span>
             <span className="text-ink-soft">
-              Deposit <strong className="font-semibold text-ink">{formatUsd(row.booking.depositUsd)}</strong>
+              Deposit <strong className="font-semibold text-ink">{formatCents(row.booking.depositCents)}</strong>
             </span>
             {/* The number the driver is accountable for. Styled as the loudest
                 thing in the row when it is not zero. */}
-            {row.booking.remainingUsd > 0 ? (
+            {row.booking.remainingCents > 0 ? (
               <span className="rounded-lg bg-terracotta/10 px-2.5 py-1 font-bold text-terracotta">
-                Collect {formatUsd(row.booking.remainingUsd)}
+                Collect {formatCents(row.booking.remainingCents)}
               </span>
             ) : (
               <span className="rounded-lg bg-nile/10 px-2.5 py-1 font-semibold text-nile">Paid in full</span>
@@ -130,8 +130,8 @@ export function DaySheet({ rows, role }: { rows: DaySheetRow[]; role: UserRole }
   const totals = totalsForDays(
     rows.map((row) => ({
       bookingId: row.booking.id,
-      totalUsd: row.booking.totalUsd,
-      depositUsd: row.booking.depositUsd,
+      totalCents: row.booking.totalCents,
+      depositCents: row.booking.depositCents,
     })),
   );
 
@@ -147,9 +147,9 @@ export function DaySheet({ rows, role }: { rows: DaySheetRow[]; role: UserRole }
         <span className="text-ink-soft">
           {rows.reduce((n, row) => n + row.booking.pax, 0)} guests
         </span>
-        {canSeeMoney(role) && totals.remainingUsd > 0 ? (
+        {canSeeMoney(role) && totals.remainingCents > 0 ? (
           <span className="ml-auto font-semibold text-terracotta">
-            {formatUsd(totals.remainingUsd)} to collect
+            {formatCents(totals.remainingCents)} to collect
           </span>
         ) : null}
       </div>

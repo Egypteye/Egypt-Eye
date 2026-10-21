@@ -20,9 +20,9 @@ export type OsBooking = {
   source: string | null;
   serviceType: string | null;
   pax: number;
-  totalUsd: number;
-  depositUsd: number;
-  remainingUsd: number;
+  totalCents: number;
+  depositCents: number;
+  remainingCents: number;
   status: "confirmed" | "cancelled" | "completed";
   cancellationReason: string | null;
   reservationOwner: string | null;
@@ -72,7 +72,7 @@ export type OsLead = {
 };
 
 const BOOKING_COLUMNS =
-  "id, ref, guest_name, guest_phone, guest_email, source, service_type, pax, total_usd, deposit_usd, remaining_usd, status, cancellation_reason, reservation_owner, notes, lead_id, created_at";
+  "id, ref, guest_name, guest_phone, guest_email, source, service_type, pax, total_cents, deposit_cents, remaining_cents, status, cancellation_reason, reservation_owner, notes, lead_id, created_at";
 
 const DAY_COLUMNS =
   "id, booking_id, service_date, service_type, service_location, pickup_time, pickup_location, operator_name, guide_name, inclusions, inclusions_notes, notes, photographer, assist, data_collected, photo_link";
@@ -84,12 +84,14 @@ type Row = Record<string, unknown>;
 
 const text = (value: unknown): string | null => (typeof value === "string" && value !== "" ? value : null);
 
-// Postgres numeric comes back from supabase-js as a string, not a number.
-// Reading it with `as number` would make every total render as "NaN" after
-// one arithmetic operation, so it is coerced once, here.
-const money = (value: unknown): number => {
+// Money is stored as integer cents, which supabase-js hands back as a
+// number. Coerced and floored anyway: a non-integer here would mean the
+// column type changed under us, and silently carrying a fraction of a cent
+// into the arithmetic is worse than treating it as the whole cents it claims
+// to be.
+const cents = (value: unknown): number => {
   const n = typeof value === "number" ? value : Number(value);
-  return Number.isFinite(n) ? n : 0;
+  return Number.isFinite(n) ? Math.trunc(n) : 0;
 };
 
 // An embedded to-one relation. supabase-js types `os_bookings(...)` as an
@@ -116,9 +118,9 @@ function toBooking(row: Row): OsBooking {
     source: text(row.source),
     serviceType: text(row.service_type),
     pax: Number(row.pax),
-    totalUsd: money(row.total_usd),
-    depositUsd: money(row.deposit_usd),
-    remainingUsd: money(row.remaining_usd),
+    totalCents: cents(row.total_cents),
+    depositCents: cents(row.deposit_cents),
+    remainingCents: cents(row.remaining_cents),
     status: (row.status as OsBooking["status"]) ?? "confirmed",
     cancellationReason: text(row.cancellation_reason),
     reservationOwner: text(row.reservation_owner),

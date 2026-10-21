@@ -310,6 +310,12 @@ inclusions, which is what either would read from.
 
 ### Notes
 
+- Money is stored as **whole cents**, like every other money column in this
+  project. The forms are in dollars and are converted once, server-side, by
+  the same `usdToCents()` the deposit flow uses — so a price with sub-cent
+  precision is refused rather than quietly rounded into a number nobody
+  typed, and no total can pick up a floating-point error on its way to a
+  screen.
 - Photos and videos are **never** stored in the database — the content fields
   hold a link to the gallery.
 - A booking is never deleted. Cancelling keeps the row, its reason and its

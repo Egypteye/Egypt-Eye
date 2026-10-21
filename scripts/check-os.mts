@@ -30,9 +30,10 @@ import {
   formatTime,
   isIsoDate,
   parseInclusions,
-  remainingUsd,
+  remainingCents,
   todayInCairo,
   totalsForDays,
+  usdToCents,
   whatsappMessage,
 } from "../src/lib/os/model";
 import {
@@ -49,8 +50,35 @@ import {
 } from "../src/lib/auth/roles";
 
 const problems: string[] = [];
+
 function ok(condition: boolean, failure: string) {
+  // This project has already shipped a guard that always passed because its
+  // arguments were the other way round and a non-empty string is truthy.
+  // Refusing anything but a boolean makes that mistake impossible here.
+  if (typeof condition !== "boolean") {
+    throw new TypeError(
+      `ok() takes (condition, failure) and was given a ${typeof condition} first: ${String(condition)}`,
+    );
+  }
   if (!condition) problems.push(failure);
+}
+
+/**
+ * The money part of model.ts, on its own.
+ *
+ * Scoped deliberately: a whole-file search for "* 100" would be satisfied by
+ * any unrelated line, which is how one of this project's earlier guards came
+ * to assert nothing at all.
+ */
+function modelMoneySection(): string {
+  const src = readFileSync("src/lib/os/model.ts", "utf8");
+  const start = src.indexOf("// Money — whole cents");
+  const end = src.indexOf("// Follow-ups");
+  if (start < 0 || end <= start) {
+    problems.push("could not locate the money section of src/lib/os/model.ts to inspect it");
+    return "";
+  }
+  return src.slice(start, end);
 }
 
 // ---------------------------------------------------------------------------
@@ -139,41 +167,69 @@ ok(rejectedAbsurd, `expandDates accepted a span longer than ${MAX_BOOKING_DAYS} 
 // the business look four times its size. Remove the de-duplication in
 // totalsForDays and the first assertion here reports 14,720.
 // ---------------------------------------------------------------------------
-const glowGirls = { bookingId: "glow", totalUsd: 3680, depositUsd: 1000 };
+// The real figures from the sheet, in cents: $3,680 with a $1,000 deposit.
+const glowGirls = { bookingId: "glow", totalCents: 368_000, depositCents: 100_000 };
 const fourDaySheet = [glowGirls, glowGirls, glowGirls, glowGirls];
 
 const totals = totalsForDays(fourDaySheet);
 ok(
-  totals.totalUsd === 3680,
-  `a four-day booking totalled ${totals.totalUsd} instead of 3680 — the money is being counted once per day again`,
+  totals.totalCents === 368_000,
+  `a four-day booking totalled ${totals.totalCents} instead of 368000 — the money is being counted once per day again`,
 );
 ok(totals.bookings === 1, `a four-day booking counted as ${totals.bookings} bookings`);
-ok(totals.depositUsd === 1000, "the deposit was multiplied by the number of days");
-ok(totals.remainingUsd === 2680, "the outstanding balance was multiplied by the number of days");
+ok(totals.depositCents === 100_000, "the deposit was multiplied by the number of days");
+ok(totals.remainingCents === 268_000, "the outstanding balance was multiplied by the number of days");
 
 // Two genuinely different bookings on one day DO add up.
 const mixedDay = totalsForDays([
-  { bookingId: "a", totalUsd: 300, depositUsd: 100 },
-  { bookingId: "b", totalUsd: 450, depositUsd: 450 },
+  { bookingId: "a", totalCents: 30_000, depositCents: 10_000 },
+  { bookingId: "b", totalCents: 45_000, depositCents: 45_000 },
 ]);
-ok(mixedDay.totalUsd === 750, `two bookings on one day totalled ${mixedDay.totalUsd} instead of 750`);
+ok(mixedDay.totalCents === 75_000, `two bookings on one day totalled ${mixedDay.totalCents} instead of 75000`);
 ok(mixedDay.bookings === 2, "two distinct bookings were collapsed into one");
-ok(mixedDay.remainingUsd === 200, "the collectable balance for a mixed day is wrong");
-ok(totalsForDays([]).totalUsd === 0, "an empty day sheet did not total zero");
+ok(mixedDay.remainingCents === 20_000, "the collectable balance for a mixed day is wrong");
+ok(totalsForDays([]).totalCents === 0, "an empty day sheet did not total zero");
 
-ok(remainingUsd(3680, 1000) === 2680, "remainingUsd got a plain subtraction wrong");
-ok(remainingUsd(100, 100) === 0, "a fully paid booking does not show as nothing to collect");
-// Floating point: 0.1 + 0.2 territory. Without the rounding this is
-// 319.99999999999994, which renders as $320.00 but compares false against 320
-// — so "paid in full" would never trigger on a price ending in .10.
-ok(remainingUsd(320.1, 0.1) === 320, `remainingUsd returned ${remainingUsd(320.1, 0.1)} — floating point is leaking into the balance`);
+ok(remainingCents(368_000, 100_000) === 268_000, "remainingCents got a plain subtraction wrong");
+ok(remainingCents(100, 100) === 0, "a fully paid booking does not show as nothing to collect");
+
+// Integers all the way down. Every total above is exact because nothing in
+// the money path multiplies or divides by 100 — the single conversion from a
+// typed dollar figure happens in the action, through the project's own
+// usdToCents(). Put a `* 100` back into the model's money section and the
+// rounding errors it exists to prevent come back with it.
+const moneySection = modelMoneySection();
+for (const arithmetic of ["* 100", "/ 100", "Math.round"]) {
+  ok(
+    !moneySection.includes(arithmetic),
+    `src/lib/os/model.ts's money section does "${arithmetic}" — money is whole cents here, and a scaling step is where a rounding error gets in`,
+  );
+}
+
+// And the conversion itself defers to the house authority rather than being
+// re-derived, per the single-authority rule for money.
+ok(usdToCents(3680) === 368_000, "usdToCents is no longer the conversion being used");
+ok(usdToCents(36.8) === 3_680, "usdToCents got a two-decimal price wrong");
+ok(usdToCents(25.005) === null, "a sub-cent price was rounded into something nobody typed instead of refused");
+ok(usdToCents(-5) === null, "a negative price was accepted");
+ok(usdToCents(Number.NaN) === null, "NaN was accepted as a price");
+
+const bookingActionsSrc = readFileSync("src/app/os/bookings/actions.ts", "utf8");
+ok(
+  /usdToCents\(/.test(bookingActionsSrc),
+  "the booking actions no longer convert through usdToCents() — a second conversion is a second answer about money",
+);
+ok(
+  !/\* 100|\/ 100/.test(bookingActionsSrc),
+  "the booking actions scale money by hand instead of deferring to usdToCents()",
+);
 
 // ---------------------------------------------------------------------------
 // 5. The money is stored on the booking, and the day table has no price
 //    column to disagree with it.
 //
 // Asserted against the migration itself, because this is a schema property:
-// adding total_usd to os_booking_days would reintroduce exactly the bug
+// adding total_cents to os_booking_days would reintroduce exactly the bug
 // section 4 guards against, and no amount of correct arithmetic would help.
 // ---------------------------------------------------------------------------
 const migration = readFileSync("supabase/migrations/0025_os_simple.sql", "utf8");
@@ -183,7 +239,7 @@ const dayTableEnd = migration.indexOf("create index if not exists os_booking_day
 ok(dayTableStart >= 0 && dayTableEnd > dayTableStart, "could not locate os_booking_days in the migration to inspect it");
 const dayTable = migration.slice(Math.max(dayTableStart, 0), dayTableEnd > dayTableStart ? dayTableEnd : undefined);
 
-for (const column of ["total_usd", "deposit_usd", "remaining_usd", "price"]) {
+for (const column of ["total_cents", "deposit_cents", "remaining_cents", "total_usd", "deposit_usd", "price"]) {
   ok(
     !new RegExp(`\\b${column}\\b`).test(dayTable),
     `os_booking_days declares ${column} — money on a day row is the duplication this schema exists to remove`,
@@ -191,12 +247,24 @@ for (const column of ["total_usd", "deposit_usd", "remaining_usd", "price"]) {
 }
 
 ok(
-  /remaining_usd numeric\(10, 2\) generated always as \(total_usd - deposit_usd\) stored/.test(migration),
-  "remaining_usd is no longer a generated column — a hand-maintained third number is how a sheet comes to claim a paid guest owes money",
+  /remaining_cents integer generated always as \(total_cents - deposit_cents\) stored/.test(migration),
+  "remaining_cents is no longer a generated integer column — a hand-maintained third number is how a sheet comes to claim a paid guest owes money",
+);
+
+// Money is whole cents in every other table here (amount_cents in 0022), and
+// a numeric column would reintroduce the string-to-float coercion on the way
+// into JavaScript that integers make impossible.
+ok(
+  !/(total|deposit|remaining)_cents\s+numeric/.test(migration),
+  "an OS money column is numeric rather than integer cents",
 );
 ok(
-  /constraint os_bookings_deposit_within_total check \(deposit_usd <= total_usd\)/.test(migration),
-  "nothing stops a deposit larger than the total, which makes remaining_usd negative on every screen",
+  !/^\s*(total|deposit|remaining)_usd\s+(numeric|integer|bigint|real|double)/m.test(migration),
+  "an OS money column is declared in dollars — every money column in this project is whole cents",
+);
+ok(
+  /constraint os_bookings_deposit_within_total check \(deposit_cents <= total_cents\)/.test(migration),
+  "nothing stops a deposit larger than the total, which makes remaining_cents negative on every screen",
 );
 ok(
   /constraint os_booking_days_unique_date unique \(booking_id, service_date\)/.test(migration),
@@ -352,7 +420,7 @@ const logisticsStart = bookingActions.indexOf("export async function updateDayLo
 const logisticsEnd = bookingActions.indexOf("export async function updateDayContent");
 ok(logisticsStart >= 0 && logisticsEnd > logisticsStart, "could not locate updateDayLogistics to inspect it");
 const logisticsBody = bookingActions.slice(Math.max(logisticsStart, 0), logisticsEnd > logisticsStart ? logisticsEnd : undefined);
-for (const column of ["total_usd", "deposit_usd"]) {
+for (const column of ["total_cents", "deposit_cents"]) {
   ok(
     !logisticsBody.includes(column),
     `updateDayLogistics writes ${column} — operations would be able to re-price a booking by saving a day`,
@@ -362,7 +430,7 @@ for (const column of ["total_usd", "deposit_usd"]) {
 const contentStart = bookingActions.indexOf("export async function updateDayContent");
 const contentEnd = bookingActions.indexOf("export async function addBookingDay");
 const contentBody = bookingActions.slice(Math.max(contentStart, 0), contentEnd > contentStart ? contentEnd : undefined);
-for (const column of ["total_usd", "deposit_usd", "pickup_time", "operator_name", "guide_name"]) {
+for (const column of ["total_cents", "deposit_cents", "pickup_time", "operator_name", "guide_name"]) {
   ok(
     !contentBody.includes(column),
     `updateDayContent writes ${column} — the social team would be able to change the money or the logistics`,
@@ -461,8 +529,8 @@ const message = whatsappMessage(
     pax: 2,
     serviceType: "Tour",
     source: "Egypt Eye",
-    totalUsd: 3680,
-    depositUsd: 1000,
+    totalCents: 368_000,
+    depositCents: 100_000,
     notes: "Vegetarian lunch",
   },
   [
@@ -494,8 +562,11 @@ const message = whatsappMessage(
 
 ok(message.includes("EE-0007"), "the hand-off message does not name the booking");
 ok(message.includes("Fernando") && message.includes("+20 100 000 0000"), "the hand-off message is missing the guest or their number");
-ok(message.includes("TO COLLECT: $2,680"), `the hand-off message does not state the balance to collect:\n${message}`);
-ok(!message.includes("$3,680.00"), "the hand-off message formats a whole-dollar total with trailing zeros");
+ok(
+  message.includes("TO COLLECT: $2680"),
+  `the hand-off message does not state the balance to collect:\n${message}`,
+);
+ok(!message.includes("$3680.00"), "the hand-off message formats a whole-dollar total with trailing zeros");
 const firstDay = message.indexOf("Mon, 19 Oct 2026");
 const secondDay = message.indexOf("Tue, 20 Oct 2026");
 ok(firstDay >= 0 && secondDay >= 0, `the hand-off message does not date its days readably:\n${message}`);
@@ -511,7 +582,17 @@ ok(message.includes("Includes: Camel, Pro Reels"), "the inclusions are missing f
 ok(message.includes("Driver: David") && message.includes("Guide: Mena"), "the crew's own names are missing from the hand-off message");
 
 const paidUp = whatsappMessage(
-  { ref: "EE-0008", guestName: "Nika", guestPhone: null, pax: 2, serviceType: null, source: null, totalUsd: 400, depositUsd: 400, notes: null },
+  {
+    ref: "EE-0008",
+    guestName: "Nika",
+    guestPhone: null,
+    pax: 2,
+    serviceType: null,
+    source: null,
+    totalCents: 40_000,
+    depositCents: 40_000,
+    notes: null,
+  },
   [],
 );
 ok(

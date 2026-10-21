@@ -108,33 +108,36 @@ export function formatTime(time: string | null): string | null {
 }
 
 // ---------------------------------------------------------------------------
-// Money
+// Money — whole cents, start to finish.
+//
+// Every money column in this project is integer cents, and so is every figure
+// here. There is exactly one conversion, at the form, by usdToCents() from
+// @/lib/booking/quote — the project's single authority on turning a typed
+// price into money. Nothing below multiplies or divides by 100, so nothing
+// below can introduce a rounding error, and formatCents() from the same
+// module is the only thing that renders one.
 // ---------------------------------------------------------------------------
 
+export { formatCents, usdToCents } from "@/lib/booking/quote";
+
+import { formatCents } from "@/lib/booking/quote";
+
 /**
- * What the guest still owes.
+ * What the guest still owes, in cents.
  *
- * The database computes this as a generated column, so this function exists
- * for forms and previews rather than as a second source of truth. It is the
- * same subtraction on purpose: the operations sheet keeps Remaining as a
- * third typed-in number, which is how a sheet comes to claim a guest owes
- * money they have already paid.
+ * The database computes this as a generated column, so this exists for forms
+ * and previews rather than as a second source of truth. It is the same
+ * subtraction on purpose: the operations sheet keeps Remaining as a third
+ * typed-in number, which is how a sheet comes to claim a guest owes money
+ * they have already paid. Integer in, integer out — no rounding step to get
+ * wrong.
  */
-export function remainingUsd(totalUsd: number, depositUsd: number): number {
-  return Math.round((totalUsd - depositUsd) * 100) / 100;
-}
-
-export function formatUsd(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: amount % 1 === 0 ? 0 : 2,
-    maximumFractionDigits: 2,
-  }).format(amount);
+export function remainingCents(totalCents: number, depositCents: number): number {
+  return totalCents - depositCents;
 }
 
 /**
- * Totals for a set of day rows.
+ * Totals for a set of day rows, in cents.
  *
  * Takes each booking ONCE, however many of its days are in the set. This is
  * the whole reason money does not live on the day row: a four-day booking
@@ -143,25 +146,25 @@ export function formatUsd(amount: number): string {
  * answers what that day is actually worth.
  */
 export function totalsForDays(
-  days: { bookingId: string; totalUsd: number; depositUsd: number }[],
-): { bookings: number; totalUsd: number; depositUsd: number; remainingUsd: number } {
-  const seen = new Map<string, { totalUsd: number; depositUsd: number }>();
+  days: { bookingId: string; totalCents: number; depositCents: number }[],
+): { bookings: number; totalCents: number; depositCents: number; remainingCents: number } {
+  const seen = new Map<string, { totalCents: number; depositCents: number }>();
   for (const day of days) {
     if (!seen.has(day.bookingId)) {
-      seen.set(day.bookingId, { totalUsd: day.totalUsd, depositUsd: day.depositUsd });
+      seen.set(day.bookingId, { totalCents: day.totalCents, depositCents: day.depositCents });
     }
   }
-  let totalUsd = 0;
-  let depositUsd = 0;
+  let totalCents = 0;
+  let depositCents = 0;
   for (const booking of seen.values()) {
-    totalUsd += booking.totalUsd;
-    depositUsd += booking.depositUsd;
+    totalCents += booking.totalCents;
+    depositCents += booking.depositCents;
   }
   return {
     bookings: seen.size,
-    totalUsd: Math.round(totalUsd * 100) / 100,
-    depositUsd: Math.round(depositUsd * 100) / 100,
-    remainingUsd: remainingUsd(totalUsd, depositUsd),
+    totalCents,
+    depositCents,
+    remainingCents: remainingCents(totalCents, depositCents),
   };
 }
 
@@ -315,8 +318,8 @@ export type WhatsAppBooking = {
   pax: number;
   serviceType: string | null;
   source: string | null;
-  totalUsd: number;
-  depositUsd: number;
+  totalCents: number;
+  depositCents: number;
   notes: string | null;
 };
 
@@ -359,10 +362,10 @@ export function whatsappMessage(booking: WhatsAppBooking, days: WhatsAppDay[]): 
 
   lines.push("");
   lines.push(`*Payment*`);
-  lines.push(`Total: ${formatUsd(booking.totalUsd)}`);
-  lines.push(`Deposit paid: ${formatUsd(booking.depositUsd)}`);
-  const due = remainingUsd(booking.totalUsd, booking.depositUsd);
-  lines.push(due > 0 ? `TO COLLECT: ${formatUsd(due)}` : "Paid in full — collect nothing.");
+  lines.push(`Total: ${formatCents(booking.totalCents)}`);
+  lines.push(`Deposit paid: ${formatCents(booking.depositCents)}`);
+  const due = remainingCents(booking.totalCents, booking.depositCents);
+  lines.push(due > 0 ? `TO COLLECT: ${formatCents(due)}` : "Paid in full — collect nothing.");
 
   if (booking.notes) {
     lines.push("");

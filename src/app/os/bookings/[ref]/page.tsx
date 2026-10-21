@@ -4,7 +4,7 @@ import { requireOsStaff } from "@/lib/auth/session";
 import { canEditContent, canEditLogistics, canEditMoney, canManageBookings, canSeeMoney } from "@/lib/auth/roles";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { getBookingByRef } from "@/lib/os/data";
-import { formatDate, formatUsd, whatsappMessage } from "@/lib/os/model";
+import { formatDate, formatCents, whatsappMessage } from "@/lib/os/model";
 import { CopyButton } from "../../ActionForm";
 import { Panel } from "../../Fields";
 import { AddDayForm, BookingDetailsForm, BookingMoneyForm, DayPanel, StatusForm } from "./BookingEditor";
@@ -65,8 +65,8 @@ export default async function BookingPage({ params }: { params: Promise<{ ref: s
           pax: booking.pax,
           serviceType: booking.serviceType,
           source: booking.source,
-          totalUsd: booking.totalUsd,
-          depositUsd: booking.depositUsd,
+          totalCents: booking.totalCents,
+          depositCents: booking.depositCents,
           notes: booking.notes,
         },
         days.map((day) => ({
@@ -106,12 +106,12 @@ export default async function BookingPage({ params }: { params: Promise<{ ref: s
       {showMoney ? (
         <div className="flex flex-wrap gap-3">
           {[
-            { label: "Total", value: formatUsd(booking.totalUsd), tone: "text-ink" },
-            { label: "Deposit paid", value: formatUsd(booking.depositUsd), tone: "text-ink" },
+            { label: "Total", value: formatCents(booking.totalCents), tone: "text-ink" },
+            { label: "Deposit paid", value: formatCents(booking.depositCents), tone: "text-ink" },
             {
               label: "To collect",
-              value: booking.remainingUsd > 0 ? formatUsd(booking.remainingUsd) : "Nothing",
-              tone: booking.remainingUsd > 0 ? "text-terracotta" : "text-nile",
+              value: booking.remainingCents > 0 ? formatCents(booking.remainingCents) : "Nothing",
+              tone: booking.remainingCents > 0 ? "text-terracotta" : "text-nile",
             },
             { label: "Guests", value: String(booking.pax), tone: "text-ink" },
             { label: "Days", value: String(days.length), tone: "text-ink" },
