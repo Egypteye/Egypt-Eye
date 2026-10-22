@@ -25,7 +25,7 @@ import { photoshoots } from "../src/content/photoshoots.js";
 import { stories } from "../src/content/stories.js";
 import { signatureExperiences } from "../src/content/signatureExperiences.js";
 import { destinationHubs } from "../src/content/destinationHubs.js";
-import { activityDestinationGroups } from "../src/content/activities.js";
+import { activityDestinationGroups, experienceThemes } from "../src/content/activities.js";
 import { homepage } from "../src/content/homepage.js";
 import { aboutPage } from "../src/content/aboutPage.js";
 import { contactPage } from "../src/content/contactPage.js";
@@ -57,6 +57,10 @@ const sources: [string, unknown][] = [
   ["signatureExperiences", signatureExperiences],
   ["destinationHubs", destinationHubs],
   ["activityGroups", activityDestinationGroups],
+  // The collection headings on the Extra Experiences page. This walker only
+  // reads the modules named here, so a heading left off this list serves in
+  // English on every locale while looking perfectly translated in the code.
+  ["experienceThemes", experienceThemes],
   ["homepage", homepage],
   ["aboutPage", aboutPage],
   ["contactPage", contactPage],

@@ -142,6 +142,21 @@ export const experience = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "theme",
+      title: "Collection",
+      description:
+        "Which collection this sits in on the Extra Experiences page. Leave empty and it simply appears under its destination, which is how most of the catalogue works.",
+      type: "string",
+      options: {
+        list: [
+          { title: "Local culture & craft", value: "craft" },
+          { title: "Heritage & faith", value: "heritage" },
+          { title: "Photography", value: "photography" },
+          { title: "Outdoors", value: "outdoors" },
+        ],
+      },
+    }),
+    defineField({
       name: "enquiryOptions",
       title: "Enquiry form options",
       description:

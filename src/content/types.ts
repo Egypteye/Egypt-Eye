@@ -158,6 +158,20 @@ export type PhysicalLevel = {
   note: string;
 };
 
+/**
+ * What KIND of thing an experience is, as distinct from where it happens.
+ *
+ * The Extra Experiences page has always grouped by destination, which works
+ * while a city holds three or four outings. Cairo now holds a dozen, and
+ * "a photographer for an hour" and "a day at the desert monasteries" are not
+ * the same sort of purchase — a visitor scanning one undifferentiated grid
+ * has to read every card to find out which is which.
+ *
+ * Deliberately a small closed set. A theme per product is a taxonomy nobody
+ * maintains; four buckets a reader can hold in their head is navigation.
+ */
+export type ExperienceTheme = "craft" | "heritage" | "photography" | "outdoors";
+
 export type Experience = {
   /**
    * Whether this product offers the "Secure your date" deposit flow.
@@ -249,6 +263,13 @@ export type Experience = {
   included: string[];
   /** Practical expectations — timings, fitness, seasonality, what to bring. */
   goodToKnow?: string[];
+  /**
+   * Which of the four collections this belongs to. Absent on most of the
+   * catalogue, and the listing page falls back to a flat grid for any
+   * destination whose items carry no theme — so adding this changed nothing
+   * for the destinations that were already legible.
+   */
+  theme?: ExperienceTheme;
   /**
    * Short, product-specific things a customer can tick in the enquiry form —
    * "Lunch at the farm", "Add Saqqara", "I'd like a tailored itinerary".
