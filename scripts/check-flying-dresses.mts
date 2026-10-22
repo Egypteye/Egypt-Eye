@@ -2824,6 +2824,80 @@ for (const pkg of packages) {
 }
 
 // ---------------------------------------------------------------------------
+// THE HERO ASKS THE BROWSER ABOUT THE CODEC THE FILE ACTUALLY IS.
+//
+// This guard exists because the component asked the wrong question for a
+// while. It called canPlayType with 'avc1.42E01E' — Baseline, level 3.0 —
+// and then set .src to a file that is High 4.0. A decoder that does Baseline
+// but not High 4.0 answered yes, was handed a stream it could not decode, and
+// had nowhere to go: the source is assigned directly rather than offered as
+// <source> children, so there was no second candidate and no error handler.
+// The result is a hero that shows its poster forever on some devices and
+// plays perfectly on every device available to test it on.
+//
+// So the codec string is not hardcoded in this check either. It is read out
+// of each file's own avcC box, which is where the profile and level actually
+// live, and the component must contain that exact string. Re-encode the hero
+// at a different profile and this goes red until the query is updated with
+// it.
+//
+// PROVEN by putting 'avc1.42E01E' back in HeroVideo.tsx: red on both files.
+// Proven again by deleting the error listener: red. Then restored.
+// ---------------------------------------------------------------------------
+{
+  const componentRaw = read("src/app/flying-dresses/_components/HeroVideo.tsx");
+  // COMMENTS STRIPPED FIRST, and that is not a detail. The first version of
+  // this guard passed on the broken component, because the prose above the
+  // fix names both codec strings to explain them — so `includes(codec)`
+  // matched the explanation while the code underneath still asked for
+  // Baseline. CLAUDE.md §4 lists that exact failure mode, and this is the
+  // fourth time it has happened in this repository. Only live code counts.
+  const component = componentRaw
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  // ISO/IEC 14496-15: the AVCDecoderConfigurationRecord that follows the
+  // 'avcC' box tag is configurationVersion, AVCProfileIndication,
+  // profile_compatibility, AVCLevelIndication — the three bytes after the
+  // version are exactly the three the codecs= parameter spells in hex.
+  const codecOf = (file: string): string | null => {
+    const bytes = readFileSync(file);
+    const at = bytes.indexOf("avcC", 0, "latin1");
+    if (at < 0) return null;
+    const hex = [...bytes.subarray(at + 5, at + 8)]
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("");
+    return `avc1.${hex}`;
+  };
+
+  for (const [label, file] of [
+    ["the full master", "public/brand/flying-dresses/hero.mp4"],
+    ["the phone cut", "public/brand/flying-dresses/hero-small.mp4"],
+  ] as const) {
+    const codec = existsSync(file) ? codecOf(file) : null;
+    ok(`${label} (${file}) is missing or carries no readable avcC box`, codec !== null);
+    if (codec) {
+      ok(
+        `HeroVideo asks the browser about a codec ${label} is not — the file is ${codec}, ` +
+          "and no canPlayType call in the component asks about it, so a decoder that refuses " +
+          "this profile can be handed it anyway",
+        new RegExp(`codecs=\\s*\\\\?["']${codec.replace(".", "\\.")}`).test(component)
+      );
+    }
+  }
+
+  ok(
+    "HeroVideo has no error listener, so a source the browser accepts and then fails to " +
+      "decode leaves the poster up with no second candidate",
+    /addEventListener\(\s*"error"/.test(component)
+  );
+  ok(
+    "HeroVideo no longer falls back to a second source on failure",
+    /const\s+queue\s*=/.test(component) && /index\s*\+=\s*1/.test(component)
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
