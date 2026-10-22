@@ -259,7 +259,7 @@ export default async function StoryDetailPage({
             </div>
           )}
 
-          <Link href={to("/stories")} className="mt-12 inline-block text-sm font-semibold text-gold-dark hover:underline">
+          <Link href={to("/stories")} className="mt-12 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark hover:underline">
             ← Back to all stories
           </Link>
         </Container>

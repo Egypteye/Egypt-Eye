@@ -656,7 +656,7 @@ export default async function AboutPage() {
                   <p className="mt-2 text-sm text-ink-soft">{site.policies.cancellation}</p>
                   <Link
                     href="/cancellation-policy"
-                    className="mt-3 inline-block text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink"
+                    className="mt-3 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark underline underline-offset-2 hover:text-ink"
                   >
                     <T>Read the full Cancellation Policy</T>
                   </Link>

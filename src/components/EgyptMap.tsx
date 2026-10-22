@@ -344,11 +344,17 @@ export function EgyptMap({
               }
               aria-expanded={open}
               disabled={!interactive}
-              className={`group absolute flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition hover:z-10 focus-visible:z-10 ${
+              className={`group absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition hover:z-10 focus-visible:z-10 ${
                 interactive ? "cursor-pointer" : "cursor-default"
               } ${open ? "z-10" : "z-0"} ${matchesMood ? "opacity-90" : "opacity-30"}`}
               style={{ left: `${(city.mapX / VIEWBOX_W) * 100}%`, top: `${(city.mapY / VIEWBOX_H) * 100}%` }}
             >
+              {/* 24px, not the 44px a standalone button would get. These pins
+                  are 16px apart in places — Cairo and Giza nearly touch — and
+                  a 44px hit area would cover its neighbours, so the bigger
+                  target would take taps meant for another city. 24x24 is the
+                  WCAG 2.5.8 AA minimum, the dot still looks 12px, and the
+                  position that carries the meaning is unmoved. */}
               {/* The label is absolutely positioned and pointer-events-none
                   so it never grows this button's hit area — with 42+ pins on
                   the map, a label's box (even invisible, at opacity-0) would
@@ -414,7 +420,7 @@ export function EgyptMap({
             </>
           );
 
-          const sharedClassName = `group absolute flex h-4 w-4 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition hover:z-10 focus-visible:z-10 ${
+          const sharedClassName = `group absolute flex h-6 w-6 -translate-x-1/2 -translate-y-1/2 items-center justify-center transition hover:z-10 focus-visible:z-10 ${
             active ? "z-10" : "z-0"
           } ${interactive ? "cursor-pointer" : "cursor-default"} ${dimmed ? "opacity-40" : "opacity-100"}`;
           const style = { left: `${(hub.mapX / VIEWBOX_W) * 100}%`, top: `${(hub.mapY / VIEWBOX_H) * 100}%` };

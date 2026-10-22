@@ -65,12 +65,15 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/45">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/55">
             {dict.footer.contact}
           </p>
-          <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
+          <ul className="mt-2 text-sm text-cream/70">
             <li>
-              <a href={`mailto:${site.contact.email}`} className="hover:text-gold-light">
+              <a
+                href={`mailto:${site.contact.email}`}
+                className="inline-flex min-h-[44px] items-center hover:text-gold-light"
+              >
                 {site.contact.email}
               </a>
             </li>
@@ -78,7 +81,7 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
               <WhatsAppBookButton
                 whatsappLink={site.contact.whatsappLink}
                 context={{ page: "the site footer", intro: "Hi, I have a question." }}
-                className="hover:text-gold-light"
+                className="inline-flex min-h-[44px] items-center hover:text-gold-light"
               >
                 {site.footer.whatsappPrefix}
                 {site.contact.whatsapp}
@@ -88,7 +91,7 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
         </div>
 
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/45">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/55">
             {dict.footer.follow}
           </p>
           <SocialLinks site={site} tone="dark" includeWhatsApp className="mt-4" />
@@ -101,7 +104,7 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
         <Container className="grid gap-x-8 gap-y-10 py-14 sm:grid-cols-2 lg:grid-cols-5">
           {FOOTER_SECTIONS.map((section) => (
             <nav key={section.heading} aria-label={section.heading}>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/45">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-cream/55">
                 {/* Partner With Us already has a translated heading; the rest
                     go through <T>, which falls back to English per language
                     until the dictionaries are filled. */}
@@ -111,10 +114,17 @@ export async function Footer({ siteSettings: site }: { siteSettings: ResolvedSit
                   <T>{section.heading}</T>
                 )}
               </p>
-              <ul className="mt-4 space-y-2.5 text-sm text-cream/70">
+              {/* The links carry their own 44px height rather than the list
+                  carrying the rhythm: a 17px-tall link in a column of them is
+                  the single most-repeated undersized tap target on the site,
+                  and spacing between them is not a hit area. */}
+              <ul className="mt-2 text-sm text-cream/70">
                 {section.links.map((link) => (
                   <li key={link.href}>
-                    <Link href={to(link.href)} className="transition hover:text-gold-light">
+                    <Link
+                      href={to(link.href)}
+                      className="inline-flex min-h-[44px] items-center transition hover:text-gold-light"
+                    >
                       {labelFor(link)}
                     </Link>
                   </li>

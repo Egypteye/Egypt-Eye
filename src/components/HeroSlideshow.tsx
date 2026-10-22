@@ -124,30 +124,39 @@ export function HeroSlideshow({
                 type="button"
                 aria-label={tr("Previous slide")}
                 onClick={() => goTo(index - 1)}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cream/15 text-cream backdrop-blur-sm transition hover:bg-cream/30"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cream/15 text-cream backdrop-blur-sm transition hover:bg-cream/30"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </button>
-              <div className="flex items-center gap-2">
+              {/* The dot a thumb hits is not the dot an eye sees. These were
+                  6x6 — a quarter of the 44px minimum — so the button is now a
+                  44px-tall hit area with the bar as an inner span, and the gap
+                  moves inside it. The row grows from roughly 80px to 120px and
+                  the dots themselves look exactly as they did. */}
+              <div className="flex items-center">
                 {slides.map((slide, i) => (
                   <button
                     key={i}
                     type="button"
                     aria-label={`Show ${slide.headline ?? `slide ${i + 1}`}`}
                     onClick={() => goTo(i)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      i === index ? "w-6 bg-gold" : "w-1.5 bg-cream/40 hover:bg-cream/70"
-                    }`}
-                  />
+                    className="group flex h-11 w-6 items-center justify-center"
+                  >
+                    <span
+                      className={`block h-1.5 rounded-full transition-all ${
+                        i === index ? "w-6 bg-gold" : "w-1.5 bg-cream/40 group-hover:bg-cream/70"
+                      }`}
+                    />
+                  </button>
                 ))}
               </div>
               <button
                 type="button"
                 aria-label={tr("Next slide")}
                 onClick={() => goTo(index + 1)}
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-cream/15 text-cream backdrop-blur-sm transition hover:bg-cream/30"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-cream/15 text-cream backdrop-blur-sm transition hover:bg-cream/30"
               >
                 <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={2}>
                   <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />

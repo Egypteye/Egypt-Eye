@@ -49,7 +49,7 @@ export function FaqAccordion({ faqs, idPrefix = "faq" }: { faqs: Faq[]; idPrefix
                   {faq.link && (
                     <Link
                       href={faq.link.href}
-                      className="mt-3 inline-block text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
+                      className="mt-3 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
                     >
                       {faq.link.label} →
                     </Link>

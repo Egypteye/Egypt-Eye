@@ -42,7 +42,7 @@ export function LanguageLinks() {
                 lang={l.htmlLang}
                 dir={l.dir}
                 aria-current={active ? "true" : undefined}
-                className={`inline-block rounded-full px-3 py-1.5 text-sm transition ${
+                className={`inline-flex min-h-[44px] items-center rounded-full px-3 py-1.5 text-sm transition ${
                   active
                     ? "bg-cream/15 font-semibold text-cream"
                     : "text-cream/70 hover:bg-cream/10 hover:text-cream"

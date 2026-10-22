@@ -354,7 +354,10 @@ export default async function Home() {
               is the canonical entity for these answers, and two pages
               claiming it competes with itself. */}
           <Reveal delay={150} className="mt-6 text-center">
-            <Link href="/faq" className="text-sm font-semibold text-gold-dark underline-offset-4 hover:underline">
+            <Link
+              href="/faq"
+              className="inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
+            >
               <T>See all frequently asked questions</T> →
             </Link>
           </Reveal>
