@@ -687,14 +687,14 @@ ok(describeFollowUp(null, today) === "No follow-up set", "describeFollowUp inven
 // Adding one means confirming it with the team first, which is the point:
 // this check going red is the question being asked.
 //
-// "Booking.com" is called out because it was once in here as nothing more
-// than a guess at what the letter "B" means in the follow-up list's platform
-// column. That question is still open, so it must not be suggested as if it
-// were answered.
+// "Booking.com" is in the pinned lists because the owner confirmed that is
+// what the bare "B" in the follow-up list's platform column means. It spent
+// one revision out of them while that was still a guess, which is the
+// mechanism working rather than a detour.
 // ---------------------------------------------------------------------------
 const PINNED: [string, readonly string[], string][] = [
-  ["PLATFORM_SUGGESTIONS", PLATFORM_SUGGESTIONS, "WhatsApp|Email|Instagram|TikTok"],
-  ["SOURCE_SUGGESTIONS", SOURCE_SUGGESTIONS, "Egypt Eye|Airbnb"],
+  ["PLATFORM_SUGGESTIONS", PLATFORM_SUGGESTIONS, "WhatsApp|Email|Instagram|TikTok|Booking.com"],
+  ["SOURCE_SUGGESTIONS", SOURCE_SUGGESTIONS, "Egypt Eye|Airbnb|Booking.com"],
   ["SERVICE_TYPE_SUGGESTIONS", SERVICE_TYPE_SUGGESTIONS, "Tour|Photoshoot|Flying dress"],
   ["LOCATION_SUGGESTIONS", LOCATION_SUGGESTIONS, "Pyramids of Giza|Old Cairo|Luxor"],
   [
@@ -713,12 +713,16 @@ for (const [name, actual, expected] of PINNED) {
   );
 }
 
-// The unanswered question must not reappear as an answer.
-for (const [name, actual] of PINNED.map(([n, a]) => [n, a] as const)) {
-  ok(
-    !actual.some((value) => /booking\.com/i.test(value)),
-    `${name} suggests Booking.com — nobody has confirmed that is what "B" means in the follow-up list`,
-  );
+// A suggestion must never be an abbreviation only this team can read. "B" is
+// what the paper sheet says, and the OS spells it out — a new hire tapping
+// "B" would have no idea what they were recording.
+for (const [name, actual] of PINNED) {
+  for (const value of actual) {
+    ok(
+      value.length > 2,
+      `${name} suggests "${value}" — the OS spells channels out, because the paper list's "B" is readable only to whoever wrote it`,
+    );
+  }
 }
 
 // And the columns they fill must stay free text, or a suggestion list becomes

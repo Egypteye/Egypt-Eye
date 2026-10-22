@@ -107,10 +107,11 @@ $$;
 -- table being in a database: it is indexed, so "who am I chasing today" is a
 -- query rather than a reading of five sheets of paper.
 --
--- platform is free text on purpose. The paper list uses "B", "Ig" and
--- "TikTok", and nobody has yet told us what B stands for. An enum here would
--- refuse a value the desk writes down every day, so the UI suggests the known
--- ones and the column accepts whatever is actually true.
+-- platform is free text on purpose. The paper list writes "B" (Booking.com),
+-- "Ig" and "TikTok" — short forms that mean something to whoever wrote them
+-- and grow as new channels appear. An enum would refuse the next one on the
+-- day it mattered, so the UI suggests the known channels, spelled out, and
+-- the column accepts whatever is actually true.
 -- ---------------------------------------------------------------------------
 create table if not exists public.ops_followups (
   id uuid primary key default gen_random_uuid(),

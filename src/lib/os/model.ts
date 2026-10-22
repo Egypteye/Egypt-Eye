@@ -237,21 +237,35 @@ export function describeFollowUp(nextFollowUpOn: string | null, today: string): 
 // invented, because a suggestion is not neutral: a staff member picking
 // "Lunch" from a list puts "Includes: Lunch" into the message that goes to
 // the guest and the crew, and an inclusion the company does not actually sell
-// becomes a promise the moment somebody taps it. An earlier version of this
-// file also offered "Booking.com", which was nothing but a guess at what the
-// letter "B" means in the follow-up list's platform column — a guess
-// promoted to a suggested fact. Adding to any of these lists means confirming
-// with the team first, and scripts/check-os.mts pins them so it cannot happen
-// by accident.
+// becomes a promise the moment somebody taps it. Adding to any of these lists
+// means confirming with the team first, and scripts/check-os.mts pins them so
+// it cannot happen by accident.
+//
+// "Booking.com" is here because the owner confirmed it: the follow-up list
+// writes a bare "B" in its platform column, which three of its five rows use.
+// It sat out one revision of this file while that was still a guess.
 //
 // All five fields are free text in the database, so none of this constrains
 // what anyone can actually record. The list is a typing aid, not a menu.
 
-/** The follow-up list writes "Ig" and "TikTok"; requests also arrive by email and WhatsApp. */
-export const PLATFORM_SUGGESTIONS = ["WhatsApp", "Email", "Instagram", "TikTok"] as const;
+/**
+ * Where the request came in. The follow-up list writes "B" (Booking.com),
+ * "Ig" and "TikTok"; requests also arrive by email and WhatsApp.
+ */
+export const PLATFORM_SUGGESTIONS = [
+  "WhatsApp",
+  "Email",
+  "Instagram",
+  "TikTok",
+  "Booking.com",
+] as const;
 
-/** The operations sheet's "Organization" and the social sheet's "Platform". */
-export const SOURCE_SUGGESTIONS = ["Egypt Eye", "Airbnb"] as const;
+/**
+ * Who the booking came through. The operations sheet's "Organization" and the
+ * social sheet's "Platform" hold Egypt Eye and Airbnb; Booking.com joins them
+ * because it is a confirmed channel that requests arrive on.
+ */
+export const SOURCE_SUGGESTIONS = ["Egypt Eye", "Airbnb", "Booking.com"] as const;
 
 /** The operations sheet's "Service Type" and the social sheet's "Type". */
 export const SERVICE_TYPE_SUGGESTIONS = ["Tour", "Photoshoot", "Flying dress"] as const;
