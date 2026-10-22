@@ -201,6 +201,44 @@ for (const e of activities) {
 }
 
 // ---------------------------------------------------------------------------
+// 8b. Stock photography is credited, and only used where it is honest.
+//
+// Four of these products have no photograph at all, on purpose: Unsplash has
+// no Wadi El Natrun monastery, no Mokattam cave church, no Al-Qarafa and no
+// Wadi Degla. A photograph of the White Desert on a Wadi Degla page, or of
+// the Sultan Hassan mosque on the necropolis page, is a picture of somewhere
+// else — the brand's tone panel is the honest alternative and the page keeps
+// it until somebody shoots the real thing.
+//
+// Anything that DOES carry a photo must name the photographer. The content
+// file's own header asks for it; this is the assertion behind that request.
+// ---------------------------------------------------------------------------
+const UNPHOTOGRAPHED = [
+  "city-of-the-dead-heritage-walk",
+  "mokattam-cave-church",
+  "wadi-el-natrun-monasteries",
+  "wadi-degla-hike-stargazing",
+];
+for (const slug of UNPHOTOGRAPHED) {
+  const e = bySlug.get(slug);
+  ok(`${slug} exists`, e !== undefined);
+  ok(
+    `${slug} has no stand-in photograph of somewhere else`,
+    e !== undefined && !e.image
+  );
+}
+for (const e of THEMED) {
+  if (!e.image) continue;
+  ok(`${e.slug} credits the photographer`, Boolean(e.imageCredit?.creator?.trim()));
+  ok(
+    `${e.slug} links the photo's own page, not the raw file`,
+    typeof e.imageCredit?.sourceUrl === "string" &&
+      /^https:\/\/unsplash\.com\/photos\//.test(e.imageCredit.sourceUrl)
+  );
+  ok(`${e.slug} carries a tone to fall back to`, Boolean(e.imageTone));
+}
+
+// ---------------------------------------------------------------------------
 // 9. The Sanity round trip — the failure nobody sees.
 // ---------------------------------------------------------------------------
 const queries = readFileSync("src/sanity/queries.ts", "utf8");
@@ -223,5 +261,7 @@ console.log(
   `check-experience-collections: ok — ${THEMED.length} experiences across ${experienceThemes.length} collections, ` +
     `none carrying a price, a bookable flag or a claimed artisan, permit or partnership; the seven products with an ` +
     `open question each disclose it; the photography products all state the consent rule and point at one another so ` +
-    `nobody buys the wrong one; no neighbourhood is sold as a sight; and theme survives the Sanity round trip.`
+    `nobody buys the wrong one; no neighbourhood is sold as a sight; ${THEMED.filter((e) => e.image).length} carry a ` +
+    `credited photograph and ${UNPHOTOGRAPHED.length} carry none rather than a picture of somewhere else; and theme ` +
+    `survives the Sanity round trip.`
 );

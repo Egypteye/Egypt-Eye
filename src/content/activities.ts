@@ -284,6 +284,11 @@ export const activities: Experience[] = [
     location: "Islamic Cairo",
     price: { amount: null },
     imageTone: "luxor",
+    image: unsplash("photo-1541430840663-7979db8e3046"),
+    imageCredit: credit(
+      "Sam Dan Truong",
+      "https://unsplash.com/photos/brown-and-gray-wooden-wall-decor-SGni-rVlhz4"
+    ),
     description:
       "Sit down at a metalworker's bench in the old city and cut your own piece — a name, a line of hieroglyphs, a date — into brass or copper under the hands of someone who has done it since they were a teenager. You leave with the thing you made, not a thing you bought.",
     steps: [
@@ -341,6 +346,11 @@ export const activities: Experience[] = [
     location: "Cairo",
     price: { amount: null },
     imageTone: "luxor",
+    image: unsplash("photo-1628962691167-27b7db9997e0"),
+    imageCredit: credit(
+      "Oussama Abouchatir",
+      "https://unsplash.com/photos/person-writing-on-white-paper-_d2YajYba98"
+    ),
     description:
       "Arabic script is a craft with rules — the reed pen is cut a certain way, the proportions of every letter are measured in dots, and the hand is trained rather than expressive. A working calligrapher takes you through one script from the pen upward, and you write your own name in it by the end.",
     steps: [
@@ -392,6 +402,11 @@ export const activities: Experience[] = [
     location: "Cairo",
     price: { amount: null },
     imageTone: "desert",
+    image: unsplash("photo-1784741924166-af7f9f220afc"),
+    imageCredit: credit(
+      "Lothar Boris Piltz",
+      "https://unsplash.com/photos/a-vibrant-display-of-various-dried-fruits-teas-and-spices-yU_L8HwlBeY"
+    ),
     description:
       "What an Egyptian kitchen actually keeps, bought where Egyptians actually buy it. Through a working food market with someone who cooks from it — the spice blends that have no English name, the cheeses that scare visitors and shouldn't, the difference between the molokhia everyone warns you about and the molokhia people go home for.",
     steps: [
@@ -602,6 +617,11 @@ export const activities: Experience[] = [
     location: "Zamalek, Cairo",
     price: { amount: null },
     imageTone: "nile",
+    image: unsplash("photo-1634154955216-0a8455e2fb15"),
+    imageCredit: credit(
+      "Jens Aber",
+      "https://unsplash.com/photos/the-sun-is-setting-over-a-city-with-a-bridge-dBYlE_IACP8"
+    ),
     description:
       "Not the pyramids. Zamalek is the Cairo of balconied 1930s apartment blocks, jacaranda, embassy gardens and the Nile at the end of the street — a private shoot through the island with a photographer who knows which corners hold the light and at what hour.",
     steps: [
@@ -655,6 +675,11 @@ export const activities: Experience[] = [
     location: "Historic Cairo",
     price: { amount: null },
     imageTone: "luxor",
+    image: unsplash("photo-1777621175513-caa47fc3584f"),
+    imageCredit: credit(
+      "Yunshuo Qu",
+      "https://unsplash.com/photos/man-taking-a-picture-with-a-vintage-camera-n1CJh1hNWbY"
+    ),
     description:
       "A working Egyptian photographer, your own camera, and one of the most photographed quarters on earth — spent learning to see it rather than collecting it. Light, framing, and the particular problem of shooting a crowded street without either flattening it or intruding on it.",
     steps: [
@@ -707,6 +732,11 @@ export const activities: Experience[] = [
     location: "Cairo and Giza",
     price: { amount: null },
     imageTone: "nile",
+    image: unsplash("photo-1679238211153-546821b75f98"),
+    imageCredit: credit(
+      "Michael Starkie",
+      "https://unsplash.com/photos/a-view-of-a-city-with-a-pyramid-in-the-distance-TtlvTrqxXno"
+    ),
     description:
       "Not an itinerary — a photographer, for as long as you want one. Bring them to the pyramids for an hour, keep them for a whole day across the city, or have them quietly cover a proposal, a birthday or a family trip. You choose the where and the how long; we match the photographer to it.",
     steps: [
