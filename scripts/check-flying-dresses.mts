@@ -2787,6 +2787,43 @@ for (const pkg of packages) {
 }
 
 // ---------------------------------------------------------------------------
+// ON A PHONE THE COPY COMES FIRST AND THE HEADER STANDS CLEAR.
+//
+// Asked for directly, after the owner saw the film's darker frames sitting
+// behind the header pill. Two things make it true and both are easy to undo
+// by accident: the flex order that puts .fd-hero-body ahead of the media in
+// the visual order, and the ABSENCE of the negative margin that used to pull
+// the band up under the floating header. Put that margin back and the film
+// slides under the bar again, which is exactly what was being complained
+// about. Measured at 390px: the header ends at 70px and the copy begins at
+// about 90.
+// ---------------------------------------------------------------------------
+{
+  const css = read("src/app/flying-dresses/brand.css");
+  // There are several media queries at this width; pick the one that actually
+  // holds the hero, and stop at the next @media so a later rule cannot satisfy
+  // these assertions from outside the block.
+  const phoneBlock = (
+    css.split(/@media\s*\(max-width:\s*47\.99rem\)\s*\{/).slice(1).find((chunk) =>
+      chunk.includes(".fd-hero-media")
+    ) ?? ""
+  ).split("@media")[0];
+  ok(
+    "the phone hero block is missing entirely",
+    phoneBlock.includes(".fd-hero-media")
+  );
+  ok(
+    "the phone hero no longer puts the copy before the film",
+    /\.fd-hero-body\s*\{[^}]*order:\s*1/.test(phoneBlock) &&
+      /\.fd-hero-media\s*\{[^}]*order:\s*2/.test(phoneBlock)
+  );
+  ok(
+    "the phone hero pulls the film back under the floating header with a negative margin",
+    !/\.fd-hero-media\s*\{[^}]*margin-top:\s*-/.test(phoneBlock)
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

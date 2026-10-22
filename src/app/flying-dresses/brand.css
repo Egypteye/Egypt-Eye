@@ -3476,19 +3476,38 @@ ol.fd-timeline h3::before {
    Above 48rem nothing in here applies and the hero is untouched.
 */
 @media (max-width: 47.99rem) {
+  /* WORDS FIRST, FILM SECOND, AND THE HEADER STANDS ON ITS OWN.
+     =====================================================================
+     Asked for directly. The band used to come first and was pulled up under
+     the floating header, so the first thing on the page was a frame of video
+     with a white pill sitting on top of it — and whenever the loop was on one
+     of its darker frames, that pill floated on a murky rectangle that said
+     nothing about the brand.
+
+     Flex with an explicit order rather than moving the markup: the DOM keeps
+     the picture before the copy, which is the order it should be read in
+     above 48rem, where the type sits over the film. Below it, the reading
+     order a screen reader follows and the visual order now agree because the
+     copy genuinely comes first.
+
+     The negative margin is gone with it, so .fd-hero's own padding-top is
+     left to do its job and the header has clear space behind it. */
   .fd-hero {
-    display: block;
+    display: flex;
+    flex-direction: column;
     min-height: 0;
     padding-bottom: 0;
   }
 
+  .fd-hero-body {
+    order: 1;
+  }
+
   .fd-hero-media {
+    order: 2;
     position: relative;
     inset: auto;
     z-index: 0;
-    /* Cancels .fd-hero's padding-top so the band starts at the very top of
-       the section and the header floats over it, as before. */
-    margin-top: -5rem;
     /* 4/3 rather than the film's native 3/2: on a phone the band was about a
        quarter of the screen with the copy stacked under it, which is not the
        film leading the page. This is a third more height for an even crop off
@@ -3514,7 +3533,10 @@ ol.fd-timeline h3::before {
   }
 
   .fd-hero-body {
-    padding-block: 2rem 2.5rem;
+    /* MEASURED, not guessed. The header pill ends at 70px on a 390px screen;
+       at 0.5rem of padding the eyebrow started at 66 and sat behind it. This
+       starts the copy at about 90, which is clear air under the bar. */
+    padding-block: 2rem 2.25rem;
   }
 }
 
