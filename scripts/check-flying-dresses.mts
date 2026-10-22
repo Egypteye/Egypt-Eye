@@ -2997,6 +2997,56 @@ for (const pkg of packages) {
 }
 
 // ---------------------------------------------------------------------------
+// A PACKAGE WITH NOTHING BEHIND IT MUST NOT SAY "RIGHT NOW".
+//
+// BookingRail has two ways of saying there is no deposit button, and they
+// mean opposite things to somebody deciding whether to wait or to write:
+//
+//   "Online deposits are not open for this date right now"  -> come back
+//   "This one is quoted rather than listed"                 -> ask us
+//
+// It chose between them on `pkg.priceUsd === null`, which was never the real
+// question. That was a stand-in for "has no Egypt Eye product behind it",
+// true of the Red Sea yacht only while the yacht had no figure. The owner
+// gave it $399, the stand-in flipped, and the live page started telling
+// customers that deposits on a shoot with no product behind it were shut
+// "right now", for a date. Nobody had changed BookingRail.
+//
+// So this asserts the condition reads the product, never the price. The
+// wording is checked too, because the bug was invisible in the diff that
+// caused it: nothing in BookingRail changed at all.
+//
+// PROVEN by restoring `pkg.priceUsd === null`: red. Proven again by swapping
+// the two sentences: red. Then restored.
+// ---------------------------------------------------------------------------
+{
+  const rail = read("src/app/flying-dresses/_components/BookingRail.tsx");
+  const code = rail
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  ok(
+    "BookingRail decides its no-deposit wording from the package's own price again — " +
+      "a package that gains a price but still has no Egypt Eye product behind it will " +
+      "tell customers to wait for a button that does not exist",
+    !/pkg\.priceUsd\s*===\s*null\s*\n?\s*\?/.test(code)
+  );
+  ok(
+    "BookingRail no longer chooses its no-deposit wording from whether a product exists",
+    /\{!product\s*\n?\s*\?/.test(code)
+  );
+  // And the two sentences must stay the right way round.
+  const quoted = code.indexOf("quoted rather than listed");
+  const rightNow = code.indexOf("not open for this date right now");
+  ok(
+    "the no-deposit sentences are the wrong way round: no product must read " +
+      "\"quoted rather than listed\", not \"right now\"",
+    quoted !== -1 && rightNow !== -1 && quoted < rightNow
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {

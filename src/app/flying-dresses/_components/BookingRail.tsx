@@ -121,11 +121,26 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
               "not open for this date right now" implies a temporary,
               date-specific state somebody could wait out. That is true for a
               shoot whose deposit happens to be switched off, and false for a
-              shoot that is quoted rather than listed — the Red Sea yacht has
-              no price and no Egypt Eye product behind it, so there is nothing
-              to wait for. A customer who waits for a button that is never
-              coming is a customer who does not enquire. */}
-          {pkg.priceUsd === null
+              shoot with no Egypt Eye product behind it at all: the button is
+              not closed, it does not exist. A customer who waits for a button
+              that is never coming is a customer who does not enquire.
+
+              THIS ASKED THE WRONG QUESTION UNTIL THE YACHT GOT A PRICE.
+              It read `pkg.priceUsd === null`, which was a stand-in for "has
+              nothing behind it" and was true of the Red Sea yacht only while
+              the yacht had no figure. The owner gave it one ($399) and the
+              stand-in silently flipped: a package with a price and no product
+              started telling customers deposits were shut "right now", for a
+              date, when there was no product to take a deposit against and
+              never had been.
+
+              So it asks about the thing it actually means. `product` is the
+              Egypt Eye photoshoot this package books against, resolved from
+              eyeSlug above; no product means nothing to wait for, whatever
+              the package's own price says. A product that exists but is not
+              currently selling is the temporary case, and keeps the
+              temporary wording. */}
+          {!product
             ? "This one is quoted rather than listed"
             : "Online deposits are not open for this date right now"}
         </p>
