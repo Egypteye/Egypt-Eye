@@ -141,6 +141,35 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// 8b. No start time, no end time, no hour count. The owner's instruction.
+//
+// The day may finish at the farmhouse in the afternoon or run through the
+// evening gathering, and the sites' opening hours move. Every clock time this
+// page used to carry — an 8:00am pickup, back by 4:00pm, "about 8 hours" —
+// was a promise about a schedule nobody controls, printed next to a day that
+// is explicitly assembled around the farm's own programme.
+//
+// Checked field by field, because a time reintroduced in one step description
+// is as binding to the guest as one in the duration.
+// ---------------------------------------------------------------------------
+const CLOCK = /\b(\d{1,2}\s*[:.]\s*\d{2}\s*(am|pm)?|\d{1,2}\s*(am|pm)|\d+\s*(hours?|hrs?)\b|o'clock)\b/i;
+const timedFields: [string, string][] = [
+  ["duration", farm.duration],
+  ["description", farm.description],
+  ["location", farm.location ?? ""],
+  ...steps.flatMap((s, i): [string, string][] => [
+    [`step ${i + 1} title`, s.title],
+    [`step ${i + 1} description`, s.description],
+  ]),
+  ...farm.included.map((v, i): [string, string] => [`included ${i + 1}`, v]),
+  ...goodToKnow.map((v, i): [string, string] => [`good-to-know ${i + 1}`, v]),
+];
+for (const [where, value] of timedFields) {
+  ok(`no start time, end time or hour count in ${where}`, !CLOCK.test(value));
+}
+ok("no fixed start times are offered for this product", (farm.timeSlots ?? []).length === 0);
+
+// ---------------------------------------------------------------------------
 // 9. The location the owner gave.
 // ---------------------------------------------------------------------------
 ok("the location names the Saqqara Tourist Road", /Saqqara Tourist Road/i.test(farm.location ?? ""));
@@ -184,6 +213,7 @@ console.log(
   `check-farm: ok — the August-only date harvest is stated and no sentence promises fresh dates without it, ` +
     `no variety is invented, children under 12 are half the adult rate with no figure anywhere, the seasonal ` +
     `activities are hedged where they are described, the food is examples confirmed with the farm, the combined ` +
-    `Dahshur-and-Saqqara day names its three sites and admits it needs checking, and the ${options.length} enquiry ` +
+    `Dahshur-and-Saqqara day names its three sites and admits it needs checking, no clock time or hour count ` +
+    `appears in any of its ${timedFields.length} fields, and the ${options.length} enquiry ` +
     `options survive the Sanity round trip.`
 );
