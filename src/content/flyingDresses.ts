@@ -1053,18 +1053,19 @@ export const rentalServices: RentalService[] = [
     title: "Accessories",
     eyebrow: "With a shoot, or on their own",
     summary:
-      "Accessories are available alongside any shoot or any dress rental. Ask us what is in the collection.",
+      "Headpieces, collars, earrings, arm cuffs and rings, to wear with any shoot or any dress rental.",
     intro:
-      "The brochure confirms accessories are available and does not list them, so rather than guess at a collection we have not seen, this page tells you the service is real and asks you to ask. It is the one page on this site that is deliberately short.",
+      "This page used to say the collection had not been seen and ask you to write. The collection has now been photographed, so it is below, grouped the way we group it: on the head, around the neck, earrings, around the arm, on the finger. Quote the reference under any piece and we will tell you whether it is free for your date and what it costs with your shoot.",
     youGet: [
       "Accessories to wear with a photoshoot or a dress rental.",
+      "Pieces chosen before the day, so nothing is decided in a hurry at the location.",
     ],
     notIncluded: [],
     howItWorks: [
       {
-        title: "Ask what is available",
+        title: "Pick the pieces, or ask us to",
         detail:
-          "Tell us which dress or which shoot you are thinking about and we will tell you what we have that goes with it.",
+          "Quote the reference under any piece below, or tell us the dress and the location and we will suggest what goes with it.",
       },
       {
         title: "We reply with the collection and the price",
@@ -1073,11 +1074,19 @@ export const rentalServices: RentalService[] = [
     ],
     delivery: ["hotel-delivery", "collection"],
     durationNote: null,
-    // DELIBERATELY EMPTY. Nothing in the brochure, on any reachable page, or
-    // anywhere in this repository names a single accessory. Listing "veil,
-    // crown, parasol" would put three products on a page that the business may
-    // not own. The structure is live and waiting: add entries and the grid
-    // appears by itself, exactly as the men's outfits section did.
+    // STILL EMPTY, AND NOW FOR A DIFFERENT REASON.
+    //
+    // It was empty because nothing named a single accessory, and listing
+    // "veil, crown, parasol" would have put three products on a page the
+    // business might not own. The pieces have since been photographed and
+    // they render from accessoryLookbook.ts, which is a gallery.
+    //
+    // `outfits` is NOT a gallery. It is the Outfit type the Egypt Eye booking
+    // picker reads, so an entry here becomes something a customer can select
+    // inside a paid booking. The accessories have no price and no availability
+    // behind them yet, so putting them in this array would offer a choice the
+    // deposit does not cover. They go in when they can be sold, not when they
+    // can be seen.
     outfits: [],
     faqs: [
       {

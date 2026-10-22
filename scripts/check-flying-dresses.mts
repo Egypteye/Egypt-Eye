@@ -37,6 +37,11 @@ import {
 } from "../src/content/flyingDresses.js";
 import { canCompleteBookingHere } from "../src/lib/booking/paypalConfig.js";
 import {
+  LOOKBOOK_NOTE,
+  accessoryCategories,
+  accessoryItems,
+} from "../src/app/flying-dresses/_lib/accessoryLookbook.js";
+import {
   FLYING_DRESS_COLLECTION,
   MENS_OUTFITS,
 } from "../src/content/outfitCollection.js";
@@ -3134,6 +3139,150 @@ for (const pkg of packages) {
 }
 
 // ---------------------------------------------------------------------------
+// THE ACCESSORIES ARE SHOWN, NOT SOLD, AND NOT RENAMED.
+//
+// The owner photographed each piece and had it composited onto generated
+// models, and states the pieces render identically to the wardrobe and that
+// delivering the exact piece shown is theirs. That is their call and it is
+// recorded in accessoryLookbook.ts. What this guards is everything that is
+// NOT theirs to assert later by accident:
+//
+//  1. Every frame must resolve to a file. A gallery of missing images is the
+//     one failure that makes the collection look smaller than it is.
+//  2. No piece may carry a price. The three hire services carry none by
+//     design, and a figure here would be the first.
+//  3. The references must stay references. The source names nothing — the
+//     filenames are generative titles repeated across categories — so a
+//     product name appearing here would be invented, which is CLAUDE.md §7.
+//  4. The note saying what is generated must survive, and must still say it.
+//     It is one string so it cannot drift between pages; a guard is what
+//     stops it being quietly emptied.
+//
+// PROVEN by pointing a frame at a missing file, by adding priceUsd to an
+// item, by renaming a ref to a product name, and by blanking the note. All
+// red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const lookbook = read("src/app/flying-dresses/_lib/accessoryLookbook.ts");
+
+  ok(
+    "the accessory lookbook is empty, so the collection page shows nothing",
+    accessoryItems.length > 0 && accessoryCategories.length > 0
+  );
+
+  for (const item of accessoryItems) {
+    const file = `public${item.src}`;
+    ok(`accessory "${item.ref}" points at ${item.src}, which is not in public/`, existsSync(file));
+    ok(
+      `accessory "${item.ref}" has no alt text, so the piece is invisible to a screen reader`,
+      item.alt.trim().length > 10
+    );
+  }
+
+  // A reference, not a product name. "Headpiece 2" is a coordinate; "Cleopatra
+  // Collar" is a claim about an item nothing in the source material names.
+  for (const item of accessoryItems) {
+    ok(
+      `accessory reference "${item.ref}" reads as a product name — the source names no piece, so a ` +
+        "name here would be invented. Keep it as <category> <number>.",
+      /^[A-Z][a-z]+ \d+$/.test(item.ref)
+    );
+  }
+
+  // No price, anywhere near them.
+  ok(
+    "the accessory lookbook has grown a price field — the hire services carry no price by design",
+    !/price|usd|\$\d/i.test(lookbook.replace(/\/\*[\s\S]*?\*\//g, " "))
+  );
+
+  // The note that says what is generated.
+  ok(
+    "the lookbook note is missing or empty, so the pages show generated imagery with nothing saying so",
+    LOOKBOOK_NOTE.trim().length > 40
+  );
+  ok(
+    "the lookbook note no longer says which part is created digitally",
+    /digital/i.test(LOOKBOOK_NOTE) && /photograph/i.test(LOOKBOOK_NOTE)
+  );
+  const lookbookComponent = read("src/app/flying-dresses/_components/AccessoryLookbook.tsx");
+  ok(
+    "the lookbook renders the pieces without the note about how the frames were made",
+    lookbookComponent.includes("LOOKBOOK_NOTE")
+  );
+
+  // And the accessories page must actually render them.
+  const rentalPage = read("src/app/flying-dresses/rentals/[slug]/page.tsx");
+  ok(
+    "the accessories page no longer renders the collection",
+    /<AccessoryLookbook/.test(rentalPage)
+  );
+  // They must not leak into the booking picker, which is a paid selection.
+  const accessoriesService = rentalServices.find((r) => r.slug === "accessories");
+  ok(
+    "the accessories service now carries outfits, which the Egypt Eye booking picker reads — that " +
+      "offers a customer a choice inside a paid booking that has no price or availability behind it",
+    accessoriesService !== undefined && accessoriesService.outfits.length === 0
+  );
+}
+
+// ---------------------------------------------------------------------------
+// A STYLED COMPOSITE SAYS SO, AND NEVER CALLS ITSELF AGENCY WORK.
+//
+// "styled" was added for frames where the product is really ours and really
+// photographed but the model and the setting are generated. It exists so that
+// this kind of image has somewhere honest to go: the alternative was filing it
+// as "agency", which is the one promotion assets.ts says nobody may make
+// quietly, and which the file itself would contradict — these carry C2PA
+// provenance naming OpenAI.
+//
+// So the kind has to earn itself. A styled slot must carry a credit, and that
+// credit must say which part is generated. Without it the kind is just a label
+// in a file nobody reads, and the page shows a composite with nothing saying
+// so.
+//
+// PROVEN by removing the credit from the dress-rental slot (red), and by
+// changing its kind to "agency" (red, on the agency allow-list guard above).
+// ---------------------------------------------------------------------------
+for (const [name, slot] of Object.entries(allSlots)) {
+  if (slot.kind !== "styled") continue;
+  ok(
+    `the styled slot "${name}" carries no credit, so a generated scene renders with nothing saying so`,
+    typeof slot.credit === "string" && slot.credit.trim().length > 20
+  );
+  ok(
+    `the styled slot "${name}" has a credit that never says which part is generated`,
+    /generated|digitally|composite/i.test(slot.credit ?? "")
+  );
+  ok(
+    `the styled slot "${name}" has no image, which is what kind:"empty" is for`,
+    typeof slot.src === "string" && slot.src.length > 0
+  );
+}
+
+// AND THE CREDIT HAS TO REACH THE PAGE.
+//
+// The three assertions above check the DATA, and the first version of this
+// stopped there — which was not enough: Scene took no credit prop at all, so
+// the dress-rental frame rendered a generated scene with the note sitting
+// unread in assets.ts. A credit nothing renders is a note to ourselves.
+//
+// PROVEN by removing the credit prop from Scene's usage on the rentals page
+// (red) and by deleting the figcaption from Scene (red). Then restored.
+{
+  const scene = read("src/app/flying-dresses/_components/Scene.tsx");
+  ok(
+    "Scene accepts no credit, so a styled frame's provenance note never reaches the page",
+    /credit\?:/.test(scene) && /figcaption/.test(scene)
+  );
+  const rentalsPage = read("src/app/flying-dresses/rentals/[slug]/page.tsx");
+  ok(
+    "the rentals page renders its art without passing the credit, so a styled frame shows with " +
+      "nothing saying what is generated",
+    /credit=\{art\.credit\}/.test(rentalsPage)
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 if (errors.length > 0) {
@@ -3147,8 +3296,10 @@ console.log(
   `check-flying-dresses: ok — ${packages.length} photoshoots all pointing at a real bookable product, ` +
     `${rentalServices.length} hire services none of which can carry a price, ` +
     `${FLYING_DRESS_COLLECTION.length} dresses and ${MENS_OUTFITS.length} gawns from one shared wardrobe, ` +
-    `${Object.values(allSlots).filter((s) => s.kind !== "empty").length} real images all present and ` +
-    `${Object.values(allSlots).filter((s) => s.kind === "empty").length} labelled gaps, ` +
+    `${Object.values(allSlots).filter((s) => s.kind === "agency" || s.kind === "location").length} ` +
+    `photographs and ${Object.values(allSlots).filter((s) => s.kind === "styled").length} styled ` +
+    `composites all present, ${Object.values(allSlots).filter((s) => s.kind === "empty").length} ` +
+    "labelled gaps, " +
     `${flyingDressStories.length} stories none of which duplicate a slug on egypteyetravel.com, ` +
     `${marqueePlaces.length + marqueeColours.length} ribbon frames all present and parked under reduced motion, ` +
     "reduced motion disables the timelines, and no enquiry claims to be a booking."
