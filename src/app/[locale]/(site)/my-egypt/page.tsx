@@ -126,7 +126,7 @@ export default async function MyEgyptPage() {
               <WhatsAppBookButton
                 whatsappLink={site.contact.whatsappLink}
                 context={{ page: "the My Egypt page", intro: "Hi, I have a question about my trip." }}
-                className="mt-4 inline-block text-sm font-semibold text-gold-dark underline"><T>Need help? Talk to Egypt Eye</T></WhatsAppBookButton>
+                className="mt-4 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark underline"><T>Need help? Talk to Egypt Eye</T></WhatsAppBookButton>
             </div>
           )}
 

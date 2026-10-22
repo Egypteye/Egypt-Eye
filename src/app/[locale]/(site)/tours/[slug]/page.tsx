@@ -268,7 +268,7 @@ export default async function TourDetailPage({
                     <Link
                       key={e.slug}
                       href={`/experiences/${e.slug}`}
-                      className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink"
+                      className="inline-flex min-h-[44px] items-center rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink"
                     >
                       {e.title} →
                     </Link>
@@ -293,7 +293,7 @@ export default async function TourDetailPage({
                 </div>
                 <Link
                   href="/faq"
-                  className="mt-4 inline-block text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
+                  className="mt-4 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
                 >
                   <T>Booking, payment and cancellation questions</T> →
                 </Link>
@@ -362,7 +362,7 @@ export default async function TourDetailPage({
             </div>
             <Link
               href="/tours"
-              className="mt-8 inline-block text-sm font-semibold text-gold-dark hover:underline"
+              className="mt-8 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark hover:underline"
             >
               ← Back to all tours
             </Link>

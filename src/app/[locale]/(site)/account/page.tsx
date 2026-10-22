@@ -144,7 +144,7 @@ export default async function AccountPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/account/profile" className="text-sm font-semibold text-ink-soft hover:text-ink"><T>Edit Profile</T></Link>
-            <LogoutButton className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
+            <LogoutButton className="inline-flex min-h-[44px] items-center rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
           </div>
         </div>
 

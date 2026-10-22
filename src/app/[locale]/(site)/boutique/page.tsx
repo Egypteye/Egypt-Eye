@@ -292,7 +292,7 @@ export default async function BoutiquePage() {
                 </p>
                 <Link
                   href={to("/stories/best-souvenirs-to-buy-in-egypt")}
-                  className="mt-4 inline-block text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
+                  className="mt-4 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark underline-offset-4 hover:underline"
                 >
                   {ui["Souvenirs worth bringing home"]} →
                 </Link>

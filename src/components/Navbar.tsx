@@ -145,7 +145,7 @@ export function Navbar({ siteSettings: site }: { siteSettings: ResolvedSiteSetti
       }`}
     >
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
-        <Link href="/" className="flex items-center gap-2.5" onClick={() => setOpen(false)}>
+        <Link href="/" className="flex min-h-[44px] items-center gap-2.5" onClick={() => setOpen(false)}>
           <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ink p-1.5 ring-1 ring-gold/40">
             <Image
               src="/brand/egypt-eye-mark-gold.png"

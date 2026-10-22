@@ -217,7 +217,7 @@ export default async function PhotoshootDetailPage({
 
           <Link
             href="/photoshoots"
-            className="mt-10 inline-block text-sm font-semibold text-gold-dark hover:underline"
+            className="mt-10 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark hover:underline"
           >
             ← Back to all photoshoot packages
           </Link>

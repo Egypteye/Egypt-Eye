@@ -75,7 +75,7 @@ export default async function TermsPage() {
               {section.href && section.hrefLabel && (
                 <Link
                   href={section.href}
-                  className="mt-4 inline-block text-sm font-semibold text-ink underline underline-offset-4 transition hover:text-gold-dark"
+                  className="mt-4 inline-flex min-h-[44px] items-center text-sm font-semibold text-ink underline underline-offset-4 transition hover:text-gold-dark"
                 >
                   {t[section.hrefLabel]}
                 </Link>
