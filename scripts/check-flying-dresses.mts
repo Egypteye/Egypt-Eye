@@ -35,6 +35,7 @@ import {
   urgentCall,
   wardrobe,
 } from "../src/content/flyingDresses.js";
+import { canCompleteBookingHere } from "../src/lib/booking/paypalConfig.js";
 import {
   FLYING_DRESS_COLLECTION,
   MENS_OUTFITS,
@@ -874,12 +875,98 @@ ok(
   proxySource.includes("isFlyingDressesAllowed") && !proxySource.includes("isFlyingDressesExempt")
 );
 
+// ---------------------------------------------------------------------------
+// THIS DOMAIN MAY TAKE A DEPOSIT ONLY IF IT CAN ALSO RECORD ONE.
+//
+// The brand used to send every customer to the Egypt Eye checkout, and the
+// guard here said so: the link had to be absolute, "which is what keeps PayPal
+// credentials off this brand's deployment entirely". That is no longer the
+// design. The same booking dialog now runs on this domain when this
+// deployment can finish the job, because a handoff to another brand
+// mid-purchase is where a boutique sale dies.
+//
+// What replaces it is the rule that makes the change safe. Taking money is two
+// things — moving it, and writing down what it was for — and a deployment with
+// PayPal and no database does the first only. That is a customer charged for a
+// booking nobody has a record of, which is worse than not selling. So the
+// local checkout is gated on BOTH, the Egypt Eye link stays as the fallback,
+// and the credentials can be added in either order with no window in between.
+//
+// PROVEN by dropping supabaseReady from the gate (red), by deleting the Egypt
+// Eye fallback branch (red), and against the rule itself below. Then restored.
+// ---------------------------------------------------------------------------
 const bookingRail = read("src/app/flying-dresses/_components/BookingRail.tsx");
+const railCode = bookingRail
+  .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+  .replace(/\/\*[\s\S]*?\*\//g, " ")
+  .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
 ok(
-  "the deposit link is relative, so it resolves against the Flying Dresses domain — where the proxy refuses " +
-    "payment routes, so the button 404s. It must point at the Egypt Eye origin, which is what keeps PayPal " +
-    "credentials off this brand's deployment entirely.",
-  bookingRail.includes("EGYPT_EYE_ORIGIN") && !/href=\{`\/secure\//.test(bookingRail)
+  "the Flying Dresses rail no longer keeps the Egypt Eye checkout as its fallback, so a deployment " +
+    "without PayPal or Supabase has nowhere to send a customer who wants to pay",
+  railCode.includes("EGYPT_EYE_ORIGIN") && /secure\/photoshoot\/\$\{pkg\.eyeSlug\}/.test(railCode)
+);
+ok(
+  "the Flying Dresses rail offers a local checkout without asking whether this deployment can " +
+    "complete a booking — it must go through canCompleteBookingHere, which requires a database as " +
+    "well as a payment provider",
+  /canCompleteBookingHere\(/.test(railCode) &&
+    /providerEnabled/.test(railCode) &&
+    /supabaseReady/.test(railCode)
+);
+
+// The rule itself, exercised rather than read. It is the one thing standing
+// between a customer and a charge with no booking behind it.
+ok(
+  "canCompleteBookingHere lets a deployment take money with no database behind it",
+  canCompleteBookingHere({ providerEnabled: true, supabaseReady: false }) === false
+);
+ok(
+  "canCompleteBookingHere refuses a deployment that has both halves",
+  canCompleteBookingHere({ providerEnabled: true, supabaseReady: true }) === true
+);
+ok(
+  "canCompleteBookingHere offers a checkout with no payment provider",
+  canCompleteBookingHere({ providerEnabled: false, supabaseReady: true }) === false
+);
+
+// ---------------------------------------------------------------------------
+// WHAT THE BRAND'S DOMAIN STILL REFUSES.
+//
+// Opening the checkout here meant opening three routes. The two left shut are
+// the two that would hurt, and nothing about this change should quietly widen
+// to a prefix later — `startsWith("/api/bookings")` would admit both of them
+// and every route added under that path from now on.
+// ---------------------------------------------------------------------------
+// Comments stripped, for the third time in this change: the proxy's own note
+// explains the prefix trap by writing `startsWith("/api/bookings")` out in
+// full, and the first version of the guard below matched that sentence instead
+// of the code. CLAUDE.md §4, again.
+const proxyCode = proxySource
+  .replace(/\/\*[\s\S]*?\*\//g, " ")
+  .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+for (const route of ["/api/bookings", "/api/bookings/rail", "/api/bookings/paypal/capture"]) {
+  ok(
+    `the Flying Dresses domain cannot reach ${route}, so its own checkout cannot complete`,
+    proxyCode.includes(`pathname === "${route}"`)
+  );
+}
+ok(
+  "the Flying Dresses allow-list matches /api/bookings by PREFIX, which admits the reconcile sweep and " +
+    "every booking route added after today without anybody deciding to",
+  !/startsWith\(\s*["'`]\/api\/bookings/.test(proxyCode)
+);
+ok(
+  "the reconcile sweep answers on the Flying Dresses domain — it belongs to one deployment and a second " +
+    "one answering it is a second thing that can double-settle a payment",
+  !proxyCode.includes('pathname === "/api/bookings/reconcile"')
+);
+ok(
+  "a second PayPal webhook endpoint answers on the Flying Dresses domain. PayPal resolves a booking by " +
+    "order id in the shared Supabase, so the Egypt Eye webhook already settles orders started here; a " +
+    "second endpoint needs a second registration and a second PAYPAL_WEBHOOK_ID and buys nothing",
+  !proxyCode.includes('pathname === "/api/webhooks/paypal"')
 );
 
 ok(
