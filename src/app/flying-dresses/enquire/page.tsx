@@ -7,6 +7,8 @@ import {
   fdWardrobe,
 } from "../_lib/content";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
+import { urgentCall } from "@/content/flyingDresses";
+import { UrgentCall } from "../_components/UrgentCall";
 import { EnquiryForm } from "../_components/EnquiryForm";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 
@@ -67,6 +69,11 @@ export default async function EnquirePage({
   const mensParam = one(params.mens).toLowerCase();
   const mens = mensOutfits.find((m) => m.id.toLowerCase() === mensParam)?.id ?? "";
 
+  // The live primary number, which is what the urgent card dials. Falls back
+  // to the content file only if settings somehow carry no phone at all.
+  const urgentPhone =
+    contact.phones.find((phone) => phone.primary) ?? contact.phones[0] ?? urgentCall.fallback;
+
   return (
     <>
       <section className="fd-section-tight">
@@ -93,12 +100,26 @@ export default async function EnquirePage({
       <section className="fd-section-tight" style={{ paddingTop: 0 }}>
         <div className="fd-shell fd-split">
           <div>
+            {/* ABOVE THE FORM, not beside it. The people this is for are the
+                ones whose shoot is in two days, and asking them to read a form
+                before they discover they should have rung instead is the whole
+                problem.
+
+                INSIDE the form's column, not a third child of .fd-split: that
+                is a two-column grid above 60rem, so a third child would take
+                the form's column and push the sidebar onto its own row. The
+                number comes from settings, so a change in the Studio reaches
+                this card too. */}
+            <div style={{ marginBottom: "1.75rem" }}>
+              <UrgentCall phone={urgentPhone} />
+            </div>
             <EnquiryForm
               initialPackage={pkg}
               initialService={service}
               initialExperience={experience}
               initialDress={dress}
               initialMens={mens}
+              phone={urgentPhone}
             />
           </div>
 

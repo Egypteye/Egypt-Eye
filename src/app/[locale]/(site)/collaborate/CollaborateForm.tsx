@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
+import { PhoneField } from "@/components/PhoneField";
 
 const PLATFORMS = ["Instagram", "TikTok", "YouTube", "Facebook", "Blog / Website", "Other"];
 const COLLAB_TYPES = [
@@ -124,7 +125,8 @@ export function CollaborateForm() {
           {tr("Email *")}
           <input type="email" name="email" required className={inputClass()} />
         </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("WhatsApp / Phone")}<input type="tel" name="phone" className={inputClass()} />
+        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("WhatsApp / Phone")}
+          <PhoneField errorClassName="text-sm font-semibold text-terracotta" id="collaborate-phone" inputLabel="Phone number" selectClassName={inputClass()} inputClassName={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Portfolio / previous work")}<input type="url" name="portfolioUrl" placeholder={tr("https://")} className={inputClass()} />
         </label>

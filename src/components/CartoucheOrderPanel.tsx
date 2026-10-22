@@ -5,6 +5,7 @@ import { PayPalDepositButtons } from "@/components/PayPalDepositButtons";
 import { personalisedItemAnchor, personalisedItemNotice } from "@/content/cancellationPolicy";
 import { formatCents } from "@/lib/booking/quote";
 import type { SVariant, Spelling, SymbolKey } from "@/lib/hieroglyphs/signs";
+import { PhoneField } from "@/components/PhoneField";
 
 // Buying a cartouche, rather than asking about one.
 //
@@ -246,7 +247,7 @@ export function CartoucheOrderPanel({
           <label className={label} htmlFor={`${ids}-phone`}>
             Phone or WhatsApp (optional)
           </label>
-          <input id={`${ids}-phone`} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} maxLength={40} className={field} />
+          <PhoneField errorClassName="text-sm font-semibold text-terracotta" id={`${ids}-phone`} value={phone} onChange={(next) => setPhone(next)} selectClassName={field} inputClassName={field} />
         </div>
         <div>
           <label className={label} htmlFor={`${ids}-qty`}>

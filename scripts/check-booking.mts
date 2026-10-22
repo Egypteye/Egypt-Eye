@@ -11,6 +11,7 @@
  *      would be inventing a business fact, and charging $0 to "secure" a date
  *      would be a broken promise rather than a free one.
  */
+import { execSync } from "node:child_process";
 import { readFileSync, readdirSync } from "node:fs";
 import { breakdownRows, breakdownText, financials } from "../src/lib/email/breakdown";
 import { payPalLink } from "../src/lib/booking/deposit";
@@ -27,6 +28,7 @@ import { extrasTotal, normaliseExtras, selectExtras, formatUsd } from "../src/li
 import { composePhone } from "../src/lib/booking/phone";
 import { readFile } from "node:fs/promises";
 import { DIAL_CODES, dialCodeFor, flagFor } from "../src/lib/booking/countryCodes";
+import { countryDialCodes } from "../src/content/countryCodes";
 import {
   bookingStateFromRow,
   canTransition,
@@ -636,6 +638,46 @@ ok("the flag is derived from the code", flagFor("EG") === "🇪🇬" && flagFor(
 ok("a bad code produces no flag rather than mojibake", flagFor("XYZ") === "");
 ok("an unknown country resolves to nothing", dialCodeFor("ZZ") === null);
 
+// ---------------------------------------------------------------------------
+// ONE LIST, AND IT COVERS EVERYBODY.
+//
+// There are two dial-code modules in this repository and they used to
+// disagree. src/content/countryCodes.ts carries all 204 countries for the
+// Customize form; this one carried 105, curated down to the markets Egypt Eye
+// sells to, which was fine while it served only the booking popup.
+//
+// Then the country code became mandatory on every form on both brands, all
+// reading THIS list, and the shortfall became a wall: a traveller from
+// Zimbabwe or Venezuela had no row to pick and, on the forms where the field
+// is required, could not submit at all. The 99 missing countries were filled
+// in behind the curated head.
+//
+// They also disagreed about the Dominican Republic: +1809 here against +1
+// there. +1809 doubles the area code the moment a customer types their own
+// full number, and it contradicted US and Canada sitting at +1 in this very
+// file. Corrected to +1.
+//
+// PROVEN by deleting Zimbabwe from CODES (coverage goes red) and by setting
+// the Dominican Republic back to +1809 (agreement goes red). Then restored.
+// ---------------------------------------------------------------------------
+{
+  const booking = new Map(DIAL_CODES.map((c) => [c.iso, c.dial]));
+  const uncovered = countryDialCodes.filter((c) => !booking.has(c.iso));
+  ok(
+    `the booking dial codes no longer cover every country the Customize form offers — ` +
+      `missing ${uncovered.length}: ${uncovered.map((c) => c.iso).join(", ")}`,
+    uncovered.length === 0
+  );
+  const disagree = countryDialCodes.filter(
+    (c) => booking.has(c.iso) && booking.get(c.iso) !== c.dial
+  );
+  ok(
+    `the two dial-code lists disagree about ` +
+      disagree.map((c) => `${c.iso} (${booking.get(c.iso)} here, ${c.dial} in src/content)`).join("; "),
+    disagree.length === 0
+  );
+}
+
 // An Egyptian mobile as Egyptians write it. The leading zero is national
 // notation and makes the number undialable once a country code is in front of
 // it, so it is dropped rather than rejected — this is the single most common
@@ -1219,6 +1261,65 @@ ok(
   "the customer is told a non-English guide is not yet promised",
   /confirm that language before the day|will confirm whether we can cover it/.test(emails),
 );
+
+// ---------------------------------------------------------------------------
+// NO PHONE BOX WITHOUT A COUNTRY BESIDE IT.
+//
+// Asked for directly: "a separate required dropdown to add country code
+// anywhere the client is typing his phone number." Anywhere is the load-
+// bearing word — there were sixteen phone inputs across the two brands and
+// only two of them had a country code, so enquiries kept arriving as
+// "01285343630": dialable inside Egypt, dialable nowhere else, and invisible
+// to WhatsApp, which identifies an account by its full international number.
+//
+// This sweeps the tree rather than listing the files, because the failure
+// mode is a NEW form written next year with a bare <input type="tel">. A list
+// would still be green on the day that happened.
+//
+// src/app/admin is excluded on purpose: those pages are the desk's own, not a
+// customer's, and staff transcribing a number the customer already gave have
+// no country to choose.
+//
+// PROVEN by adding a bare tel input to TransferBookingForm: red, naming it.
+// Then removed.
+// ---------------------------------------------------------------------------
+{
+  const telFiles = execSync(
+    "grep -rl 'type=\"tel\"' src/ --include=*.tsx | grep -v '^src/app/admin/' || true",
+    { encoding: "utf8" }
+  )
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .sort();
+
+  const naked = telFiles.filter((file) => {
+    // COMMENTS STRIPPED FIRST. Caught while proving this guard red: the
+    // mutated file still said "PhoneField" in a comment explaining the phone
+    // handling, so the marker matched the prose and the guard stayed green on
+    // a form with a bare tel input. Same failure CLAUDE.md §4 records, and the
+    // second time it bit in this one change.
+    const body = readFileSync(file, "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+    // Either it renders the shared field, or it builds the pair itself — the
+    // booking dialog and the Customize form both predate PhoneField and do
+    // the same job with their own markup.
+    return !/PhoneField|CountryCode|dialIso/.test(body);
+  });
+
+  ok(
+    `a phone box with no country code beside it: ${naked.join(", ")} — ` +
+      "a number typed without one is undialable from outside its own country " +
+      "and cannot be resolved by WhatsApp at all",
+    naked.length === 0
+  );
+  // And the sweep itself has to be finding things, or it guards nothing.
+  ok(
+    "the phone-field sweep found no phone inputs at all, so it is no longer checking anything",
+    telFiles.length >= 3
+  );
+}
 
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);

@@ -32,6 +32,7 @@ import {
   nav,
   packages,
   rentalServices,
+  urgentCall,
   wardrobe,
 } from "../src/content/flyingDresses.js";
 import {
@@ -2748,16 +2749,28 @@ for (const pkg of packages) {
 // desk cannot dial from outside Egypt and WhatsApp cannot resolve at all. The
 // field stays optional; what is required is that a number which IS given
 // carries its country code.
+//
+// THIS GUARD USED TO WATCH A REGULAR EXPRESSION IN THIS FORM, and it went red
+// the moment that regex was deleted — correctly, and worth recording. The
+// hint plus a pattern test has been replaced by a dropdown that cannot be
+// skipped and by src/lib/booking/phone.ts, which is now the one authority on
+// what a usable number is for both brands. So the assertion moved with the
+// mechanism: the form must render the shared field and must carry that
+// field's verdict into its own error state. A form that renders PhoneField
+// but drops the verdict would submit an unusable number as no number at all,
+// which is worse than the bug this all started with, so both halves are
+// checked.
 // ---------------------------------------------------------------------------
 {
   const form = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
   ok(
-    "the enquiry form does not validate the phone number's country code",
-    /next\.phone\s*=/.test(form) && /\\\+\\d\{1,4\}/.test(form)
+    "the enquiry form no longer renders the shared country-code field",
+    /<PhoneField/.test(form)
   );
   ok(
-    "the phone field does not tell the visitor to include a country code",
-    /country code/i.test(form)
+    "the enquiry form takes the phone field's verdict but never acts on it, so an " +
+      "unusable number would submit as no number at all",
+    /setPhoneProblem/.test(form) && /next\.phone\s*=\s*phoneProblem/.test(form)
   );
   ok(
     "the phone field stopped being optional, which costs more enquiries than it saves",
@@ -2895,6 +2908,92 @@ for (const pkg of packages) {
     "HeroVideo no longer falls back to a second source on failure",
     /const\s+queue\s*=/.test(component) && /index\s*\+=\s*1/.test(component)
   );
+}
+
+// ---------------------------------------------------------------------------
+// THE URGENT ROUTE DIALS THE LIVE NUMBER, NOT A COPY OF IT.
+//
+// Asked for directly: urgent and last minute enquiries should ring the line
+// rather than queue behind the form. The number is the brand's existing one,
+// so nothing new was invented; what is new is that one surface puts the call
+// ahead of the form.
+//
+// The guard is about WHICH number it dials. The phone is editable in the
+// Studio, and once that document exists Sanity replaces the content file
+// wholesale (CLAUDE.md §3). A display string or a tel: href frozen into the
+// component would keep dialling a retired number on the one route meant for
+// people who cannot afford a second try, and every page would still look
+// right. So the component must take the number as a prop and the content
+// block must not carry a bare one for it to reach for.
+//
+// It also must not grow a promise. The owner has stated no opening hours and
+// no answering time, and an urgent card is exactly where an invented "we
+// always pick up" would be most tempting and most costly.
+//
+// PROVEN by hardcoding contact.phones[0] inside UrgentCall (red), by dropping
+// the phone prop from the enquire page (red), and by adding "24/7" to the
+// blurb (red). Then restored.
+// ---------------------------------------------------------------------------
+{
+  const component = read("src/app/flying-dresses/_components/UrgentCall.tsx");
+  const code = component
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  ok(
+    "UrgentCall does not take the number as a prop, so it cannot follow a Studio change",
+    /phone\s*:\s*\{[^}]*tel/.test(code) && /phone\.tel/.test(code)
+  );
+  ok(
+    "UrgentCall reaches for a number of its own instead of the one it is given",
+    !/contact\.phones/.test(code) && !/urgentCall\.(display|tel)\b/.test(code)
+  );
+  ok(
+    "the urgent card is a real tel: link, so it dials without JavaScript",
+    /href=\{`tel:\$\{phone\.tel\}`\}/.test(code)
+  );
+
+  const page = read("src/app/flying-dresses/enquire/page.tsx");
+  ok(
+    "the enquire page no longer shows the urgent call route",
+    /<UrgentCall/.test(page)
+  );
+  ok(
+    "the enquire page shows the urgent route but not with the live settings number",
+    /<UrgentCall\s+phone=\{urgentPhone\}/.test(page) &&
+      /contact\.phones\.find\(/.test(page)
+  );
+
+  // A failed enquiry is the moment a phone number matters most, and WhatsApp
+  // was the only way out of that state. WhatsApp needs an installed, signed-in
+  // app; tel: needs neither.
+  const form = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+  ok(
+    "the enquiry form's failure state offers no phone number, only WhatsApp",
+    /tel:\$\{contactPhone\.tel\}/.test(form)
+  );
+
+  // No promise anybody has to keep.
+  const PROMISES = [
+    "24/7",
+    "24 hours",
+    "always available",
+    "always answer",
+    "we always pick up",
+    "instant reply",
+    "immediately",
+    "any time of day",
+    "round the clock",
+  ];
+  const copy = [urgentCall.eyebrow, urgentCall.heading, urgentCall.blurb, urgentCall.shortLabel]
+    .join(" ")
+    .toLowerCase();
+  for (const phrase of PROMISES) {
+    ok(
+      `the urgent call copy promises "${phrase}", which the owner has not stated`,
+      !copy.includes(phrase)
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------

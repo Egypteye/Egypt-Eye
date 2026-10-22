@@ -206,6 +206,50 @@ export const contact = {
 } as const;
 
 /**
+ * THE URGENT ROUTE.
+ *
+ * Asked for directly: urgent and last minute enquiries should ring the line
+ * rather than join the queue behind the form.
+ *
+ * It is the SAME number as contact.phones — there is only one, and the owner
+ * confirmed it for both calls and WhatsApp. This block exists to give that
+ * number a different JOB, not to add another one: a shoot that needs a dress
+ * tomorrow cannot wait for somebody to read an email, so the call comes first
+ * and the form is the fallback, which is the reverse of everywhere else on
+ * the site.
+ *
+ * NOTHING HERE PROMISES AN ANSWER. No opening hours, no "we always pick up",
+ * no reply window: the owner has not stated any of those and this file does
+ * not invent business facts. It says what to do when it is urgent, and the
+ * number to do it on.
+ */
+export const urgentCall = {
+  eyebrow: "Urgent or last minute",
+  heading: "Call us",
+  /** No clock promise, no reply window. Just which route is faster. */
+  blurb:
+    "If your date is within the next few days, calling reaches us faster than this form does.",
+  /** For the places a short label is all that fits. */
+  shortLabel: "Urgent? Call",
+
+  /**
+   * COPY ONLY, AND THE NUMBER DELIBERATELY ABSENT.
+   *
+   * The phone number is editable in the Studio, and once a document exists
+   * Sanity replaces the content file wholesale (CLAUDE.md §3). A `display`
+   * and `tel` frozen in here would go on dialling the old number from this
+   * one card for as long as nobody noticed, which is the worst kind of wrong
+   * for the route reserved for the people in a hurry.
+   *
+   * So every surface takes the live number from fdSettings().contact.phones
+   * and this supplies the words around it. The fallback, for a surface with
+   * no settings to read, is the same contact.phones the rest of the site
+   * falls back to.
+   */
+  fallback: contact.phones.find((phone) => phone.primary) ?? contact.phones[0],
+} as const;
+
+/**
  * The WhatsApp deep link.
  *
  * `number` is optional and overrides the value in this file. It exists

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { PaymentMode } from "@/lib/booking/wording";
+import { PhoneField } from "@/components/PhoneField";
 
 // The form. Four questions, which is the whole point of this path existing.
 //
@@ -43,15 +44,23 @@ export function SecureBookingForm({
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // The authority's verdict on the number, held so the form's own gate can
+  // refuse an unusable one instead of quietly sending none.
+  const [phoneProblem, setPhoneProblem] = useState<string | null>(null);
   const [result, setResult] = useState<Result | null>(null);
 
   const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
 
+  // An empty phone is fine here — it is offered, not demanded. A number the
+  // authority rejects is not: it reaches this component as the empty string,
+  // so letting it through would book a date with no way to ring the guest
+  // about it, which is the one thing this field exists to prevent.
   const ready =
     form.startsAt.trim() !== "" &&
     form.guestName.trim() !== "" &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guestEmail.trim());
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guestEmail.trim()) &&
+    !phoneProblem;
 
   async function submit(event: React.FormEvent) {
     event.preventDefault();
@@ -182,12 +191,17 @@ export function SecureBookingForm({
           />
         </Field>
         <Field label="Phone or WhatsApp" hint="So we can reach you quickly if the date needs a conversation.">
-          <input
-            type="tel"
+          <PhoneField
+            errorClassName="text-sm font-semibold text-terracotta"
+            id="secure-phone"
             value={form.guestPhone}
-            onChange={(e) => set("guestPhone", e.target.value)}
-            maxLength={40}
-            className={inputClass}
+            onChange={(next, problem) => {
+              set("guestPhone", next);
+              setPhoneProblem(problem);
+            }}
+            inputLabel="Phone number"
+            selectClassName={inputClass}
+            inputClassName={inputClass}
           />
         </Field>
       </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
+import { PhoneField } from "@/components/PhoneField";
 
 type ItemType = "tour" | "experience" | "photoshoot" | "signatureExperience";
 
@@ -202,7 +203,7 @@ export function EnquiryModal({
                 <input id="enq-email" name="email" type="email" required maxLength={200} className={inputClass} />
               </Field>
               <Field label={tr("WhatsApp / Phone")} htmlFor="enq-phone">
-                <input id="enq-phone" name="phone" type="tel" required maxLength={60} className={inputClass} />
+                <PhoneField errorClassName="text-sm font-semibold text-terracotta" id="enq-phone" required selectClassName={inputClass} inputClassName={inputClass} />
               </Field>
             </div>
 

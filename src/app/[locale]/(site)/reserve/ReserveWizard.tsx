@@ -6,6 +6,7 @@ import { Container } from "@/components/Container";
 import { useJourneyItems } from "@/lib/journey";
 import type { JourneyDetailsResponse } from "@/app/api/journey/route";
 import { useTr } from "@/i18n/LocaleProvider";
+import { PhoneField } from "@/components/PhoneField";
 
 type FormData = {
   guestName: string;
@@ -33,6 +34,9 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
   const details = items.length === 0 ? emptyDetails : (fetchedDetails ?? emptyDetails);
   const loadingDetails = items.length > 0 && fetchedDetails === null && fetchStatus === "idle";
   const [step, setStep] = useState(0);
+  // The authority's verdict on the number, held so the form's own gate can
+  // refuse an unusable one instead of quietly sending none.
+  const [phoneProblem, setPhoneProblem] = useState<string | null>(null);
   const [discountState, setDiscountState] = useState<DiscountState>({ checked: false });
   const [checkingDiscount, setCheckingDiscount] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<"idle" | "submitting" | "error">("idle");
@@ -157,8 +161,19 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
     );
   }
 
+  // The phone is optional, so an EMPTY one does not hold the step back. An
+  // unusable one does: PhoneField composes a number it cannot validate to the
+  // empty string, so without this the reservation would advance carrying no
+  // number at all while the guest is certain they typed one. The complaint
+  // itself comes from src/lib/booking/phone.ts, not from here.
   const canContinue =
-    step === 0 ? Boolean(form.guestName.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guestEmail)) : true;
+    step === 0
+      ? Boolean(
+          form.guestName.trim() &&
+            /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guestEmail) &&
+            !phoneProblem
+        )
+      : true;
 
   return (
     <section className="bg-sand py-14 sm:py-20">
@@ -197,7 +212,18 @@ export function ReserveWizard({ currentUser }: { currentUser: { email: string; f
                 <input type="email" value={form.guestEmail} onChange={(e) => update("guestEmail", e.target.value)} className={inputClass} required />
               </Field>
               <Field label={tr("Phone (optional)")}>
-                <input type="tel" value={form.guestPhone} onChange={(e) => update("guestPhone", e.target.value)} className={inputClass} />
+                <PhoneField
+                  errorClassName="text-sm font-semibold text-terracotta"
+                  id="reserve-phone"
+                  value={form.guestPhone}
+                  onChange={(next, problem) => {
+                    update("guestPhone", next);
+                    setPhoneProblem(problem);
+                  }}
+                  inputLabel={tr("Phone number")}
+                  selectClassName={inputClass}
+                  inputClassName={inputClass}
+                />
               </Field>
             </div>
           )}

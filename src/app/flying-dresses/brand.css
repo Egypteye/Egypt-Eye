@@ -2352,6 +2352,63 @@ ol.fd-timeline h3::before {
   color: var(--fd-ivory-dim);
 }
 
+/* ---- The urgent call route -------------------------------------------
+   Asked for directly: a date within the next few days should ring the line
+   rather than queue behind the form.
+
+   Louder than .fd-note on purpose, because it is competing with a form that
+   fills the rest of the screen and a visitor in a hurry has to find it
+   without looking. The gold rule is the same device .fd-note uses, widened,
+   so it reads as the same family turned up rather than a different one. The
+   number itself is set at display scale: it is the only thing on the card
+   anybody needs to read, and on a phone it is also the tap target. */
+.fd-urgent {
+  padding: 1.25rem 1.5rem;
+  background: var(--fd-sand);
+  border-left: 3px solid var(--fd-gold);
+}
+
+.fd-urgent-number {
+  margin: 0.35rem 0 0.5rem;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-3);
+  line-height: 1.15;
+}
+
+.fd-urgent-number a {
+  color: var(--fd-ink);
+  text-decoration: none;
+  /* A number is read in groups, and tight tracking runs them together. */
+  letter-spacing: 0.01em;
+  /* 44px of height for a thumb, per the tap-target pass on the last change. */
+  display: inline-block;
+  padding-block: 0.3rem;
+}
+
+.fd-urgent-number a:hover,
+.fd-urgent-number a:focus-visible {
+  color: var(--fd-gold-ink);
+}
+
+.fd-urgent-blurb {
+  margin: 0;
+  font-size: var(--fd-step--1);
+  line-height: 1.6;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-urgent {
+  background: var(--fd-ink-3);
+}
+
+.fd-on-dark .fd-urgent-number a {
+  color: var(--fd-ivory);
+}
+
+.fd-on-dark .fd-urgent-blurb {
+  color: var(--fd-ivory-dim);
+}
+
 .fd-pill {
   display: inline-flex;
   align-items: center;

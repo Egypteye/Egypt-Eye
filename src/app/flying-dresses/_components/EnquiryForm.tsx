@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
 import { track } from "../_lib/analytics";
-import { RENTAL_DELIVERY_LABELS, addOns, dresses, flyingDressEnquiry, mensOutfits, packagePricePhrase, packages, rentalServices, whatsappHref } from "@/content/flyingDresses";
+import { RENTAL_DELIVERY_LABELS, addOns, dresses, flyingDressEnquiry, mensOutfits, packagePricePhrase, packages, rentalServices, urgentCall, whatsappHref } from "@/content/flyingDresses";
+import { PhoneField } from "@/components/PhoneField";
 
 /**
  * The enquiry form.
@@ -52,16 +53,24 @@ export function EnquiryForm({
   initialExperience = "",
   initialDress = "",
   initialMens = "",
+  phone: contactPhone = urgentCall.fallback,
 }: {
   initialPackage?: string;
   initialService?: string;
   initialExperience?: string;
   initialDress?: string;
   initialMens?: string;
+  /**
+   * The live primary number, for the failure state below. Defaults to the
+   * content file so a caller that has no settings to hand still renders a
+   * real number rather than nothing; the enquire page passes the Studio's.
+   */
+  phone?: { display: string; tel: string };
 }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [phoneProblem, setPhoneProblem] = useState<string | null>(null);
   const [pkg, setPkg] = useState(initialPackage);
   const [service, setService] = useState(initialService);
   // Carried, not editable: the experience comes from the page the visitor
@@ -136,15 +145,16 @@ export function EnquiryForm({
     //
     // The field STAYS OPTIONAL. Plenty of people would rather be emailed, and
     // making a phone number mandatory to ask a question costs more enquiries
-    // than it saves. But a number that IS given has to be one we can use, so
-    // this checks only what was typed: leading +, 1-4 digits of country code,
-    // then at least six more digits, with spaces, dashes, dots and brackets
-    // allowed between them because people paste numbers in every shape.
-    const typedPhone = phone.trim();
-    if (typedPhone && !/^\+\d{1,4}[\d\s().-]{6,}$/.test(typedPhone)) {
-      next.phone = typedPhone.startsWith("+")
-        ? "That does not look like a complete number. Include the country code and the full number, like +20 100 123 4567."
-        : "Please start with your country code, like +20 for Egypt or +44 for the UK. Without it we cannot call or reach you on WhatsApp.";
+    // than it saves. But a number that IS given has to be one we can use.
+    //
+    // What counts as usable is NOT decided here. This used to carry its own
+    // regular expression — leading +, one to four digits, then six more — and
+    // its own wording for failing it, which made three different answers to
+    // the same question across the site: this, the booking popup's, and the
+    // one the shared field briefly grew. src/lib/booking/phone.ts is the
+    // authority; PhoneField hands its verdict back and this records it.
+    if (phoneProblem) {
+      next.phone = phoneProblem;
     }
     setErrors(next);
     if (Object.keys(next).length > 0) {
@@ -238,6 +248,21 @@ export function EnquiryForm({
             Send it on WhatsApp instead
             <span className="fd-sr"> (opens in a new tab)</span>
           </a>
+          {/* AND THE NUMBER, IN PLAIN TEXT.
+              This block is what somebody sees when their enquiry did not
+              send, which is the moment they have least patience for another
+              route that might also fail. WhatsApp was the only way out of
+              here, and WhatsApp is an app that has to be installed and
+              signed in to. A tel: link needs neither, and the digits are
+              written out so they can be copied by somebody for whom neither
+              link does anything. */}
+          <p style={{ margin: "0.75rem 0 0" }}>
+            Or call us on{" "}
+            <a href={`tel:${contactPhone.tel}`} className="fd-link">
+              {contactPhone.display}
+            </a>
+            .
+          </p>
         </div>
       ) : null}
 
@@ -274,21 +299,19 @@ export function EnquiryForm({
           id="fd-phone"
           label="Phone or WhatsApp"
           error={errors.phone}
-          hint="Optional, but it is the fastest way to reach you. Start with your country code: +20 for Egypt, +44 for the UK, +1 for the US."
+          hint="Optional, but it is the fastest way to reach you. Pick your country first so we can actually ring you."
         >
-          <input
+          <PhoneField
             id="fd-phone"
-            name="phone"
-            type="tel"
-            inputMode="tel"
-            autoComplete="tel"
-            // The placeholder shows the shape rather than describing it, and
-            // the + is pre-filled so the keyboard starts where it should.
-            placeholder="+20 100 123 4567"
+            showInlineError={false}
             value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-            aria-invalid={errors.phone ? true : undefined}
-            aria-describedby={errors.phone ? "fd-phone-error" : undefined}
+            onChange={(next, problem) => {
+              setPhone(next);
+              setPhoneProblem(problem);
+            }}
+            placeholder="100 123 4567"
+            invalid={Boolean(errors.phone)}
+            describedBy={errors.phone ? "fd-phone-error" : undefined}
           />
         </Field>
 

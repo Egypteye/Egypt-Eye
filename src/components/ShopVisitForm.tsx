@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { SCENT_FAMILIES } from "@/lib/boutique/scentFamilies";
+import { PhoneField } from "@/components/PhoneField";
 
 // "Come and smell them first."
 //
@@ -174,7 +175,7 @@ export function ShopVisitForm({ areas }: { areas: Area[] }) {
           <label className={label} htmlFor={`${ids}-phone`}>
             Phone or WhatsApp (optional)
           </label>
-          <input id={`${ids}-phone`} name="phone" type="tel" maxLength={40} className={field} />
+          <PhoneField errorClassName="text-sm font-semibold text-terracotta" id={`${ids}-phone`} selectClassName={field} inputClassName={field} />
         </div>
         <div>
           <label className={label} htmlFor={`${ids}-name`}>
