@@ -3049,6 +3049,43 @@ for (const pkg of packages) {
 // ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// The wardrobe photographs.
+//
+// Each dress card used to render "photo coming soon" — on a page where the
+// photograph IS the product, because a customer picks the dress by looking at
+// it. The twelve colours now carry the owner's own wardrobe shoot, matched
+// folder by folder and checked by eye against the swatch.
+//
+// The assertion that matters is the LAST one. Two dresses sharing a photograph
+// means a colour was mapped to the wrong folder, and the symptom is a customer
+// choosing Emerald and being handed Verdant on the day — a mistake nobody
+// notices until somebody is standing on a rooftop in the wrong dress.
+// ---------------------------------------------------------------------------
+const dressPhotoRefs = FLYING_DRESS_COLLECTION.map((d) => {
+  const img = d.image as { asset?: { _ref?: string } } | string | undefined;
+  return typeof img === "string" ? img : img?.asset?._ref;
+});
+
+ok(
+  "every dress in the collection carries a photograph",
+  dressPhotoRefs.every((r) => typeof r === "string" && r.length > 0)
+);
+ok(
+  "every dress photograph is a Sanity asset, so it is served resized rather than at full capture size",
+  dressPhotoRefs.every((r) => typeof r === "string" && r.startsWith("image-"))
+);
+ok(
+  "no two dresses share a photograph",
+  new Set(dressPhotoRefs).size === dressPhotoRefs.length
+);
+// The five gawns have no photographs yet — the wardrobe shoot covered the
+// dresses only. Their cards still say "photo coming soon", which is true.
+ok(
+  "the men's gawns are honestly unphotographed rather than borrowing a dress",
+  MENS_OUTFITS.every((o) => !o.image)
+);
+
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");
   for (const error of errors) console.error(`  ✗ ${error}`);

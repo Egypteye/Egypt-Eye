@@ -52,18 +52,114 @@ import type { Outfit } from "@/lib/booking/outfits";
  * `BronZey`'s internal capital is the business's own spelling. Left alone.
  */
 export const FLYING_DRESS_COLLECTION: Outfit[] = [
-  { id: "cherry", name: "Cherry", category: "womens-dress", hex: "#9d2235" },
-  { id: "emerald", name: "Emerald", category: "womens-dress", hex: "#1f6f54" },
-  { id: "navy", name: "Navy", category: "womens-dress", hex: "#1e2a4a" },
-  { id: "black", name: "Black", category: "womens-dress", hex: "#15161a" },
-  { id: "verdant", name: "Verdant", category: "womens-dress", hex: "#4b7a3f" },
-  { id: "ginger", name: "Ginger", category: "womens-dress", hex: "#b4662c" },
-  { id: "snowy", name: "Snowy", category: "womens-dress", hex: "#f2efe9" },
-  { id: "golden", name: "Golden", category: "womens-dress", hex: "#c9a227" },
-  { id: "bronzey", name: "BronZey", category: "womens-dress", hex: "#8c6239" },
-  { id: "aqua", name: "Aqua", category: "womens-dress", hex: "#3c9ca8" },
-  { id: "lavender", name: "Lavender", category: "womens-dress", hex: "#9b8ac4" },
-  { id: "orchid", name: "Orchid", category: "womens-dress", hex: "#a4559b" },
+  {
+    id: "cherry",
+    name: "Cherry",
+    category: "womens-dress",
+    hex: "#9d2235",
+    // The owner's own photograph of this dress, from the "Red" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-6c1ed45ed66664e487493b5613468d5480c642f4-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "emerald",
+    name: "Emerald",
+    category: "womens-dress",
+    hex: "#1f6f54",
+    // The owner's own photograph of this dress, from the "Em. Green" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-fa5db32fde04daa37053266c6340d94b5235d61d-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "navy",
+    name: "Navy",
+    category: "womens-dress",
+    hex: "#1e2a4a",
+    // The owner's own photograph of this dress, from the "Blue" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-a4b58d910bc56083b55716cf087b29ac4b11e0a8-5754x3836-jpg", _type: "reference" } },
+  },
+  {
+    id: "black",
+    name: "Black",
+    category: "womens-dress",
+    hex: "#15161a",
+    // The owner's own photograph of this dress, from the "Black" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-2ad605d93526c8008244d26cf20c6a8ba5b954e2-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "verdant",
+    name: "Verdant",
+    category: "womens-dress",
+    hex: "#4b7a3f",
+    // The owner's own photograph of this dress, from the "Green" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-b80e75883ffa2f50044b8253150b6849f6ea24d8-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "ginger",
+    name: "Ginger",
+    category: "womens-dress",
+    hex: "#b4662c",
+    // The owner's own photograph of this dress, from the "Ginger" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-ee89dd0428af2b4284f74c4acbfa14ded4b25e20-5737x3825-jpg", _type: "reference" } },
+  },
+  {
+    id: "snowy",
+    name: "Snowy",
+    category: "womens-dress",
+    hex: "#f2efe9",
+    // The owner's own photograph of this dress, from the "White" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-a337199257aacbfda4cb72956d8f9283bf8eac97-5542x3695-jpg", _type: "reference" } },
+  },
+  {
+    id: "golden",
+    name: "Golden",
+    category: "womens-dress",
+    hex: "#c9a227",
+    // The owner's own photograph of this dress, from the "Gold" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-2c9ebb63d077e1f730e9bb10beda1f73869bd22e-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "bronzey",
+    name: "BronZey",
+    category: "womens-dress",
+    hex: "#8c6239",
+    // The owner's own photograph of this dress, from the "Bronze" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-d053feb07256d497e1f1fbb09111883e0f354f13-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "aqua",
+    name: "Aqua",
+    category: "womens-dress",
+    hex: "#3c9ca8",
+    // The owner's own photograph of this dress, from the "Aqua" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-b2394306332b1308f6108ab78c89e2dfb3066236-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "lavender",
+    name: "Lavender",
+    category: "womens-dress",
+    hex: "#9b8ac4",
+    // The owner's own photograph of this dress, from the "Purple" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-bbc6faae06375c34ab5f39046c90316b48be9370-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "orchid",
+    name: "Orchid",
+    category: "womens-dress",
+    hex: "#a4559b",
+    // The owner's own photograph of this dress, from the "Magenta" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-4713222ca2dc56ada7436da623deeb7f734d3c55-6000x4000-jpg", _type: "reference" } },
+  },
 ];
 
 /**
