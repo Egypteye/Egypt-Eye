@@ -2765,9 +2765,32 @@ for (const section of ["celebrations", "creative"]) {
     "and the uploaded photograph is the one used",
     oneUploaded.photos.cherry?.src === "https://cdn.sanity.io/images/x/y/new-cherry.jpg",
   );
+  // A GARMENT NOBODY HAS PHOTOGRAPHED MUST STAY ABSENT, not render blank.
+  //
+  // This used to point at "saeedy-gawn-1" as the example, which worked for as
+  // long as that gawn had no photograph and broke the day it got one. All
+  // seventeen garments are photographed now, so there is no real id left to
+  // make the point with — and picking the next unphotographed one would just
+  // arm the same trap for whoever fills it.
+  //
+  // So it asks the merge directly, with an id that is not in the wardrobe and
+  // never will be. That is the behaviour the assertion was always about.
+  const ghost = mergeWardrobe([
+    ...outfitDocs,
+    {
+      outfitId: "not-a-real-garment",
+      name: "Not A Real Garment",
+      category: "mens-outfit" as const,
+      photoUrl: null,
+      alt: null,
+      hex: null,
+      shoot: null,
+      order: 9990,
+    },
+  ]);
   ok(
     "a garment with no photograph anywhere stays absent rather than blank",
-    seeded.photos["saeedy-gawn-1"] === undefined,
+    ghost.photos["not-a-real-garment"] === undefined,
   );
 
   // The component must take the photographs as data. Importing the module's
@@ -2798,7 +2821,14 @@ for (const section of ["celebrations", "creative"]) {
 
   // The page must not tell a customer there are no photographs while showing
   // some. Counted from the data, never asserted in prose.
-  const wardrobePage = readFileSync("src/app/flying-dresses/wardrobe/page.tsx", "utf8");
+  // COMMENTS STRIPPED, because this guard tripped on the note explaining why
+  // the sentence was deleted. The page now carries a paragraph about having
+  // once said "the photography for this page has not been shot yet", and a
+  // guard that reads prose cannot tell that from the page saying it.
+  const wardrobePage = readFileSync("src/app/flying-dresses/wardrobe/page.tsx", "utf8")
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
   const claimsNoPhotography = /the photography for this page has not been shot yet/.test(wardrobePage);
   ok(
     "the wardrobe page does not claim it has no photographs unless it has none",
@@ -3280,6 +3310,120 @@ for (const [name, slot] of Object.entries(allSlots)) {
       "nothing saying what is generated",
     /credit=\{art\.credit\}/.test(rentalsPage)
   );
+}
+
+// ---------------------------------------------------------------------------
+// A COMPOSITE NEVER CLAIMS A CLIENT SHOOT.
+//
+// The wardrobe tells a customer "From the Aroouj shoot. The dress is the one
+// you would wear." That is true of the twelve dresses, which were taken at
+// real client shoots with real customers, and false of the five gawns, where
+// the garment is real and photographed but the model and the background are
+// generated. There was no shoot and the person is nobody.
+//
+// Without the styled flag those five would have inherited that sentence word
+// for word, which is the quietest kind of fabrication: nothing looks wrong,
+// and the site has invented a photo session and a client.
+//
+// PROVEN by dropping styled from a gawn entry (red), and by deleting the
+// branch from Wardrobe so every photograph claims a shoot again (red).
+// ---------------------------------------------------------------------------
+{
+  const gawnIds = MENS_OUTFITS.map((o) => o.id);
+  for (const id of gawnIds) {
+    const photo = dressPhotos[id];
+    ok(
+      `the gawn "${id}" has no photograph, so the wardrobe still shows it as a gap`,
+      photo !== undefined
+    );
+    if (!photo) continue;
+    ok(
+      `the gawn "${id}" is not marked styled, so the wardrobe will tell a customer it came from a ` +
+        "client shoot that never happened",
+      photo.styled === true
+    );
+  }
+
+  // The dresses are the other half of the same rule: they ARE client work and
+  // must not be relabelled as composites.
+  for (const dress of FLYING_DRESS_COLLECTION) {
+    const photo = dressPhotos[dress.id];
+    if (!photo) continue;
+    ok(
+      `the dress "${dress.id}" is marked styled, which would hide real client work behind a ` +
+        "generated-imagery note",
+      photo.styled !== true
+    );
+  }
+
+  // And the component must still make the distinction.
+  const wardrobe = read("src/app/flying-dresses/_components/Wardrobe.tsx");
+  ok(
+    "Wardrobe no longer branches on styled, so every photograph claims a shoot",
+    /\.styled/.test(wardrobe) && /created digitally/.test(wardrobe)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// NOTHING TELLS A CUSTOMER THE PHOTOGRAPHS DO NOT EXIST WHILE SHOWING THEM.
+//
+// Three times now. The wardrobe paragraph said "the photography has not been
+// shot yet" after twelve photographs landed. The lightbox caption said the
+// same in the same component. The wardrobe FAQ said it a third time, one
+// scroll further down, and survived both fixes because nobody reads an FAQ
+// array while fixing a paragraph.
+//
+// The paragraph and the caption are conditional now, which is the real fix.
+// This is the backstop for the flat assertions: while every garment has a
+// photograph, no customer-facing string on this page may say otherwise.
+//
+// PROVEN by restoring the old FAQ answer: red.
+// ---------------------------------------------------------------------------
+{
+  const everyGarmentPhotographed = [...FLYING_DRESS_COLLECTION, ...MENS_OUTFITS].every(
+    (o) => dressPhotos[o.id] !== undefined
+  );
+  const wardrobePage = read("src/app/flying-dresses/wardrobe/page.tsx");
+  const copy = wardrobePage
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  // EVERY SURFACE, NOT THE ONE I HAPPENED TO NOTICE.
+  //
+  // The FAQ was found by screenshotting the page, and the screenshot then
+  // showed two more: a paragraph under the men's list saying "we have not
+  // photographed the gawns", and the empty-slot caption calling them "the
+  // site's biggest missing asset", both rendering directly beneath the five
+  // photographs. Four copies of one claim, in three files.
+  //
+  // So the sweep is the files, not the file. A denial may only survive inside
+  // a branch that the data can still reach.
+  const DENIALS = [
+    "has not been shot yet",
+    "photography for this page has not",
+    "not photographed the gawns",
+    "names them rather than showing",
+    "biggest missing asset",
+    "Not on this page yet",
+  ];
+  const surfaces: [string, string][] = [
+    ["the wardrobe page", copy],
+    ["the men's wear content", read("src/content/flyingDresses.ts")],
+    ["the image slots", read("src/app/flying-dresses/_lib/assets.ts")],
+  ];
+  for (const [where, text] of surfaces) {
+    const body = text
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+    for (const phrase of DENIALS) {
+      ok(
+        `${where} still tells a customer "${phrase}" while every garment is photographed`,
+        !everyGarmentPhotographed || !body.toLowerCase().includes(phrase.toLowerCase())
+      );
+    }
+  }
 }
 
 // ---------------------------------------------------------------------------

@@ -305,7 +305,11 @@ export const empty = {
     alt: "The five traditional gawns, photographed as a set",
     width: 1800,
     height: 1200,
-    wanted: "The five gawns: the site's biggest missing asset",
+    // The five garments are photographed now and render in the wardrobe grid
+    // from dressPhotos. What this landscape slot still wants is the thing none
+    // of those five frames is: all five together, so the range reads at a
+    // glance instead of one portrait at a time.
+    wanted: "The five gawns together in one frame",
   }),
   accessories: slot({
     kind: "empty",

@@ -1166,7 +1166,7 @@ export const rentalServices: RentalService[] = [
       {
         question: "Are there photographs of the five styles?",
         answer:
-          "Not on this page yet, which is why it names them rather than showing them. Ask and we will send you pictures of the actual garments.",
+          "Yes, all five are on this page. They are studio frames of the garments themselves, with the model and the background created digitally, so what you are looking at is the real gawn rather than a photograph of a shoot. Ask us and we will send more pictures of whichever one you are considering.",
       },
     ],
     confirm: [

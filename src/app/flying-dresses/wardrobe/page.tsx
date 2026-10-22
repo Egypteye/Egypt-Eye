@@ -23,9 +23,18 @@ const WARDROBE_FAQS = [
       "No. Every dress in the collection is included in the photoshoot price, so the choice costs nothing. A second dress in the same session is $99, and a dress made or customised for you to keep is $249.",
   },
   {
-    question: "Why are these colour swatches rather than photographs?",
+    // REWRITTEN, AND THE OLD VERSION IS WHY THE COMMENT BELOW EXISTS.
+    //
+    // This asked "Why are these colour swatches rather than photographs?" and
+    // answered that "the photography for this page has not been shot yet" —
+    // a flat assertion, written when it was true, left standing after twelve
+    // dress photographs and then five gawn frames landed. The paragraph on
+    // the page had already been made conditional after exactly this mistake;
+    // the FAQ was the same sentence hiding one scroll further down, telling a
+    // customer the page could not show them what it was showing them.
+    question: "Are these photographs of the actual garments?",
     answer:
-      "Because we would rather show you an honest colour than a photograph of a different dress. The garments are real and all twelve are available; the photography for this page has not been shot yet. Ask us and we will send you pictures of the actual dress you are considering.",
+      "Yes. Every dress and every gawn on this page is photographed. The twelve dresses are frames from real client shoots. The five gawns are studio frames of the garments themselves, with the model and the background created digitally, so you are seeing the real garment rather than a photograph of a shoot. Whatever you pick is the one that arrives.",
   },
   {
     question: "Can you promise me a specific dress on a specific day?",
@@ -78,12 +87,18 @@ export default async function WardrobePage() {
                 mistake the lightbox caption made, in the same component.
 
                 So it is counted, not asserted: what is missing is derived
-                from the photographs the page actually received. */}
+                from the photographs the page actually received.
+
+                The all-zero branch that used to sit here is gone too. It read
+                "the photography for this page has not been shot yet" and was
+                reachable only by deleting all seventeen photographs, which is
+                a different emergency; meanwhile it sat in the file as a fourth
+                copy of the sentence this page keeps having to unlearn, and the
+                counted version above covers every state that can actually
+                happen, zero included. */}
             {missingPhotos.length > 0 ? (
               <p className="fd-note">
-                {photographed.length > 0
-                  ? `${photographed.length} of the ${all.length} garments are photographed here. The rest are shown as colour swatches rather than a stock picture of a different dress, and we would rather say so. Ask us and we will send you pictures of the one you are considering.`
-                  : "These are colour swatches, not photographs of the fabric. All the garments are real and available; the photography for this page has not been shot yet, and we would rather say so than show you a stock picture of a different dress. Ask us and we will send you pictures of the one you are considering."}
+                {`${photographed.length} of the ${all.length} garments are photographed here. The rest are shown as colour swatches rather than a stock picture of a different dress, and we would rather say so. Ask us and we will send you pictures of the one you are considering.`}
               </p>
             ) : null}
           </div>
@@ -119,11 +134,18 @@ export default async function WardrobePage() {
                 <li key={outfit.id}>{outfit.name}</li>
               ))}
             </ul>
+            {/* The fourth place on this page that said the gawns were not
+                photographed. The grid above now shows all five, so this said
+                "we cannot show you these" directly beneath them.
+
+                What survives is the half that is still true and still useful:
+                the two Saeedy cuts are genuinely hard to tell apart in a
+                frame, so the invitation to ask is kept and the denial is
+                dropped. */}
             <p className="fd-note">
-              We have not photographed the gawns for this site yet, so this page names them rather
-              than showing them. Ask and we will send you pictures of the actual garments, and
-              tell us which pair interests you, because what distinguishes the two Saeedy cuts from
-              each other is easier to show than to describe.
+              The two Saeedy cuts are close in a photograph and easier to tell apart in person.
+              Tell us which one you are drawn to and we will send you more pictures of it, and of
+              how it hangs on somebody your height.
             </p>
             <div className="fd-actions" style={{ marginTop: "2rem" }}>
               <Link className="fd-btn" href={fdPath("/rentals/mens-wear")}>

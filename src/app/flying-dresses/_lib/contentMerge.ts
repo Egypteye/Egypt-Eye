@@ -507,6 +507,13 @@ export function mergeWardrobe(docs: FdOutfitDoc[] | null): FdWardrobe {
         src: d.photoUrl,
         alt: str(d.alt, local?.alt, outfit.name),
         shoot: str(d.shoot, local?.shoot, "Agency shoot"),
+        // NOT carried over from the local entry. `styled` describes the file,
+        // and this branch runs because the Studio supplied a DIFFERENT file —
+        // a real photograph of the gawn, most likely, which is the upgrade
+        // this whole fallback exists to allow. Inheriting the flag would keep
+        // telling customers the model is generated after somebody replaced it
+        // with one that is not. A Studio upload is a photograph unless the
+        // schema one day says otherwise.
       };
     } else if (local) {
       photos[d.outfitId] = local;
