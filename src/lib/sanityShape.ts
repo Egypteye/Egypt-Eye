@@ -106,6 +106,12 @@ export function hardenExperience(experience: Experience, local?: Experience): Ex
     // projects null, nothing falls back, and the enquiry form quietly stops
     // asking the product's own questions.
     enquiryOptions: arr(experience.enquiryOptions, local?.enquiryOptions),
+    // A scalar, so it cannot use arr()'s three-case rule — but it needs the
+    // same protection. A Studio document that predates this field projects
+    // theme: null, the spread above writes that null over the content file's
+    // value, and the product drops out of its collection into the loose
+    // "More" bucket on the listing page. Visible only in production.
+    theme: experience.theme ?? local?.theme,
     relatedTours: experience.relatedTours?.map((t) => hardenTour(t)),
   };
 }
