@@ -17,6 +17,7 @@ import {
   rentalServiceBySlug,
 } from "@/content/flyingDresses";
 import { experienceBySlug, experiencePath } from "@/content/flyingDressExperiences";
+import { accessoryByRef } from "@/content/flyingDressAccessories";
 
 /**
  * The Flying Dresses enquiry.
@@ -117,6 +118,20 @@ export async function POST(request: NextRequest) {
   const mensId = clean(body.mens, 60).toLowerCase();
   const mens = mensOutfits.find((m) => m.id.toLowerCase() === mensId);
 
+  // The accessories, resolved against the collection for the same reason as
+  // everything else here: the request says WHICH, never what it is called. A
+  // crafted payload could otherwise post `accessories: ["Pharaoh's Crown,
+  // included"]` and the desk would read a piece we do not own as fact.
+  //
+  // Both the name and the reference go in, because they are read by different
+  // people: the customer will say "the Nefertiti" on the phone and the desk
+  // matches "Necklace 1" against the stock.
+  const requestedAccessories = Array.isArray(body.accessories) ? body.accessories : [];
+  const chosenAccessories = requestedAccessories
+    .map((ref) => (typeof ref === "string" ? accessoryByRef(ref) : undefined))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .map((item) => `${item.name} (${item.ref})`);
+
   // Extras, matched by id against the published add-ons. The label and the
   // price qualification both come from the catalogue, so an email can never
   // quote "$35" for something the brochure calls "starts at $35".
@@ -155,6 +170,7 @@ export async function POST(request: NextRequest) {
   push("People", people);
   push("Dress", dress?.name ?? "");
   push("Men's attire", mens?.name ?? "");
+  push("Accessories", chosenAccessories.join(", "));
   push("Extras", extras.join(", "));
   push("Hotel / pickup area", hotel);
   push("Delivery", delivery);

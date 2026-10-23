@@ -38,9 +38,10 @@ import {
 import { canCompleteBookingHere } from "../src/lib/booking/paypalConfig.js";
 import {
   LOOKBOOK_NOTE,
+  NAMING_NOTE,
   accessoryCategories,
   accessoryItems,
-} from "../src/app/flying-dresses/_lib/accessoryLookbook.js";
+} from "../src/content/flyingDressAccessories.js";
 import {
   FLYING_DRESS_COLLECTION,
   MENS_OUTFITS,
@@ -699,6 +700,12 @@ function stripComments(src: string): string {
 
 const PROSE_FILES = [
   "src/content/flyingDresses.ts",
+  // Added when the accessories grew names, descriptions and a line each
+  // saying where they are worn. Before that this file held references and
+  // alt text; now it is customer-facing prose like everything else here, and
+  // leaving it out would have been a hole in the dash rule the owner asked
+  // for, opened by the change that filled the file.
+  "src/content/flyingDressAccessories.ts",
   "src/app/flying-dresses/_lib/assets.ts",
   "src/app/flying-dresses/_lib/seo.ts",
   "src/app/flying-dresses/page.tsx",
@@ -3183,7 +3190,7 @@ for (const pkg of packages) {
 // The owner photographed each piece and had it composited onto generated
 // models, and states the pieces render identically to the wardrobe and that
 // delivering the exact piece shown is theirs. That is their call and it is
-// recorded in accessoryLookbook.ts. What this guards is everything that is
+// recorded in flyingDressAccessories.ts. What this guards is everything that is
 // NOT theirs to assert later by accident:
 //
 //  1. Every frame must resolve to a file. A gallery of missing images is the
@@ -3202,7 +3209,8 @@ for (const pkg of packages) {
 // red, then restored.
 // ---------------------------------------------------------------------------
 {
-  const lookbook = read("src/app/flying-dresses/_lib/accessoryLookbook.ts");
+  const lookbook = read("src/content/flyingDressAccessories.ts");
+  const lookbookComponent = read("src/app/flying-dresses/_components/AccessoryLookbook.tsx");
 
   ok(
     "the accessory lookbook is empty, so the collection page shows nothing",
@@ -3218,15 +3226,102 @@ for (const pkg of packages) {
     );
   }
 
-  // A reference, not a product name. "Headpiece 2" is a coordinate; "Cleopatra
-  // Collar" is a claim about an item nothing in the source material names.
+  // THE REFERENCE SURVIVES ALONGSIDE THE NAME.
+  //
+  // The pieces have names now — the owner asked for them, and naming your own
+  // stock is branding rather than an invented fact. The reference is not
+  // thereby redundant: it is stable when a name is reconsidered, it is
+  // unambiguous read out over a phone line, and it is what the desk matches
+  // an enquiry against. A name quietly replacing it would leave the desk with
+  // "the gold one" and nothing to match.
   for (const item of accessoryItems) {
     ok(
-      `accessory reference "${item.ref}" reads as a product name — the source names no piece, so a ` +
-        "name here would be invented. Keep it as <category> <number>.",
+      `accessory reference "${item.ref}" is no longer a reference — keep it as <category> <number>, ` +
+        "which is what the desk matches and what stays put when a name changes.",
       /^[A-Z][a-z]+ \d+$/.test(item.ref)
     );
   }
+
+  // ---------------------------------------------------------------------
+  // NAMED, DESCRIBED, AND SAID TO BE WORN SOMEWHERE.
+  //
+  // All three were asked for together and they fail separately. A piece with
+  // a name and no `worn` is the failure that matters most: "a wide gold cuff"
+  // tells a customer nothing about whether it will even be visible in the
+  // dress they picked, and "on the upper arm, above the elbow" tells them
+  // exactly that. It is also the field most likely to be skipped when a
+  // fourteenth piece is added in a hurry.
+  //
+  // A name must not be a reference wearing a name's clothes, either. If
+  // `name` is allowed to read "Headpiece 1" then the whole request has been
+  // satisfied on paper and not at all on the page.
+  //
+  // PROVEN by blanking one `worn`, by blanking one `description`, by setting
+  // a `name` to "Headpiece 1", and by giving two pieces the same name. All
+  // red, then restored.
+  // ---------------------------------------------------------------------
+  for (const item of accessoryItems) {
+    ok(
+      `accessory "${item.ref}" has no name, so the collection is a row of coordinates`,
+      item.name.trim().length > 2
+    );
+    ok(
+      `accessory "${item.ref}" has a name that is really a reference ("${item.name}") — the point of ` +
+        "the name is that it is a name",
+      !/^[A-Z][a-z]+ \d+$/.test(item.name)
+    );
+    ok(
+      `accessory "${item.ref}" has no description, so the page shows a photograph and a name`,
+      item.description.trim().length > 15
+    );
+    ok(
+      `accessory "${item.ref}" does not say where it is worn, which is the one thing a customer ` +
+        "cannot work out from the photograph",
+      item.worn.trim().length > 15
+    );
+  }
+  ok(
+    "two accessories share a name, so an enquiry naming one is ambiguous",
+    new Set(accessoryItems.map((i) => i.name.toLowerCase())).size === accessoryItems.length
+  );
+
+  // ---------------------------------------------------------------------
+  // A NAME IS NOT A PROVENANCE CLAIM, AND THE PAGE HAS TO SAY SO.
+  //
+  // Calling a collar "Nefertiti" is branding. Letting a visitor read it as a
+  // statement that the piece is an antiquity, or a documented reproduction of
+  // one, is CLAUDE.md §7 arriving by implication rather than by sentence —
+  // and implication is how it actually arrives. NAMING_NOTE is the sentence
+  // that closes it, and it is one string so it cannot drift between the
+  // collection page and the enquiry form.
+  //
+  // PROVEN by emptying NAMING_NOTE, by removing the word "ours" from it, and
+  // by deleting it from the lookbook component. All red, then restored.
+  // ---------------------------------------------------------------------
+  ok(
+    "the naming note is missing or too short to say anything, so the pieces carry invented-looking " +
+      "names with nothing explaining them",
+    NAMING_NOTE.trim().length > 60
+  );
+  ok(
+    "the naming note no longer says the names are the studio's own, which is the only thing that " +
+      "stops a name reading as a claim about an antiquity",
+    /\bours\b|\bour own\b|\bwe (?:call|refer)\b/i.test(NAMING_NOTE)
+  );
+  ok(
+    "the naming note no longer disowns the antiquity reading it exists to disown",
+    /antiquit|artefact|artifact|not because/i.test(NAMING_NOTE)
+  );
+  ok(
+    "the lookbook prints the names without the note saying whose names they are. (Matched as a " +
+      "rendered expression, not a substring: the first version of this passed on a component that " +
+      "imported NAMING_NOTE and never put it on the page.)",
+    /\{NAMING_NOTE\}/.test(lookbookComponent)
+  );
+  ok(
+    "the lookbook shows a photograph and a name but never says where the piece is worn",
+    /item\.worn/.test(lookbookComponent) && /item\.description/.test(lookbookComponent)
+  );
 
   // No price, anywhere near them.
   ok(
@@ -3243,10 +3338,9 @@ for (const pkg of packages) {
     "the lookbook note no longer says which part is created digitally",
     /digital/i.test(LOOKBOOK_NOTE) && /photograph/i.test(LOOKBOOK_NOTE)
   );
-  const lookbookComponent = read("src/app/flying-dresses/_components/AccessoryLookbook.tsx");
   ok(
     "the lookbook renders the pieces without the note about how the frames were made",
-    lookbookComponent.includes("LOOKBOOK_NOTE")
+    /\{LOOKBOOK_NOTE\}/.test(lookbookComponent)
   );
 
   // And the accessories page must actually render them.
@@ -3474,6 +3568,225 @@ ok(
   "the men's gawns are honestly unphotographed rather than borrowing a dress",
   MENS_OUTFITS.every((o) => !o.image)
 );
+
+// ---------------------------------------------------------------------------
+// THE ENQUIRY FORM ASKS WHAT FIRST, AND EVERYTHING AFTER IT FOLLOWS.
+//
+// Four products shared one undivided form, and the form read as one product
+// with a lot of caveats: somebody hiring a dress for an afternoon scrolled
+// past a photoshoot location, a headcount and eleven priced photoshoot extras
+// before reaching anything that applied to them, and could tick "full makeup"
+// on a dress rental on the way past. The desk then unpicked it by hand.
+//
+// What is guarded is the SHAPE, not the wording:
+//
+//  1. There is a first question, with the four things we sell behind it.
+//  2. The hire branches do not offer photoshoot extras. This is the one that
+//     produced wrong enquiries rather than merely long ones.
+//  3. Switching away from a branch forgets what was typed into it. A rooftop
+//     left behind in a dress-rental enquiry is a question somebody has to
+//     ring up and resolve.
+//  4. `service` stays DERIVED from the answer. The payload, the route, the
+//     email and the analytics all still read a rental slug or an empty
+//     string, and a second piece of state saying the same thing as the first
+//     is a second thing that can disagree with it.
+//
+// Matched against the file with comments stripped, for the reason CLAUDE.md
+// §4 gives and this change has now hit five times: a guard that matches its
+// own explanatory prose passes on the broken code.
+//
+// PROVEN by deleting the fieldset, by moving the extras out of the isShoot
+// branch, by emptying chooseIntent's resets, and by storing `service` in
+// useState beside `intent`. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const formSource = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+  const formCode = formSource
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  ok(
+    "the enquiry form no longer asks what the visitor wants before asking for anything else",
+    /fd-intent-grid/.test(formCode) && /name="intent"/.test(formCode)
+  );
+  for (const id of ["photoshoot", "dress-rental", "accessories", "mens-wear"] as const) {
+    ok(
+      `the enquiry form's first question does not offer "${id}", so one of the four things we sell ` +
+        "is unreachable from the form",
+      new RegExp(`id: "${id}"`).test(formCode)
+    );
+  }
+
+  ok(
+    "the enquiry form offers photoshoot extras on a hire, so somebody renting a dress can ask for " +
+      "makeup on a session that does not exist",
+    /isShoot \? \(\s*<div className="fd-field fd-field-full">[\s\S]{0,600}?addOns\.map/.test(formCode)
+  );
+
+  ok(
+    "the enquiry form keeps a photoshoot location, occasion, headcount or extras after the visitor " +
+      "switches to a hire, so the desk receives an answer to a question that was un-asked",
+    /const chooseIntent/.test(formCode) &&
+      /setPkg\(""\)/.test(formCode) &&
+      /setExperience\(""\)/.test(formCode) &&
+      /setExtras\(\[\]\)/.test(formCode)
+  );
+
+  ok(
+    "the enquiry form stores the hire slug beside the intent instead of deriving it, so the two can " +
+      "disagree and the payload stops matching what the visitor chose",
+    /const service = isShoot \? "" : intent/.test(formCode) &&
+      !/useState\(initialService\)/.test(formCode)
+  );
+
+  // -------------------------------------------------------------------
+  // THE TWO WARDROBES ARE GATED ON THE EXTRA THAT PAYS FOR THEM.
+  //
+  // Accessories and men's attire are each a priced extra AND a collection to
+  // choose from, and the flat form offered the collection to everybody. That
+  // is how a form implies something is included: a visitor who picks a gawn
+  // from a dropdown that was simply there has not been told it costs more,
+  // and the first they hear of it is the quote.
+  //
+  // Now the extra is the gate on a shoot, and the intent is the gate on a
+  // hire, where the collection IS the enquiry. Both are checked because they
+  // are separate conditions in the source and either can be lost alone.
+  // -------------------------------------------------------------------
+  ok(
+    "the accessory collection is offered without the extra that pays for it being ticked",
+    /const showAccessories = isShoot \? extras\.includes\(ACCESSORIES_EXTRA\)/.test(formCode)
+  );
+  ok(
+    "the gawn picker is offered without the extra that pays for it being ticked",
+    /const showMens = isShoot \? extras\.includes\(MENS_EXTRA\)/.test(formCode)
+  );
+  // Scoped to toggleExtra's own body. Matched against the whole file this
+  // passed on a form that had gutted it, because chooseIntent further up
+  // makes the same two calls for a different reason — a guard satisfied by
+  // the wrong function is a guard that checks nothing.
+  const toggleBody = /const toggleExtra[\s\S]*?\n  \};/.exec(formCode)?.[0] ?? "";
+  ok(
+    "unticking an extra leaves the collection open and its choices in the payload, so the desk is " +
+      "quoted for pieces the visitor took back",
+    /setAccessories\(\[\]\)/.test(toggleBody) && /setMens\(""\)/.test(toggleBody)
+  );
+
+  // The gawn costs extra, and this sentence is where most visitors find out.
+  ok(
+    "the gawn picker never says the attire is charged on top of the shoot, so a visitor who picks " +
+      "one from a dropdown has been told nothing about what it costs",
+    /Charged on top of the shoot, not included in it/.test(formCode)
+  );
+  const mensAddOn = addOns.find((a) => a.id === "mens-attire");
+  ok(
+    "the men's attire extra no longer says it is charged on top of the shoot",
+    mensAddOn !== undefined && /on top of the shoot/i.test(mensAddOn.detail)
+  );
+
+  // And the chosen pieces must be resolved server-side, like everything else.
+  const enquiryRoute = read("src/app/api/flying-dresses-enquiry/route.ts");
+  ok(
+    "the enquiry route takes the accessory labels from the request instead of resolving them " +
+      "against the collection, so a crafted payload puts a piece we do not own into an email the " +
+      "desk reads as fact",
+    /accessoryByRef\(/.test(enquiryRoute) && !/body\.accessories[\s\S]{0,80}?join/.test(enquiryRoute)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// IT IS THE NINE PYRAMIDS VIEW, INSIDE THE GIZA COMPLEX. NOT A LOUNGE.
+//
+// The brochure called it "Nine Pyramids Lounge, within the Giza pyramid
+// area"; a separate instruction said a Nine Pyramids rooftop "offers pyramid
+// views, it is not inside the archaeological complex". The site said neither,
+// which was the right answer to an unresolved question and the wrong one to
+// leave standing once the owner resolved it: it is the Nine Pyramids View,
+// in the complex, on request.
+//
+// This is not pedantry about a name. A session genuinely inside the
+// archaeological area carries ticketing and permit implications a rooftop
+// outside it does not, the sister brand sells that exact vantage point by
+// name, and there is a Stories article on this site whose whole subject is
+// competitors blurring the two. Drifting back to "Lounge" would put the two
+// brands' descriptions of one place out of step again.
+//
+// PROVEN by restoring the old label and the old detail. Both red.
+// ---------------------------------------------------------------------------
+{
+  const ninePyramids = addOns.find((a) => a.id === "nine-pyramids-view");
+  ok(
+    "the Nine Pyramids extra is gone or has been renumbered, so the shoot the owner confirmed is " +
+      "no longer offered",
+    ninePyramids !== undefined
+  );
+  if (ninePyramids) {
+    ok(
+      "the Nine Pyramids extra calls itself a session at a lounge again, which is the reading the " +
+        "owner corrected",
+      !/lounge/i.test(`${ninePyramids.label} ${ninePyramids.detail} ${ninePyramids.homeNote}`)
+    );
+    ok(
+      "the Nine Pyramids extra no longer says it is the Nine Pyramids View",
+      /nine pyramids view/i.test(ninePyramids.label) &&
+        /nine pyramids view/i.test(ninePyramids.detail)
+    );
+    ok(
+      "the Nine Pyramids extra no longer places itself inside the Giza complex, which is the part " +
+        "that carries the permit and ticketing implications",
+      /giza complex/i.test(ninePyramids.detail)
+    );
+  }
+  // Nowhere else in this brand's copy either.
+  const brandContent = read("src/content/flyingDresses.ts").replace(/\/\/[^\n]*/g, " ");
+  ok(
+    'this brand\'s content still says "Nine Pyramids Lounge" somewhere',
+    !/Nine Pyramids Lounge/i.test(brandContent)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE URGENT CALL SITS UNDER THE FORM, TURNED DOWN.
+//
+// Asked for directly. It was a loud card above the form, so the first thing
+// every visitor met on the page that sells the shoot was an alarm about a
+// situation almost none of them were in. Below the form, the people it IS for
+// reach it at the moment they would otherwise hit send and wait.
+//
+// Both halves are checked because they fail separately: moved but still loud
+// is still an alarm, and quiet but still first is still first.
+//
+// PROVEN by putting the block back above <EnquiryForm> (red) and by dropping
+// variant="quiet" (red).
+// ---------------------------------------------------------------------------
+{
+  const page = read("src/app/flying-dresses/enquire/page.tsx").replace(
+    /\{\/\*[\s\S]*?\*\/\}/g,
+    " "
+  );
+  const form = page.indexOf("<EnquiryForm");
+  const urgent = page.indexOf("<UrgentCall");
+  ok(
+    "the urgent call card is back above the enquiry form, where every visitor meets it whether " +
+      "their date is tomorrow or next spring",
+    form !== -1 && urgent !== -1 && urgent > form
+  );
+  ok(
+    "the urgent call is under the form but still rendered at full volume",
+    /<UrgentCall[^>]*variant="quiet"/.test(page)
+  );
+  const urgentComponent = read("src/app/flying-dresses/_components/UrgentCall.tsx");
+  ok(
+    "UrgentCall has no quiet variant, so the enquiry page's quieter block falls back to the loud one",
+    /fd-urgent-quiet/.test(urgentComponent)
+  );
+  ok(
+    "brand.css has no rule for the quiet urgent block, so the class renders as unstyled markup. " +
+      "(Matched as a selector: a substring test passed when the rule was renamed to " +
+      ".fd-urgent-quietX, which still contains it.)",
+    /\.fd-urgent-quiet\s*\{/.test(read("src/app/flying-dresses/brand.css"))
+  );
+}
 
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");

@@ -79,8 +79,20 @@ What is needed for each of the three:
   or charged and which areas of Cairo it covers, and which of the twelve dresses
   you are willing to send out unaccompanied — the site currently lists all
   twelve, which assumes all twelve.
-- **Accessories:** see 2.1 — there is no list at all yet.
+- **Accessories:** the price. The thirteen pieces are now photographed, named
+  and described on the site, so the only thing still missing is the figure —
+  whether it is per piece, per set, or included above a certain package.
 - **Men's wear:** the price as a photoshoot add-on and as a standalone hire.
+
+**This one has got sharper, not softer.** The enquiry form now shows the gawn
+picker only once somebody ticks "Traditional attire for men", and the accessory
+collection only once they tick "Accessories" — so by the time either list
+appears, the visitor has deliberately asked to be quoted for it. That is the
+right moment to tell them a number, and it is the moment we currently have
+nothing to tell them. The form says it is "charged on top of the shoot" and
+quoted in writing, which is true and is the strongest honest wording available
+without a figure. **A figure would be better than the strongest honest
+wording.**
 
 ### 1.5 Confirm the WhatsApp number is on WhatsApp
 
@@ -97,14 +109,35 @@ the one, so only the one is published. Say if the second should be shown too.
 
 ## 2. Content gaps that are visibly holding the site back
 
-### 2.1 Nobody has named a single accessory
+### 2.1 The accessories are named now. Check the names.
 
-Your brochure says *"Accessories and men's outfits are available"* and never
-says what they are. So the accessories page describes the service honestly and
-asks the visitor to ask — it is the one deliberately short page on the site.
+**Closed, with one thing for you to read.** You sent the photographs, and you
+asked for names drawn from ancient Egypt. The thirteen pieces now carry them:
 
-The grid is already built. **Send names and photographs and the page fills
-itself**, with no code change.
+| On the head | Nefertari, Seshat, Hatshepsut |
+| Around the neck | Nefertiti, Meritaten, Isis |
+| Earrings | Bastet, Sekhmet |
+| Around the arm | Nekhbet, Wadjet, Serqet |
+| On the finger | Horus, Maat |
+
+Each one also carries a plain description and a line saying **where on the body
+it is worn**, which is the thing a photograph cannot tell somebody deciding
+whether a piece will even be visible in the dress they picked.
+
+Two things worth knowing:
+
+1. **The names are presented as yours, not as history.** Every surface that
+   prints one also prints a sentence saying so: *"The names are ours. Each piece
+   is called after a figure from ancient Egypt because that is how we refer to
+   them on a shoot day, not because the piece is an antiquity or a copy of
+   one."* That sentence is what keeps a name from reading as a claim we would
+   have to defend. It can be reworded; it should not be removed.
+2. **The references are still there** ("Headpiece 1") under each name, because
+   they are what the desk matches an enquiry against and they do not change when
+   a name is reconsidered.
+
+**Read the thirteen names and tell us any you want changed.** They were chosen
+here, and your stock is yours to name.
 
 ### 2.2 What distinguishes the two Saeedy gawns, and the two Bahary ones?
 

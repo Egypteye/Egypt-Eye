@@ -1,13 +1,47 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { experienceBySlug } from "@/content/flyingDressExperiences";
+import { experienceBySlug, flyingDressExperiences } from "@/content/flyingDressExperiences";
 import { track } from "../_lib/analytics";
 import { RENTAL_DELIVERY_LABELS, addOns, dresses, flyingDressEnquiry, mensOutfits, packagePricePhrase, packages, rentalServices, urgentCall, whatsappHref } from "@/content/flyingDresses";
+import { NAMING_NOTE, accessoryCategories, accessoryByRef } from "@/content/flyingDressAccessories";
 import { PhoneField } from "@/components/PhoneField";
 
 /**
  * The enquiry form.
+ *
+ * -------------------------------------------------------------------------
+ * ONE QUESTION FIRST, AND THE REST OF THE FORM ANSWERS TO IT
+ * -------------------------------------------------------------------------
+ * This used to be one flat list of every field the business could possibly
+ * want, and the list was the problem. Somebody who wanted to hire a dress for
+ * an afternoon scrolled past a photoshoot location, a headcount and eleven
+ * priced photoshoot extras before reaching anything that applied to them; the
+ * same visitor could tick "full makeup" on a dress rental and the desk would
+ * get an enquiry it had to unpick by hand. Four products in one undivided
+ * form reads as one product with a lot of caveats.
+ *
+ * So the first control asks WHAT, and everything after it is a consequence of
+ * the answer:
+ *
+ *   A photoshoot      location, occasion, headcount, dress, extras
+ *   Rent a dress      which dress, dates, how it reaches you
+ *   Accessories       which pieces, dates, how they reach you
+ *   Men's attire      which gawn, dates, how it reaches you
+ *
+ * `intent` is the only new piece of state. The payload is unchanged: the
+ * three hire intents ARE the three rental slugs, so `service` is still a
+ * rental slug or an empty string and the route, the email and the analytics
+ * all carry on reading exactly what they read before.
+ *
+ * THE TWO GATED PICKERS. Accessories and men's attire are each a priced extra
+ * AND a wardrobe to choose from, and offering the wardrobe to everybody was
+ * how the old form implied both were included. Now the extra is the gate: tick
+ * "Accessories" and the thirteen pieces appear, tick "Traditional attire for
+ * men" and the five gawns do. Nobody is choosing from a collection they have
+ * not asked to be quoted for, and nobody is quoted for a collection they have
+ * not chosen from. On the hire paths the gate is the intent itself, because
+ * there the wardrobe IS the enquiry.
  *
  * -------------------------------------------------------------------------
  * TWO WAYS OUT, AND BOTH ARE REAL
@@ -47,6 +81,39 @@ import { PhoneField } from "@/components/PhoneField";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
+/**
+ * What the visitor is here for. The three hire values ARE rental slugs, which
+ * is what keeps the payload identical to the flat form's — see the note above.
+ */
+type Intent = "photoshoot" | "dress-rental" | "accessories" | "mens-wear";
+
+const INTENTS: { id: Intent; label: string; blurb: string }[] = [
+  {
+    id: "photoshoot",
+    label: "A photoshoot",
+    blurb: "A session with our photographer and stylist, in the dress.",
+  },
+  {
+    id: "dress-rental",
+    label: "Rent a dress",
+    blurb: "The dress on its own, for your own camera. No photographer.",
+  },
+  {
+    id: "accessories",
+    label: "Accessories",
+    blurb: "Headpieces, collars, earrings, cuffs and rings.",
+  },
+  {
+    id: "mens-wear",
+    label: "Men's attire",
+    blurb: "Five styles of traditional gawn.",
+  },
+];
+
+/** The two add-on ids that open a wardrobe rather than just being ticked. */
+const ACCESSORIES_EXTRA = "accessories";
+const MENS_EXTRA = "mens-attire";
+
 export function EnquiryForm({
   initialPackage = "",
   initialService = "",
@@ -71,16 +138,31 @@ export function EnquiryForm({
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [phoneProblem, setPhoneProblem] = useState<string | null>(null);
+
+  // THE LINK DECIDES THE OPENING ANSWER, because the link already knows it.
+  // /enquire?service=mens-wear comes from the men's wear page, and asking
+  // that visitor what they came for would be asking a question they have
+  // already answered by clicking.
+  const [intent, setIntent] = useState<Intent>(() =>
+    initialService === "dress-rental" ||
+    initialService === "accessories" ||
+    initialService === "mens-wear"
+      ? initialService
+      : "photoshoot"
+  );
+  const isShoot = intent === "photoshoot";
+
   const [pkg, setPkg] = useState(initialPackage);
-  const [service, setService] = useState(initialService);
-  // Carried, not editable: the experience comes from the page the visitor
-  // arrived from. There is no selector for it because the catalogue is eight
-  // items and a ninth dropdown helps nobody.
-  const [experience] = useState(initialExperience);
+  // Selectable now rather than carried. The catalogue is eight occasions and
+  // the old form had no way to say "this is a proposal" — which is the single
+  // most useful thing the desk can know before it replies, because it changes
+  // the timing, the discretion and who else is told.
+  const [experience, setExperience] = useState(initialExperience);
   const [date, setDate] = useState("");
   const [people, setPeople] = useState("");
   const [dress, setDress] = useState(initialDress);
   const [mens, setMens] = useState(initialMens);
+  const [accessories, setAccessories] = useState<string[]>([]);
   const [extras, setExtras] = useState<string[]>([]);
   const [hotel, setHotel] = useState("");
   const [delivery, setDelivery] = useState("");
@@ -95,8 +177,49 @@ export function EnquiryForm({
     form?: string;
   }>({});
 
+  /**
+   * The hire slug the payload carries. Derived, never stored twice: a second
+   * piece of state saying the same thing as `intent` is a second thing that
+   * can disagree with it.
+   */
+  const service = isShoot ? "" : intent;
+
   /** Delivery only makes sense when something is being handed over. */
-  const needsDelivery = service !== "";
+  const needsDelivery = !isShoot;
+
+  // Which wardrobes are open. On a shoot the priced extra is the gate; on a
+  // hire the intent is, because there the wardrobe is the whole enquiry.
+  const showAccessories = isShoot ? extras.includes(ACCESSORIES_EXTRA) : intent === "accessories";
+  const showMens = isShoot ? extras.includes(MENS_EXTRA) : intent === "mens-wear";
+  const showDress = isShoot || intent === "dress-rental";
+
+  /**
+   * Fields the visitor filled in and then switched away from are dropped
+   * rather than carried silently. Somebody who picked the Pyramids Rooftop,
+   * changed to a dress rental and sent it should not have a rooftop in the
+   * email: they un-asked for it, and a stale value in an enquiry is a
+   * question the desk has to ring up and resolve.
+   */
+  const chooseIntent = (next: Intent) => {
+    setIntent(next);
+    setDelivery("");
+    if (next !== "photoshoot") {
+      setPkg("");
+      setExperience("");
+      setPeople("");
+      setExtras([]);
+    }
+    if (next !== "photoshoot" && next !== "dress-rental") setDress("");
+    if (next !== "photoshoot" && next !== "mens-wear") setMens("");
+    if (next !== "photoshoot" && next !== "accessories") setAccessories([]);
+  };
+
+  /** Unticking the extra closes its wardrobe and forgets what was in it. */
+  const toggleExtra = (id: string, checked: boolean) => {
+    setExtras((current) => (checked ? [...current, id] : current.filter((x) => x !== id)));
+    if (!checked && id === ACCESSORIES_EXTRA) setAccessories([]);
+    if (!checked && id === MENS_EXTRA) setMens("");
+  };
 
   // The WhatsApp message, kept in sync with the form. Built through the same
   // encoder the buttons elsewhere on the site use, so there is one message
@@ -118,6 +241,12 @@ export function EnquiryForm({
       people,
       dress: dresses.find((d) => d.id === dress)?.name,
       mensOutfit: mensOutfits.find((m) => m.id === mens)?.name,
+      // Name AND reference. The name is what they will say on the phone; the
+      // reference is what the desk matches against the rail of stock.
+      accessories: accessories
+        .map((ref) => accessoryByRef(ref))
+        .filter((item): item is NonNullable<typeof item> => Boolean(item))
+        .map((item) => `${item.name} (${item.ref})`),
       extras: extras
         .map((id) => addOns.find((a) => a.id === id)?.label)
         .filter((label): label is string => Boolean(label)),
@@ -125,7 +254,7 @@ export function EnquiryForm({
       delivery: delivery ? RENTAL_DELIVERY_LABELS[delivery as "hotel-delivery" | "collection"] : undefined,
       notes: message,
     });
-  }, [pkg, service, experience, name, date, people, dress, mens, extras, hotel, delivery, message]);
+  }, [pkg, service, experience, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -178,6 +307,7 @@ export function EnquiryForm({
           people,
           dress,
           mens,
+          accessories,
           extras,
           hotel,
           delivery,
@@ -266,6 +396,42 @@ export function EnquiryForm({
         </div>
       ) : null}
 
+      {/* ===================================================================
+          STEP ONE. Radios rather than a dropdown, and the reason is that a
+          dropdown hides the answers: this control decides what the rest of
+          the page even contains, and a visitor who cannot see that hiring a
+          dress on its own is possible will never open a menu to find out.
+          =================================================================== */}
+      <fieldset className="fd-intent">
+        <legend className="fd-intent-legend">What would you like to book?</legend>
+        <div className="fd-intent-grid">
+          {INTENTS.map((option) => (
+            <label
+              key={option.id}
+              className="fd-intent-option"
+              data-selected={intent === option.id ? "true" : undefined}
+            >
+              <input
+                type="radio"
+                name="intent"
+                value={option.id}
+                checked={intent === option.id}
+                onChange={() => chooseIntent(option.id)}
+              />
+              <span>
+                <span className="fd-intent-label">{option.label}</span>
+                <span className="fd-intent-blurb">{option.blurb}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+        <p className="fd-hint" style={{ marginTop: "0.75rem" }}>
+          {isShoot
+            ? "Everything below is about the session. Dress hire, accessories and men's attire can be added to it further down."
+            : "A hire, without a photographer. Tell us the dates and we will come back with the terms and the cost in writing."}
+        </p>
+      </fieldset>
+
       <div className="fd-form fd-form-2">
         <Field id="fd-name" label="Your name" error={errors.name} required>
           <input
@@ -315,51 +481,11 @@ export function EnquiryForm({
           />
         </Field>
 
-        <Field id="fd-people" label="How many people">
-          <input
-            id="fd-people"
-            name="people"
-            type="number"
-            min={1}
-            max={20}
-            inputMode="numeric"
-            value={people}
-            onChange={(e) => setPeople(e.target.value)}
-          />
-        </Field>
-
-        <Field id="fd-package" label="Photoshoot location">
-          <select id="fd-package" name="package" value={pkg} onChange={(e) => setPkg(e.target.value)}>
-            <option value="">Not sure yet, advise me</option>
-            {packages.map((p) => (
-              <option key={p.slug} value={p.slug}>
-                {p.name}: {packagePricePhrase(p)}
-              </option>
-            ))}
-          </select>
-        </Field>
-
         <Field
-          id="fd-service"
-          label="Or hire without a shoot"
-          hint="Dress, accessories or men's attire on their own. Priced on request."
+          id="fd-date"
+          label={isShoot ? "Preferred date" : "When do you need it"}
+          hint="We will confirm whether it is free."
         >
-          <select
-            id="fd-service"
-            name="service"
-            value={service}
-            onChange={(e) => setService(e.target.value)}
-          >
-            <option value="">No, I want a photoshoot</option>
-            {rentalServices.map((s) => (
-              <option key={s.slug} value={s.slug}>
-                {s.title}
-              </option>
-            ))}
-          </select>
-        </Field>
-
-        <Field id="fd-date" label="Preferred date" hint="We will confirm whether it is free.">
           <input
             id="fd-date"
             name="date"
@@ -369,27 +495,80 @@ export function EnquiryForm({
           />
         </Field>
 
-        <Field id="fd-dress" label="Dress" hint="A preference, not a reservation.">
-          <select id="fd-dress" name="dress" value={dress} onChange={(e) => setDress(e.target.value)}>
-            <option value="">No preference</option>
-            {dresses.map((d) => (
-              <option key={d.id} value={d.id}>
-                {d.name}
-              </option>
-            ))}
-          </select>
-        </Field>
+        {isShoot ? (
+          <>
+            <Field id="fd-package" label="Photoshoot location">
+              <select
+                id="fd-package"
+                name="package"
+                value={pkg}
+                onChange={(e) => setPkg(e.target.value)}
+              >
+                <option value="">Not sure yet, advise me</option>
+                {packages.map((p) => (
+                  <option key={p.slug} value={p.slug}>
+                    {p.name}: {packagePricePhrase(p)}
+                  </option>
+                ))}
+              </select>
+            </Field>
 
-        <Field id="fd-mens" label="Men's attire" hint="Five traditional styles.">
-          <select id="fd-mens" name="mens" value={mens} onChange={(e) => setMens(e.target.value)}>
-            <option value="">None</option>
-            {mensOutfits.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
-              </option>
-            ))}
-          </select>
-        </Field>
+            <Field
+              id="fd-experience"
+              label="What is the occasion"
+              hint="It changes how we plan the day. A proposal is run differently from a creator shoot."
+            >
+              <select
+                id="fd-experience"
+                name="experience"
+                value={experience}
+                onChange={(e) => setExperience(e.target.value)}
+              >
+                <option value="">No particular occasion</option>
+                {flyingDressExperiences.map((e) => (
+                  <option key={e.slug} value={e.slug}>
+                    {e.name}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field id="fd-people" label="How many people">
+              <input
+                id="fd-people"
+                name="people"
+                type="number"
+                min={1}
+                max={20}
+                inputMode="numeric"
+                value={people}
+                onChange={(e) => setPeople(e.target.value)}
+              />
+            </Field>
+          </>
+        ) : null}
+
+        {showDress ? (
+          <Field
+            id="fd-dress"
+            label="Dress"
+            hint={isShoot ? "A preference, not a reservation." : "Twelve colours. We will confirm the one you pick is free."}
+          >
+            <select
+              id="fd-dress"
+              name="dress"
+              value={dress}
+              onChange={(e) => setDress(e.target.value)}
+            >
+              <option value="">{isShoot ? "No preference" : "Not sure yet, advise me"}</option>
+              {dresses.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        ) : null}
 
         {needsDelivery ? (
           <Field id="fd-delivery" label="Delivery or collection">
@@ -406,66 +585,171 @@ export function EnquiryForm({
           </Field>
         ) : null}
 
-        <div className="fd-field fd-field-full">
-          <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-            <legend
-              style={{
-                fontSize: "var(--fd-step--1)",
-                fontWeight: 500,
-                letterSpacing: "0.14em",
-                textTransform: "uppercase",
-                color: "var(--fd-ink-soft)",
-                padding: 0,
-                marginBottom: "0.6rem",
-              }}
-            >
-              Anything to add
-            </legend>
-            <div className="fd-swatch-row">
-              {addOns.map((addOn) => {
-                const checked = extras.includes(addOn.id);
-                return (
-                  <label
-                    key={addOn.id}
-                    className="fd-swatch"
-                    style={{ cursor: "pointer", textTransform: "none", letterSpacing: "0.02em" }}
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={(e) =>
-                        setExtras((current) =>
-                          e.target.checked
-                            ? [...current, addOn.id]
-                            : current.filter((id) => id !== addOn.id)
-                        )
-                      }
-                      // 1.5rem = 24px, WCAG 2.2 2.5.8 Target Size (Minimum). These were
-                      // 1.1rem/17.6px and failed it.
-                      style={{ width: "1.5rem", height: "1.5rem", minHeight: 0, flex: "none" }}
-                    />
-                    <span>
-                      {addOn.label}
-                      {": "}
-                      {addOn.priceUsd === null
-                        ? "on request"
-                        : `${addOn.fromPrice ? "from " : ""}$${addOn.priceUsd}`}
-                    </span>
-                  </label>
-                );
-              })}
-            </div>
-            <p className="fd-hint" style={{ marginTop: "0.6rem" }}>
-              Nothing here is charged now. Anything marked &ldquo;from&rdquo; or &ldquo;on
-              request&rdquo; is confirmed with you before you commit.
-            </p>
-          </fieldset>
-        </div>
+        {/* ===============================================================
+            THE PRICED EXTRAS. Photoshoot only: there is nothing to add to
+            a dress that is going out on its own, and offering makeup with
+            a rental was one of the ways the flat form implied a rental
+            came with a session.
+            =============================================================== */}
+        {isShoot ? (
+          <div className="fd-field fd-field-full">
+            <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
+              <legend
+                style={{
+                  fontSize: "var(--fd-step--1)",
+                  fontWeight: 500,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--fd-ink-soft)",
+                  padding: 0,
+                  marginBottom: "0.6rem",
+                }}
+              >
+                Anything to add
+              </legend>
+              <div className="fd-swatch-row">
+                {addOns.map((addOn) => {
+                  const checked = extras.includes(addOn.id);
+                  return (
+                    <label
+                      key={addOn.id}
+                      className="fd-swatch"
+                      style={{ cursor: "pointer", textTransform: "none", letterSpacing: "0.02em" }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={(e) => toggleExtra(addOn.id, e.target.checked)}
+                        // 1.5rem = 24px, WCAG 2.2 2.5.8 Target Size (Minimum). These were
+                        // 1.1rem/17.6px and failed it.
+                        style={{ width: "1.5rem", height: "1.5rem", minHeight: 0, flex: "none" }}
+                      />
+                      <span>
+                        {addOn.label}
+                        {": "}
+                        {addOn.priceUsd === null
+                          ? "on request"
+                          : `${addOn.fromPrice ? "from " : ""}$${addOn.priceUsd}`}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+              <p className="fd-hint" style={{ marginTop: "0.6rem" }}>
+                Nothing here is charged now. Anything marked &ldquo;from&rdquo; or &ldquo;on
+                request&rdquo; is confirmed with you before you commit.
+              </p>
+            </fieldset>
+          </div>
+        ) : null}
+
+        {/* ===============================================================
+            THE ACCESSORY COLLECTION, once it has been asked for.
+
+            Checkboxes with the piece, where it is worn and its reference,
+            because "Necklace 2" means nothing to somebody choosing and
+            everything to the desk reading the email. Grouped by the
+            business's own five headings so the order on this list matches
+            the order on the collection page they probably just read.
+            =============================================================== */}
+        {showAccessories ? (
+          <div className="fd-field fd-field-full">
+            <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
+              <legend
+                style={{
+                  fontSize: "var(--fd-step--1)",
+                  fontWeight: 500,
+                  letterSpacing: "0.14em",
+                  textTransform: "uppercase",
+                  color: "var(--fd-ink-soft)",
+                  padding: 0,
+                  marginBottom: "0.6rem",
+                }}
+              >
+                Which accessories
+              </legend>
+              <p className="fd-hint" style={{ marginTop: 0, marginBottom: "0.9rem" }}>
+                {NAMING_NOTE}
+              </p>
+              {accessoryCategories.map((category) => (
+                <div key={category.slug} style={{ marginBottom: "1.1rem" }}>
+                  <p className="fd-eyebrow" style={{ marginBottom: "0.5rem" }}>
+                    {category.title}
+                  </p>
+                  <div className="fd-pick-list">
+                    {category.items.map((item) => (
+                      <label key={item.ref} className="fd-pick">
+                        <input
+                          type="checkbox"
+                          checked={accessories.includes(item.ref)}
+                          onChange={(e) =>
+                            setAccessories((current) =>
+                              e.target.checked
+                                ? [...current, item.ref]
+                                : current.filter((r) => r !== item.ref)
+                            )
+                          }
+                          style={{ width: "1.5rem", height: "1.5rem", minHeight: 0, flex: "none" }}
+                        />
+                        <span>
+                          <span className="fd-pick-name">
+                            {item.name}{" "}
+                            <span className="fd-pick-ref">{item.ref}</span>
+                          </span>
+                          <span className="fd-pick-worn">{item.worn}</span>
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <p className="fd-hint" style={{ marginTop: "0.2rem" }}>
+                {isShoot
+                  ? "Accessories are charged on top of the shoot and quoted with it. Pick as many as you like here; nothing is held or charged until we have written back."
+                  : "Pick as many as you like. We will come back with what is free on your dates and what it costs, in writing."}
+              </p>
+            </fieldset>
+          </div>
+        ) : null}
+
+        {/* ===============================================================
+            THE GAWNS, once the extra has been ticked.
+
+            The cost line is not decoration. For most visitors this is the
+            only place they find out that dressing a second person is not
+            part of the shoot price they just read on the location list —
+            see the note on the `mens-attire` add-on in content.
+            =============================================================== */}
+        {showMens ? (
+          <Field
+            id="fd-mens"
+            label="Which gawn"
+            full
+            hint={
+              isShoot
+                ? "Charged on top of the shoot, not included in it. The cost depends on the style and your dates, so we quote it to you in writing before anything is agreed."
+                : "Five traditional styles. We will come back with the cost and the fit in writing."
+            }
+          >
+            <select id="fd-mens" name="mens" value={mens} onChange={(e) => setMens(e.target.value)}>
+              <option value="">Not sure yet, advise me</option>
+              {mensOutfits.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+        ) : null}
 
         <Field
           id="fd-hotel"
-          label="Hotel or pickup area"
-          hint="For door-to-door transport, or for delivering a dress."
+          label={isShoot ? "Hotel or pickup area" : "Hotel or delivery area"}
+          hint={
+            isShoot
+              ? "For door-to-door transport on the day."
+              : "Where in Cairo we would be delivering to, if you would rather not collect."
+          }
           full
         >
           <input

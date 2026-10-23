@@ -100,19 +100,6 @@ export default async function EnquirePage({
       <section className="fd-section-tight" style={{ paddingTop: 0 }}>
         <div className="fd-shell fd-split">
           <div>
-            {/* ABOVE THE FORM, not beside it. The people this is for are the
-                ones whose shoot is in two days, and asking them to read a form
-                before they discover they should have rung instead is the whole
-                problem.
-
-                INSIDE the form's column, not a third child of .fd-split: that
-                is a two-column grid above 60rem, so a third child would take
-                the form's column and push the sidebar onto its own row. The
-                number comes from settings, so a change in the Studio reaches
-                this card too. */}
-            <div style={{ marginBottom: "1.75rem" }}>
-              <UrgentCall phone={urgentPhone} />
-            </div>
             <EnquiryForm
               initialPackage={pkg}
               initialService={service}
@@ -121,6 +108,26 @@ export default async function EnquirePage({
               initialMens={mens}
               phone={urgentPhone}
             />
+            {/* UNDER THE FORM, AND TURNED DOWN. Asked for directly.
+
+                It used to sit above the form as a loud card, on the reasoning
+                that somebody whose shoot is in two days should not have to
+                read a form before discovering they should have rung. That is
+                still true of them and was never true of anybody else, and
+                everybody else is most of the traffic: the first thing every
+                visitor met on the page that sells the shoot was an alarm
+                about a situation they were not in.
+
+                Below it, the people it is for reach it at exactly the moment
+                they would otherwise hit "send and wait" — which is the moment
+                the alternative is worth knowing about. The number still
+                dials, and still comes from settings so a change in the Studio
+                reaches it.
+
+                INSIDE the form's column, not a third child of .fd-split: that
+                is a two-column grid above 60rem, so a third child would take
+                the form's column and push the sidebar onto its own row. */}
+            <UrgentCall phone={urgentPhone} variant="quiet" />
           </div>
 
           <aside>
