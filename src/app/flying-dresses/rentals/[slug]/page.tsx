@@ -6,6 +6,8 @@ import { fdRentals, fdSettings, fdWardrobe } from "../../_lib/content";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { Wardrobe } from "../../_components/Wardrobe";
+import { AccessoryLookbook } from "../../_components/AccessoryLookbook";
+import { accessoryCategories, accessoryItems } from "../../_lib/accessoryLookbook";
 import { empty } from "../../_lib/assets";
 import {
   fdBreadcrumbJsonLd,
@@ -132,6 +134,7 @@ export default async function RentalServicePage({
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone="neutral"
                 label={art.wanted}
+                credit={art.credit}
                 priority
               />
             </figure>
@@ -222,6 +225,23 @@ export default async function RentalServicePage({
               photos={photos}
               showFilters={dressesForService.length > 4}
             />
+          </div>
+        </section>
+      ) : null}
+
+      {/* The accessories, on the one page that hires them. Rendered from the
+          lookbook rather than from service.outfits, which is the booking
+          picker's list — see the note on that field in content/flyingDresses. */}
+      {service.slug === "accessories" ? (
+        <section className="fd-section-tight">
+          <div className="fd-shell">
+            <div style={{ maxWidth: "42rem", marginBottom: "2rem" }}>
+              <p className="fd-eyebrow">The collection</p>
+              <h2 className="fd-display fd-h3">
+                {accessoryItems.length} pieces, in {accessoryCategories.length} groups
+              </h2>
+            </div>
+            <AccessoryLookbook />
           </div>
         </section>
       ) : null}

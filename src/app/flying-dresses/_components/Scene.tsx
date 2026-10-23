@@ -35,6 +35,7 @@ export function Scene({
   tone = "neutral",
   ratio = "fd-ratio-landscape",
   label,
+  credit,
   className = "",
   drift = false,
 }: {
@@ -53,6 +54,16 @@ export function Scene({
   /** Shown on an empty slot. Falls back to the alt text, which describes the
       intended photograph and is exactly what belongs there. */
   label?: string;
+  /**
+   * Who made it, shown under the frame.
+   *
+   * Added for kind:"styled" — a frame whose product is really ours and really
+   * photographed, with a generated model and setting around it. assets.ts
+   * requires such a slot to carry a credit saying which part is generated, and
+   * a credit nothing renders is a note to ourselves rather than to the
+   * customer looking at the picture. So the component shows it.
+   */
+  credit?: string;
   className?: string;
   /** Adds the slow scroll-linked scale. Off by default. */
   drift?: boolean;
@@ -72,7 +83,7 @@ export function Scene({
     );
   }
 
-  return (
+  const picture = (
     <div className={frame}>
       <Image
         src={src}
@@ -86,5 +97,14 @@ export function Scene({
         loading={priority ? undefined : "lazy"}
       />
     </div>
+  );
+
+  if (!credit) return picture;
+
+  return (
+    <figure style={{ margin: 0 }}>
+      {picture}
+      <figcaption className="fd-scene-credit">{credit}</figcaption>
+    </figure>
   );
 }

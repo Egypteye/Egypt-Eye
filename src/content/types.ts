@@ -1574,7 +1574,7 @@ export type BoutiquePage = {
  * unbreakable rule about imagery on this brand.
  */
 export type FlyingDressFrame = {
-  kind: "agency" | "location" | "empty";
+  kind: "agency" | "location" | "styled" | "empty";
   /** null only when kind is "empty". */
   src: string | null;
   /** Describes the photograph to someone who cannot see it. */

@@ -274,7 +274,13 @@ export function Wardrobe({
                       tile note below the thumbnail was conditional; this was
                       not, so the two disagreed in the same component. */}
                   {photos[open.id]
-                    ? `From the ${photos[open.id].shoot} shoot. The dress is the one you would wear.`
+                    ? photos[open.id].styled
+                      ? // A composite: the garment is real and photographed, the
+                        // model and the background are not. Saying "from the X
+                        // shoot" here would invent a client session, so it says
+                        // the half that is true and names the half that is not.
+                        "The garment is the one you would wear. The model and the background are created digitally."
+                      : `From the ${photos[open.id].shoot} shoot. The dress is the one you would wear.`
                     : open.category === "mens-outfit"
                       ? "Traditional attire. Ask us for photographs of the actual garment."
                       : "A colour swatch, not the fabric. Ask us for photographs."}

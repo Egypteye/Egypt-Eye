@@ -13,6 +13,16 @@
  *   kind: "location"    real Egypt photography already licensed and in use on
  *                       egypteyetravel.com. Shows the PLACE, and is never
  *                       presented as a flying-dress photograph.
+ *   kind: "styled"      the PRODUCT is really ours and really photographed;
+ *                       the model and the setting around it are generated.
+ *                       Added when the owner supplied the accessory and dress
+ *                       frames: they photographed each piece and had it
+ *                       composited onto generated models, and confirmed the
+ *                       pieces render identically to the wardrobe and that
+ *                       delivering the exact piece shown is theirs. The files
+ *                       carry C2PA provenance naming OpenAI, so this is not a
+ *                       judgement call — it is in the bytes, and a slot that
+ *                       said "agency" would be contradicted by its own file.
  *   kind: "empty"       no photograph exists. Renders as a designed, labelled
  *                       slot (components/Scene.tsx), never as a stock photo.
  *
@@ -27,7 +37,7 @@
  */
 
 export type ImageSlot = {
-  kind: "agency" | "location" | "empty";
+  kind: "agency" | "location" | "styled" | "empty";
   /** null only when kind is "empty". */
   src: string | null;
   /** Describes the image to someone who cannot see it. */
@@ -295,7 +305,11 @@ export const empty = {
     alt: "The five traditional gawns, photographed as a set",
     width: 1800,
     height: 1200,
-    wanted: "The five gawns: the site's biggest missing asset",
+    // The five garments are photographed now and render in the wardrobe grid
+    // from dressPhotos. What this landscape slot still wants is the thing none
+    // of those five frames is: all five together, so the range reads at a
+    // glance instead of one portrait at a time.
+    wanted: "The five gawns together in one frame",
   }),
   accessories: slot({
     kind: "empty",
@@ -303,7 +317,11 @@ export const empty = {
     alt: "The accessories available to wear with a flying dress",
     width: 1800,
     height: 1200,
-    wanted: "The accessory collection: nothing has been named yet",
+    // Still empty, and still worth filling: the thirteen accessory frames on
+    // the rentals page are portraits of single pieces, and this slot is the
+    // landscape header that would show the collection together. Nothing in
+    // the folder is that shot.
+    wanted: "The accessory collection together, in one landscape frame",
   }),
   redSeaYacht: slot({
     kind: "empty",
@@ -318,12 +336,15 @@ export const empty = {
     wanted: "The yacht at Ain Sokhna: the only one of the four on water",
   }),
   dressRental: slot({
-    kind: "empty",
-    src: null,
-    alt: "A flying dress packed and ready for delivery to a hotel",
-    width: 1800,
-    height: 1200,
-    wanted: "A rental dress, packed for hotel delivery",
+    // The hire range, in one frame. NOT the packed-for-delivery photograph
+    // this slot was waiting for, which is still worth taking: this shows what
+    // you can hire, not what arrives at your hotel.
+    kind: "styled",
+    src: "/photos/flying-dresses/rent-a-dress-collection.jpg",
+    alt: "A row of flying dresses in teal, blue, red, green, black, white, gold, purple and pink, displayed on mannequins in open desert",
+    width: 1536,
+    height: 1024,
+    credit: "Dresses photographed from the collection; the display and setting are generated.",
   }),
 };
 

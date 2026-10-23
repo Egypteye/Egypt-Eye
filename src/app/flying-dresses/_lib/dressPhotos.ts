@@ -28,9 +28,17 @@ import {
  *
  * PROVENANCE
  *
- * Every file here is the agency's own work, from client shoots supplied by the
- * owner in October 2026. The EXIF on the originals reads "egypt-eye-travel /
- * EGYPT.EYE". They are real customers, published at the owner's instruction.
+ * The twelve DRESSES are the agency's own work, from client shoots supplied by
+ * the owner in October 2026. The EXIF on the originals reads "egypt-eye-travel
+ * / EGYPT.EYE". They are real customers, published at the owner's instruction.
+ *
+ * The five GAWNS are not, and the difference is marked rather than described
+ * in passing. The owner photographed each garment and had it composited onto a
+ * generated model on a plain studio background; the files carry C2PA
+ * provenance naming OpenAI. The garment is real and the owner stands behind
+ * delivering the one shown. The person wearing it is not a customer and the
+ * frame is not a shoot, so `styled` is set on each and the wardrobe says
+ * something different about them. See the note on that field.
  */
 export type DressPhoto = {
   src: string;
@@ -38,9 +46,65 @@ export type DressPhoto = {
   alt: string;
   /** The shoot it came from, so a frame can always be traced back. */
   shoot: string;
+  /**
+   * True when the GARMENT is real and photographed but the model and the
+   * setting around it are generated.
+   *
+   * It exists because of one sentence. The wardrobe tells a customer "From the
+   * Aroouj shoot. The dress is the one you would wear." — which is true of
+   * twelve frames taken at real client shoots and false of a composite, where
+   * there was no shoot and the person is nobody. Without this flag the five
+   * gawns would have inherited that sentence and quietly claimed a customer
+   * session that never happened.
+   *
+   * What stays true either way is the half that matters to somebody choosing:
+   * the garment is the one they would wear. That part is said for both.
+   */
+  styled?: boolean;
 };
 
 export const dressPhotos: Record<string, DressPhoto> = {
+  // ---------------------------------------------------------------------------
+  // THE FIVE GAWNS — the asset checklist's "biggest missing asset", filled.
+  //
+  // Supplied in the men's wardrobe folder, one frame each, already matching the
+  // five entries in MENS_OUTFITS by name. Studio frames on white: the garment
+  // is the subject, which is what a wardrobe grid needs and what the twelve
+  // dress photographs, shot on location, deliberately are not.
+  //
+  // `styled` on every one. See the field's note.
+  // ---------------------------------------------------------------------------
+  "saeedy-gawn-1": {
+    src: "/photos/flying-dresses/gawn-saeedy-gawn-1.jpg",
+    alt: "A white Saeedy gawn worn with a brown and amber patterned shawl over one shoulder",
+    shoot: "Men's wardrobe",
+    styled: true,
+  },
+  "saeedy-gawn-2": {
+    src: "/photos/flying-dresses/gawn-saeedy-gawn-2.jpg",
+    alt: "A white Saeedy gawn worn with a gold and cream patterned shawl over one shoulder",
+    shoot: "Men's wardrobe",
+    styled: true,
+  },
+  "bahary-gawn-3": {
+    src: "/photos/flying-dresses/gawn-bahary-gawn-3.jpg",
+    alt: "A white Bahary gawn worn under a deep red waistcoat with gold embroidery down both front panels",
+    shoot: "Men's wardrobe",
+    styled: true,
+  },
+  "bahary-gawn-4": {
+    src: "/photos/flying-dresses/gawn-bahary-gawn-4.jpg",
+    alt: "A white Bahary gawn worn under a black waistcoat with gold embroidery down both front panels",
+    shoot: "Men's wardrobe",
+    styled: true,
+  },
+  "classic-plain-gawn-5": {
+    src: "/photos/flying-dresses/gawn-classic-plain-gawn-5.jpg",
+    alt: "A plain white gawn with a mandarin collar and no overlay",
+    shoot: "Men's wardrobe",
+    styled: true,
+  },
+
   cherry: {
     src: "/photos/flying-dresses/dress-cherry.jpg",
     alt: "The Cherry dress on the Giza rooftop, its red train sweeping the full width of the frame with the pyramids behind",

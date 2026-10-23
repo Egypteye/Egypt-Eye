@@ -4,6 +4,11 @@ import { productRail } from "@/lib/booking/productRail";
 import { HUMAN_CONFIRMS } from "@/lib/booking/wording";
 import type { FlyingDressPackage } from "@/content/flyingDresses";
 import { EGYPT_EYE_ORIGIN, flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
+import { SecureDateButton } from "@/components/SecureDateButton";
+import { cancellationSummary } from "@/content/cancellationPolicy";
+import { canCompleteBookingHere } from "@/lib/booking/paypalConfig";
+import { paymentProvider } from "@/lib/booking/activeProvider";
+import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -98,6 +103,13 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
     getPhotoshootBySlug(pkg.eyeSlug),
     getSiteSettings(),
   ]);
+
+  // Can this deployment take the money AND write the booking down? Both, or
+  // the customer goes to Egypt Eye as before. See canCompleteBookingHere.
+  const localCheckout = canCompleteBookingHere({
+    providerEnabled: paymentProvider().enabled,
+    supabaseReady: supabaseAdminConfigured,
+  });
 
   // Not admin: a customer's view of the rail, which is the only one that
   // should ever decide what a public page shows.
@@ -217,18 +229,54 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
       </p>
 
       <div className="fd-actions">
-        {/* An ABSOLUTE link to the Egypt Eye origin, and a plain <a> rather
-            than next/link, because this leaves the app.
+        {/* TWO WAYS TO PAY, AND THE DEPLOYMENT DECIDES WHICH.
+            =================================================================
+            This brand used to have exactly one: an absolute link to the Egypt
+            Eye checkout, because only that deployment had the credentials to
+            take a deposit and record it. The handoff works and still does,
+            but it sends somebody mid-purchase to a different brand on a
+            different domain, which is where a boutique sale goes to die.
 
-            It is absolute so that this brand's own deployment never has to
-            serve a payment route — see EGYPT_EYE_ORIGIN in
-            content/flyingDresses.ts. The Flying Dresses project therefore
-            needs no PayPal credentials at all, which is why src/proxy.ts can
-            refuse every /api/bookings/* path on this domain without breaking
-            anything. */}
-        <a className="fd-btn" href={`${EGYPT_EYE_ORIGIN}/secure/photoshoot/${pkg.eyeSlug}`}>
-          Choose your date &amp; pay the deposit
-        </a>
+            So when THIS deployment can complete a booking by itself, the same
+            dialog Egypt Eye uses opens here instead and nobody leaves the
+            site. Same component, same /api/bookings route, same quote and
+            deposit authorities — no second payment path was written, because
+            a second payment path is a second set of money bugs.
+
+            canCompleteBookingHere requires PayPal AND Supabase. Until the
+            Flying Dresses project has both, this renders exactly what it
+            rendered before, so the credentials can be added in either order
+            without a window where the site takes money it cannot write down.
+            There is no flag day and nothing to remember to switch. */}
+        {localCheckout && resolved && product ? (
+          <SecureDateButton
+            productType="photoshoot"
+            productSlug={product.slug}
+            productTitle={product.title}
+            depositPercent={offer.depositPercent}
+            paymentMode={resolved.rail.moneyMode}
+            cancellationSummary={cancellationSummary}
+            cancellationHref={`${EGYPT_EYE_ORIGIN}/cancellation-policy`}
+            timeSlots={product.timeSlots}
+            extras={product.extras}
+            outfits={product.outfits}
+            quotable={{
+              slug: product.slug,
+              title: product.title,
+              bookable: product.bookable,
+              price: product.price,
+              depositPercent: product.depositPercent ?? settings.defaultDepositPercent,
+              extras: product.extras,
+            }}
+            productKind="photoshoot"
+            className="fd-btn"
+            label="Choose your date &amp; pay the deposit"
+          />
+        ) : (
+          <a className="fd-btn" href={`${EGYPT_EYE_ORIGIN}/secure/photoshoot/${pkg.eyeSlug}`}>
+            Choose your date &amp; pay the deposit
+          </a>
+        )}
         <Link className="fd-btn fd-btn-ghost" href={fdPath(`/enquire?package=${pkg.slug}`)}>
           Or ask us first
         </Link>
