@@ -152,6 +152,18 @@ export const FLYING_DRESS_COLLECTION: Outfit[] = [
     image: { asset: { _ref: "image-bbc6faae06375c34ab5f39046c90316b48be9370-6000x4000-jpg", _type: "reference" } },
   },
   {
+    id: "hot-pink",
+    name: "Hot Pink",
+    // Sampled from the dress itself rather than picked by eye: the fabric's
+    // dominant saturated tone in the owner's photograph. It sits clearly
+    // apart from Cherry (#9d2235), which is the darker red of the two.
+    hex: "#fc1356",
+    category: "womens-dress",
+    // The owner's own photograph of this dress, from the "Pink" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-858d051adf383669196a80ff2fb5eb4ae401ca33-6000x4000-jpg", _type: "reference" } },
+  },
+  {
     id: "orchid",
     name: "Orchid",
     category: "womens-dress",

@@ -21,7 +21,7 @@
  * before launch. See docs/FLYING-DRESSES-OWNER-CONFIRMATIONS.md.
  *
  * Corroboration that the brochure is current: egypteyetravel.com/photoshoots
- * — the sister brand, same owner, same twelve dresses — was fetched live and
+ * — the sister brand, same owner, same thirteen dresses — was fetched live and
  * shows Sand Dunes $179, Rooftop $199 and Fayoum $349, matching the brochure
  * on all three. That is encouraging, not proof. Prices still need a yes.
  *
@@ -138,7 +138,7 @@ export const brand = {
   tagline: "Editorial flying-dress photography in Egypt",
 
   description:
-    "Flying-dress photoshoots in Egypt: a rooftop above the Pyramids of Giza, the sand dunes outside Cairo, and the lakes and white dunes of Fayoum. Twelve dresses, traditional Egyptian attire for men, door-to-door transport and 100+ colour-graded photographs. Dress rental without a photoshoot is available separately.",
+    "Flying-dress photoshoots in Egypt: a rooftop above the Pyramids of Giza, the sand dunes outside Cairo, and the lakes and white dunes of Fayoum. Thirteen dresses, traditional Egyptian attire for men, door-to-door transport and 100+ colour-graded photographs. Dress rental without a photoshoot is available separately.",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -264,11 +264,11 @@ export function whatsappHref(message: string, number?: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// THE WARDROBE — twelve dresses and five men's gawns
+// THE WARDROBE — thirteen dresses and five men's gawns
 // ---------------------------------------------------------------------------
 
 /**
- * The twelve dresses and the five men's gawns, re-exported under this brand's
+ * The thirteen dresses and the five men's gawns, re-exported under this brand's
  * own names.
  *
  * Imported rather than re-declared: content/outfitCollection.ts is the single
@@ -969,11 +969,11 @@ export const rentalServices: RentalService[] = [
     title: "Rent a Dress, Without the Photoshoot",
     eyebrow: "Dress only",
     summary:
-      "Rent one flying dress from the collection of twelve and shoot it yourself. Delivered to your hotel in Cairo, or collected from us.",
+      "Rent one flying dress from the collection of thirteen and shoot it yourself. Delivered to your hotel in Cairo, or collected from us.",
     intro:
-      "Not everyone needs a photographer. If you are travelling with someone who shoots, or you simply want the dress for your own camera and your own morning, this is the dress on its own: the same twelve garments from the same collection, without the session built around them.",
+      "Not everyone needs a photographer. If you are travelling with someone who shoots, or you simply want the dress for your own camera and your own morning, this is the dress on its own: the same thirteen garments from the same collection, without the session built around them.",
     youGet: [
-      "One flying dress from the collection of twelve, in the colour you choose.",
+      "One flying dress from the collection of thirteen, in the colour you choose.",
       "Delivery to your hotel in Cairo, or collection from us, whichever suits you.",
     ],
     notIncluded: [
@@ -1041,7 +1041,7 @@ export const rentalServices: RentalService[] = [
       "The rental window: how many hours or days one rental runs for.",
       "The security deposit or damage terms, and whether a card or cash hold is taken.",
       "Whether delivery is free, charged, or limited to certain areas of Cairo.",
-      "Which of the twelve dresses are actually available to rent out unaccompanied. The whole collection is listed here, which assumes all twelve are.",
+      "Which of the thirteen dresses are actually available to rent out unaccompanied. The whole collection is listed here, which assumes all thirteen are.",
       "Dress sizes and fit range.",
     ],
   },

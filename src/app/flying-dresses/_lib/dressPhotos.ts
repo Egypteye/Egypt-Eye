@@ -96,6 +96,11 @@ export const dressPhotos: Record<string, DressPhoto> = {
     alt: "The Lavender dress with its violet train streaming sideways across the rooftop",
     shoot: "Julia",
   },
+  "hot-pink": {
+    src: "/photos/flying-dresses/dress-hot-pink.jpg",
+    alt: "The Hot Pink dress on the Giza rooftop, its train thrown up into a wave the width of the terrace, two pyramids on the skyline behind",
+    shoot: "Melody",
+  },
   orchid: {
     src: "/photos/flying-dresses/dress-orchid.jpg",
     alt: "The Orchid dress on the rooftop, magenta silk thrown up into the air beside a pyramid",

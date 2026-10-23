@@ -337,7 +337,59 @@ ok(
   "the men's list this brand exports no longer matches the shared collection",
   JSON.stringify(mensOutfits) === JSON.stringify(MENS_OUTFITS)
 );
-ok("the shared collection no longer holds twelve dresses", FLYING_DRESS_COLLECTION.length === 12);
+ok("the shared collection no longer holds thirteen dresses", FLYING_DRESS_COLLECTION.length === 13);
+
+// ---------------------------------------------------------------------------
+// The copy counts the dresses, so the copy drifts when the wardrobe grows.
+//
+// Two stories are built around the size of the collection — one of them
+// enumerates every dress by name — and the rental copy sells "the collection
+// of N". Adding Hot Pink made six sentences false at once, in an article a
+// customer reads to choose a colour. Nothing caught it; these do.
+// ---------------------------------------------------------------------------
+const COUNT_WORDS: Record<number, string> = {
+  11: "eleven", 12: "twelve", 13: "thirteen", 14: "fourteen", 15: "fifteen", 16: "sixteen",
+};
+const expectedCountWord = COUNT_WORDS[FLYING_DRESS_COLLECTION.length];
+// Comments are stripped first. A comment reading "there were eleven of those
+// render sites" is not a claim about the wardrobe, and flagging it trains the
+// next person to ignore this check.
+const withoutComments = (source: string) =>
+  source.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
+const countedSources = [
+  ["content/flyingDressStories.ts", withoutComments(read("src/content/flyingDressStories.ts"))],
+  ["content/flyingDresses.ts", withoutComments(contentSource)],
+] as const;
+
+ok(
+  `the wardrobe has grown past the count words this check knows (${FLYING_DRESS_COLLECTION.length} dresses)`,
+  Boolean(expectedCountWord)
+);
+// One word other than the size is legitimate, and only in one construction:
+// "somewhere to put the other twelve colours" is correct prose about thirteen
+// dresses, because the writer is counting the ones you are NOT wearing.
+//
+// It is allowed ONLY directly after "other". A blanket exemption for
+// size-minus-one would have gutted this check: a wardrobe that grows from
+// twelve to thirteen leaves copy saying "twelve", which is precisely
+// size-minus-one and precisely the drift being guarded against.
+const otherWord = COUNT_WORDS[FLYING_DRESS_COLLECTION.length - 1];
+for (const [file, raw] of countedSources) {
+  const source = otherWord ? raw.replace(new RegExp(`\\bother ${otherWord}\\b`, "gi"), " ") : raw;
+  for (const [, word] of Object.entries(COUNT_WORDS)) {
+    if (word === expectedCountWord) continue;
+    ok(
+      `${file} still says "${word}" about a collection that now holds ${FLYING_DRESS_COLLECTION.length}`,
+      !new RegExp(`\\b${word}\\b(?![- ]day)`, "i").test(source)
+    );
+  }
+}
+for (const dress of FLYING_DRESS_COLLECTION) {
+  ok(
+    `"${dress.name}" is missing from the story that lists the collection by name`,
+    read("src/content/flyingDressStories.ts").includes(dress.name)
+  );
+}
 ok(
   "the shared men's collection no longer holds five gawns, but the rooftop FAQ promises five styles",
   MENS_OUTFITS.length === 5
@@ -2666,7 +2718,7 @@ for (const section of ["celebrations", "creative"]) {
     ),
   );
   ok(
-    "photographing one dress in the Studio leaves the other eleven photographed",
+    `photographing one dress in the Studio leaves the other ${FLYING_DRESS_COLLECTION.length - 1} photographed`,
     Object.keys(oneUploaded.photos).length === Object.keys(dressPhotos).length,
   );
   ok(
