@@ -881,24 +881,28 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
-// THIS DOMAIN MAY TAKE A DEPOSIT ONLY IF IT CAN ALSO RECORD ONE.
+// THE DEPOSIT BUTTON MUST LEAVE THIS DOMAIN, AND THE DIALOG MUST NOT BE
+// MOUNTED HERE.
 //
-// The brand used to send every customer to the Egypt Eye checkout, and the
-// guard here said so: the link had to be absolute, "which is what keeps PayPal
-// credentials off this brand's deployment entirely". That is no longer the
-// design. The same booking dialog now runs on this domain when this
-// deployment can finish the job, because a handoff to another brand
-// mid-purchase is where a boutique sale dies.
+// This was briefly the other way round: SecureDateButton, the dialog Egypt Eye
+// opens on its own product pages, was mounted on these pages so that nobody
+// mid-purchase had to cross to another brand. The booking logic was right —
+// correct price, correct deposit percentage, correct wording — and the dialog
+// still rendered as unstyled markup inline in the page, because that component
+// is built from Tailwind utilities that resolve against the @theme in
+// app/globals.css and this brand's root layout loads only brand.css, which
+// imports no Tailwind on purpose.
 //
-// What replaces it is the rule that makes the change safe. Taking money is two
-// things — moving it, and writing down what it was for — and a deployment with
-// PayPal and no database does the first only. That is a customer charged for a
-// booking nobody has a record of, which is worse than not selling. So the
-// local checkout is gated on BOTH, the Egypt Eye link stays as the fallback,
-// and the credentials can be added in either order with no window in between.
+// So the two halves are asserted separately, because they fail separately:
+//   1. The handoff must stay absolute, to the Egypt Eye checkout that works.
+//   2. This file must not import the Egypt Eye dialog at all. A styling
+//      problem is invisible to every check in this repo — it was caught by
+//      screenshotting the deployed page, not here — so what is guarded is the
+//      import, which is checkable. When the dialog can be presented in this
+//      brand's chrome, this assertion is the one to come back and change.
 //
-// PROVEN by dropping supabaseReady from the gate (red), by deleting the Egypt
-// Eye fallback branch (red), and against the rule itself below. Then restored.
+// PROVEN by restoring the SecureDateButton branch (both red) and by deleting
+// the handoff link (first red). Then reverted.
 // ---------------------------------------------------------------------------
 const bookingRail = read("src/app/flying-dresses/_components/BookingRail.tsx");
 const railCode = bookingRail
@@ -907,21 +911,21 @@ const railCode = bookingRail
   .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
 
 ok(
-  "the Flying Dresses rail no longer keeps the Egypt Eye checkout as its fallback, so a deployment " +
-    "without PayPal or Supabase has nowhere to send a customer who wants to pay",
+  "the Flying Dresses rail no longer sends the deposit to the Egypt Eye checkout, so a customer who " +
+    "wants to pay has nowhere to go",
   railCode.includes("EGYPT_EYE_ORIGIN") && /secure\/photoshoot\/\$\{pkg\.eyeSlug\}/.test(railCode)
 );
 ok(
-  "the Flying Dresses rail offers a local checkout without asking whether this deployment can " +
-    "complete a booking — it must go through canCompleteBookingHere, which requires a database as " +
-    "well as a payment provider",
-  /canCompleteBookingHere\(/.test(railCode) &&
-    /providerEnabled/.test(railCode) &&
-    /supabaseReady/.test(railCode)
+  "the Flying Dresses rail mounts Egypt Eye's SecureDateButton, whose Tailwind classes resolve to " +
+    "nothing under this brand's layout — it rendered as unstyled markup inline in the page the last " +
+    "time this was tried",
+  !railCode.includes("SecureDateButton")
 );
 
-// The rule itself, exercised rather than read. It is the one thing standing
-// between a customer and a charge with no booking behind it.
+// The rule that will gate the dialog once it can be presented in this brand's
+// chrome. Nothing calls it while the handoff stands, and it is exercised here
+// rather than deleted because it is the one thing that will stand between a
+// customer and a charge with no booking behind it.
 ok(
   "canCompleteBookingHere lets a deployment take money with no database behind it",
   canCompleteBookingHere({ providerEnabled: true, supabaseReady: false }) === false
@@ -936,11 +940,16 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
-// WHAT THE BRAND'S DOMAIN STILL REFUSES.
+// WHAT THE BRAND'S DOMAIN REFUSES.
 //
-// Opening the checkout here meant opening three routes. The two left shut are
-// the two that would hurt, and nothing about this change should quietly widen
-// to a prefix later — `startsWith("/api/bookings")` would admit both of them
+// No booking route answers on this host, because nothing on this host calls
+// one: the deposit button hands off to the Egypt Eye checkout. Three were
+// briefly open for a dialog that could not be styled here, and an allow-list
+// entry for a feature that is not shipped reads to the next person as a
+// decision somebody made.
+//
+// Two of them stay shut even when the dialog arrives, and nothing should ever
+// widen to a prefix — `startsWith("/api/bookings")` would admit both of them
 // and every route added under that path from now on.
 // ---------------------------------------------------------------------------
 // Comments stripped, for the third time in this change: the proxy's own note
@@ -953,8 +962,8 @@ const proxyCode = proxySource
 
 for (const route of ["/api/bookings", "/api/bookings/rail", "/api/bookings/paypal/capture"]) {
   ok(
-    `the Flying Dresses domain cannot reach ${route}, so its own checkout cannot complete`,
-    proxyCode.includes(`pathname === "${route}"`)
+    `${route} answers on the Flying Dresses domain, for a checkout that does not run there`,
+    !proxyCode.includes(`pathname === "${route}"`)
   );
 }
 ok(

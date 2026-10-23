@@ -74,31 +74,36 @@ function isFlyingDressesAllowed(pathname: string): boolean {
     pathname === "/api/flying-dresses-enquiry" ||
     pathname === "/api/flying-dresses-collaborate" ||
     // ---------------------------------------------------------------------
-    // THE DEPOSIT, TAKEN ON THIS DOMAIN.
+    // NO BOOKING ROUTE ANSWERS HERE, BECAUSE NOTHING HERE CALLS ONE.
     //
-    // This brand used to send the customer to the Egypt Eye checkout, so it
-    // needed none of these. It now runs the same booking dialog on its own
-    // pages, which means these three must answer here — and ONLY these three.
-    // They are listed one by one for the reason written at the top of this
-    // function: `startsWith("/api/bookings")` would quietly admit every
-    // future route under that prefix, and the two deliberately left out are
-    // exactly the two that would hurt.
+    // Three of them were briefly listed: /api/bookings, /api/bookings/rail
+    // and /api/bookings/paypal/capture, which is what the Egypt Eye booking
+    // dialog needs when it runs on this brand's own pages. That dialog is not
+    // mounted here — it is built from Tailwind utilities this brand's layout
+    // does not load, and the deposit button hands off to the Egypt Eye
+    // checkout instead, which is written up in BookingRail.tsx.
     //
-    // NOT /api/bookings/reconcile: the cron sweep that captures stragglers.
-    // It belongs to one deployment, runs on a schedule with CRON_SECRET, and
-    // a second domain answering it is a second thing that can double-settle.
+    // So they come back out. An allow-list entry for a feature that is not
+    // shipped is the same quiet widening this function's own note warns
+    // about, one step slower: nothing calls them, nothing notices them, and
+    // the next person reads them as a decision somebody made on purpose. When
+    // the dialog can be presented in this brand's chrome, the three lines
+    // return in that change, where they can be reasoned about together.
     //
-    // NOT /api/webhooks/paypal, and that one is worth saying out loud because
-    // it looks like an omission. PayPal delivers to the URLs registered on
-    // the app, and the handler finds the booking by ORDER ID in Supabase, not
-    // by which deployment created it. Both projects share one Supabase, so an
-    // order started here is settled by the webhook already registered on the
-    // Egypt Eye domain. Opening a second webhook endpoint would need a second
-    // registration and a second PAYPAL_WEBHOOK_ID, and would buy nothing.
+    // Two will stay out even then, and they are worth naming because they
+    // look like omissions:
+    //
+    //   /api/bookings/reconcile — the cron sweep that captures stragglers. It
+    //   belongs to one deployment, runs on a schedule with CRON_SECRET, and a
+    //   second domain answering it is a second thing that can double-settle.
+    //
+    //   /api/webhooks/paypal — PayPal delivers to the URLs registered on the
+    //   app, and the handler finds the booking by ORDER ID in Supabase, not
+    //   by which deployment created it. Both projects share one Supabase, so
+    //   an order started here would be settled by the webhook already
+    //   registered on the Egypt Eye domain. A second endpoint needs a second
+    //   registration and a second PAYPAL_WEBHOOK_ID, and buys nothing.
     // ---------------------------------------------------------------------
-    pathname === "/api/bookings" ||
-    pathname === "/api/bookings/rail" ||
-    pathname === "/api/bookings/paypal/capture" ||
     // Framework and static assets, which carry no authority.
     pathname.startsWith("/_next") ||
     pathname.startsWith("/photos/") ||
