@@ -101,7 +101,7 @@ export const listingPages: ResolvedListingPages = {
       {
         question: "Can I add a horse, a camel or video?",
         answer:
-          "Yes. Arabian horse photography, a camel experience, a professional video Reel and a group photoshoot are all available as add-ons. There are also two dedicated horse packages: the Jumping Horse Photoshoot at $120, and the Running Horse Video + Jumping Horse Photoshoot at $160.",
+          "Yes. Arabian horse photography, a camel experience, a professional video Reel and a group photoshoot are all available as add-ons. There are also two dedicated horse packages: the Jumping Horse Photoshoot at $120, and the Running Horse Video + Jumping Horse Photoshoot at $160, which adds a cinematic horse galloping video.",
       },
     ],
   },

@@ -9,7 +9,11 @@ const nextConfig: NextConfig = {
   // address works. Add a LAN IP here too if you test on a phone.
   //
   // Development only; `next build` ignores it.
-  allowedDevOrigins: ["localhost", "127.0.0.1"],
+  // flyingdressesegypt.localhost is how the second brand (src/proxy.ts) is
+  // reviewed on its own host during development: *.localhost resolves to the
+  // loopback address without touching /etc/hosts, and the proxy's host check
+  // then serves the Flying Dresses tree from the domain root.
+  allowedDevOrigins: ["localhost", "127.0.0.1", "flyingdressesegypt.localhost"],
 
   // Full Next.js server mode (Vercel) — needed for the embedded Sanity
   // Studio at /studio and for content to update without a manual rebuild.
@@ -98,13 +102,34 @@ const nextConfig: NextConfig = {
       "https://c.paypal.com",
     ].join(" ");
 
+    // Google Analytics 4.
+    //
+    // WITHOUT THIS THE TAG IS DEAD ON ARRIVAL, and silently: the browser
+    // refuses the script, GA4 never initialises, no data is collected, and
+    // the only evidence is a console message on a page nobody has open. The
+    // visual audit is what caught it — the analytics work in this change was
+    // complete and would have reported zero visitors forever.
+    //
+    // The tag script comes from one host. The BEACONS do not: GA4 sends them
+    // to a regional endpoint chosen at runtime (region1.google-analytics.com
+    // and siblings), so connect-src takes a wildcard where the rest of this
+    // policy deliberately does not. That is a considered exception rather
+    // than a lapse — the alternative is enumerating Google's regions and
+    // losing data from whichever one is added next.
+    const googleAnalytics = {
+      script: "https://www.googletagmanager.com",
+      connect:
+        "https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com",
+      img: "https://www.google-analytics.com https://www.googletagmanager.com",
+    };
+
     const publicCsp = [
       "default-src 'self'",
-      `script-src 'self' 'unsafe-inline' ${paypal}${devScript}`,
+      `script-src 'self' 'unsafe-inline' ${paypal} ${googleAnalytics.script}${devScript}`,
       "style-src 'self' 'unsafe-inline'",
-      `img-src 'self' data: https://cdn.sanity.io https://images.pexels.com https://*.supabase.co ${paypal}`,
+      `img-src 'self' data: https://cdn.sanity.io https://images.pexels.com https://*.supabase.co ${paypal} ${googleAnalytics.img}`,
       "font-src 'self' data:",
-      `connect-src 'self' https://*.supabase.co ${paypal}${devConnect}`,
+      `connect-src 'self' https://*.supabase.co ${paypal} ${googleAnalytics.connect}${devConnect}`,
       `frame-src 'self' https://www.youtube.com https://player.vimeo.com ${paypal}`,
       "frame-ancestors 'self'",
       "base-uri 'self'",

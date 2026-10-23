@@ -1,4 +1,4 @@
-import type { Experience } from "./types";
+import type { Experience, ExperienceTheme } from "./types";
 import { unsplashCredit, unsplashUrl } from "./unsplash";
 
 // Activities / Extra Experiences — the add-on outings Egypt Eye runs around
@@ -106,11 +106,15 @@ export const activities: Experience[] = [
     physicalLevel: {
       tier: "moderate",
       note:
-        "A full day of village walking on dirt paths and farm ground. Going down inside the Red Pyramid is steep, low-ceilinged and warm — and completely optional.",
+        "A full day of village walking on dirt paths and farm ground, with hands-on work at a real farm. Going down inside the Red Pyramid is steep, low-ceilinged and warm — and completely optional.",
     },
     title: "Village & Farm Experience in Dahshur",
-    duration: "Full day (about 8 hours)",
-    location: "Dahshur, Giza Governorate",
+    // Deliberately no hour count. The day can end at the farmhouse in the
+    // afternoon or run through the sunset outing and the evening gathering,
+    // and those depend on the season and the farm's own programme — so an
+    // "about 8 hours" here would be wrong half the time. See goodToKnow.
+    duration: "Full day",
+    location: "Saqqara Tourist Road, Dahshur, near the Dahshur Pyramid entrance",
     price: { amount: null },
     imageTone: "nile",
     image: unsplash("photo-1725958242753-34e7fe712c56"),
@@ -119,51 +123,87 @@ export const activities: Experience[] = [
       "https://unsplash.com/photos/a-field-of-green-plants-in-a-muddy-area-vS_tzihh-e0"
     ),
     description:
-      "A day in the farmland south of Cairo, in the village that sits beneath Sneferu's Bent and Red Pyramids. Tea on arrival, a walk through the fields, hands in the work, a home-cooked lunch at a family table — and two of Egypt's most important pyramids with almost nobody else at them.",
+      "A full day of rural Egyptian life in the farming village beneath Sneferu's Bent and Red Pyramids. Bread baked in a wood-fired oven, a guided walk through the crops and the date palms, hands in the work — planting, pottery, a donkey ride — and a long countryside meal at a family table. It can be run on its own, or combined with Dahshur's two pyramids and the necropolis of Saqqara as one private day.",
     steps: [
       {
-        title: "8:00am pickup in Cairo",
-        description: "Private transfer out through the southern suburbs into open farmland — about 40 minutes from Giza.",
+        title: "Early pickup in Cairo or Giza",
+        description:
+          "Private transfer from your hotel out through the southern suburbs into open farmland. The day starts early on purpose: the drive, the farm's own programme and the sites' opening hours all have to line up, so we fix the running order with you beforehand.",
       },
       {
-        title: "Tea, and a walk through the fields",
+        title: "Baladi bread, in the morning",
         description:
-          "You're welcomed with Egyptian tea, then walked out through the crops and date palms to see how the land is actually worked.",
+          "The morning opens at the oven — mixing, shaping and baking traditional Egyptian baladi bread, then eating it warm.",
       },
       {
-        title: "Time on the farm",
+        title: "A guided walk through the farm",
         description:
-          "Meet the animals, learn how the date harvest works, and try your hand at the local crafts — palm-leaf weaving is the one everyone ends up doing.",
+          "An introduction to how the land is actually worked, crop by crop, and to the date varieties grown here — including how the palms are climbed and how the harvest is traditionally taken. The fresh harvest itself is an August event; outside it, this is the explanation and a tasting of the farm's date products rather than fruit off the tree.",
       },
       {
-        title: "Lunch at the farmhouse",
+        title: "Hands in the work",
         description:
-          "A home-cooked countryside meal at a family table: roast chicken or duck, seasonal mahshi, rice, salads and fruit. This is the part guests write to us about.",
+          "Planting and whatever the season's work happens to be, pottery and traditional handicrafts at the wheel and the bench, and a donkey ride through the lanes. Which of these run on your day depends on the season and the farm's work that week.",
+      },
+      {
+        title: "At the family table",
+        description:
+          "A full countryside breakfast or lunch, cooked at the farmhouse — tell us which suits your day. Breakfast runs to feteer meshaltet, bread straight from the oven, bee honey and blackstrap molasses, fresh and aged farmhouse cheese, fried potatoes, boiled eggs, ful medames and falafel, with seasonal vegetables and salad. Lunch runs to assorted mahshi — grape leaves, cabbage, eggplant, zucchini — vermicelli rice, oven-baked dishes, molokhia and soup, with chicken, meat and kofta. These are examples of what the kitchen cooks, not a fixed menu: the day's table depends on the season and is confirmed with the farm.",
       },
       {
         title: "The Bent and Red Pyramids",
         description:
-          "Dahshur's two great pyramids — Sneferu's failed experiment and the correction that made Giza possible — usually with a fraction of Giza's crowd.",
+          "Sneferu's failed experiment and the correction that made Giza possible, usually with a fraction of Giza's crowd. Going down inside the Red Pyramid is optional.",
       },
       {
-        title: "Back in Cairo by around 4:00pm",
-        description: "Return transfer to your hotel.",
+        title: "Sunset from the mountain",
+        description:
+          "An outing up to the high ground for the last of the light, with the pyramids on the horizon. Weather and timing dependent.",
+      },
+      {
+        title: "Tea around the fire",
+        description:
+          "A traditional evening gathering to close the day — singing, and tea made over a wood fire. This runs subject to the season and the farm's arrangements for that evening.",
+      },
+      {
+        title: "Return transfer",
+        description:
+          "Private transfer back to your hotel in Cairo or Giza. The return time depends on how much of the day you take — an afternoon finish at the farmhouse and a stay through the evening gathering are very different endings.",
       },
     ],
     included: [
       "Private air-conditioned transport from and back to Cairo or Giza",
       "English-speaking guide for the day",
-      "Tea on arrival and the farm visit",
-      "Hands-on activities with the family",
-      "Home-cooked farmhouse lunch",
+      "Tea on arrival and the guided farm tour",
+      "Hands-on farm activities, bread baking and handicrafts",
+      "A traditional countryside meal at the family table",
       "Dahshur site entrance fees",
     ],
     goodToKnow: [
-      "Dahshur is around 40 minutes from Giza — this is a real day out, not a stop on the way to somewhere else.",
+      // The seasonal line the owner asked for, close to verbatim. It is first
+      // because it is the one expectation this product used to set wrongly:
+      // the page previously implied the date harvest was simply part of the
+      // visit, in any month.
+      "The farm's fresh date harvest takes place annually in August. Outside the harvest season, guests can learn about the date varieties grown on the farm and sample a selection of the farm's date products. Fresh dates on the palms and direct harvesting experiences are seasonal and cannot be guaranteed outside August.",
+      "If seeing and tasting freshly harvested dates is your main reason for coming, August is the month to plan around.",
+      "Children under 12 years old are charged at half the adult rate for the farm experience.",
+      "The farm is on the Saqqara Tourist Road in Dahshur, near the Dahshur Pyramid entrance, roughly 5 km beyond Saqqara.",
+      "The farm day can be combined with the Bent Pyramid, the Red Pyramid and Saqqara in one private trip, with hotel pickup and drop-off in Cairo or Giza. It is a lot for one day and needs an early start, so we check opening hours, driving times and the farm's programme for your date before fixing the itinerary.",
+      "Which activities run depends on the season, the weather and the farm's own work that day — planting, the sunset outing and the evening gathering in particular. We confirm the day's programme with the farm before your visit.",
       "You can go down inside the Red Pyramid. The descent is steep, low-ceilinged and warm; it is entirely optional.",
       "This is a working village, so modest dress is appreciated.",
       "October to April is the comfortable season for a day spent mostly outdoors.",
       "Vegetarian and other dietary requirements are easy — tell us when you book so the family can cook for them.",
+    ],
+    // What the reservations team otherwise has to write back and ask. None of
+    // these selects or prices anything — they are preferences, passed through
+    // to the enquiry email in the guest's own words.
+    enquiryOptions: [
+      "Breakfast at the farm",
+      "Lunch at the farm",
+      "Add the Bent and Red Pyramids",
+      "Add Saqqara",
+      "I'd like a tailored itinerary",
     ],
     destinations: ["Dahshur", "Giza", "Cairo"],
   },
@@ -221,6 +261,580 @@ export const activities: Experience[] = [
       "Early morning and late afternoon are the calmest and coolest slots, and the best light.",
       "Bring a change of clothes — you will get some water on you — and a dry bag or waterproof case for your phone.",
       "Cairo's a big city and the river runs through the middle of it: expect a working waterway, not wilderness.",
+    ],
+    destinations: ["Cairo"],
+  },
+
+  // ── Cairo: craft, heritage and photography ─────────────────────────────
+  //
+  // Ten products researched in October 2026 against what Cairo operators
+  // actually sell. Every one of them quotes by enquiry and carries no
+  // supplier, permit, price or availability we have not confirmed — several
+  // of these need a relationship built before they can run, and the page says
+  // so rather than implying a workshop is standing by.
+  {
+    slug: "cairo-metal-engraving-workshop",
+    theme: "craft",
+    physicalLevel: {
+      tier: "easy",
+      note: "Seated work at a bench, with a walk through the lanes to reach it. No standing for long and nothing strenuous.",
+    },
+    title: "Engrave Your Own Keepsake with a Cairo Metalworker",
+    duration: "About half a day",
+    location: "Islamic Cairo",
+    price: { amount: null },
+    imageTone: "luxor",
+    image: unsplash("photo-1541430840663-7979db8e3046"),
+    imageCredit: credit(
+      "Sam Dan Truong",
+      "https://unsplash.com/photos/brown-and-gray-wooden-wall-decor-SGni-rVlhz4"
+    ),
+    description:
+      "Sit down at a metalworker's bench in the old city and cut your own piece — a name, a line of hieroglyphs, a date — into brass or copper under the hands of someone who has done it since they were a teenager. You leave with the thing you made, not a thing you bought.",
+    steps: [
+      {
+        title: "Into the workshop lanes",
+        description:
+          "A short guided walk through the metalworkers' quarter to the bench, past the trades that still supply it — this part is the context the finished object is missing without it.",
+      },
+      {
+        title: "Choosing what to cut",
+        description:
+          "Your design, worked out with the artisan: a name in Arabic or English, a cartouche, a date, a short inscription. Simple lines cut better than crowded ones, and they will tell you which is which.",
+      },
+      {
+        title: "At the bench",
+        description:
+          "Marking, cutting and finishing your own piece with the artisan working beside you. How far you get is a matter of how intricate a design you chose.",
+      },
+      {
+        title: "Taking it home",
+        description: "The piece is yours to take with you the same day.",
+      },
+    ],
+    included: [
+      "Private transfer from and back to your hotel in Cairo or Giza",
+      "English-speaking guide for the session",
+      "The workshop session with the artisan",
+      "Materials for one piece per person",
+      "The piece you make",
+    ],
+    goodToKnow: [
+      "We arrange the artisan for your date rather than running a fixed class, so the workshop, the metal and what is achievable in the time are confirmed with you before you book.",
+      "This is hand tooling, not machine engraving. The result looks made rather than manufactured, which is the point of it.",
+      "Tell us the name or inscription you want when you enquire — Arabic, English or hieroglyphs — so the artisan can advise before the day.",
+      "Working metal shops are hot, noisy and full of sharp tooling. Closed shoes, and children only by arrangement.",
+      "If you want a cartouche made for you by a workshop rather than made by you, our Boutique already sells those — this is the hands-on alternative.",
+    ],
+    enquiryOptions: [
+      "In Arabic script",
+      "In hieroglyphs",
+      "A private session, just our group",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "arabic-calligraphy-workshop-cairo",
+    theme: "craft",
+    physicalLevel: {
+      tier: "easy",
+      note: "Seated throughout, at a desk. Nothing physical about it beyond holding a pen at an unfamiliar angle.",
+    },
+    title: "Arabic Calligraphy with a Cairo Calligrapher",
+    duration: "About 3 hours",
+    location: "Cairo",
+    price: { amount: null },
+    imageTone: "luxor",
+    image: unsplash("photo-1628962691167-27b7db9997e0"),
+    imageCredit: credit(
+      "Oussama Abouchatir",
+      "https://unsplash.com/photos/person-writing-on-white-paper-_d2YajYba98"
+    ),
+    description:
+      "Arabic script is a craft with rules — the reed pen is cut a certain way, the proportions of every letter are measured in dots, and the hand is trained rather than expressive. A working calligrapher takes you through one script from the pen upward, and you write your own name in it by the end.",
+    steps: [
+      {
+        title: "The pen, and why it is cut like that",
+        description:
+          "The qalam, the ink, the angle of the nib, and the dot system that sets every proportion in the script. Ten minutes of this changes how the rest of the city's walls read.",
+      },
+      {
+        title: "One script, properly",
+        description:
+          "Rather than a tour of six hands, you work in one — the calligrapher will suggest which suits the time you have — and practise the strokes it is built from.",
+      },
+      {
+        title: "Your own name",
+        description:
+          "Writing your name, or a short phrase, in the script you have been practising. You keep what you write.",
+      },
+    ],
+    included: [
+      "Private transfer from and back to your hotel in Cairo or Giza",
+      "The workshop session with the calligrapher",
+      "Pen, ink and paper",
+      "The pieces you write",
+    ],
+    goodToKnow: [
+      "Cairo has real calligraphy teaching — the Ministry has run a calligraphy school at the Gayer-Anderson Museum and Bayt Al-Sinnari hosts workshops — but those are public programmes on their own calendars, not ours. We arrange a calligrapher privately for your date, and confirm the teacher and the venue with you before you book.",
+      "The session is taught in English unless you ask otherwise; we do not promise every language.",
+      "No Arabic is needed. Reading the letters is not the exercise — drawing them is.",
+      "Three hours is enough to write your name well in one script. It is not enough to learn the script.",
+      "Left-handed writers can absolutely do this; tell us when you enquire so the calligrapher can prepare.",
+    ],
+    enquiryOptions: [
+      "A private session, just our group",
+      "We'd like to write a specific phrase",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "egyptian-pantry-market-walk",
+    theme: "craft",
+    physicalLevel: {
+      tier: "moderate",
+      note: "Two to three hours mostly on your feet, on uneven market ground and through crowded lanes.",
+    },
+    title: "The Egyptian Pantry: A Cook's Walk Through the Market",
+    duration: "About 3 hours",
+    location: "Cairo",
+    price: { amount: null },
+    imageTone: "desert",
+    image: unsplash("photo-1784741924166-af7f9f220afc"),
+    imageCredit: credit(
+      "Lothar Boris Piltz",
+      "https://unsplash.com/photos/a-vibrant-display-of-various-dried-fruits-teas-and-spices-yU_L8HwlBeY"
+    ),
+    description:
+      "What an Egyptian kitchen actually keeps, bought where Egyptians actually buy it. Through a working food market with someone who cooks from it — the spice blends that have no English name, the cheeses that scare visitors and shouldn't, the difference between the molokhia everyone warns you about and the molokhia people go home for.",
+    steps: [
+      {
+        title: "Into a working market",
+        description:
+          "Not a tourist bazaar — a market that exists to feed the neighbourhood around it, which is why the prices and the produce are real.",
+      },
+      {
+        title: "The pantry, item by item",
+        description:
+          "Spices and blends, pulses, the bread, the cheeses, the preserved and the pickled. What each is for, what it replaces in your own kitchen, and what actually survives the flight home.",
+      },
+      {
+        title: "Tasting as you go",
+        description:
+          "Small tastes along the way from vendors your host buys from. Enough to add up to a meal if you pace it badly.",
+      },
+      {
+        title: "Taking it with you",
+        description:
+          "Help choosing and buying what you want to take home, and the sense to know what will be confiscated at a border.",
+      },
+    ],
+    included: [
+      "Private transfer from and back to your hotel in Cairo or Giza",
+      "An English-speaking host who cooks",
+      "Tastings along the walk",
+    ],
+    goodToKnow: [
+      "Which market we use depends on the day and on what is trading; we confirm the route with you beforehand rather than printing one here.",
+      "Anything you buy to take home is yours to pay for — we do not mark up a vendor's prices.",
+      "Tell us about allergies and dietary restrictions when you enquire. A market walk is a hard place to improvise around a nut allergy.",
+      "Markets are busiest and best in the morning. Afternoons are quieter and hotter.",
+      "This is a walk and a tasting, not a cooking class. If you want to cook what you buy, say so when you enquire and we will look at arranging it.",
+    ],
+    enquiryOptions: [
+      "We'd like to cook afterwards as well",
+      "Vegetarian or vegan",
+      "A private walk, just our group",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "city-of-the-dead-heritage-walk",
+    theme: "heritage",
+    physicalLevel: {
+      tier: "moderate",
+      note: "Two to three hours walking on dust, rubble and uneven ground, with very little shade.",
+    },
+    title: "The City of the Dead: Cairo's Living Necropolis",
+    duration: "About half a day",
+    location: "Al-Qarafa, Cairo",
+    price: { amount: null },
+    imageTone: "giza",
+    description:
+      "A square mile of Cairo where the tombs have doors, the streets have names, and families have lived among their dead for centuries. It holds some of the finest Mamluk funerary architecture anywhere — and parts of it are being cleared for a road network, which is why seeing it with someone who can read it matters now rather than later.",
+    steps: [
+      {
+        title: "Why a cemetery has streets",
+        description:
+          "How Cairo came to bury its dead in courtyard houses, why people live in them, and what the architecture was built to do.",
+      },
+      {
+        title: "The Mamluk domes",
+        description:
+          "The carved stone domes this necropolis is famous for, which are the reason it forms part of the Historic Cairo World Heritage inscription.",
+      },
+      {
+        title: "What is still standing",
+        description:
+          "Demolition for a new road network has been under way since 2023 and the ground changes between visits, so the route is set on the day by the guide rather than promised in advance.",
+      },
+    ],
+    included: [
+      "Private transfer from and back to your hotel in Cairo or Giza",
+      "An English-speaking guide who knows the area and its residents",
+      "The walking route for the day",
+    ],
+    goodToKnow: [
+      "People live here. We walk with a guide who is known locally, we do not photograph residents or their homes without asking first, and anyone who would rather not be visited is not visited.",
+      "Demolition for a road and flyover scheme has been clearing parts of Al-Qarafa since 2023, and UNESCO has stated it was not consulted. What is reachable genuinely changes, which is why we set the route on the day.",
+      "This is a cemetery and an inhabited neighbourhood at once. Modest dress, quiet voices, and the guide's lead on where cameras come out.",
+      "Dust, rubble and no shade. Closed shoes, a hat, and water.",
+      "If the day's conditions make the visit intrusive or unsafe, we will say so and offer you something else rather than walking you through it anyway.",
+    ],
+    enquiryOptions: [
+      "Combine with Islamic Cairo",
+      "A private walk, just our group",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "mokattam-cave-church",
+    theme: "heritage",
+    physicalLevel: {
+      tier: "moderate",
+      note: "The church is cut into the cliff and built in tiers — expect steps and slopes between the levels.",
+    },
+    title: "The Cave Church of Mokattam",
+    duration: "About half a day",
+    location: "Mokattam, Cairo",
+    price: { amount: null },
+    imageTone: "giza",
+    description:
+      "An amphitheatre carved into the Mokattam cliff, seating thousands, with the rock face itself sculpted in relief around it. The Monastery of Saint Simon is one of the largest churches in the Middle East and almost no visitor itinerary includes it — a guided visit to the church, its scripture reliefs, and the Coptic history that put it there.",
+    steps: [
+      {
+        title: "Up to the cliff",
+        description:
+          "The drive up through Mokattam to the monastery gate, with the history of Cairo's Coptic community on the way.",
+      },
+      {
+        title: "The carved amphitheatre",
+        description:
+          "The main church cut into the rock, the scale of it, and the reliefs carved directly into the cliff face around the seating.",
+      },
+      {
+        title: "The smaller churches and the relief work",
+        description:
+          "The chapels on the other terraces, and the sculpted scripture scenes that cover the rock between them.",
+      },
+    ],
+    included: [
+      "Private transfer from and back to your hotel in Cairo or Giza",
+      "An English-speaking guide",
+      "The guided visit to the monastery",
+    ],
+    goodToKnow: [
+      "This is an active place of worship for a large congregation. Modest dress — knees and shoulders covered — quiet during services, and the guide's lead on photography inside.",
+      "The monastery sits above the quarter where Cairo's zabbaleen live and work. We go there for the church; we do not run a tour of anyone's neighbourhood or livelihood, and we will not package it as a sight.",
+      "The site is built in tiers up a cliff. There are steps and slopes between the levels, and parts are steep.",
+      "Opening times follow the church's own calendar and feast days, so we confirm the day's access before you travel.",
+      "Fridays and Sundays bring very large congregations. Beautiful to witness, and busy.",
+    ],
+    enquiryOptions: [
+      "Combine with Coptic Cairo",
+      "A private visit, just our group",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "wadi-el-natrun-monasteries",
+    theme: "heritage",
+    physicalLevel: {
+      tier: "easy",
+      note: "Walking between buildings on level monastery ground, with a long drive either side of it.",
+    },
+    title: "Wadi El Natrun: The Desert Monasteries",
+    duration: "Full day",
+    location: "Wadi El Natrun, Beheira",
+    price: { amount: null },
+    imageTone: "desert",
+    description:
+      "Christian monasticism began in this desert. The monasteries of Wadi El Natrun have been continuously inhabited for roughly sixteen centuries — keep-towers, ancient wall paintings, libraries and a working community of monks — about an hour and a half northwest of Cairo, and almost entirely off the standard route.",
+    steps: [
+      {
+        title: "Out of Cairo into the desert",
+        description:
+          "The drive northwest along the desert road, and why this particular valley became the cradle of monastic life.",
+      },
+      {
+        title: "The monasteries",
+        description:
+          "Two of the valley's monasteries, usually including Deir Anba Bishoy — the churches, the keep-towers built against raids, and the wall paintings.",
+      },
+      {
+        title: "The community today",
+        description:
+          "What a working monastery is, how the day is ordered, and the continuity that makes this different from visiting a ruin.",
+      },
+      {
+        title: "Back to Cairo",
+        description: "Return transfer to your hotel.",
+      },
+    ],
+    included: [
+      "Private air-conditioned transport from and back to Cairo or Giza",
+      "An English-speaking guide for the day",
+      "Visits to the monasteries open on your date",
+    ],
+    goodToKnow: [
+      "Which monasteries are open to visitors varies by day, by feast and by fasting season, and each sets its own hours and photography rules. We confirm the day's itinerary with the monasteries rather than printing a fixed one here.",
+      "Modest dress is required: shoulders and knees covered for everyone, and a head covering for women inside the churches. Visitors have been refused entry for less.",
+      "Photography differs between monasteries and between buildings — some interiors are not photographed at all. The guide will tell you where.",
+      "Parts of the monasteries are reserved for the monastic community and are not open to visitors. That is not a closure; it is a working monastery.",
+      "It is a long day with roughly three hours of driving in total. There is little to buy out there, so bring what you want to eat and drink.",
+    ],
+    enquiryOptions: [
+      "A private day, just our group",
+      "We'd like a Coptic-heritage focus",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "zamalek-private-photoshoot",
+    theme: "photography",
+    physicalLevel: {
+      tier: "easy",
+      note: "A couple of hours strolling between locations on flat island streets, at whatever pace you set.",
+    },
+    title: "Zamalek Photoshoot: Cairo's Island Streets",
+    duration: "About 2 hours",
+    location: "Zamalek, Cairo",
+    price: { amount: null },
+    imageTone: "nile",
+    image: unsplash("photo-1634154955216-0a8455e2fb15"),
+    imageCredit: credit(
+      "Jens Aber",
+      "https://unsplash.com/photos/the-sun-is-setting-over-a-city-with-a-bridge-dBYlE_IACP8"
+    ),
+    description:
+      "Not the pyramids. Zamalek is the Cairo of balconied 1930s apartment blocks, jacaranda, embassy gardens and the Nile at the end of the street — a private shoot through the island with a photographer who knows which corners hold the light and at what hour.",
+    steps: [
+      {
+        title: "Planning the route",
+        description:
+          "The look you want, settled before the day: architecture, the river, the greener streets, or a mix. The route follows the light rather than a map.",
+      },
+      {
+        title: "Shooting through the island",
+        description:
+          "Moving between locations on foot, shooting as you go. Two or three changes of backdrop in a session is comfortable; more is rushing.",
+      },
+      {
+        title: "Your edited images",
+        description:
+          "A selection of edited photographs delivered after the shoot. The number and the turnaround are agreed with you when you book.",
+      },
+    ],
+    included: [
+      "A private photographer for the session",
+      "Location planning around the light",
+      "Edited images, to an agreed count",
+    ],
+    goodToKnow: [
+      "Egypt allows personal photography in public places without a permit, but professional and commercial shoots, and lighting equipment set up in the street, are a different matter. We confirm what your shoot needs before the day rather than assuming.",
+      "Egyptian law requires a person's consent before they are photographed, and photographing children is not permitted. A street shoot works around people rather than through them.",
+      "Some buildings, gardens and compounds are private or diplomatic and cannot be used as backdrops. The photographer plans around that.",
+      "The first and last hours of daylight are the shoot worth having. Midday on an open street is the one to avoid.",
+      "Outfit changes need somewhere to change — tell us when you enquire and we will build it into the route.",
+      "This is a shoot of you. If you want to learn to take the photographs yourself, the photography class is the other product.",
+    ],
+    enquiryOptions: [
+      "Couple or engagement shoot",
+      "Family shoot",
+      "Solo portraits",
+      "We'd like outfit changes",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "cairo-photography-class",
+    theme: "photography",
+    physicalLevel: {
+      tier: "moderate",
+      note: "Two to three hours on your feet in a historic quarter, carrying your own camera.",
+    },
+    title: "Photography Class in Historic Cairo",
+    duration: "About 3 hours",
+    location: "Historic Cairo",
+    price: { amount: null },
+    imageTone: "luxor",
+    image: unsplash("photo-1777621175513-caa47fc3584f"),
+    imageCredit: credit(
+      "Yunshuo Qu",
+      "https://unsplash.com/photos/man-taking-a-picture-with-a-vintage-camera-n1CJh1hNWbY"
+    ),
+    description:
+      "A working Egyptian photographer, your own camera, and one of the most photographed quarters on earth — spent learning to see it rather than collecting it. Light, framing, and the particular problem of shooting a crowded street without either flattening it or intruding on it.",
+    steps: [
+      {
+        title: "What you brought, and what it does",
+        description:
+          "Your camera or your phone, set up properly for the conditions — Cairo's contrast between a shaded lane and an open courtyard is the whole technical problem of the day.",
+      },
+      {
+        title: "Shooting the quarter",
+        description:
+          "Working through the streets putting each idea into practice — composition, light, and the judgement about when a photograph of a person is a portrait and when it is a trophy.",
+      },
+      {
+        title: "Looking at what you got",
+        description:
+          "Sitting down over your own frames at the end: what worked, what didn't, and what to do differently tomorrow.",
+      },
+    ],
+    included: [
+      "Private transfer from and back to your hotel in Cairo or Giza",
+      "A professional photographer teaching the session",
+      "The review at the end",
+    ],
+    goodToKnow: [
+      "Bring your own camera — any camera, including a phone. This is a class, so we do not supply equipment.",
+      "Egyptian law requires a person's written consent before photographing them, and photographing children is not permitted. How to ask, and when not to, is part of what is taught.",
+      "Which quarter we use depends on the day and on what is accessible; we confirm it with you beforehand.",
+      "Museums and archaeological sites have their own photography rules and separate permits, so the class works in the streets rather than inside ticketed sites.",
+      "Taught in English unless you ask otherwise; we do not promise every language.",
+      "If you would rather be photographed than learn to photograph, the Zamalek shoot or a photographer by the hour is the better fit.",
+    ],
+    enquiryOptions: [
+      "Beginner",
+      "I shoot already and want to improve",
+      "Phone photography",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "photographer-by-the-hour",
+    theme: "photography",
+    physicalLevel: {
+      tier: "easy",
+      note: "Whatever your own plans involve — the photographer goes where you go.",
+    },
+    title: "A Photographer, by the Hour",
+    duration: "From one hour; you set the length",
+    location: "Cairo and Giza",
+    price: { amount: null },
+    imageTone: "nile",
+    image: unsplash("photo-1679238211153-546821b75f98"),
+    imageCredit: credit(
+      "Michael Starkie",
+      "https://unsplash.com/photos/a-view-of-a-city-with-a-pyramid-in-the-distance-TtlvTrqxXno"
+    ),
+    description:
+      "Not an itinerary — a photographer, for as long as you want one. Bring them to the pyramids for an hour, keep them for a whole day across the city, or have them quietly cover a proposal, a birthday or a family trip. You choose the where and the how long; we match the photographer to it.",
+    steps: [
+      {
+        title: "Tell us the shape of it",
+        description:
+          "Where you will be, how long you want a photographer there, and what the photographs are for. That is the whole brief.",
+      },
+      {
+        title: "Matched to a photographer",
+        description:
+          "Cairo photographers specialise — documentary, portrait, wedding, fashion. We match the one whose work fits what you described rather than sending whoever is free.",
+      },
+      {
+        title: "The shoot itself",
+        description:
+          "They meet you where you are and work around your day rather than running it.",
+      },
+      {
+        title: "Your edited images",
+        description:
+          "Edited photographs delivered afterwards, to a count and a turnaround agreed before you book.",
+      },
+    ],
+    included: [
+      "A photographer for the hours you book",
+      "Matching the photographer to the brief",
+      "Edited images, to an agreed count",
+    ],
+    goodToKnow: [
+      "This is a service, not a tour. There is no itinerary, no guide and no transport unless you ask for them.",
+      "Site entry is separate. The pyramids, museums and ticketed sites each have their own rules for professional photography, and some require a permit we have to arrange in advance.",
+      "Egyptian law requires consent before photographing a person, and photographing children is not permitted. That applies to a hired photographer too.",
+      "Tell us the hours and the locations when you enquire. The rate for an hour at one location and a full day across the city are not the same thing, and we would rather quote you properly than post a number that fits neither.",
+      "For a planned shoot with a route built around the light, the Zamalek photoshoot is the better product.",
+    ],
+    enquiryOptions: [
+      "One hour",
+      "Half a day",
+      "A full day",
+      "A proposal or celebration",
+      "I'd like a tailored itinerary",
+    ],
+    destinations: ["Cairo"],
+  },
+  {
+    slug: "wadi-degla-hike-stargazing",
+    theme: "outdoors",
+    physicalLevel: {
+      tier: "active",
+      note: "Several hours walking a dry limestone canyon on loose rock, with no shade and no water on the route.",
+    },
+    title: "Wadi Degla: Canyon Hike, Sunset and Stars",
+    duration: "About half a day, into the evening",
+    location: "Wadi Degla Protectorate, Cairo",
+    price: { amount: null },
+    imageTone: "desert",
+    description:
+      "A limestone canyon inside the city limits. Wadi Degla is a protected area at the edge of Maadi — a dry riverbed cut through fossil-bearing rock, walked out in the afternoon, turned around for sunset on the canyon wall, and dark enough afterwards for a sky Cairo normally hides.",
+    steps: [
+      {
+        title: "Into the wadi",
+        description:
+          "Through the protectorate gate and out along the canyon floor, with the geology and the fossils that make this a protected area rather than a quarry.",
+      },
+      {
+        title: "The walk out",
+        description:
+          "A few hours along the dry riverbed, as far as the group's pace takes it. The canyon walls rise as you go.",
+      },
+      {
+        title: "Sunset on the rock",
+        description: "Turning for the light on the canyon wall, which is the hour this place is for.",
+      },
+      {
+        title: "Stars, and back",
+        description:
+          "Time under the sky once it is properly dark, then the drive back into the city — which is startlingly short.",
+      },
+    ],
+    included: [
+      "Private transfer from and back to your hotel in Cairo or Giza",
+      "An English-speaking guide for the walk",
+      "Protectorate entry fees",
+      "Drinking water for the route",
+    ],
+    goodToKnow: [
+      "Wadi Degla is a declared protectorate and the rules are the protectorate's, not ours: entry fees are set at the gate and we confirm the current ones for your date rather than quoting a figure here.",
+      "Camping overnight is allowed only in designated areas and we have not confirmed the current permit process. If you want to stay the night, ask when you enquire and we will find out what is possible for your date — we will not promise it in advance.",
+      "No shade, no water on the route and no phone signal in parts of the canyon. Closed walking shoes, a hat, and more water than you think.",
+      "Loose rock underfoot the whole way. This is a walk rather than a scramble, but it is not a stroll, and it is not suitable in sandals.",
+      "October to April is the season for this. A summer afternoon in a limestone canyon is genuinely dangerous.",
+      "The fossils and the rock are protected. Nothing leaves the wadi — that is a condition of entry, not a request.",
+    ],
+    enquiryOptions: [
+      "We'd like to camp overnight if permitted",
+      "A private walk, just our group",
+      "I'd like a tailored itinerary",
     ],
     destinations: ["Cairo"],
   },
@@ -1203,6 +1817,40 @@ export const activities: Experience[] = [
 // rather than being pulled into Cairo by its second tag. Anything whose first
 // tag matches nothing here falls into a final "More experiences" group rather
 // than disappearing, so adding an activity can never silently hide it.
+/**
+ * The four collections, in the order they read on the page.
+ *
+ * Ordered by how a visitor chooses rather than alphabetically: the things you
+ * make and taste, then the things you go and see, then the photography, then
+ * the one that needs walking shoes.
+ */
+export const experienceThemes: {
+  key: ExperienceTheme;
+  name: string;
+  blurb: string;
+}[] = [
+  {
+    key: "craft",
+    name: "Local culture & craft",
+    blurb: "Half a day at somebody's bench or in their market — you leave with the thing you made, or the sense to shop like a local.",
+  },
+  {
+    key: "heritage",
+    name: "Heritage & faith",
+    blurb: "Places Cairo keeps for itself: a necropolis people live in, a church cut into a cliff, and the desert where monasticism began.",
+  },
+  {
+    key: "photography",
+    name: "Photography",
+    blurb: "Three different things — a shoot of you, a lesson in shooting, and a photographer for however long you want one.",
+  },
+  {
+    key: "outdoors",
+    name: "Outdoors",
+    blurb: "A limestone canyon inside the city limits, walked at the hour it is worth walking.",
+  },
+];
+
 export const activityDestinationGroups: {
   key: string;
   name: string;

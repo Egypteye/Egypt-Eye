@@ -56,14 +56,14 @@ export const toursBySlugsQuery = groq`*[_type == "tour" && slug.current in $slug
 
 export const experiencesQuery = groq`*[_type == "experience"] | order(order asc) {
   _id, "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
-  image, imageTone, description, location, included, destinations, physicalLevel,
+  image, imageTone, description, location, included, destinations, theme, physicalLevel,
   bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, outfits[]{id, name, category, image, hex, note, active}
 }`;
 
 const experienceDetailFields = groq`
   "slug": slug.current, title, duration, ${ratingFields}, ${priceFields},
   image, imageTone, gallery, description, location,
-  steps[]{title, description}, included, goodToKnow, destinations,
+  steps[]{title, description}, included, goodToKnow, enquiryOptions, destinations, theme,
   physicalLevel, mapStops, bookable, depositPercent, paypalLink, timeSlots, extras[]{label, priceUsd}, outfits[]{id, name, category, image, hex, note, active},
   relatedTours[]->{${relatedTourFields}},
   seo
@@ -181,7 +181,7 @@ export const faqsQuery = groq`*[_type == "faqItem"] | order(order asc) {
 export const siteSettingsQuery = groq`*[_type == "siteSettings"][0] {
   defaultDepositPercent,
   name, shortName, tagline, heroHeadline, heroSubheadline, description, positioning,
-  contact, socials, pillars, policies, trustStats, reviewsOverride,
+  contact, legal, socials, pillars, policies, trustStats, reviewsOverride,
   heroImages[]{image, tone, headline, subtext, linkLabel, linkHref},
   flyingDressImage, redSeaImage, ninePyramidsImage, customizeImage,
   destinationPhotos[]{name, image},
@@ -273,6 +273,7 @@ export const treasureProductsQuery = groq`*[_type == "treasureProduct" && status
   blurb, blurbTranslations, description, placeholder, status, availability, featured, order,
   ${treasureImageFields}, imageTone, gallery[]{..., "alt": alt, "caption": caption},
   price{amount, originalAmount, note},
+  scentFamily, productType, sourceUrl, verificationNote,
   variants[]{label, price{amount, originalAmount, note}, availability},
   options[]{label, price{amount, originalAmount, note}, note},
   specs[]{label, value}, tags, faqs[]{question, answer}, seo

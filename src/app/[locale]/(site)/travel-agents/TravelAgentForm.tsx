@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
+import { PhoneField } from "@/components/PhoneField";
 
 const SERVICE_OPTIONS = [
   "Inbound Tour Operator",
@@ -116,7 +117,7 @@ export function TravelAgentForm() {
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
           {tr("WhatsApp / Phone *")}
-          <input type="tel" name="phone" required className={inputClass()} />
+          <PhoneField errorClassName="text-sm font-semibold text-terracotta" id="agent-phone" required inputLabel="Phone number" selectClassName={inputClass()} inputClassName={inputClass()} />
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Website")}<input type="url" name="website" placeholder={tr("https://")} className={inputClass()} />
         </label>

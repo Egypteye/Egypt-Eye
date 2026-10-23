@@ -61,7 +61,10 @@ export async function POST(request: NextRequest) {
   const email = clean(body.email, 200);
   const phone = clean(body.phone, 60);
   const nationality = clean(body.nationality, 100);
-  const travelers = clean(body.travelers, 20);
+  // 60, not 20. This used to be a bare headcount; the form now sends
+  // "2 adults, 1 child", and at 20 the longest real combinations were being
+  // silently truncated mid-word before the reservations email was written.
+  const travelers = clean(body.travelers, 60);
   const startDate = clean(body.startDate, 40);
   const endDate = clean(body.endDate, 40);
   const flexibleDates = body.flexibleDates === true;

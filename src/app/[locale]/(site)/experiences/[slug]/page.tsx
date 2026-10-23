@@ -241,7 +241,7 @@ export default async function ExperienceDetailPage({
                   <Link
                     key={t.slug}
                     href={`/tours/${t.slug}`}
-                    className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink"
+                    className="inline-flex min-h-[44px] items-center rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-gold/40 hover:text-ink"
                   >
                     {t.title} →
                   </Link>
@@ -299,7 +299,13 @@ export default async function ExperienceDetailPage({
             whatsappLink={site.contact.whatsappLink}
             context={{ page: "this experience's page", item: experience.title }}
             className="mt-5 block w-full rounded-full bg-ink py-3 text-center text-sm font-semibold text-cream transition hover:bg-gold-dark"><T>Book on WhatsApp</T></WhatsAppBookButton>
-          <EnquiryButton itemType="experience" itemTitle={experience.title} itemSlug={experience.slug} className="mt-3" />
+          <EnquiryButton
+            itemType="experience"
+            itemTitle={experience.title}
+            itemSlug={experience.slug}
+            options={experience.enquiryOptions}
+            className="mt-3"
+          />
 
           <div className="mt-4 border-t border-black/5 pt-4">
             <AddToJourneyButton
@@ -339,7 +345,7 @@ export default async function ExperienceDetailPage({
             </div>
             <Link
               href="/experiences"
-              className="mt-8 inline-block text-sm font-semibold text-gold-dark hover:underline"
+              className="mt-8 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark hover:underline"
             >
               ← Back to all experiences
             </Link>

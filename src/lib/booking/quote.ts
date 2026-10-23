@@ -1,4 +1,11 @@
 import type { BookingExtra } from "@/content/types";
+import {
+  GUIDE_LABEL,
+  GUIDE_PRICE_USD,
+  guideEligible,
+  readGuideSelection,
+  type GuideSelection,
+} from "./guide";
 
 // What a deposit actually costs, worked out from what the customer selected.
 //
@@ -222,7 +229,7 @@ export function readExtraSelection(raw: unknown): ExtraSelection[] {
 export function quoteDeposit(
   product: QuotableProduct,
   productType: string,
-  selection: { people: unknown; extras: unknown },
+  selection: { people: unknown; extras: unknown; guide?: unknown },
   sitePercent?: number | null
 ): QuoteResult {
   if (product.bookable !== true) return { ok: false, reason: "notBookable" };
@@ -278,6 +285,47 @@ export function quoteDeposit(
       amountCents: extraCents * choice.quantity,
     });
     ruleExtras.push({ label: extra.label, priceCents: extraCents, quantity: choice.quantity });
+  }
+
+  // The Egyptologist guide.
+  //
+  // A line rather than a separate field, so that everything downstream — the
+  // booking row, the emails, the admin view, the balance arithmetic — reads
+  // it through the same path as every other chargeable thing and none of them
+  // had to learn a new shape. It is `kind: "extra"` for exactly that reason.
+  //
+  // What makes it NOT an ordinary extra, and why it is handled here instead
+  // of in the loop above:
+  //
+  //   * Its price comes from lib/booking/guide.ts, not from the product. No
+  //     Studio document carries it, so no Studio document can disagree about
+  //     what a guide costs.
+  //   * Its quantity is 1, always. One guide walks the group, so the fee is
+  //     once per booking and not once per guest. Nothing in the request can
+  //     raise it — there is no quantity read here to raise.
+  //   * It is only offered on eligible products, checked server side against
+  //     the slug. A request naming a guide on a product that does not offer
+  //     one buys nothing, the same way a forged extra label does.
+  //
+  // The chosen language is NOT priced and is not part of this line. It rides
+  // on the booking beside it; see readGuideSelection.
+  const guide: GuideSelection = guideEligible(product.slug)
+    ? readGuideSelection(selection.guide)
+    : { selected: false, language: "", isRequest: false, status: "none" };
+  if (guide.selected) {
+    const guideCents = usdToCents(GUIDE_PRICE_USD);
+    // Unreachable with the constant as written, and deliberately not assumed:
+    // a guide whose price will not read is dropped rather than given away.
+    if (guideCents !== null && guideCents > 0) {
+      lines.push({
+        kind: "extra",
+        label: GUIDE_LABEL,
+        unitCents: guideCents,
+        quantity: 1,
+        amountCents: guideCents,
+      });
+      ruleExtras.push({ label: GUIDE_LABEL, priceCents: guideCents, quantity: 1 });
+    }
   }
 
   const bookingTotalCents = lines.reduce((sum, line) => sum + line.amountCents, 0);

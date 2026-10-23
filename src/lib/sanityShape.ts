@@ -1,5 +1,6 @@
 import type {
   DestinationHub,
+  FlyingDressGallery,
   Experience,
   Photoshoot,
   SignatureExperience,
@@ -99,6 +100,18 @@ export function hardenExperience(experience: Experience, local?: Experience): Ex
     // which is how a product stops offering outfits at all.
     outfits: arr(experience.outfits, local?.outfits),
     faqs: arr(experience.faqs, local?.faqs),
+    // Same three-case rule as every other array here: never set in Studio
+    // falls back to the repo's list, an editor who empties it gets an empty
+    // list back. Without this line a Studio document that predates the field
+    // projects null, nothing falls back, and the enquiry form quietly stops
+    // asking the product's own questions.
+    enquiryOptions: arr(experience.enquiryOptions, local?.enquiryOptions),
+    // A scalar, so it cannot use arr()'s three-case rule — but it needs the
+    // same protection. A Studio document that predates this field projects
+    // theme: null, the spread above writes that null over the content file's
+    // value, and the product drops out of its collection into the loose
+    // "More" bucket on the listing page. Visible only in production.
+    theme: experience.theme ?? local?.theme,
     relatedTours: experience.relatedTours?.map((t) => hardenTour(t)),
   };
 }
@@ -185,3 +198,38 @@ export const hardenSignatureExperiences = (
   const map = bySlug(local);
   return items.map((e) => hardenSignatureExperience(e, map.get(e.slug)));
 };
+
+/**
+ * A Flying Dresses gallery, safe to render.
+ *
+ * `frames` is required by the type, so every page walks it without checking.
+ * The three cases are the ones the whole of this file exists for, and the
+ * middle one is the one that is easy to get wrong:
+ *
+ *   - null/undefined: the projection did not return it, or no editor ever set
+ *     it. The repo's own frames are the richer answer, so use them.
+ *   - []: an editor emptied the gallery. That is a real edit. Keep it empty;
+ *     quietly restoring the repo's frames would overrule a deliberate choice
+ *     and the editor would have no way to tell why.
+ *   - no local counterpart: a gallery that exists only in the Studio. Empty,
+ *     so it renders nothing rather than throwing.
+ *
+ * `layout` gets the same treatment for a different reason: it is a union, and
+ * a document saved before the field existed returns null for it, which would
+ * reach the component as a class name of `fd-gallery-null`.
+ */
+export function hardenFlyingDressGallery(
+  gallery: FlyingDressGallery,
+  local?: FlyingDressGallery
+): FlyingDressGallery {
+  const layout = gallery.layout;
+  return {
+    ...gallery,
+    title: gallery.title || local?.title || "",
+    layout:
+      layout === "grid" || layout === "feature" || layout === "strip"
+        ? layout
+        : (local?.layout ?? "grid"),
+    frames: arr(gallery.frames, local?.frames),
+  };
+}

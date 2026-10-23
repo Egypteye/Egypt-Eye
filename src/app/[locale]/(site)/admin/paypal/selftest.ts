@@ -175,6 +175,7 @@ export async function runPaymentSelfTest(): Promise<SelfTestResult> {
     const unpaid = await fulfilAttempt({
       id: retry.data?.id ?? "x",
       reservation_id: reservationId,
+      boutique_order_id: null,
       provider_order_id: "SELFTEST-C",
       status: "created",
       amount_cents: quote.totalCents,

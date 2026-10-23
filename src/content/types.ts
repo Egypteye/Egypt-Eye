@@ -158,6 +158,20 @@ export type PhysicalLevel = {
   note: string;
 };
 
+/**
+ * What KIND of thing an experience is, as distinct from where it happens.
+ *
+ * The Extra Experiences page has always grouped by destination, which works
+ * while a city holds three or four outings. Cairo now holds a dozen, and
+ * "a photographer for an hour" and "a day at the desert monasteries" are not
+ * the same sort of purchase — a visitor scanning one undifferentiated grid
+ * has to read every card to find out which is which.
+ *
+ * Deliberately a small closed set. A theme per product is a taxonomy nobody
+ * maintains; four buckets a reader can hold in their head is navigation.
+ */
+export type ExperienceTheme = "craft" | "heritage" | "photography" | "outdoors";
+
 export type Experience = {
   /**
    * Whether this product offers the "Secure your date" deposit flow.
@@ -249,6 +263,27 @@ export type Experience = {
   included: string[];
   /** Practical expectations — timings, fitness, seasonality, what to bring. */
   goodToKnow?: string[];
+  /**
+   * Which of the four collections this belongs to. Absent on most of the
+   * catalogue, and the listing page falls back to a flat grid for any
+   * destination whose items carry no theme — so adding this changed nothing
+   * for the destinations that were already legible.
+   */
+  theme?: ExperienceTheme;
+  /**
+   * Short, product-specific things a customer can tick in the enquiry form —
+   * "Lunch at the farm", "Add Saqqara", "I'd like a tailored itinerary".
+   *
+   * Prose, not products: an option here carries no price and selects nothing.
+   * The ticked labels are appended to the enquiry message so the reservations
+   * team gets the preference in writing instead of guessing it. Anything that
+   * costs money belongs in `extras`, which has a server-side quote behind it.
+   *
+   * Absent on almost every product, and the fieldset simply does not render
+   * when it is — a form that asks a question the product has no answer to is
+   * worse than one that does not ask.
+   */
+  enquiryOptions?: string[];
   destinations?: string[];
   relatedTours?: Tour[];
   physicalLevel?: PhysicalLevel;
@@ -760,6 +795,12 @@ export type SiteSettings = {
     whatsapp?: string;
     whatsappLink?: string;
   };
+  legal?: {
+    operatorName?: string;
+    operatorLicence?: string;
+    operatorAddress?: string;
+    entityName?: string;
+  };
   socials?: {
     instagram?: string;
     facebook?: string;
@@ -904,6 +945,19 @@ export type ResolvedSiteSettings = {
     email: string;
     whatsapp: string;
     whatsappLink: string;
+  };
+  // Who the customer is actually contracting with. Egypt Eye holds no
+  // tourism licence of its own — it works under a larger licensed agency,
+  // which is the operator of record. These name THAT agency. Optional
+  // because only the owner has them, entered in Sanity Studio rather than
+  // committed here. /admin reports them as missing while blank; the legal
+  // pages leave the sentence out rather than printing a placeholder, and
+  // nothing anywhere claims a licence that has not been entered.
+  legal?: {
+    operatorName?: string;
+    operatorLicence?: string;
+    operatorAddress?: string;
+    entityName?: string;
   };
   socials: {
     instagram: string;
@@ -1380,6 +1434,27 @@ export type TreasureOption = {
   note?: string;
 };
 
+/**
+ * The scent families the Boutique sorts fragrance by.
+ *
+ * A product may sit in more than one — a rose-and-amber blend is honestly
+ * both — which is why this is a list rather than a single value. It is the
+ * one thing about an oil that can be assigned from the name alone, so it is
+ * the only facet we filter on until the supplier confirms the rest.
+ */
+export type ScentFamily = "floral" | "fresh" | "woody" | "amber" | "signature";
+
+/**
+ * What the liquid actually is.
+ *
+ * Deliberately OPTIONAL, and deliberately not defaulted. A bottle labelled
+ * "Sandalwood" is not therefore a pure essential oil, and saying so without
+ * a supplier's word for it would be a claim about composition we cannot
+ * support. Undefined means "nobody has told us", and the UI shows no product
+ * type at all rather than guessing — see docs/oils-research.md.
+ */
+export type TreasureProductType = "essentialOil" | "fragranceOil" | "perfumeOil" | "blend";
+
 export type TreasureProduct = {
   slug: string;
   /** Resolved to the category slug at fetch time, whether it came from a
@@ -1410,6 +1485,14 @@ export type TreasureProduct = {
   specs?: { label: string; value: string }[];
   /** Omitted entirely while the price is genuinely not set. */
   price?: Price;
+  /** Scent families this product belongs to. Empty until assigned. */
+  scentFamily?: ScentFamily[];
+  /** Omitted while unverified. Never inferred from the product's name. */
+  productType?: TreasureProductType;
+  /** Where a documented fact about this product came from. */
+  sourceUrl?: string;
+  /** What still needs confirming before this can be sold. Shown to the team. */
+  verificationNote?: string;
   variants?: TreasureVariant[];
   options?: TreasureOption[];
   tags?: string[];
@@ -1476,4 +1559,50 @@ export type BoutiquePage = {
   featuredProductSlugs?: string[];
   faqs?: Faq[];
   seo?: PageSeo;
+};
+
+/**
+ * ONE FRAME IN A FLYING DRESSES GALLERY.
+ *
+ * Structurally what `src/app/flying-dresses/_lib/assets.ts` has always called
+ * an ImageSlot; it lives here now because a Studio-backed type has to be in
+ * this file for scripts/check-sanity-shape.mts to see it, and that check is
+ * what stops a cleared field taking the site down.
+ *
+ * `kind` is the honesty field and it is not cosmetic: "empty" renders a
+ * designed, labelled gap rather than a photograph, which is the brief's one
+ * unbreakable rule about imagery on this brand.
+ */
+export type FlyingDressFrame = {
+  kind: "agency" | "location" | "empty";
+  /** null only when kind is "empty". */
+  src: string | null;
+  /** Describes the photograph to someone who cannot see it. */
+  alt: string;
+  /** Intrinsic size when known, so the box is reserved before the bytes land. */
+  width?: number;
+  height?: number;
+  /** Attribution, which travels with the photograph rather than the page. */
+  credit?: string;
+  /** For an empty frame: what belongs here, shown on the slot itself. */
+  wanted?: string;
+};
+
+/**
+ * A named set of frames the owner can reorder and recaption in the Studio.
+ *
+ * `galleryId` is the stable key the code looks a gallery up by, NOT the title:
+ * renaming "What a morning looks like" must not detach the gallery from the
+ * page that renders it.
+ *
+ * `frames` is a required array, so hardenFlyingDressGallery() guarantees it at
+ * the fetch boundary. An editor emptying a gallery should empty that section,
+ * never end the build — which is exactly what an unhardened required array did
+ * to the Boutique for two days.
+ */
+export type FlyingDressGallery = {
+  galleryId: string;
+  title: string;
+  layout: "grid" | "feature" | "strip";
+  frames: FlyingDressFrame[];
 };

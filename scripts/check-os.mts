@@ -522,6 +522,25 @@ ok(
   "src/proxy.ts exempts /os as a bare prefix, which also exempts pages like /oasis-tours",
 );
 
+// This deployment also answers on flyingdressesegypt.com, a second brand
+// served from the same app. The internal OS must not be reachable there, for
+// the same reason /studio is not: an internal tool on a second hostname is a
+// second front door. Unknown paths on that domain rewrite into the brand's
+// own tree and land on its not-found page, which is the right outcome — so
+// what has to stay true is that /os is never added to its allow-list.
+const proxyFlyingDresses = proxySource.slice(
+  proxySource.indexOf("function isFlyingDressesAllowed"),
+  proxySource.indexOf("function flyingDressesProxy"),
+);
+ok(
+  proxyFlyingDresses.length > 0,
+  "could not locate isFlyingDressesAllowed() in src/proxy.ts to inspect it",
+);
+ok(
+  !/["'`]\/os/.test(proxyFlyingDresses),
+  "the Flying Dresses domain allow-list admits /os — the internal workspace would be served on a second hostname",
+);
+
 ok(
   /disallow: \[[^\]]*"\/os"/.test(readFileSync("src/app/robots.ts", "utf8")),
   "robots.txt no longer disallows /os — internal booking URLs would be offered to crawlers",

@@ -14,11 +14,14 @@ export function EnquiryButton({
   itemType,
   itemTitle,
   itemSlug,
+  options,
   className = "",
 }: {
   itemType: ItemType;
   itemTitle: string;
   itemSlug: string;
+  /** Product-specific things a guest can tick. Absent on most products. */
+  options?: string[];
   className?: string;
 }) {
   const tr = useTr();
@@ -31,7 +34,13 @@ export function EnquiryButton({
         onClick={() => setOpen(true)}
         className={`block w-full rounded-full border border-black/10 py-3 text-center text-sm font-semibold text-ink-soft transition hover:bg-sand-dim ${className}`}>{tr("Email an Enquiry")}</button>
       {open && (
-        <EnquiryModal itemType={itemType} itemTitle={itemTitle} itemSlug={itemSlug} onClose={() => setOpen(false)} />
+        <EnquiryModal
+          itemType={itemType}
+          itemTitle={itemTitle}
+          itemSlug={itemSlug}
+          options={options}
+          onClose={() => setOpen(false)}
+        />
       )}
     </>
   );

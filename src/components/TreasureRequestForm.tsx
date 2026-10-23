@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
 import type { TreasureCategory, TreasureProduct } from "@/content/types";
+import { PhoneField } from "@/components/PhoneField";
 
 // One form for all four categories.
 //
@@ -296,7 +297,7 @@ export function TreasureRequestForm({
         <label className={label} htmlFor="treasure-phone">
           {tr("Phone or WhatsApp (optional)")}
         </label>
-        <input id="treasure-phone" name="phone" type="tel" className={input} />
+        <PhoneField errorClassName="text-sm font-semibold text-terracotta" id="treasure-phone" selectClassName={input} inputClassName={input} />
       </div>
 
       {error && (

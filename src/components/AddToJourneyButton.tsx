@@ -43,7 +43,7 @@ export function AddToJourneyButton({
           if (nowAdded && suggestions && suggestions.length > 0) setShowSuggestions(true);
         }}
         aria-pressed={added}
-        className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
+        className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition ${
           added
             ? "border-gold-dark bg-gold/15 text-gold-dark"
             : "border-black/10 text-ink-soft hover:border-gold/40 hover:text-ink"

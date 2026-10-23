@@ -11,10 +11,12 @@
  *      would be inventing a business fact, and charging $0 to "secure" a date
  *      would be a broken promise rather than a free one.
  */
+import { execSync } from "node:child_process";
 import { readFileSync, readdirSync } from "node:fs";
 import { breakdownRows, breakdownText, financials } from "../src/lib/email/breakdown";
 import { payPalLink } from "../src/lib/booking/deposit";
 import { isInstantBookable, quoteDeposit, type QuotableProduct } from "../src/lib/booking/quote";
+import { DEFAULT_GUIDE_LANGUAGE, GUIDE_LABEL, readGuideSelection } from "../src/lib/booking/guide";
 import { photoshoots } from "../src/content/photoshoots";
 import { experiences } from "../src/content/experiences";
 import { disabledProvider, chooseProvider } from "../src/lib/booking/paymentProvider";
@@ -26,6 +28,7 @@ import { extrasTotal, normaliseExtras, selectExtras, formatUsd } from "../src/li
 import { composePhone } from "../src/lib/booking/phone";
 import { readFile } from "node:fs/promises";
 import { DIAL_CODES, dialCodeFor, flagFor } from "../src/lib/booking/countryCodes";
+import { countryDialCodes } from "../src/content/countryCodes";
 import {
   bookingStateFromRow,
   canTransition,
@@ -635,6 +638,46 @@ ok("the flag is derived from the code", flagFor("EG") === "🇪🇬" && flagFor(
 ok("a bad code produces no flag rather than mojibake", flagFor("XYZ") === "");
 ok("an unknown country resolves to nothing", dialCodeFor("ZZ") === null);
 
+// ---------------------------------------------------------------------------
+// ONE LIST, AND IT COVERS EVERYBODY.
+//
+// There are two dial-code modules in this repository and they used to
+// disagree. src/content/countryCodes.ts carries all 204 countries for the
+// Customize form; this one carried 105, curated down to the markets Egypt Eye
+// sells to, which was fine while it served only the booking popup.
+//
+// Then the country code became mandatory on every form on both brands, all
+// reading THIS list, and the shortfall became a wall: a traveller from
+// Zimbabwe or Venezuela had no row to pick and, on the forms where the field
+// is required, could not submit at all. The 99 missing countries were filled
+// in behind the curated head.
+//
+// They also disagreed about the Dominican Republic: +1809 here against +1
+// there. +1809 doubles the area code the moment a customer types their own
+// full number, and it contradicted US and Canada sitting at +1 in this very
+// file. Corrected to +1.
+//
+// PROVEN by deleting Zimbabwe from CODES (coverage goes red) and by setting
+// the Dominican Republic back to +1809 (agreement goes red). Then restored.
+// ---------------------------------------------------------------------------
+{
+  const booking = new Map(DIAL_CODES.map((c) => [c.iso, c.dial]));
+  const uncovered = countryDialCodes.filter((c) => !booking.has(c.iso));
+  ok(
+    `the booking dial codes no longer cover every country the Customize form offers — ` +
+      `missing ${uncovered.length}: ${uncovered.map((c) => c.iso).join(", ")}`,
+    uncovered.length === 0
+  );
+  const disagree = countryDialCodes.filter(
+    (c) => booking.has(c.iso) && booking.get(c.iso) !== c.dial
+  );
+  ok(
+    `the two dial-code lists disagree about ` +
+      disagree.map((c) => `${c.iso} (${booking.get(c.iso)} here, ${c.dial} in src/content)`).join("; "),
+    disagree.length === 0
+  );
+}
+
 // An Egyptian mobile as Egyptians write it. The leading zero is national
 // notation and makes the number undialable once a country code is in front of
 // it, so it is dropped rather than rejected — this is the single most common
@@ -1115,6 +1158,169 @@ const emails = readFileSync("src/lib/email/templates.ts", "utf8");
 ok("both paid emails show the outfits in HTML", (emails.match(/outfitFactsRow\(booking\)/g) ?? []).length === 2);
 ok("both paid emails show them in plain text", (emails.match(/outfitTextLine\(booking\)/g) ?? []).length === 2);
 
+// ===========================================================================
+// The Egyptologist tour guide.
+//
+// The money assertions come first because they are the ones that cost real
+// money if they drift: the fee is once per BOOKING, and it is priced from
+// one constant on the server rather than from anything the browser sends.
+// ===========================================================================
+const CAMEL = {
+  slug: "camel-ride-giza-pyramids",
+  title: "Camel Ride",
+  bookable: true,
+  price: { amount: 125 },
+  extras: [{ label: "Photos", priceUsd: 20 }],
+};
+const FELUCCA = { slug: "quiet-nile-felucca-tour", title: "Felucca", bookable: true, price: { amount: 40 }, extras: [] };
+const guideQuote = (product: typeof CAMEL | typeof FELUCCA, selection: Record<string, unknown>) => {
+  const r = quoteDeposit(product, "experience", selection as never, 25);
+  return r.ok ? r.quote : null;
+};
+
+const plain = guideQuote(CAMEL, { people: 2, extras: [] })!;
+const withGuide = guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: true } })!;
+ok("a guide adds exactly $40 to the booking total", withGuide.bookingTotalCents - plain.bookingTotalCents === 4000);
+ok("no guide means no change at all", guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: false } })!.bookingTotalCents === plain.bookingTotalCents);
+ok("an absent guide key means no change", guideQuote(CAMEL, { people: 2, extras: [] })!.bookingTotalCents === plain.bookingTotalCents);
+
+// The whole point of the flag: one guide walks the group.
+const five = guideQuote(CAMEL, { people: 5, extras: [], guide: { selected: true } })!;
+const fivePlain = guideQuote(CAMEL, { people: 5, extras: [] })!;
+ok("the fee is once per booking, not per guest", five.bookingTotalCents - fivePlain.bookingTotalCents === 4000);
+const guideLine = withGuide.lines.find((l) => l.label === GUIDE_LABEL);
+ok("the guide line exists", guideLine !== undefined);
+ok("the guide line is quantity 1", guideLine?.quantity === 1);
+ok("the guide line is $40", guideLine?.amountCents === 4000);
+
+// A forged request cannot buy more guide, cheaper guide, or any guide at all
+// on a product that does not offer one.
+ok(
+  "a forged quantity cannot multiply the fee",
+  guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: true, quantity: 9 } })!.bookingTotalCents === withGuide.bookingTotalCents,
+);
+ok(
+  "a forged price in the request is ignored",
+  guideQuote(CAMEL, { people: 2, extras: [], guide: { selected: true, priceUsd: 0 } })!.bookingTotalCents === withGuide.bookingTotalCents,
+);
+ok(
+  "an ineligible product refuses the guide",
+  guideQuote(FELUCCA, { people: 2, extras: [], guide: { selected: true } })!.bookingTotalCents ===
+    guideQuote(FELUCCA, { people: 2, extras: [] })!.bookingTotalCents,
+);
+ok("the guide is recorded in the quote's evidence", withGuide.rules.extras.some((e) => e.label === GUIDE_LABEL));
+ok("the deposit grows with it", withGuide.totalCents > plain.totalCents);
+
+// The language. English is the default and needs no confirmation; anything
+// else is a REQUEST, which is the distinction the customer is promised.
+ok("selecting a guide defaults to English", readGuideSelection({ selected: true }).language === DEFAULT_GUIDE_LANGUAGE);
+ok("English needs no confirming", readGuideSelection({ selected: true }).status === "included");
+ok(
+  "another language is stored as a request",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "Spanish" }).status === "requested",
+);
+ok(
+  "a request keeps the language asked for",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "Spanish" }).language === "Spanish",
+);
+ok("an unticked guide is never selected", readGuideSelection({ selected: false }).selected === false);
+ok("a non-boolean selected is refused", readGuideSelection({ selected: "yes" }).selected === false);
+ok(
+  "a blank requested language falls back to English rather than a request nobody can confirm",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "   " }).status === "included",
+);
+ok(
+  "a language is length-capped",
+  readGuideSelection({ selected: true, language: "other", otherLanguage: "x".repeat(400) }).language.length <= 60,
+);
+
+// The price is stated in one place. A second copy is a second answer.
+const guideModule = readFileSync("src/lib/booking/guide.ts", "utf8");
+ok("the fee is a named constant", /GUIDE_PRICE_USD = 40/.test(guideModule));
+ok(
+  "the quote reads the constant rather than a literal",
+  /GUIDE_PRICE_USD/.test(readFileSync("src/lib/booking/quote.ts", "utf8")),
+);
+const sheet = readFileSync("src/components/SecureDateButton.tsx", "utf8");
+ok("the sheet shows the fee from the same constant", /GUIDE_PRICE_USD/.test(sheet));
+ok("the sheet sends no price", !/guide:\s*\{[^}]*price/i.test(sheet));
+ok("the sheet re-checks eligibility before offering it", /guideEligible\(productSlug\)/.test(sheet));
+
+// It has to survive to the people who act on it.
+ok("the booking route quotes with the guide", /guide: body\.guide/.test(bookingRoute));
+ok("the booking route re-checks eligibility server side", /guideEligible\(productSlug\)/.test(bookingRoute));
+ok("the guide is persisted on the booking", /guide: guideChoice\.selected \? guideChoice : null/.test(bookingRoute));
+ok("fulfilment reads the snapshot back", /journey_snapshot/.test(fulfilment));
+ok("fulfilment passes the guide to the emails", /guide: reservation\.journey_snapshot/.test(fulfilment));
+ok("the paid emails can show a guide", /booking\.guide/.test(emails));
+ok(
+  "a requested language is flagged to the team as needing confirmation",
+  /REQUESTED, needs confirming/.test(emails),
+);
+ok(
+  "the customer is told a non-English guide is not yet promised",
+  /confirm that language before the day|will confirm whether we can cover it/.test(emails),
+);
+
+// ---------------------------------------------------------------------------
+// NO PHONE BOX WITHOUT A COUNTRY BESIDE IT.
+//
+// Asked for directly: "a separate required dropdown to add country code
+// anywhere the client is typing his phone number." Anywhere is the load-
+// bearing word — there were sixteen phone inputs across the two brands and
+// only two of them had a country code, so enquiries kept arriving as
+// "01285343630": dialable inside Egypt, dialable nowhere else, and invisible
+// to WhatsApp, which identifies an account by its full international number.
+//
+// This sweeps the tree rather than listing the files, because the failure
+// mode is a NEW form written next year with a bare <input type="tel">. A list
+// would still be green on the day that happened.
+//
+// src/app/admin is excluded on purpose: those pages are the desk's own, not a
+// customer's, and staff transcribing a number the customer already gave have
+// no country to choose.
+//
+// PROVEN by adding a bare tel input to TransferBookingForm: red, naming it.
+// Then removed.
+// ---------------------------------------------------------------------------
+{
+  const telFiles = execSync(
+    "grep -rl 'type=\"tel\"' src/ --include=*.tsx | grep -v '^src/app/admin/' || true",
+    { encoding: "utf8" }
+  )
+    .trim()
+    .split("\n")
+    .filter(Boolean)
+    .sort();
+
+  const naked = telFiles.filter((file) => {
+    // COMMENTS STRIPPED FIRST. Caught while proving this guard red: the
+    // mutated file still said "PhoneField" in a comment explaining the phone
+    // handling, so the marker matched the prose and the guard stayed green on
+    // a form with a bare tel input. Same failure CLAUDE.md §4 records, and the
+    // second time it bit in this one change.
+    const body = readFileSync(file, "utf8")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+    // Either it renders the shared field, or it builds the pair itself — the
+    // booking dialog and the Customize form both predate PhoneField and do
+    // the same job with their own markup.
+    return !/PhoneField|CountryCode|dialIso/.test(body);
+  });
+
+  ok(
+    `a phone box with no country code beside it: ${naked.join(", ")} — ` +
+      "a number typed without one is undialable from outside its own country " +
+      "and cannot be resolved by WhatsApp at all",
+    naked.length === 0
+  );
+  // And the sweep itself has to be finding things, or it guards nothing.
+  ok(
+    "the phone-field sweep found no phone inputs at all, so it is no longer checking anything",
+    telFiles.length >= 3
+  );
+}
+
 if (errors.length > 0) {
   console.error(`\ncheck-booking: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
@@ -1124,5 +1330,7 @@ if (errors.length > 0) {
 console.log(
   "check-booking: ok — no payment event can confirm a booking, every pre-capture state says nothing is charged, " +
     "a product with no deposit figure shows no button, no booking surface promises a reply window, " +
-    "and an outfit can neither carry a price nor be invented by a request."
+    "an outfit can neither carry a price nor be invented by a request, " +
+    "and the Egyptologist guide costs $40 once per booking \u2014 never per guest, never from the browser, " +
+    "never on a product that does not offer one \u2014 with any language but English stored as a request."
 );

@@ -154,7 +154,7 @@ export default async function AgentPortalPage() {
           </div>
           <div className="flex items-center gap-3">
             <Link href="/account" className="text-sm font-semibold text-ink-soft hover:text-ink"><T>My Account</T></Link>
-            <LogoutButton className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
+            <LogoutButton className="inline-flex min-h-[44px] items-center rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-ink-soft transition hover:border-terracotta hover:text-terracotta" />
           </div>
         </div>
 
@@ -241,7 +241,7 @@ export default async function AgentPortalPage() {
               <InfoField label={ui["Services offered"]} value={agent.services.join(", ") || "—"} />
               <InfoField label={ui["Partner since"]} value={new Date(agent.approved_at).toLocaleDateString()} />
             </div>
-            <Link href="/account/profile" className="mt-4 inline-block text-sm font-semibold text-gold-dark hover:underline">
+            <Link href="/account/profile" className="mt-4 inline-flex min-h-[44px] items-center text-sm font-semibold text-gold-dark hover:underline">
               {ui["Edit your personal profile & password →"]}
             </Link>
           </div>

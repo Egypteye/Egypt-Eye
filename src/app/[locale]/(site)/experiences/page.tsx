@@ -7,7 +7,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { ExperienceCard } from "@/components/ExperienceCard";
 import { Reveal } from "@/components/Reveal";
-import { activityDestinationGroups } from "@/content/activities";
+import { activityDestinationGroups, experienceThemes } from "@/content/activities";
 import type { Experience } from "@/content/types";
 import { getExperiences, getListingPages } from "@/sanity/fetchers";
 import { localizeContent } from "@/i18n/localizeDeep";
@@ -67,6 +67,29 @@ function groupByDestination(
   return groups;
 }
 
+// Splits one destination's items into the four collections, preserving the
+// order of `experienceThemes` and dropping any collection with nothing in it.
+//
+// Returns null when the destination has no themed items at all, and the caller
+// then renders the flat grid it always rendered — which is every destination
+// but Cairo. The collections exist because Cairo outgrew a single grid, not
+// because grids are wrong.
+function splitByTheme(
+  items: Experience[],
+  themes: { key: string; name: string; blurb: string }[]
+) {
+  if (!items.some((e) => e.theme)) return null;
+
+  const buckets = themes
+    .map((t) => ({ ...t, items: items.filter((e) => e.theme === t.key) }))
+    .filter((t) => t.items.length > 0);
+
+  // Anything in this destination without a theme still has to appear, so it
+  // keeps its own trailing block rather than being silently dropped.
+  const unthemed = items.filter((e) => !e.theme);
+  return { buckets, unthemed };
+}
+
 export default async function ExperiencesPage() {
   const ui = await trAll([
     "A desert oasis lake in Egypt's Western Desert",
@@ -76,10 +99,13 @@ export default async function ExperiencesPage() {
   ]);
 
   const locale = await getLocale();
-  const [experiences, listingPages, destinationGroups] = await Promise.all([
+  const [experiences, listingPages, destinationGroups, themes] = await Promise.all([
     getExperiences(),
     getListingPages(),
     localizeContent(activityDestinationGroups, locale),
+    // Through the same pipeline as the destination groups, so a collection
+    // heading is translated wherever those are.
+    localizeContent(experienceThemes, locale),
   ]);
   const page = listingPages.experiences;
   const groups = groupByDestination(
@@ -144,11 +170,44 @@ export default async function ExperiencesPage() {
                 <p className="mt-3 text-[15px] leading-relaxed text-ink-soft">{group.blurb}</p>
               </div>
             </Reveal>
-            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {group.items.map((e) => (
-                <ExperienceCard key={e.slug} experience={e} />
-              ))}
-            </div>
+            {(() => {
+              const split = splitByTheme(group.items, themes);
+              if (!split) {
+                return (
+                  <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {group.items.map((e) => (
+                      <ExperienceCard key={e.slug} experience={e} />
+                    ))}
+                  </div>
+                );
+              }
+              return (
+                <>
+                  {split.buckets.map((t) => (
+                    <div key={t.key} className="mt-12 first:mt-8">
+                      <Reveal>
+                        <div className="max-w-2xl border-l-2 border-gold/40 pl-4">
+                          <h3 className="font-display text-xl font-semibold text-ink">{t.name}</h3>
+                          <p className="mt-1.5 text-sm leading-relaxed text-ink-soft">{t.blurb}</p>
+                        </div>
+                      </Reveal>
+                      <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                        {t.items.map((e) => (
+                          <ExperienceCard key={e.slug} experience={e} />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                  {split.unthemed.length > 0 && (
+                    <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                      {split.unthemed.map((e) => (
+                        <ExperienceCard key={e.slug} experience={e} />
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </Container>
         </section>
       ))}

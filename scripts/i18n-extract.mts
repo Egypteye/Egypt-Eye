@@ -25,7 +25,7 @@ import { photoshoots } from "../src/content/photoshoots.js";
 import { stories } from "../src/content/stories.js";
 import { signatureExperiences } from "../src/content/signatureExperiences.js";
 import { destinationHubs } from "../src/content/destinationHubs.js";
-import { activityDestinationGroups } from "../src/content/activities.js";
+import { activityDestinationGroups, experienceThemes } from "../src/content/activities.js";
 import { homepage } from "../src/content/homepage.js";
 import { aboutPage } from "../src/content/aboutPage.js";
 import { contactPage } from "../src/content/contactPage.js";
@@ -40,6 +40,11 @@ import { agencyTrips } from "../src/content/aboutCredibility.js";
 // sees the structural `kind`/`id` fields that carry no prose.
 import { cancellationPolicyStrings } from "../src/content/cancellationPolicy.js";
 import { egyptCities } from "../src/content/egyptCities.js";
+import { termsStrings } from "../src/content/terms.js";
+// Lives in lib/privacy rather than content/ because check-privacy.mts has to
+// read it offline, which `server-only` would prevent. Flattened the same way
+// cancellationPolicyStrings is.
+import { privacyPolicyStrings } from "../src/lib/privacy/policy.js";
 
 const MANIFEST = "src/i18n/generated/manifest.json";
 const UI_MANIFEST = "src/i18n/generated/ui-manifest.json";
@@ -52,6 +57,10 @@ const sources: [string, unknown][] = [
   ["signatureExperiences", signatureExperiences],
   ["destinationHubs", destinationHubs],
   ["activityGroups", activityDestinationGroups],
+  // The collection headings on the Extra Experiences page. This walker only
+  // reads the modules named here, so a heading left off this list serves in
+  // English on every locale while looking perfectly translated in the code.
+  ["experienceThemes", experienceThemes],
   ["homepage", homepage],
   ["aboutPage", aboutPage],
   ["contactPage", contactPage],
@@ -66,6 +75,8 @@ const sources: [string, unknown][] = [
   // an array inherits its parent's key, so a bare top-level array of
   // strings is collected as nothing.
   ["cancellationPolicy", { body: cancellationPolicyStrings }],
+  ["privacyPolicy", { body: privacyPolicyStrings }],
+  ["terms", { body: termsStrings }],
   ["egyptCities", egyptCities],
 ];
 

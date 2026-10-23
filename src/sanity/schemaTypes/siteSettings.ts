@@ -146,6 +146,44 @@ export const siteSettings = defineType({
     }),
 
     defineField({
+      name: "legal",
+      title: "Operator of record",
+      description:
+        "The licensed Egyptian agency whose licence your tours are sold under — NOT Egypt Eye itself. Customers, card providers and authorities all ask who the licensed operator is, and a site that stays silent leaves them assuming it is us. Leave a field blank and the sentence is simply left out of the legal pages: nothing is ever guessed. Never type a licence number you have not been given by the agency.",
+      type: "object",
+      options: { collapsible: true, collapsed: true },
+      fields: [
+        defineField({
+          name: "operatorName",
+          title: "Licensed agency we operate under",
+          description:
+            "The full name of the agency, exactly as it appears on their licence. This is the business the customer is contracting with for the tour.",
+          type: "string",
+        }),
+        defineField({
+          name: "operatorLicence",
+          title: "That agency's tourism licence number",
+          description:
+            "As issued to them by the Ministry of Tourism and Antiquities. Ask them for it in writing. Leave blank if you do not have it — do not estimate or reuse a number from a document you are unsure about.",
+          type: "string",
+        }),
+        defineField({
+          name: "operatorAddress",
+          title: "That agency's registered address",
+          description: "One line. The address on their licence, not a meeting point.",
+          type: "string",
+        }),
+        defineField({
+          name: "entityName",
+          title: "Our own registered name (only if we have one)",
+          description:
+            "Leave blank unless Egypt Eye Travel is itself registered as a business. It is not, at the time of writing.",
+          type: "string",
+        }),
+      ],
+    }),
+
+    defineField({
       name: "socials",
       title: "Social links",
       type: "object",

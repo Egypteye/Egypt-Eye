@@ -401,9 +401,15 @@ export const stories: Story[] = [
       p(
         "Egypt has thousands of tour operators, and the gap between the best and the worst of them is enormous — the same nine-day Cairo-to-Luxor-to-Aswan itinerary can be an unhurried, well-guided trip, or four rushed days spent being herded past monuments and into commission shops, depending entirely on who's running it. Picking the right operator matters more here than in most destinations, because so much of what actually shapes the trip — which guide you get, how early you arrive at a site, whether you're given time to actually take a photo — never shows up on a price comparison page."
       ),
-      h2("Check the License Before Anything Else"),
+      h2("Find Out Who the Licensed Operator Is"),
       p(
-        "Every legitimate Egyptian tour operator is licensed through the Ministry of Tourism and Antiquities, and that licensing is what allows a company to actually operate inside archaeological sites — hire registered guides, coordinate with site security, and take legal responsibility for a group. An operator that can't produce a license or company registration, or that runs entirely through informal messaging-app bookings with no business name attached, is a real risk, not just an inconvenience: if anything goes wrong on-site, an unlicensed operator has no standing to fix it."
+        "Operating tours in Egypt — hiring registered guides, working inside archaeological sites, coordinating with site security, carrying legal responsibility for a group — requires a licence from the Ministry of Tourism and Antiquities. What surprises most travellers is that the licence does not always belong to the brand they found online. A great deal of Egyptian travel, including some of the most specialised and best-run trips, is sold by small teams working under the licence of a larger agency. The small team plans the trip and answers your messages; the licensed agency is the operator of record and carries the legal responsibility."
+      ),
+      p(
+        "That arrangement is normal and entirely legitimate. We work that way ourselves: Egypt Eye Travel is a small specialist team, and the tours we sell are arranged and operated through the licensed Egyptian agency we work under. What matters is not whether the brand you are talking to holds the licence itself — it is whether they will tell you plainly who does."
+      ),
+      p(
+        "So the question to ask is not \"are you licensed?\", which invites a yes from anyone. Ask: who is the licensed operator for my trip, and what is their licence number? A straight answer, in writing, is the signal you want. Evasion, or a company that will not say who is actually responsible for you once you land, is the thing to walk away from."
       ),
       h2("Look at the Guides, Not Just the Itinerary"),
       p(
@@ -432,7 +438,8 @@ export const stories: Story[] = [
       h2("Red Flags Worth Walking Away From"),
       ...bullets([
         "Pressure to book and pay a deposit within hours, with no time to think it over",
-        "No verifiable online presence — no real reviews, no consistent company name across platforms, no registration details",
+        "A company that will not tell you, in writing, who the licensed operator for your trip is",
+        "No verifiable online presence — no real reviews, and no consistent company name across platforms",
         "A quote with no itinerary breakdown, just a single total price",
         "An itinerary padded with stops at 'government' papyrus, perfume, or essential-oil shops that mainly exist to pay guide commissions",
         "No clear cancellation or refund policy offered in writing",
@@ -6460,7 +6467,7 @@ export const stories: Story[] = [
     primaryKeyword: "petra travel guide",
     secondaryKeywords: ["petra jordan", "how to visit petra", "petra treasury"],
     relatedTours: toursBySlug("petra-day-tour-from-amman", "petra-by-night", "wadi-rum-overnight-bedouin-camp", "jordan-5-day-highlights"),
-    seoTitle: "Petra Travel Guide: What to Know Before You Go | Egypt Eye",
+    seoTitle: "Petra Travel Guide: What to Know Before You Go",
     seoDescription: "A practical Petra guide — the Siq walk, the Monastery climb, timing your visit, and what a single day covers.",
     body: [
       p(
@@ -6583,7 +6590,7 @@ export const stories: Story[] = [
     primaryKeyword: "wadi rum jordan",
     secondaryKeywords: ["wadi rum desert", "bedouin camp jordan", "wadi rum 4x4"],
     relatedTours: toursBySlug("wadi-rum-overnight-bedouin-camp", "petra-day-tour-from-amman", "jordan-5-day-highlights", "3-days-jordan"),
-    seoTitle: "Wadi Rum Guide: Jordan's Red Desert & Bedouin Camps | Egypt Eye",
+    seoTitle: "Wadi Rum Guide: Jordan's Red Desert & Bedouin Camps",
     seoDescription: "What to expect from a Wadi Rum visit — the 4x4 safari, a Bedouin camp night, and why film crews keep coming back.",
     body: [
       p(
@@ -6702,7 +6709,7 @@ export const stories: Story[] = [
     primaryKeyword: "amman travel guide",
     secondaryKeywords: ["amman jordan", "things to do in amman", "amman citadel"],
     relatedTours: toursBySlug("amman-city-tour", "jerash-ajloun-castle-tour", "dead-sea-day-trip-jordan", "jordan-5-day-highlights"),
-    seoTitle: "Amman Travel Guide: Jordan's Capital | Egypt Eye",
+    seoTitle: "Amman Travel Guide: Jordan's Capital",
     seoDescription: "What's worth seeing in Amman — the Citadel, the Roman Theatre, and downtown — for travelers passing through before Petra or Wadi Rum.",
     body: [
       p(
@@ -6821,7 +6828,7 @@ export const stories: Story[] = [
     primaryKeyword: "jerash jordan",
     secondaryKeywords: ["jerash ruins", "ajloun castle", "roman ruins jordan"],
     relatedTours: toursBySlug("jerash-ajloun-castle-tour", "amman-city-tour", "jordan-5-day-highlights", "3-days-jordan"),
-    seoTitle: "Jerash & Ajloun Castle Guide | Egypt Eye",
+    seoTitle: "Jerash & Ajloun Castle Guide",
     seoDescription: "Jerash's Roman ruins and Ajloun's 12th-century castle — what to see, and how the two connect on a day trip from Amman.",
     body: [
       p(
@@ -6941,7 +6948,7 @@ export const stories: Story[] = [
     primaryKeyword: "dead sea jordan",
     secondaryKeywords: ["floating in the dead sea", "dead sea mud", "dead sea day trip"],
     relatedTours: toursBySlug("dead-sea-day-trip-jordan", "jordan-5-day-highlights", "3-days-jordan", "wadi-rum-overnight-bedouin-camp"),
-    seoTitle: "Dead Sea Jordan Guide: Floating, Mud & Tips | Egypt Eye",
+    seoTitle: "Dead Sea Jordan Guide: Floating, Mud & Tips",
     seoDescription: "What a Dead Sea day in Jordan actually involves — the floating, the mineral mud, and practical tips nobody mentions beforehand until you're there.",
     body: [
       p(
@@ -7062,7 +7069,7 @@ export const stories: Story[] = [
     primaryKeyword: "is jordan safe to visit",
     secondaryKeywords: ["jordan safety", "jordan travel safety", "is amman safe"],
     relatedTours: toursBySlug("jordan-5-day-highlights", "3-days-jordan", "amman-city-tour", "petra-day-tour-from-amman"),
-    seoTitle: "Is Jordan Safe to Visit? A Straight Answer | Egypt Eye",
+    seoTitle: "Is Jordan Safe to Visit? A Straight Answer",
     seoDescription: "Jordan's real safety record for travelers, why regional headlines mislead, and practical precautions for Amman, Petra, and Wadi Rum.",
     body: [
       p(
@@ -7169,7 +7176,7 @@ export const stories: Story[] = [
     primaryKeyword: "egyptian currency guide",
     secondaryKeywords: ["egyptian pounds", "money in egypt", "atms in egypt"],
     relatedTours: toursBySlug("cairo-giza-nile-cruise-signature-trip", "8-day-essential-egypt-nile-cruise", "3-day-cairo-giza", "1-day-giza-tour"),
-    seoTitle: "Egyptian Pounds: A Practical Money Guide | Egypt Eye",
+    seoTitle: "Egyptian Pounds: A Practical Money Guide",
     seoDescription: "How money actually works in Egypt — cash vs. cards, ATMs, exchange rates, and what to realistically budget for day-to-day travel spending.",
     body: [
       p(
@@ -7283,7 +7290,7 @@ export const stories: Story[] = [
     primaryKeyword: "tipping in egypt",
     secondaryKeywords: ["baksheesh egypt", "how much to tip in egypt"],
     relatedTours: toursBySlug("cairo-giza-nile-cruise-signature-trip", "8-day-essential-egypt-nile-cruise", "6-day-cairo-giza-luxor", "1-day-giza-tour"),
-    seoTitle: "Tipping in Egypt: A Practical Guide to Baksheesh | Egypt Eye",
+    seoTitle: "Tipping in Egypt: A Practical Guide to Baksheesh",
     seoDescription: "How tipping, or baksheesh, actually works in Egypt — who to tip, roughly how much, and why it functions differently than tipping elsewhere.",
     body: [
       p(
@@ -7393,7 +7400,7 @@ export const stories: Story[] = [
     primaryKeyword: "sim card egypt",
     secondaryKeywords: ["internet in egypt", "egypt sim card tourist"],
     relatedTours: toursBySlug("cairo-giza-nile-cruise-signature-trip", "8-day-essential-egypt-nile-cruise", "white-desert-safari-bahariya", "1-day-giza-tour"),
-    seoTitle: "SIM Cards & Staying Connected in Egypt | Egypt Eye",
+    seoTitle: "SIM Cards & Staying Connected in Egypt",
     seoDescription: "How to get a local SIM or eSIM in Egypt, what coverage is really like outside major cities, and how reliable hotel Wi-Fi actually is.",
     body: [
       p(
@@ -7502,7 +7509,7 @@ export const stories: Story[] = [
     primaryKeyword: "what to wear in egypt temples",
     secondaryKeywords: ["mosque dress code egypt", "egypt dress code"],
     relatedTours: toursBySlug("islamic-coptic-cairo-walking-tour", "st-catherine-monastery-sinai-tour", "egyptian-museum-coptic-cairo-tour", "mount-sinai-sunrise-hike"),
-    seoTitle: "Egypt Dress Code: Temples, Mosques & Churches | Egypt Eye",
+    seoTitle: "Egypt Dress Code: Temples, Mosques & Churches",
     seoDescription: "Dress code guidance for ancient temples, working mosques, and Coptic churches in Egypt — what's actually required versus general courtesy.",
     body: [
       p(
@@ -8469,7 +8476,7 @@ export const stories: Story[] = [
       "2-day-luxor-tour",
       "egyptian-museum-coptic-cairo-tour"
     ),
-    seoTitle: "The Curse of the Pharaohs: Myth or Fact? | Egypt Eye",
+    seoTitle: "The Curse of the Pharaohs: Myth or Fact?",
     seoDescription: "Where the 'curse of the pharaohs' legend actually came from — Tutankhamun's tomb, a string of deaths, and 1920s newspaper sensationalism.",
     body: [
       p("On November 26, 1922, Howard Carter broke through a sealed doorway in the Valley of the Kings and, holding a candle up to a small gap, saw \"wonderful things\" — the intact tomb of Tutankhamun, untouched for over 3,000 years. Five months later, Lord Carnarvon, the wealthy backer who had funded Carter's excavation for over a decade, was dead. Newspapers around the world had their story within days, and the phrase \"curse of the pharaohs\" has outlived almost every actual fact about the discovery itself."),
@@ -8558,7 +8565,7 @@ export const stories: Story[] = [
       "edfu-kom-ombo-day-tour",
       "aswan-nubian-village-philae-tour"
     ),
-    seoTitle: "Ancient Egyptian Gods Explained | Egypt Eye",
+    seoTitle: "Ancient Egyptian Gods Explained",
     seoDescription: "A short introduction to Egypt's major gods — Ra, Isis, Horus, and Anubis — and why so many temples are dedicated to them.",
     body: [
       p("Ancient Egyptian religion tracked well over a thousand named deities across three thousand years of recorded history, and no single list can cover all of them. But a fairly small group of gods shows up again and again on temple walls, in tomb paintings, and in the objects filling Egypt's museums, and once you can recognize a handful of them, the sites themselves start making a lot more sense — why a given temple looks the way it does, why certain animals appear carved into columns, why some pharaohs are shown wearing particular crowns."),
@@ -8652,7 +8659,7 @@ export const stories: Story[] = [
       "egyptian-museum-coptic-cairo-tour",
       "dendera-abydos-day-tour"
     ),
-    seoTitle: "How to Read Hieroglyphics: The Basics | Egypt Eye",
+    seoTitle: "How to Read Hieroglyphics: The Basics",
     seoDescription: "A few basic hieroglyphic symbols worth knowing before visiting Egypt's temples — cartouches, the ankh, and how to spot a pharaoh's name.",
     body: [
       p("Nobody leaves a two-week trip to Egypt able to read hieroglyphics fluently, and that's fine — the writing system took ancient Egyptian scribes years of formal training to master, and it stayed unreadable to modern scholars for nearly 1,400 years until the Rosetta Stone cracked it open in the 1820s. But a surprisingly small set of recurring symbols shows up constantly on temple walls and tomb ceilings, and learning to spot even a few of them changes the whole experience of standing in front of one. It stops being decoration and starts being text."),
@@ -8747,7 +8754,7 @@ export const stories: Story[] = [
       "aswan-abu-simbel-tour",
       "4-day-nile-cruise-luxor-aswan"
     ),
-    seoTitle: "Nubian Culture: Aswan's Living History | Egypt Eye",
+    seoTitle: "Nubian Culture: Aswan's Living History",
     seoDescription: "Nubia's own ancient kingdoms and its living culture today — colorful villages, distinct language, and a history separate from pharaonic Egypt.",
     body: [
       p("Nubia tends to get mentioned as a footnote in Egyptian history, a region south of Aswan that traded with the pharaohs and occasionally got conquered by them. That framing has it backward more often than most visitors realize. Nubia had its own kingdoms — Kerma, Napata, Meroe — stretching back nearly as far as early dynastic Egypt, and for a stretch in the 8th century BCE, Nubian kings ruled Egypt itself, not the other way around. What's left of that history, and the culture that grew out of it, is still very much alive today in the villages around Aswan."),
@@ -8839,7 +8846,7 @@ export const stories: Story[] = [
       "colored-canyon-nuweiba-tour",
       "dahab-blue-hole-three-pools-tour"
     ),
-    seoTitle: "Bedouin Culture in the Sinai | Egypt Eye",
+    seoTitle: "Bedouin Culture in the Sinai",
     seoDescription: "Who the Bedouin communities of the Sinai are, and how their traditional knowledge of the desert shapes experiences like the Mount Sinai hike.",
     body: [
       p("Almost every classic Sinai experience — the sunrise climb up Mount Sinai, a night at a desert camp under a genuinely dark sky, snorkeling the reef at Ras Abu Galum, tea served in a Bedouin tent halfway through a canyon hike — depends on knowledge that belongs to one group of people: the Bedouin communities who have lived in this desert for centuries and know how to move through it safely. Understanding who they actually are changes these experiences from generic \"desert activities\" into something with real context behind it."),

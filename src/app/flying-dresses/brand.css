@@ -1,0 +1,3748 @@
+/* ==========================================================================
+   FLYING DRESSES EGYPT — the brand stylesheet and the motion system.
+
+   HAND-WRITTEN CSS, NO TAILWIND, DELIBERATELY.
+
+   The Egypt Eye site runs on Tailwind v4 with its own @theme in
+   app/globals.css. This brand does not import that file and does not import
+   Tailwind, for three reasons:
+
+     1. Independence. This is a different business on a different domain. If
+        it inherited Egypt Eye's tokens, a change to the travel brand's gold
+        would silently restyle a fashion brand.
+     2. Payload. A second Tailwind entry point would ship a second utility
+        bundle and a second source scan. This stylesheet is a few kilobytes
+        and carries no unused rules, which is the right trade for a site whose
+        whole job is loading large photographs quickly.
+     3. It has to look bespoke. Utility classes are a fine way to build a
+        product UI and a poor way to arrive at an editorial one.
+
+   ORGANISATION
+     1. Tokens
+     2. Reset and base
+     3. Typography
+     4. Layout primitives
+     5. Buttons and links
+     6. The motion system
+     7. Components
+     8. Reduced motion — one blanket off-switch, last so it wins
+   ========================================================================== */
+
+/* ==========================================================================
+   1. TOKENS
+   ========================================================================== */
+
+:root {
+  /* ---- Colour ----------------------------------------------------------
+     Near-monochrome on purpose. There are twelve saturated dresses in this
+     wardrobe and they are the product, so the chrome carries almost no
+     colour and the photographs carry all of it. One restrained antique gold
+     for emphasis; no second accent.
+
+     Contrast, measured against the backgrounds each is actually used on:
+       --fd-ink      on --fd-ivory   12.1:1
+       --fd-ink-soft on --fd-ivory    7.1:1
+       --fd-ivory    on --fd-ink     12.1:1
+       --fd-ivory-dim on --fd-ink     9.1:1
+       --fd-gold-ink on --fd-ivory    6.9:1
+       --fd-gold-ink on --fd-sand     5.7:1
+       --fd-gold-ink on --fd-sand-deep 4.5:1
+       --fd-gold     on --fd-ink      5.8:1
+     Every pairing clears WCAG 2.2 AA (4.5:1) at body size, measured against
+     each background it is actually used on rather than just one.         */
+
+  /* THE DARK IS A WARM BROWN, NOT A NEAR-BLACK.
+     Taken from the brand's own social covers, which sit on a warm brown and
+     an olive with cream type over flowing silk. The site's dark was #14110f
+     — effectively black — and read colder and harder than anything else the
+     brand puts out.
+
+     #3a2e1c is the covers' brown, darkened. The sampled value (#5c4526) is
+     too light to carry the gold accent: it measured 3.96:1, under AA. At
+     #3a2e1c every pairing clears it — ivory 12.07:1, ivory-dim 9.10:1,
+     gold 5.83:1, rose 7.67:1 — while keeping the hue the covers use. */
+  /* =====================================================================
+     SHAPE, DEPTH AND GLASS
+     =====================================================================
+     The brief: rounded geometry, floating panels, translucency, background
+     blur, layered depth, soft shadows. Taken from the references as a
+     LANGUAGE, not a skin — the colours below are the brand's own.
+
+     Applied with judgment rather than everywhere. Blur is expensive and it
+     flattens a photograph behind it, so backdrop-filter is used on exactly
+     four things: the floating header, the phone's sticky bar, the caption
+     plate in the pinned scene, and the booking panel. Everything else gets
+     its depth from radius, a hairline and a soft shadow, which cost nothing.
+
+     Every shadow is tinted with the brand's brown rather than black. Black
+     shadow on a warm cream page reads grey and cheap; this keeps the whole
+     surface in one colour family. */
+  --fd-r-xs: 0.625rem;
+  --fd-r-sm: 0.875rem;
+  --fd-r-md: 1.25rem;
+  --fd-r-lg: 1.75rem;
+  --fd-r-xl: 2.25rem;
+  --fd-r-pill: 999px;
+
+  /* Two layers each: a tight contact shadow so the edge reads, and a wide
+     soft one for the float. One big blur alone looks like a smudge. */
+  --fd-shadow-sm: 0 1px 2px rgba(20, 20, 20, 0.05), 0 2px 8px rgba(20, 20, 20, 0.05);
+  --fd-shadow-md: 0 2px 4px rgba(20, 20, 20, 0.05), 0 12px 32px rgba(20, 20, 20, 0.09);
+  --fd-shadow-lg: 0 4px 10px rgba(20, 20, 20, 0.06), 0 28px 64px rgba(20, 20, 20, 0.13);
+  --fd-shadow-float: 0 2px 6px rgba(20, 20, 20, 0.06), 0 18px 48px rgba(20, 20, 20, 0.14);
+
+  /* 0.72 is deliberate. Below about 0.7 the ink on these panels stops
+     clearing AA over a busy photograph, and the blur cannot be relied on to
+     save it — Firefox shipped backdrop-filter late and it can be disabled.
+     At 0.72 the panel is legible with the blur switched off entirely. */
+  /* Raised from 0.72 / 0.86. Over the hero's dark photograph the header was
+     reading as a grey bar rather than an ivory one: a blurred backdrop at
+     72% lets enough of a near-black frame through to shift the whole
+     capsule off-white. Ivory is the brand; grey is an accident. */
+  --fd-glass: rgba(250, 247, 242, 0.88);
+  --fd-glass-strong: rgba(250, 247, 242, 0.95);
+  --fd-glass-dark: rgba(20, 20, 20, 0.58);
+  --fd-glass-edge: rgba(255, 255, 255, 0.5);
+  --fd-hairline: rgba(20, 20, 20, 0.1);
+  --fd-blur: 18px;
+
+  /* =====================================================================
+     RED, WHITE AND BLACK
+     =====================================================================
+     The owner asked for this palette directly, against editorial references
+     that all run the same way: a vivid red used at full-bleed section scale,
+     near-black type on warm white, and the red doing the shouting.
+
+     The previous palette was four light swatches with an antique gold. All
+     four were SURFACES with no colour type could be set in, so the gold had
+     to carry every accent and was repeatedly caught failing AA on one
+     background or another. Red does not have that problem: #c8102e clears
+     4.5:1 as text on every light surface here AND carries white type on top
+     of itself, so one colour does both jobs.
+
+     MEASURED, against every background each colour is actually used on.
+     Nothing in this block is estimated:
+
+       ink        on white    17.2    on paper   17.2    on tint   15.4
+       ink-soft   on white     7.5    on paper    7.0    on tint    6.0
+       red        on white     5.9    on paper    5.5    on tint    4.9
+       red        on tint-deep 4.6
+       white      on red       5.9    paper on red       5.5
+       paper      on black    17.2    ivory-dim on black 13.9
+       red-light  on black     4.7
+
+     Every pairing clears WCAG 2.2 AA at body size.
+
+     TWO THINGS THAT ARE NOT SAFE, and are therefore not done anywhere:
+       - red type on black measures 3.1. That is AA Large only, so the red on
+         a dark section is --fd-gold (#e04a5f, 4.7) and never --fd-gold-ink.
+       - black type on red measures 3.1, same reason. Type on a red fill is
+         white or paper.
+
+     tint-deep is #f0dee0 and not the #ebd3d5 it started as, because red on
+     that measured 4.15 and the whole point of this palette is that the red
+     is safe everywhere. Solved up in lightness until it cleared. */
+  --fd-ink: #141414;
+  --fd-ink-2: #2e2e2e;
+  --fd-ink-3: #3f3f3f;
+  /* Secondary text on light backgrounds. */
+  --fd-ink-soft: #555555;
+
+  /* Warm white rather than #fff. The references are all cream-white; pure
+     white next to this red reads clinical. */
+  --fd-ivory: #faf7f2;
+  /* Muted type on the black sections. */
+  --fd-ivory-dim: #e6dede;
+
+  /* The two pale red surfaces, for banding sections without going full red.
+     Surfaces only: no type is ever set in these. */
+  --fd-sand: #f6e7e9;
+  --fd-sand-deep: #f0dee0;
+  --fd-butter: #ffffff;
+  --fd-tan: #f0dee0;
+
+  /* THE RED, which is one colour doing two jobs.
+     --fd-gold-ink is the red as TYPE and as a fill: 5.9 on white, and white
+     on it is also 5.9. The token keeps its old name because eight rules
+     reference it and renaming them is churn with no reader benefit.
+     --fd-gold is the lighter red, and exists for exactly one reason: the red
+     above is 3.1 on black, so a dark section needs its own. */
+  --fd-gold: #e04a5f;
+  --fd-gold-ink: #c8102e;
+
+  /* The logo's own two colours, sampled from the artwork the owner supplied.
+     Used ONLY by the wordmark. */
+  --fd-brand-ink: #141414;
+  --fd-brand-rose: #c8102e;
+  --fd-brand-rose-soft: #e04a5f;
+  --fd-gold-line: rgba(200, 16, 46, 0.3);
+
+  /* ---- Type ------------------------------------------------------------
+     Bodoni Moda is a didone: high stroke contrast, flat serifs. It is the
+     fashion-magazine letterform and it is unusable below about 18px, which
+     is why it is display-only here and every small label is in Jost.      */
+  --fd-display: var(--font-fd-display), "Didot", "Times New Roman", serif;
+  --fd-sans: var(--font-fd-sans), ui-sans-serif, system-ui, sans-serif;
+  --fd-script: var(--font-fd-script), "Snell Roundhand", cursive;
+
+  /* Fluid scale. clamp() rather than breakpoints so a 380px phone and a
+     1600px desktop both get a deliberate size instead of the nearest one. */
+  --fd-step--1: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --fd-step-0: clamp(1rem, 0.96rem + 0.18vw, 1.0625rem);
+  --fd-step-1: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  --fd-step-2: clamp(1.25rem, 1.12rem + 0.6vw, 1.625rem);
+  --fd-step-3: clamp(1.5rem, 1.26rem + 1.1vw, 2.25rem);
+  --fd-step-4: clamp(1.875rem, 1.42rem + 2vw, 3.25rem);
+  --fd-step-5: clamp(2.25rem, 1.4rem + 3.8vw, 4.75rem);
+  --fd-step-6: clamp(2.75rem, 1.3rem + 6.4vw, 6.5rem);
+
+  /* ---- Space ----------------------------------------------------------- */
+  --fd-gutter: clamp(1rem, 0.5rem + 2.2vw, 2.5rem);
+  --fd-section: clamp(4rem, 2rem + 9vw, 9rem);
+  --fd-measure: 36rem;
+
+  /* ---- Motion ----------------------------------------------------------
+     Three durations and two easings for the whole site. A motion language is
+     a short list used consistently, not a long list used once each.
+
+     --fd-ease is an expo-out: it leaves fast and arrives slowly, which is
+     what makes fabric and large images feel weighted rather than snappy.  */
+  --fd-ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --fd-ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --fd-fast: 220ms;
+  --fd-mid: 520ms;
+  --fd-slow: 980ms;
+}
+
+/* ==========================================================================
+   2. RESET AND BASE
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  /* Anchor links and the in-page nav land below the fixed header rather than
+     underneath it. */
+  scroll-padding-top: 6rem;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--fd-ivory);
+  color: var(--fd-ink);
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step-0);
+  font-weight: 300;
+  line-height: 1.7;
+  letter-spacing: 0.01em;
+  /* Nothing on this site should ever scroll sideways. Enforced here as a
+     backstop and tested at 320px — see the mobile pass in the README. */
+  overflow-x: hidden;
+}
+
+img,
+picture,
+video,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Every image slot declares its own ratio, so no image can push the layout
+   around while it loads. This is the CLS budget, spent at the source. */
+figure {
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* ---- Focus -------------------------------------------------------------
+   One visible ring everywhere, on a dark and a light background alike. The
+   double shadow means it reads against ivory, against ink and on top of a
+   photograph, which a single-colour outline does not.                    */
+:focus-visible {
+  outline: 2px solid var(--fd-gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.fd-skip {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  translate: -50% -120%;
+  z-index: 200;
+  padding: 0.75rem 1.25rem;
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: translate var(--fd-fast) var(--fd-ease);
+}
+
+.fd-skip:focus {
+  translate: -50% 0;
+}
+
+.fd-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ==========================================================================
+   3. TYPOGRAPHY
+   ========================================================================== */
+
+.fd-display {
+  font-family: var(--fd-display);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+  /* A didone at display size needs its tracking pulled in; at 9rem the
+     default spacing reads as gaps between letters rather than a word. */
+  text-wrap: balance;
+  margin: 0;
+}
+
+.fd-h1 {
+  font-size: var(--fd-step-6);
+}
+.fd-h2 {
+  font-size: var(--fd-step-4);
+}
+.fd-h3 {
+  font-size: var(--fd-step-3);
+}
+.fd-h4 {
+  font-size: var(--fd-step-2);
+}
+
+.fd-italic {
+  font-style: italic;
+}
+
+/* The handwritten accent. Used for at most one phrase per page, never for
+   anything a visitor has to read to use the site, and never below 2rem —
+   Italianno is a formal script and is illegible small. */
+.fd-script {
+  font-family: var(--fd-script);
+  font-weight: 400;
+  font-size: var(--fd-step-4);
+  line-height: 1;
+  color: var(--fd-gold-ink);
+  letter-spacing: 0;
+}
+
+/* Breadcrumb links sit inside an .fd-eyebrow nav and were 50x19 — below even
+   WCAG 2.2's 24x24 minimum (2.5.8). Padding rather than font size, so the
+   eyebrow keeps its scale. */
+.fd-eyebrow a {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding-block: 0.85rem;
+}
+
+.fd-eyebrow {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--fd-gold-ink);
+  margin: 0 0 1rem;
+}
+
+.fd-on-dark .fd-eyebrow {
+  color: var(--fd-gold);
+}
+
+.fd-lead {
+  /* Between step 0 and step 1 rather than at step 1: a lede that is only
+     just larger than body text still reads as a lede, and at step 1 it was
+     filling a third of a phone screen before the page had said anything. */
+  font-size: clamp(1rem, 0.95rem + 0.25vw, 1.1875rem);
+  line-height: 1.6;
+  max-width: var(--fd-measure);
+  margin: 0 0 1.5rem;
+}
+
+.fd-prose {
+  max-width: var(--fd-measure);
+}
+
+.fd-prose p {
+  margin: 0 0 1.1em;
+}
+
+.fd-prose p:last-child {
+  margin-bottom: 0;
+}
+
+.fd-muted {
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark {
+  color: var(--fd-ivory);
+}
+
+.fd-on-dark .fd-muted {
+  color: var(--fd-ivory-dim);
+}
+
+/* A short rule used as a section mark. Decorative, so aria-hidden at the
+   markup level; here it is only geometry. */
+.fd-rule {
+  width: 3.5rem;
+  height: 1px;
+  background: var(--fd-gold);
+  border: 0;
+  margin: 0 0 1.75rem;
+}
+
+.fd-rule-center {
+  margin-inline: auto;
+}
+
+/* ==========================================================================
+   4. LAYOUT PRIMITIVES
+   ========================================================================== */
+
+.fd-shell {
+  width: 100%;
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-inline: var(--fd-gutter);
+}
+
+.fd-shell-narrow {
+  max-width: 58rem;
+}
+
+.fd-shell-wide {
+  max-width: 96rem;
+}
+
+.fd-section {
+  padding-block: var(--fd-section);
+}
+
+.fd-section-tight {
+  padding-block: calc(var(--fd-section) * 0.6);
+}
+
+.fd-dark {
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+}
+
+.fd-sand {
+  background: var(--fd-sand);
+}
+
+.fd-ivory {
+  background: var(--fd-ivory);
+}
+
+.fd-center {
+  text-align: center;
+}
+
+/* The asymmetric editorial split — the layout that does most of the work on
+   this site. Deliberately NOT 50/50: an off-centre column is what makes a
+   page read as composed rather than as two boxes. */
+.fd-split {
+  display: grid;
+  gap: clamp(2rem, 1rem + 4vw, 5rem);
+  align-items: center;
+}
+
+@media (min-width: 60rem) {
+  .fd-split {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+  .fd-split-reverse {
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+  /* Keeps the DOM in reading order while swapping the visual order, so a
+     screen reader and the keyboard still get text-then-image. */
+  .fd-split-reverse > :first-child {
+    order: 2;
+  }
+}
+
+.fd-stack > * + * {
+  margin-top: 1.25rem;
+}
+
+/* An auto-fitting grid with no card chrome. Used for the wardrobe and the
+   portfolio. `--fd-min` is set per instance. */
+.fd-grid {
+  display: grid;
+  gap: clamp(0.75rem, 0.4rem + 1.4vw, 1.75rem);
+  /* `min(..., 100%)` IS LOAD-BEARING, not a flourish.
+     A bare `minmax(20rem, 1fr)` is a PROMISE THAT EVERY COLUMN IS AT LEAST
+     20rem, which the grid keeps even when its container is narrower — so it
+     overflows rather than shrinking. /packages sets --fd-min: 20rem for the
+     booking rails, and at 320px, inside a 288px shell, each cell rendered
+     320px wide and pushed the page 16px sideways.
+
+     It took the 320px viewport being added to the visual audit to see it,
+     and then a second look to find it: `body` carries `overflow-x: hidden`
+     while `html` does not, so the elements all reported as clipped while
+     the document scrolled anyway. Nothing was visibly broken; the page just
+     slid under your thumb.
+
+     Capping the minimum at 100% of the track means "20rem, or as much as
+     there is, whichever is smaller", which is what was meant everywhere
+     this variable is set. */
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--fd-min, 14rem), 100%), 1fr));
+}
+
+/* The work gallery, section 8 of the home page.
+   NOT .fd-grid. That one is auto-fill, so its column count is whatever the
+   viewport divides into — at 82rem with a 15rem minimum it lands on four, and
+   the gallery holds six frames, so the second row came out half empty with one
+   frame stranded under nothing. A gallery of a photographer's own work is the
+   last place on the site that should look unconsidered.
+   Six divides evenly by 1, 2 and 3, so the count is pinned to those three and
+   every row is full at every width. */
+.fd-gallery {
+  display: grid;
+  gap: clamp(0.75rem, 0.4rem + 1.4vw, 1.75rem);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 40rem) {
+  .fd-gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 60rem) {
+  .fd-gallery {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* `grid` is .fd-gallery's own behaviour, so this rule changes nothing — and it
+   exists anyway, because <Gallery> emits fd-gallery-grid and a class the
+   stylesheet has never heard of is indistinguishable from a typo. The check
+   that reads every class used in the brand's .tsx files found this one. */
+.fd-gallery-grid {
+  grid-auto-flow: row;
+}
+
+/* ---- Cards for the experiences catalogue --------------------------------
+   NOT .fd-gallery. These are navigation cards, and the gallery carries rules
+   about labelled gaps, attribution and derived counts that mean nothing here.
+   Reusing it was the lazy option and the check that forbids hand-built
+   galleries caught it, correctly. */
+.fd-card-grid {
+  display: grid;
+  gap: clamp(0.75rem, 0.4rem + 1.4vw, 1.5rem);
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 40rem) {
+  .fd-card-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 64rem) {
+  .fd-card-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.fd-experience-card {
+  display: block;
+  padding: clamp(1.5rem, 1rem + 1.5vw, 2.25rem);
+  background: var(--fd-ivory);
+  border: 1px solid var(--fd-hairline);
+  border-radius: var(--fd-r-md);
+  box-shadow: var(--fd-shadow-sm);
+  text-decoration: none;
+  color: inherit;
+  transition:
+    box-shadow var(--fd-fast) var(--fd-ease-soft),
+    translate var(--fd-fast) var(--fd-ease-soft);
+}
+
+.fd-experience-card:hover {
+  box-shadow: var(--fd-shadow-md);
+  translate: 0 -2px;
+}
+
+.fd-experience-card .fd-tile-title {
+  display: block;
+  font-size: var(--fd-step-1);
+  margin-bottom: 0.75rem;
+}
+
+.fd-experience-card .fd-tile-meta {
+  display: block;
+  color: var(--fd-ink-soft);
+  font-size: var(--fd-step--1);
+  /* Sentence case and normal tracking: this is a sentence, not a caption
+     strip. Inheriting .fd-tile-meta's uppercase + 0.14em turned every card
+     description into three lines of letterspaced capitals. */
+  text-transform: none;
+  letter-spacing: 0.005em;
+  line-height: 1.65;
+  margin-bottom: 1.25rem;
+}
+
+/* ---- Extras, each naming who supplies it --------------------------------
+   The supplier line is the point of this list, so it is styled as information
+   rather than as a footnote. */
+.fd-extras-list {
+  gap: 1.25rem;
+}
+
+ol.fd-extras-list h4,
+.fd-extras-list h4 {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step-0);
+  font-weight: 500;
+  margin: 0 0 0.25rem;
+}
+
+.fd-supplier {
+  margin: 0;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.04em;
+  color: var(--fd-ink-soft);
+}
+
+/* In-house is the only one that means "we can simply do this", so it is the
+   only one that gets the brand colour. The rest read as qualifications,
+   which is what they are. */
+.fd-supplier-in-house {
+  color: var(--fd-gold-ink);
+}
+
+/* ---- The three facts: where, how long, how far ahead -------------------- */
+.fd-facts {
+  display: grid;
+  gap: 1.75rem;
+  margin: 0;
+}
+
+@media (min-width: 48rem) {
+  .fd-facts {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.5rem;
+  }
+}
+
+.fd-facts dt {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fd-gold-ink);
+  margin-bottom: 0.5rem;
+}
+
+.fd-facts dd {
+  margin: 0;
+  color: var(--fd-ink-soft);
+  font-size: var(--fd-step--1);
+  line-height: 1.65;
+}
+
+/* Dependencies are not achievements, so they do not get the tick mark that
+   .fd-ticks draws. */
+.fd-ticks-plain > li::before {
+  content: none;
+}
+
+.fd-ticks-plain > li {
+  padding-left: 0;
+}
+
+/* ---- The three gallery layouts ----------------------------------------
+   Three, and not an open-ended set, because every layout is a shape the
+   captions have to line up in and a `sizes` attribute has to be right for.
+   Three tells every story on this site; a fourth is a decision, not a prop. */
+
+/* FEATURE: one large frame, the rest supporting it. The large one is first in
+   the DOM because it is first in importance — reading order and visual order
+   agree, which they did not in the lockup that read "Egypt FLYING DRESSES". */
+@media (min-width: 60rem) {
+  .fd-gallery-feature {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .fd-gallery-feature > figure:first-child {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+}
+
+/* STRIP: a horizontal run for a sequence, scrolled rather than wrapped, so a
+   series stays a series instead of breaking into ragged rows.
+   Scroll snap, and `scroll-padding` so a snapped frame is not jammed against
+   the edge. No radius on this element: it scrolls, and a rounded clipping box
+   eats the corners of whatever is inside it, which is what cost the price
+   table its first column. */
+.fd-gallery-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(16rem, 22rem);
+  grid-template-columns: none;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--fd-gutter);
+  padding-bottom: 0.5rem;
+  scrollbar-width: thin;
+}
+
+.fd-gallery-strip > figure {
+  scroll-snap-align: start;
+}
+
+@media (min-width: 40rem) {
+  .fd-gallery-strip {
+    grid-template-columns: none;
+  }
+}
+
+@media (min-width: 60rem) {
+  .fd-gallery-strip {
+    grid-template-columns: none;
+  }
+}
+
+/* ---- A full-bleed red section ------------------------------------------
+   The references all do the same thing: one section is the brand colour at
+   full width and everything on it is white. That is what carries the palette,
+   and it is why the red had to clear AA as a BACKGROUND as well as as type.
+
+   Type on this is white or paper, never black: black on this red measures
+   3.1, which is AA Large only. The rule below sets the colour rather than
+   leaving it to each page, so nobody has to remember. */
+.fd-red {
+  background: var(--fd-gold-ink);
+  color: var(--fd-ivory);
+}
+
+.fd-red .fd-eyebrow,
+.fd-red .fd-muted,
+.fd-red .fd-caption {
+  color: var(--fd-ivory-dim);
+}
+
+/* ---- The signature script, used as an accent inside a heading -----------
+   The thing the references actually do: a line of high-contrast serif with
+   one or two words crossing it in a handwritten red. It is decoration on top
+   of a real heading, never a heading on its own, so it stays inside the h2
+   and the text remains selectable and readable by a screen reader in order.
+
+   `transform` rather than a negative margin, so it leans across the line
+   without changing the height of the block it sits in. */
+.fd-script-accent {
+  font-family: var(--fd-script);
+  color: var(--fd-gold-ink);
+  font-size: 1.35em;
+  line-height: 0.8;
+  display: inline-block;
+  transform: rotate(-3deg);
+  padding-inline: 0.08em;
+}
+
+/* On a dark or red section the accent cannot be the main red: it measures
+   3.1 on black. These two give it a colour that clears AA there. */
+.fd-on-dark .fd-script-accent {
+  color: var(--fd-gold);
+}
+
+.fd-red .fd-script-accent {
+  color: var(--fd-ivory);
+}
+
+/* ---- The three rooftop beats -------------------------------------------
+   What replaced the pinned scroll scene. A numbered sequence, all of it on
+   screen at once, no timeline and nothing to out-scroll. */
+.fd-beats {
+  counter-reset: fd-beat;
+  gap: 1.5rem;
+}
+
+.fd-beats > li {
+  counter-increment: fd-beat;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.fd-beats > li::before {
+  content: counter(fd-beat, decimal-leading-zero);
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.14em;
+  color: var(--fd-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* `ol.fd-beats` for the same reason as ol.fd-timeline above: `.fd-list h3`
+   is the same specificity and sits later in this file, so a plain class
+   selector loses on source order and these rendered in the sans. Twice now
+   the same trap, so it is worth stating plainly: anything overriding
+   .fd-list here needs the element qualifier. */
+ol.fd-beats h3 {
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  font-weight: 400;
+  letter-spacing: 0;
+  margin: 0;
+  display: block;
+}
+
+ol.fd-beats h3::before {
+  display: none;
+}
+
+/* ==========================================================================
+   5. BUTTONS AND LINKS
+   ========================================================================== */
+
+.fd-btn {
+  --fd-btn-bg: var(--fd-ink);
+  --fd-btn-fg: var(--fd-ivory);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  /* 48px minimum tap target at every size, per WCAG 2.2 target size. */
+  min-height: 3rem;
+  padding: 0.85rem 1.75rem;
+  background: var(--fd-btn-bg);
+  color: var(--fd-btn-fg);
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 1px solid var(--fd-btn-bg);
+  transition:
+    background-color var(--fd-fast) var(--fd-ease-soft),
+    color var(--fd-fast) var(--fd-ease-soft),
+    border-color var(--fd-fast) var(--fd-ease-soft),
+    translate var(--fd-fast) var(--fd-ease-soft);
+}
+
+.fd-btn:hover {
+  background: transparent;
+  color: var(--fd-btn-bg);
+}
+
+.fd-btn:active {
+  translate: 0 1px;
+}
+
+.fd-btn-gold {
+  --fd-btn-bg: var(--fd-gold-ink);
+  --fd-btn-fg: var(--fd-ivory);
+}
+
+.fd-btn-ghost {
+  background: transparent;
+  color: var(--fd-ink);
+  border-color: rgba(20, 20, 20, 0.28);
+}
+
+.fd-btn-ghost:hover {
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+  border-color: var(--fd-ink);
+}
+
+/* On a photograph or a dark panel. */
+.fd-on-dark .fd-btn,
+.fd-btn-light {
+  --fd-btn-bg: var(--fd-ivory);
+  --fd-btn-fg: var(--fd-ink);
+}
+
+.fd-on-dark .fd-btn-outline,
+.fd-btn-outline-light {
+  background: transparent;
+  color: var(--fd-ivory);
+  border-color: rgba(250, 247, 242, 0.45);
+}
+
+.fd-on-dark .fd-btn-outline:hover,
+.fd-btn-outline-light:hover {
+  background: var(--fd-ivory);
+  color: var(--fd-ink);
+  border-color: var(--fd-ivory);
+}
+
+.fd-btn-block {
+  width: 100%;
+}
+
+.fd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+/* An underline that draws in from the left on hover — and that is PRESENT,
+   not hidden, so the link is identifiable without hovering. */
+/* An inline link that is still a tap target.
+   These were 22px tall as bare inline anchors — the phone number and the email
+   address on the About and Enquire pages, which are the two links on those
+   pages someone is most likely to tap. Below WCAG 2.2's 24x24 minimum
+   (2.5.8), and below it on exactly the wrong elements. inline-block plus
+   vertical padding gets them to 44px without changing the type. */
+.fd-link {
+  display: inline-block;
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--fd-gold-line);
+  padding-block: 0.6rem 0.3rem;
+  min-height: 2.75rem;
+  transition: border-color var(--fd-fast) var(--fd-ease-soft);
+}
+
+.fd-link:hover {
+  border-color: var(--fd-gold);
+}
+
+.fd-arrow-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* THE DRAWN DASH AFTER "SEE THE EXPERIENCE" IS GONE, at the owner's
+   instruction: no dashes anywhere on the site. The link still reads as a
+   link, by its letterspaced uppercase setting and its underline on hover,
+   so nothing is lost but the rule. */
+.fd-arrow-link:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+}
+
+/* ==========================================================================
+   6. THE MOTION SYSTEM
+
+   Built on CSS scroll-driven animations, with no JavaScript and no animation
+   library. Three properties do all of it: opacity, transform and clip-path —
+   the three the compositor can animate without laying the page out again.
+
+   THE PROGRESSIVE-ENHANCEMENT RULE, which is the important part:
+   every animated element is in its FINAL, VISIBLE state by default. The
+   animations live inside @supports (animation-timeline: view()), so a browser
+   without scroll-driven animations shows the finished page rather than an
+   empty one. There is no way for a visitor to end up looking at content stuck
+   at opacity 0 — which is the standard failure of JS-gated reveals, and one
+   this repository has already had to work around once in components/Reveal.tsx.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    /* ---- The workhorse: rise and fade as the element enters ------------
+       EVERY RANGE HERE MUST END IN THE `cover` PHASE, AND MUST END EARLY.
+
+       This is the one non-obvious thing about the whole motion system, and it
+       was found by measuring the rendered page rather than by reading the CSS.
+
+       The ranges were `entry 2% cover 24%`. That is a perfectly sensible-
+       looking range and it meant the FIRST SECTION OF EVERY PAGE RENDERED AT
+       58% OPACITY and stayed there until the visitor scrolled — because an
+       element sitting just below the header at scroll 0 has finished its
+       `entry` phase but is only ~58% through `cover`, so the animation was
+       frozen mid-reveal. Washed-out body copy, on the most-read part of the
+       page, which also dropped it below AA contrast. axe reported it as ten
+       contrast failures and it was real.
+
+       `entry 0% cover 12%` instead. Measured on a tall article, a short one,
+       and an element already in view at load:
+         - already in view at load  -> cover progress ~0.58, past 12%, so the
+           animation is COMPLETE and opacity is exactly 1
+         - below the fold           -> cover progress 0, opacity 0, reveals on
+           scroll as intended
+         - taller than the viewport -> still resolves to 1, which `entry 100%`
+           does not, because a tall element never finishes entering
+       Verified: `entry 2% cover 24%` -> 0.58, `cover 0% cover 20%` -> 0.71,
+       `entry 0% entry 100%` -> 0.39, `entry 0% cover 12%` -> 1.00.
+
+       scripts/check-flying-dresses.mts asserts the ranges still end in
+       `cover`, because this is a silent, visual-only regression. */
+    .fd-reveal {
+      animation: fd-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% cover 12%;
+    }
+
+    /* Staggered children. Four steps is enough; past that a visitor is
+       waiting for a list to finish arriving. The stagger is in the START of
+       each range, never the end — pushing the end later is what reintroduces
+       the washed-out bug above. */
+    .fd-reveal-group > * {
+      animation: fd-rise linear both;
+      animation-timeline: view();
+    }
+    .fd-reveal-group > *:nth-child(1) { animation-range: entry 0% cover 10%; }
+    .fd-reveal-group > *:nth-child(2) { animation-range: entry 3% cover 12%; }
+    .fd-reveal-group > *:nth-child(3) { animation-range: entry 6% cover 14%; }
+    .fd-reveal-group > *:nth-child(n + 4) { animation-range: entry 9% cover 16%; }
+
+    /* ---- The fabric reveal -------------------------------------------
+       A curved mask that opens upward and outward, like a dress settling.
+       An ellipse rather than a straight wipe because the whole brand is
+       about cloth, and a hard horizontal edge reads as a blind.          */
+    .fd-fabric {
+      animation: fd-fabric linear both;
+      animation-timeline: view();
+      /* Ends in `cover`, early, for the reason above. A mask frozen at 40%
+         would crop the photograph permanently rather than just dim it. */
+      animation-range: entry 0% cover 14%;
+    }
+
+    /* ---- Image scale -------------------------------------------------
+       The frame stays still, the photograph inside it grows very slightly
+       across the whole scroll. 1.06 is the ceiling: enough to feel alive,
+       not enough to read as a zoom.                                       */
+    .fd-drift img {
+      animation: fd-drift linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+
+    /* ---- Depth ---------------------------------------------------------
+       Foreground and background on different ranges. Small offsets only:
+       heavy parallax is the effect most likely to make someone queasy, and
+       WCAG's animation guidance is explicit about it.                     */
+    .fd-depth-back {
+      animation: fd-depth-back linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+    .fd-depth-front {
+      animation: fd-depth-front linear both;
+      animation-timeline: view();
+      animation-range: cover;
+    }
+
+    /* ---- Letter-by-word entrance for one headline only ---------------- */
+    .fd-words > span {
+      display: inline-block;
+      animation: fd-word linear both;
+      animation-timeline: view();
+    }
+    .fd-words > span:nth-child(1) { animation-range: entry 0% cover 8%; }
+    .fd-words > span:nth-child(2) { animation-range: entry 4% cover 10%; }
+    .fd-words > span:nth-child(3) { animation-range: entry 8% cover 12%; }
+    .fd-words > span:nth-child(n + 4) { animation-range: entry 12% cover 14%; }
+
+    /* ---- The hero's entrance -----------------------------------------
+       The one time-based animation on the site, because there is no scroll
+       to drive it yet. It is short, it runs once, and the content is in its
+       final state before it starts — so a slow device that never paints the
+       first frame loses nothing.                                          */
+    .fd-enter {
+      animation: fd-enter var(--fd-slow) var(--fd-ease) both;
+    }
+    .fd-enter-2 { animation-delay: 120ms; }
+    .fd-enter-3 { animation-delay: 240ms; }
+    .fd-enter-4 { animation-delay: 360ms; }
+  }
+
+  /* The scroll cue at the bottom of the hero. A 4px travel, infinite —
+     small enough not to be the thing you look at. */
+  .fd-cue-line::after {
+    animation: fd-cue 2.4s var(--fd-ease-soft) infinite;
+  }
+}
+
+@keyframes fd-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 2.25rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fd-word {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 0.5em, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fd-fabric {
+  from {
+    clip-path: ellipse(130% 0% at 50% 100%);
+  }
+  to {
+    clip-path: ellipse(190% 150% at 50% 55%);
+  }
+}
+
+@keyframes fd-drift {
+  from {
+    scale: 1;
+  }
+  to {
+    scale: 1.06;
+  }
+}
+
+@keyframes fd-depth-back {
+  from {
+    transform: translate3d(0, -1.5rem, 0);
+  }
+  to {
+    transform: translate3d(0, 1.5rem, 0);
+  }
+}
+
+@keyframes fd-depth-front {
+  from {
+    transform: translate3d(0, 2.5rem, 0);
+  }
+  to {
+    transform: translate3d(0, -2.5rem, 0);
+  }
+}
+
+@keyframes fd-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fd-cue {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 1;
+  }
+}
+
+/* ==========================================================================
+   7. COMPONENTS
+   ========================================================================== */
+
+/* ---- Header ----------------------------------------------------------- */
+
+.fd-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--fd-ivory) 88%, transparent);
+  /* A 1px hairline rather than a shadow. A luxury brand's header does not
+     float above the page on a drop shadow. */
+  border-bottom: 1px solid rgba(20, 20, 20, 0.08);
+}
+
+@supports (backdrop-filter: blur(8px)) {
+  .fd-header {
+    backdrop-filter: blur(10px) saturate(1.1);
+  }
+}
+
+.fd-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 4.5rem;
+}
+
+.fd-wordmark {
+  display: inline-flex;
+  align-items: center;
+  /* 146x31 before. The logo is the home link and is tapped constantly. */
+  min-height: 2.75rem;
+  gap: 0.1rem;
+  color: inherit;
+  text-decoration: none;
+  line-height: 1;
+}
+
+/* The supplied logo, sized by height so either file's aspect ratio works. */
+/* THE SUPPLIED LOGO IS A TWO-LINE LOCKUP, not a single-line wordmark.
+   "FLYING DRESS" sits above a script "Egypt", so only about a third of the
+   image's height is the line a visitor actually reads. Sized at the height
+   the typeset fallback used, the words came out smaller than the body copy
+   beneath them. These heights are set so the capitals read at roughly the
+   size the typeset wordmark did, which means the image is taller.
+   Aspect is 956x341 (2.8:1), so height h gives width 2.8h: 2.75rem is 123px
+   wide, 3.5rem is 157px. Both clear the 320px header with the menu button. */
+.fd-wordmark-img {
+  width: auto;
+  height: 2.5rem;
+  object-fit: contain;
+}
+
+/* Measured, not guessed. At 3.5rem the logo was 56px tall inside a 66px
+   capsule: 5px of air above and below, while the nav text beside it had 27px.
+   It read as jammed into the bar rather than set in it. At 3rem it is 48px
+   with 9px either side, and the capitals still clear the nav's x-height. The
+   anchor around it keeps min-height: 2.75rem, so the tap target stays 44px
+   even though the picture is smaller than that. */
+@media (min-width: 64rem) {
+  .fd-wordmark-img {
+    height: 3rem;
+  }
+}
+
+.fd-footer-logo {
+  width: auto;
+  height: 4.25rem;
+  object-fit: contain;
+  margin-bottom: 1rem;
+}
+
+/* ---- THE WORDMARK -----------------------------------------------------
+   Letterspaced serif capitals with a script "Egypt" overlapping beneath,
+   following the supplied artwork. Built from two stacked layers in a grid
+   cell so the script can sit behind the capitals without either of them
+   being absolutely positioned out of the flow — which keeps the mark's box
+   real, so the header can size around it and the link stays a 44px target. */
+.fd-mark {
+  position: relative;
+  display: inline-grid;
+  justify-items: center;
+  line-height: 1;
+  isolation: isolate;
+}
+
+.fd-mark-name {
+  grid-area: 1 / 1;
+  z-index: 1;
+  font-family: var(--fd-display);
+  font-weight: 500;
+  font-size: var(--fd-mark-size, 1.15rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fd-brand-ink);
+  /* The trailing letter's tracking would otherwise push the mark off centre
+     over the script beneath it. */
+  text-indent: 0.18em;
+  white-space: nowrap;
+}
+
+/* The script, sitting low and overlapping the capitals, as in the artwork.
+   translate rather than `position: absolute` so it still contributes nothing
+   to layout but moves with the mark at any size. */
+.fd-mark-script {
+  grid-area: 1 / 1;
+  z-index: 0;
+  font-family: var(--fd-script);
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 2.6);
+  line-height: 1;
+  color: var(--fd-brand-rose);
+  translate: 0 38%;
+  pointer-events: none;
+}
+
+/* The footer version, on ink. The rose is kept but lightened, and the
+   capitals become ivory — the supplied light artwork does the same thing. */
+.fd-mark-light .fd-mark-name {
+  color: var(--fd-ivory);
+}
+
+.fd-mark-light .fd-mark-script {
+  color: var(--fd-brand-rose-soft);
+  opacity: 0.75;
+}
+
+@media (min-width: 64rem) {
+  .fd-mark {
+    --fd-mark-size: 1.3rem;
+  }
+}
+
+/* The footer wants it larger, and with room for the script's descender. */
+.fd-footer .fd-mark {
+  --fd-mark-size: 1.5rem;
+  margin-bottom: 1.75rem;
+  justify-items: start;
+}
+
+.fd-wordmark-name {
+  font-family: var(--fd-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+}
+
+.fd-wordmark-sub {
+  font-size: 0.5625rem;
+  font-weight: 500;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: var(--fd-gold-ink);
+}
+
+.fd-nav {
+  display: none;
+}
+
+/* THE DESKTOP NAV ONLY APPEARS WHERE IT FITS — AND --fd-nav-at IS THE ONE
+   PLACE THAT DECIDES WHERE.
+   ------------------------------------------------------------------------
+   This number was 90rem, measured when the brand name was typeset in caps at
+   0.22em tracking. The owner's logo replaced that with an image, which is
+   narrower, and re-measuring with it in place the header content fits from
+   about 1100px: it overflows by 30px at 1024 and by nothing at 1100, 1180,
+   1280, 1366 or 1440. 72rem (1152px) is the switch, chosen with headroom over
+   the 1100 where it starts fitting rather than sat on it.
+
+   THE THREE RULES BELOW MUST ALL USE THE SAME WIDTH, and a check enforces it.
+   They did not, and that was a real bug the owner hit: the nav moved to 90rem
+   and the burger moved with it, but `.fd-drawer`'s hide rule was left behind
+   at 64rem. From 1024px to 1440px the burger was therefore visible with its
+   drawer set to `display: none` — clicking it set aria-expanded="true" and
+   nothing appeared. 1280px, the commonest laptop width there is, sat squarely
+   in that dead zone. A media query is not a local edit: these three are one
+   decision written in three places. */
+@media (min-width: 72rem) {
+  .fd-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, -0.4rem + 1.6vw, 1.5rem);
+  }
+
+  .fd-nav a {
+    letter-spacing: 0.07em;
+    white-space: nowrap;
+  }
+}
+
+.fd-nav a {
+  font-size: var(--fd-step--1);
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fd-ink);
+  text-decoration: none;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.fd-nav a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.15rem;
+  height: 1px;
+  background: var(--fd-gold);
+  scale: 0 1;
+  transform-origin: left;
+  transition: scale var(--fd-mid) var(--fd-ease);
+}
+
+.fd-nav a:hover::after,
+.fd-nav a[aria-current="page"]::after {
+  scale: 1 1;
+}
+
+.fd-header-cta {
+  display: none;
+}
+
+@media (min-width: 48rem) {
+  .fd-header-cta {
+    display: inline-flex;
+  }
+}
+
+/* ---- Mobile menu ------------------------------------------------------ */
+
+.fd-burger {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 3rem;
+  height: 3rem;
+  align-items: center;
+}
+
+/* Same width as the nav above: see --fd-nav-at note. */
+@media (min-width: 72rem) {
+  .fd-burger {
+    display: none;
+  }
+}
+
+.fd-burger span {
+  display: block;
+  width: 1.375rem;
+  height: 1px;
+  background: var(--fd-ink);
+  transition: translate var(--fd-fast) var(--fd-ease), rotate var(--fd-fast) var(--fd-ease), opacity var(--fd-fast);
+}
+
+.fd-burger[aria-expanded="true"] span:nth-child(1) {
+  translate: 0 6px;
+  rotate: 45deg;
+}
+.fd-burger[aria-expanded="true"] span:nth-child(2) {
+  opacity: 0;
+}
+.fd-burger[aria-expanded="true"] span:nth-child(3) {
+  translate: 0 -6px;
+  rotate: -45deg;
+}
+
+.fd-drawer {
+  /* Anchored to the header, which is `position: sticky` and therefore the
+     containing block for this. No viewport maths to fall out of step. */
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  inset-inline: 0;
+  z-index: 99;
+  background: var(--fd-ivory);
+  border: 1px solid var(--fd-glass-edge);
+  box-shadow: var(--fd-shadow-float);
+  padding: 0.5rem 1.25rem 1.25rem;
+  max-height: calc(100svh - 8rem);
+  overflow-y: auto;
+  /* No slide. The owner's word for the old one was "slider", and a menu
+     that travels is a menu you wait for. A fade is enough to stop it
+     appearing out of nowhere, and reduced motion removes even that. */
+  animation: fd-fade var(--fd-fast) var(--fd-ease) both;
+}
+
+@keyframes fd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* THIS IS THE ONE THAT WAS WRONG. Same width as the burger that opens it:
+   hiding the drawer anywhere the burger is still on screen makes the button
+   dead. See the note above the nav. */
+@media (min-width: 72rem) {
+  .fd-drawer {
+    display: none;
+  }
+}
+
+.fd-drawer ul {
+  list-style: none;
+  margin: 0 0 1.25rem;
+  padding: 0;
+}
+
+.fd-drawer li + li {
+  border-top: 1px solid rgba(20, 20, 20, 0.08);
+}
+
+.fd-drawer ul a {
+  display: block;
+  padding: 0.85rem 0;
+  font-family: var(--fd-display);
+  /* Was step 2. In a panel the width of the header a 30px serif line is a
+     headline, not a menu item. */
+  font-size: var(--fd-step-0);
+  letter-spacing: 0.01em;
+  color: var(--fd-ink);
+  text-decoration: none;
+}
+
+/* ---- Hero ------------------------------------------------------------- */
+
+.fd-hero {
+  position: relative;
+  /* svh, not vh. On iOS the dynamic toolbar makes 100vh taller than the
+     visible viewport, which pushes the CTA under the chrome on exactly the
+     devices most of this traffic arrives on. */
+  /* Nearly the whole first screen. The film is the product here — it is the
+     only moving proof on the site that a flying dress does what the stills
+     imply — so it gets the room rather than sharing the fold with the
+     section beneath it. Capped in rem so a tall desktop monitor does not
+     stretch a 3:2 frame into something it has to crop away. */
+  min-height: min(100svh, 60rem);
+  display: grid;
+  align-items: end;
+  overflow: hidden;
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+  isolation: isolate;
+}
+
+.fd-hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+}
+
+.fd-hero-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The art-directed crop. On a phone the interesting part of a landscape
+     frame is the upper middle, not the centre. */
+  object-position: 50% 32%;
+}
+
+/* The scrim. Two stops, bottom-weighted, so the headline sits on ink and the
+   top of the photograph stays a photograph. Without this the type is
+   unreadable on a bright sky and no amount of font weight fixes it. */
+/* TWO GRADIENTS, AND THE SECOND ONE IS WHY.
+   =====================================================================
+   The vertical scrim alone was written for a photograph whose bright areas
+   were known. The hero is video now: the frame behind the headline changes
+   every second, and across the loop it goes from pale sky to a sunlit gold
+   dress. A scrim that only darkens from the bottom leaves the headline
+   sitting on whatever happens to be there, and for part of the loop that is
+   near-white silk under ivory type.
+
+   So a second gradient darkens the reading column from the left. It is the
+   side the text is on, it is weighted to fade out well before the middle, and
+   the right-hand side of the frame — where the picture is actually doing its
+   work — stays clear.
+
+   Measured against the brightest frame of the loop with the headline over it:
+   the ivory holds above 4.5:1 across the text column. */
+/* REWEIGHTED SO THE FILM IS THE SUBJECT, NOT THE BACKDROP.
+   =====================================================================
+   The owner's note was that the video looked transparent. It did, and this
+   was why: the old vertical scrim carried a stop at every height — 0.45 at
+   38%, 0.12 at 68% and 0.3 at the very TOP — so even the sky, where no type
+   ever sits, was behind a quarter-strength grey wash. Nothing needed
+   protecting up there. The film was being dimmed along its whole height to
+   solve a problem that only exists in the bottom-left corner.
+
+   So the ink is now concentrated where the words actually are and cleared
+   everywhere else: the vertical gradient reaches zero by 56% instead of
+   carrying a veil to the top, and the horizontal one fades out by 68%
+   instead of 78%. Behind the headline the darkness is essentially unchanged
+   — 0.86 against the old 0.88 at the floor — so this buys brightness in the
+   picture without spending contrast on the type. */
+.fd-hero-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      to right,
+      rgba(20, 20, 20, 0.76) 0%,
+      rgba(20, 20, 20, 0.52) 28%,
+      rgba(20, 20, 20, 0.1) 54%,
+      rgba(20, 20, 20, 0) 70%
+    ),
+    linear-gradient(to top, rgba(20, 20, 20, 0.86) 0%, rgba(20, 20, 20, 0.4) 34%, rgba(20, 20, 20, 0) 66%);
+}
+
+/* On a phone the text column is the whole width, so a left-to-right scrim
+   would leave the right edge of the headline unprotected. There the vertical
+   one does the work and this just lifts the floor. */
+@media (max-width: 48rem) {
+  .fd-hero-scrim {
+    background:
+      linear-gradient(to right, rgba(20, 20, 20, 0.55) 0%, rgba(20, 20, 20, 0.42) 100%),
+      linear-gradient(to top, rgba(20, 20, 20, 0.9) 0%, rgba(20, 20, 20, 0.5) 45%, rgba(20, 20, 20, 0.25) 100%);
+  }
+}
+
+.fd-hero-body {
+  padding-block: clamp(2.5rem, 1rem + 6vw, 6rem);
+  /* THE SCRIM GOT LIGHTER, SO THE TYPE CARRIES ITS OWN SHADOW.
+     =====================================================================
+     Lightening the scrim to let the film through cost the eyebrow its
+     background: it is set in the brand accent (#e04a5f), and measured against
+     a sunlit fold of silk behind it that came out at 1.1:1 — invisible. The
+     headline is ivory and survived; the eyebrow did not.
+
+     Re-darkening the whole frame to fix one line would undo the point of the
+     change, so the type is lifted off the picture instead. Two shadows: a
+     wide, soft one that pools enough ink behind a glyph to separate it from a
+     bright frame, and a tight one that sharpens the edge. This is what a film
+     title does over a moving image, and it costs the picture nothing. */
+  text-shadow:
+    0 1px 28px rgba(20, 20, 20, 0.55),
+    0 1px 3px rgba(20, 20, 20, 0.4);
+}
+
+/* The buttons are solid shapes with their own backgrounds; a shadow on their
+   label would only blur it. */
+.fd-hero-body .fd-btn {
+  text-shadow: none;
+}
+
+.fd-hero h1 {
+  /* NOT --fd-step-6, which is the display maximum. This headline sits over
+     the film, so its job is to be read across it, not to compete with it.
+
+     MEASURED, because the previous version of this rule was not. Its comment
+     claimed a desktop end of "~105px" while its own clamp capped at 7.5rem,
+     which is 120px — the stated intent and the number never matched, and a
+     1920px screen got the 120px the comment did not mention. At that size the
+     headline block ran 353px tall: 39% of the viewport, on the one screen a
+     photography brand has to win.
+
+     What it renders at now, against what it rendered at before:
+
+         390px    40px -> 36px
+         768px    64px -> 46px
+        1280px    95px -> 66px
+        1440px   105px -> 72px
+        1920px   120px -> 84px   (block 353px -> about 150px)
+
+     The cap is 5.25rem and the fluid term reaches it at about 1800px, so the
+     number in this comment is the number the browser uses. */
+  /* Brought down again, on the same reasoning as the measurement above and
+     at the owner's direction: the visuals take priority and the type should
+     be read across the film rather than compete with it. Against the sizes
+     in the comment above:
+
+         390px    36px -> 32px
+         768px    46px -> 41px
+        1280px    66px -> 54px
+        1440px    72px -> 59px
+        1920px    84px -> 68px
+
+     The cap is 4.25rem and the fluid term reaches it at about 1750px. Still
+     a didone at 68px on a large screen, which is a masthead, not a caption. */
+  font-size: clamp(2rem, 0.9rem + 3.1vw, 4.25rem);
+  max-width: 22ch;
+}
+
+@media (max-width: 40rem) {
+  /* The image needs room more than the margins do. */
+  .fd-hero-body {
+    padding-block: 2rem 1.5rem;
+  }
+
+  .fd-hero-support {
+    margin: 1rem 0 1.5rem;
+  }
+
+  .fd-cue {
+    margin-top: 1.5rem;
+  }
+}
+
+
+/* THE HERO EYEBROW IS IVORY, NOT THE BRAND ACCENT, AND THAT IS ARITHMETIC.
+   =====================================================================
+   Everywhere else on the site the eyebrow is set in --fd-gold (#e04a5f, a
+   rose red) against a controlled ivory or ink background, where it is both
+   legible and the brand's signature. Over the film it is neither.
+
+   The accent's relative luminance is about 0.19. For small text to clear the
+   4.5:1 that WCAG asks, the background behind it has to sit near 0.003 —
+   effectively black. No scrim that still lets a film through gets there, and
+   a pale tint of the same hue tops out around 3.3:1. It was failing before
+   this work too; the heavier scrim only made the failure less obvious.
+
+   So on this one surface the eyebrow takes the ivory the rest of the hero
+   type uses. The accent is not lost: it is still the eyebrow colour on every
+   page whose background this site controls. */
+.fd-hero .fd-eyebrow {
+  color: var(--fd-ivory);
+}
+
+.fd-hero-support {
+  /* step-0 rather than step-1: one notch down, so the standfirst supports the
+     headline instead of forming a second block of equal weight over the
+     picture. */
+  font-size: var(--fd-step-0);
+  line-height: 1.6;
+  max-width: 42ch;
+  margin: 1.5rem 0 2rem;
+  color: var(--fd-ivory);
+}
+
+.fd-cue {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 2.5rem;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fd-ivory-dim);
+}
+
+.fd-cue-line {
+  position: relative;
+  width: 1px;
+  height: 2.5rem;
+  background: rgba(250, 247, 242, 0.25);
+}
+
+.fd-cue-line::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 1rem;
+  background: var(--fd-gold);
+}
+
+/* ---- Figures and image frames ----------------------------------------- */
+
+.fd-figure {
+  position: relative;
+  overflow: hidden;
+  background: var(--fd-sand-deep);
+}
+
+.fd-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fd-ratio-portrait {
+  aspect-ratio: 2 / 3;
+}
+.fd-ratio-tall {
+  aspect-ratio: 3 / 5;
+}
+.fd-ratio-landscape {
+  aspect-ratio: 3 / 2;
+}
+.fd-ratio-wide {
+  aspect-ratio: 16 / 9;
+}
+.fd-ratio-square {
+  aspect-ratio: 1;
+}
+
+.fd-caption {
+  margin-top: 0.75rem;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.04em;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-caption {
+  color: var(--fd-ivory-dim);
+}
+
+/* A photograph slot with no photograph in it yet.
+
+   This is designed rather than broken on purpose, and it is designed to be
+   OBVIOUSLY not a photograph — a tinted field with the subject written on it.
+   A stock image here would be indistinguishable from the agency's own work,
+   which is the one thing the brief rules out. The tones match the three
+   locations so the page still reads as composed. */
+.fd-slot {
+  display: grid;
+  place-items: center;
+  /* Scales with the frame: at 2rem flat, a small tile spent most of its
+     height on padding and pushed the label out of the box. */
+  padding: clamp(0.75rem, 6cqi, 2rem);
+  text-align: center;
+  /* So the label can be sized in cqi below. */
+  container-type: inline-size;
+  /* A frame has a fixed aspect-ratio, so anything that still does not fit is
+     clipped rather than spilling over the frame below it. */
+  overflow: hidden;
+  background-image: var(--fd-slot-bg, linear-gradient(145deg, #3a2e1c, #6b6054));
+  color: var(--fd-ivory);
+  position: relative;
+}
+
+.fd-slot::after {
+  content: "";
+  position: absolute;
+  inset: 0.75rem;
+  border: 1px solid rgba(250, 247, 242, 0.22);
+  pointer-events: none;
+}
+
+.fd-slot-tone-dunes {
+  --fd-slot-bg: linear-gradient(150deg, #8a6a28 0%, #c9a85f 48%, #d6c7b2 100%);
+}
+.fd-slot-tone-rooftop {
+  --fd-slot-bg: linear-gradient(150deg, #3a2e1c 0%, #8a6a28 55%, #c9a85f 100%);
+}
+.fd-slot-tone-fayoum {
+  --fd-slot-bg: linear-gradient(150deg, #3c6f78 0%, #d6c7b2 55%, #e9ded0 100%);
+}
+.fd-slot-tone-neutral {
+  --fd-slot-bg: linear-gradient(150deg, #3a2e1c 0%, #6b6054 100%);
+}
+
+/* SIZED TO THE FRAME, NOT TO THE PAGE.
+   This was var(--fd-step-2), a page-level step, in a box whose height is set
+   by its aspect-ratio. In the home page gallery that produced a 192px-tall
+   frame holding 295px of text: the label ran straight out of the bottom of
+   its own box and over the caption beneath it. Measured on a 1440px viewport;
+   the phone layout was fine, which is why reading it on a phone missed it.
+   cqi is a percentage of THIS frame's width, so the label now shrinks with
+   the frame it is in and cannot outgrow it. */
+.fd-slot-label {
+  font-family: var(--fd-display);
+  font-size: clamp(0.95rem, 7cqi, 1.75rem);
+  line-height: 1.15;
+  max-width: 24ch;
+  text-wrap: balance;
+  text-shadow: 0 1px 12px rgba(20, 20, 20, 0.55);
+}
+
+.fd-slot-note {
+  margin-top: 0.6rem;
+  font-size: clamp(0.6rem, 3cqi, 0.78rem);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.9;
+  text-shadow: 0 1px 8px rgba(20, 20, 20, 0.6);
+}
+
+/* The third caption's arrival. No exit: see the note on nth-child(3). */
+@keyframes fd-step-settle {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fd-step {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 1.5rem, 0);
+  }
+  18%,
+  82% {
+    opacity: 1;
+    transform: none;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(0, -1.5rem, 0);
+  }
+}
+
+/* ---- The horizontal rail ---------------------------------------------
+   Native overflow scrolling with snap points. No JS, no custom wheel
+   handling, no scroll hijack. It is swipeable on a phone, trackpad-scrollable
+   on a laptop, and keyboard-scrollable because the container is focusable and
+   labelled. Each card is also a real link, so tabbing moves through them
+   and the browser scrolls them into view by itself.                       */
+
+.fd-rail {
+  display: grid;
+  grid-auto-flow: column;
+  /* `min-width: 0` is the whole fix for a horizontal scrollbar on the page.
+     A grid with `grid-auto-flow: column` has an intrinsic width of all twelve
+     columns added together, and a grid item's default `min-width: auto`
+     refuses to shrink below that — so `overflow-x: auto` had nothing to
+     scroll against and the RAIL pushed the page wide instead of scrolling
+     inside itself. It measured 17px of horizontal overflow on a 390px phone
+     and 294px on a 1024px tablet, which is a page that slides sideways under
+     your thumb on every screen.
+     Measured before and after on the committed build to be sure it was this
+     and not the new palette: the same two numbers were already there. */
+  min-width: 0;
+  max-width: 100%;
+  grid-auto-columns: min(78vw, 22rem);
+  gap: clamp(0.75rem, 0.4rem + 1.2vw, 1.5rem);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--fd-gutter);
+  padding-inline: var(--fd-gutter);
+  padding-block: 0.5rem;
+  /* A visible, slim scrollbar. Hiding it is a common flourish and it removes
+     the only affordance telling a desktop visitor there is more to the right. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--fd-sand-deep) transparent;
+}
+
+.fd-rail > * {
+  scroll-snap-align: start;
+}
+
+.fd-rail-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+/* ---- Cards (used sparingly — no repeated three-card rows) ------------- */
+
+.fd-tile {
+  position: relative;
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+.fd-tile-media {
+  position: relative;
+  overflow: hidden;
+  background: var(--fd-sand-deep);
+}
+
+.fd-tile-media img,
+.fd-tile-media .fd-slot {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale var(--fd-slow) var(--fd-ease);
+}
+
+.fd-tile:hover .fd-tile-media img {
+  scale: 1.04;
+}
+
+.fd-tile-body {
+  padding-top: 1.25rem;
+}
+
+.fd-tile-title {
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-2);
+  line-height: 1.1;
+  margin: 0 0 0.35rem;
+}
+
+.fd-tile-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem 1rem;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-tile-meta {
+  color: var(--fd-ivory-dim);
+}
+
+.fd-price {
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--fd-ink);
+}
+
+.fd-on-dark .fd-price {
+  color: var(--fd-ivory);
+}
+
+.fd-price-from {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+/* ---- Swatches and the wardrobe ---------------------------------------- */
+
+.fd-swatch-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.fd-swatch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.45rem 0.9rem 0.45rem 0.5rem;
+  border: 1px solid rgba(20, 20, 20, 0.18);
+  background: transparent;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color var(--fd-fast), background-color var(--fd-fast);
+}
+
+.fd-swatch:hover {
+  border-color: var(--fd-ink);
+}
+
+.fd-swatch[aria-pressed="true"] {
+  border-color: var(--fd-ink);
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+}
+
+.fd-swatch-dot {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  /* A hairline inside the dot, so "Snowy" at #f2efe9 is still a visible
+     circle on an ivory page rather than an invisible one. */
+  box-shadow: inset 0 0 0 1px rgba(20, 20, 20, 0.22);
+  flex: none;
+}
+
+.fd-outfit {
+  text-align: left;
+  width: 100%;
+  display: block;
+  color: inherit;
+}
+
+.fd-outfit-media {
+  position: relative;
+  /* Landscape, like every other frame on the site. The owner's photographs
+     are overwhelmingly landscape, and a portrait tile would either letterbox
+     them or crop a dress in half. */
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  background: var(--fd-sand);
+}
+
+.fd-outfit-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: scale var(--fd-slow) var(--fd-ease);
+}
+
+.fd-outfit:hover .fd-outfit-media img {
+  scale: 1.05;
+}
+
+/* The colour field shown for a dress with no photograph yet. It is a colour
+   field and says so — see the "photo coming soon" label. */
+.fd-outfit-colour {
+  position: absolute;
+  inset: 0;
+  background: var(--fd-outfit-colour, var(--fd-sand-deep));
+}
+
+/* A gawn has no colour either, because there is no colour that "Bahary Gawn"
+   means. It gets a monogram instead of a fake swatch. */
+.fd-outfit-monogram {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(160deg, var(--fd-ink-3), var(--fd-ink-soft));
+  color: var(--fd-ivory);
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-4);
+}
+
+.fd-outfit-name {
+  margin: 0.75rem 0 0;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  line-height: 1.15;
+}
+
+.fd-outfit-note {
+  margin: 0.2rem 0 0;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+/* ---- Inclusions and definition lists ---------------------------------- */
+
+.fd-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.5rem;
+}
+
+@media (min-width: 48rem) {
+  .fd-list-2 {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 3rem;
+  }
+}
+
+/* The shoot in order. A numbered sequence rather than a bulleted set, because
+   the order is the information: a visitor is asking what happens first.
+   The marker is drawn rather than relying on the list's own counter, so the
+   time label can sit on the same line as the number without the browser's
+   marker box deciding the indent. */
+.fd-timeline {
+  counter-reset: fd-step;
+  gap: 2rem;
+}
+
+.fd-timeline > li {
+  counter-increment: fd-step;
+  position: relative;
+  padding-left: 3rem;
+}
+
+/* .fd-list draws a small gold rule before every h3. On a numbered sequence
+   that is a second marker next to the first, and it reads as a stray dash
+   beside each step. The number is the marker here.
+   `ol.fd-timeline` rather than `.fd-timeline`: .fd-list h3::before is the same
+   specificity and sits LATER in this file, so a plain class selector loses on
+   source order. The element qualifier buys the one point that settles it, and
+   `display: none` removes the box rather than only its (already empty)
+   content. Checked in a screenshot, not in getComputedStyle: both rules
+   compute `content: ""`, so the measurement looked identical while the page
+   still showed the dash. */
+ol.fd-timeline h3::before {
+  display: none;
+}
+
+.fd-timeline > li::before {
+  content: counter(fd-step);
+  position: absolute;
+  left: 0;
+  top: 0.1em;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--fd-r-pill);
+  background: var(--fd-gold-ink);
+  color: var(--fd-ivory);
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  font-variant-numeric: tabular-nums;
+}
+
+.fd-list h3 a {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding-block: 0.6rem 0.3rem;
+}
+
+.fd-list h3 {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step-0);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  margin: 0 0 0.35rem;
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+}
+
+/* The dash that used to sit before every list heading is gone with the
+   rest of them. The heading's own weight carries the hierarchy. */
+
+.fd-list p {
+  margin: 0;
+  font-size: var(--fd-step--1);
+  line-height: 1.65;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-list p {
+  color: var(--fd-ivory-dim);
+}
+
+.fd-ticks {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+.fd-ticks li {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  font-size: var(--fd-step-0);
+}
+
+.fd-ticks li::before {
+  content: "";
+  flex: none;
+  width: 0.45rem;
+  height: 0.45rem;
+  border: 1px solid var(--fd-gold);
+  rotate: 45deg;
+  translate: 0 -0.15em;
+}
+
+.fd-crosses li::before {
+  border-radius: 50%;
+  rotate: 0deg;
+  border-color: var(--fd-ink-soft);
+  background: transparent;
+}
+
+/* ---- The price table -------------------------------------------------- */
+
+.fd-table-wrap {
+  /* The one place horizontal scrolling is correct: a wide table on a narrow
+     phone, scrolled inside its own box rather than making the page scroll. */
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.fd-table {
+  width: 100%;
+  min-width: 34rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.fd-table th,
+.fd-table td {
+  padding: 1rem 1rem 1rem 0;
+  border-bottom: 1px solid rgba(20, 20, 20, 0.1);
+  vertical-align: baseline;
+}
+
+.fd-table thead th {
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+  border-bottom-color: rgba(20, 20, 20, 0.25);
+}
+
+.fd-table tbody th {
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  font-weight: 400;
+}
+
+.fd-table td:last-child,
+.fd-table th:last-child {
+  padding-right: 0;
+}
+
+/* ---- Accordion (FAQ) --------------------------------------------------
+   <details>/<summary>: open by keyboard and by screen reader with no script,
+   and it works before hydration. The marker is replaced, not hidden, so the
+   open/closed state is visible without colour.                            */
+
+.fd-faq {
+  border-top: 1px solid rgba(20, 20, 20, 0.12);
+}
+
+.fd-faq details {
+  border-bottom: 1px solid rgba(20, 20, 20, 0.12);
+}
+
+.fd-faq summary {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.25rem 0;
+  min-height: 3rem;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  line-height: 1.3;
+  cursor: pointer;
+  list-style: none;
+}
+
+.fd-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.fd-faq summary::after {
+  content: "+";
+  flex: none;
+  font-family: var(--fd-sans);
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--fd-gold-ink);
+  transition: rotate var(--fd-fast) var(--fd-ease);
+}
+
+.fd-faq details[open] summary::after {
+  content: "–";
+}
+
+.fd-faq-answer {
+  padding: 0 0 1.5rem;
+  max-width: var(--fd-measure);
+  color: var(--fd-ink-soft);
+}
+
+.fd-faq-answer p {
+  margin: 0 0 0.85em;
+}
+
+.fd-faq-answer p:last-child {
+  margin-bottom: 0;
+}
+
+/* ---- Notes, flags and the price-on-request pill ----------------------- */
+
+.fd-note {
+  padding: 1.25rem 1.5rem;
+  background: var(--fd-sand);
+  border-left: 2px solid var(--fd-gold);
+  font-size: var(--fd-step--1);
+  line-height: 1.65;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-note {
+  background: var(--fd-ink-3);
+  color: var(--fd-ivory-dim);
+}
+
+/* ---- The urgent call route -------------------------------------------
+   Asked for directly: a date within the next few days should ring the line
+   rather than queue behind the form.
+
+   Louder than .fd-note on purpose, because it is competing with a form that
+   fills the rest of the screen and a visitor in a hurry has to find it
+   without looking. The gold rule is the same device .fd-note uses, widened,
+   so it reads as the same family turned up rather than a different one. The
+   number itself is set at display scale: it is the only thing on the card
+   anybody needs to read, and on a phone it is also the tap target. */
+.fd-urgent {
+  padding: 1.25rem 1.5rem;
+  background: var(--fd-sand);
+  border-left: 3px solid var(--fd-gold);
+}
+
+.fd-urgent-number {
+  margin: 0.35rem 0 0.5rem;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-3);
+  line-height: 1.15;
+}
+
+.fd-urgent-number a {
+  color: var(--fd-ink);
+  text-decoration: none;
+  /* A number is read in groups, and tight tracking runs them together. */
+  letter-spacing: 0.01em;
+  /* 44px of height for a thumb, per the tap-target pass on the last change. */
+  display: inline-block;
+  padding-block: 0.3rem;
+}
+
+.fd-urgent-number a:hover,
+.fd-urgent-number a:focus-visible {
+  color: var(--fd-gold-ink);
+}
+
+.fd-urgent-blurb {
+  margin: 0;
+  font-size: var(--fd-step--1);
+  line-height: 1.6;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-urgent {
+  background: var(--fd-ink-3);
+}
+
+.fd-on-dark .fd-urgent-number a {
+  color: var(--fd-ivory);
+}
+
+.fd-on-dark .fd-urgent-blurb {
+  color: var(--fd-ivory-dim);
+}
+
+.fd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--fd-gold-line);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--fd-gold-ink);
+}
+
+.fd-on-dark .fd-pill {
+  color: var(--fd-gold);
+}
+
+/* ---- Forms ------------------------------------------------------------ */
+
+.fd-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  .fd-form-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .fd-field-full {
+    grid-column: 1 / -1;
+  }
+}
+
+.fd-field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.fd-field label {
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+.fd-field .fd-hint {
+  font-size: var(--fd-step--1);
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: var(--fd-ink-soft);
+}
+
+.fd-field input,
+.fd-field select,
+.fd-field textarea {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 0.9rem;
+  background: var(--fd-ivory);
+  border: 1px solid rgba(20, 20, 20, 0.22);
+  border-radius: 0;
+  font-size: var(--fd-step-0);
+  /* 16px minimum on the actual input, or iOS Safari zooms the whole page the
+     moment the field is focused. */
+  transition: border-color var(--fd-fast);
+}
+
+.fd-field textarea {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.fd-field input:focus,
+.fd-field select:focus,
+.fd-field textarea:focus {
+  border-color: var(--fd-ink);
+}
+
+.fd-field input[aria-invalid="true"],
+.fd-field select[aria-invalid="true"],
+.fd-field textarea[aria-invalid="true"] {
+  border-color: #9d2235;
+  border-width: 2px;
+}
+
+.fd-error {
+  font-size: var(--fd-step--1);
+  color: #7d1b2a;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.fd-form-status {
+  padding: 1rem 1.25rem;
+  border-left: 2px solid var(--fd-gold);
+  background: var(--fd-sand);
+  font-size: var(--fd-step-0);
+}
+
+.fd-form-status[data-tone="error"] {
+  border-left-color: #9d2235;
+  background: #f7eceb;
+  color: #7d1b2a;
+}
+
+/* The honeypot. Off-screen rather than display:none, because some autofill
+   agents skip hidden fields and fill positioned ones — which is the point. */
+.fd-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+/* ---- Lightbox --------------------------------------------------------- */
+
+.fd-lightbox {
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgba(20, 20, 20, 0.97);
+  color: var(--fd-ivory);
+}
+
+.fd-lightbox::backdrop {
+  background: rgba(20, 20, 20, 0.9);
+}
+
+.fd-lightbox-inner {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  height: 100%;
+  padding: var(--fd-gutter);
+  gap: 1rem;
+}
+
+.fd-lightbox-stage {
+  display: grid;
+  place-items: center;
+  min-height: 0;
+}
+
+.fd-lightbox-stage img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.fd-lightbox-colour {
+  width: min(70vw, 22rem);
+  /* Matches .fd-outfit-media so the swatch is the same shape as the
+     photograph that will replace it. */
+  aspect-ratio: 3 / 2;
+  background: var(--fd-outfit-colour, var(--fd-sand-deep));
+}
+
+.fd-lightbox-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.fd-lightbox-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.fd-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba(250, 247, 242, 0.35);
+  color: var(--fd-ivory);
+  font-size: 1.25rem;
+  transition: background-color var(--fd-fast), border-color var(--fd-fast);
+}
+
+.fd-icon-btn:hover {
+  background: rgba(250, 247, 242, 0.12);
+  border-color: var(--fd-ivory);
+}
+
+.fd-icon-btn[disabled] {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* ---- The sticky mobile action ----------------------------------------
+   Phone only, and it sits in the safe area rather than on top of the last
+   line of a form. `padding-bottom` picks up the iOS home-indicator inset.  */
+
+.fd-sticky-cta {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 95;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem var(--fd-gutter) calc(0.6rem + env(safe-area-inset-bottom));
+  background: color-mix(in srgb, var(--fd-ivory) 94%, transparent);
+  border-top: 1px solid rgba(20, 20, 20, 0.1);
+}
+
+@supports (backdrop-filter: blur(8px)) {
+  .fd-sticky-cta {
+    backdrop-filter: blur(10px);
+  }
+}
+
+@media (min-width: 48rem) {
+  .fd-sticky-cta {
+    display: none;
+  }
+}
+
+/* The bar is fixed, so the page needs room underneath it or it covers the
+   footer's last row. */
+@media (max-width: 47.99rem) {
+  .fd-has-sticky-cta {
+    padding-bottom: 4.75rem;
+  }
+}
+
+/* ---- Footer ----------------------------------------------------------- */
+
+.fd-footer {
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+  padding-block: clamp(3rem, 1.5rem + 5vw, 5.5rem) 2rem;
+}
+
+.fd-footer-grid {
+  display: grid;
+  gap: 2.5rem;
+}
+
+@media (min-width: 48rem) {
+  .fd-footer-grid {
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+.fd-footer h2 {
+  font-family: var(--fd-sans);
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--fd-gold);
+  margin: 0 0 1rem;
+}
+
+.fd-footer ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.6rem;
+}
+
+/* `:not(.fd-btn)` matters. This rule used to match buttons too, and because
+   it is more specific (0,1,1) than `.fd-btn` (0,1,0) it painted them in the
+   footer's muted link colour. The first fix for that added
+   `.fd-footer .fd-btn { color: ... }` at (0,2,0), which rescued the solid
+   button and broke the OUTLINE one beside it: `.fd-btn-outline-light` is only
+   (0,1,0), so it lost, and "WhatsApp" rendered dark ink on the dark footer —
+   an empty-looking box, exactly the symptom the first fix was meant to cure.
+   Excluding buttons here instead lets each button variant win on its own, so
+   there is no override to keep in sync. */
+.fd-footer a:not(.fd-btn) {
+  color: var(--fd-ivory-dim);
+  text-decoration: none;
+  font-size: var(--fd-step-0);
+  display: inline-flex;
+  align-items: center;
+  /* 44px, not 32px. At 2rem these were 81x32 and failed the tap-target
+     threshold on every page — a column of links a thumb cannot reliably hit
+     is the most-used navigation on a phone. */
+  min-height: 2.75rem;
+}
+
+/* THE FOOTER'S PRIMARY BUTTON WAS INVISIBLE.
+   `.fd-footer a` (specificity 0,1,1) beat `.fd-btn` (0,1,0), so "Plan your
+   shoot" rendered --fd-ivory-dim text on its --fd-ivory background: a measured
+   1.32:1, which is to say unreadable. It looked like an empty box and nobody
+   would have clicked it.
+   Found by axe, not by looking — which is the whole argument for running it. */
+/* Height only. Colour is each variant's own business now — see the note on
+   `.fd-footer a:not(.fd-btn)` above. */
+.fd-footer .fd-btn {
+  min-height: 3rem;
+}
+
+.fd-footer a:not(.fd-btn):hover {
+  color: var(--fd-ivory);
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.fd-footer-base a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  /* A four-letter word is only ~40px wide. Padding, not a bigger font. */
+  min-width: 2.75rem;
+  padding-inline: 0.5rem;
+}
+
+.fd-footer ul a {
+  padding-inline-end: 0.5rem;
+  min-width: 2.75rem;
+}
+
+.fd-footer-base {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(250, 247, 242, 0.14);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2rem;
+  justify-content: space-between;
+  font-size: var(--fd-step--1);
+  color: var(--fd-ivory-dim);
+}
+
+/* ==========================================================================
+   8. REDUCED MOTION
+
+   Last, so it wins, and blanket rather than selective.
+
+   Everything above is decoration. A visitor who has asked their operating
+   system for less motion gets the full layout, the full type and the full
+   photography with nothing moving — including the infinite scroll cue, the
+   hover scales and the hero's entrance. Nothing is hidden by this block and
+   nothing becomes unreachable, because every animated element's default state
+   is its final one.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ===========================================================================
+   THE DESIGN LANGUAGE LAYER
+   ===========================================================================
+   Rounded geometry, floating panels, translucency, layered depth.
+
+   WHY IT IS A LAYER AT THE END RATHER THAN EDITS THROUGHOUT
+
+   Every rule here is written at the SAME specificity as the rule it adjusts,
+   so source order decides and nothing needs a `!important` or a compound
+   selector. That is not tidiness, it is the lesson from the footer: raising
+   specificity to win one fight made `.fd-btn-outline-light` lose the next one
+   and shipped an invisible button. A flat layer can be read top to bottom and
+   removed in one piece.
+
+   What is deliberately NOT given glass, radius or shadow: body prose, the
+   footer, and the section rhythm. A page where everything floats has no
+   foreground. The footer stays flat and grounded so the page has a floor.
+   =========================================================================== */
+
+/* ---- The header floats -----------------------------------------------
+   Detached from the top edge and rounded into a capsule, as in the
+   references. The hairline is kept and the shadow stays small: this is a
+   photography brand, and a header that hovers on a heavy drop shadow looks
+   like a dashboard.                                                      */
+.fd-header {
+  position: sticky;
+  top: 0.75rem;
+  z-index: 100;
+  margin: 0.75rem var(--fd-gutter) 0;
+  border: 1px solid var(--fd-glass-edge);
+  border-radius: var(--fd-r-pill);
+  background: var(--fd-glass-strong);
+  box-shadow: var(--fd-shadow-float);
+  /* The sticky header must not leave a gap of page showing above it. */
+  backdrop-filter: none;
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-header {
+    background: var(--fd-glass);
+    backdrop-filter: blur(var(--fd-blur)) saturate(140%);
+  }
+}
+
+.fd-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  min-height: 4rem;
+  /* The shell's own gutter would double up inside a header that already has
+     an outer margin. */
+  padding-inline: clamp(1rem, 0.6rem + 1.4vw, 1.75rem);
+}
+
+/* The page starts under a floating header, so it needs the header's height
+   back as breathing room rather than hiding beneath it. */
+.fd-hero {
+  margin-top: calc(-5.5rem - 0.75rem);
+  padding-top: 5.5rem;
+}
+
+/* ---- Navigation: pills ------------------------------------------------ */
+.fd-nav a {
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--fd-r-pill);
+  transition:
+    background-color var(--fd-fast) var(--fd-ease-soft),
+    color var(--fd-fast) var(--fd-ease-soft);
+}
+
+.fd-nav a:hover {
+  background: color-mix(in srgb, var(--fd-sand-deep) 55%, transparent);
+}
+
+/* The current page reads as a filled pill, the way the references mark an
+   active tab. aria-current is already on the link, so this needs no extra
+   class and cannot fall out of step with what a screen reader announces. */
+.fd-nav a[aria-current="page"] {
+  background: var(--fd-ink);
+  color: var(--fd-ivory);
+}
+
+/* ---- Buttons: capsules ------------------------------------------------ */
+.fd-btn {
+  border-radius: var(--fd-r-pill);
+  box-shadow: var(--fd-shadow-sm);
+}
+
+.fd-btn-ghost,
+.fd-btn-outline-light {
+  box-shadow: none;
+}
+
+/* ---- The small button ------------------------------------------------
+   The default .fd-btn is 48px tall with 28px of side padding, which is
+   right for a page's one main action and far too much for a pair of them
+   repeated beside every item, or for the phone's bar — where two of them
+   filled a third of the screen. 44px still clears WCAG 2.2's target size
+   (24px minimum, 44px the AAA figure) with room to spare. */
+.fd-btn-sm {
+  min-height: 2.75rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+}
+
+.fd-btn:hover {
+  box-shadow: var(--fd-shadow-md);
+}
+
+.fd-icon-btn,
+.fd-burger {
+  border-radius: var(--fd-r-pill);
+}
+
+/* ---- Frames, cards and tiles: rounded, with real depth ---------------- */
+.fd-figure,
+.fd-slot {
+  border-radius: var(--fd-r-lg);
+}
+
+.fd-tile-media,
+.fd-tile-media .fd-figure,
+.fd-tile-media .fd-slot {
+  border-radius: var(--fd-r-lg);
+}
+
+/* THE RADIUS GOES ON THE PICTURE, NOT ON THE CARD.
+   =====================================================================
+   This rule used to put `border-radius: var(--fd-r-lg)` on .fd-tile, which
+   already carries `overflow: hidden` from the rule above. Rounded corners plus
+   overflow clipping means the CORNER CURVE CLIPS THE CONTENT, and a tile's
+   last line of text sits exactly there: measured at inset 0 from the left edge
+   and 0 from the bottom, inside a 28px radius. The curve ate the first letters
+   of it — "PRICE ON REQUEST" rendered with the P sliced in half.
+
+   A tile is a picture with a caption under it. The picture is the card and
+   takes the radius, the shadow and the lift; the caption sits on the page,
+   outside anything that clips. Which is also what the references do. */
+.fd-tile {
+  transition: translate var(--fd-slow) var(--fd-ease-soft);
+}
+
+.fd-tile-media {
+  transition:
+    translate var(--fd-slow) var(--fd-ease-soft),
+    box-shadow var(--fd-slow) var(--fd-ease-soft);
+  box-shadow: var(--fd-shadow-sm);
+}
+
+.fd-tile:hover .fd-tile-media {
+  translate: 0 -4px;
+  box-shadow: var(--fd-shadow-lg);
+}
+
+.fd-outfit-media {
+  border-radius: var(--fd-r-md);
+  box-shadow: var(--fd-shadow-sm);
+  transition:
+    translate var(--fd-slow) var(--fd-ease-soft),
+    box-shadow var(--fd-slow) var(--fd-ease-soft);
+}
+
+.fd-outfit:hover .fd-outfit-media {
+  translate: 0 -3px;
+  box-shadow: var(--fd-shadow-md);
+}
+
+.fd-swatch,
+.fd-swatch-dot,
+.fd-outfit-colour,
+.fd-lightbox-colour {
+  border-radius: var(--fd-r-md);
+}
+
+.fd-swatch-dot {
+  border-radius: var(--fd-r-pill);
+}
+
+/* ---- Panels: the translucent, layered ones ---------------------------- */
+.fd-note {
+  border-radius: var(--fd-r-lg);
+  border: 1px solid var(--fd-glass-edge);
+  background: var(--fd-glass-strong);
+  box-shadow: var(--fd-shadow-md);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-note {
+    background: var(--fd-glass);
+    backdrop-filter: blur(var(--fd-blur)) saturate(130%);
+  }
+}
+
+.fd-faq,
+/* .fd-table-wrap IS DELIBERATELY NOT IN THIS LIST.
+   It was, and it cost the price table its corner text. The element scrolls
+   (overflow-x: auto), so it is a clipping box, and a clipping box with a
+   radius clips to the CURVE — the same way a 28px radius on .fd-tile ate the
+   "P" of "PRICE ON REQUEST". Here the table's first column is flush left on
+   purpose (`padding: 1rem 1rem 1rem 0`), so "Three hours from Cairo" sat
+   right in the 20px arc and lost its first letters. Flush-left text and a
+   rounded clipping box cannot both be had; the text wins. */
+.fd-drawer,
+.fd-lightbox-inner,
+.fd-lightbox-stage,
+.fd-pill,
+.fd-price,
+.fd-form {
+  border-radius: var(--fd-r-md);
+}
+
+.fd-pill {
+  border-radius: var(--fd-r-pill);
+}
+
+.fd-field input,
+.fd-field select,
+.fd-field textarea {
+  border-radius: var(--fd-r-sm);
+}
+
+/* ---- The horizontal rail: a row of floating cards --------------------- */
+.fd-rail > * {
+  border-radius: var(--fd-r-lg);
+}
+
+/* Room for the lift and the shadow. Without it `overflow-x: auto` clips the
+   bottom of a card the moment it rises on hover. */
+.fd-rail {
+  padding-block: 0.75rem 1.25rem;
+}
+
+/* ---- The phone's sticky bar: a floating capsule ----------------------- */
+.fd-sticky-cta {
+  inset-inline: var(--fd-gutter);
+  bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  padding: 0.35rem;
+  border: 1px solid var(--fd-glass-edge);
+  border-top: 1px solid var(--fd-glass-edge);
+  border-radius: var(--fd-r-pill);
+  background: var(--fd-glass-strong);
+  box-shadow: var(--fd-shadow-float);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-sticky-cta {
+    background: var(--fd-glass);
+    backdrop-filter: blur(var(--fd-blur)) saturate(140%);
+  }
+}
+
+/* ---- Where the warm accents actually land ----------------------------
+   Two of the owner's four swatches are too saturated to be page
+   backgrounds: butter and tan would turn a photography site into a
+   stationery set. They earn their place as accents instead, where a small
+   area of warmth lifts a neutral page.                                   */
+.fd-rule,
+.fd-rule-center {
+  background: var(--fd-tan);
+}
+
+.fd-eyebrow {
+  color: var(--fd-gold-ink);
+}
+
+/* ---- Motion: one shared easing for the new depth ----------------------
+   Everything above moves on translate and box-shadow only, never on width,
+   height, top or left, so none of it triggers layout. And all of it stops
+   dead under reduced motion, which the site already honours globally.    */
+@media (prefers-reduced-motion: reduce) {
+  /* THE TIMELINES HAVE TO GO, not just the durations. A scroll-driven
+     animation with a 1ms duration still runs on scroll: its progress comes
+     from the scroll position, not from time, so the blanket rule above does
+     nothing to it. Each of these is parked at its end state instead.
+
+     This rule briefly disappeared when the pinned scene was deleted, because
+     `.fd-pin-step` was one of the selectors in the list and the whole rule
+     went with it. check-flying-dresses caught it in the same minute. */
+  .fd-reveal,
+  .fd-reveal-group > *,
+  .fd-fabric,
+  .fd-drift img,
+  .fd-depth-back,
+  .fd-depth-front,
+  .fd-words > span {
+    animation: none !important;
+    animation-timeline: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+    scale: 1 !important;
+    clip-path: none !important;
+  }
+
+  .fd-tile:hover .fd-tile-media,
+  .fd-outfit:hover .fd-outfit-media {
+    translate: none;
+  }
+}
+
+/* ---- Phone ------------------------------------------------------------
+   The floating header's side margin eats into a 390px screen, so it tucks
+   in, and the capsule relaxes to a rounded rectangle: a pill that tall
+   looks like a lozenge rather than a bar.                                */
+@media (max-width: 48rem) {
+  .fd-header {
+    margin-inline: 0.75rem;
+    border-radius: var(--fd-r-lg);
+  }
+
+  .fd-figure,
+  .fd-slot,
+  .fd-tile-media {
+    border-radius: var(--fd-r-md);
+  }
+}
+
+/* ---- Corrections found by looking at the restyled header ---------------
+   Three faults the capsule exposed, all of them caused by the new padding
+   rather than present before it.                                         */
+
+/* 1. EVERY NAV LABEL WRAPPED ONTO TWO LINES. The pill padding widened each
+      item enough that "The Wardrobe", "Rent & Hire" and the call to action
+      broke mid-phrase and doubled the header's height. The pills carry
+      their own spacing, so the gap between them comes down to compensate. */
+.fd-nav a,
+.fd-header-cta,
+.fd-nav {
+  white-space: nowrap;
+}
+
+@media (min-width: 64rem) {
+  .fd-nav {
+    gap: clamp(0.125rem, -0.4rem + 0.8vw, 0.5rem);
+  }
+}
+
+/* 2. THE UNDERLINE AND THE PILL BOTH MARKED THE CURRENT PAGE. Two active
+      states for one fact, and on the filled pill the gold hairline sat on
+      dark where it could not be seen anyway. The pill is the clearer of the
+      two, so the underline goes. */
+.fd-nav a::after {
+  display: none;
+}
+
+/* 3. THE WORDMARK COLLIDED WITH ITSELF.
+      "Egypt" is set across the caps as a signature lockup, which is the
+      right idea and was wrong by about a third: at 2.6x the cap height and
+      only 38% down, the script's x-height ran straight through FLYING
+      DRESSES and the two were unreadable as either one word or two.
+
+      Smaller and lower. The loops of the E and the y still cross the caps,
+      which is what makes it a lockup rather than two stacked lines, but the
+      body of the word now sits clear underneath. The mark also needs real
+      height reserved or the descender is clipped by the capsule. */
+.fd-mark {
+  /* Room for the descender of "Egypt". Measured, not guessed: at 0.85 the
+     tails of the y and the p were sliced off by the capsule's bottom edge. */
+  padding-bottom: calc(var(--fd-mark-size, 1.15rem) * 1.25);
+}
+
+.fd-mark-script {
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 1.95);
+  translate: 0 56%;
+}
+
+.fd-wordmark {
+  align-items: flex-start;
+  padding-block: 0.25rem;
+}
+
+/* ---- THE WARDROBE'S TWELVE SWATCHES HAD NEVER RENDERED -----------------
+   `.fd-outfit-media` is a <span> (see OutfitMedia in _components/Wardrobe.tsx)
+   and this rule set `aspect-ratio` without setting `display`. An inline box
+   ignores aspect-ratio, and its only child is `position: absolute`, so the
+   element computed to 0x0 and drew nothing. Measured: w=0 h=0 display=inline.
+
+   The effect was that the wardrobe page — whose entire job is showing twelve
+   dresses — rendered as a list of names with "photo coming soon" under each,
+   and the colour that stands in for the missing photograph was never visible.
+   It has been that way since the page was built. Nothing caught it, because
+   nothing renders this page and looks at it: the check scripts read source
+   text, and axe does not report an invisible element as a contrast or
+   structure fault.
+
+   Found by taking a screenshot of the page and seeing an empty grid. */
+.fd-outfit-media {
+  display: block;
+}
+
+/* A real photograph in an outfit tile. Fills the 3:2 frame; the frame already
+   clips, and object-fit keeps the dress from being squashed into it. */
+.fd-outfit-photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* The hero video fills its frame exactly as the photograph did, including the
+   art-directed crop: on a phone the subject of a landscape frame sits in the
+   upper middle, not the centre. The poster uses the same rule, so the still
+   and the moving version are framed identically and the swap is invisible. */
+.fd-hero-video,
+.fd-hero-video img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 32%;
+  display: block;
+}
+
+/* A GRADE, NOT A SHARPEN — and the distinction is the honest one.
+   =====================================================================
+   The master is 1440x960 at 1.41 Mbps, which is a thin budget for fifty-four
+   seconds of moving silk, and no filter here can put back detail the encoder
+   already threw away. Re-encoding was measured rather than assumed: against a
+   lossless reference, lifting the phone cut from its current bitrate all the
+   way to CRF 21 moved SSIM from 0.9587 to 0.9647 — six thousandths, for 78%
+   more bytes. The source is the ceiling.
+
+   What a grade does do is make the picture read as deliberate: a little more
+   separation between the dress and the sand, a little more colour in the
+   silk. Kept deliberately small, because a hero that looks processed is worse
+   than one that looks soft, and the contrast is what makes a low-bitrate
+   frame show its blocking. Sharpening filters were tried and rejected on
+   exactly that: they find the compression before they find the dress. */
+.fd-hero-video {
+  filter: saturate(1.07) contrast(1.05);
+}
+
+/* ---- The header's horizontal lockup -----------------------------------
+   The stacked mark writes "Egypt" across the capitals. That is the brand's
+   signature and it needs vertical room to read as one mark; inside a 64px
+   header capsule it reads as two words colliding, which is what the owner
+   saw. Side by side on a shared baseline it is the same two words, laid out
+   for the shape of the container they are actually in.
+
+   `.fd-mark` is an inline-grid with both children stacked in one cell, so the
+   inline variant has to undo that cell before it can lay them out in a row. */
+.fd-mark-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.42em;
+  padding-bottom: 0;
+}
+
+.fd-mark-inline .fd-mark-name,
+.fd-mark-inline .fd-mark-script {
+  grid-area: auto;
+  position: static;
+  translate: none;
+}
+
+/* The script is FIRST in the DOM because the stacked lockup paints it behind
+   the capitals. Stacking there is set by z-index, not by source order, so
+   reordering visually here costs nothing and the markup stays one component.
+   Without this the header read "Egypt Flying Dresses". */
+.fd-mark-inline .fd-mark-name {
+  order: 1;
+}
+
+.fd-mark-inline .fd-mark-script {
+  order: 2;
+}
+
+.fd-mark-inline .fd-mark-script {
+  /* Large enough to be the flourish, small enough to sit on the capitals'
+     baseline without driving the header's height. line-height 0 keeps the
+     script's generous ascenders and descenders from doing exactly that. */
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 1.75);
+  line-height: 0;
+  /* Optical, not metric: a roundhand's baseline sits visually high next to
+     letterspaced capitals. */
+  position: relative;
+  top: 0.06em;
+}
+
+.fd-wordmark:has(.fd-mark-inline) {
+  align-items: center;
+  padding-block: 0;
+}
+
+/* ---- The bar, taken down a weight --------------------------------------
+   The owner's note was that the header "doesn't look luxe". Measured against
+   the screenshot, the fault is bulk rather than taste: a 4rem minimum height
+   plus 0.75rem of top margin plus a float shadow is 90px of chrome above a
+   photograph, and the mark inside it was being set large enough to need all
+   of it.
+
+   Restraint is the whole correction. A thinner capsule, a hairline instead of
+   a visible border, a shadow you have to look for, and a smaller mark with
+   more air around the letterspacing.                                       */
+.fd-header {
+  border-color: color-mix(in srgb, var(--fd-ink) 8%, transparent);
+  box-shadow: 0 1px 2px rgba(20, 20, 20, 0.03), 0 8px 24px -16px rgba(20, 20, 20, 0.18);
+}
+
+/* THE BAR LOOKED EMPTY ON A LARGE MONITOR, and the capsule was not the
+   reason — its contents were. `.fd-header-inner` carries `.fd-shell`, whose
+   max-width is 82rem, so while the capsule stretched with the viewport the
+   row inside it stopped at 1312px and centred. Measured: the logo sat 29px
+   inside the capsule at 1280, 132px at 1600, 292px at 1920 and 612px at 2560,
+   with the same dead band mirrored on the right of the call to action.
+
+   A reading column is capped so that lines of text do not run too long. A
+   header row is a logo, a nav and a button pinned to the ends of a bar; it
+   has no line length to protect, and capping it only pulls both ends inward.
+   So this one opts out and fills its capsule, leaving the capsule's own
+   padding as the inset at every width. */
+.fd-header-inner {
+  max-width: none;
+  min-height: 3.5rem;
+}
+
+@media (min-width: 64rem) {
+  .fd-header-inner {
+    min-height: 3.75rem;
+  }
+}
+
+/* The hero's offset is measured from the header's height, so it comes down
+   with it or the first section floats. */
+.fd-hero {
+  margin-top: calc(-5rem - 0.75rem);
+  padding-top: 5rem;
+}
+
+/* The mark: smaller, with the capitals' tracking opened up. A didone set
+   small with generous letterspacing is the whole vocabulary of a fashion
+   masthead; the same letters set large and tight read as a sign. */
+.fd-mark {
+  --fd-mark-size: 0.95rem;
+}
+
+@media (min-width: 48rem) {
+  .fd-mark {
+    --fd-mark-size: 1.05rem;
+  }
+}
+
+.fd-mark-inline .fd-mark-name {
+  letter-spacing: 0.22em;
+  font-weight: 400;
+}
+
+.fd-mark-inline .fd-mark-script {
+  font-size: calc(var(--fd-mark-size, 1.15rem) * 1.9);
+}
+
+/* The header's own button matches the pair that now sit beside every item,
+   rather than being the one oversized thing in a slim bar. */
+.fd-header-cta {
+  min-height: 2.5rem;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+}
+
+/* ---- The pair of ways to reach us, under every item --------------------
+   Quieter than a page's main action: these repeat down a page and a column
+   of filled capsules would read as a toolbar rather than as an offer.      */
+.fd-item-actions {
+  margin-top: 1.25rem;
+  gap: 0.5rem;
+}
+
+.fd-item-actions .fd-btn {
+  box-shadow: none;
+}
+
+/* ---- The space under a page's opening ---------------------------------
+   Two `fd-section-tight` blocks stacked put a full section's bottom padding
+   and a full section's top padding between a page's lede and the first thing
+   it introduces. On a phone that is most of a screen of nothing. This closes
+   the seam wherever a section is explicitly marked as continuing the one
+   above it.                                                               */
+.fd-section-joined {
+  padding-top: 0;
+}
+
+.fd-section-lede {
+  padding-bottom: clamp(1.5rem, 1rem + 2vw, 2.5rem);
+}
+
+/* The breadcrumb was set at the eyebrow's full 0.16em tracking, which on a
+   390px screen wrapped "Home / Special Experiences / Maternity and family"
+   onto two lines of widely spaced red capitals before the page had said
+   anything. Same size, less air. */
+.fd-eyebrow-crumbs {
+  letter-spacing: 0.08em;
+  /* The eyebrow's line-height is set for a one-line label. A crumb trail
+     wraps on a phone, and at that leading the two lines read as two
+     separate things. */
+  line-height: 1.45;
+  /* The SIZE is deliberately left alone. The visual audit already reports
+     the "Home" crumb at 39x48 — inside WCAG 2.2 AA's 24px minimum, under
+     the 44px AAA figure the audit warns at — and making the type smaller
+     would narrow it further for no gain. Tracking is where the width was. */
+}
+
+/* ---- The bar is ivory, not glass --------------------------------------
+   The frosted treatment was the last thing making the header look wrong.
+   Over the hero — a near-black photograph — a blurred ivory at any opacity
+   that still reads as translucent mixes enough of that photograph in to
+   come out GREY, and it changes colour as you scroll. A masthead that is a
+   different shade on every page is the opposite of a brand mark.
+
+   The references the owner sent all do the same thing: a solid, floating
+   white bar. So this overrides the @supports rule above it — later, same
+   specificity — and the capsule is simply ivory, everywhere, always. The
+   glass tokens stay in use on the note panels and the phone's bar, where
+   what sits behind them is page, not photograph.                          */
+.fd-header {
+  background: var(--fd-ivory);
+  backdrop-filter: none;
+  border-color: color-mix(in srgb, var(--fd-ink) 10%, transparent);
+}
+
+@supports (backdrop-filter: blur(4px)) {
+  .fd-header {
+    background: var(--fd-ivory);
+    backdrop-filter: none;
+  }
+}
+
+/* Two tap targets the audit measured a hair under the 44px it warns at.
+   Both are real: a 19px-tall inline link and a 43px crumb are fiddly on a
+   phone whatever WCAG's 24px floor allows. */
+.fd-eyebrow-crumbs a {
+  padding-inline: 0.2rem;
+  margin-inline: -0.2rem;
+}
+
+/* AN INLINE LINK HAD NO COLOUR, SO IT WAS BROWSER-DEFAULT BLUE.
+   This rule sized the tap target and stopped there, which meant every link
+   inside running prose on this site rendered #0000EE, and purple once
+   visited. On a brand whose entire palette is ink, ivory, sand and one red,
+   that is the single most out-of-place colour available, and it was on the
+   home page ("See what each of these costs"), under the photo ribbon, and on
+   every source citation in the stories section.
+
+   Nobody had noticed because the site is almost entirely buttons and cards,
+   which all set their own colour. Prose links are rare here, which is
+   exactly why the gap survived.
+
+   Ink with a red underline, rather than red text: red is the brand's accent
+   and a paragraph with three red words in it reads as a warning. The offset
+   keeps the rule off the descenders. */
+.fd-inline-link {
+  display: inline-block;
+  min-height: 2.75rem;
+  padding-block: 0.75rem;
+  color: var(--fd-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--fd-gold);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: color var(--fd-fast, 160ms) var(--fd-ease-soft, ease);
+}
+
+.fd-inline-link:hover,
+.fd-inline-link:focus-visible {
+  color: var(--fd-gold-ink);
+  text-decoration-thickness: 2px;
+}
+
+/* The dark sections invert it: ivory text, and the accent still carries the
+   underline, which holds contrast against ink where ink obviously cannot. */
+.fd-on-dark .fd-inline-link,
+.fd-dark .fd-inline-link {
+  color: var(--fd-ivory);
+}
+
+.fd-on-dark .fd-inline-link:hover,
+.fd-on-dark .fd-inline-link:focus-visible,
+.fd-dark .fd-inline-link:hover,
+.fd-dark .fd-inline-link:focus-visible {
+  color: var(--fd-ivory);
+  text-decoration-thickness: 2px;
+}
+
+/* ---- The narrowest phone ----------------------------------------------
+   At 320px — an iPhone SE, or any phone with text size turned up — the
+   wordmark plus the menu button were 331px wide inside a 294px bar, so the
+   capsule ran 37px off the right edge of the screen and took the burger
+   with it. Measured, not guessed.
+
+   The tracking is where the width was: 0.22em across fourteen capitals is
+   about 30px of pure air. It buys the mark its fashion-masthead character
+   at every size that can afford it, and gives it back at the one that
+   cannot. */
+@media (max-width: 24.5rem) {
+  .fd-mark {
+    --fd-mark-size: 0.8rem;
+  }
+
+  .fd-mark-inline .fd-mark-name {
+    letter-spacing: 0.1em;
+  }
+
+  .fd-mark-inline {
+    gap: 0.3em;
+  }
+
+  .fd-header-inner {
+    gap: 0.5rem;
+    padding-inline: 0.85rem;
+  }
+}
+
+/* ---- The hero on a phone: a band, not a slab -------------------------- */
+/*
+   THE FILM IS COMPOSED WIDE AND THE PHONE WAS SHOWING A THIRD OF IT.
+
+   The hero is one layout at every width: the video absolutely positioned
+   behind the headline, object-fit: cover, min-height min(92svh, 56rem). On a
+   desktop that is right — the box is wider than the film's 3:2, so the crop
+   takes a little off the top and bottom and the composition survives.
+
+   On a phone it is the opposite shape, and the numbers are brutal. Measured
+   in Chromium:
+
+       390x844   hero box 390x776   28% taller than the film is wide
+                 visible frame width: 34%
+       430x932   hero box 430x857   visible frame width: 33%
+       360x800   hero box 360x736   visible frame width: 33%
+
+   Two thirds of every frame was being decoded and thrown away. Worse, the
+   third that survived was then stretched: the phone file is 960px wide, 34%
+   of it is 326px, and that was being painted across 390 CSS pixels — about
+   1170 device pixels on a modern phone. A 3.6x upscale of an already
+   compressed frame. That is what the owner saw and called low quality, and no
+   amount of bitrate fixes a 3.6x upscale.
+
+   It is also a composition problem, which is why the obvious fix is wrong.
+   The temptation is to crop a portrait version for phones. A contact sheet of
+   the film says no: across its nine scenes the subject sits hard left in one,
+   hard right in two, and three women span the full width in two more. A
+   centre crop to the phone's shape removes a person from five of nine shots.
+
+   SO THE PHONE GETS A DIFFERENT LAYOUT. The media stops being a background
+   and becomes a 3:2 band at the top of the section, at its native shape, with
+   the copy below it on ink. The whole frame is visible, nothing is upscaled —
+   960 source pixels now paint 390 CSS pixels instead of 326 — and the film
+   can be seen rather than glimpsed.
+
+   What it costs: the section gets taller, because the copy no longer sits on
+   top of the picture. That is the trade and it is the right way round. A
+   shorter section that shows a third of a frame is not a better first
+   impression than a taller one that shows all of it.
+
+   The negative margin is the same trick the section already uses: it pulls
+   the band up under the floating header so the header still sits over the
+   film, exactly as it does now. The scrim goes away because there is no
+   longer any type over the picture to protect.
+
+   Above 48rem nothing in here applies and the hero is untouched.
+*/
+@media (max-width: 47.99rem) {
+  /* WORDS FIRST, FILM SECOND, AND THE HEADER STANDS ON ITS OWN.
+     =====================================================================
+     Asked for directly. The band used to come first and was pulled up under
+     the floating header, so the first thing on the page was a frame of video
+     with a white pill sitting on top of it — and whenever the loop was on one
+     of its darker frames, that pill floated on a murky rectangle that said
+     nothing about the brand.
+
+     Flex with an explicit order rather than moving the markup: the DOM keeps
+     the picture before the copy, which is the order it should be read in
+     above 48rem, where the type sits over the film. Below it, the reading
+     order a screen reader follows and the visual order now agree because the
+     copy genuinely comes first.
+
+     The negative margin is gone with it, so .fd-hero's own padding-top is
+     left to do its job and the header has clear space behind it. */
+  .fd-hero {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding-bottom: 0;
+  }
+
+  .fd-hero-body {
+    order: 1;
+  }
+
+  .fd-hero-media {
+    order: 2;
+    position: relative;
+    inset: auto;
+    z-index: 0;
+    /* 4/3 rather than the film's native 3/2: on a phone the band was about a
+       quarter of the screen with the copy stacked under it, which is not the
+       film leading the page. This is a third more height for an even crop off
+       each side, which a landscape frame of a dress in open space absorbs —
+       the subject is central and the edges are sand and sky. Not portrait:
+       a contact sheet of the real footage showed a 4/5 crop cutting a person
+       out of five frames in nine. */
+    aspect-ratio: 4 / 3;
+    width: 100%;
+  }
+
+  /* The art-directed 32% crop was for a tall box that had to choose a slice.
+     The band is the film's own shape, so there is nothing to choose. */
+  .fd-hero-media img,
+  .fd-hero-video,
+  .fd-hero-video img {
+    object-position: 50% 50%;
+  }
+
+  /* No type over the picture, so nothing to darken. */
+  .fd-hero-scrim {
+    display: none;
+  }
+
+  .fd-hero-body {
+    /* MEASURED, not guessed. The header pill ends at 70px on a 390px screen;
+       at 0.5rem of padding the eyebrow started at 66 and sat behind it. This
+       starts the copy at about 90, which is clear air under the bar. */
+    padding-block: 2rem 2.25rem;
+  }
+}
+
+/* ---- The photo ribbon ------------------------------------------------- */
+/*
+   Two rows of the agency's own frames, travelling in opposite directions.
+   Asked for directly: "photos animated slider with variety of photos moving".
+
+   THE MOTION IS A SINGLE TRANSLATE AND NOTHING ELSE. No width, no left, no
+   margin, so it runs on the compositor and never triggers layout. The strip
+   holds each row twice and moves exactly -50%, which puts the second copy
+   where the first began: the loop closes with no measurement, no JavaScript
+   and no visible seam, at any number of frames and any screen width.
+
+   REDUCED MOTION NEEDED ITS OWN RULE, AND THIS IS THE INTERESTING PART.
+   The global block near the top of this file sets animation-duration: 1ms
+   and animation-iteration-count: 1 on everything. For a fade that is exactly
+   right: it lands on its end state, which is the visible one. For an infinite
+   marquee it is exactly wrong — the end state is translateX(-50%), so the
+   blanket rule does not stop the ribbon, it FAST-FORWARDS it and parks it
+   half a strip to the left, with the first few frames gone off the edge.
+   A visitor who asked for less motion would get fewer photographs.
+
+   Verified in Chromium with reducedMotion: "reduce": animation-name none,
+   transform none, first cell at x=0 inside its ribbon.
+
+   So the ribbon is parked at 0 explicitly, and then overflows as a normal
+   horizontal scroller, which is the honest fallback: everything is still
+   reachable, by hand, without anything moving.
+*/
+
+.fd-ribbon {
+  overflow: hidden;
+  /* The band is decoration below the fold; let the browser skip it until it
+     is near the viewport. contain-intrinsic-size keeps the scrollbar honest
+     while it is skipped. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 13rem;
+}
+
+.fd-ribbon + .fd-ribbon {
+  margin-top: clamp(0.5rem, 0.3rem + 0.8vw, 1rem);
+}
+
+.fd-ribbon-track {
+  display: flex;
+  gap: clamp(0.5rem, 0.3rem + 0.8vw, 1rem);
+  width: max-content;
+  will-change: transform;
+  animation: fd-ribbon-slide var(--fd-ribbon-duration, 70s) linear infinite;
+}
+
+.fd-ribbon-reverse {
+  animation-direction: reverse;
+}
+
+/* Hovering one, or tabbing to anything inside it, holds it still. */
+.fd-ribbon:hover .fd-ribbon-track,
+.fd-ribbon:focus-within .fd-ribbon-track {
+  animation-play-state: paused;
+}
+
+.fd-ribbon-cell {
+  margin: 0;
+  flex: none;
+  /* Height is fixed and width is free, so the frames keep their own
+     proportions. A uniform cell would crop a landscape and a portrait to the
+     same box and the row would stop looking like a photographer's wall. */
+  height: clamp(8rem, 5rem + 12vw, 15rem);
+  border-radius: var(--fd-r-md, 0.75rem);
+  overflow: hidden;
+  background: var(--fd-sand-deep);
+}
+
+.fd-ribbon-cell img {
+  height: 100%;
+  width: auto;
+  display: block;
+  object-fit: cover;
+}
+
+@keyframes fd-ribbon-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fd-ribbon-track {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  /* Parked, so make it reachable by hand instead. */
+  .fd-ribbon {
+    overflow-x: auto;
+  }
+}
+
+/* ---- Links that are headings, and links that are navigation ----------- */
+/*
+   EIGHTEEN BROWSER-DEFAULT LINKS, FOUND BY SWEEPING THE RENDERED PAGES.
+
+   The inline-link fix above covered running prose. It did not cover two other
+   places where an <a> carries no class and therefore no colour, so Chromium
+   painted them #0000EE and, once visited, #551A8B:
+
+     ul.fd-list.fd-list-2 > li > h3 > a   the "other experiences" and
+                                          "next" rails on /celebrations/*,
+                                          /creative/* and /stories/*
+     nav > ul.fd-swatch-row > li > a      the jump links at the top of /faq
+
+   Every other link on this site sits inside a button, a tile or the footer,
+   all of which set their own colour. These two were the remainder, and they
+   had been live on the celebration and FAQ pages since those pages were
+   built. Nobody reported them because a blue link does not look broken; it
+   looks like a link. It is simply not this brand's link.
+
+   A heading that is a link is still a heading, so it takes the ink it would
+   have had and earns an underline on hover rather than wearing one, which is
+   the same treatment .fd-arrow-link already gets.
+
+   scripts/visual-audit.mts now fails on any link left in the User-Agent's
+   blue or purple, which is the only kind of check that can see this: the
+   markup is a perfectly ordinary <a> and every source-reading guard in this
+   repository passes on it.
+*/
+.fd-list a,
+.fd-swatch-row a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.fd-list a:hover,
+.fd-list a:focus-visible,
+.fd-swatch-row a:hover,
+.fd-swatch-row a:focus-visible {
+  text-decoration: underline;
+  text-decoration-color: var(--fd-gold);
+  text-underline-offset: 0.25em;
+}
+
+/* The stories source list is prose inside a .fd-list, so its citations keep
+   the inline-link treatment rather than inheriting the heading one. */
+.fd-list a.fd-inline-link {
+  color: var(--fd-ink);
+  text-decoration: underline;
+  text-decoration-color: var(--fd-gold);
+}

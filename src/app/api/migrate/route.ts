@@ -21,6 +21,21 @@ import { events } from "@/content/events";
 import { homepage } from "@/content/homepage";
 import { listingPages } from "@/content/listingPages";
 import { destinationHubs } from "@/content/destinationHubs";
+import {
+  addOns as fdAddOnsLocal,
+  brand as fdBrand,
+  cancellation as fdCancellation,
+  contact as fdContact,
+  nav as fdNav,
+  packageIncludes as fdIncludes,
+  packages as fdPackagesLocal,
+  payment as fdPayment,
+  rentalServices as fdRentalsLocal,
+} from "@/content/flyingDresses";
+import {
+  FLYING_DRESS_COLLECTION,
+  MENS_OUTFITS,
+} from "@/content/outfitCollection";
 import type { StoryBodyBlock, StoryCountdownBlock, StoryExperienceCardBlock } from "@/content/types";
 import { planTreasureUpdate } from "@/lib/migrationPlan";
 import { refuseUnlessMaintainer } from "@/lib/security/maintenance";
@@ -979,6 +994,151 @@ export async function GET(request: NextRequest) {
       treasures: treasurePlan,
       results,
     });
+  }
+
+  // ------------------------------------------------------------------------
+  // FLYING DRESSES EGYPT — seeding a brand that had no CMS documents at all.
+  //
+  //   /api/migrate?secret=...&only=flyingDresses
+  //
+  // createIfNotExists, NOT createOrReplace, and that difference is the whole
+  // safety story for this block. Every other type here is re-run to push
+  // updated content files INTO Sanity. This one is the opposite: it exists to
+  // hand the owner a starting point, after which the Studio is the authority
+  // and the content files are only a fallback. A createOrReplace would mean
+  // that re-running this route — for any unrelated type, since `only` is
+  // optional — silently reverted every edit they had made.
+  //
+  // So: it creates what is missing and never touches what is there. Running
+  // it twice does nothing the second time. There is no mode that overwrites.
+  //
+  // THE SEED IS A NO-OP BY CONSTRUCTION. Every value comes from the content
+  // files the site already renders, so publishing these changes nothing a
+  // visitor sees. scripts/check-flying-dresses.mts asserts that against the
+  // real payload rather than trusting it.
+  //
+  // No images are seeded. The merge in _lib/contentMerge.ts falls back to the
+  // local photograph whenever a document has none, so the pictures stay
+  // exactly as they are until somebody uploads a replacement in the Studio.
+  // ------------------------------------------------------------------------
+  if (shouldRun("flyingDresses")) {
+    tx.createIfNotExists({
+      _id: "flyingDressSettings",
+      _type: "flyingDressSettings",
+      name: fdBrand.name,
+      shortName: fdBrand.shortName,
+      tagline: fdBrand.tagline,
+      description: fdBrand.description,
+      heroHeadline: fdBrand.heroHeadline,
+      heroHeadlineAccent: fdBrand.heroHeadlineAccent,
+      heroSupport: fdBrand.heroSupport,
+      email: fdContact.email,
+      phoneDisplay: fdContact.phones[0]?.display ?? "",
+      location: fdContact.location,
+      socials: fdContact.socials.map((s, i) => ({
+        _key: `social${i}`, _type: "fdSocial",
+        platform: s.platform, handle: s.handle,
+        ...(s.profileUrl ? { profileUrl: s.profileUrl } : {}),
+      })),
+      packageIncludes: fdIncludes.map((inc, i) => ({
+        _key: `inc${i}`, _type: "fdInclusion", title: inc.title, detail: inc.detail,
+      })),
+      paymentNote: fdPayment.note,
+      paymentMethods: fdPayment.methods.map((m, i) => ({
+        _key: `pay${i}`, _type: "fdPaymentMethod", label: m.label,
+        ...(m.detail ? { detail: m.detail } : {}),
+      })),
+      cancellationPublished: fdCancellation.published,
+      cancellationSummary: fdCancellation.summary,
+      nav: fdNav.map((n, i) => ({ _key: `nav${i}`, _type: "fdNavItem", label: n.label, href: n.href })),
+    });
+    results.push("flyingDressSettings");
+
+    for (const [idx, p] of fdPackagesLocal.entries()) {
+      tx.createIfNotExists({
+        _id: `fdPackage-${p.slug}`,
+        _type: "flyingDressPackage",
+        slug: { _type: "slug", current: p.slug },
+        name: p.name, title: p.title, eyebrow: p.eyebrow,
+        order: (idx + 1) * 10,
+        priceUsd: p.priceUsd,
+        eyeSlug: p.eyeSlug,
+        intro: p.intro,
+        ...(p.metaDescription ? { metaDescription: p.metaDescription } : {}),
+        whyThis: p.whyThis,
+        gettingThere: p.gettingThere,
+        visualDirection: p.visualDirection,
+        imageAlt: p.imageAlt,
+        tone: p.tone,
+        ...(p.priceStory
+          ? { priceStoryHeading: p.priceStory.heading, priceStoryBody: p.priceStory.body }
+          : {}),
+        ...(p.timeline
+          ? {
+              timeline: p.timeline.map((t, i) => ({
+                _key: `t${i}`, _type: "fdTimelineStep", when: t.when, what: t.what,
+              })),
+            }
+          : {}),
+        faqs: p.faqs.map((f, i) => ({
+          _key: `f${i}`, _type: "fdFaq", question: f.question, answer: f.answer,
+        })),
+      });
+    }
+    results.push(`flyingDressPackage x${fdPackagesLocal.length}`);
+
+    for (const [idx, a] of fdAddOnsLocal.entries()) {
+      tx.createIfNotExists({
+        _id: `fdAddOn-${a.id}`,
+        _type: "flyingDressAddOn",
+        addOnId: { _type: "slug", current: a.id },
+        label: a.label,
+        // Omitted rather than null when there is no price: the field means
+        // "on request", and the schema refuses a zero for the same reason.
+        ...(typeof a.priceUsd === "number" ? { priceUsd: a.priceUsd } : {}),
+        priceIsFrom: a.fromPrice,
+        homeNote: a.homeNote,
+        detail: a.detail,
+        order: (idx + 1) * 10,
+      });
+    }
+    results.push(`flyingDressAddOn x${fdAddOnsLocal.length}`);
+
+    for (const [idx, r] of fdRentalsLocal.entries()) {
+      tx.createIfNotExists({
+        _id: `fdRental-${r.slug}`,
+        _type: "flyingDressRental",
+        slug: { _type: "slug", current: r.slug },
+        name: r.name, title: r.title, eyebrow: r.eyebrow,
+        order: (idx + 1) * 10,
+        summary: r.summary,
+        intro: r.intro,
+        youGet: r.youGet,
+        notIncluded: r.notIncluded,
+        howItWorks: r.howItWorks.map((h, i) => ({
+          _key: `h${i}`, _type: "fdRentalStep", title: h.title, detail: h.detail,
+        })),
+        faqs: r.faqs.map((f, i) => ({
+          _key: `f${i}`, _type: "fdFaq", question: f.question, answer: f.answer,
+        })),
+      });
+    }
+    results.push(`flyingDressRental x${fdRentalsLocal.length}`);
+
+    const fdOutfits = [...FLYING_DRESS_COLLECTION, ...MENS_OUTFITS];
+    for (const [idx, o] of fdOutfits.entries()) {
+      tx.createIfNotExists({
+        _id: `fdOutfit-${o.id}`,
+        _type: "flyingDressOutfit",
+        outfitId: o.id,
+        name: o.name,
+        category: o.category,
+        ...(o.hex ? { hex: o.hex } : {}),
+        order: (idx + 1) * 10,
+        retired: false,
+      });
+    }
+    results.push(`flyingDressOutfit x${fdOutfits.length}`);
   }
 
   try {

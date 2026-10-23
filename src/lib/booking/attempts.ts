@@ -33,7 +33,9 @@ export { isTerminal };
 
 export type AttemptRow = {
   id: string;
-  reservation_id: string;
+  /** Exactly one of these is set. The database enforces it; see 0025. */
+  reservation_id: string | null;
+  boutique_order_id: string | null;
   provider_order_id: string | null;
   status: string;
   amount_cents: number;
@@ -48,13 +50,40 @@ export type AttemptRow = {
 };
 
 const SELECT =
-  "id, reservation_id, provider_order_id, status, amount_cents, currency, quote, " +
+  "id, reservation_id, boutique_order_id, provider_order_id, status, amount_cents, currency, quote, " +
   "create_request_id, capture_request_id, capture_id, authorization_id, fulfilled_at, captured_at";
 
 
 
+/**
+ * What an attempt is paying for.
+ *
+ * A booking deposit and a boutique order are different things with the same
+ * money problem, so they share one rail rather than two. The alternative —
+ * a second createAttempt/settleAttempt beside this one — is precisely the
+ * "two code paths that both handle a payment" this module opens by warning
+ * against, and the case they would eventually disagree about is the one
+ * that costs money.
+ */
+export type AttemptParent =
+  | { kind: "reservation"; id: string }
+  | { kind: "boutiqueOrder"; id: string };
+
+/** The parent of a row, read back off the row itself. */
+export function parentOf(attempt: AttemptRow): AttemptParent | null {
+  if (attempt.reservation_id) return { kind: "reservation", id: attempt.reservation_id };
+  if (attempt.boutique_order_id) return { kind: "boutiqueOrder", id: attempt.boutique_order_id };
+  return null;
+}
+
+/** Which table a parent lives in. */
+export const PARENT_TABLE: Record<AttemptParent["kind"], "reservations" | "boutique_orders"> = {
+  reservation: "reservations",
+  boutiqueOrder: "boutique_orders",
+};
+
 export type CreateAttemptInput = {
-  reservationId: string;
+  parent: AttemptParent;
   reference: string;
   quote: Quote;
   description: string;
@@ -84,7 +113,11 @@ export async function createAttempt(input: CreateAttemptInput): Promise<CreateAt
   const { data: attempt, error } = await supabase
     .from("payment_attempts")
     .insert({
-      reservation_id: input.reservationId,
+      // Exactly one column is set. The CHECK constraint in 0025 refuses a row
+      // with both or neither, so an orphan attempt the sweep could never
+      // resolve cannot be written in the first place.
+      reservation_id: input.parent.kind === "reservation" ? input.parent.id : null,
+      boutique_order_id: input.parent.kind === "boutiqueOrder" ? input.parent.id : null,
       provider: provider.name,
       amount_cents: input.quote.totalCents,
       currency: input.quote.currency,
@@ -175,16 +208,20 @@ export async function settleAttempt(orderId: string): Promise<SettleOutcome> {
     return { ok: false, reason: "terminal", message: `That payment is already ${attempt.status}.` };
   }
 
-  // The booking's reference, read from our own row rather than from whoever
-  // called us, so the comparison below is against something the caller could
-  // not have chosen.
+  // The reference, read from our own row rather than from whoever called us,
+  // so the comparison below is against something the caller could not have
+  // chosen. Either parent answers it.
+  const parent = parentOf(attempt);
+  if (!parent) {
+    return { ok: false, reason: "unknown", message: "That payment has no order attached to it." };
+  }
   const { data: reservation } = await supabase
-    .from("reservations")
+    .from(PARENT_TABLE[parent.kind])
     .select("id, reference, status")
-    .eq("id", attempt.reservation_id)
+    .eq("id", parent.id)
     .maybeSingle();
   if (!reservation) {
-    return { ok: false, reason: "unknown", message: "That payment's booking no longer exists." };
+    return { ok: false, reason: "unknown", message: "That payment's order no longer exists." };
   }
 
   const result = await provider.finalizeApproval(orderId, {
@@ -254,22 +291,32 @@ export async function settleAttempt(orderId: string): Promise<SettleOutcome> {
   const settled = (fresh ?? attempt) as unknown as AttemptRow;
 
   if (settled.status === "captured") {
-    // The money side of the booking only. The booking itself stays a request
-    // until a person confirms it, which is the rule this whole system exists
-    // to hold, so nothing here touches `status`.
-    await supabase
-      .from("reservations")
-      .update({
-        deposit_status: "captured",
-        deposit_amount: settled.amount_cents / 100,
-        deposit_quote: settled.quote,
-        deposit_paid_at: settled.captured_at ?? now,
-        payment_order_id: orderId,
-        payment_capture_id: settled.capture_id,
-        paid_attempt_id: settled.id,
-        updated_at: now,
-      })
-      .eq("id", attempt.reservation_id);
+    if (parent.kind === "reservation") {
+      // The money side of the booking only. The booking itself stays a
+      // request until a person confirms it, which is the rule this whole
+      // system exists to hold, so nothing here touches `status`.
+      await supabase
+        .from("reservations")
+        .update({
+          deposit_status: "captured",
+          deposit_amount: settled.amount_cents / 100,
+          deposit_quote: settled.quote,
+          deposit_paid_at: settled.captured_at ?? now,
+          payment_order_id: orderId,
+          payment_capture_id: settled.capture_id,
+          paid_attempt_id: settled.id,
+          updated_at: now,
+        })
+        .eq("id", parent.id);
+    } else {
+      // A boutique order IS paid for in full, unlike a deposit, so its own
+      // status moves. It still does not say the piece is made: `making` is
+      // the next step and a person moves it.
+      await supabase
+        .from("boutique_orders")
+        .update({ status: "paid", paid_at: settled.captured_at ?? now, updated_at: now })
+        .eq("id", parent.id);
+    }
   }
 
   return {
@@ -307,10 +354,21 @@ export async function markAttempt(
     .eq("id", attempt.id);
 
   if (movesTerminal) {
-    await supabase
-      .from("reservations")
-      .update({ deposit_status: status === "refunded" ? "refunded" : "voided", updated_at: now })
-      .eq("id", attempt.reservation_id);
+    const parent = parentOf(attempt);
+    if (parent?.kind === "reservation") {
+      await supabase
+        .from("reservations")
+        .update({ deposit_status: status === "refunded" ? "refunded" : "voided", updated_at: now })
+        .eq("id", parent.id);
+    } else if (parent?.kind === "boutiqueOrder") {
+      // "reversed" is a chargeback, not a refund we chose to give, but from
+      // the order's side both mean the money is gone and the piece should
+      // not be made.
+      await supabase
+        .from("boutique_orders")
+        .update({ status: status === "refunded" ? "refunded" : "cancelled", updated_at: now })
+        .eq("id", parent.id);
+    }
   }
 
   return { ...attempt, status };

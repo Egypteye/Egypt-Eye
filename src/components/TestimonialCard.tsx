@@ -79,7 +79,7 @@ export function TestimonialCard({
             href={d.sourceUrl}
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="mt-2 inline-block text-xs font-semibold text-gold-dark underline underline-offset-2"
+            className="mt-2 inline-flex min-h-[44px] items-center text-xs font-semibold text-gold-dark underline underline-offset-2"
           >
             Read the full review on {d.platformLabel}
           </a>
@@ -142,7 +142,7 @@ export function TestimonialCard({
             href={d.sourceUrl}
             target="_blank"
             rel="noopener noreferrer nofollow"
-            className="mt-2 inline-block text-xs text-ink-soft/85 underline underline-offset-2 transition hover:text-ink"
+            className="mt-2 inline-flex min-h-[44px] items-center text-xs text-ink-soft/85 underline underline-offset-2 transition hover:text-ink"
           >
             View on {d.platformLabel}
           </a>

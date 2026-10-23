@@ -9,6 +9,7 @@ import {
 import { HUMAN_CONFIRMS, moneyState, replyPromise, type PaymentMode } from "@/lib/booking/wording";
 import { extrasTotal, formatUsd, type BookingExtra } from "@/lib/booking/extras";
 import { describeOutfits, OUTFIT_PREFERENCE_NOTE, type OutfitChoice } from "@/lib/booking/outfits";
+import { describeGuide, type GuideSelection } from "@/lib/booking/guide";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 
@@ -164,6 +165,7 @@ export function reservationTeamEmail({
   preferences,
   accountState,
   reviewUrl,
+  guide,
 }: {
   reference: string;
   guestName: string;
@@ -180,6 +182,15 @@ export function reservationTeamEmail({
   preferences?: string | null;
   accountState: "signed-in" | "guest";
   reviewUrl: string;
+  /**
+   * The Egyptologist guide, when one was taken.
+   *
+   * This is the half of the booking the desk has to ACT on: a language other
+   * than English is a request nobody has agreed to yet, and it is on this
+   * email or it is nowhere. It sits high in the table, above the contact
+   * details, for that reason.
+   */
+  guide?: GuideSelection | null;
 }) {
   const date = (value: string | null) =>
     value ? new Date(value).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" }) : null;
@@ -207,6 +218,16 @@ export function reservationTeamEmail({
           ["Estimate", total === null ? "—" : money(total)],
         ] as [string, string][])
       : ([["Estimate", "No priced items — quote required"]] as [string, string][])),
+    ...(guide && guide.selected
+      ? ([
+          [
+            "Tour guide",
+            guide.isRequest
+              ? `YES \u2014 ${guide.language} REQUESTED, needs confirming (English available)`
+              : `Yes \u2014 ${guide.language}`,
+          ],
+        ] as [string, string][])
+      : []),
     ["Name", guestName],
     ["Email", guestEmail],
     ["Phone", guestPhone || "Not provided"],
@@ -1090,6 +1111,7 @@ export function bookingRequestCustomerEmail({
   moneyMode,
   extras,
   outfits,
+  guide,
 }: {
   reference: string;
   guestName: string;
@@ -1112,6 +1134,12 @@ export function bookingRequestCustomerEmail({
   extras?: readonly BookingExtra[];
   /** What they chose to wear. Empty on every product without a collection. */
   outfits?: readonly OutfitChoice[];
+  /**
+   * The Egyptologist guide, when one was taken. Its FEE already appears in
+   * `extras` because it is a quote line; what this adds is the language and,
+   * for anything other than English, the fact that it is still a request.
+   */
+  guide?: GuideSelection | null;
 }) {
   const greeting = `Hi ${escapeHtml(guestName.split(" ")[0] || guestName)},`;
   const when = formatSlot(startsAt, slotLabel);
@@ -1147,6 +1175,21 @@ export function bookingRequestCustomerEmail({
       ? `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Wearing</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(describeOutfits(wearing))}</strong></td></tr>`
       : "";
 
+  // Named on its own row rather than left to the extras table, because the
+  // LANGUAGE is the part the customer needs to see confirmed back to them,
+  // and the extras table only carries labels and prices.
+  const guideBlock =
+    guide && guide.selected
+      ? `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Tour guide</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(describeGuide(guide))}</strong></td></tr>`
+      : "";
+  // A language other than English is a REQUEST. Saying so here, in the
+  // customer's own confirmation, is the difference between managing an
+  // expectation and breaking a promise on the day.
+  const guideNote =
+    guide && guide.selected && guide.isRequest
+      ? `<p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">Your guide is booked. We have asked for ${escapeHtml(guide.language)} and will confirm whether we can cover it \u2014 if we cannot, your guide will work in English and we will tell you before the day.</p>`
+      : "";
+
   const chosen = extras ?? [];
   const extrasBlock =
     chosen.length > 0
@@ -1173,6 +1216,7 @@ export function bookingRequestCustomerEmail({
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">When</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(when)}</strong></td></tr>
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">For</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(who)}</strong></td></tr>
         ${outfitBlock}
+        ${guideBlock}
         <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Reference</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(reference)}</strong></td></tr>
       </table>
       ${
@@ -1181,6 +1225,7 @@ export function bookingRequestCustomerEmail({
           : ""
       }
       ${extrasBlock}
+      ${guideNote}
       ${moneyLine}
       <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
       ${ctaButton("See your booking", `${SITE_URL}/account`)}
@@ -1197,6 +1242,7 @@ export function bookingRequestCustomerEmail({
     `What: ${productTitle}`,
     `When: ${when}`,
     `For: ${who}`,
+    ...(guide && guide.selected ? [`Tour guide: ${describeGuide(guide)}`] : []),
     `Reference: ${reference}`,
     wearing.length > 0 ? `Wearing: ${describeOutfits(wearing)}` : "",
     wearing.length > 0 ? OUTFIT_PREFERENCE_NOTE : "",
@@ -1519,6 +1565,12 @@ export type BookingFacts = {
    * Studio collection changed between booking and payment.
    */
   outfits?: OutfitChoice[];
+  /**
+   * The Egyptologist guide, read back off the booking rather than recomputed.
+   * Its fee is already one of `extras`; this carries the language and whether
+   * a non-English request is still awaiting confirmation.
+   */
+  guide?: GuideSelection | null;
 };
 
 function whenText(booking: BookingFacts): string {
@@ -1552,6 +1604,17 @@ export function paymentReceivedCustomerEmail({
   const first = booking.guestName.split(" ")[0] || booking.guestName;
   const when = whenText(booking);
   const who = `${booking.people} ${booking.people === 1 ? "person" : "people"}`;
+  // The guide's fee is a priced line in the breakdown already. This repeats
+  // only the part a price cannot say: which language, and whether we have
+  // actually agreed to it yet.
+  const guideLine =
+    booking.guide && booking.guide.selected
+      ? `<p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">${escapeHtml(describeGuide(booking.guide))}.${
+          booking.guide.isRequest
+            ? " We will confirm that language before the day, or your guide will work in English."
+            : ""
+        }</p>`
+      : "";
 
   // No separate extras paragraph: every extra is already a priced line in the
   // breakdown above. The sentence that used to sit here said extras were
@@ -1581,6 +1644,7 @@ export function paymentReceivedCustomerEmail({
         ${breakdownRows(quote)}
       </table>
       ${extrasHtml}
+      ${guideLine}
       <p style="margin:0 0 16px;">${escapeHtml(replyPromise())}</p>
       ${ctaButton("See your booking", `${SITE_URL}/account`)}
       <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:12px;color:#6b7d70;">PayPal order ${escapeHtml(
@@ -1601,6 +1665,7 @@ export function paymentReceivedCustomerEmail({
     `When: ${when}`,
     `For: ${who}`,
     outfitTextLine(booking),
+    ...(booking.guide && booking.guide.selected ? [describeGuide(booking.guide)] : []),
     `Reference: ${payment.reference}`,
     "",
     "How your deposit was worked out:",
@@ -1650,6 +1715,16 @@ export function paymentReceivedTeamEmail({
         ${row("When", when)}
         ${row("People", String(booking.people))}
         ${outfitFactsRow(booking)}
+        ${
+          booking.guide && booking.guide.selected
+            ? row(
+                "Tour guide",
+                booking.guide.isRequest
+                  ? `YES \u2014 ${booking.guide.language} REQUESTED, needs confirming`
+                  : `Yes \u2014 ${booking.guide.language}`
+              )
+            : ""
+        }
         ${row("Name", booking.guestName)}
         ${booking.guestPhone ? row("Phone", booking.guestPhone) : ""}
         ${row("Email", booking.guestEmail || "None — guest booking, reply by phone")}
@@ -1710,4 +1785,287 @@ export function paymentReceivedTeamEmail({
     html,
     text,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Boutique orders
+//
+// A cartouche is paid for in full, not deposited on, and it is collected in
+// Egypt rather than posted — so neither of these may reuse the deposit
+// wording. Two things they must both carry: the signs that will actually be
+// engraved, and the plain statement that the spelling is confirmed before
+// anything is cut. A pendant cannot be un-engraved.
+// ---------------------------------------------------------------------------
+
+export type BoutiqueOrderFacts = {
+  reference: string;
+  productName: string;
+  engravedName: string;
+  glyphs: string;
+  spellingLine: string;
+  signCount: number;
+  capacity: number;
+  quantity: number;
+  unitCents: number;
+  totalCents: number;
+  currency: string;
+  customerName: string;
+  customerEmail: string;
+  customerPhone?: string | null;
+  collectionNotes?: string | null;
+  orderId: string;
+  captureId: string;
+};
+
+function boutiqueRows(order: BoutiqueOrderFacts): string {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+  return [
+    row("Piece", order.productName),
+    row("Name to be written", order.engravedName),
+    row("Signs", `${order.glyphs}  (${order.signCount} of ${order.capacity})`),
+    order.quantity > 1 ? row("Quantity", String(order.quantity)) : "",
+    row("Collection", "In Egypt — we arrange the handover with you"),
+    row("Paid", `${cents(order.totalCents)} ${order.currency}`),
+    row("Reference", order.reference),
+  ].join("");
+}
+
+export function boutiqueOrderCustomerEmail(order: BoutiqueOrderFacts) {
+  const first = order.customerName.split(" ")[0] || order.customerName;
+  const html = baseLayout({
+    preheader: `Your ${order.productName} is ordered — ${order.engravedName}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(first)},</p>
+      <p style="margin:0 0 16px;"><strong>Your cartouche is ordered — thank you.</strong> ${escapeHtml(
+        cents(order.totalCents)
+      )} ${escapeHtml(order.currency)} has been received.</p>
+      <p style="margin:0 0 16px;">We will confirm the spelling with you before anything is engraved. A cartouche cannot be un-engraved, so we would rather ask twice than cut the wrong name once.</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${boutiqueRows(order)}
+      </table>
+      <p style="margin:0 0 16px;">We will be in touch to arrange where and when to hand it over while you are in Egypt.</p>
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:12px;color:#6b7d70;">PayPal order ${escapeHtml(
+        order.orderId
+      )} · transaction ${escapeHtml(order.captureId)}</p>
+    `,
+    footerHtml: `Quote ${escapeHtml(order.reference)} if you reply to this email. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${first},`,
+    "",
+    `Your cartouche is ordered — thank you. ${cents(order.totalCents)} ${order.currency} received.`,
+    "",
+    "We will confirm the spelling with you before anything is engraved.",
+    "",
+    `Piece: ${order.productName}`,
+    `Name to be written: ${order.engravedName}`,
+    `Signs: ${order.spellingLine}`,
+    order.quantity > 1 ? `Quantity: ${order.quantity}` : "",
+    `Collection: in Egypt — we arrange the handover with you`,
+    `Paid: ${cents(order.totalCents)} ${order.currency}`,
+    `Reference: ${order.reference}`,
+    "",
+    `PayPal order ${order.orderId} · transaction ${order.captureId}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Your cartouche is ordered — ${order.reference}`, html, text };
+}
+
+export function boutiqueOrderTeamEmail(order: BoutiqueOrderFacts) {
+  const html = baseLayout({
+    preheader: `PAID — ${order.productName} for ${order.engravedName} (${order.reference}).`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;"><strong>A cartouche has been paid for in full.</strong></p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${boutiqueRows(order)}
+      </table>
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">For the workshop</p>
+      <p style="margin:0 0 16px;font-size:15px;"><strong>${escapeHtml(order.spellingLine)}</strong></p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Customer</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(
+          order.customerName
+        )}</strong></td></tr>
+        <tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Email</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(
+          order.customerEmail
+        )}</strong></td></tr>
+        ${
+          order.customerPhone
+            ? `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">Phone</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(
+                order.customerPhone
+              )}</strong></td></tr>`
+            : ""
+        }
+      </table>
+      ${
+        order.collectionNotes
+          ? `<p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">What they told us</p><p style="margin:0 0 16px;">${escapeHtml(
+              order.collectionNotes
+            )}</p>`
+          : ""
+      }
+      <p style="margin:0 0 16px;">Confirm the spelling with the customer before the workshop cuts anything.</p>
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — boutique order ${escapeHtml(order.reference)}.`,
+  });
+
+  const text = [
+    "A cartouche has been paid for in full.",
+    "",
+    `Piece: ${order.productName}`,
+    `For the workshop: ${order.spellingLine}`,
+    order.quantity > 1 ? `Quantity: ${order.quantity}` : "",
+    `Paid: ${cents(order.totalCents)} ${order.currency}`,
+    `Reference: ${order.reference}`,
+    "",
+    `Customer: ${order.customerName}`,
+    `Email: ${order.customerEmail}`,
+    order.customerPhone ? `Phone: ${order.customerPhone}` : "",
+    order.collectionNotes ? `What they told us: ${order.collectionNotes}` : "",
+    "",
+    "Confirm the spelling with the customer before the workshop cuts anything.",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `PAID — cartouche for ${order.engravedName} (${order.reference})`, html, text };
+}
+
+// ---------------------------------------------------------------------------
+// Private shop visit
+//
+// A REQUEST, never an appointment. Nobody has supplied the shop's opening
+// hours, so neither of these may say a time, and both say in words that a
+// person confirms afterwards. The team's copy carries the map pins; the
+// customer's does not, because we have not claimed a partnership with any
+// of those shops.
+// ---------------------------------------------------------------------------
+
+export type ShopVisitFacts = {
+  reference: string;
+  name: string;
+  email: string;
+  phone?: string | null;
+  areaName: string;
+  mapUrls: string[];
+  preferredDate?: string | null;
+  preferredTime?: string | null;
+  visitors: number;
+  interests: string[];
+  notes?: string | null;
+};
+
+const VISIT_NOT_CONFIRMED =
+  "This is a request, not a booking. Nothing is held and no time is confirmed until one of our team comes back to you.";
+
+export function shopVisitCustomerEmail(v: ShopVisitFacts) {
+  const first = v.name.split(" ")[0] || v.name;
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  const html = baseLayout({
+    preheader: `We have your request to visit the shop — ${v.reference}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;">Hi ${escapeHtml(first)},</p>
+      <p style="margin:0 0 16px;"><strong>We have your request to come and smell the collection.</strong></p>
+      <p style="margin:0 0 16px;">${escapeHtml(VISIT_NOT_CONFIRMED)}</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("Where", v.areaName)}
+        ${v.preferredDate ? row("You asked for", v.preferredDate) : ""}
+        ${v.preferredTime ? row("Time", v.preferredTime) : ""}
+        ${row("How many of you", String(v.visitors))}
+        ${v.interests.length > 0 ? row("Interested in", v.interests.join(", ")) : ""}
+        ${row("Reference", v.reference)}
+      </table>
+      <p style="margin:0 0 16px;">Bring nothing and buy nothing. An hour is enough to work through a range properly, and you only take home what you actually liked on your own skin.</p>
+    `,
+    footerHtml: `Quote ${escapeHtml(v.reference)} if you reply. Egypt Eye Travel and Tours.`,
+  });
+
+  const text = [
+    `${first},`,
+    "",
+    "We have your request to come and smell the collection.",
+    "",
+    VISIT_NOT_CONFIRMED,
+    "",
+    `Where: ${v.areaName}`,
+    v.preferredDate ? `You asked for: ${v.preferredDate}` : "",
+    v.preferredTime ? `Time: ${v.preferredTime}` : "",
+    `How many of you: ${v.visitors}`,
+    v.interests.length > 0 ? `Interested in: ${v.interests.join(", ")}` : "",
+    `Reference: ${v.reference}`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Your shop visit request — ${v.reference}`, html, text };
+}
+
+export function shopVisitTeamEmail(v: ShopVisitFacts) {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  const html = baseLayout({
+    preheader: `Shop visit request — ${v.areaName}, ${v.visitors} visitor(s).`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;"><strong>Somebody wants to come and smell the oils.</strong> Nothing is confirmed — one of us needs to come back with a time.</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("Where", v.areaName)}
+        ${v.preferredDate ? row("Preferred date", v.preferredDate) : ""}
+        ${v.preferredTime ? row("Preferred time", v.preferredTime) : ""}
+        ${row("Visitors", String(v.visitors))}
+        ${v.interests.length > 0 ? row("Wants to explore", v.interests.join(", ")) : ""}
+        ${row("Name", v.name)}
+        ${row("Email", v.email)}
+        ${v.phone ? row("Phone / WhatsApp", v.phone) : ""}
+        ${row("Reference", v.reference)}
+      </table>
+      ${
+        v.notes
+          ? `<p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Their note</p><p style="margin:0 0 16px;">${escapeHtml(
+              v.notes
+            )}</p>`
+          : ""
+      }
+      <p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Shops in this area</p>
+      <ul style="margin:0 0 16px;padding-left:18px;">
+        ${v.mapUrls
+          .map((u) => `<li style="margin:0 0 6px;"><a href="${escapeHtml(u)}">${escapeHtml(u)}</a></li>`)
+          .join("")}
+      </ul>
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — shop visit ${escapeHtml(v.reference)}.`,
+  });
+
+  const text = [
+    "Somebody wants to come and smell the oils. Nothing is confirmed.",
+    "",
+    `Where: ${v.areaName}`,
+    v.preferredDate ? `Preferred date: ${v.preferredDate}` : "",
+    v.preferredTime ? `Preferred time: ${v.preferredTime}` : "",
+    `Visitors: ${v.visitors}`,
+    v.interests.length > 0 ? `Wants to explore: ${v.interests.join(", ")}` : "",
+    `Name: ${v.name}`,
+    `Email: ${v.email}`,
+    v.phone ? `Phone / WhatsApp: ${v.phone}` : "",
+    `Reference: ${v.reference}`,
+    v.notes ? `\nTheir note: ${v.notes}` : "",
+    "",
+    "Shops in this area:",
+    ...v.mapUrls.map((u) => `  ${u}`),
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Shop visit request — ${v.areaName} (${v.reference})`, html, text };
 }

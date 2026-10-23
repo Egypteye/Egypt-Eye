@@ -7,6 +7,7 @@ import { treasureCategoryBySlug, treasureProductsFor } from "@/content/treasures
 import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { site } from "@/content/site";
+import { describeSpelling, spellName } from "@/lib/hieroglyphs/signs";
 
 // A Boutique request: a reservation, an availability question, or a
 // shop appointment, depending on the category and where the traveller is.
@@ -84,6 +85,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: `${field.label} is required.` }, { status: 400 });
     }
     if (value) answers.push({ label: field.label, value });
+  }
+
+  // The hieroglyphic spelling the workshop needs, derived here from the name
+  // that was actually submitted rather than sent up by the browser. The page
+  // shows a preview; this is the line the desk works from, and because both
+  // come from spellName() they cannot disagree. It also records where the
+  // name does not fit a single cartouche, which is a conversation to have
+  // before anything is engraved, not after.
+  const nameField = category.personalization.find((f) => f.name === "cartoucheName");
+  if (nameField) {
+    const submitted = clean(form.get(nameField.name), 40);
+    if (submitted) {
+      answers.push({ label: "Hieroglyphic spelling", value: describeSpelling(submitted, spellName(submitted)) });
+    }
   }
 
   // ---------------------------------------------------------------------

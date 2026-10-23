@@ -80,7 +80,7 @@ function OutfitGroup({
   return (
     <div className="flex flex-col gap-3">
       <h3 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft">
-        {title} <span className="text-ink/40">({count})</span>
+        {title} <span className="text-ink/65">({count})</span>
       </h3>
       <ul className="grid grid-cols-3 gap-3 sm:grid-cols-4 lg:grid-cols-6">
         {outfits.map((outfit) => (

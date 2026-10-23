@@ -13,7 +13,7 @@ what is both high-frequency and costly to get wrong. Depth lives in
 
 `claude/egypt-eye-travel-website-fckb5t` **is the default branch**. There is no
 PR and no staging. Every push deploys to a site taking real card payments.
-Before any commit: `npm run check` (17 offline checks), `npx tsc --noEmit`,
+Before any commit: `npm run check` (25 offline checks), `npx tsc --noEmit`,
 `npm run lint`. All three green, every time. See the `ship` skill.
 
 ## 2. The owner has no terminal
@@ -69,5 +69,5 @@ sandbox has no DNS to Sanity. That is the environment, not your code. Treat
 
 ## Checks
 
-`npm run check` runs 17. `npm run audit:visual` opens real pages in real
+`npm run check` runs 25. `npm run audit:visual` opens real pages in real
 Chromium. `scripts/check-sql.sh` is **not** in the aggregate.

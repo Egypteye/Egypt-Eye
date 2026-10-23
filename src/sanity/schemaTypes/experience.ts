@@ -142,6 +142,29 @@ export const experience = defineType({
       of: [{ type: "string" }],
     }),
     defineField({
+      name: "theme",
+      title: "Collection",
+      description:
+        "Which collection this sits in on the Extra Experiences page. Leave empty and it simply appears under its destination, which is how most of the catalogue works.",
+      type: "string",
+      options: {
+        list: [
+          { title: "Local culture & craft", value: "craft" },
+          { title: "Heritage & faith", value: "heritage" },
+          { title: "Photography", value: "photography" },
+          { title: "Outdoors", value: "outdoors" },
+        ],
+      },
+    }),
+    defineField({
+      name: "enquiryOptions",
+      title: "Enquiry form options",
+      description:
+        "Short things a guest can tick when they email an enquiry about this experience — e.g. 'Lunch at the farm', 'Add Saqqara', 'I'd like a tailored itinerary'. No prices: a ticked option is a preference passed to the team, not a purchase. Leave empty and the form does not ask.",
+      type: "array",
+      of: [{ type: "string" }],
+    }),
+    defineField({
       name: "destinations",
       title: "Destinations",
       description: "E.g. 'Cairo', 'Giza' — connects this experience to the Explore Egypt map.",

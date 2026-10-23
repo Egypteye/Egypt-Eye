@@ -67,6 +67,13 @@ export const site = {
     whatsapp: "+20 127 414 4599",
     whatsappLink: "https://wa.me/201274144599",
   },
+  // Deliberately empty. These name the LICENSED AGENCY Egypt Eye operates
+  // under — not Egypt Eye itself, which holds no tourism licence. Only the
+  // owner has them; inventing a licence number on a legal page is the single
+  // fastest way for a travel business to turn a paperwork gap into a fraud
+  // allegation. He fills them in Sanity Studio under Site Settings →
+  // Operator of record, and /admin lists them as outstanding until he does.
+  legal: {},
   // The real accounts. Share-sheet tracking parameters (mibextid, igsi,
   // _r/_t, feature=shared) are stripped — they identify whoever copied the
   // link, add nothing for visitors, and these bare profile URLs are the

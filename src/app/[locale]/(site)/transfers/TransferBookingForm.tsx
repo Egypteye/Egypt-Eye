@@ -6,6 +6,7 @@ import { localizedTransferCategories } from "@/content/productTranslations";
 import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { getTransferQuote } from "@/lib/transferPricing";
 import type { TransferCategory, TransferVehicle, TransferVehicleId, TransferZone } from "@/content/types";
+import { PhoneField } from "@/components/PhoneField";
 
 const DURATION_OPTIONS = [3, 4, 5, 6, 8, 10];
 
@@ -70,6 +71,9 @@ export function TransferBookingForm({
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  // The authority's verdict on the number, held so the form's own gate can
+  // refuse an unusable one instead of quietly sending none.
+  const [phoneProblem, setPhoneProblem] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -123,7 +127,16 @@ export function TransferBookingForm({
     }
 
     if (!date || !name || !email || !phone) {
-      setErrorMessage("Please fill in all required fields.");
+      // The phone gets its own sentence. It is required here, and PhoneField
+      // hands back the empty string for a number it could not make sense of,
+      // so "fill in all required fields" would be aimed at a box the customer
+      // can see they have filled in. phoneProblem says what is actually wrong
+      // with it, in the authority's own words.
+      setErrorMessage(
+        phoneProblem && date && name && email
+          ? phoneProblem
+          : "Please fill in all required fields."
+      );
       return;
     }
     if (isCustomCategory && (!customFrom.trim() || !customTo.trim())) {
@@ -395,7 +408,19 @@ export function TransferBookingForm({
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
             WhatsApp / Phone *
-            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required className={inputClass()} />
+            <PhoneField
+              errorClassName="text-sm font-semibold text-terracotta"
+              id="transfer-phone"
+              value={phone}
+              onChange={(next, problem) => {
+                setPhone(next);
+                setPhoneProblem(problem);
+              }}
+              required
+              inputLabel="Phone number"
+              selectClassName={inputClass()}
+              inputClassName={inputClass()}
+            />
           </label>
           <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">{tr("Flight number or other notes")}<textarea
               value={notes}

@@ -23,6 +23,22 @@ import { host } from "./host";
 import { author } from "./author";
 import { event } from "./event";
 import {
+  flyingDressFrameObject,
+  flyingDressGallery,
+} from "./flyingDressGallery";
+import {
+  fdFaqObject,
+  fdInclusionObject,
+  fdSocialObject,
+  flyingDressSettings,
+} from "./flyingDressSettings";
+import {
+  flyingDressAddOn,
+  flyingDressPackage,
+  flyingDressRental,
+} from "./flyingDressCommerce";
+import { flyingDressOutfit } from "./flyingDressWardrobe";
+import {
   takeEgyptHomePage,
   treasureCategory,
   treasureOption,
@@ -43,6 +59,10 @@ export const schemaTypes = [
   treasureVariant,
   treasureOption,
   treasureStep,
+  flyingDressFrameObject,
+  fdFaqObject,
+  fdInclusionObject,
+  fdSocialObject,
   // Document types shown in the Studio's content list.
   tour,
   experience,
@@ -56,6 +76,15 @@ export const schemaTypes = [
   event,
   treasureCategory,
   treasureProduct,
+  flyingDressGallery,
+  // Flying Dresses Egypt. Until these existed the brand had one schema
+  // and zero documents of it, so every price, photograph and sentence on
+  // that site needed a developer and a deploy.
+  flyingDressSettings,
+  flyingDressPackage,
+  flyingDressAddOn,
+  flyingDressRental,
+  flyingDressOutfit,
   takeEgyptHomePage,
   faqItem,
   siteSettings,

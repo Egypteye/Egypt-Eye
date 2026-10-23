@@ -96,7 +96,7 @@ import type {
   TreasureCategory,
   TreasureProduct,
   BoutiquePage,
-} from "@/content/types";
+  FlyingDressGallery,} from "@/content/types";
 
 // Governs every Sanity fetch site-wide (all tours, stories, experiences,
 // listing pages, homepage — everything routes through safeFetch below).
@@ -752,6 +752,14 @@ async function getSiteSettingsInner(): Promise<ResolvedSiteSettings> {
     ...localSite,
     ...result,
     contact: { ...localSite.contact, ...result.contact },
+    // Merged rather than replaced, and blank strings dropped, so a field the
+    // owner clears in Studio reads as absent to missingLegalIdentity() and
+    // gets reported on /admin — rather than printing "Registered address: ."
+    legal: Object.fromEntries(
+      Object.entries({ ...localSite.legal, ...result.legal }).filter(
+        ([, v]) => typeof v === "string" && v.trim() !== "",
+      ),
+    ),
     socials: { ...localSite.socials, ...result.socials },
     heroSlides:
       result.heroImages && result.heroImages.length > 0
@@ -1008,3 +1016,176 @@ async function getBoutiquePageInner(): Promise<BoutiquePage | null> {
 export const getTreasureCategories = translated(getTreasureCategoriesInner);
 export const getTreasureProducts = translated(getTreasureProductsInner);
 export const getBoutiquePage = translated(getBoutiquePageInner);
+
+/**
+ * A Flying Dresses gallery, by its stable id.
+ *
+ * THE PROJECTION IS THE DANGEROUS PART of any Sanity-backed type here, and it
+ * is why this one is written out field by field rather than with `...`: a
+ * required field the projection does not select is undefined on every
+ * document, forever, and nothing in the type system notices. That is the exact
+ * shape of the bug that stopped the Boutique deploying for two days.
+ *
+ * Images resolve to a URL and their real pixel size here rather than in the
+ * component, so a Sanity frame and a repo frame reach <Gallery> as the same
+ * thing and the component needs no idea where a frame came from.
+ *
+ * A frame with no photograph keeps `src: null` and becomes kind "empty", which
+ * is what makes it render as a labelled gap instead of a picture. The editor
+ * never picks "empty"; it is the absence of an upload, so it cannot drift
+ * from what is actually there.
+ */
+export async function getFlyingDressGallery(
+  galleryId: string
+): Promise<FlyingDressGallery | null> {
+  const doc = await safeFetch<{
+    galleryId: string;
+    title: string;
+    layout: FlyingDressGallery["layout"];
+    frames: {
+      url: string | null;
+      width: number | null;
+      height: number | null;
+      alt: string | null;
+      kind: "agency" | "location" | null;
+      credit: string | null;
+      wanted: string | null;
+    }[] | null;
+  }>(
+    `*[_type == "flyingDressGallery" && galleryId == $galleryId][0]{
+      galleryId,
+      title,
+      layout,
+      "frames": frames[]{
+        "url": photo.asset->url,
+        "width": photo.asset->metadata.dimensions.width,
+        "height": photo.asset->metadata.dimensions.height,
+        alt,
+        kind,
+        credit,
+        wanted
+      }
+    }`,
+    { galleryId }
+  );
+
+  if (!doc) return null;
+
+  return {
+    galleryId: doc.galleryId,
+    title: doc.title,
+    layout: doc.layout,
+    frames: (doc.frames ?? []).map((frame) => ({
+      kind: frame.url ? (frame.kind ?? "agency") : "empty",
+      src: frame.url,
+      alt: frame.alt ?? "",
+      ...(frame.width ? { width: frame.width } : {}),
+      ...(frame.height ? { height: frame.height } : {}),
+      ...(frame.credit ? { credit: frame.credit } : {}),
+      ...(frame.wanted ? { wanted: frame.wanted } : {}),
+    })),
+  };
+}
+
+import type {
+  FdAddOnDoc,
+  FdOutfitDoc,
+  FdPackageDoc,
+  FdRentalDoc,
+  FdSettingsDoc,
+} from "@/app/flying-dresses/_lib/contentMerge";
+
+/* ==========================================================================
+   FLYING DRESSES EGYPT
+   ==========================================================================
+   The second brand. Until these existed it had one schema and no documents
+   of it, so everything on that site — three prices, twelve dresses, every
+   headline — could only change by editing TypeScript and redeploying.
+
+   Each of these follows the same contract as the rest of this file and as
+   .claude/skills/sanity-content:
+
+     - a published document REPLACES its content-file entry wholesale,
+     - `safeFetch` returns null when Sanity is unreachable or unconfigured,
+       and the caller falls back to the content file,
+     - arrays are hardened in lib/sanityShape.ts, where [] is kept as a
+       deliberate clearing and null falls back.
+
+   The projections return plain data, never Sanity image objects: `asset->url`
+   is resolved here so nothing downstream has to know what a Sanity image is.
+   ========================================================================== */
+
+
+export async function getFlyingDressSettings(): Promise<FdSettingsDoc | null> {
+  return safeFetch<FdSettingsDoc>(
+    `*[_type == "flyingDressSettings"][0]{
+      name, shortName, tagline, description,
+      heroHeadline, heroHeadlineAccent, heroSupport,
+      email, phoneDisplay, location,
+      socials[]{platform, handle, profileUrl},
+      packageIncludes[]{title, detail},
+      paymentNote,
+      paymentMethods[]{label, detail},
+      cancellationPublished, cancellationSummary,
+      nav[]{label, href}
+    }`
+  );
+}
+
+
+const FD_PACKAGE_PROJECTION = `{
+  "slug": slug.current,
+  name, title, eyebrow, order, priceUsd, durationNote, eyeSlug,
+  priceStoryHeading, priceStoryBody,
+  intro, metaDescription, whyThis, gettingThere, visualDirection,
+  "imageUrl": image.asset->url,
+  imageAlt, tone,
+  timeline[]{when, what},
+  faqs[]{question, answer}
+}`;
+
+export async function getFlyingDressPackages(): Promise<FdPackageDoc[] | null> {
+  return safeFetch<FdPackageDoc[]>(
+    `*[_type == "flyingDressPackage" && defined(slug.current)] | order(order asc) ${FD_PACKAGE_PROJECTION}`
+  );
+}
+
+
+export async function getFlyingDressAddOns(): Promise<FdAddOnDoc[] | null> {
+  return safeFetch<FdAddOnDoc[]>(
+    `*[_type == "flyingDressAddOn" && defined(addOnId.current)] | order(order asc){
+      "addOnId": addOnId.current,
+      label, priceUsd, priceIsFrom, homeNote, detail, order
+    }`
+  );
+}
+
+
+export async function getFlyingDressRentals(): Promise<FdRentalDoc[] | null> {
+  return safeFetch<FdRentalDoc[]>(
+    `*[_type == "flyingDressRental" && defined(slug.current)] | order(order asc){
+      "slug": slug.current,
+      name, title, eyebrow, order, priceUsd, intro, summary,
+      howItWorks[]{title, detail},
+      youGet, notIncluded,
+      faqs[]{question, answer}
+    }`
+  );
+}
+
+
+/**
+ * `retired != true` rather than `!retired`, deliberately: a document saved
+ * before the field existed has no `retired` at all, and GROQ's `!null` is not
+ * true. Written the other way round, the whole wardrobe would vanish from the
+ * site the moment the first garment was published.
+ */
+export async function getFlyingDressOutfits(): Promise<FdOutfitDoc[] | null> {
+  return safeFetch<FdOutfitDoc[]>(
+    `*[_type == "flyingDressOutfit" && defined(outfitId) && retired != true] | order(order asc){
+      outfitId, name, category,
+      "photoUrl": photo.asset->url,
+      alt, hex, shoot, order
+    }`
+  );
+}

@@ -50,6 +50,14 @@ const DEFAULT_PAGES = [
 ];
 
 const VIEWPORTS = [
+  // 320px IS NOT A LEGACY WIDTH. It is an iPhone SE, and it is what any
+  // phone becomes when its owner turns text size up or zooms — which the
+  // audience for this site, people reading a foreign website on holiday,
+  // does constantly. It was missing from this list, and the header spent a
+  // release overflowing its own viewport by 37px there: the capsule ran off
+  // the right edge and took the menu button with it. Nothing caught it
+  // because nothing looked at a screen that narrow.
+  { name: "narrow", width: 320, height: 760 },
   { name: "mobile", width: 390, height: 844 },
   { name: "tablet", width: 768, height: 1024 },
   { name: "desktop", width: 1440, height: 900 },
@@ -124,6 +132,39 @@ async function inspectStructure(page: Page, path: string) {
       .filter((img) => !img.hasAttribute("alt"))
       .map((img) => (img.getAttribute("src") ?? "").slice(0, 120));
 
+    // LINKS NOBODY GAVE A COLOUR.
+    //
+    // #0000EE and #551A8B are the User-Agent stylesheet's link and visited
+    // colours. A link rendering in either of them is a link no stylesheet
+    // reached, and it is invisible to every source-reading check in this
+    // repository: the markup is a perfectly ordinary <a>.
+    //
+    // Eighteen of them were live across the Flying Dresses brand when this
+    // check was written, on the celebration pages, the creative pages and
+    // the FAQ, in two patterns nobody had classed. They do not look broken.
+    // They look like links. They are simply not the brand's.
+    //
+    // Reported with the ancestor chain rather than the text, because the fix
+    // is always a selector and never one link.
+    const defaultColouredLinks = Array.from(document.querySelectorAll("a"))
+      .filter((a) => {
+        const c = getComputedStyle(a).color;
+        return c === "rgb(0, 0, 238)" || c === "rgb(85, 26, 139)";
+      })
+      .map((a) => {
+        const chain: string[] = [];
+        let el: Element | null = a.parentElement;
+        while (el && chain.length < 3) {
+          const cls =
+            typeof el.className === "string" && el.className.trim()
+              ? "." + el.className.trim().split(/\s+/).join(".")
+              : "";
+          chain.unshift(el.tagName.toLowerCase() + cls);
+          el = el.parentElement;
+        }
+        return chain.join(" > ") + " > a";
+      });
+
     // Interactive things too small to hit reliably on a phone. Measured from
     // the rendered box, so it accounts for padding, not just font size.
     //
@@ -131,16 +172,46 @@ async function inspectStructure(page: Page, path: string) {
     // visually-hidden pattern a "Skip to content" link uses, which is an
     // accessibility feature, not a tap target. Flagging it taught me to
     // distrust the whole list, which is worse than not flagging it.
+    //
+    // TWO MORE THINGS ARE NOT TAP TARGETS, both learned from this form.
+    //
+    // 1. A control a finger cannot reach. The enquiry form's honeypot is a
+    //    real 204x33 input parked at left: -9999px, on purpose: it is
+    //    aria-hidden, tabIndex -1, and off-screen rather than display:none
+    //    because some bots fill positioned fields and skip hidden ones. It
+    //    was reported as an undersized tap target on the most
+    //    conversion-critical page on the site.
+    //
+    // 2. A checkbox inside its own <label>. The box is 24x24 and the label
+    //    around it is 207x46, and the label is what a thumb actually hits,
+    //    because clicking a label activates its control. Measuring the input
+    //    reported eight failures on a form whose targets are all 46px.
+    //
+    // Both were wrong, both were on /enquire, and a page that cries wolf
+    // twice is a page whose next warning nobody reads.
     const smallTargets = Array.from(document.querySelectorAll('a,button,[role="button"],input,select'))
       .map((el) => {
-        const r = el.getBoundingClientRect();
         const cs = getComputedStyle(el);
+        // The real target is the label wrapping a control, when there is one.
+        const label = el.closest("label");
+        const target = label ?? el;
+        const r = target.getBoundingClientRect();
+        const unreachable =
+          el.closest("[aria-hidden='true']") !== null ||
+          el.getAttribute("tabindex") === "-1" ||
+          r.right < 0 ||
+          r.bottom < 0 ||
+          r.left > innerWidth;
         return {
           tag: el.tagName.toLowerCase(),
-          label: (el.textContent ?? "").trim().slice(0, 40),
+          label: (target.textContent ?? "").trim().slice(0, 40),
           w: Math.round(r.width),
           h: Math.round(r.height),
-          hidden: cs.visibility === "hidden" || cs.display === "none" || Number(cs.opacity) < 0.02,
+          hidden:
+            cs.visibility === "hidden" ||
+            cs.display === "none" ||
+            Number(cs.opacity) < 0.02 ||
+            unreachable,
         };
       })
       .filter((t) => t.w > 1 && t.h > 1 && !t.hidden && (t.w < minTap || t.h < minTap));
@@ -157,6 +228,171 @@ async function inspectStructure(page: Page, path: string) {
     }
     const topTargetGroups = Object.entries(targetGroups).sort((a, b) => b[1] - a[1]).slice(0, 5);
 
+    // TEXT PRINTED ON TOP OF OTHER TEXT.
+    //
+    // This exists because the home page shipped with three headlines stacked
+    // in one grid cell, all at full opacity, rendering as an unreadable smear
+    // — and every check in this repository passed on it. The console was
+    // clean, axe was happy (it measures contrast, not collision), the tap
+    // targets were fine and the HTML was valid. The owner found it by looking
+    // at the site.
+    //
+    // The cause was a cross-fade whose timeline never activated, so the rule
+    // that stacks the captions applied while the rule that fades them did
+    // not. That specific bug is fixed; this is here so the next one of its
+    // shape is caught by a machine instead of a customer.
+    //
+    // Compares only elements with their own visible text at 18px or larger —
+    // display type, where a collision is both most likely and most damaging.
+    // Ancestor/descendant pairs are skipped: a heading always overlaps the
+    // section containing it, and that is not a defect.
+    const bigText = Array.from(document.querySelectorAll("h1,h2,h3,h4,p,span,li,figcaption,div"))
+      .filter((el) => {
+        const own = Array.from(el.childNodes)
+          .filter((n) => n.nodeType === 3)
+          .map((n) => n.textContent ?? "")
+          .join("")
+          .trim();
+        if (own.length < 8) return false;
+        // checkVisibility walks the ANCESTORS. getComputedStyle(el).opacity
+        // does not, and that distinction is the whole check: in the pinned
+        // scene the <p> carrying the headline is always opacity 1 — it is the
+        // .fd-pin-step WRAPPING it that the cross-fade animates. Reading the
+        // paragraph alone reported every caption as permanently visible, so
+        // this flagged three collisions on correct code and would have been
+        // switched off within a day.
+        if (!el.checkVisibility({ opacityProperty: true, visibilityProperty: true, contentVisibilityAuto: true })) {
+          return false;
+        }
+        const cs = getComputedStyle(el);
+        if (parseFloat(cs.fontSize) < 18) return false;
+        // Mid-fade is not a collision. Walk up for the effective opacity: a
+        // genuinely stuck element sits at full opacity all the way to the
+        // root, which is what this threshold means.
+        let eff = 1;
+        let n: Element | null = el;
+        while (n && n !== document.documentElement) {
+          eff *= Number(getComputedStyle(n).opacity);
+          if (eff < 0.9) return false;
+          n = n.parentElement;
+        }
+        const r = el.getBoundingClientRect();
+        return r.width > 24 && r.height > 12;
+      });
+
+    const collisions = [];
+    for (let i = 0; i < bigText.length; i++) {
+      for (let j = i + 1; j < bigText.length; j++) {
+        const a = bigText[i];
+        const b = bigText[j];
+        if (a.contains(b) || b.contains(a)) continue;
+        const ra = a.getBoundingClientRect();
+        const rb = b.getBoundingClientRect();
+        const w = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+        const h = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+        if (w <= 0 || h <= 0) continue;
+        const overlap = w * h;
+        const smaller = Math.min(ra.width * ra.height, rb.width * rb.height);
+        if (overlap / smaller < 0.6) continue;
+        collisions.push(
+          `"${(a.textContent ?? "").trim().slice(0, 40)}" over "${(b.textContent ?? "").trim().slice(0, 40)}"`
+        );
+        if (collisions.length >= 3) break;
+      }
+      if (collisions.length >= 3) break;
+    }
+
+    // A BOX THAT ASKED FOR AN ASPECT RATIO AND GOT NO HEIGHT.
+    //
+    // aspect-ratio does nothing on an inline box. `.fd-outfit-media` is a
+    // <span> that set `aspect-ratio` and never set `display`, so it computed
+    // to 0x0 and the wardrobe's twelve colour swatches drew nothing at all —
+    // on the page whose whole purpose is showing twelve dresses. It shipped
+    // that way and no check noticed, because an element with no height is
+    // invisible to contrast, heading and tap-target checks alike: there is
+    // nothing there to measure.
+    //
+    // So this looks for the shape of that mistake rather than that one
+    // element: anything that declares an aspect ratio and then renders with
+    // no height is either a collapsed box or a rule with no effect, and both
+    // are worth knowing about.
+    const collapsed = [];
+    for (const el of document.querySelectorAll("*")) {
+      const cs = getComputedStyle(el);
+      // "auto 1600 / 900" is the INTRINSIC ratio a browser derives from an
+      // img's width/height attributes, not a rule anybody wrote. Only an
+      // authored aspect-ratio can be the mistake this looks for, and the
+      // distinction is the leading "auto". Without it this flagged the
+      // fallback <img> inside the hero <video>, which is 0x0 precisely
+      // because the video is playing — a correct state reported as a fault,
+      // which is how a check gets switched off.
+      if (!cs.aspectRatio || cs.aspectRatio === "auto" || cs.aspectRatio.startsWith("auto")) continue;
+      if (cs.display === "none") continue;
+      // Fallback content of a <video> or <audio> never renders while the
+      // media works. It is markup for a browser that cannot play it.
+      if (el.closest("video, audio, picture")) continue;
+      const r = el.getBoundingClientRect();
+      if (r.height >= 1) continue;
+      collapsed.push(
+        `${el.tagName.toLowerCase()}.${(el.className || "").toString().split(" ")[0]} ` +
+          `has aspect-ratio ${cs.aspectRatio} but renders ${Math.round(r.width)}x${Math.round(r.height)} ` +
+          `(display: ${cs.display})`
+      );
+      if (collapsed.length >= 3) break;
+    }
+
+    // TEXT EATEN BY A ROUNDED CORNER.
+    //
+    // `overflow: hidden` plus `border-radius` clips content to the CURVE, not
+    // to the box. Any text that reaches a corner loses its first or last
+    // letters to it, and it is invisible in code review because the two
+    // properties are usually in different rules written months apart: the
+    // overflow belonged to the card, the radius arrived with a restyle.
+    //
+    // It shipped exactly that way here. A tile's last line sat at inset 0 from
+    // the left and 0 from the bottom of a 28px radius, so "PRICE ON REQUEST"
+    // rendered with the P sliced in half. The owner spotted it; nothing else
+    // did, because the text is present in the DOM, correctly sized, correctly
+    // contrasted, and simply not all drawn.
+    const cornerClipped = [];
+    for (const box of document.querySelectorAll("*")) {
+      const cs = getComputedStyle(box);
+      if (cs.overflow === "visible" && cs.overflowX === "visible") continue;
+      const radii = [
+        parseFloat(cs.borderTopLeftRadius),
+        parseFloat(cs.borderTopRightRadius),
+        parseFloat(cs.borderBottomLeftRadius),
+        parseFloat(cs.borderBottomRightRadius),
+      ];
+      const maxR = Math.max(...radii.map((n) => (Number.isFinite(n) ? n : 0)));
+      if (maxR < 4) continue;
+      const br = box.getBoundingClientRect();
+      if (br.width < 10 || br.height < 10) continue;
+      for (const el of box.querySelectorAll("p,span,a,h1,h2,h3,h4,h5,h6,li,dt,dd,figcaption")) {
+        const own = Array.from(el.childNodes)
+          .filter((n) => n.nodeType === 3)
+          .map((n) => n.textContent ?? "")
+          .join("")
+          .trim();
+        if (own.length < 3) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width < 5 || r.height < 5) continue;
+        // Inside the square region a corner's curve cuts into?
+        const nearLeft = r.left - br.left < maxR;
+        const nearRight = br.right - r.right < maxR;
+        const nearTop = r.top - br.top < maxR;
+        const nearBottom = br.bottom - r.bottom < maxR;
+        if ((nearLeft || nearRight) && (nearTop || nearBottom)) {
+          cornerClipped.push(
+            `"${own.slice(0, 32)}" sits in a ${Math.round(maxR)}px rounded corner of ` +
+              `${box.tagName.toLowerCase()}.${(box.className || "").toString().split(" ")[0]} (overflow: ${cs.overflow})`
+          );
+          break;
+        }
+      }
+      if (cornerClipped.length >= 3) break;
+    }
+
     // Total rendered text. A homepage carrying a megabyte of it is shipping
     // a database to the browser, whatever it looks like.
     const bodyChars = document.body.innerText.length;
@@ -170,8 +406,13 @@ async function inspectStructure(page: Page, path: string) {
       ogImage: document.querySelector('meta[property="og:image"]')?.getAttribute("content") ?? null,
       headings,
       imagesWithoutAlt,
+
+      defaultColouredLinks,
       smallTargets,
       topTargetGroups,
+      collisions,
+      collapsed,
+      cornerClipped,
       bodyChars,
       domNodes,
       jsonLdBlocks: document.querySelectorAll('script[type="application/ld+json"]').length,
@@ -199,11 +440,37 @@ async function inspectStructure(page: Page, path: string) {
     }
   }
 
+  // --- Text printed on top of other text
+  for (const c of info.collisions) {
+    add("error", path, "layout", `Text overlaps text: ${c}`);
+  }
+
+  // --- Boxes that asked for a ratio and got no height
+  for (const c of info.collapsed) {
+    add("error", path, "layout", `Collapsed box: ${c}`);
+  }
+
+  // --- Text eaten by a rounded corner
+  for (const c of info.cornerClipped) {
+    add("error", path, "layout", `Corner clip: ${c}`);
+  }
+
   // --- Images and JSON-LD
   if (info.imagesWithoutAlt.length) {
     add("warning", path, "a11y", `${info.imagesWithoutAlt.length} <img> without alt, e.g. ${info.imagesWithoutAlt[0]}`);
   }
   if (info.jsonLdBlocks === 0) add("note", path, "seo", "No JSON-LD structured data on this page.");
+
+  // --- Links the stylesheet never reached
+  if (info.defaultColouredLinks.length) {
+    const patterns = Array.from(new Set(info.defaultColouredLinks));
+    add(
+      "error",
+      path,
+      "brand",
+      `${info.defaultColouredLinks.length} link(s) rendering in the browser's default blue/purple, in ${patterns.length} pattern(s): ${patterns.join(" | ")}`
+    );
+  }
 
   return info;
 }
@@ -218,10 +485,53 @@ async function runAxe(page: Page, path: string) {
     return null;
   }
   await page.evaluate(source);
+
+  // SETTLE THE SCROLL REVEALS BEFORE MEASURING COLOUR.
+  //
+  // Every section on the Flying Dresses pages fades in on a `view()` timeline,
+  // so at scroll-top the sections below the fold legitimately sit part-way
+  // through `fd-rise` — and axe blends an ancestor's opacity into the
+  // foreground colour before testing it. It therefore measured the eyebrow in
+  // section 2 as #e3dccf on #f8f4ed, a ratio of 1.24, and reported six serious
+  // contrast violations on a page whose real colours are #614919 and #3a2e1c
+  // on #f8f4ed and pass AA comfortably.
+  //
+  // Verified before writing this: scrolling the whole page in half-viewport
+  // steps and recording each element's highest opacity, all 20 reveal
+  // elements reach 1 at both 390px and 1440px. Nothing was dim; axe was
+  // simply reading them mid-fade.
+  //
+  // Desktop hid the problem, which is the dangerous part. At exactly opacity 0
+  // axe skips an element as invisible, so the wider viewport — where the
+  // sections are further from `entry` — reported zero violations while mobile
+  // reported six. A rule that fires only at one width, on correct code, is a
+  // rule the next person learns to ignore.
+  //
+  // So contrast is measured against the state a reader actually reads: the
+  // animations are pinned to their end, scoped to this scan and reverted
+  // straight after, which leaves the screenshots and the layout detectors
+  // (they need the live animation — the pinned-caption bug was only visible
+  // mid-scroll) untouched.
+  const SETTLE_ID = "__audit_settle_reveals";
+  await page.evaluate((id) => {
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = `
+      .fd-reveal, .fd-reveal-group > *, .fd-fabric, .fd-words > span, .fd-pin-step {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        clip-path: none !important;
+      }`;
+    document.head.appendChild(style);
+  }, SETTLE_ID);
+
   const result = (await page.evaluate(async () => {
     // @ts-expect-error injected at runtime
     return await window.axe.run(document, { resultTypes: ["violations"] });
   })) as { violations: { id: string; impact: string | null; description: string; nodes: unknown[] }[] };
+
+  await page.evaluate((id) => document.getElementById(id)?.remove(), SETTLE_ID);
 
   for (const v of result.violations) {
     const severity: Severity = v.impact === "critical" || v.impact === "serious" ? "warning" : "note";
@@ -247,17 +557,44 @@ if (!executablePath) {
 
 mkdirSync(OUT, { recursive: true });
 
-const proxy = process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
+// The cloud sandbox routes outbound HTTPS through an agent proxy, and
+// Chromium has to be told about it or every request to a deployed site hangs.
+//
+// But a LOCAL base must never go through it. Chromium's --proxy-server applies
+// to localhost too, and the agent proxy answers a localhost request with
+// HTTP 405 Method Not Allowed — so auditing `next dev` reported every page as
+// a 405 with no title and no <h1>, which reads exactly like a catastrophically
+// broken site rather than like a misrouted request. That cost a real debugging
+// detour; hence the bypass and the note.
+//
+// `*.localhost` counts as local too. RFC 6761 reserves the whole .localhost
+// TLD for loopback, and the second brand is only reachable in `next dev` by
+// hostname — flyingdressesegypt.localhost:3000 — because the proxy routes by
+// Host header. A pattern that matched bare `localhost` only sent exactly that
+// audit through the agent proxy and reported the entire brand as 405s.
+const isLocalBase =
+  /^https?:\/\/([a-z0-9-]+\.)*(localhost|127\.0\.0\.1|\[::1\])(:|\/|$)/i.test(BASE);
+const proxy = isLocalBase ? undefined : process.env.HTTPS_PROXY || process.env.HTTP_PROXY;
 const browser: Browser = await chromium.launch({
   executablePath,
   args: ["--ignore-certificate-errors"],
-  ...(proxy ? { proxy: { server: proxy } } : {}),
+  ...(proxy
+    ? {
+        proxy: {
+          server: proxy,
+          // Belt and braces: even against a remote base, anything local that
+          // a page happens to request stays off the proxy.
+          bypass: "localhost,*.localhost,127.0.0.1,::1",
+        },
+      }
+    : {}),
 });
 
 console.log(`visual-audit: ${BASE}`);
 console.log(`  browser  ${executablePath}`);
 console.log(`  pages    ${PAGES.length}   viewports ${VIEWPORTS.map((v) => v.name).join(", ")}`);
 if (proxy) console.log(`  proxy    ${proxy} (load times below include proxy overhead and are NOT the site's real speed)`);
+if (isLocalBase) console.log("  proxy    bypassed for a local base");
 console.log("");
 
 const pageReports: Record<string, unknown> = {};
@@ -304,6 +641,60 @@ for (const path of PAGES) {
 
     const shot = join(OUT, `${label}-${vp.name}.png`);
     await page.screenshot({ path: shot, fullPage: false });
+
+    // THE PAGE SLIDING SIDEWAYS — measured on EVERY viewport, deliberately.
+    //
+    // This is in the per-viewport loop and not in inspectStructure (which
+    // only runs the mobile pass) because the real instance of this bug was a
+    // desktop nav that switched on at 1024px and needed 1440: 312px of
+    // sideways scroll at 1024 and 86px at 1280, with the phone perfectly
+    // fine. A detector that only looked at 390px would have reported the page
+    // as clean while every laptop slid under the cursor.
+    const slide = await page.evaluate(() => {
+      const overflow =
+        document.documentElement.scrollWidth - document.documentElement.clientWidth;
+      const culprits: string[] = [];
+      if (overflow > 1) {
+        const vw = document.documentElement.clientWidth;
+        Array.from(document.querySelectorAll("*")).forEach((el) => {
+          const r = el.getBoundingClientRect();
+          if (r.width < 1 || r.right <= vw + 1) return;
+          const parent = el.parentElement;
+          if (!parent || parent.getBoundingClientRect().right > vw + 1) return;
+          const cs = getComputedStyle(el);
+          // An element that scrolls itself is MEANT to be wider than its box.
+          if (cs.overflowX === "auto" || cs.overflowX === "scroll") return;
+          // AND NEITHER IS ANYTHING INSIDE ONE. A wide table in a scrolling
+          // wrapper is correct and is not why the page slid; reporting it
+          // sends the reader to the wrong element. This cost a real
+          // diagnosis: /packages was named as "table.fd-table, div" when the
+          // actual culprit was a grid cell with a 20rem minimum.
+          //
+          // The walk stops at <body> ON PURPOSE. `body` here carries
+          // `overflow-x: hidden` while `html` does not, so the page scrolls
+          // even though body clips what sticks out — treat body as a clipper
+          // and every culprit on the page disappears while the error stays.
+          for (let a: HTMLElement | null = parent; a && a !== document.body; a = a.parentElement) {
+            const ao = getComputedStyle(a).overflowX;
+            if (ao === "auto" || ao === "scroll" || ao === "hidden") return;
+          }
+          const cls = typeof el.className === "string" ? el.className.trim() : "";
+          const name = el.tagName.toLowerCase() + (cls ? "." + cls.split(/\s+/).join(".") : "");
+          if (culprits.length < 4 && !culprits.includes(name)) culprits.push(name);
+        });
+      }
+      return { overflow, culprits };
+    });
+    if (slide.overflow > 1) {
+      add(
+        "error",
+        path,
+        "layout",
+        `Page scrolls sideways by ${slide.overflow}px` +
+          (slide.culprits.length ? ` — widest: ${slide.culprits.join(", ")}` : ""),
+        vp.name
+      );
+    }
 
     for (const e of consoleErrors.slice(0, 3)) add("error", path, "console", `${vp.name}: ${e}`, vp.name);
     for (const f of failedRequests.slice(0, 3)) add("error", path, "network", `${vp.name}: ${f}`, vp.name);
