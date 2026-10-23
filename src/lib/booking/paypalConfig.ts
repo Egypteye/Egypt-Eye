@@ -248,3 +248,35 @@ export function sameMoney(usd: number, paypalAmount: unknown): boolean {
   const theirs = parsePayPalAmount(paypalAmount);
   return theirs !== null && theirs === Math.round(usd * 100);
 }
+
+/**
+ * Whether THIS deployment can carry a booking all the way through by itself.
+ *
+ * =========================================================================
+ * BOTH HALVES, BECAUSE HALF OF IT IS THE WORST OUTCOME
+ * =========================================================================
+ * Taking a deposit is two things: moving the money, and writing down what it
+ * was for. A deployment with PayPal credentials and no database can do the
+ * first and not the second, which is a customer charged for a booking nobody
+ * has a record of. That is strictly worse than not selling at all, and it is
+ * the exact shape a second deployment arrives in — the Flying Dresses project
+ * was given its own PayPal before it was given Supabase, or the other way
+ * round, and in between it looks like it works.
+ *
+ * So the question is asked once, here, and both halves are required. A
+ * deployment that answers false keeps whatever it did before: for Flying
+ * Dresses that is the link to the Egypt Eye checkout, which has both.
+ *
+ * It takes its inputs rather than reading the environment so a check script
+ * can run it (CLAUDE.md §6) — `server-only` would otherwise put the one rule
+ * standing between a customer and an unrecorded charge out of reach of every
+ * test.
+ */
+export function canCompleteBookingHere(deployment: {
+  /** The payment provider resolved for this request, already env-aware. */
+  providerEnabled: boolean;
+  /** Service-role Supabase, which is what writes the reservation. */
+  supabaseReady: boolean;
+}): boolean {
+  return deployment.providerEnabled && deployment.supabaseReady;
+}

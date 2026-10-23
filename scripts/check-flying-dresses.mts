@@ -35,6 +35,12 @@ import {
   urgentCall,
   wardrobe,
 } from "../src/content/flyingDresses.js";
+import { canCompleteBookingHere } from "../src/lib/booking/paypalConfig.js";
+import {
+  LOOKBOOK_NOTE,
+  accessoryCategories,
+  accessoryItems,
+} from "../src/app/flying-dresses/_lib/accessoryLookbook.js";
 import {
   FLYING_DRESS_COLLECTION,
   MENS_OUTFITS,
@@ -874,12 +880,98 @@ ok(
   proxySource.includes("isFlyingDressesAllowed") && !proxySource.includes("isFlyingDressesExempt")
 );
 
+// ---------------------------------------------------------------------------
+// THIS DOMAIN MAY TAKE A DEPOSIT ONLY IF IT CAN ALSO RECORD ONE.
+//
+// The brand used to send every customer to the Egypt Eye checkout, and the
+// guard here said so: the link had to be absolute, "which is what keeps PayPal
+// credentials off this brand's deployment entirely". That is no longer the
+// design. The same booking dialog now runs on this domain when this
+// deployment can finish the job, because a handoff to another brand
+// mid-purchase is where a boutique sale dies.
+//
+// What replaces it is the rule that makes the change safe. Taking money is two
+// things — moving it, and writing down what it was for — and a deployment with
+// PayPal and no database does the first only. That is a customer charged for a
+// booking nobody has a record of, which is worse than not selling. So the
+// local checkout is gated on BOTH, the Egypt Eye link stays as the fallback,
+// and the credentials can be added in either order with no window in between.
+//
+// PROVEN by dropping supabaseReady from the gate (red), by deleting the Egypt
+// Eye fallback branch (red), and against the rule itself below. Then restored.
+// ---------------------------------------------------------------------------
 const bookingRail = read("src/app/flying-dresses/_components/BookingRail.tsx");
+const railCode = bookingRail
+  .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+  .replace(/\/\*[\s\S]*?\*\//g, " ")
+  .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
 ok(
-  "the deposit link is relative, so it resolves against the Flying Dresses domain — where the proxy refuses " +
-    "payment routes, so the button 404s. It must point at the Egypt Eye origin, which is what keeps PayPal " +
-    "credentials off this brand's deployment entirely.",
-  bookingRail.includes("EGYPT_EYE_ORIGIN") && !/href=\{`\/secure\//.test(bookingRail)
+  "the Flying Dresses rail no longer keeps the Egypt Eye checkout as its fallback, so a deployment " +
+    "without PayPal or Supabase has nowhere to send a customer who wants to pay",
+  railCode.includes("EGYPT_EYE_ORIGIN") && /secure\/photoshoot\/\$\{pkg\.eyeSlug\}/.test(railCode)
+);
+ok(
+  "the Flying Dresses rail offers a local checkout without asking whether this deployment can " +
+    "complete a booking — it must go through canCompleteBookingHere, which requires a database as " +
+    "well as a payment provider",
+  /canCompleteBookingHere\(/.test(railCode) &&
+    /providerEnabled/.test(railCode) &&
+    /supabaseReady/.test(railCode)
+);
+
+// The rule itself, exercised rather than read. It is the one thing standing
+// between a customer and a charge with no booking behind it.
+ok(
+  "canCompleteBookingHere lets a deployment take money with no database behind it",
+  canCompleteBookingHere({ providerEnabled: true, supabaseReady: false }) === false
+);
+ok(
+  "canCompleteBookingHere refuses a deployment that has both halves",
+  canCompleteBookingHere({ providerEnabled: true, supabaseReady: true }) === true
+);
+ok(
+  "canCompleteBookingHere offers a checkout with no payment provider",
+  canCompleteBookingHere({ providerEnabled: false, supabaseReady: true }) === false
+);
+
+// ---------------------------------------------------------------------------
+// WHAT THE BRAND'S DOMAIN STILL REFUSES.
+//
+// Opening the checkout here meant opening three routes. The two left shut are
+// the two that would hurt, and nothing about this change should quietly widen
+// to a prefix later — `startsWith("/api/bookings")` would admit both of them
+// and every route added under that path from now on.
+// ---------------------------------------------------------------------------
+// Comments stripped, for the third time in this change: the proxy's own note
+// explains the prefix trap by writing `startsWith("/api/bookings")` out in
+// full, and the first version of the guard below matched that sentence instead
+// of the code. CLAUDE.md §4, again.
+const proxyCode = proxySource
+  .replace(/\/\*[\s\S]*?\*\//g, " ")
+  .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+for (const route of ["/api/bookings", "/api/bookings/rail", "/api/bookings/paypal/capture"]) {
+  ok(
+    `the Flying Dresses domain cannot reach ${route}, so its own checkout cannot complete`,
+    proxyCode.includes(`pathname === "${route}"`)
+  );
+}
+ok(
+  "the Flying Dresses allow-list matches /api/bookings by PREFIX, which admits the reconcile sweep and " +
+    "every booking route added after today without anybody deciding to",
+  !/startsWith\(\s*["'`]\/api\/bookings/.test(proxyCode)
+);
+ok(
+  "the reconcile sweep answers on the Flying Dresses domain — it belongs to one deployment and a second " +
+    "one answering it is a second thing that can double-settle a payment",
+  !proxyCode.includes('pathname === "/api/bookings/reconcile"')
+);
+ok(
+  "a second PayPal webhook endpoint answers on the Flying Dresses domain. PayPal resolves a booking by " +
+    "order id in the shared Supabase, so the Egypt Eye webhook already settles orders started here; a " +
+    "second endpoint needs a second registration and a second PAYPAL_WEBHOOK_ID and buys nothing",
+  !proxyCode.includes('pathname === "/api/webhooks/paypal"')
 );
 
 ok(
@@ -2673,9 +2765,32 @@ for (const section of ["celebrations", "creative"]) {
     "and the uploaded photograph is the one used",
     oneUploaded.photos.cherry?.src === "https://cdn.sanity.io/images/x/y/new-cherry.jpg",
   );
+  // A GARMENT NOBODY HAS PHOTOGRAPHED MUST STAY ABSENT, not render blank.
+  //
+  // This used to point at "saeedy-gawn-1" as the example, which worked for as
+  // long as that gawn had no photograph and broke the day it got one. All
+  // seventeen garments are photographed now, so there is no real id left to
+  // make the point with — and picking the next unphotographed one would just
+  // arm the same trap for whoever fills it.
+  //
+  // So it asks the merge directly, with an id that is not in the wardrobe and
+  // never will be. That is the behaviour the assertion was always about.
+  const ghost = mergeWardrobe([
+    ...outfitDocs,
+    {
+      outfitId: "not-a-real-garment",
+      name: "Not A Real Garment",
+      category: "mens-outfit" as const,
+      photoUrl: null,
+      alt: null,
+      hex: null,
+      shoot: null,
+      order: 9990,
+    },
+  ]);
   ok(
     "a garment with no photograph anywhere stays absent rather than blank",
-    seeded.photos["saeedy-gawn-1"] === undefined,
+    ghost.photos["not-a-real-garment"] === undefined,
   );
 
   // The component must take the photographs as data. Importing the module's
@@ -2706,7 +2821,14 @@ for (const section of ["celebrations", "creative"]) {
 
   // The page must not tell a customer there are no photographs while showing
   // some. Counted from the data, never asserted in prose.
-  const wardrobePage = readFileSync("src/app/flying-dresses/wardrobe/page.tsx", "utf8");
+  // COMMENTS STRIPPED, because this guard tripped on the note explaining why
+  // the sentence was deleted. The page now carries a paragraph about having
+  // once said "the photography for this page has not been shot yet", and a
+  // guard that reads prose cannot tell that from the page saying it.
+  const wardrobePage = readFileSync("src/app/flying-dresses/wardrobe/page.tsx", "utf8")
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
   const claimsNoPhotography = /the photography for this page has not been shot yet/.test(wardrobePage);
   ok(
     "the wardrobe page does not claim it has no photographs unless it has none",
@@ -3047,6 +3169,264 @@ for (const pkg of packages) {
 }
 
 // ---------------------------------------------------------------------------
+// THE ACCESSORIES ARE SHOWN, NOT SOLD, AND NOT RENAMED.
+//
+// The owner photographed each piece and had it composited onto generated
+// models, and states the pieces render identically to the wardrobe and that
+// delivering the exact piece shown is theirs. That is their call and it is
+// recorded in accessoryLookbook.ts. What this guards is everything that is
+// NOT theirs to assert later by accident:
+//
+//  1. Every frame must resolve to a file. A gallery of missing images is the
+//     one failure that makes the collection look smaller than it is.
+//  2. No piece may carry a price. The three hire services carry none by
+//     design, and a figure here would be the first.
+//  3. The references must stay references. The source names nothing — the
+//     filenames are generative titles repeated across categories — so a
+//     product name appearing here would be invented, which is CLAUDE.md §7.
+//  4. The note saying what is generated must survive, and must still say it.
+//     It is one string so it cannot drift between pages; a guard is what
+//     stops it being quietly emptied.
+//
+// PROVEN by pointing a frame at a missing file, by adding priceUsd to an
+// item, by renaming a ref to a product name, and by blanking the note. All
+// red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const lookbook = read("src/app/flying-dresses/_lib/accessoryLookbook.ts");
+
+  ok(
+    "the accessory lookbook is empty, so the collection page shows nothing",
+    accessoryItems.length > 0 && accessoryCategories.length > 0
+  );
+
+  for (const item of accessoryItems) {
+    const file = `public${item.src}`;
+    ok(`accessory "${item.ref}" points at ${item.src}, which is not in public/`, existsSync(file));
+    ok(
+      `accessory "${item.ref}" has no alt text, so the piece is invisible to a screen reader`,
+      item.alt.trim().length > 10
+    );
+  }
+
+  // A reference, not a product name. "Headpiece 2" is a coordinate; "Cleopatra
+  // Collar" is a claim about an item nothing in the source material names.
+  for (const item of accessoryItems) {
+    ok(
+      `accessory reference "${item.ref}" reads as a product name — the source names no piece, so a ` +
+        "name here would be invented. Keep it as <category> <number>.",
+      /^[A-Z][a-z]+ \d+$/.test(item.ref)
+    );
+  }
+
+  // No price, anywhere near them.
+  ok(
+    "the accessory lookbook has grown a price field — the hire services carry no price by design",
+    !/price|usd|\$\d/i.test(lookbook.replace(/\/\*[\s\S]*?\*\//g, " "))
+  );
+
+  // The note that says what is generated.
+  ok(
+    "the lookbook note is missing or empty, so the pages show generated imagery with nothing saying so",
+    LOOKBOOK_NOTE.trim().length > 40
+  );
+  ok(
+    "the lookbook note no longer says which part is created digitally",
+    /digital/i.test(LOOKBOOK_NOTE) && /photograph/i.test(LOOKBOOK_NOTE)
+  );
+  const lookbookComponent = read("src/app/flying-dresses/_components/AccessoryLookbook.tsx");
+  ok(
+    "the lookbook renders the pieces without the note about how the frames were made",
+    lookbookComponent.includes("LOOKBOOK_NOTE")
+  );
+
+  // And the accessories page must actually render them.
+  const rentalPage = read("src/app/flying-dresses/rentals/[slug]/page.tsx");
+  ok(
+    "the accessories page no longer renders the collection",
+    /<AccessoryLookbook/.test(rentalPage)
+  );
+  // They must not leak into the booking picker, which is a paid selection.
+  const accessoriesService = rentalServices.find((r) => r.slug === "accessories");
+  ok(
+    "the accessories service now carries outfits, which the Egypt Eye booking picker reads — that " +
+      "offers a customer a choice inside a paid booking that has no price or availability behind it",
+    accessoriesService !== undefined && accessoriesService.outfits.length === 0
+  );
+}
+
+// ---------------------------------------------------------------------------
+// A STYLED COMPOSITE SAYS SO, AND NEVER CALLS ITSELF AGENCY WORK.
+//
+// "styled" was added for frames where the product is really ours and really
+// photographed but the model and the setting are generated. It exists so that
+// this kind of image has somewhere honest to go: the alternative was filing it
+// as "agency", which is the one promotion assets.ts says nobody may make
+// quietly, and which the file itself would contradict — these carry C2PA
+// provenance naming OpenAI.
+//
+// So the kind has to earn itself. A styled slot must carry a credit, and that
+// credit must say which part is generated. Without it the kind is just a label
+// in a file nobody reads, and the page shows a composite with nothing saying
+// so.
+//
+// PROVEN by removing the credit from the dress-rental slot (red), and by
+// changing its kind to "agency" (red, on the agency allow-list guard above).
+// ---------------------------------------------------------------------------
+for (const [name, slot] of Object.entries(allSlots)) {
+  if (slot.kind !== "styled") continue;
+  ok(
+    `the styled slot "${name}" carries no credit, so a generated scene renders with nothing saying so`,
+    typeof slot.credit === "string" && slot.credit.trim().length > 20
+  );
+  ok(
+    `the styled slot "${name}" has a credit that never says which part is generated`,
+    /generated|digitally|composite/i.test(slot.credit ?? "")
+  );
+  ok(
+    `the styled slot "${name}" has no image, which is what kind:"empty" is for`,
+    typeof slot.src === "string" && slot.src.length > 0
+  );
+}
+
+// AND THE CREDIT HAS TO REACH THE PAGE.
+//
+// The three assertions above check the DATA, and the first version of this
+// stopped there — which was not enough: Scene took no credit prop at all, so
+// the dress-rental frame rendered a generated scene with the note sitting
+// unread in assets.ts. A credit nothing renders is a note to ourselves.
+//
+// PROVEN by removing the credit prop from Scene's usage on the rentals page
+// (red) and by deleting the figcaption from Scene (red). Then restored.
+{
+  const scene = read("src/app/flying-dresses/_components/Scene.tsx");
+  ok(
+    "Scene accepts no credit, so a styled frame's provenance note never reaches the page",
+    /credit\?:/.test(scene) && /figcaption/.test(scene)
+  );
+  const rentalsPage = read("src/app/flying-dresses/rentals/[slug]/page.tsx");
+  ok(
+    "the rentals page renders its art without passing the credit, so a styled frame shows with " +
+      "nothing saying what is generated",
+    /credit=\{art\.credit\}/.test(rentalsPage)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// A COMPOSITE NEVER CLAIMS A CLIENT SHOOT.
+//
+// The wardrobe tells a customer "From the Aroouj shoot. The dress is the one
+// you would wear." That is true of the twelve dresses, which were taken at
+// real client shoots with real customers, and false of the five gawns, where
+// the garment is real and photographed but the model and the background are
+// generated. There was no shoot and the person is nobody.
+//
+// Without the styled flag those five would have inherited that sentence word
+// for word, which is the quietest kind of fabrication: nothing looks wrong,
+// and the site has invented a photo session and a client.
+//
+// PROVEN by dropping styled from a gawn entry (red), and by deleting the
+// branch from Wardrobe so every photograph claims a shoot again (red).
+// ---------------------------------------------------------------------------
+{
+  const gawnIds = MENS_OUTFITS.map((o) => o.id);
+  for (const id of gawnIds) {
+    const photo = dressPhotos[id];
+    ok(
+      `the gawn "${id}" has no photograph, so the wardrobe still shows it as a gap`,
+      photo !== undefined
+    );
+    if (!photo) continue;
+    ok(
+      `the gawn "${id}" is not marked styled, so the wardrobe will tell a customer it came from a ` +
+        "client shoot that never happened",
+      photo.styled === true
+    );
+  }
+
+  // The dresses are the other half of the same rule: they ARE client work and
+  // must not be relabelled as composites.
+  for (const dress of FLYING_DRESS_COLLECTION) {
+    const photo = dressPhotos[dress.id];
+    if (!photo) continue;
+    ok(
+      `the dress "${dress.id}" is marked styled, which would hide real client work behind a ` +
+        "generated-imagery note",
+      photo.styled !== true
+    );
+  }
+
+  // And the component must still make the distinction.
+  const wardrobe = read("src/app/flying-dresses/_components/Wardrobe.tsx");
+  ok(
+    "Wardrobe no longer branches on styled, so every photograph claims a shoot",
+    /\.styled/.test(wardrobe) && /created digitally/.test(wardrobe)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// NOTHING TELLS A CUSTOMER THE PHOTOGRAPHS DO NOT EXIST WHILE SHOWING THEM.
+//
+// Three times now. The wardrobe paragraph said "the photography has not been
+// shot yet" after twelve photographs landed. The lightbox caption said the
+// same in the same component. The wardrobe FAQ said it a third time, one
+// scroll further down, and survived both fixes because nobody reads an FAQ
+// array while fixing a paragraph.
+//
+// The paragraph and the caption are conditional now, which is the real fix.
+// This is the backstop for the flat assertions: while every garment has a
+// photograph, no customer-facing string on this page may say otherwise.
+//
+// PROVEN by restoring the old FAQ answer: red.
+// ---------------------------------------------------------------------------
+{
+  const everyGarmentPhotographed = [...FLYING_DRESS_COLLECTION, ...MENS_OUTFITS].every(
+    (o) => dressPhotos[o.id] !== undefined
+  );
+  const wardrobePage = read("src/app/flying-dresses/wardrobe/page.tsx");
+  const copy = wardrobePage
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  // EVERY SURFACE, NOT THE ONE I HAPPENED TO NOTICE.
+  //
+  // The FAQ was found by screenshotting the page, and the screenshot then
+  // showed two more: a paragraph under the men's list saying "we have not
+  // photographed the gawns", and the empty-slot caption calling them "the
+  // site's biggest missing asset", both rendering directly beneath the five
+  // photographs. Four copies of one claim, in three files.
+  //
+  // So the sweep is the files, not the file. A denial may only survive inside
+  // a branch that the data can still reach.
+  const DENIALS = [
+    "has not been shot yet",
+    "photography for this page has not",
+    "not photographed the gawns",
+    "names them rather than showing",
+    "biggest missing asset",
+    "Not on this page yet",
+  ];
+  const surfaces: [string, string][] = [
+    ["the wardrobe page", copy],
+    ["the men's wear content", read("src/content/flyingDresses.ts")],
+    ["the image slots", read("src/app/flying-dresses/_lib/assets.ts")],
+  ];
+  for (const [where, text] of surfaces) {
+    const body = text
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+    for (const phrase of DENIALS) {
+      ok(
+        `${where} still tells a customer "${phrase}" while every garment is photographed`,
+        !everyGarmentPhotographed || !body.toLowerCase().includes(phrase.toLowerCase())
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Report.
 // ---------------------------------------------------------------------------
 // ---------------------------------------------------------------------------
@@ -3097,8 +3477,10 @@ console.log(
   `check-flying-dresses: ok — ${packages.length} photoshoots all pointing at a real bookable product, ` +
     `${rentalServices.length} hire services none of which can carry a price, ` +
     `${FLYING_DRESS_COLLECTION.length} dresses and ${MENS_OUTFITS.length} gawns from one shared wardrobe, ` +
-    `${Object.values(allSlots).filter((s) => s.kind !== "empty").length} real images all present and ` +
-    `${Object.values(allSlots).filter((s) => s.kind === "empty").length} labelled gaps, ` +
+    `${Object.values(allSlots).filter((s) => s.kind === "agency" || s.kind === "location").length} ` +
+    `photographs and ${Object.values(allSlots).filter((s) => s.kind === "styled").length} styled ` +
+    `composites all present, ${Object.values(allSlots).filter((s) => s.kind === "empty").length} ` +
+    "labelled gaps, " +
     `${flyingDressStories.length} stories none of which duplicate a slug on egypteyetravel.com, ` +
     `${marqueePlaces.length + marqueeColours.length} ribbon frames all present and parked under reduced motion, ` +
     "reduced motion disables the timelines, and no enquiry claims to be a booking."

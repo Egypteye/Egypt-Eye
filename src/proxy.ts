@@ -73,6 +73,32 @@ function isFlyingDressesAllowed(pathname: string): boolean {
     // allow-list becomes a deny-list without anybody deciding to change it.
     pathname === "/api/flying-dresses-enquiry" ||
     pathname === "/api/flying-dresses-collaborate" ||
+    // ---------------------------------------------------------------------
+    // THE DEPOSIT, TAKEN ON THIS DOMAIN.
+    //
+    // This brand used to send the customer to the Egypt Eye checkout, so it
+    // needed none of these. It now runs the same booking dialog on its own
+    // pages, which means these three must answer here — and ONLY these three.
+    // They are listed one by one for the reason written at the top of this
+    // function: `startsWith("/api/bookings")` would quietly admit every
+    // future route under that prefix, and the two deliberately left out are
+    // exactly the two that would hurt.
+    //
+    // NOT /api/bookings/reconcile: the cron sweep that captures stragglers.
+    // It belongs to one deployment, runs on a schedule with CRON_SECRET, and
+    // a second domain answering it is a second thing that can double-settle.
+    //
+    // NOT /api/webhooks/paypal, and that one is worth saying out loud because
+    // it looks like an omission. PayPal delivers to the URLs registered on
+    // the app, and the handler finds the booking by ORDER ID in Supabase, not
+    // by which deployment created it. Both projects share one Supabase, so an
+    // order started here is settled by the webhook already registered on the
+    // Egypt Eye domain. Opening a second webhook endpoint would need a second
+    // registration and a second PAYPAL_WEBHOOK_ID, and would buy nothing.
+    // ---------------------------------------------------------------------
+    pathname === "/api/bookings" ||
+    pathname === "/api/bookings/rail" ||
+    pathname === "/api/bookings/paypal/capture" ||
     // Framework and static assets, which carry no authority.
     pathname.startsWith("/_next") ||
     pathname.startsWith("/photos/") ||

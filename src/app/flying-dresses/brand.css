@@ -2352,6 +2352,60 @@ ol.fd-timeline h3::before {
   color: var(--fd-ivory-dim);
 }
 
+/* A scene's credit. Small and quiet, under the frame rather than over it:
+   it is a provenance note, not a caption competing with the photograph. */
+.fd-scene-credit {
+  margin-top: 0.6rem;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-scene-credit {
+  color: var(--fd-ivory-dim);
+}
+
+/* ---- The accessory lookbook -------------------------------------------
+   A gallery of jewellery, so the frame is portrait and the crop is top-
+   weighted: every one of these photographs puts the piece on the head, the
+   neck, the ear or the hand, and a centred crop of a standing figure cuts
+   exactly that away. 4/5 rather than the source's own ratio for the same
+   reason the wardrobe tiles are: a consistent grid reads as a collection and
+   a ragged one reads as a folder. */
+.fd-acc-frame {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: var(--fd-sand);
+}
+
+.fd-acc-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The jewellery sits high in every frame. */
+  object-position: 50% 22%;
+  display: block;
+}
+
+/* The reference, not a product name. Set small and quiet: it is there to be
+   quoted in an enquiry, not to be read as a title. */
+.fd-acc-ref {
+  margin-top: 0.6rem;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-acc-ref {
+  color: var(--fd-ivory-dim);
+}
+
+.fd-on-dark .fd-acc-frame {
+  background: var(--fd-ink-3);
+}
+
 /* ---- The urgent call route -------------------------------------------
    Asked for directly: a date within the next few days should ring the line
    rather than queue behind the form.
