@@ -46,7 +46,7 @@ export const wardrobeShareImage: FdShareImage = {
   src: "/photos/flying-dresses/wardrobe-lineup.jpg",
   width: 2000,
   height: 1333,
-  alt: "The Flying Dresses Egypt wardrobe, a line of gowns in twelve colours",
+  alt: "Seven women on the Giza rooftop, each in a different colour from the collection, the pyramids hazy behind them",
 };
 
 export const aboutShareImage: FdShareImage = {

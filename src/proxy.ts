@@ -325,6 +325,14 @@ function isLocaleExempt(pathname: string): boolean {
     pathname.startsWith("/api/") ||
     pathname.startsWith("/auth/") ||
     pathname.startsWith("/studio") ||
+    // Egypt Eye OS — the internal workspace. It is one tool for one team in
+    // one language, so there is nothing to translate and no /en/os to serve.
+    // Matched as the exact path OR a path under it, never as a prefix: a bare
+    // startsWith("/os") would also exempt a public page like /oasis-tours and
+    // drop it out of the locale rewrite, which is how /photoshoots was lost
+    // once already (see the matcher note below).
+    pathname === "/os" ||
+    pathname.startsWith("/os/") ||
     pathname.startsWith("/_next") ||
     // Flying Dresses Egypt is a separate brand with its own root layout and
     // no [locale] segment, so /flying-dresses/x must never become

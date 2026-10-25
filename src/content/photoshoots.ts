@@ -2,7 +2,7 @@ import { unsplashUrl } from "./unsplash";
 import type { Photoshoot } from "./types";
 import { FLYING_DRESS_OUTFITS } from "./outfitCollection";
 
-// The wardrobe — twelve flying dresses and five traditional men's gawns —
+// The wardrobe — thirteen flying dresses and five traditional men's gawns —
 // used to be declared here. It now lives in content/outfitCollection.ts,
 // because Flying Dresses Egypt (content/flyingDresses.ts) sells the same
 // physical garments and a second copy of the list would let the two brands
@@ -93,7 +93,7 @@ export const photoshoots: Photoshoot[] = [
   },
   {
     slug: "flying-dress-photoshoot",
-    // The dress collection. Same twelve for all three Flying Dress products;
+    // The dress collection. The same one for all three Flying Dress products;
     // switch any off per product in the Studio.
     outfits: FLYING_DRESS_OUTFITS,
     title: "Sand Dunes Flying Dress Photoshoot",
@@ -158,7 +158,7 @@ export const photoshoots: Photoshoot[] = [
   },
   {
     slug: "fayoum-flying-dress-photoshoot",
-    // The dress collection. Same twelve for all three Flying Dress products;
+    // The dress collection. The same one for all three Flying Dress products;
     // switch any off per product in the Studio.
     outfits: FLYING_DRESS_OUTFITS,
     title: "Fayoum Flying Dress Photoshoot",
@@ -382,7 +382,7 @@ export const photoshoots: Photoshoot[] = [
   },
   {
     slug: "pyramids-rooftop-flying-dress-photoshoot",
-    // The dress collection. Same twelve for all three Flying Dress products;
+    // The dress collection. The same one for all three Flying Dress products;
     // switch any off per product in the Studio.
     outfits: FLYING_DRESS_OUTFITS,
     title: "Pyramids Rooftop Flying Dress Photoshoot",
@@ -498,7 +498,7 @@ export const photoshoots: Photoshoot[] = [
       {
         question: "Do I bring the dress?",
         answer:
-          "No. The dress is included and it is yours for the session. There are twelve in the collection, all of them available: Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender and Orchid. Tell us which one you would like when you book.",
+          "No. The dress is included and it is yours for the session. There are thirteen in the collection, all of them available: Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender, Hot Pink and Orchid. Tell us which one you would like when you book.",
       },
       {
         question: "Can my partner be in the photos?",

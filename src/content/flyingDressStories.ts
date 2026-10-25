@@ -74,7 +74,7 @@ export const storyClusters: { id: StoryClusterId; name: string; blurb: string }[
     id: "the-dress",
     name: "The dress",
     blurb:
-      "Twelve colours, one cut, a five-metre train and an assistant. How to choose, and what the fabric does when the wind arrives.",
+      "Thirteen colours, one cut, a five-metre train and an assistant. How to choose, and what the fabric does when the wind arrives.",
   },
   {
     id: "the-place",
@@ -298,16 +298,16 @@ export const flyingDressStories: FlyingDressStory[] = [
     title: "Choosing a dress colour, when the background is limestone and sand",
     seoTitle: "Choosing a Dress Colour",
     metaDescription:
-      "Twelve colours in the collection, and a background made of limestone, sand and haze. Which colours separate from it, which disappear, and why.",
+      "Thirteen colours in the collection, and a background made of limestone, sand and haze. Which colours separate from it, which disappear, and why.",
     excerpt:
       "Choosing a colour does not change what you pay, which means the only thing to optimise is the photograph. Against pale stone and paler sand, that question has a fairly short answer.",
     publishedAt: "2026-10-19T00:00:00.000Z",
     basis: "first-party",
     sections: [
       {
-        heading: "Twelve colours, one price",
+        heading: "Thirteen colours, one price",
         body: [
-          "The collection holds twelve flying dresses: Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender and Orchid. One is included in every photoshoot, in the colour you choose, and choosing one does not change the price. There is no premium colour.",
+          "The collection holds thirteen flying dresses: Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender, Hot Pink and Orchid. One is included in every photoshoot, in the colour you choose, and choosing one does not change the price. There is no premium colour.",
           "That removes the only reason to compromise, and leaves a single question: which of these will look like something against the particular background you are standing in front of.",
         ],
       },
@@ -334,7 +334,7 @@ export const flyingDressStories: FlyingDressStory[] = [
         heading: "The ones that need thought",
         body: [
           "Snowy, Golden, Ginger and BronZey are the colours the background is already wearing. None of them is a bad choice, and all four produce photographs that people love, but they ask for something in return.",
-          "Snowy against white dunes or hazed limestone is a tonal photograph rather than a graphic one: all the interest is in the fold and the movement of the fabric, not in the contrast. It is the most bridal of the twelve and the one that most rewards being shot low against sky rather than ground.",
+          "Snowy against white dunes or hazed limestone is a tonal photograph rather than a graphic one: all the interest is in the fold and the movement of the fabric, not in the contrast. It is the most bridal of the thirteen and the one that most rewards being shot low against sky rather than ground.",
           "Golden, Ginger and BronZey are the warm earth tones, and they are at their best when there is something behind you that is not earth: sky, water at Fayoum, or the shaded face of a building on a rooftop. Put any of them against a sunlit dune at the same angle and the dress and the ground become one object.",
           "If one of these four is the colour you want, say so. The adjustment is the photographer's, not yours. It is a matter of what goes behind you, and that is a decision made on the roof in ten seconds.",
         ],
@@ -351,7 +351,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         question: "Does the colour change the price?",
         answer:
-          "No. One dress from the collection is included in every photoshoot in the colour you choose, and all twelve cost the same.",
+          "No. One dress from the collection is included in every photoshoot in the colour you choose, and all thirteen cost the same.",
       },
       {
         question: "Which colour photographs best at the pyramids?",
@@ -412,7 +412,7 @@ export const flyingDressStories: FlyingDressStory[] = [
           "The hour before the site opens. A private roof has no opening time, which is why these sessions can start in the best light of the day rather than after the first coaches.",
           "Nobody else in the frame. A wide shot on the plateau is a wide shot with other people's holidays in it. A roof is yours for the session.",
           "No ticket, no gate, no queue, and no walk in a five-metre train across open sand before you have taken a photograph.",
-          "Somewhere to change, and somewhere to put the other eleven colours.",
+          "Somewhere to change, and somewhere to put the other twelve colours.",
         ],
       },
       {

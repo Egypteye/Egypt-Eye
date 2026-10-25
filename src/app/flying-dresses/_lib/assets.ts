@@ -352,13 +352,19 @@ export const empty = {
  * The wardrobe in one photograph.
  *
  * Added when the owner's October 2026 shoot folder turned out to contain group
- * frames: eight women in eight of the twelve colours, which says what the
- * wardrobe page spends a grid of seventeen tiles saying.
+ * frames: seven women, seven colours in one frame, which says what the
+ * wardrobe page spends a grid of tiles saying.
+ *
+ * Both descriptions of this file used to be wrong about it — "eight women"
+ * here and "a line of gowns in twelve colours" in shareImages. It is seven
+ * women wearing the dresses, not a rail of them, and the count of colours in
+ * the frame has nothing to do with the size of the collection. Counted off
+ * the photograph itself.
  */
 export const wardrobeLineup = slot({
   kind: "agency",
   src: "/photos/flying-dresses/wardrobe-lineup.jpg",
-  alt: "Eight women together on the Giza rooftop, each in a different colour from the collection",
+  alt: "Seven women together on the Giza rooftop, each in a different colour from the collection",
   width: 2000,
   height: 1333,
   credit: "Agency group shoot, supplied October 2026",

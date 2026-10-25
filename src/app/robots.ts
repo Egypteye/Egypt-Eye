@@ -16,7 +16,12 @@ export default function robots(): MetadataRoute.Robots {
         // helps neither. Their canonical URLs all point at
         // flyingdressesegypt.com, and that domain serves its own robots.txt
         // from src/app/flying-dresses/robots.txt/route.ts.
-        disallow: ["/studio", "/api/", "/flying-dresses"],
+        //
+        // /os is the internal workspace: guest names, phone numbers and what
+        // each booking was sold for. It is gated server-side, so listing it
+        // here only keeps the URLs out of search results — it is not the
+        // thing keeping anyone out.
+        disallow: ["/studio", "/api/", "/flying-dresses", "/os"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,

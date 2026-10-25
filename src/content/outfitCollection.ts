@@ -1,7 +1,7 @@
 /**
  * THE WARDROBE — one collection, two brands.
  *
- * Twelve flying dresses and five traditional men's gawns. Egypt Eye Travel
+ * Thirteen flying dresses and five traditional men's gawns. Egypt Eye Travel
  * sells photoshoots that include them (content/photoshoots.ts) and Flying
  * Dresses Egypt sells the same garments as shoots and as rentals
  * (content/flyingDresses.ts). It is one physical wardrobe in Cairo, so it is
@@ -30,12 +30,13 @@
 import type { Outfit } from "@/lib/booking/outfits";
 
 /**
- * THE FLYING DRESS COLLECTION — twelve dresses, all confirmed available.
+ * THE FLYING DRESS COLLECTION — thirteen dresses, all confirmed available.
  *
- * Confirmed twice: the business names all twelve in the "Do I bring the
+ * Confirmed twice: the business named the original twelve in the "Do I bring the
  * dress?" FAQ on the rooftop product, and the live page at
  * egypteyetravel.com/photoshoots/pyramids-rooftop-flying-dress-photoshoot
- * lists the same twelve by name.
+ * lists the same twelve by name. Hot Pink was added afterwards, from the
+ * owner's own photograph of a dress that was not in either list.
  *
  * Shared by every Flying Dress product because all of them already promise a
  * dress "in the colour you choose" from one collection. That is an assumption
@@ -150,6 +151,18 @@ export const FLYING_DRESS_COLLECTION: Outfit[] = [
     // The owner's own photograph of this dress, from the "Purple" folder
     // of their wardrobe shoot.
     image: { asset: { _ref: "image-bbc6faae06375c34ab5f39046c90316b48be9370-6000x4000-jpg", _type: "reference" } },
+  },
+  {
+    id: "hot-pink",
+    name: "Hot Pink",
+    // Sampled from the dress itself rather than picked by eye: the fabric's
+    // dominant saturated tone in the owner's photograph. It sits clearly
+    // apart from Cherry (#9d2235), which is the darker red of the two.
+    hex: "#fc1356",
+    category: "womens-dress",
+    // The owner's own photograph of this dress, from the "Pink" folder
+    // of their wardrobe shoot.
+    image: { asset: { _ref: "image-858d051adf383669196a80ff2fb5eb4ae401ca33-6000x4000-jpg", _type: "reference" } },
   },
   {
     id: "orchid",
