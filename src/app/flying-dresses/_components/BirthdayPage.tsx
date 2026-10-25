@@ -5,6 +5,7 @@ import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { CelebrationChoices } from "./CelebrationChoices";
 import { agency } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
+import { mergeFaqs } from "@/content/flyingDressExperiences";
 import {
   CHARGE_LABEL,
   CHARGE_NOTE,
@@ -503,7 +504,7 @@ export function BirthdayPage({ experience }: { experience: { faqs: { question: s
           <h2 className="fd-display fd-h3" style={{ marginBottom: "2rem" }}>
             Questions
           </h2>
-          <FaqList faqs={[...celebrationFaqs, ...experience.faqs]} headingLevel={3} />
+          <FaqList faqs={mergeFaqs(experience.faqs, celebrationFaqs)} headingLevel={3} />
         </div>
       </section>
 

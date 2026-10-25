@@ -8,6 +8,7 @@ import { NAMING_NOTE, accessoryCategories, accessoryByRef } from "@/content/flyi
 import { proposalDecorations } from "@/content/flyingDressProposal";
 import { revealThemeById } from "@/content/flyingDressGenderReveal";
 import { celebrationOccasionById } from "@/content/flyingDressBirthday";
+import { productionServices } from "@/content/flyingDressMusic";
 import { PhoneField } from "@/components/PhoneField";
 
 /**
@@ -186,6 +187,12 @@ export function EnquiryForm({
   const [cakeRequest, setCakeRequest] = useState("");
   const [songs, setSongs] = useState("");
   const [transportWanted, setTransportWanted] = useState(false);
+  // The music session's own fields. A rooftop booked by the hour needs the
+  // hours; everything else on this form is about a session of fixed shape.
+  const [hours, setHours] = useState("");
+  const [artist, setArtist] = useState("");
+  const [services, setServices] = useState<string[]>([]);
+  const [reference, setReference] = useState("");
   const [date, setDate] = useState("");
   const [people, setPeople] = useState("");
   const [dress, setDress] = useState(initialDress);
@@ -224,6 +231,14 @@ export function EnquiryForm({
    * celebration added later is covered without touching this file.
    */
   const isCelebration = isShoot && isCelebrationExperience(experience);
+
+  /**
+   * The rooftop music session, which is the one experience charged by the
+   * HOUR and the one whose production is assembled from separately quoted
+   * services. Matched on the slug rather than the section, because the other
+   * creative experiences are not sold this way.
+   */
+  const isMusic = isShoot && experience === "rooftop-music-session";
 
   // Which wardrobes are open. On a shoot the priced extra is the gate; on a
   // hire the intent is, because there the wardrobe is the whole enquiry.
@@ -303,13 +318,20 @@ export function EnquiryForm({
         // message as the brief for its reply, and transport on a celebration
         // is not the included transport our photoshoot packages carry.
         ...(transportWanted ? ["Transport requested (additional charge)"] : []),
+        ...(hours.trim() ? [`Rooftop hours: ${hours.trim()}`] : []),
+        ...(artist.trim() ? [`Artist: ${artist.trim()}`] : []),
+        ...services
+          .map((id) => productionServices.find((service) => service.id === id)?.name)
+          .filter((name): name is string => Boolean(name))
+          .map((name) => `Production: ${name}`),
+        ...(reference.trim() ? [`Reference: ${reference.trim()}`] : []),
         ...extras.map((id) => addOns.find((a) => a.id === id)?.label),
       ].filter((label): label is string => Boolean(label)),
       hotel,
       delivery: delivery ? RENTAL_DELIVERY_LABELS[delivery as "hotel-delivery" | "collection"] : undefined,
       notes: message,
     });
-  }, [pkg, service, experience, setup, theme, occasion, cakeRequest, songs, transportWanted, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
+  }, [pkg, service, experience, setup, theme, occasion, cakeRequest, songs, transportWanted, hours, artist, services, reference, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -364,6 +386,10 @@ export function EnquiryForm({
           cake: cakeRequest,
           songs,
           transport: transportWanted,
+          hours,
+          artist,
+          services,
+          reference,
           date,
           people,
           dress,
@@ -655,17 +681,7 @@ export function EnquiryForm({
         {isShoot ? (
           <div className="fd-field fd-field-full">
             <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-              <legend
-                style={{
-                  fontSize: "var(--fd-step--1)",
-                  fontWeight: 500,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--fd-ink-soft)",
-                  padding: 0,
-                  marginBottom: "0.6rem",
-                }}
-              >
+              <legend className="fd-field-legend">
                 Anything to add
               </legend>
               <div className="fd-swatch-row">
@@ -716,17 +732,7 @@ export function EnquiryForm({
         {showAccessories ? (
           <div className="fd-field fd-field-full">
             <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
-              <legend
-                style={{
-                  fontSize: "var(--fd-step--1)",
-                  fontWeight: 500,
-                  letterSpacing: "0.14em",
-                  textTransform: "uppercase",
-                  color: "var(--fd-ink-soft)",
-                  padding: 0,
-                  marginBottom: "0.6rem",
-                }}
-              >
+              <legend className="fd-field-legend">
                 Which accessories
               </legend>
               <p className="fd-hint" style={{ marginTop: 0, marginBottom: "0.9rem" }}>
@@ -801,6 +807,105 @@ export function EnquiryForm({
               ))}
             </select>
           </Field>
+        ) : null}
+
+        {/* ===============================================================
+            THE MUSIC SESSION FIELDS.
+
+            The rooftop is the only thing on this site charged by the hour,
+            so the hours are the first thing the desk needs: without them
+            there is no quotation to give. The production services are
+            checkboxes rather than prose because the reply differs per
+            service, and resolving them server-side keeps the labels ours.
+            =============================================================== */}
+        {isMusic ? (
+          <>
+            <Field
+              id="fd-hours"
+              label="Rooftop hours"
+              hint="From $150 an hour for the location. Most sessions are built around one hour of usable light and the shoot around it is longer."
+            >
+              <input
+                id="fd-hours"
+                name="hours"
+                type="number"
+                min={1}
+                max={12}
+                inputMode="numeric"
+                value={hours}
+                onChange={(e) => setHours(e.target.value)}
+              />
+            </Field>
+
+            <Field id="fd-artist" label="DJ or artist name" hint="However it should be credited.">
+              <input
+                id="fd-artist"
+                name="artist"
+                autoComplete="off"
+                value={artist}
+                onChange={(e) => setArtist(e.target.value)}
+              />
+            </Field>
+
+            <div className="fd-field fd-field-full">
+              <fieldset style={{ border: 0, margin: 0, padding: 0 }}>
+                <legend className="fd-field-legend">Production you want quoted</legend>
+                <div className="fd-swatch-row">
+                  {productionServices.map((option) => {
+                    const checked = services.includes(option.id);
+                    return (
+                      <label
+                        key={option.id}
+                        className="fd-swatch"
+                        style={{
+                          cursor: "pointer",
+                          textTransform: "none",
+                          letterSpacing: "0.02em",
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={(e) =>
+                            setServices((current) =>
+                              e.target.checked
+                                ? [...current, option.id]
+                                : current.filter((id) => id !== option.id)
+                            )
+                          }
+                          // 24px, WCAG 2.2 2.5.8 Target Size (Minimum), same
+                          // as the add-ons row above.
+                          style={{ width: "1.5rem", height: "1.5rem", minHeight: 0, flex: "none" }}
+                        />
+                        <span>{option.name}</span>
+                      </label>
+                    );
+                  })}
+                </div>
+                <p className="fd-hint" style={{ marginTop: "0.6rem" }}>
+                  None of these has a published price. Tick what you want and each one is quoted
+                  for your session. Taking none of them is a real booking: the roof on its own is
+                  what plenty of people want.
+                </p>
+              </fieldset>
+            </div>
+
+            <Field
+              id="fd-reference"
+              label="A link to your music or a reference"
+              full
+              hint="A profile, a track, a previous video, or a visual reference for how you want it to look. Optional, and it makes the first reply much more useful."
+            >
+              <input
+                id="fd-reference"
+                name="reference"
+                inputMode="url"
+                autoComplete="off"
+                value={reference}
+                onChange={(e) => setReference(e.target.value)}
+              />
+            </Field>
+          </>
         ) : null}
 
         {/* ===============================================================

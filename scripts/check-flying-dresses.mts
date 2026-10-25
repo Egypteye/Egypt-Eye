@@ -80,7 +80,15 @@ import {
   music as celebrationMusic,
   transport as celebrationTransport,
 } from "../src/content/flyingDressBirthday.js";
-import { isCelebrationExperience } from "../src/content/flyingDressExperiences.js";
+import { isCelebrationExperience, mergeFaqs } from "../src/content/flyingDressExperiences.js";
+import {
+  audioRecording,
+  musicSetups,
+  notSupplied,
+  productionServices,
+  rooftopRate,
+  shootApproach,
+} from "../src/content/flyingDressMusic.js";
 import {
   revealDecorations,
   revealPayment,
@@ -4936,6 +4944,306 @@ ok(
       "it, or the category has fallen back to the generic renderer",
     /category\.id === "celebrations" && celebration \?[\s\S]{0,140}?<BirthdayPage/.test(
       strip(birthdayRoute)
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE ROOFTOP MUSIC SESSION
+//
+// The first Flying Dresses experience to carry a CONFIRMED PRICE, which makes
+// it the first that can be wrong about money in a way a customer acts on. The
+// rate is $150 AN HOUR for the ROOFTOP, and two mistakes are available:
+// showing the number without its unit, and letting it read as though the
+// production services are inside it.
+//
+// The other thing these protect is the record's loudest sentence: WE DO NOT
+// SUPPLY A SOUND SYSTEM, DJ EQUIPMENT OR GENERATORS. A DJ who arrives
+// expecting a booth has had their session ruined.
+//
+// PROVEN, each by breaking the thing it names: the rate unmoored from its
+// unit, the rate changed, the exclusion sentence removed, the no-sound
+// section gutted, the audio question answered, a camera count published, a
+// delivery promise added, the gallery's gaps filled with a real photograph,
+// a caption that stops naming its occasion, a setup with a missing image, the
+// API trusting the request, the hours left unvalidated, and the route's
+// render switched off. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const musicContent = read("src/content/flyingDressMusic.ts");
+  const musicPage = read("src/app/flying-dresses/_components/MusicProductionPage.tsx");
+  const musicRoute = read("src/app/flying-dresses/creative/[slug]/page.tsx");
+  const musicApi = read("src/app/api/flying-dresses-enquiry/route.ts");
+  const musicForm = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+  const musicGallery = read("src/app/flying-dresses/_components/PhotoGallery.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  const musicExperience = flyingDressExperiences.find((e) => e.slug === "rooftop-music-session");
+  ok("the rooftop-music-session experience has gone missing", Boolean(musicExperience));
+
+  // ---- THE RATE, AND ITS UNIT. ---------------------------------------
+  ok(
+    `the music session's pricing is "${musicExperience?.pricing.kind}" rather than hourly. The ` +
+      "owner confirmed $150 AN HOUR for the rooftop; any other shape renders the figure without " +
+      "its unit somewhere, and a rate read as a session price is wrong by however many hours " +
+      "somebody books.",
+    musicExperience?.pricing.kind === "hourly"
+  );
+  if (musicExperience?.pricing.kind === "hourly") {
+    ok(
+      `the music session's rate is $${musicExperience.pricing.fromUsd} rather than the $150 the ` +
+        "owner confirmed. A price may only change when the owner says so.",
+      musicExperience.pricing.fromUsd === 150
+    );
+    ok(
+      `the music session's rate unit is "${musicExperience.pricing.unit}" rather than "hour"`,
+      musicExperience.pricing.unit === "hour"
+    );
+  }
+  ok(
+    `rooftopRate carries $${rooftopRate.fromUsd} per ${rooftopRate.unit}, which disagrees with ` +
+      "the experience record. Two numbers for one rate is how a page and an email quote " +
+      "different figures at the same customer.",
+    rooftopRate.fromUsd === 150 && rooftopRate.unit === "hour"
+  );
+  // The display string is what a visitor actually reads.
+  ok(
+    `rooftopRate.display is "${rooftopRate.display}" and does not state the amount with its ` +
+      'unit. It must read as a rate ("per hour"), not as a price.',
+    /\$150/.test(rooftopRate.display) && /per hour/i.test(rooftopRate.display)
+  );
+  ok(
+    "the music page shows the rate without its unit beside it, so $150 reads as the price of the " +
+      "whole session rather than of one hour of it",
+    /rooftopRate\.display/.test(musicPage)
+  );
+
+  // ---- The rate is the ROOF, not the production. ---------------------
+  ok(
+    "rooftopRate.excludes no longer lists what sits outside the hourly rate. Filming, audio, " +
+      "editing, set dressing and the artist shoot are all quoted separately, and an hourly " +
+      "figure with no exclusions reads as an all-in package.",
+    /filming/i.test(rooftopRate.excludes) &&
+      /editing/i.test(rooftopRate.excludes) &&
+      /separately|outside|not inside/i.test(rooftopRate.excludes)
+  );
+  ok(
+    "the music page no longer renders rooftopRate.excludes, so the hourly rate appears with " +
+      "nothing saying what it does not buy",
+    /rooftopRate\.excludes/.test(musicPage)
+  );
+  for (const service of productionServices) {
+    const priced = `${service.name} ${service.detail}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `the production service "${service.id}" carries a price (${priced.join(", ")}). None of ` +
+        "them has a published figure; every one is quoted for the session.",
+      priced.length === 0
+    );
+  }
+
+  // ---- THE OPEN QUESTION STAYS OPEN. ---------------------------------
+  // The owner explicitly flagged this one as unverified before publication.
+  ok(
+    "the audio recording service is no longer marked unconfirmed. The owner asked for its " +
+      "commercial status to be verified before publication: nobody has said whether it is " +
+      "inside the hourly rate or charged separately, so the page must offer it and claim " +
+      "neither.",
+    productionServices.find((service) => service.id === "audio")?.status === "unconfirmed"
+  );
+  ok(
+    "audioRecording.pageWording now states whether recording equipment is included or charged. " +
+      "That is the one question the owner named as unverified.",
+    !/\bis included\b|\bincluded in the\b|\bcosts \$|\bfor \$/i.test(audioRecording.pageWording)
+  );
+
+  // ---- No invented production specifics. -----------------------------
+  // The owner described "2 to 3 angles" as an INTENDED APPROACH. The brief is
+  // explicit that it must not become a camera or crew count.
+  {
+    const code = strip(musicContent) + strip(musicPage);
+    for (const [what, pattern] of [
+      ["a camera count", /\b(two|three|2|3|four)\s+cameras?\b/i],
+      ["a crew size", /\b(two|three|2|3)\s+(operators?|camera operators?|crew)\b/i],
+      ["a photograph count", /\b\d{2,}\s+(edited\s+)?(photographs?|images?|frames?)\b/i],
+      ["a delivery deadline", /within\s+\d+\s+(hours|days|weeks)/i],
+      ["a video length", /\b\d+\s*(minute|min)\b/i],
+    ] as [string, RegExp][]) {
+      ok(
+        `the music page or its content publishes ${what}. The owner described two or three ` +
+          "ANGLES as an intended approach, and the brief is explicit that it must not be read " +
+          "as a confirmed number of cameras or operators. Nothing about deliverables has been set.",
+        !pattern.test(code)
+      );
+    }
+  }
+  ok(
+    "shootApproach.notPublished no longer names the deliverables we do NOT publish. A production " +
+      "customer asks for every one of them, and leaving the absence unsaid reads as an omission " +
+      "rather than as a position.",
+    /number of cameras/i.test(shootApproach.notPublished)
+  );
+
+  // ---- WE DO NOT SUPPLY SOUND. ---------------------------------------
+  // MATCHED ON THE RENDER AND ON THE DATA, not on the identifier and not on
+  // the file. The first versions of these two tested for `notSupplied`
+  // anywhere in the page (the heading and lede kept it green with the list
+  // gutted) and for the PA sentence anywhere in the content file (the FAQ
+  // answer further down kept it green with the warning deleted). Both passed
+  // on code with the warning removed, which is the one failure this whole
+  // section exists to prevent.
+  ok(
+    "the music page no longer RENDERS notSupplied.points, so the warning that we do not supply " +
+      "a sound system, decks or power has lost its list. The experience record states it in " +
+      "capitals and it is the single most likely way this service ruins somebody's session.",
+    /notSupplied\.points\.map/.test(strip(musicPage))
+  );
+  ok(
+    "no entry in notSupplied.points names a PA, DJ equipment or generators. " +
+      '"We provide cameras and lighting" is not the same warning as "we do not supply the PA", ' +
+      "and a DJ who arrives expecting a booth has had their session ruined.",
+    notSupplied.points.some((point) =>
+      /PA, DJ equipment or generators/i.test(`${point.title} ${point.detail}`)
+    )
+  );
+  ok(
+    "no entry in notSupplied.points says filming inside the archaeological complex is not what " +
+      "this is. That is a different, separately permitted activity and the record is explicit.",
+    // The DETAIL, not the title. A heading reading "Not inside the pyramids
+    // complex" matched the first version of this while the sentence
+    // explaining that it is a separately permitted activity had been
+    // deleted, which leaves the warning as a label with nothing behind it.
+    notSupplied.points.some((point) => /separately permitted/i.test(point.detail))
+  );
+  ok(
+    "the music content no longer says amplified sound is the venue's decision, which the " +
+      "experience record is emphatic about",
+    /venue's call|venue's decision/i.test(musicContent)
+  );
+
+  // ---- The gallery: designed gaps, never a borrowed photograph. ------
+  ok(
+    "PhotoGallery no longer renders a null-src frame as a designed labelled gap. The music page " +
+      "has no DJ photography at all, and a gallery that cannot hold a gap either ships empty or " +
+      "gets filled with somebody else's set.",
+    /frame\.src === null/.test(musicGallery)
+  );
+  ok(
+    "the lightbox is being handed the gaps as well as the photographs, so its arrows walk onto " +
+      "an empty box and it miscounts how many frames there are",
+    /frames=\{real\}/.test(musicGallery)
+  );
+  {
+    const gaps = [...musicPage.matchAll(/wanted:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    ok(
+      `the music gallery declares ${gaps.length} labelled gaps rather than the four shots it is ` +
+        "missing. Deleting one does not get the photograph taken; it hides that it is needed.",
+      gaps.length === 4
+    );
+    for (const gap of gaps) {
+      ok(
+        `a music gallery gap has no description of the shot it wants: "${gap}"`,
+        gap.trim().length > 10
+      );
+    }
+  }
+  {
+    const captions = [...musicPage.matchAll(/caption:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map(
+      (m) => m[1]
+    );
+    const real = captions.filter((c) => /Photographed at|flying-dress session/i.test(c));
+    ok(
+      `only ${real.length} of the music gallery's real frames name the occasion they were ` +
+        "photographed at. None of them is a music session, and a visitor must not have to guess.",
+      real.length === 3
+    );
+  }
+  ok(
+    "the music gallery intro no longer tells the visitor that we have not filmed a DJ set on " +
+      "this roof yet",
+    /not filmed a DJ set on this roof yet/i.test(musicPage)
+  );
+
+  // ---- The setup catalogue, whenever it fills up. --------------------
+  for (const setup of musicSetups) {
+    ok(
+      `the music setup "${setup.id}" has no photograph at public${setup.src}`,
+      setup.src.startsWith("/") && existsSync(`public${setup.src}`)
+    );
+    const priced = `${setup.name} ${setup.description}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(`the music setup "${setup.id}" carries a price (${priced.join(", ")})`, priced.length === 0);
+  }
+
+  // ---- The enquiry handoff. ------------------------------------------
+  ok(
+    "the enquiry API no longer resolves the requested production services against the " +
+      "catalogue, so a crafted payload could put a service we do not offer into the desk email",
+    /productionServices\.find\(\(service\) => service\.id === id\)/.test(strip(musicApi))
+  );
+  ok(
+    "the enquiry API no longer validates the rooftop hours. That field is the one number on " +
+      "this form that multiplies by a rate, so a negative or absurd value reaches a quotation.",
+    /hoursRaw >= 1 && hoursRaw <= 12/.test(strip(musicApi))
+  );
+  ok(
+    "the enquiry API's hours row no longer carries the rate, leaving a bare number in a row " +
+      "called Hours beside every other number on the form",
+    /rate: from \$150 per hour/.test(musicApi)
+  );
+  ok(
+    "the enquiry form no longer gates the music fields on the music experience, so everybody " +
+      "booking a photoshoot is asked how many rooftop hours they want",
+    /const isMusic = isShoot && experience === "rooftop-music-session"/.test(strip(musicForm))
+  );
+
+  // ---- NO QUESTION IS ASKED TWICE. -----------------------------------
+  // Caught by React, not by me: both custom pages concatenated their own FAQ
+  // list with the experience record's and shipped two copies of the same
+  // question a few lines apart. The duplicate-key error was the lucky part;
+  // the visible symptom was a page answering itself twice.
+  for (const [label, page, source] of [
+    ["music", musicPage, "musicFaqs"],
+    ["celebration", read("src/app/flying-dresses/_components/BirthdayPage.tsx"), "celebrationFaqs"],
+  ] as [string, string, string][]) {
+    ok(
+      `the ${label} page concatenates its own questions with the record's instead of merging ` +
+        "them, so a question answered in both renders twice and the FAQ structured data " +
+        "disagrees with the page",
+      new RegExp(`mergeFaqs\\(experience\\.faqs, ${source}\\)`).test(strip(page))
+    );
+  }
+  {
+    // The merge itself, exercised rather than trusted.
+    const merged = mergeFaqs(
+      [{ question: "Can I play loud on the rooftop?", answer: "record" }],
+      [
+        { question: "can i play loud on the rooftop", answer: "page duplicate" },
+        { question: "Something else entirely?", answer: "page only" },
+      ]
+    );
+    ok(
+      `mergeFaqs returned ${merged.length} questions rather than 2, so a duplicate question ` +
+        "survived the merge",
+      merged.length === 2
+    );
+    ok(
+      "mergeFaqs let a page answer displace the record's. The record drives the FAQ structured " +
+        "data, and Google requires the marked-up answer to be the one visible on the page.",
+      merged[0]?.answer === "record"
+    );
+  }
+
+  // ---- The route still owns the URL. ---------------------------------
+  ok(
+    "the music body is no longer rendered from the shared creative route: either it has been " +
+      "forked to its own URL, taking the breadcrumbs and the FAQ structured data with it, or " +
+      "the category has fallen back to the generic renderer",
+    /category\.id === "music-production" && experiences\[0\] \?[\s\S]{0,120}?<MusicProductionPage/.test(
+      strip(musicRoute)
     )
   );
 }

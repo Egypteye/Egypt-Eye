@@ -21,6 +21,7 @@ import { accessoryByRef } from "@/content/flyingDressAccessories";
 import { proposalDecorations } from "@/content/flyingDressProposal";
 import { revealThemeById } from "@/content/flyingDressGenderReveal";
 import { celebrationOccasionById } from "@/content/flyingDressBirthday";
+import { productionServices } from "@/content/flyingDressMusic";
 
 /**
  * The Flying Dresses enquiry.
@@ -172,6 +173,27 @@ export async function POST(request: NextRequest) {
   // this field cannot turn into a transport booking.
   const wantsTransport = body.transport === true;
 
+  // The music session. HOURS are the one number on this form that drives a
+  // figure, so they are parsed rather than passed through: a rooftop is
+  // charged by the hour and "twelve" or "-3" in that field is not an answer
+  // the desk can quote from. Out of range becomes empty rather than clamped,
+  // because a silently corrected 40 into 12 is a quotation nobody asked for.
+  const hoursRaw = Number.parseInt(clean(body.hours, 10), 10);
+  const hours =
+    Number.isInteger(hoursRaw) && hoursRaw >= 1 && hoursRaw <= 12 ? String(hoursRaw) : "";
+  const artist = clean(body.artist, 120);
+  const reference = clean(body.reference, 500);
+  // Resolved against the catalogue, like every other id here: the NAME the
+  // desk reads comes off the catalogue, never off the request, so a crafted
+  // payload cannot post a production service we do not offer.
+  const requestedServices = Array.isArray(body.services) ? body.services : [];
+  const chosenServices = requestedServices
+    .map((id) =>
+      typeof id === "string" ? productionServices.find((service) => service.id === id) : undefined
+    )
+    .filter((service): service is (typeof productionServices)[number] => Boolean(service))
+    .map((service) => service.name);
+
   const deliveryKey = clean(body.delivery, 40);
   const delivery =
     deliveryKey === "hotel-delivery" || deliveryKey === "collection"
@@ -208,6 +230,12 @@ export async function POST(request: NextRequest) {
   // A bare "Yes" in a row called Transport is the ambiguity that costs a
   // customer the difference.
   push("Transport", wantsTransport ? "Requested: additional charge, quote with the booking" : "");
+  // "3" alone in a row called Hours is ambiguous against every other number
+  // on this form, and this is the one that multiplies by a rate.
+  push("Rooftop hours", hours ? `${hours} (rate: from $150 per hour)` : "");
+  push("Artist", artist);
+  push("Production requested", chosenServices.join(", "));
+  push("Reference", reference);
   push("Extras", extras.join(", "));
   push("Hotel / pickup area", hotel);
   push("Delivery", delivery);

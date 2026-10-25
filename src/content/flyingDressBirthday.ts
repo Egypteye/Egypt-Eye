@@ -468,19 +468,9 @@ export const celebrationFaqs: CelebrationFaq[] = [
       "Yes, and it is one of the better parts of this. Tell us the occasion, the style and what you want written on it. Cakes come through a supplier we work with rather than our own kitchen, so the design and the cost are confirmed with you before anything is ordered. We do not publish flavours, sizes or dietary options here because those are the supplier's to confirm for your date.",
   },
   {
-    question: "Can I play my own music?",
-    answer:
-      "Yes. There is a speaker, and you send us the tracks ahead of the date. How loud and how late is the venue's decision rather than ours, so we check it for your date. We are not offering a DJ or a live musician on this page; ask if you want one and we will find out whether it can be arranged.",
-  },
-  {
     question: "Are both photoshoots really part of it?",
     answer:
       "Yes. A casual photoshoot of the evening itself and a flying dress session on the same roof are both part of the celebration rather than two things you pick between. We do not publish a number of photographs, a length for either session or a delivery date, because none has been set for a celebration: you get those in writing for your booking.",
-  },
-  {
-    question: "How many people can come?",
-    answer:
-      "You can add one to fifteen companions to the booking. What the roof can actually take differs by venue and by date, so give us your number when you enquire and we confirm it with them rather than promising it here. We do not set a minimum or a maximum ourselves.",
   },
   {
     question: "Can you arrange transport?",

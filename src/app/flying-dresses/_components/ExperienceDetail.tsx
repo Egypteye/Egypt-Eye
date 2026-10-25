@@ -106,6 +106,20 @@ export function ExperienceDetail({
               venue and which extras you want. Tell us what you are planning and you will get a
               real figure, not a starting-from.
             </p>
+          ) : experience.pricing.kind === "hourly" ? (
+            /* THE UNIT TRAVELS WITH THE NUMBER. A rate rendered as a bare
+               "from $150" reads as the price of the whole session, and is
+               wrong by however many hours somebody was planning to book.
+               The music page composes its own body and does not reach this
+               branch, but an experience's price must never be renderable
+               without its unit from anywhere. */
+            <p className="fd-note" style={{ marginTop: "2rem" }}>
+              <strong style={{ fontWeight: 500 }}>
+                From ${experience.pricing.fromUsd} per {experience.pricing.unit}.
+              </strong>{" "}
+              That is the rate for the location. Production services are arranged separately and
+              quoted for your session.
+            </p>
           ) : null}
         </div>
       </section>

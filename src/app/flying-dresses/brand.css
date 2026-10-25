@@ -2788,6 +2788,19 @@ ol.fd-timeline h3::before {
    The box is 1.5rem = 24px, matching the extras row, for WCAG 2.2 2.5.8
    Target Size (Minimum). `flex: none` keeps it square when the sentence
    beside it wraps onto three lines on a phone. */
+/* A fieldset's legend inside a form field. Same treatment as `.fd-field
+   label`, which a <legend> is not and therefore does not inherit. It was
+   written inline three times before this existed. */
+.fd-field-legend {
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+  padding: 0;
+  margin-bottom: 0.6rem;
+}
+
 .fd-field .fd-check {
   display: flex;
   gap: 0.75rem;
