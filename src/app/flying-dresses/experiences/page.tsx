@@ -6,6 +6,7 @@ import { agency, empty, location, type ImageSlot } from "../_lib/assets";
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { packagePriceLabel } from "@/content/flyingDresses";
+import { StoriesFromHere } from "../_components/StoriesFromHere";
 
 export const metadata: Metadata = fdMetadata({
   title: "The Experiences",
@@ -141,6 +142,8 @@ export default async function ExperiencesPage() {
           </div>
         </div>
       </section>
+
+      <StoriesFromHere path="/experiences" />
 
       <script
         type="application/ld+json"

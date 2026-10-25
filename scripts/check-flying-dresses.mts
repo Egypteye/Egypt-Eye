@@ -61,9 +61,14 @@ import {
 import {
   EGYPT_EYE_FLYING_DRESS_STORIES,
   flyingDressStories,
+  liveStories,
+  storyPlainText,
+  relatedStories,
   storyClusters,
+  storyLinkTargets,
   storyWordCount,
 } from "../src/content/flyingDressStories.js";
+import { isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
 // The PURE merge module, deliberately — content.ts reaches the Sanity client,
 // which reaches env.ts, which throws here. CLAUDE.md §6.
 import {
@@ -2148,7 +2153,13 @@ for (const section of ["celebrations", "creative"]) {
   const TITLE_MAX = 60;
 
   // Proven by lengthening one seoTitle past the budget: red.
-  for (const story of flyingDressStories) {
+  //
+  // liveStories(), not every entry. A researched brief is deliberately a stub
+  // with a placeholder section: it has no URL, no sitemap entry and no card on
+  // the index, so holding it to the word floor a published reference article
+  // owes a reader would mean the pipeline could not hold work in progress at
+  // all, which is the whole point of StoryStatus.
+  for (const story of liveStories()) {
     const rendered = story.seoTitle.length + SUFFIX;
     ok(
       `story ${story.slug}: <title> renders ${rendered} chars with the brand suffix, past the ${TITLE_MAX} a result list shows`,
@@ -2288,17 +2299,43 @@ for (const section of ["celebrations", "creative"]) {
   }
 
   // -------------------------------------------------------------------------
-  // NO PRICE AN ARTICLE INVENTED.
+  // NO PRICE AN ARTICLE INVENTED, AND NO PRICE AN ARTICLE HAS OUTLIVED.
   //
   // Prose is where a figure gets rounded, remembered or guessed. Only the
-  // confirmed numbers — the three photoshoot prices and the add-ons that
-  // already carry one — may appear as a dollar amount in a story.
+  // confirmed numbers — the photoshoot prices and the add-ons that already
+  // carry one — may appear as a dollar amount in a story.
   //
-  // Proven by writing "$250" into one paragraph: red.
+  // The second half of that heading is the half that bites later. Every
+  // figure in the cost article is also a field in content/flyingDresses.ts,
+  // which the owner edits. Change a package price and the article goes on
+  // confidently quoting the old one, in the one piece whose entire value is
+  // that its numbers are real, and nothing about the rendered page looks
+  // wrong. CLAUDE.md §5 is about money having one authority; this is what
+  // that means for prose.
+  //
+  // THE ONE EXCEPTION IS SOMEBODY ELSE'S PRICE. The cost article compares our
+  // figures to what else was being sold at Giza, which it cannot do without
+  // naming those figures, and they are not ours to keep in sync. So they are
+  // listed here one by one rather than waved through by a range, and a story
+  // may only use one if it is `basis: "cited"` and carries sources — which
+  // ties the exception to the evidence instead of to a promise.
+  //
+  // Proven by writing "$250" into one paragraph (red), by changing a package
+  // price in content and leaving the article alone (red), and by moving a
+  // market figure into a first-party article (red).
   // -------------------------------------------------------------------------
   const confirmedPrices = new Set<number>([
     ...packages.map((p) => p.priceUsd).filter((v): v is number => typeof v === "number"),
     ...addOns.map((a) => a.priceUsd).filter((v): v is number => typeof v === "number"),
+  ]);
+
+  /** Competitor figures researched on 2026-10-25, each supported by a source on the article. */
+  const RESEARCHED_MARKET_PRICES = new Map<number, string>([
+    [85, "Tripadvisor: pyramid photo sessions without a flying dress, listed from about $85"],
+    [180, "Tripadvisor: one-hour private flying-dress session, listed from $180"],
+    [189, "Tripadvisor: four-hour private flying-dress session, listed from $189"],
+    [450, "Arabian Moments: rooftop flying-dress sessions advertised from $450"],
+    [500, "Tinggly: pyramids rooftop flying-dress package listed at $500"],
   ]);
 
   for (const story of flyingDressStories) {
@@ -2310,11 +2347,21 @@ for (const section of ["celebrations", "creative"]) {
       ...story.faqs.flatMap((f) => [f.question, f.answer]),
     ].join(" ");
 
-    for (const match of prose.matchAll(/\$(\d[\d,]*)/g)) {
+    for (const match of prose.matchAll(/\$(\d(?:[\d,]*\d)?)/g)) {
       const value = Number(match[1].replace(/,/g, ""));
+      if (confirmedPrices.has(value)) continue;
+      const market = RESEARCHED_MARKET_PRICES.get(value);
       ok(
-        `story ${story.slug} states $${match[1]}, which is not a confirmed price`,
-        confirmedPrices.has(value)
+        `story ${story.slug} states $${match[1]}, which is neither a price in the catalogue nor a ` +
+          "researched market figure. If the catalogue changed, the article has to change with it.",
+        market !== undefined
+      );
+      if (market === undefined) continue;
+      ok(
+        `story ${story.slug} quotes another operator's $${match[1]} (${market}) but is not a cited ` +
+          "article with sources. A competitor's figure without the source that supports it is our " +
+          "claim, not theirs.",
+        story.basis === "cited" && (story.sources ?? []).length > 0
       );
     }
   }
@@ -2361,8 +2408,9 @@ for (const section of ["celebrations", "creative"]) {
     sitemapSource.includes('path: "/stories"')
   );
   ok(
-    "the sitemap does not map over flyingDressStories, so new articles would never be submitted",
-    sitemapSource.includes("flyingDressStories.map")
+    "the sitemap does not map over the stories, so new articles would never be submitted. It must " +
+      "map liveStories(), which is also what keeps a draft out of it.",
+    sitemapSource.includes("liveStories().map")
   );
 
   const footerSource = read("src/app/flying-dresses/_components/Footer.tsx");
@@ -3786,6 +3834,202 @@ ok(
       ".fd-urgent-quietX, which still contains it.)",
     /\.fd-urgent-quiet\s*\{/.test(read("src/app/flying-dresses/brand.css"))
   );
+}
+
+// ---------------------------------------------------------------------------
+// THE STORIES ARE AN ENGINE, AND AN ENGINE HAS PARTS THAT CAN COME LOOSE.
+//
+// Six articles shipped here with three structural faults that nothing caught,
+// because nothing was looking: the related rail was `slice(0, 3)` and handed
+// every article the same three links, no article had a named commercial
+// destination, and nothing on the site linked to any of them except the index.
+// All three render perfectly. None of them is visible in a screenshot.
+//
+// What follows guards the parts of an editorial section that fail silently.
+// PROVEN, each by breaking the thing it names and watching it go red: a link
+// to a route that does not exist, a duplicate slug, a published article with
+// no destination, a draft in the sitemap, a repeated heading, and a price in
+// prose that no longer matches the catalogue. Then restored.
+// ---------------------------------------------------------------------------
+{
+  const stories = flyingDressStories;
+  const live = liveStories();
+  const allSlugs = stories.map((s) => s.slug);
+
+  ok(
+    "the Stories section is empty, so the editorial engine has nothing in it",
+    live.length > 0
+  );
+
+  // ---- Every link resolves. ------------------------------------------
+  // The one that actually costs money: an article is written to send people
+  // somewhere, and Next will happily build, deploy and render a <Link> to a
+  // route that does not exist. It looks correct until it is clicked.
+  for (const story of stories) {
+    for (const target of storyLinkTargets(story)) {
+      ok(
+        `story "${story.slug}" links to ${target}, which is not a route on this site. ` +
+          "See content/flyingDressRoutes.ts for what resolves.",
+        isFlyingDressRoute(target, allSlugs)
+      );
+    }
+  }
+
+  // ---- Identity. ------------------------------------------------------
+  ok(
+    "two stories share a slug, so one of them is unreachable",
+    new Set(allSlugs).size === allSlugs.length
+  );
+  const titles = stories.map((s) => s.title.toLowerCase());
+  ok(
+    "two stories share a title, which is how a library starts competing with itself in search",
+    new Set(titles).size === titles.length
+  );
+  const seoTitles = live.map((s) => s.seoTitle.toLowerCase());
+  ok(
+    "two published stories share a <title>, so a result list shows the same blue link twice",
+    new Set(seoTitles).size === seoTitles.length
+  );
+
+  // ---- What a published article owes the reader and the business. -----
+  for (const story of live) {
+    ok(
+      `published story "${story.slug}" has no commercial destination. An editorial page the ` +
+        "business pays to write and is never paid for is the default outcome, not a risk.",
+      story.destination !== undefined
+    );
+    ok(
+      `published story "${story.slug}" is an orphan: nothing on this site links to it except the ` +
+        "index. Name the pages it should be linked from in `inboundFrom`.",
+      (story.inboundFrom ?? []).length > 0
+    );
+    ok(
+      `published story "${story.slug}" has no sections`,
+      story.sections.length > 0
+    );
+    ok(
+      `published story "${story.slug}" has a meta description of ${story.metaDescription.length} ` +
+        "characters. Under 70 wastes the line; over 165 is cut off mid-sentence in a result.",
+      story.metaDescription.length >= 70 && story.metaDescription.length <= 165
+    );
+    ok(
+      `published story "${story.slug}" has an seoTitle of ${story.seoTitle.length} characters, and ` +
+        "the brand name appended to it costs 23 more. Keep it under 40.",
+      story.seoTitle.length > 0 && story.seoTitle.length <= 40
+    );
+    // The table of contents links to #headingId. Two identical headings in one
+    // article means one of those anchors silently goes to the wrong place.
+    const headings = story.sections.map((s) => s.heading);
+    ok(
+      `story "${story.slug}" repeats a section heading, so its contents list has two links to one anchor`,
+      new Set(headings).size === headings.length
+    );
+  }
+
+  // ---- `inboundFrom` has to mean something. ---------------------------
+  //
+  // THE FIRST VERSION OF THIS BLOCK PASSED ON BROKEN CODE, which is the
+  // reason the guard is written this way.
+  //
+  // Naming a page in `inboundFrom` only produces a link if that page renders
+  // <StoriesFromHere>. Nine paths were named across the articles and six
+  // pages had been wired, so /packages, /celebrations and /faq silently
+  // carried no link at all. The non-empty check above was green throughout:
+  // it asserted that somebody had written down an intention, not that the
+  // intention had been carried out. A browser found it.
+  //
+  // So the path is resolved to the file that serves it and the file is read.
+  // A dynamic segment collapses to its one route file, which is correct: wire
+  // /experiences/[slug] once and every package page has it.
+  const PAGE_FOR_PATH = (path: string): string => {
+    const segments = path.split("/").filter(Boolean);
+    if (segments.length === 0) return "src/app/flying-dresses/page.tsx";
+    if (segments.length === 1) return `src/app/flying-dresses/${segments[0]}/page.tsx`;
+    return `src/app/flying-dresses/${segments[0]}/[slug]/page.tsx`;
+  };
+  const inboundPaths = new Set(live.flatMap((s) => s.inboundFrom ?? []));
+  for (const path of inboundPaths) {
+    const file = PAGE_FOR_PATH(path);
+    ok(
+      `a story asks to be linked from ${path}, but ${file} does not render <StoriesFromHere>, so ` +
+        "the link does not exist. `inboundFrom` is a request, not a link.",
+      existsSync(file) && read(file).includes("<StoriesFromHere")
+    );
+  }
+
+  // A cited article without its citations is the failure the `basis` field
+  // exists to prevent. This guard predates the engine and is kept.
+  for (const story of stories) {
+    if (story.basis !== "cited") continue;
+    ok(
+      `story "${story.slug}" says it is cited and carries no sources`,
+      (story.sources ?? []).length > 0
+    );
+  }
+
+  // ---- Drafts are not published. --------------------------------------
+  const indexPage = read("src/app/flying-dresses/stories/page.tsx");
+  const storyPage = read("src/app/flying-dresses/stories/[slug]/page.tsx");
+  const storySitemap = read("src/app/flying-dresses/sitemap.xml/route.ts");
+  for (const [label, source] of [
+    ["the stories index", indexPage],
+    ["the article route", storyPage],
+    ["the sitemap", storySitemap],
+  ] as const) {
+    // Comments and the import SPECIFIER are stripped first. The first version
+    // of this matched `from "@/content/flyingDressStories"` and a sentence in
+    // a code comment, and failed on three files that were already correct —
+    // a guard that cannot tell a module path from a use of the value is a
+    // guard that gets switched off.
+    const code = source
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ")
+      .replace(/from\s+"[^"]*"/g, " ");
+    ok(
+      `${label} reads flyingDressStories directly, so a draft or a researched brief would be ` +
+        "published. It must go through liveStories().",
+      !/\bflyingDressStories\b/.test(code)
+    );
+  }
+
+  // ---- The related rail is scored, not sliced. ------------------------
+  // Asserted on behaviour rather than on the source text: the bug was a rail
+  // that returned the same thing for every article, so what is checked is
+  // that two articles do not get identical rails.
+  const rails = live.map((s) => relatedStories(s).map((r) => r.slug).join("|"));
+  const distinct = new Set(rails.filter((r) => r.length > 0));
+  ok(
+    "every article shows the same related rail, which is what slice(0, 3) did before " +
+      "relatedStories() replaced it. A reader learns in two articles that the rail is furniture.",
+    live.length < 3 || distinct.size > 1
+  );
+
+  // ---- Inline link markup is well formed. -----------------------------
+  //
+  // A malformed `[label](path` renders as literal brackets in the middle of a
+  // sentence. It survives review because it reads as a typo rather than as a
+  // broken feature, and it is invisible in the content file, where square
+  // brackets look like square brackets.
+  //
+  // Checked on the OUTPUT rather than by counting markers. The first version
+  // compared `](` occurrences to parsed links, which passes on the commonest
+  // malformation of all: drop the `]` and there are zero of each. What is
+  // actually wrong is residue in the text a reader sees, so that is what is
+  // asserted — after parsing, no bracket or `](` may survive into the prose.
+  for (const story of stories) {
+    const lines = [
+      ...story.sections.flatMap((s) => [...s.body, ...(s.list ?? [])]),
+      ...story.faqs.map((f) => f.answer),
+    ];
+    for (const line of lines) {
+      const rendered = storyPlainText(line);
+      ok(
+        `story "${story.slug}" has link markup that did not parse, so a reader sees brackets in ` +
+          `the middle of a sentence: "${rendered.slice(0, 70)}"`,
+        !/[[\]]/.test(rendered) && !rendered.includes("](")
+      );
+    }
+  }
 }
 
 if (errors.length > 0) {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  flyingDressStories,
+  liveStories,
   storiesInCluster,
   storyClusters,
   storyReadingMinutes,
@@ -113,7 +113,7 @@ export default function StoriesIndexPage() {
         <div className="fd-shell" style={{ maxWidth: "46rem" }}>
           <h2 className="fd-display fd-h3">Something not answered here?</h2>
           <p className="fd-muted" style={{ marginTop: "1rem" }}>
-            {flyingDressStories.length} articles will not cover everything. The
+            {liveStories().length} articles will not cover everything. The
             questions page is longer and blunter, and a message gets you a
             person.
           </p>

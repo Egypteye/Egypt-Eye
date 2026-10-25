@@ -16,6 +16,7 @@ import {
   fdMetadata,
   fdPath,
 } from "../../_lib/seo";
+import { StoriesFromHere } from "../../_components/StoriesFromHere";
 
 export async function generateStaticParams() {
   return (await fdRentals()).map((s) => ({ slug: s.slug }));
@@ -279,6 +280,8 @@ export default async function RentalServicePage({
           </div>
         </div>
       </section>
+
+      <StoriesFromHere path={`/rentals/${service.slug}`} />
 
       <script
         type="application/ld+json"

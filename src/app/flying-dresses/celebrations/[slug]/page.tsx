@@ -10,6 +10,7 @@ import {
   experiencesInCategory,
 } from "@/content/flyingDressExperiences";
 import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from "../../_lib/seo";
+import { StoriesFromHere } from "../../_components/StoriesFromHere";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -168,6 +169,7 @@ export default async function ExperienceCategoryPage({
           </ul>
         </div>
       </section>
+      <StoriesFromHere path={`/${SECTION}/${category.slug}`} />
     </>
   );
 }

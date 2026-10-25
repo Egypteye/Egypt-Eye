@@ -3723,6 +3723,70 @@ ol.fd-timeline h3::before {
    Ink with a red underline, rather than red text: red is the brand's accent
    and a paragraph with three red words in it reads as a warning. The offset
    keeps the rule off the descenders. */
+/* ---- The editorial section --------------------------------------------
+   A contents list, and one commercial next step.
+
+   Both are set QUIETLY on purpose. This brand's articles earn the click by
+   being right about something, and a reading experience interrupted by a
+   boxed, bordered, accented call to action every few hundred words reads as
+   advertising with prose around it. The contents list is a hairline and a
+   column of links; the next step is one sentence and one button, once, after
+   the article has finished saying what it came to say. */
+.fd-toc {
+  max-width: 46rem;
+  margin: 0 0 2.5rem;
+  padding: 1rem 0 1.1rem;
+  border-top: 1px solid var(--fd-gold-line);
+  border-bottom: 1px solid var(--fd-gold-line);
+}
+
+.fd-toc-list {
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+
+@media (min-width: 46rem) {
+  .fd-toc-list {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2rem;
+  }
+}
+
+.fd-toc-list a {
+  color: var(--fd-ink-soft);
+  text-decoration: none;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  /* 44px of target for a thumb, per the tap-target pass. A contents list is
+     mostly used on a phone, which is the device the scrolling hurts on. */
+  display: block;
+  padding-block: 0.35rem;
+}
+
+.fd-toc-list a:hover,
+.fd-toc-list a:focus-visible {
+  color: var(--fd-gold-ink);
+}
+
+.fd-story-cta {
+  max-width: 46rem;
+}
+
+.fd-story-cta-note {
+  margin: 0 0 1.25rem;
+  font-size: var(--fd-step-0);
+  line-height: 1.7;
+  color: var(--fd-ink-soft);
+  max-width: 42rem;
+}
+
+.fd-on-dark .fd-toc-list a {
+  color: var(--fd-ivory-dim);
+}
+
 .fd-inline-link {
   display: inline-block;
   min-height: 2.75rem;
@@ -3733,6 +3797,28 @@ ol.fd-timeline h3::before {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.25em;
   transition: color var(--fd-fast, 160ms) var(--fd-ease-soft, ease);
+}
+
+/* A LINK INSIDE A SENTENCE IS NOT A TAP TARGET.
+   .fd-inline-link carries display:inline-block, min-height:2.75rem and
+   vertical padding, which is the right treatment for a link standing on its
+   own: 44px of thumb, per WCAG 2.2 2.5.8.
+
+   Dropped into running prose it is a disaster, and a quiet one. Every line
+   containing a link gets a 44px line box, so a paragraph with one link in it
+   is set at one leading and the rest of the article at another, and the page
+   reads as though the typography is broken without any single line looking
+   wrong. That is exactly what happened when the stories grew contextual
+   links, and it was caught by looking at the page rather than by any check.
+
+   2.5.8 has an explicit exception for this case: a target "in a sentence or
+   whose size is otherwise constrained by the line-height of non-target text"
+   is exempt. So inside .fd-prose the link goes back to being text with an
+   underline, which is what it is. */
+.fd-prose .fd-inline-link {
+  display: inline;
+  min-height: 0;
+  padding-block: 0;
 }
 
 .fd-inline-link:hover,
