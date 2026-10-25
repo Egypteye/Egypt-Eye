@@ -7,6 +7,7 @@ import {
   fdWardrobe,
 } from "../_lib/content";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
+import { proposalDecorations } from "@/content/flyingDressProposal";
 import { urgentCall } from "@/content/flyingDresses";
 import { UrgentCall } from "../_components/UrgentCall";
 import { EnquiryForm } from "../_components/EnquiryForm";
@@ -64,6 +65,13 @@ export default async function EnquirePage({
   // slug selects nothing, so a stale link from a retired experience still
   // opens a working form rather than a broken one.
   const experience = experienceBySlug(one(params.experience))?.slug ?? "";
+  // The proposal setup, resolved against the catalogue exactly like every
+  // other incoming value: an unknown id becomes "" and selects nothing. The
+  // catalogue is empty today, so this resolves to nothing for everybody —
+  // which is correct, and is why it is wired now rather than later. The day
+  // a real design is added it arrives here already working.
+  const setupParam = one(params.setup);
+  const setup = proposalDecorations.find((d) => d.id === setupParam)?.id ?? "";
   const dressParam = one(params.dress).toLowerCase();
   const dress = dresses.find((d) => d.id.toLowerCase() === dressParam)?.id ?? "";
   const mensParam = one(params.mens).toLowerCase();
@@ -104,6 +112,7 @@ export default async function EnquirePage({
               initialPackage={pkg}
               initialService={service}
               initialExperience={experience}
+              initialSetup={setup}
               initialDress={dress}
               initialMens={mens}
               phone={urgentPhone}

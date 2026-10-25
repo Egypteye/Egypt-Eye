@@ -69,6 +69,11 @@ import {
   storyWordCount,
 } from "../src/content/flyingDressStories.js";
 import { isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
+import {
+  proposalDecorations,
+  proposalPayment,
+  proposalVenue,
+} from "../src/content/flyingDressProposal.js";
 // The PURE merge module, deliberately — content.ts reaches the Sanity client,
 // which reaches env.ts, which throws here. CLAUDE.md §6.
 import {
@@ -4030,6 +4035,190 @@ ok(
       );
     }
   }
+}
+
+// ---------------------------------------------------------------------------
+// THE PROPOSAL PAGE SELLS SOMETHING WE HAVE NEVER PHOTOGRAPHED.
+//
+// That is the fact the whole page is built around and the reason this block
+// exists. The repository holds real, credited agency work from the Giza
+// rooftop — couples, a vow renewal, a gender reveal, groups — and not one
+// frame of a proposal. The couples frames look exactly like proposal
+// photography, which is precisely why a caption that forgets to say what they
+// are becomes fabricated client work rather than an oversight.
+//
+// The other half is the venue. The owner supplied "Palm Hotel, Mansouriya
+// Street, near the Sphinx Gate area" and asked, in the same message, for it to
+// be verified before publishing. A street address is what somebody types into
+// a map on the morning of their proposal. It stays held until a human confirms
+// it, and the flag is the mechanism.
+//
+// PROVEN, each by breaking the thing it names: a price on the page, a venue
+// fact flipped to published, a decoration entry with no photograph, a caption
+// that stops saying what the frame is, and a lightbox stripped of its dialog
+// role. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const proposalContent = read("src/content/flyingDressProposal.ts");
+  const proposalPage = read("src/app/flying-dresses/_components/ProposalPage.tsx");
+  const galleryComponent = read("src/app/flying-dresses/_components/ProposalGallery.tsx");
+  const lightbox = read("src/app/flying-dresses/_components/Lightbox.tsx");
+  const decorations = read("src/app/flying-dresses/_components/ProposalDecorations.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  // ---- No price. Anywhere. -------------------------------------------
+  // No figure has been set for any proposal package. The page carries a
+  // deposit SPLIT, which is a percentage and not a price, so the test is for
+  // a currency amount rather than for digits.
+  for (const [label, source] of [
+    ["the proposal content file", proposalContent],
+    ["the proposal page", proposalPage],
+  ] as const) {
+    const code = strip(source);
+    const money = code.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `${label} states a currency amount (${money.join(", ")}). No price has been set for any ` +
+        "proposal package, so a figure here is an invented one. CLAUDE.md §7.",
+      money.length === 0
+    );
+  }
+  ok(
+    "the proposal payment split no longer adds up to the whole booking",
+    proposalPayment.depositPercent + proposalPayment.balancePercent === 100
+  );
+  ok(
+    "the proposal page stopped saying the price is quoted rather than published, so a visitor " +
+      "cannot tell whether a figure exists",
+    /no published price/i.test(proposalPayment.quoteNote)
+  );
+
+  // ---- The held facts stay held. --------------------------------------
+  //
+  // This is the guard that matters most, because flipping one of these is a
+  // one-character edit that silently publishes an unverified claim about
+  // somebody else's building.
+  const held: [string, { value: string; published: boolean; note?: string }][] = [
+    ["the venue name", proposalVenue.name],
+    ["the venue street address", proposalVenue.address],
+    ["the free changing room", proposalVenue.changingRoom],
+  ];
+  for (const [label, fact] of held) {
+    ok(
+      `${label} has been marked published. The owner supplied it AND asked for it to be verified; ` +
+        "until a human confirms it, it stays off the page. Flipping this flag is not the " +
+        "verification.",
+      fact.published === false
+    );
+    ok(
+      `${label} is held with no note saying what would release it, so nobody knows what to check`,
+      typeof fact.note === "string" && fact.note.length > 40
+    );
+    ok(
+      `${label} is held but its text appears on the proposal page anyway`,
+      !strip(proposalPage).includes(fact.value)
+    );
+  }
+
+  // ---- The rooftop is not the archaeological complex. -----------------
+  ok(
+    "the proposal page no longer distinguishes a rooftop with a pyramid view from the " +
+      "archaeological complex. That distinction is the one competitors blur and the one this " +
+      "brand has a whole article about.",
+    /archaeological complex/i.test(proposalVenue.notTheComplex) &&
+      strip(proposalPage).includes("notTheComplex")
+  );
+
+  // ---- Every gallery frame says what it actually is. ------------------
+  //
+  // The page has five captions and none of the photographs is a proposal.
+  // Each caption must name the real occasion, or the frame is passed off as
+  // something it is not.
+  const OCCASIONS = ["couples shoot", "vow renewal", "gender reveal", "flying-dress session", "the roof"];
+  const captions = [...proposalPage.matchAll(/caption:\s*\n?\s*"([^"]+)"/g)].map((m) => m[1]);
+  ok(
+    `the proposal gallery has ${captions.length} captions, which is not the set the page composes. ` +
+      "Every frame must carry one: a caption is the only thing stopping a couples shoot reading " +
+      "as a proposal we photographed.",
+    captions.length >= 5
+  );
+  for (const caption of captions) {
+    ok(
+      `a proposal gallery caption never says what the photograph actually is: "${caption.slice(0, 60)}". ` +
+        `It must name one of: ${OCCASIONS.join(", ")}.`,
+      OCCASIONS.some((occasion) => caption.toLowerCase().includes(occasion))
+    );
+  }
+  ok(
+    "the proposal gallery stopped telling the visitor that none of these is a proposal, which is " +
+      "the sentence that makes the rest of the section honest",
+    /not photographed a proposal|nothing below is one/i.test(strip(proposalPage))
+  );
+
+  // ---- The catalogue cannot grow a fake entry. ------------------------
+  for (const decoration of proposalDecorations) {
+    ok(
+      `proposal decoration "${decoration.id}" points at ${decoration.src}, which is not in public/. ` +
+        "A catalogue entry without its photograph is a list item pretending to be a design.",
+      existsSync(`public${decoration.src}`)
+    );
+    ok(
+      `proposal decoration "${decoration.id}" has no alt text`,
+      decoration.alt.trim().length > 10
+    );
+  }
+  ok(
+    "the decoration catalogue has entries but the page no longer offers the interim copy for an " +
+      "empty one, so emptying it would render a heading over nothing",
+    decorations.includes("interim") && /DECORATION_INTERIM/.test(proposalPage)
+  );
+
+  // ---- The lightbox is a real dialog. ---------------------------------
+  //
+  // A lightbox is the easiest component on a site to ship broken for keyboard
+  // users, because it looks perfect to whoever built it with a mouse.
+  // Comments stripped first. The block comment at the top of Lightbox.tsx
+  // explains the component by NAMING every attribute this loop looks for, so
+  // matched against the raw file the role check passed on a component whose
+  // role had been changed to "group". CLAUDE.md §4.
+  const lightboxCode = strip(lightbox);
+  for (const [need, pattern] of [
+    ['role="dialog"', /role="dialog"/],
+    ["aria-modal", /aria-modal="true"/],
+    ["an Escape handler", /"Escape"/],
+    ["arrow-key navigation", /ArrowRight/],
+    ["a focus trap on Tab", /"Tab"/],
+    ["focus returned to the opener on close", /opener\?\.focus/],
+  ] as const) {
+    ok(
+      `the lightbox has lost ${need}, so it is a picture viewer a keyboard user cannot operate`,
+      pattern.test(lightboxCode)
+    );
+  }
+  ok(
+    "the gallery renders thumbnails that are not buttons, so the lightbox cannot be opened from " +
+      "the keyboard at all",
+    /<button[\s\S]{0,200}?fd-pgallery-btn/.test(galleryComponent)
+  );
+
+  // ---- The route still owns the URL. ----------------------------------
+  const categoryRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+  // Matched on the RENDER, not on the identifier. The first version tested
+  // for `category.id === "proposals"` anywhere in the file, which is also how
+  // the experience record is looked up two lines earlier — so switching the
+  // render off left the guard green and the page back to the generic body.
+  ok(
+    "the proposal body is no longer rendered from the shared celebrations route: either it has " +
+      "been forked to its own URL, taking the breadcrumbs and the FAQ structured data with it, " +
+      "or the category has fallen back to the generic renderer",
+    /category\.id === "proposals" && proposal \?[\s\S]{0,120}?<ProposalPage/.test(
+      strip(categoryRoute)
+    )
+  );
 }
 
 if (errors.length > 0) {

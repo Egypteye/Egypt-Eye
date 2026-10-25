@@ -18,6 +18,7 @@ import {
 } from "@/content/flyingDresses";
 import { experienceBySlug, experiencePath } from "@/content/flyingDressExperiences";
 import { accessoryByRef } from "@/content/flyingDressAccessories";
+import { proposalDecorations } from "@/content/flyingDressProposal";
 
 /**
  * The Flying Dresses enquiry.
@@ -145,6 +146,11 @@ export async function POST(request: NextRequest) {
         : `${a.label} (${a.fromPrice ? "from " : ""}$${a.priceUsd})`
     );
 
+  // The proposal setup, resolved against the catalogue for the same reason
+  // as everything else here: the request says WHICH, never what it is called.
+  const setupId = clean(body.setup, 60);
+  const setup = proposalDecorations.find((d) => d.id === setupId);
+
   const deliveryKey = clean(body.delivery, 40);
   const delivery =
     deliveryKey === "hotel-delivery" || deliveryKey === "collection"
@@ -171,6 +177,7 @@ export async function POST(request: NextRequest) {
   push("Dress", dress?.name ?? "");
   push("Men's attire", mens?.name ?? "");
   push("Accessories", chosenAccessories.join(", "));
+  push("Proposal setup", setup?.name ?? "");
   push("Extras", extras.join(", "));
   push("Hotel / pickup area", hotel);
   push("Delivery", delivery);

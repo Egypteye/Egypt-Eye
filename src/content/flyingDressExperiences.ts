@@ -135,6 +135,13 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Proposals, above the pyramids",
     intro:
       "A private rooftop, a decoration you choose, and a photographer already in position when she turns around. We plan it with you and nobody else hears about it.",
+    // The intro reads as a promise once you have arrived. A result list is
+    // read by somebody who has not, and is deciding between us and four other
+    // operators, so the description carries the three facts that separate us
+    // there: the rooftop rather than the complex, the setup built before
+    // arrival, and the photograph of the moment rather than a re-enactment.
+    metaDescription:
+      "Plan a surprise proposal on a private rooftop overlooking the Great Pyramids. You choose the setup, we build it before you arrive, and the moment itself is photographed.",
   },
   {
     id: "gender-reveal",

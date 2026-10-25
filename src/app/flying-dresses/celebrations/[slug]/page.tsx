@@ -11,6 +11,7 @@ import {
 } from "@/content/flyingDressExperiences";
 import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from "../../_lib/seo";
 import { StoriesFromHere } from "../../_components/StoriesFromHere";
+import { ProposalPage } from "../../_components/ProposalPage";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -59,6 +60,9 @@ export default async function ExperienceCategoryPage({
   const siblings = experienceCategories.filter(
     (c) => c.section === SECTION && c.id !== category.id
   );
+  // The proposal's own record, when this is that category. Read from the
+  // same array the generic renderer uses, so there is one source.
+  const proposal = category.id === "proposals" ? experiences[0] : undefined;
 
   return (
     <>
@@ -140,17 +144,34 @@ export default async function ExperienceCategoryPage({
         </div>
       </section>
 
-      {/* `headless` when this category holds exactly one experience: the h1
-          and lede above are already that experience's title and intro, and
-          printing them again directly underneath is the duplication the
-          owner reported on the maternity page. */}
-      {experiences.map((experience) => (
-        <ExperienceDetail
-          key={experience.slug}
-          experience={experience}
-          headless={experiences.length === 1}
-        />
-      ))}
+      {/* ONE CATEGORY GETS ITS OWN BODY, AND ONLY THE BODY.
+          =================================================================
+          The proposal is the page somebody plans for months and compares
+          against other suppliers before they ever speak to us, and the
+          shared renderer gave it the same four sections as a birthday. So
+          it composes its own sections instead.
+
+          What it deliberately does NOT get is its own route. The URL, the
+          metadata, the breadcrumbs, the FAQ structured data, the sibling
+          rail and the story links above and below are all still this
+          page's, which is what keeps the change to one category rather
+          than to the celebrations section. A second route would have
+          duplicated every one of those and then drifted from them. */}
+      {category.id === "proposals" && proposal ? (
+        <ProposalPage experience={proposal} />
+      ) : (
+        /* `headless` when this category holds exactly one experience: the
+           h1 and lede above are already that experience's title and intro,
+           and printing them again directly underneath is the duplication
+           the owner reported on the maternity page. */
+        experiences.map((experience) => (
+          <ExperienceDetail
+            key={experience.slug}
+            experience={experience}
+            headless={experiences.length === 1}
+          />
+        ))
+      )}
 
       <section className="fd-section-tight fd-sand">
         <div className="fd-shell">

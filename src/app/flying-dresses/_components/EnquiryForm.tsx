@@ -5,6 +5,7 @@ import { experienceBySlug, flyingDressExperiences } from "@/content/flyingDressE
 import { track } from "../_lib/analytics";
 import { RENTAL_DELIVERY_LABELS, addOns, dresses, flyingDressEnquiry, mensOutfits, packagePricePhrase, packages, rentalServices, urgentCall, whatsappHref } from "@/content/flyingDresses";
 import { NAMING_NOTE, accessoryCategories, accessoryByRef } from "@/content/flyingDressAccessories";
+import { proposalDecorations } from "@/content/flyingDressProposal";
 import { PhoneField } from "@/components/PhoneField";
 
 /**
@@ -118,6 +119,7 @@ export function EnquiryForm({
   initialPackage = "",
   initialService = "",
   initialExperience = "",
+  initialSetup = "",
   initialDress = "",
   initialMens = "",
   phone: contactPhone = urgentCall.fallback,
@@ -125,6 +127,8 @@ export function EnquiryForm({
   initialPackage?: string;
   initialService?: string;
   initialExperience?: string;
+  /** A proposal decoration chosen on the proposal page, already resolved. */
+  initialSetup?: string;
   initialDress?: string;
   initialMens?: string;
   /**
@@ -158,6 +162,11 @@ export function EnquiryForm({
   // most useful thing the desk can know before it replies, because it changes
   // the timing, the discretion and who else is told.
   const [experience, setExperience] = useState(initialExperience);
+  // Carried, not editable. It is chosen on the proposal page, where the
+  // photographs are; a second picker here would be a choice made twice from
+  // a worse position. It travels into the payload and the WhatsApp draft so
+  // nobody has to describe their setup again.
+  const [setup] = useState(initialSetup);
   const [date, setDate] = useState("");
   const [people, setPeople] = useState("");
   const [dress, setDress] = useState(initialDress);
@@ -247,14 +256,19 @@ export function EnquiryForm({
         .map((ref) => accessoryByRef(ref))
         .filter((item): item is NonNullable<typeof item> => Boolean(item))
         .map((item) => `${item.name} (${item.ref})`),
-      extras: extras
-        .map((id) => addOns.find((a) => a.id === id)?.label)
-        .filter((label): label is string => Boolean(label)),
+      // The chosen proposal setup, resolved to its name. Sits with the
+      // extras because that is what it is to the desk reading the message.
+      extras: [
+        ...(proposalDecorations.find((d) => d.id === setup)?.name
+          ? [`Proposal setup: ${proposalDecorations.find((d) => d.id === setup)?.name}`]
+          : []),
+        ...extras.map((id) => addOns.find((a) => a.id === id)?.label),
+      ].filter((label): label is string => Boolean(label)),
       hotel,
       delivery: delivery ? RENTAL_DELIVERY_LABELS[delivery as "hotel-delivery" | "collection"] : undefined,
       notes: message,
     });
-  }, [pkg, service, experience, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
+  }, [pkg, service, experience, setup, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -303,6 +317,7 @@ export function EnquiryForm({
           package: pkg,
           service,
           experience,
+          setup,
           date,
           people,
           dress,
