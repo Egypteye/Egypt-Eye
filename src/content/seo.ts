@@ -188,7 +188,6 @@ export function tripDepartureEventJsonLd({
   departsOn,
   returnsOn,
   priceUsd,
-  seatsLeft,
   capacity,
   state,
   departsFrom,
@@ -200,7 +199,6 @@ export function tripDepartureEventJsonLd({
   departsOn: string;
   returnsOn?: string | null;
   priceUsd: number;
-  seatsLeft: number;
   capacity: number;
   state: "open" | "almost_full" | "sold_out" | "closed" | "cancelled" | "departed";
   departsFrom: string;
@@ -236,11 +234,17 @@ export function tripDepartureEventJsonLd({
       name: "Egypt Eye Travel and Tours",
       url: siteUrl,
     },
-    // maximumAttendeeCapacity and remainingAttendeeCapacity are real counts
-    // from the departure row, never estimates — publishing a capacity that
-    // isn't the one being sold against would be fabricated structured data.
+    // maximumAttendeeCapacity is a real count from the departure row, never an
+    // estimate - publishing a capacity that isn't the one being sold against
+    // would be fabricated structured data. It is also a fact the trips state
+    // out loud anyway ("Up to 12 travellers"): it describes the vehicle, not
+    // the order book.
+    //
+    // remainingAttendeeCapacity is deliberately NOT published. It is the
+    // remaining-seat count under another name, and structured data is a public
+    // surface that search engines render; emitting it there while hiding it in
+    // the page would publish the number and only pretend not to.
     maximumAttendeeCapacity: capacity,
-    remainingAttendeeCapacity: seatsLeft,
     offers: {
       "@type": "Offer",
       url,

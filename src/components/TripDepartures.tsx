@@ -6,18 +6,17 @@ import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { PayPalDepositButtons } from "./PayPalDepositButtons";
 import { formatCents } from "@/lib/booking/quote";
 import { localePath } from "@/i18n/locales";
-import { SeatPill, GuaranteeNote, SeatBar } from "./SeatAvailability";
+import { SeatPill, GuaranteeNote } from "./SeatAvailability";
 import { formatDateRange, groupByMonth } from "@/lib/departureModel";
 import type { Departure } from "@/lib/departureModel";
 
 // Pick a date, then take the seats. The whole booking journey for a Weekly
 // Trip, on one screen.
 //
-// Deliberately not a multi-step flow or a modal. There are two decisions —
-// which date, how many people — and putting them on one screen means the
-// visitor can see the seat count change as they reconsider the date, which is
-// the thing that actually drives the booking. A modal would hide the very
-// information the product is built on.
+// Deliberately not a multi-step flow or a modal. There are two decisions -
+// which date, how many people - and putting them on one screen means the
+// visitor can compare dates and their availability without losing either
+// decision. A modal would hide the very information the product is built on.
 //
 // Availability shown here is a snapshot. It is re-checked under a row lock
 // when the form is submitted (see /api/trip-seats), so a departure that sells
@@ -83,7 +82,15 @@ export function TripDepartures({
   const [result, setResult] = useState<Result | null>(null);
 
   const months = useMemo(() => groupByMonth(departures, locale), [departures, locale]);
-  const maxSeats = selected ? Math.max(1, Math.min(10, selected.waitlistable ? 10 : selected.seatsLeft)) : 10;
+  // Always ten, never the seats actually left.
+  //
+  // This used to cap the menu at the remaining seats, which published the
+  // count as surely as printing it: a party-size list that stops at 2 says
+  // there are 2. A request for more than the vehicle holds is refused by
+  // book_departure_seats under its row lock and comes back as
+  // `not_enough_seats`, whose message names no number and offers the
+  // waitlist - so nothing can be oversold and nothing is disclosed.
+  const maxSeats = 10;
 
   async function submit(event: FormEvent, joinWaitlist: boolean) {
     event.preventDefault();
@@ -323,7 +330,6 @@ export function TripDepartures({
                           <GuaranteeNote departure={d} />
                         </div>
                         <div className="mt-2">
-                          <SeatBar departure={d} />
                         </div>
                         {d.state === "cancelled" && d.cancellationReason && (
                           <p className="mt-2 text-xs text-rose-800">{d.cancellationReason}</p>
@@ -381,13 +387,6 @@ export function TripDepartures({
                     </option>
                   ))}
                 </select>
-                {!selected.waitlistable && selected.seatsLeft <= 3 && (
-                  <p className="mt-1 text-xs text-amber-800">
-                    {selected.seatsLeft === 1
-                      ? tr("Only 1 seat left on this date")
-                      : tr("Only {n} seats left on this date").replace("{n}", String(selected.seatsLeft))}
-                  </p>
-                )}
               </div>
 
               <input

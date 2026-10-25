@@ -79,24 +79,30 @@ export type Departure = {
   note: string | null;
 };
 
-/** Below this many seats left we say so out loud, whatever the vehicle. */
+/** Few enough left that "Almost full" is a true sentence, whatever the vehicle. */
 export const ALMOST_FULL_THRESHOLD = 3;
 
 /**
- * Whether to show the exact seat count rather than "Seats available".
+ * Whether this departure may be called "Almost full".
  *
- * A flat threshold of 3 was written for a 12-to-14 seat coach and does not
- * survive a smaller vehicle: an 8-seat departure with 4 left is half sold and
- * genuinely scarce, but scored "open" and told visitors nothing. Meanwhile 4
- * of 14 is nearly full and was also silent.
+ * This threshold used to be much looser - half the seats gone - because the
+ * pill printed the actual number: "6 seats left" is honest at any fill level,
+ * and the number was hidden only while it would have read as "nobody has
+ * booked this".
  *
- * So the count appears once at least half the seats are gone, or once very few
- * remain in absolute terms. That keeps the original reasoning intact — the
- * number is hidden precisely while it would read as "nobody has booked this"
- * — and makes it scale to whatever is actually being driven.
+ * The public pills no longer carry a count, which changes what the threshold
+ * has to mean. A bare "Almost full" on a half-sold vehicle is not a quieter
+ * version of the truth, it is a scarcity claim the data does not support -
+ * the exact thing this brand refuses to do. So it is now a quarter of the
+ * vehicle or three seats, whichever is fewer, and the label is a fact rather
+ * than a nudge.
+ *
+ * Exported so the check script asserts against this rule rather than against
+ * a threshold retyped beside it.
  */
-export function showsSeatCount(seatsLeft: number, capacity: number): boolean {
-  return seatsLeft <= ALMOST_FULL_THRESHOLD || seatsLeft * 2 <= capacity;
+export function isAlmostFull(seatsLeft: number, capacity: number): boolean {
+  if (seatsLeft <= 0) return false;
+  return seatsLeft <= Math.min(ALMOST_FULL_THRESHOLD, Math.max(1, Math.floor(capacity / 4)));
 }
 
 /**
@@ -125,7 +131,7 @@ export function deriveDeparture(row: DepartureRow, trip: WeeklyTrip): Departure 
           ? "closed"
           : seatsLeft === 0
             ? "sold_out"
-            : showsSeatCount(seatsLeft, row.capacity)
+            : isAlmostFull(seatsLeft, row.capacity)
               ? "almost_full"
               : "open";
 
@@ -219,4 +225,142 @@ export function groupByMonth(departures: Departure[], locale: string): { month: 
     else out.push({ month, departures: [d] });
   }
   return out;
+}
+
+// ---------------------------------------------------------------------------
+// THE FEATURED DEPARTURE, AND THE CLOCK THAT COUNTS DOWN TO IT
+//
+// Both are pure functions on departure data, deliberately: the hub, the
+// countdown component and the check script all have to agree about which
+// departure is "next" and when it leaves, and the only way to guarantee that
+// is for them to call the same code rather than each reimplementing it.
+// ---------------------------------------------------------------------------
+
+/**
+ * The departure the page leads with.
+ *
+ * Rules, in order:
+ *   1. It must be bookable. The featured slot is the one conversion-focused
+ *      section on the page, so pointing it at a sold-out or closed date
+ *      spends the best position on something nobody can buy.
+ *   2. Soonest first - that is what "next departure" means to a visitor.
+ *   3. Ties broken by id, so two departures on the same date always resolve
+ *      to the same one. Without this the featured trip could differ between
+ *      two renders of the same data, and the countdown with it.
+ *
+ * Returns null when nothing is bookable, which the page treats as a real
+ * state with its own copy rather than as an error. A sold-out or closed
+ * departure is never promoted here; it still appears in the calendar below,
+ * which is where someone holding a booking for it will look.
+ */
+export function selectFeaturedDeparture(departures: Departure[]): Departure | null {
+  const candidates = departures.filter((d) => d.bookable);
+  if (candidates.length === 0) return null;
+  return candidates.reduce((best, d) => {
+    if (d.departsOn !== best.departsOn) return d.departsOn < best.departsOn ? d : best;
+    return d.id < best.id ? d : best;
+  });
+}
+
+/**
+ * The offset of a time zone at a given instant, in milliseconds.
+ *
+ * Egypt reintroduced daylight saving in 2023, so Africa/Cairo is +02:00 for
+ * part of the year and +03:00 for the rest. A hardcoded offset would put
+ * every countdown an hour out for half the season, which is exactly the kind
+ * of error nobody notices until a traveller misses a pickup.
+ */
+function zoneOffsetMs(utcMs: number, timeZone: string): number {
+  // Intl throws a RangeError on a non-finite instant. Everything downstream
+  // of this is a page render, so it returns 0 and lets departureInstantMs
+  // hand back NaN, which callers already have to handle.
+  if (!Number.isFinite(utcMs)) return 0;
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    hour12: false,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).formatToParts(new Date(utcMs));
+
+  const at: Record<string, number> = {};
+  for (const p of parts) if (p.type !== "literal") at[p.type] = Number(p.value);
+  // hour comes back as 24 at midnight under hour12:false in some runtimes.
+  const asIfUtc = Date.UTC(at.year!, at.month! - 1, at.day!, at.hour! % 24, at.minute!, at.second!);
+  return asIfUtc - utcMs;
+}
+
+/**
+ * A leading clock time in the free-text departure_time field, or null.
+ *
+ * The column is text, not `time` - it holds things like "06:30, Cairo" and
+ * "Pickups from 6am" - so this reads a leading HH:MM and otherwise gives up.
+ * Half-understanding "Pickups from 6am" would produce a countdown that is
+ * confidently wrong, which is worse than one that counts to the start of the
+ * departure day and says so.
+ */
+export function parseDepartureClock(departureTime: string | null): { hour: number; minute: number } | null {
+  if (!departureTime) return null;
+  const m = /^\s*(\d{1,2}):(\d{2})/.exec(departureTime);
+  if (!m) return null;
+  const hour = Number(m[1]);
+  const minute = Number(m[2]);
+  if (hour > 23 || minute > 59) return null;
+  return { hour, minute };
+}
+
+/**
+ * The instant a departure leaves, as epoch milliseconds.
+ *
+ * Built from the Cairo wall clock, because that is the clock the group meets
+ * on. Where no usable time is recorded this is the start of the departure day
+ * in Cairo - the countdown then measures time until departure day, which is
+ * true, rather than inventing a pickup hour nobody agreed to.
+ *
+ * The two-pass offset correction handles the hour either side of a daylight
+ * saving change, where the offset at the guessed instant and the offset at
+ * the real instant differ.
+ */
+export function departureInstantMs(departsOn: string, departureTime: string | null): number {
+  // NaN rather than a throw, for a date this cannot read. A malformed
+  // departs_on is a bad row, not a reason for the whole Weekly Trips page to
+  // return a 500 — the same choice departures.ts makes when Supabase is
+  // unreachable. Callers test the result with Number.isFinite and simply
+  // render no clock.
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(departsOn);
+  if (!m) return Number.NaN;
+  const [y, mo, d] = [Number(m[1]), Number(m[2]), Number(m[3])];
+  const clock = parseDepartureClock(departureTime);
+  const naive = Date.UTC(y, mo - 1, d, clock?.hour ?? 0, clock?.minute ?? 0);
+  let utc = naive - zoneOffsetMs(naive, "Africa/Cairo");
+  utc = naive - zoneOffsetMs(utc, "Africa/Cairo");
+  return utc;
+}
+
+export type Countdown = { days: number; hours: number; minutes: number; seconds: number; done: boolean };
+
+/**
+ * How long until a departure, never negative.
+ *
+ * Once the instant has passed this reports `done`, and every unit is zero.
+ * The page uses `done` to stop rendering a clock, not to decide that the trip
+ * is over: whether a departure is still upcoming is decided by its date and
+ * status in deriveDeparture, which is the single authority. A countdown
+ * reaching zero and a departure being finished are two different facts that
+ * happen to coincide.
+ */
+export function countdownTo(targetMs: number, nowMs: number): Countdown {
+  const ms = targetMs - nowMs;
+  if (ms <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0, done: true };
+  const totalSeconds = Math.floor(ms / 1000);
+  return {
+    days: Math.floor(totalSeconds / 86400),
+    hours: Math.floor((totalSeconds % 86400) / 3600),
+    minutes: Math.floor((totalSeconds % 3600) / 60),
+    seconds: totalSeconds % 60,
+    done: false,
+  };
 }

@@ -360,7 +360,9 @@ export async function POST(request: NextRequest) {
     reference,
     waitlisted,
     seats,
-    seatsLeft,
+    // seatsLeft is deliberately absent. The team email carries it because the
+    // desk needs it; this body is public, and anyone could read the remaining
+    // count straight out of it.
     guaranteed,
     seatsToGuarantee,
     total: totalUsd,

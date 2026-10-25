@@ -5,10 +5,26 @@ import type { Departure, DepartureState } from "@/lib/departureModel";
 
 // The one place a departure's availability turns into words and a colour.
 //
-// Every surface that shows a departure — the hub list, the trip page, a card
-// — renders this, so "3 seats left" can never mean one thing in one place and
-// something else in another. The state itself is computed in
+// Every surface that shows a departure - the hub list, the featured panel, a
+// trip page, a card - renders this, so availability can never mean one thing
+// in one place and something else in another. The state itself is computed in
 // departureModel.ts; this only decides how to say it.
+//
+// =========================================================================
+// WHY THERE IS NO SEAT COUNT HERE
+// =========================================================================
+// These pills used to print the real remaining number: "3 seats left". That
+// was never fake - it came from the same row-locked inventory the booking API
+// books against - but a public count is a public count, and the business has
+// decided the website does not expose how full a vehicle is. A visitor sees
+// whether they can still come, not the state of the order book.
+//
+// So: no remaining count, no seats-taken count, no proportion bar, and no
+// "x of y". The one number that survives is in GuaranteeNote below, and it is
+// a different fact for a different reason.
+//
+// scripts/check-weekly-trips.mts asserts this file contains no seat count, by
+// rendering every state and reading the output.
 
 const TONE: Record<DepartureState, string> = {
   open: "bg-emerald-50 text-emerald-800 ring-emerald-600/20",
@@ -20,17 +36,22 @@ const TONE: Record<DepartureState, string> = {
 };
 
 /**
- * The seat count, or why there isn't one.
+ * The pill.
  *
- * Exact numbers are shown only once they are low enough to matter. "9 of 12
- * seats left" on a trip two months out is noise that also quietly tells every
- * visitor how empty it is; "Seats available" is the same fact without the
- * discouragement. Below the threshold the exact number is the useful thing,
- * and it is true, so it is shown.
+ * The six labels are written here as literal tr("...") calls rather than
+ * looked up from a table, which looks like repetition and is not. The i18n
+ * extractor finds translatable strings by scanning for exactly this call
+ * shape, so a label held in an object and passed through tr() is invisible to
+ * it and ships in English to the five other locales. That regression was
+ * introduced here once already and caught by the check below.
+ *
+ * The check script reads these same literals back out of this function and
+ * asserts that none of them can carry a number, so a lookup table was never
+ * what made the rule enforceable.
  */
 export function SeatPill({ departure, className = "" }: { departure: Departure; className?: string }) {
   const tr = useTr();
-  const { state, seatsLeft } = departure;
+  const { state } = departure;
 
   const label =
     state === "cancelled"
@@ -38,14 +59,12 @@ export function SeatPill({ departure, className = "" }: { departure: Departure; 
       : state === "departed"
         ? tr("Departed")
         : state === "closed"
-          ? tr("Bookings closed")
+          ? tr("Booking closed")
           : state === "sold_out"
-            ? tr("Sold out")
+            ? tr("Fully booked")
             : state === "almost_full"
-              ? seatsLeft === 1
-                ? tr("1 seat left")
-                : tr("{n} seats left").replace("{n}", String(seatsLeft))
-              : tr("Seats available");
+              ? tr("Almost full")
+              : tr("Still available");
 
   return (
     <span
@@ -60,10 +79,16 @@ export function SeatPill({ departure, className = "" }: { departure: Departure; 
 /**
  * Whether the trip is actually going to run.
  *
- * Shown because the honest version converts better than hiding it. "Needs 2
- * more travellers" is a reason to bring a friend and a reason to book now;
- * discovering the same fact by email a week before departure is a reason not
- * to book again.
+ * This is the one place a number survives, and it is deliberate. "Needs 2
+ * more travellers to run" is not a scarcity signal - it points the opposite
+ * way, at a trip that is emptier than it needs to be - and it answers a
+ * question a traveller genuinely has before paying: will this go ahead at
+ * all? Discovering the answer by email a week beforehand is the reason people
+ * do not book a second time.
+ *
+ * It is a count of people still needed, never of seats still for sale, and
+ * the two cannot be derived from one another without the capacity, which is
+ * not published.
  */
 export function GuaranteeNote({ departure, className = "" }: { departure: Departure; className?: string }) {
   const tr = useTr();
@@ -81,32 +106,12 @@ export function GuaranteeNote({ departure, className = "" }: { departure: Depart
   }
 
   const n = departure.seatsToGuarantee;
+  if (n <= 0) return null;
   return (
     <span className={`text-xs font-semibold text-ink-soft ${className}`}>
       {n === 1
         ? tr("Needs 1 more traveller to run")
         : tr("Needs {n} more travellers to run").replace("{n}", String(n))}
     </span>
-  );
-}
-
-/**
- * A thin bar of how full the trip is.
- *
- * Purely reinforcement for the pill beside it — hidden from assistive tech,
- * since the number is already in the text and a duplicate reading of it is
- * noise rather than information.
- */
-export function SeatBar({ departure }: { departure: Departure }) {
-  if (departure.state === "cancelled" || departure.state === "departed") return null;
-  const pct = departure.capacity > 0 ? Math.min(100, Math.round((departure.seatsTaken / departure.capacity) * 100)) : 0;
-  const full = departure.seatsLeft === 0;
-  return (
-    <div aria-hidden className="h-1 w-full overflow-hidden rounded-full bg-black/10">
-      <div
-        className={`h-full rounded-full transition-all ${full ? "bg-rose-500/70" : pct >= 70 ? "bg-amber-500/80" : "bg-emerald-600/70"}`}
-        style={{ width: `${Math.max(pct, 4)}%` }}
-      />
-    </div>
   );
 }

@@ -16,8 +16,8 @@ import type { WeeklyTripCategory } from "@/content/types";
 // answers the wrong question: nobody arrives asking "what is happening on the
 // 14th", they ask "what is the next thing I could get on". A date-ordered list
 // answers that in the first row, works down to a single column on a phone
-// without becoming a scroll-sideways table, and puts the seat count on the
-// same line as the date it belongs to.
+// without becoming a scroll-sideways table, and puts each date's availability
+// on the same line as the date it belongs to.
 //
 // Cancelled departures stay in the list rather than disappearing, because
 // someone holding a booking for one needs the page to tell them.
