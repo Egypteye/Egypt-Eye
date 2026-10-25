@@ -19,7 +19,7 @@ import { aboutShareImage } from "../_lib/shareImages";
  *
  * What is here instead is what the operation demonstrably does, stated in the
  * terms the brochure and the live sister-brand page support: three locations,
- * twelve dresses, five gawns, an assistant, a delivery window. A page that
+ * the dresses, five gawns, an assistant, a delivery window. A page that
  * tells you exactly how the morning runs earns more trust than one asserting
  * a decade of excellence, and it has the advantage of being checkable.
  *

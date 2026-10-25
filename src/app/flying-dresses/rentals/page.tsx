@@ -50,7 +50,7 @@ export default async function RentalsPage() {
             <h1 className="fd-display fd-h1">Rent &amp; Hire</h1>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
               Three ways to borrow the wardrobe without booking a session. Rent one dress from the
-              collection of twelve and shoot it yourself, add accessories, or hire a traditional
+              collection of thirteen and shoot it yourself, add accessories, or hire a traditional
               gawn, brought to your hotel in Cairo, or collected from us.
             </p>
           </div>

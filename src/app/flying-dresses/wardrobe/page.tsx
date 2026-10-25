@@ -12,7 +12,7 @@ export const metadata: Metadata = fdMetadata({
   image: wardrobeShareImage,
   title: "The Wardrobe",
   description:
-    "The twelve flying dresses (Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender and Orchid) plus five traditional Egyptian gawns for men. Every dress is included in the photoshoot price.",
+    "The thirteen flying dresses (Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender, Hot Pink and Orchid) plus five traditional Egyptian gawns for men. Every dress is included in the photoshoot price.",
   path: "/wardrobe",
 });
 
@@ -34,7 +34,7 @@ const WARDROBE_FAQS = [
     // customer the page could not show them what it was showing them.
     question: "Are these photographs of the actual garments?",
     answer:
-      "Yes. Every dress and every gawn on this page is photographed. The twelve dresses are frames from real client shoots. The five gawns are studio frames of the garments themselves, with the model and the background created digitally, so you are seeing the real garment rather than a photograph of a shoot. Whatever you pick is the one that arrives.",
+      "Yes. Every dress and every gawn on this page is photographed. The thirteen dresses are frames from real client shoots. The five gawns are studio frames of the garments themselves, with the model and the background created digitally, so you are seeing the real garment rather than a photograph of a shoot. Whatever you pick is the one that arrives.",
   },
   {
     question: "Can you promise me a specific dress on a specific day?",
@@ -73,7 +73,7 @@ export default async function WardrobePage() {
           <div style={{ maxWidth: "46rem" }}>
             <h1 className="fd-display fd-h1">The Wardrobe</h1>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.75rem" }}>
-              Twelve flying dresses and five traditional gawns. Every dress is included in the
+              Thirteen flying dresses and five traditional gawns. Every dress is included in the
               photoshoot price. Pick the one you want and tell us when you enquire, or rent one on
               its own.
             </p>

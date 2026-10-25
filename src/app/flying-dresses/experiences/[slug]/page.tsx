@@ -317,7 +317,7 @@ export default async function ExperiencePage({
             </div>
           </div>
 
-          {/* TWELVE PHOTOGRAPHS, NOT TWELVE RECTANGLES OF COLOUR.
+          {/* PHOTOGRAPHS, NOT RECTANGLES OF COLOUR.
               This grid rendered `background: dress.hex` for all twelve and
               never asked whether a photograph existed. Every one of them had
               been supplied and was already on /wardrobe and on the home page

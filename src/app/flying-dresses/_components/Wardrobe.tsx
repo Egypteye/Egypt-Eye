@@ -40,7 +40,7 @@ import { fdPath } from "../_lib/seo";
  */
 
 /**
- * A presentational grouping of the twelve colours into five families.
+ * A presentational grouping of the dress colours into five families.
  *
  * This is a UI convenience for finding a dress, not a claim about the
  * garments: nobody at the business calls Ginger a "warm" dress. Ids are listed
@@ -48,9 +48,14 @@ import { fdPath } from "../_lib/seo";
  * calculation would quietly re-sort the filter the next time a swatch is
  * nudged, and because BronZey and Golden belong in different families to the
  * eye while sitting close together in hue.
+ *
+ * Because the ids are listed by hand, a dress added to the collection lands in
+ * no family and is reachable only under "Everything" — which is how Hot Pink
+ * first shipped. check-flying-dresses now asserts that every dress is in
+ * exactly one family, so the next one cannot arrive the same way.
  */
 const COLOUR_FAMILIES: { id: string; label: string; ids: string[] }[] = [
-  { id: "warm", label: "Red & warm", ids: ["cherry", "ginger", "bronzey"] },
+  { id: "warm", label: "Red & warm", ids: ["cherry", "hot-pink", "ginger", "bronzey"] },
   { id: "green", label: "Green", ids: ["emerald", "verdant"] },
   { id: "blue", label: "Blue & aqua", ids: ["navy", "aqua"] },
   { id: "violet", label: "Violet", ids: ["lavender", "orchid"] },

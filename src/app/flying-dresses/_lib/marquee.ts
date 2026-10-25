@@ -34,13 +34,13 @@ import { dressPhotos } from "./dressPhotos";
  *   assistant mid-throw, which is the one frame on the site that shows how
  *   the photograph is actually made.
  *
- *   THE TWELVE COLOURS — the whole collection, in order, on one roof. A
+ *   THE COLOURS — the whole collection, in order, on one roof. A
  *   visitor who has not yet opened the wardrobe sees the range in six
  *   seconds without being asked to click anything.
  *
  * The second row is built from FLYING_DRESS_COLLECTION rather than from a
- * hand-written list, so a thirteenth dress arrives here the moment it arrives
- * in the collection and a withdrawn one leaves. A dress with no photograph is
+ * hand-written list, so a new dress arrives here the moment it arrives in the
+ * collection and a withdrawn one leaves. Hot Pink did exactly that. A dress with no photograph is
  * skipped rather than rendered as a colour rectangle: the ribbon is a claim
  * about photography and a swatch in it would be a weaker claim than a shorter
  * row.

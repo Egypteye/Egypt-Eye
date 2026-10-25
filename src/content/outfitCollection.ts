@@ -1,7 +1,7 @@
 /**
  * THE WARDROBE — one collection, two brands.
  *
- * Twelve flying dresses and five traditional men's gawns. Egypt Eye Travel
+ * Thirteen flying dresses and five traditional men's gawns. Egypt Eye Travel
  * sells photoshoots that include them (content/photoshoots.ts) and Flying
  * Dresses Egypt sells the same garments as shoots and as rentals
  * (content/flyingDresses.ts). It is one physical wardrobe in Cairo, so it is
@@ -30,12 +30,13 @@
 import type { Outfit } from "@/lib/booking/outfits";
 
 /**
- * THE FLYING DRESS COLLECTION — twelve dresses, all confirmed available.
+ * THE FLYING DRESS COLLECTION — thirteen dresses, all confirmed available.
  *
- * Confirmed twice: the business names all twelve in the "Do I bring the
+ * Confirmed twice: the business named the original twelve in the "Do I bring the
  * dress?" FAQ on the rooftop product, and the live page at
  * egypteyetravel.com/photoshoots/pyramids-rooftop-flying-dress-photoshoot
- * lists the same twelve by name.
+ * lists the same twelve by name. Hot Pink was added afterwards, from the
+ * owner's own photograph of a dress that was not in either list.
  *
  * Shared by every Flying Dress product because all of them already promise a
  * dress "in the colour you choose" from one collection. That is an assumption

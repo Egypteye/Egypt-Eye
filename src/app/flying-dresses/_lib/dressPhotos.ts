@@ -28,7 +28,7 @@ import {
  *
  * PROVENANCE
  *
- * The twelve DRESSES are the agency's own work, from client shoots supplied by
+ * The DRESSES are the agency's own work, from client shoots supplied by
  * the owner in October 2026. The EXIF on the originals reads "egypt-eye-travel
  * / EGYPT.EYE". They are real customers, published at the owner's instruction.
  *
@@ -52,7 +52,7 @@ export type DressPhoto = {
    *
    * It exists because of one sentence. The wardrobe tells a customer "From the
    * Aroouj shoot. The dress is the one you would wear." — which is true of
-   * twelve frames taken at real client shoots and false of a composite, where
+   * a frame taken at a real client shoot and false of a composite, where
    * there was no shoot and the person is nobody. Without this flag the five
    * gawns would have inherited that sentence and quietly claimed a customer
    * session that never happened.
@@ -69,8 +69,8 @@ export const dressPhotos: Record<string, DressPhoto> = {
   //
   // Supplied in the men's wardrobe folder, one frame each, already matching the
   // five entries in MENS_OUTFITS by name. Studio frames on white: the garment
-  // is the subject, which is what a wardrobe grid needs and what the twelve
-  // dress photographs, shot on location, deliberately are not.
+  // is the subject, which is what a wardrobe grid needs and what the dress
+  // photographs, shot on location, deliberately are not.
   //
   // `styled` on every one. See the field's note.
   // ---------------------------------------------------------------------------
@@ -173,13 +173,17 @@ export const dressPhotos: Record<string, DressPhoto> = {
 };
 
 /**
- * THE MEN'S GAWNS STILL HAVE NO PHOTOGRAPHS, AND THIS SAYS SO OUT LOUD.
+ * WHATEVER IS STILL UNPHOTOGRAPHED, SAID OUT LOUD.
  *
- * Twelve dresses arrived; five gawns did not. The wardrobe page therefore
- * still renders those five as named, photo-less options, which is the honest
- * state and the top line of the asset checklist. This export exists so the
- * check script can assert the gap rather than letting it be forgotten once the
- * page looks finished.
+ * These two lists are derived, never hand-kept, and that is the whole point.
+ * The note that used to sit here read "the men's gawns still have no
+ * photographs" — a flat assertion, written when it was true, still standing
+ * after the gawns were shot and this export had emptied itself. The same
+ * shape of mistake the wardrobe page records twice.
+ *
+ * So: no count and no claim here. The lists say what is missing, the check
+ * script asserts it, and a garment added without a photograph shows up in
+ * both rather than being forgotten once the page looks finished.
  */
 export const outfitsAwaitingPhotos: string[] = MENS_OUTFITS.filter(
   (o) => !dressPhotos[o.id]

@@ -33,7 +33,7 @@ import { marqueeColours, marqueePlaces } from "./_lib/marquee";
  *   2  what it actually is      — the product, in four lines
  *   3  the rooftop story        - why seven in the morning is the product
  *   4  the three locations      — alternating editorial panels, not three cards
- *   5  the wardrobe             — a horizontal rail of the twelve
+ *   5  the wardrobe             — a horizontal rail of the whole
  *   6  rent without a shoot     — the three hire services
  *   7  what every price includes
  *   8  the work                 — real photographs, and labelled gaps
@@ -174,7 +174,7 @@ export default async function FlyingDressesHome() {
           </h2>
           <p className="fd-muted" style={{ maxWidth: "40rem", marginBottom: "2rem" }}>
             Rooftops above Giza, the dunes and the lakes of Fayoum, and the
-            twelve colours of the collection. No stock photographs: if we have
+            thirteen colours of the collection. No stock photographs: if we have
             not shot it, it is not here.
           </p>
         </div>
@@ -189,7 +189,7 @@ export default async function FlyingDressesHome() {
           frames={marqueeColours}
           direction="right"
           speedSeconds={95}
-          label="The twelve dress colours, photographed on the rooftop"
+          label="The thirteen dress colours, photographed on the rooftop"
         />
 
         <div className="fd-shell">
@@ -401,7 +401,7 @@ export default async function FlyingDressesHome() {
             <div>
               <p className="fd-eyebrow">The wardrobe</p>
               <h2 id="fd-wardrobe-heading" className="fd-display fd-h2">
-                Twelve dresses.
+                Thirteen dresses.
                 <br />
                 <span className="fd-italic">One of them is yours for the morning.</span>
               </h2>
@@ -436,7 +436,7 @@ export default async function FlyingDressesHome() {
           <div
             tabIndex={0}
             role="group"
-            aria-label="The dress collection: scroll sideways to see all twelve"
+            aria-label="The dress collection: scroll sideways to see all thirteen"
           >
           <ul className="fd-rail" style={{ listStyle: "none", margin: 0 }}>
             {dresses.map((dress) => {
@@ -487,7 +487,7 @@ export default async function FlyingDressesHome() {
 
         <div className="fd-shell">
           <p className="fd-rail-hint fd-muted" style={{ color: "var(--fd-ivory-dim)" }}>
-            <span aria-hidden="true">→</span> Scroll sideways · twelve dresses, every one
+            <span aria-hidden="true">→</span> Scroll sideways · thirteen dresses, every one
             photographed on the rooftop
           </p>
           <div className="fd-actions" style={{ marginTop: "1.5rem" }}>
@@ -565,7 +565,7 @@ export default async function FlyingDressesHome() {
               Or take the dress and shoot it yourself
             </h2>
             <p className="fd-lead fd-muted" style={{ marginTop: "1.5rem" }}>
-              Not everyone needs a photographer. Rent one dress from the same collection of twelve,
+              Not everyone needs a photographer. Rent one dress from the same collection of thirteen,
               add accessories, or hire a traditional gawn, delivered to your hotel in Cairo, or
               collected from us.
             </p>

@@ -362,9 +362,25 @@ const expectedCountWord = COUNT_WORDS[FLYING_DRESS_COLLECTION.length];
 // next person to ignore this check.
 const withoutComments = (source: string) =>
   source.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
+// Every file that states the size of the collection to a customer.
+//
+// This list began as the two content files, and that was not enough: adding a
+// thirteenth dress left "Twelve flying dresses and five traditional gawns"
+// sitting above a grid of thirteen, the wardrobe page's meta description
+// naming twelve by name, and six more on the brand's home page. None of them
+// live in src/content. A count can be written anywhere the brand has prose,
+// so this walks the whole Flying Dresses app rather than naming files.
 const countedSources = [
   ["content/flyingDressStories.ts", withoutComments(read("src/content/flyingDressStories.ts"))],
   ["content/flyingDresses.ts", withoutComments(contentSource)],
+  ["content/outfitCollection.ts", withoutComments(read("src/content/outfitCollection.ts"))],
+  ["content/photoshoots.ts", withoutComments(read("src/content/photoshoots.ts"))],
+  ...readdirSync("src/app/flying-dresses", { recursive: true, encoding: "utf8" })
+    .filter((f) => /\.(ts|tsx)$/.test(f))
+    .map((f): [string, string] => [
+      `app/flying-dresses/${f}`,
+      withoutComments(read(`src/app/flying-dresses/${f}`)),
+    ]),
 ] as const;
 
 ok(
@@ -386,7 +402,12 @@ for (const [file, raw] of countedSources) {
     if (word === expectedCountWord) continue;
     ok(
       `${file} still says "${word}" about a collection that now holds ${FLYING_DRESS_COLLECTION.length}`,
-      !new RegExp(`\\b${word}\\b(?![- ]day)`, "i").test(source)
+      // "standing in the sun at eleven" is a clock time, not a count of
+      // dresses. A check that flags it is a check people learn to ignore.
+      !new RegExp(
+        `(?<!\\b(?:at|until|till|by|past|gone|before|after|around|since)\\s)\\b${word}\\b(?![- ]day)`,
+        "i"
+      ).test(source)
     );
   }
 }
@@ -2605,6 +2626,38 @@ for (const section of ["celebrations", "creative"]) {
   // Proven by removing the component from page.tsx: red.
   const homeSource = read("src/app/flying-dresses/page.tsx");
   ok("the home page no longer renders the photo ribbon", homeSource.includes("<PhotoRibbon"));
+}
+
+// ---------------------------------------------------------------------------
+// EVERY DRESS IS REACHABLE THROUGH THE FILTERS, NOT JUST THROUGH "EVERYTHING".
+//
+// The wardrobe's colour families are a hand-written list of ids, chosen over a
+// hue calculation so that nudging a swatch cannot silently re-sort the filter.
+// The cost of that choice is that a new dress joins no family: Hot Pink
+// shipped reachable only under "Everything", and under any of the five colour
+// filters the collection quietly had twelve dresses again.
+//
+// Proven by removing "hot-pink" from the list: red.
+// ---------------------------------------------------------------------------
+{
+  const wardrobeSource = read("src/app/flying-dresses/_components/Wardrobe.tsx");
+  const families = wardrobeSource.slice(
+    wardrobeSource.indexOf("const COLOUR_FAMILIES"),
+    wardrobeSource.indexOf("type Filter")
+  );
+  const filed = new Map<string, number>();
+  for (const id of families.matchAll(/"([a-z0-9-]+)"/g)) {
+    const key = id[1]!;
+    filed.set(key, (filed.get(key) ?? 0) + 1);
+  }
+  for (const dress of FLYING_DRESS_COLLECTION) {
+    const count = filed.get(dress.id) ?? 0;
+    ok(
+      `${dress.name} is reachable under a colour filter, not only under "Everything"`,
+      count > 0
+    );
+    ok(`${dress.name} is filed under exactly one colour family (found ${count})`, count <= 1);
+  }
 }
 
 // ---------------------------------------------------------------------------
