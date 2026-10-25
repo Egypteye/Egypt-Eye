@@ -11,6 +11,7 @@ import { BookingRail, anyPackageTakesPaymentOnline } from "../_components/Bookin
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { packagePriceLabel } from "@/content/flyingDresses";
+import { StoriesFromHere } from "../_components/StoriesFromHere";
 
 export const metadata: Metadata = fdMetadata({
   title: "Prices",
@@ -325,6 +326,8 @@ export default async function PackagesPage() {
           </div>
         </div>
       </section>
+
+      <StoriesFromHere path="/packages" />
 
       <script
         type="application/ld+json"

@@ -281,9 +281,18 @@ export const location = {
  * Keyed by ExperienceCategoryId. Missing is the normal case.
  */
 export const categoryPhoto: Partial<Record<string, ImageSlot>> = {
+  // Each of these is GENUINELY the occasion its category sells, which is the
+  // bar for appearing here: the route renders this frame large, at the top,
+  // with a credit but NO CAPTION, so it reads as "this is what we do".
   "gender-reveal": agency.genderReveal,
+  // The Alessandra shoot is an anniversary shoot in wedding clothes, so it
+  // belongs to this category and needs no qualifier.
   romance: agency.couplesRomance,
-  "vows-engagement": agency.couplesVows,
+  // "vows-engagement" DELIBERATELY ABSENT. The obvious candidate is
+  // agency.couplesVows, and it is the same anniversary shoot: a couple in
+  // wedding clothes. Uncaptioned at the top of a vow renewal page it claims a
+  // ceremony we have never photographed. It appears in that page's gallery
+  // instead, where its caption says what it actually is.
 };
 
 export const empty = {

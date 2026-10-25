@@ -7,6 +7,7 @@ import { Scene } from "../_components/Scene";
 import { empty } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { wardrobeShareImage } from "../_lib/shareImages";
+import { StoriesFromHere } from "../_components/StoriesFromHere";
 
 export const metadata: Metadata = fdMetadata({
   image: wardrobeShareImage,
@@ -186,6 +187,8 @@ export default async function WardrobePage() {
           </div>
         </div>
       </section>
+
+      <StoriesFromHere path="/wardrobe" />
 
       <script
         type="application/ld+json"

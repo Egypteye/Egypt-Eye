@@ -4,11 +4,6 @@ import { productRail } from "@/lib/booking/productRail";
 import { HUMAN_CONFIRMS } from "@/lib/booking/wording";
 import type { FlyingDressPackage } from "@/content/flyingDresses";
 import { EGYPT_EYE_ORIGIN, flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
-import { SecureDateButton } from "@/components/SecureDateButton";
-import { cancellationSummary } from "@/content/cancellationPolicy";
-import { canCompleteBookingHere } from "@/lib/booking/paypalConfig";
-import { paymentProvider } from "@/lib/booking/activeProvider";
-import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -103,13 +98,6 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
     getPhotoshootBySlug(pkg.eyeSlug),
     getSiteSettings(),
   ]);
-
-  // Can this deployment take the money AND write the booking down? Both, or
-  // the customer goes to Egypt Eye as before. See canCompleteBookingHere.
-  const localCheckout = canCompleteBookingHere({
-    providerEnabled: paymentProvider().enabled,
-    supabaseReady: supabaseAdminConfigured,
-  });
 
   // Not admin: a customer's view of the rail, which is the only one that
   // should ever decide what a public page shows.
@@ -229,54 +217,43 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
       </p>
 
       <div className="fd-actions">
-        {/* TWO WAYS TO PAY, AND THE DEPLOYMENT DECIDES WHICH.
+        {/* THE DEPOSIT BUTTON LEAVES THIS DOMAIN, AND FOR ONE CONCRETE REASON.
             =================================================================
-            This brand used to have exactly one: an absolute link to the Egypt
-            Eye checkout, because only that deployment had the credentials to
-            take a deposit and record it. The handoff works and still does,
-            but it sends somebody mid-purchase to a different brand on a
-            different domain, which is where a boutique sale goes to die.
+            Not because the money cannot be taken here. It can: this app's
+            PayPal and Supabase are one set of credentials, the three routes
+            the checkout needs are open on this host (see src/proxy.ts), and
+            canCompleteBookingHere() in lib/booking/paypalConfig.ts is the
+            rule that decides whether a given deployment may finish a booking
+            at all. All of that is in place and stays in place.
 
-            So when THIS deployment can complete a booking by itself, the same
-            dialog Egypt Eye uses opens here instead and nobody leaves the
-            site. Same component, same /api/bookings route, same quote and
-            deposit authorities — no second payment path was written, because
-            a second payment path is a second set of money bugs.
+            It leaves because of the CHROME, which is a smaller problem than
+            the money and a harder one to fake. SecureDateButton — the dialog
+            Egypt Eye opens on its own product pages — is built from Tailwind
+            utility classes that resolve against the @theme in
+            app/globals.css. This brand has its own root layout and loads only
+            brand.css, which is hand-written and imports no Tailwind, on
+            purpose and for reasons written at the top of that file.
 
-            canCompleteBookingHere requires PayPal AND Supabase. Until the
-            Flying Dresses project has both, this renders exactly what it
-            rendered before, so the credentials can be added in either order
-            without a window where the site takes money it cannot write down.
-            There is no flag day and nothing to remember to switch. */}
-        {localCheckout && resolved && product ? (
-          <SecureDateButton
-            productType="photoshoot"
-            productSlug={product.slug}
-            productTitle={product.title}
-            depositPercent={offer.depositPercent}
-            paymentMode={resolved.rail.moneyMode}
-            cancellationSummary={cancellationSummary}
-            cancellationHref={`${EGYPT_EYE_ORIGIN}/cancellation-policy`}
-            timeSlots={product.timeSlots}
-            extras={product.extras}
-            outfits={product.outfits}
-            quotable={{
-              slug: product.slug,
-              title: product.title,
-              bookable: product.bookable,
-              price: product.price,
-              depositPercent: product.depositPercent ?? settings.defaultDepositPercent,
-              extras: product.extras,
-            }}
-            productKind="photoshoot"
-            className="fd-btn"
-            label="Choose your date &amp; pay the deposit"
-          />
-        ) : (
-          <a className="fd-btn" href={`${EGYPT_EYE_ORIGIN}/secure/photoshoot/${pkg.eyeSlug}`}>
-            Choose your date &amp; pay the deposit
-          </a>
-        )}
+            Mounting the dialog here anyway is not a cosmetic compromise. It
+            was tried, and every one of those utility classes resolved to
+            nothing: the dialog rendered as unstyled markup inline in the page
+            — a raw date field, a bare close glyph, no overlay — around a
+            booking form that was computing the right figures. A payment form
+            that looks broken is worse than a seam, because the seam costs a
+            click and the broken form costs the sale and the trust behind it.
+
+            So the handoff stays until the dialog can be presented in this
+            brand's chrome, which is real work with real risk on the one
+            component that takes money, and belongs in its own change rather
+            than bolted onto this one. The two things NOT acceptable as
+            shortcuts: importing Tailwind into this layout (it would ship a
+            second utility bundle and put Egypt Eye's reset under a stylesheet
+            written against the browser's, restyling every page of this brand
+            to fix one dialog), and forking the form (CLAUDE.md §5 — a second
+            money form is a second set of money bugs). */}
+        <a className="fd-btn" href={`${EGYPT_EYE_ORIGIN}/secure/photoshoot/${pkg.eyeSlug}`}>
+          Choose your date &amp; pay the deposit
+        </a>
         <Link className="fd-btn fd-btn-ghost" href={fdPath(`/enquire?package=${pkg.slug}`)}>
           Or ask us first
         </Link>

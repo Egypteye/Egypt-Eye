@@ -853,22 +853,29 @@ export const addOns: AddOn[] = [
     confidence: "confirm",
   },
   {
-    // "An additional photography session at Nine Pyramids Lounge, within the
-    // Giza pyramid area, can be added to an existing package. This is a
-    // separate photography service and does not require a flying dress."
+    // RESOLVED BY THE OWNER, OCTOBER 2026. It is the Nine Pyramids VIEW,
+    // inside the Giza complex — not a lounge.
     //
-    // NOTE FOR REVIEW: the brief places this "within the Giza pyramid area",
-    // while an earlier instruction said the Nine Pyramids rooftop "offers
-    // pyramid views; it is not inside the archaeological complex". Those may
-    // be two different venues with similar names, or the same one described
-    // two ways. This copy deliberately says neither — see
-    // docs/FLYING-DRESSES-BRIEF-CONFLICTS.md.
-    id: "nine-pyramids-lounge",
-    label: "A session at Nine Pyramids Lounge",
+    // The brochure called it "Nine Pyramids Lounge, within the Giza pyramid
+    // area", while an earlier instruction said a Nine Pyramids rooftop
+    // "offers pyramid views; it is not inside the archaeological complex".
+    // This copy used to say neither, because getting it wrong is not a
+    // cosmetic error: a session genuinely inside the archaeological area has
+    // ticketing and permit implications a rooftop outside it does not, and
+    // this brand's sister site runs a whole article on competitors blurring
+    // exactly that line.
+    //
+    // The owner has now named it: the Nine Pyramids View, in the Giza
+    // complex, on request. That is also the vantage point Egypt Eye already
+    // sells by name — the one spot where all nine pyramids line up — so the
+    // two brands now describe the same place the same way.
+    // See docs/FLYING-DRESSES-BRIEF-CONFLICTS.md.
+    id: "nine-pyramids-view",
+    label: "A photoshoot at the Nine Pyramids View",
     priceUsd: null,
     fromPrice: false,
-    detail: "A second, separate photography session at Nine Pyramids Lounge, added to an existing booking. No flying dress involved: it is ordinary portrait work in a different setting. Availability confirmed per date, price on request.",
-    homeNote: "A second session in a different setting. No flying dress; ordinary portraits.",
+    detail: "A photoshoot at the Nine Pyramids View, inside the Giza complex: the vantage point where all nine pyramids line up in one frame. Added to an existing booking, on request. No flying dress involved, so it is ordinary portrait work. Availability is confirmed for your date and the cost is quoted with it.",
+    homeNote: "A photoshoot at the Nine Pyramids View, inside the Giza complex, on request. No flying dress; ordinary portraits.",
     confidence: "confirm",
   },
   {
@@ -890,21 +897,34 @@ export const addOns: AddOn[] = [
     confidence: "confirm",
   },
   {
+    // The collection has been photographed, named and described since this
+    // was written, so the sentence no longer has to apologise for a list it
+    // cannot show. It still carries no figure, for the same reason as the
+    // gawns above: none has been given.
     id: "accessories",
     label: "Accessories",
     priceUsd: null,
     fromPrice: false,
-    detail: "Available alongside any shoot. The brochure confirms accessories exist without listing them or pricing them, so ask and we will tell you what is in the collection.",
-    homeNote: "Available alongside any shoot. Ask and we will tell you what is in the collection.",
+    detail: "Thirteen pieces, for the head, the neck, the ears, the arms and the hands. Pick the ones you want when you enquire, or ask us to suggest what goes with your dress. Charged on top of the shoot, on request.",
+    homeNote: "Pieces for the head, neck, ears, arms and hands, chosen before the day rather than on it.",
     confidence: "missing",
   },
   {
+    // CHARGED IN ADDITION, AND THE WORDING HAS TO CARRY THAT ON ITS OWN.
+    //
+    // This is the extra that gates the gawn picker in the enquiry form, so
+    // for a lot of visitors this sentence is the only place they learn that
+    // dressing a second person is not part of the shoot they just priced.
+    // There is still no figure — the owner has not given one, and inventing
+    // one is CLAUDE.md §7 — so what the sentence has to do instead is leave
+    // nobody thinking it might be included. "Price on request" alone did
+    // not: read quickly it sounds like a formality.
     id: "mens-attire",
     label: "Traditional attire for men",
     priceUsd: null,
     fromPrice: false,
-    detail: "Five styles of gawn, for a partner in the frame. Price on request.",
-    homeNote: "Five styles of gawn, for a partner in the frame.",
+    detail: "Five styles of gawn, for a partner in the frame. It is charged on top of the shoot rather than included in it, and the cost is on request: it depends on the style and your dates, so we put it in writing before anything is agreed.",
+    homeNote: "Five styles of gawn, for a partner in the frame. Charged on top of the shoot, quoted before you commit.",
     confidence: "missing",
   },
 ];
@@ -1055,7 +1075,7 @@ export const rentalServices: RentalService[] = [
     summary:
       "Headpieces, collars, earrings, arm cuffs and rings, to wear with any shoot or any dress rental.",
     intro:
-      "This page used to say the collection had not been seen and ask you to write. The collection has now been photographed, so it is below, grouped the way we group it: on the head, around the neck, earrings, around the arm, on the finger. Quote the reference under any piece and we will tell you whether it is free for your date and what it costs with your shoot.",
+      "Thirteen pieces, photographed, named and grouped the way we group them: on the head, around the neck, earrings, around the arm, on the finger. Each one says where it is worn, because that is the part you cannot tell from a photograph and the part that decides whether it works with your dress. Quote a name, or the reference under it, and we will tell you whether the piece is free for your date and what it costs with your shoot.",
     youGet: [
       "Accessories to wear with a photoshoot or a dress rental.",
       "Pieces chosen before the day, so nothing is decided in a hurry at the location.",
@@ -1079,7 +1099,7 @@ export const rentalServices: RentalService[] = [
     // It was empty because nothing named a single accessory, and listing
     // "veil, crown, parasol" would have put three products on a page the
     // business might not own. The pieces have since been photographed and
-    // they render from accessoryLookbook.ts, which is a gallery.
+    // they render from flyingDressAccessories.ts, which is a gallery.
     //
     // `outfits` is NOT a gallery. It is the Outfit type the Egypt Eye booking
     // picker reads, so an entry here becomes something a customer can select
@@ -1092,7 +1112,7 @@ export const rentalServices: RentalService[] = [
       {
         question: "What accessories do you have?",
         answer:
-          "Ask us. We would rather tell you what is actually in the collection this week than publish a list here and have you arrive expecting something we have lent out.",
+          "Thirteen pieces, and they are all on this page with a photograph, a name and a note saying where each one is worn: three for the head, three for the neck, two pairs of earrings, three for the arm and two rings. Quote a name or the reference under it when you write.",
       },
       {
         question: "Can I rent accessories without a dress?",
@@ -1106,7 +1126,7 @@ export const rentalServices: RentalService[] = [
       },
     ],
     confirm: [
-      "THE ACCESSORY LIST. This page cannot show a collection until someone names what is in it. Photographs and names are all that is needed. The grid is already built.",
+      "A LANDSCAPE FRAME of the collection together, for the top of this page. The thirteen individual frames are in.",
       "Accessory prices, or whether they are included with certain packages.",
       "Whether accessories can be rented without a dress at all.",
     ],
@@ -1133,7 +1153,7 @@ export const rentalServices: RentalService[] = [
       {
         title: "Choose a style",
         detail:
-          "Five are listed. We have not photographed them for this site yet, so if the look matters more than the name, say so and we will send you pictures of the actual garments.",
+          "All five are on this page. They are studio frames of the garments themselves, so if the look matters more than the name, that is what you are looking at. Ask and we will send more pictures of whichever one you are considering.",
       },
       {
         title: "We reply with the price and the fit",
@@ -1170,7 +1190,7 @@ export const rentalServices: RentalService[] = [
       },
     ],
     confirm: [
-      "PHOTOGRAPHS of all five gawns. This is the single highest-value asset gap on the site: five named garments with no pictures.",
+      "A LANDSCAPE FRAME of the five gawns together, for the top of this page. The five individual frames are in.",
       "What distinguishes Saeedy Gawn 1 from Saeedy Gawn 2, and Bahary Gawn 3 from Bahary Gawn 4. The brochure numbers them and does not say.",
       "Prices: both as a photoshoot add-on and as a standalone rental.",
       "Sizes available.",
@@ -1248,6 +1268,8 @@ export type EnquiryDraft = {
   people?: string;
   dress?: string;
   mensOutfit?: string;
+  /** Accessory names, already resolved against the collection by the caller. */
+  accessories?: string[];
   extras?: string[];
   hotel?: string;
   delivery?: string;
@@ -1274,6 +1296,7 @@ export function flyingDressEnquiry(draft: EnquiryDraft = {}): string {
   row("People", draft.people);
   row("Dress", draft.dress);
   row("Men's attire", draft.mensOutfit);
+  if (draft.accessories?.length) row("Accessories", draft.accessories.join(", "));
   if (draft.extras?.length) row("Extras", draft.extras.join(", "));
   row("Hotel / pickup area", draft.hotel);
   row("Delivery", draft.delivery);

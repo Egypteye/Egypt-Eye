@@ -7,6 +7,9 @@ import {
   fdWardrobe,
 } from "../_lib/content";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
+import { proposalDecorations } from "@/content/flyingDressProposal";
+import { revealThemeById } from "@/content/flyingDressGenderReveal";
+import { celebrationOccasionById } from "@/content/flyingDressBirthday";
 import { urgentCall } from "@/content/flyingDresses";
 import { UrgentCall } from "../_components/UrgentCall";
 import { EnquiryForm } from "../_components/EnquiryForm";
@@ -64,6 +67,22 @@ export default async function EnquirePage({
   // slug selects nothing, so a stale link from a retired experience still
   // opens a working form rather than a broken one.
   const experience = experienceBySlug(one(params.experience))?.slug ?? "";
+  // The proposal setup, resolved against the catalogue exactly like every
+  // other incoming value: an unknown id becomes "" and selects nothing. The
+  // catalogue is empty today, so this resolves to nothing for everybody —
+  // which is correct, and is why it is wired now rather than later. The day
+  // a real design is added it arrives here already working.
+  const setupParam = one(params.setup);
+  const setup = proposalDecorations.find((d) => d.id === setupParam)?.id ?? "";
+  // The gender reveal colour theme, same discipline. Unlike the decoration
+  // catalogue this list is NOT empty: the experience record confirms the
+  // customer picks a colour theme, so this one resolves for real visitors
+  // today. An unknown id still becomes "" and selects nothing.
+  const theme = revealThemeById(one(params.theme))?.id ?? "";
+  // What is being celebrated, chosen on the celebration page beside the four
+  // explanations. Resolved the same way: unknown becomes "" and selects
+  // nothing, so a stale or crafted link opens a working form.
+  const occasion = celebrationOccasionById(one(params.occasion))?.id ?? "";
   const dressParam = one(params.dress).toLowerCase();
   const dress = dresses.find((d) => d.id.toLowerCase() === dressParam)?.id ?? "";
   const mensParam = one(params.mens).toLowerCase();
@@ -100,27 +119,37 @@ export default async function EnquirePage({
       <section className="fd-section-tight" style={{ paddingTop: 0 }}>
         <div className="fd-shell fd-split">
           <div>
-            {/* ABOVE THE FORM, not beside it. The people this is for are the
-                ones whose shoot is in two days, and asking them to read a form
-                before they discover they should have rung instead is the whole
-                problem.
-
-                INSIDE the form's column, not a third child of .fd-split: that
-                is a two-column grid above 60rem, so a third child would take
-                the form's column and push the sidebar onto its own row. The
-                number comes from settings, so a change in the Studio reaches
-                this card too. */}
-            <div style={{ marginBottom: "1.75rem" }}>
-              <UrgentCall phone={urgentPhone} />
-            </div>
             <EnquiryForm
               initialPackage={pkg}
               initialService={service}
               initialExperience={experience}
+              initialSetup={setup}
+              initialTheme={theme}
+              initialOccasion={occasion}
               initialDress={dress}
               initialMens={mens}
               phone={urgentPhone}
             />
+            {/* UNDER THE FORM, AND TURNED DOWN. Asked for directly.
+
+                It used to sit above the form as a loud card, on the reasoning
+                that somebody whose shoot is in two days should not have to
+                read a form before discovering they should have rung. That is
+                still true of them and was never true of anybody else, and
+                everybody else is most of the traffic: the first thing every
+                visitor met on the page that sells the shoot was an alarm
+                about a situation they were not in.
+
+                Below it, the people it is for reach it at exactly the moment
+                they would otherwise hit "send and wait" — which is the moment
+                the alternative is worth knowing about. The number still
+                dials, and still comes from settings so a change in the Studio
+                reaches it.
+
+                INSIDE the form's column, not a third child of .fd-split: that
+                is a two-column grid above 60rem, so a third child would take
+                the form's column and push the sidebar onto its own row. */}
+            <UrgentCall phone={urgentPhone} variant="quiet" />
           </div>
 
           <aside>

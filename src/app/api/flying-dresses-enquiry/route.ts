@@ -17,6 +17,11 @@ import {
   rentalServiceBySlug,
 } from "@/content/flyingDresses";
 import { experienceBySlug, experiencePath } from "@/content/flyingDressExperiences";
+import { accessoryByRef } from "@/content/flyingDressAccessories";
+import { proposalDecorations } from "@/content/flyingDressProposal";
+import { revealThemeById } from "@/content/flyingDressGenderReveal";
+import { celebrationOccasionById } from "@/content/flyingDressBirthday";
+import { productionServices } from "@/content/flyingDressMusic";
 
 /**
  * The Flying Dresses enquiry.
@@ -117,6 +122,20 @@ export async function POST(request: NextRequest) {
   const mensId = clean(body.mens, 60).toLowerCase();
   const mens = mensOutfits.find((m) => m.id.toLowerCase() === mensId);
 
+  // The accessories, resolved against the collection for the same reason as
+  // everything else here: the request says WHICH, never what it is called. A
+  // crafted payload could otherwise post `accessories: ["Pharaoh's Crown,
+  // included"]` and the desk would read a piece we do not own as fact.
+  //
+  // Both the name and the reference go in, because they are read by different
+  // people: the customer will say "the Nefertiti" on the phone and the desk
+  // matches "Necklace 1" against the stock.
+  const requestedAccessories = Array.isArray(body.accessories) ? body.accessories : [];
+  const chosenAccessories = requestedAccessories
+    .map((ref) => (typeof ref === "string" ? accessoryByRef(ref) : undefined))
+    .filter((item): item is NonNullable<typeof item> => Boolean(item))
+    .map((item) => `${item.name} (${item.ref})`);
+
   // Extras, matched by id against the published add-ons. The label and the
   // price qualification both come from the catalogue, so an email can never
   // quote "$35" for something the brochure calls "starts at $35".
@@ -129,6 +148,51 @@ export async function POST(request: NextRequest) {
         ? `${a.label} (price on request)`
         : `${a.label} (${a.fromPrice ? "from " : ""}$${a.priceUsd})`
     );
+
+  // The proposal setup, resolved against the catalogue for the same reason
+  // as everything else here: the request says WHICH, never what it is called.
+  const setupId = clean(body.setup, 60);
+  const setup = proposalDecorations.find((d) => d.id === setupId);
+
+  // The gender reveal colour theme, resolved the same way. The LABEL the desk
+  // reads comes off the catalogue, never off the request, so a crafted payload
+  // cannot post a theme that promises something we do not offer.
+  const theme = revealThemeById(clean(body.theme, 60));
+
+  // The celebration fields. The OCCASION is resolved against the catalogue
+  // like every other id here, so the label the desk reads is ours. The cake
+  // and the songs are free text the customer wrote about their own evening:
+  // they are trimmed and length-capped, not resolved, because there is no
+  // catalogue of cakes to resolve them against and nothing in them is a
+  // claim the business would be held to.
+  const occasion = celebrationOccasionById(clean(body.occasion, 60));
+  const cakeRequest = clean(body.cake, 600);
+  const songs = clean(body.songs, 400);
+  // A boolean, never a label from the request: the desk reads "yes" here and
+  // quotes for it. `=== true` rather than truthiness, so a string arriving in
+  // this field cannot turn into a transport booking.
+  const wantsTransport = body.transport === true;
+
+  // The music session. HOURS are the one number on this form that drives a
+  // figure, so they are parsed rather than passed through: a rooftop is
+  // charged by the hour and "twelve" or "-3" in that field is not an answer
+  // the desk can quote from. Out of range becomes empty rather than clamped,
+  // because a silently corrected 40 into 12 is a quotation nobody asked for.
+  const hoursRaw = Number.parseInt(clean(body.hours, 10), 10);
+  const hours =
+    Number.isInteger(hoursRaw) && hoursRaw >= 1 && hoursRaw <= 12 ? String(hoursRaw) : "";
+  const artist = clean(body.artist, 120);
+  const reference = clean(body.reference, 500);
+  // Resolved against the catalogue, like every other id here: the NAME the
+  // desk reads comes off the catalogue, never off the request, so a crafted
+  // payload cannot post a production service we do not offer.
+  const requestedServices = Array.isArray(body.services) ? body.services : [];
+  const chosenServices = requestedServices
+    .map((id) =>
+      typeof id === "string" ? productionServices.find((service) => service.id === id) : undefined
+    )
+    .filter((service): service is (typeof productionServices)[number] => Boolean(service))
+    .map((service) => service.name);
 
   const deliveryKey = clean(body.delivery, 40);
   const delivery =
@@ -155,6 +219,23 @@ export async function POST(request: NextRequest) {
   push("People", people);
   push("Dress", dress?.name ?? "");
   push("Men's attire", mens?.name ?? "");
+  push("Accessories", chosenAccessories.join(", "));
+  push("Proposal setup", setup?.name ?? "");
+  push("Gender reveal colour theme", theme?.label ?? "");
+  push("Celebrating", occasion?.label ?? "");
+  push("Cake", cakeRequest);
+  push("Music", songs);
+  // Spelled out in the desk email, because transport on a celebration is an
+  // additional charge and our photoshoot packages include it in the price.
+  // A bare "Yes" in a row called Transport is the ambiguity that costs a
+  // customer the difference.
+  push("Transport", wantsTransport ? "Requested: additional charge, quote with the booking" : "");
+  // "3" alone in a row called Hours is ambiguous against every other number
+  // on this form, and this is the one that multiplies by a rate.
+  push("Rooftop hours", hours ? `${hours} (rate: from $150 per hour)` : "");
+  push("Artist", artist);
+  push("Production requested", chosenServices.join(", "));
+  push("Reference", reference);
   push("Extras", extras.join(", "));
   push("Hotel / pickup area", hotel);
   push("Delivery", delivery);

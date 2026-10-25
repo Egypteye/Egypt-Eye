@@ -10,6 +10,7 @@ import {
 import { FaqList } from "../_components/FaqList";
 import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { packagePriceLabel } from "@/content/flyingDresses";
+import { StoriesFromHere } from "../_components/StoriesFromHere";
 
 /**
  * Every question, grouped.
@@ -323,6 +324,8 @@ export default async function FaqPage() {
           </p>
         </div>
       </section>
+
+      <StoriesFromHere path="/faq" />
 
       <script
         type="application/ld+json"

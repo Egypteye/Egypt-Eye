@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExperienceDetail } from "../../_components/ExperienceDetail";
+import { MusicProductionPage } from "../../_components/MusicProductionPage";
 import { Scene } from "../../_components/Scene";
 import { categoryPhoto } from "../../_lib/assets";
 import {
@@ -143,13 +144,28 @@ export default async function ExperienceCategoryPage({
           and lede above are already that experience's title and intro, and
           printing them again directly underneath is the duplication the
           owner reported on the maternity page. */}
-      {experiences.map((experience) => (
-        <ExperienceDetail
-          key={experience.slug}
-          experience={experience}
-          headless={experiences.length === 1}
-        />
-      ))}
+      {/* ONE CATEGORY IN THIS SECTION COMPOSES ITS OWN BODY.
+          The rooftop music session is the only Flying Dresses experience
+          with a CONFIRMED RATE ($150 an hour, owner's October 2026
+          brief) and a stack of separately quoted production services on
+          top of it. The shared renderer has nowhere to put either, and
+          it also has nowhere to put the thing this service most needs
+          said out loud: that we do not supply sound, decks or power.
+      
+          The URL, metadata, breadcrumbs, FAQ structured data and sibling
+          rail stay with this route, exactly as for the celebration
+          pages. Only the body differs. */}
+      {category.id === "music-production" && experiences[0] ? (
+        <MusicProductionPage experience={experiences[0]} />
+      ) : (
+        experiences.map((experience) => (
+          <ExperienceDetail
+            key={experience.slug}
+            experience={experience}
+            headless={experiences.length === 1}
+          />
+        ))
+      )}
 
       <section className="fd-section-tight fd-sand">
         <div className="fd-shell">

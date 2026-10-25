@@ -110,9 +110,39 @@ export type StorySource = {
   doesNotSupport?: string;
 };
 
+/**
+ * WHERE AN ARTICLE IS IN THE EDITORIAL PIPELINE.
+ *
+ * Only "published" renders a page, enters the sitemap, or appears on the
+ * index. Everything else is visible to the team in this file and to nobody
+ * else, which is the point: a researched brief and a half-written draft both
+ * need somewhere to live that is not the live site.
+ *
+ * "needs-update" is NOT a quieter kind of unpublished. It stays live, because
+ * an article that was right in October and is stale in March is still better
+ * than a 404, and pulling it would throw away whatever search position it has
+ * earned. The flag is a note to the team, and the check script lists them.
+ */
+export type StoryStatus =
+  | "idea"
+  | "researched"
+  | "draft"
+  | "reviewed"
+  | "published"
+  | "needs-update";
+
+/** The statuses that put an article in front of a reader. */
+export const LIVE_STORY_STATUSES: readonly StoryStatus[] = ["published", "needs-update"];
+
 export type FlyingDressStory = {
   slug: string;
   cluster: StoryClusterId;
+  /**
+   * Where this is in the pipeline. Absent means published, so the six
+   * articles written before this field existed did not all need editing to
+   * say what was already true of them.
+   */
+  status?: StoryStatus;
   /** The h1. Editorial length; no character budget applies. */
   title: string;
   /**
@@ -140,6 +170,38 @@ export type FlyingDressStory = {
   /** Internal only. See the note on cross-domain links at the end of this file. */
   related: { label: string; path: string }[];
   sources?: StorySource[];
+
+  /**
+   * THE ONE COMMERCIAL PAGE THIS ARTICLE IS FOR.
+   *
+   * An article that links to five products sells none of them. This is the
+   * single destination a reader who finishes convinced should be sent to, and
+   * it is a separate field from `related` because `related` is a reading list
+   * and this is the next step.
+   *
+   * It is required on a published article. An editorial page with no
+   * commercial destination is a page the business is paying to write and not
+   * being paid for, and the check script says so by name rather than leaving
+   * it to be noticed in six months.
+   */
+  destination?: { label: string; path: string; note?: string };
+
+  /**
+   * Pages that should carry a link TO this article, by brand-relative path.
+   *
+   * The inverse of `related`, and it exists because the failure it prevents
+   * is invisible from inside the article. Six articles were published here
+   * with nothing but the index linking to them: fine for a reader who finds
+   * the index, useless for every other kind of arrival, and a weak signal to
+   * anything trying to work out which pages this site considers important.
+   *
+   * The pages read this to decide what to show, so adding a path here is the
+   * whole edit. See storiesLinkedFrom().
+   */
+  inboundFrom?: string[];
+
+  /** Editorially chosen related articles, overriding the relevance score. */
+  relatedStorySlugs?: string[];
 };
 
 export const flyingDressStories: FlyingDressStory[] = [
@@ -166,7 +228,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "Someone throws it. That someone is on the payroll",
         body: [
-          "Every one of the three photoshoots includes an assistant whose entire job is the dress. Not a second photographer, not a guide. One person holding the train, lifting it, throwing it on the photographer's count, and getting it off the ground between frames.",
+          "Every one of [the three photoshoots](/experiences) includes an assistant whose entire job is the dress. Not a second photographer, not a guide. One person holding the train, lifting it, throwing it on the photographer's count, and getting it off the ground between frames.",
           "This is the single most common thing people do not expect, and it is the reason the pictures look the way they do. Left alone, a train of this size lies on the floor. A soft breeze lifts the edge of it and nothing else. The arc you have seen in other people's photographs is a throw, caught at the top of its travel, usually within about a fifth of a second of leaving the assistant's hands.",
           "It also means you are never wrangling your own dress. You hold a pose, you look where you are asked to look, and the fabric is someone else's problem. People consistently relax once they realise this, and relaxed is most of what a good frame needs.",
         ],
@@ -182,7 +244,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "Why thirty to forty-five minutes is the right length",
         body: [
-          "Each of the three photoshoots is a thirty to forty-five minute shoot, and people occasionally read that as short. It is not a cost decision, it is a physical one.",
+          "Each of [the three photoshoots](/experiences) is a thirty to forty-five minute shoot, and people occasionally read that as short. It is not a cost decision, it is a physical one.",
           "Throwing a five-metre train is work. The assistant does it dozens of times, and so, in a quieter way, do you: holding an extended pose repeatedly, often with your arms up, usually on an uneven surface, in a garment with real weight to it. The frames from the first twenty-five minutes are, reliably, the ones you choose. After that the throws lose height, the poses stiffen, and the fabric picks up dust that then has to be edited out.",
           "Forty-five minutes of this produces well over a hundred usable frames. That is what gets colour-graded and delivered, and it is why the inclusion is written as a number of photographs rather than a number of hours.",
         ],
@@ -221,6 +283,12 @@ export const flyingDressStories: FlyingDressStory[] = [
       { label: "The wardrobe", path: "/wardrobe" },
       { label: "Choosing a dress colour", path: "/stories/choosing-a-dress-colour" },
     ],
+    destination: {
+      label: "See the photoshoots",
+      path: "/experiences",
+      note: "Every one of them includes the assistant, the throws and the hundred-plus colour-graded photographs described above. The locations differ; the way the dress is flown does not.",
+    },
+    inboundFrom: ["/experiences", "/wardrobe"],
   },
 
   // -----------------------------------------------------------------------
@@ -246,7 +314,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "What the background is actually made of",
         body: [
-          "All three locations are variations on one palette. Giza is limestone, sand and, for most of the year, a pale haze that lifts the sky towards white near the horizon. The dunes are sand and sky. Fayoum adds water and the white dunes, which are the brightest ground of the three.",
+          "All [three locations](/experiences) are variations on one palette. Giza is limestone, sand and, for most of the year, a pale haze that lifts the sky towards white near the horizon. The dunes are sand and sky. Fayoum adds water and the white dunes, which are the brightest ground of the three.",
           "In other words: the background is light, warm and low in contrast almost everywhere. This is lovely, and it is unforgiving of a dress in the same register. The colours that fail here are not ugly colours. They are colours that happen to be made of the same light as the sand.",
         ],
       },
@@ -306,6 +374,13 @@ export const flyingDressStories: FlyingDressStory[] = [
       { label: "How a flying dress flies", path: "/stories/how-a-flying-dress-flies" },
       { label: "Prices and add-ons", path: "/packages" },
     ],
+    destination: {
+      label: "Look through the wardrobe",
+      path: "/wardrobe",
+      note: "Every colour in the collection, photographed. Nothing is reserved by looking, and the colour is confirmed with you before the day rather than decided on it.",
+    },
+    inboundFrom: ["/wardrobe"],
+    relatedStorySlugs: ["one-size-cut-to-fit"],
   },
 
   // -----------------------------------------------------------------------
@@ -324,8 +399,8 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "Where you are actually standing",
         body: [
-          "The Pyramids Rooftop photoshoot happens on a private roof in the streets below the Giza plateau, looking across at it. It is not inside the archaeological complex, it is not on the sand beside the Great Pyramid, and there is no gate between you and your car.",
-          "Everything else about the brand's locations follows the same pattern. The Sand Dunes shoot is on open desert. Fayoum is the lakes and the white dunes, about three hours from central Cairo. None of the three is a shoot inside an antiquities site.",
+          "[The Pyramids Rooftop photoshoot](/experiences/pyramids-rooftop) happens on a private roof in the streets below the Giza plateau, looking across at it. It is not inside the archaeological complex, it is not on the sand beside the Great Pyramid, and there is no gate between you and your car.",
+          "Everything else about the brand's locations follows the same pattern. [The Sand Dunes shoot](/experiences/sand-dunes) is on open desert. [Fayoum](/experiences/fayoum) is the lakes and the white dunes, about three hours from central Cairo. None of the three is a shoot inside an antiquities site.",
         ],
       },
       {
@@ -337,7 +412,7 @@ export const flyingDressStories: FlyingDressStory[] = [
           "The hour before the site opens. A private roof has no opening time, which is why these sessions can start in the best light of the day rather than after the first coaches.",
           "Nobody else in the frame. A wide shot on the plateau is a wide shot with other people's holidays in it. A roof is yours for the session.",
           "No ticket, no gate, no queue, and no walk in a five-metre train across open sand before you have taken a photograph.",
-          "Somewhere to change, and somewhere to put the other twelve colours.",
+          "Somewhere to change, and somewhere to put the rest of the colours.",
         ],
       },
       {
@@ -424,6 +499,12 @@ export const flyingDressStories: FlyingDressStory[] = [
           "Any single correct price. Figures seen across sources on this date ranged from roughly EGP 200 to EGP 700.",
       },
     ],
+    destination: {
+      label: "The Pyramids Rooftop shoot",
+      path: "/experiences/pyramids-rooftop",
+      note: "This is the one the article is about. The page says where you stand, what you can see from it, and what it does not include.",
+    },
+    inboundFrom: ["/experiences/pyramids-rooftop", "/experiences"],
   },
 
   // -----------------------------------------------------------------------
@@ -471,7 +552,7 @@ export const flyingDressStories: FlyingDressStory[] = [
         heading: "The last frames, and going home",
         body: [
           "The final stretch is usually the deliberate ones: the close portrait, the detail of the fabric, anything specific you asked for and did not get the first time. Then the dress goes back in the bag. It is rented for the session, not sold, and it goes back to the collection. Then the car takes you back.",
-          "Total time out of your day for Giza or the dunes is a morning. For Fayoum it is a day.",
+          "Total time out of your day for Giza or [the dunes](/experiences/sand-dunes) is a morning. For [Fayoum](/experiences/fayoum) it is a day.",
         ],
       },
       {
@@ -509,6 +590,12 @@ export const flyingDressStories: FlyingDressStory[] = [
       { label: "The three photoshoots", path: "/experiences" },
       { label: "Enquire about a date", path: "/enquire" },
     ],
+    destination: {
+      label: "Compare the photoshoots",
+      path: "/experiences",
+      note: "The shape of the session is the same at all of them. What changes is how long you are in the car first, and what is behind you when you get out.",
+    },
+    inboundFrom: ["/experiences", "/faq"],
   },
 
   // -----------------------------------------------------------------------
@@ -584,6 +671,12 @@ export const flyingDressStories: FlyingDressStory[] = [
       { label: "All celebrations", path: "/celebrations" },
       { label: "Enquire", path: "/enquire" },
     ],
+    destination: {
+      label: "Proposals",
+      path: "/celebrations/marriage-proposals",
+      note: "What we need to know beforehand, what the team does on the day, and the part we will not promise until a date is held.",
+    },
+    inboundFrom: ["/celebrations/marriage-proposals", "/celebrations"],
   },
 
   // -----------------------------------------------------------------------
@@ -668,6 +761,337 @@ export const flyingDressStories: FlyingDressStory[] = [
       { label: "The wardrobe", path: "/wardrobe" },
       { label: "Questions", path: "/faq" },
     ],
+    destination: {
+      label: "The wardrobe",
+      path: "/wardrobe",
+      note: "One adjustable cut, in every colour we hold. Tell us your measurements when you enquire and we will tell you honestly how it will sit.",
+    },
+    inboundFrom: ["/wardrobe", "/rentals/dress-rental"],
+    relatedStorySlugs: ["choosing-a-dress-colour"],
+  },
+  // -----------------------------------------------------------------------
+  {
+    slug: "what-a-flying-dress-photoshoot-costs",
+    cluster: "the-session",
+    status: "published",
+    title: "What a flying dress photoshoot in Egypt costs",
+    seoTitle: "What a Flying Dress Shoot Costs",
+    metaDescription:
+      "Our four shoots, what each price covers, what is charged on top, and where those figures sit against what else is sold at Giza. No login, no quote form.",
+    excerpt:
+      "Every published price we have, what it already includes, what is charged on top of it, and the two things we still will not put a number on. Written because almost nobody selling this publishes a figure at all.",
+    publishedAt: "2026-10-25T00:00:00.000Z",
+    basis: "cited",
+    sections: [
+      {
+        heading: "The short answer",
+        body: [
+          "Our shoots are $179, $199, $349 and $399 per person. That is the whole published range, those are the figures on [the packages page](/packages), and they are per person rather than per booking.",
+          "Each one covers the photographer, the assistant whose job is the dress, the dress itself, the transport described on that shoot's page, and over a hundred colour-graded photographs. Makeup, hair, a second dress, accessories and traditional attire for a man in the frame are extras with their own figures, and three of those figures do not exist yet because we have not set them.",
+          "Nothing on this website charges a card. The price is confirmed to you in writing before anything is agreed.",
+        ],
+      },
+      {
+        heading: "The four shoots, and why they are not the same number",
+        body: [
+          "[Sand Dunes](/experiences/sand-dunes) is $179. Open desert south of Giza, a morning out of your day.",
+          "[The Pyramids Rooftop](/experiences/pyramids-rooftop) is $199. A private roof in the streets below the plateau, looking across at it. The twenty dollars between this and the dunes buys the roof, not a longer session.",
+          "[Fayoum](/experiences/fayoum) is $349. The lakes and the white dunes, about three hours from central Cairo each way, so roughly six hours of driving surround the shoot. Most of what you are paying for above the Giza shoots is the day, not the photography.",
+          "The Red Sea Yacht experience is $399. It is the one of the four we quote rather than list, because the boat and the date have to be confirmed before we can promise it.",
+          "The session itself is thirty to forty-five minutes at all of them. Anybody pricing by the hour is pricing something else; see [what those minutes actually consist of](/stories/inside-a-forty-five-minute-session).",
+        ],
+      },
+      {
+        heading: "What the price already covers",
+        body: [
+          "This is the part worth reading before comparing anything, because what sits inside the number is where operators differ most.",
+        ],
+        list: [
+          "The photographer, and the assistant. The assistant is not optional staffing we add for larger groups. A five-metre train does not fly without somebody throwing it, which is [the whole physics of the photograph](/stories/how-a-flying-dress-flies).",
+          "The dress, from [the wardrobe](/wardrobe). Hire is included in the shoot; you are not renting it separately.",
+          "Transport as described on the individual shoot page, which for Fayoum is the larger part of the day.",
+          "Over a hundred colour-graded photographs, delivered as a gallery. Basic editing is on all of them.",
+          "One short vertical edit, included with every experience.",
+        ],
+      },
+      {
+        heading: "What is charged on top",
+        body: [
+          "These are the published figures, and they are the complete list of extras that carry one: light makeup from $35, full makeup $45, a hairdresser from $45, two extra Reels $25, a second dress in the same session $99, and a dress made or customised for you to keep at $249.",
+          "Two more are real services with no figure yet, and we would rather say so than invent one: accessories, and traditional attire for a man in the frame. Both are quoted when you ask, in writing, before anything is agreed. Professional video production, deeper retouching on a handful of frames, and a separate session at the Nine Pyramids View inside the Giza complex are quoted the same way.",
+          "If a published price matters to your planning more than the service does, say so when you [enquire](/enquire) and we will tell you plainly whether we can put a number on it yet.",
+        ],
+      },
+      {
+        heading: "Where that sits against everything else at Giza",
+        body: [
+          "We looked at what else was being sold in October 2026, because a price means nothing on its own. The sources are listed at the bottom of this article along with what each one does and does not establish.",
+          "Marketplace listings for flying-dress sessions at Giza ran from roughly $180 to $500 per person. At the upper end, a rooftop package was listed at $500 including transport, a photographer, a dress and a video, and another operator advertised rooftop sessions from $450 for an hour with twenty edited photographs. At the lower end, four-hour and one-hour private flying-dress sessions were listed from $189 and $180. Ordinary pyramid photo sessions with no flying dress were listed from about $85.",
+          "Our range sits at the bottom of the flying-dress bracket and above the plain photo tours. We are not going to pretend that makes us better value in every case: a $500 package including four hours and a video is selling something different from a forty-five minute session, and the honest comparison is what is inside the number rather than the number.",
+          "Two cautions about those figures. They are marketplace listings rather than price lists, several showed a discount against a higher figure, and none of them is a quote anybody is bound to. They are a snapshot of a market on one day.",
+        ],
+      },
+      {
+        heading: "What this website will not do",
+        body: [
+          "No form on this site asks for card details, and no page here charges anything. That is a deliberate limit rather than a feature we have not built yet.",
+          "What happens instead: you tell us the date and what you want, a person reads it, and you get back the price and the terms in writing before you commit to anything. Nothing is held until a date is confirmed with you, and a message is the start of a conversation rather than a booking.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Is the price per person or per booking?",
+        answer:
+          "Per person. Two people at the Pyramids Rooftop is two times $199, not $199 shared, because the dress, the fitting and the frames are per person. If you are planning a group, ask us when you enquire rather than assuming either way.",
+      },
+      {
+        question: "Is there a deposit?",
+        answer:
+          "A deposit arrangement is agreed with you in writing when a date is held. Nothing is charged on this website and no page here collects card details.",
+      },
+      {
+        question: "Why do accessories and men's attire have no price?",
+        answer:
+          "Because we have not set one. Both are real services and both are quoted on request. We would rather tell you that than publish a figure here that turns out not to apply to your dates.",
+      },
+      {
+        question: "Are you the cheapest?",
+        answer:
+          "No, and we would be suspicious of anyone who claimed to be. Plain photo sessions at the pyramids with no flying dress were listed from around $85 in October 2026. Within flying-dress sessions specifically our prices are at the lower end of what we found, but the useful comparison is what each price includes.",
+      },
+      {
+        question: "Does the price change by season?",
+        answer:
+          "The published figures are the published figures. If anything about your dates changes what we can offer, you will hear it in the written reply rather than discover it afterwards.",
+      },
+    ],
+    related: [
+      { label: "Compare the shoots side by side", path: "/packages" },
+      { label: "Inside a forty-five minute session", path: "/stories/inside-a-forty-five-minute-session" },
+      { label: "Questions", path: "/faq" },
+    ],
+    destination: {
+      label: "Compare the shoots",
+      path: "/packages",
+      note: "All four side by side, with what each one includes written out rather than summarised. Nothing on that page charges anything either.",
+    },
+    inboundFrom: ["/packages", "/experiences"],
+    relatedStorySlugs: ["inside-a-forty-five-minute-session"],
+    sources: [
+      {
+        label: "Tinggly: Pyramids of Giza flying dress photoshoot from a rooftop",
+        url: "https://tinggly.com/experience/pyramids-of-giza-flying-dress-photoshoot-from-a-rooftop/442172P66",
+        accessed: "2026-10-25",
+        supports:
+          "A rooftop flying-dress package listed at $500, including a photographer, a dress rental, transport and a video.",
+        doesNotSupport:
+          "What the session itself lasts, or whether the listed figure is what a buyer actually pays after discounts.",
+      },
+      {
+        label: "Arabian Moments: book a photoshoot in Egypt",
+        url: "https://arabianmoments.com/pages/egypt-photoshoot",
+        accessed: "2026-10-25",
+        supports:
+          "Rooftop flying-dress sessions advertised from $450 for one hour with twenty edited photographs.",
+        doesNotSupport: "Any claim about what is included beyond the figures on that page.",
+      },
+      {
+        label: "Tripadvisor: Giza and Cairo photography tours",
+        url: "https://www.tripadvisor.com/Attractions-g294202-Activities-c42-t269-Giza_Giza_Governorate.html",
+        accessed: "2026-10-25",
+        supports:
+          "Private flying-dress sessions at Giza listed from $180 and $189 per adult, and pyramid photo sessions without a flying dress from about $85.",
+        doesNotSupport:
+          "That these are current prices on any given day. They are marketplace listings, several carrying a discount against a higher figure, read on one date.",
+      },
+    ],
+  },
+  // -----------------------------------------------------------------------
+  {
+    slug: "two-people-in-the-frame",
+    cluster: "the-occasion",
+    status: "published",
+    title: "Two people in the frame, and what it changes",
+    seoTitle: "Two People in the Frame",
+    metaDescription:
+      "What a flying dress session is like with a partner, a friend or a family in it: how the price works, who holds what, and the one thing that gets harder.",
+    excerpt:
+      "Most of what is written about flying dress photoshoots assumes one person in a dress. A second person changes the price, the choreography and the part of the session that is hardest to get right, and almost none of that is obvious before you book.",
+    publishedAt: "2026-10-25T00:00:00.000Z",
+    basis: "first-party",
+    sections: [
+      {
+        heading: "The price is per person, and that is the first thing to settle",
+        body: [
+          "Every figure on [the packages page](/packages) is per person. Two of you at the Pyramids Rooftop is two times $199, not $199 split between you.",
+          "This catches people out often enough to be worth putting first. It is not a surcharge for a second body in the photograph; it is that each person is a dress or a gawn, a fitting, a place in the car and a share of the frames. If only one of you is being dressed and the other is simply there, say so when you [enquire](/enquire) and we will tell you honestly what that costs, because it is not the same thing.",
+          "Group rates are the one number we have not published. If there are more than two of you, ask.",
+        ],
+      },
+      {
+        heading: "What actually changes on the day",
+        body: [
+          "The session stays thirty to forty-five minutes. What changes is how much of it is spent on choreography rather than on frames.",
+          "With one person, the photographer and the assistant are solving one timing problem: the throw, and where you are standing when the fabric opens. With two, there is a second person who has to be somewhere specific at the same moment, usually out of the fabric's path, and usually doing something that does not look like waiting.",
+          "In practice that means fewer total attempts and more useful ones. A two-person session produces the same delivered gallery; it gets there by setting up more carefully rather than by shooting more.",
+        ],
+      },
+      {
+        heading: "The second dress, and the gawn",
+        body: [
+          "If both of you want to be in a flying dress, that is two shoots at the per-person price, and the throws alternate rather than happening together. Two five-metre trains in the air at once is a photograph we can occasionally get and will not promise.",
+          "A second look for one person in the same session is different and cheaper: a second dress is $99, and it buys a colour change and the frames to go with it rather than a second session.",
+          "For a man in the frame there are five styles of traditional gawn, in the Saeedy and Bahary traditions and a classic plain cut. They are hired rather than included, and we quote them on request, which means exactly that: we have not set a published figure and will not invent one here. Pick a style when you enquire and the cost comes back in writing with everything else.",
+        ],
+      },
+      {
+        heading: "Who holds what",
+        body: [
+          "The assistant holds the dress. That does not change with a second person in the picture, and it is worth saying because the instinct is to help.",
+          "Being handed the train by a partner looks natural and almost never works: the throw needs height and a known release point, and an untrained throw from the wrong side wraps the fabric around whoever is nearest. If a shot genuinely calls for the two of you holding fabric between you, the photographer will set it up deliberately and it will be a different kind of frame from the flying ones.",
+          "The one thing we would ask of a second person is to keep looking where they are told after the throw, not at the dress. Everyone looks at the dress. It is the single most common reason a frame with two people in it goes unused.",
+        ],
+      },
+      {
+        heading: "Friends, families and the rest",
+        body: [
+          "Two is the common case; it is not the only one. The same session shape covers a parent and an adult child, two friends alternating one dress, and a family where one person is dressed and the others are in the photograph as themselves.",
+          "What all of those need is for us to know the composition before the day, because it changes how many dresses travel, how long the fittings take and which location is sensible. [Fayoum](/experiences/fayoum) with four people is a long day in a car; [the Pyramids Rooftop](/experiences/pyramids-rooftop) with four people is a roof with four people on it, which is a different conversation about space.",
+          "If what you are planning is a specific occasion rather than a shoot, the [celebrations pages](/celebrations) say what each one involves, including the one we will not promise until a date is held.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Do two people pay twice?",
+        answer:
+          "Yes, if both of you are being dressed and photographed: the published prices are per person. If only one of you is in a dress and the other is in the frame as themselves, tell us when you enquire and we will quote that rather than assume.",
+      },
+      {
+        question: "Can both of us wear a flying dress at once?",
+        answer:
+          "Both of you can wear one in the same session, and the throws alternate rather than happening simultaneously. Two full trains in the air in one frame is something we sometimes get and never promise in advance.",
+      },
+      {
+        question: "What does my partner wear?",
+        answer:
+          "Whatever they like, or one of five traditional gawns we hire out. The gawns are charged on top of the shoot and quoted on request, because we have not published a figure for them.",
+      },
+      {
+        question: "Is a two-person session longer?",
+        answer:
+          "No. It is the same thirty to forty-five minutes, with more of that time spent positioning and less of it spent on repeat attempts.",
+      },
+      {
+        question: "What about a group of us?",
+        answer:
+          "Ask. Group pricing is the one figure we have not published, and the location matters more with numbers than it does with two of you.",
+      },
+    ],
+    related: [
+      { label: "Anniversaries and romance", path: "/celebrations/anniversaries-and-romance" },
+      { label: "Traditional attire for men", path: "/rentals/mens-wear" },
+      { label: "What a shoot costs", path: "/stories/what-a-flying-dress-photoshoot-costs" },
+    ],
+    destination: {
+      label: "See the celebrations",
+      path: "/celebrations",
+      note: "Proposals, anniversaries, reveals and family sittings, each with what it involves and what we will not promise until a date is held.",
+    },
+    inboundFrom: ["/celebrations", "/rentals/mens-wear"],
+    relatedStorySlugs: ["photographing-a-proposal-she-does-not-know-about", "what-a-flying-dress-photoshoot-costs"],
+  },
+  // -----------------------------------------------------------------------
+  // RESEARCHED, NOT PUBLISHED. It has no URL, it is not in the sitemap, and
+  // the index does not show it. See StoryStatus.
+  //
+  // The research is done and it is the reason this is not live yet. Searching
+  // in October 2026 for what you are allowed to photograph at Giza returned
+  // travel blogs contradicting each other: one says no permit is needed for
+  // professional photography on the plateau, another says a commercial shoot
+  // needs ministry authorisation two to four weeks ahead, a third puts a
+  // tripod fee at about 20 EGP per site per day, and a fourth says tripods
+  // need written authorisation rather than a gate fee. None of them is an
+  // official source.
+  //
+  // That contradiction IS the article: a reader is currently choosing between
+  // four confident answers with no way to tell which is right, and the useful
+  // thing we can do is show the disagreement and say who actually owns the
+  // answer. What it must never become is a fifth confident answer, which is
+  // what writing it from these sources alone would produce.
+  //
+  // WHAT IT NEEDS BEFORE IT GOES LIVE (owner):
+  //   1. What our team actually does on a Giza shoot day. We run the rooftop
+  //      session, which does not enter the complex at all, so our first-hand
+  //      knowledge of in-complex permits may be thin. If it is, the article
+  //      should say so and shrink to what we do know.
+  //   2. Whether anyone here has dealt with the Ministry of Tourism and
+  //      Antiquities directly, and what that process was.
+  //   3. An official source for the tripod position, or confirmation that
+  //      there is not one and the article should say that instead.
+  // -----------------------------------------------------------------------
+  {
+    slug: "who-owns-the-answer-about-photographing-giza",
+    cluster: "the-place",
+    status: "researched",
+    title: "Why every guide gives you a different answer about photographing Giza",
+    seoTitle: "Photographing Giza: Who to Believe",
+    metaDescription:
+      "Four guides, four different answers on tripods and permits at the pyramids. What they actually disagree about, and who owns the answer on the day.",
+    excerpt:
+      "Search for the rules on tripods and professional photography at Giza and you will find four confident, incompatible answers. This is what they disagree about and why we are not adding a fifth.",
+    publishedAt: "2026-10-25T00:00:00.000Z",
+    basis: "cited",
+    sections: [
+      {
+        heading: "Outline, pending the owner's input",
+        body: [
+          "Placeholder. This article is researched and briefed, not written. The block comment above this entry lists the three things needed before it can be.",
+        ],
+      },
+    ],
+    faqs: [],
+    related: [
+      { label: "The Pyramids Rooftop shoot", path: "/experiences/pyramids-rooftop" },
+      {
+        label: "A rooftop with a view of the pyramids is not the pyramid complex",
+        path: "/stories/a-pyramid-view-is-not-the-pyramid-complex",
+      },
+    ],
+    destination: {
+      label: "The Pyramids Rooftop shoot",
+      path: "/experiences/pyramids-rooftop",
+    },
+    sources: [
+      {
+        label: "Ahmose Travel: Egypt photography permits and drone laws at Giza",
+        url: "https://ahmosetravel.com/egypt-photography-permits-drone-rules-2026/",
+        accessed: "2026-10-25",
+        supports:
+          "The claim that tripods require authorisation from the Ministry of Tourism and Antiquities, and that drones are effectively prohibited for tourists.",
+        doesNotSupport:
+          "Any fee. It is a travel operator's blog, not an official publication, and it conflicts with sources that describe a small fee paid at the gate.",
+      },
+      {
+        label: "Joy TKT: pyramids photography rules for Giza",
+        url: "https://joytkt.com/pyramids-photography-rules/",
+        accessed: "2026-10-25",
+        supports:
+          "The claim that tripod and monopod permits are bought at the entrance gate and that the receipt is checked on site.",
+        doesNotSupport:
+          "Its own figure, which no official source we found corroborates, and which disagrees with the authorisation-based account above.",
+      },
+      {
+        label: "Local Lens: Egypt pyramids photoshoot guide",
+        url: "https://locallens.com/egypt-pyramids-photoshoot/",
+        accessed: "2026-10-25",
+        supports:
+          "The claim that no separate permit is required for personal or professional photography on the plateau, with commercial film productions treated separately.",
+        doesNotSupport:
+          "The distinction it draws between professional photography and commercial production, which is the exact point the other sources disagree on.",
+      },
+    ],
   },
 ];
 
@@ -693,21 +1117,178 @@ export const EGYPT_EYE_FLYING_DRESS_STORIES = [
   "abby-zoobi-midnight-flying-dress-booking",
 ] as const;
 
+/**
+ * The articles a reader can actually reach.
+ *
+ * Everything public goes through this rather than `flyingDressStories`: the
+ * index, the sitemap, generateStaticParams, the related rail and the inbound
+ * links on commercial pages. A draft that leaks onto one of those is a thin
+ * page indexed under this brand's name, which is the exact thing the quality
+ * bar in this file exists to prevent.
+ */
+export function liveStories(): FlyingDressStory[] {
+  return flyingDressStories.filter((s) =>
+    LIVE_STORY_STATUSES.includes(s.status ?? "published")
+  );
+}
+
 export function storyBySlug(slug: string): FlyingDressStory | undefined {
   return flyingDressStories.find((s) => s.slug === slug);
 }
 
+/** Resolves only what a reader may see. Routing uses this; the checks use storyBySlug. */
+export function liveStoryBySlug(slug: string): FlyingDressStory | undefined {
+  return liveStories().find((s) => s.slug === slug);
+}
+
 export function storiesInCluster(cluster: StoryClusterId): FlyingDressStory[] {
-  return flyingDressStories.filter((s) => s.cluster === cluster);
+  return liveStories().filter((s) => s.cluster === cluster);
+}
+
+/**
+ * RELATED ARTICLES, BY RELEVANCE RATHER THAN BY POSITION IN AN ARRAY.
+ *
+ * This replaced `flyingDressStories.filter(not me).slice(0, 3)`, which is
+ * what the article template shipped with. That version was not a weak
+ * heuristic, it was no heuristic: it returned the first three articles in
+ * file order to every article on the site, so the dress-colour piece and the
+ * proposal piece recommended an identical rail, and the sixth article was
+ * unreachable from any of them. A reader learns within two articles that the
+ * rail is furniture, and stops looking at it.
+ *
+ * The score is deliberately small and explicable:
+ *
+ *   +3  the editor named it in `relatedStorySlugs`
+ *   +2  same cluster — the strongest signal we have, because the clusters
+ *       were drawn around what a reader is worrying about, not by subject
+ *   +1  same commercial destination, i.e. it is read by someone heading for
+ *       the same product
+ *   +1  the other article already links here, so the pair is a real pair
+ *
+ * Ties break on publication date, newest first, so a genuinely undifferentiated
+ * pair at least rotates as the library grows rather than freezing forever on
+ * whichever happens to sit higher in the file.
+ */
+export function relatedStories(story: FlyingDressStory, limit = 3): FlyingDressStory[] {
+  const named = new Set(story.relatedStorySlugs ?? []);
+  const linksTo = new Set(
+    story.related.filter((r) => r.path.startsWith("/stories/")).map((r) => r.path.slice(9))
+  );
+
+  return liveStories()
+    .filter((other) => other.slug !== story.slug)
+    .map((other) => {
+      const otherLinksBack = other.related.some(
+        (r) => r.path === `/stories/${story.slug}`
+      );
+      let score = 0;
+      if (named.has(other.slug)) score += 3;
+      if (other.cluster === story.cluster) score += 2;
+      if (
+        story.destination &&
+        other.destination &&
+        other.destination.path === story.destination.path
+      ) {
+        score += 1;
+      }
+      if (linksTo.has(other.slug) || otherLinksBack) score += 1;
+      return { other, score };
+    })
+    .filter((entry) => entry.score > 0)
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        Date.parse(b.other.publishedAt) - Date.parse(a.other.publishedAt)
+    )
+    .slice(0, limit)
+    .map((entry) => entry.other);
+}
+
+/**
+ * The live articles that asked to be linked from this page.
+ *
+ * Called by the commercial pages, which is what turns `inboundFrom` from a
+ * note into a link. Capped by the caller rather than here: a product page
+ * decides how much of itself it wants to give to editorial.
+ */
+export function storiesLinkedFrom(path: string): FlyingDressStory[] {
+  return liveStories().filter((s) => (s.inboundFrom ?? []).includes(path));
+}
+
+/** Every brand-relative path a story points at, for the link checks. */
+export function storyLinkTargets(story: FlyingDressStory): string[] {
+  return [
+    ...(story.destination ? [story.destination.path] : []),
+    ...story.related.map((r) => r.path),
+    ...(story.inboundFrom ?? []),
+    ...story.sections.flatMap((section) =>
+      [...section.body, ...(section.list ?? [])].flatMap((text) =>
+        parseStoryText(text)
+          .filter((node): node is { kind: "link"; text: string; path: string } => node.kind === "link")
+          .map((node) => node.path)
+      )
+    ),
+  ];
+}
+
+/**
+ * CONTEXTUAL LINKS INSIDE THE PROSE, AS `[text](/path)`.
+ *
+ * The articles could already link outward from a rail at the bottom, which is
+ * the least useful place to put a link: it is read by whoever finishes, and
+ * it is nowhere near the sentence that made them want to click. A reader who
+ * has just read what the assistant does should be able to reach the wardrobe
+ * from that sentence.
+ *
+ * Markdown's link syntax rather than a bespoke one, because it is the syntax
+ * every editor already knows and because the parse is twelve lines. It is a
+ * deliberately tiny subset: links only, no emphasis, no HTML. Nothing here
+ * renders raw markup, so there is no injection surface — the text and the
+ * path both come out as React children and `href`, never as HTML.
+ *
+ * Paths are brand-relative and checked against the route registry, so a link
+ * to a page that does not exist fails `npm run check` rather than a customer.
+ */
+export type StoryTextNode =
+  | { kind: "text"; text: string }
+  | { kind: "link"; text: string; path: string };
+
+const INLINE_LINK = /\[([^\]]+)\]\((\/[^)\s]*)\)/g;
+
+export function parseStoryText(text: string): StoryTextNode[] {
+  const nodes: StoryTextNode[] = [];
+  let last = 0;
+  for (const match of text.matchAll(INLINE_LINK)) {
+    const index = match.index ?? 0;
+    if (index > last) nodes.push({ kind: "text", text: text.slice(last, index) });
+    nodes.push({ kind: "link", text: match[1] ?? "", path: match[2] ?? "" });
+    last = index + match[0].length;
+  }
+  if (last < text.length) nodes.push({ kind: "text", text: text.slice(last) });
+  return nodes;
+}
+
+/** The reader's words, with the link markup removed. Word counts and reading estimates use this. */
+export function storyPlainText(text: string): string {
+  return parseStoryText(text)
+    .map((node) => node.text)
+    .join("");
 }
 
 /** Every word a reader sees, which is what both the word count and the reading estimate are about. */
 export function storyWordCount(story: FlyingDressStory): number {
+  // storyPlainText, not the raw strings: a body paragraph may carry
+  // `[the wardrobe](/wardrobe)`, and counting the slug as two words inflates
+  // both the count and the reading estimate shown to the reader.
   const text = [
     story.title,
     story.excerpt,
-    ...story.sections.flatMap((s) => [s.heading, ...s.body, ...(s.list ?? [])]),
-    ...story.faqs.flatMap((f) => [f.question, f.answer]),
+    ...story.sections.flatMap((s) => [
+      s.heading,
+      ...s.body.map(storyPlainText),
+      ...(s.list ?? []).map(storyPlainText),
+    ]),
+    ...story.faqs.flatMap((f) => [f.question, storyPlainText(f.answer)]),
   ].join(" ");
   return text.split(/\s+/).filter(Boolean).length;
 }

@@ -38,16 +38,17 @@ import {
 import { canCompleteBookingHere } from "../src/lib/booking/paypalConfig.js";
 import {
   LOOKBOOK_NOTE,
+  NAMING_NOTE,
   accessoryCategories,
   accessoryItems,
-} from "../src/app/flying-dresses/_lib/accessoryLookbook.js";
+} from "../src/content/flyingDressAccessories.js";
 import {
   FLYING_DRESS_COLLECTION,
   MENS_OUTFITS,
 } from "../src/content/outfitCollection.js";
 import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
-import { allSlots, location } from "../src/app/flying-dresses/_lib/assets.js";
+import { agency, allSlots, categoryPhoto, location } from "../src/app/flying-dresses/_lib/assets.js";
 import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
@@ -60,9 +61,52 @@ import {
 import {
   EGYPT_EYE_FLYING_DRESS_STORIES,
   flyingDressStories,
+  liveStories,
+  storyPlainText,
+  relatedStories,
   storyClusters,
+  storyLinkTargets,
   storyWordCount,
+  liveStoryBySlug,
 } from "../src/content/flyingDressStories.js";
+import { isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
+import {
+  CHARGE_LABEL,
+  cake as celebrationCake,
+  celebrationDecorations,
+  celebrationLines,
+  celebrationOccasionById,
+  celebrationOccasions,
+  celebrationPayment,
+  music as celebrationMusic,
+  transport as celebrationTransport,
+} from "../src/content/flyingDressBirthday.js";
+import { isCelebrationExperience, mergeFaqs } from "../src/content/flyingDressExperiences.js";
+import { occasions, occasionByCategory } from "../src/content/flyingDressOccasions.js";
+import {
+  RATES_EVENT_PHOTOGRAPHY,
+  RATES_INCLUDE_DECORATION,
+  rates,
+} from "../src/content/flyingDressRates.js";
+import {
+  audioRecording,
+  musicSetups,
+  notSupplied,
+  productionServices,
+  rooftopRate,
+  shootApproach,
+} from "../src/content/flyingDressMusic.js";
+import {
+  revealDecorations,
+  revealPayment,
+  revealThemeById,
+  revealThemes,
+} from "../src/content/flyingDressGenderReveal.js";
+import {
+  proposalDecorations,
+  proposalPayment,
+  proposalVenue,
+} from "../src/content/flyingDressProposal.js";
 // The PURE merge module, deliberately — content.ts reaches the Sanity client,
 // which reaches env.ts, which throws here. CLAUDE.md §6.
 import {
@@ -772,6 +816,12 @@ function stripComments(src: string): string {
 
 const PROSE_FILES = [
   "src/content/flyingDresses.ts",
+  // Added when the accessories grew names, descriptions and a line each
+  // saying where they are worn. Before that this file held references and
+  // alt text; now it is customer-facing prose like everything else here, and
+  // leaving it out would have been a hole in the dash rule the owner asked
+  // for, opened by the change that filled the file.
+  "src/content/flyingDressAccessories.ts",
   "src/app/flying-dresses/_lib/assets.ts",
   "src/app/flying-dresses/_lib/seo.ts",
   "src/app/flying-dresses/page.tsx",
@@ -954,24 +1004,28 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
-// THIS DOMAIN MAY TAKE A DEPOSIT ONLY IF IT CAN ALSO RECORD ONE.
+// THE DEPOSIT BUTTON MUST LEAVE THIS DOMAIN, AND THE DIALOG MUST NOT BE
+// MOUNTED HERE.
 //
-// The brand used to send every customer to the Egypt Eye checkout, and the
-// guard here said so: the link had to be absolute, "which is what keeps PayPal
-// credentials off this brand's deployment entirely". That is no longer the
-// design. The same booking dialog now runs on this domain when this
-// deployment can finish the job, because a handoff to another brand
-// mid-purchase is where a boutique sale dies.
+// This was briefly the other way round: SecureDateButton, the dialog Egypt Eye
+// opens on its own product pages, was mounted on these pages so that nobody
+// mid-purchase had to cross to another brand. The booking logic was right —
+// correct price, correct deposit percentage, correct wording — and the dialog
+// still rendered as unstyled markup inline in the page, because that component
+// is built from Tailwind utilities that resolve against the @theme in
+// app/globals.css and this brand's root layout loads only brand.css, which
+// imports no Tailwind on purpose.
 //
-// What replaces it is the rule that makes the change safe. Taking money is two
-// things — moving it, and writing down what it was for — and a deployment with
-// PayPal and no database does the first only. That is a customer charged for a
-// booking nobody has a record of, which is worse than not selling. So the
-// local checkout is gated on BOTH, the Egypt Eye link stays as the fallback,
-// and the credentials can be added in either order with no window in between.
+// So the two halves are asserted separately, because they fail separately:
+//   1. The handoff must stay absolute, to the Egypt Eye checkout that works.
+//   2. This file must not import the Egypt Eye dialog at all. A styling
+//      problem is invisible to every check in this repo — it was caught by
+//      screenshotting the deployed page, not here — so what is guarded is the
+//      import, which is checkable. When the dialog can be presented in this
+//      brand's chrome, this assertion is the one to come back and change.
 //
-// PROVEN by dropping supabaseReady from the gate (red), by deleting the Egypt
-// Eye fallback branch (red), and against the rule itself below. Then restored.
+// PROVEN by restoring the SecureDateButton branch (both red) and by deleting
+// the handoff link (first red). Then reverted.
 // ---------------------------------------------------------------------------
 const bookingRail = read("src/app/flying-dresses/_components/BookingRail.tsx");
 const railCode = bookingRail
@@ -980,21 +1034,21 @@ const railCode = bookingRail
   .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
 
 ok(
-  "the Flying Dresses rail no longer keeps the Egypt Eye checkout as its fallback, so a deployment " +
-    "without PayPal or Supabase has nowhere to send a customer who wants to pay",
+  "the Flying Dresses rail no longer sends the deposit to the Egypt Eye checkout, so a customer who " +
+    "wants to pay has nowhere to go",
   railCode.includes("EGYPT_EYE_ORIGIN") && /secure\/photoshoot\/\$\{pkg\.eyeSlug\}/.test(railCode)
 );
 ok(
-  "the Flying Dresses rail offers a local checkout without asking whether this deployment can " +
-    "complete a booking — it must go through canCompleteBookingHere, which requires a database as " +
-    "well as a payment provider",
-  /canCompleteBookingHere\(/.test(railCode) &&
-    /providerEnabled/.test(railCode) &&
-    /supabaseReady/.test(railCode)
+  "the Flying Dresses rail mounts Egypt Eye's SecureDateButton, whose Tailwind classes resolve to " +
+    "nothing under this brand's layout — it rendered as unstyled markup inline in the page the last " +
+    "time this was tried",
+  !railCode.includes("SecureDateButton")
 );
 
-// The rule itself, exercised rather than read. It is the one thing standing
-// between a customer and a charge with no booking behind it.
+// The rule that will gate the dialog once it can be presented in this brand's
+// chrome. Nothing calls it while the handoff stands, and it is exercised here
+// rather than deleted because it is the one thing that will stand between a
+// customer and a charge with no booking behind it.
 ok(
   "canCompleteBookingHere lets a deployment take money with no database behind it",
   canCompleteBookingHere({ providerEnabled: true, supabaseReady: false }) === false
@@ -1009,11 +1063,16 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
-// WHAT THE BRAND'S DOMAIN STILL REFUSES.
+// WHAT THE BRAND'S DOMAIN REFUSES.
 //
-// Opening the checkout here meant opening three routes. The two left shut are
-// the two that would hurt, and nothing about this change should quietly widen
-// to a prefix later — `startsWith("/api/bookings")` would admit both of them
+// No booking route answers on this host, because nothing on this host calls
+// one: the deposit button hands off to the Egypt Eye checkout. Three were
+// briefly open for a dialog that could not be styled here, and an allow-list
+// entry for a feature that is not shipped reads to the next person as a
+// decision somebody made.
+//
+// Two of them stay shut even when the dialog arrives, and nothing should ever
+// widen to a prefix — `startsWith("/api/bookings")` would admit both of them
 // and every route added under that path from now on.
 // ---------------------------------------------------------------------------
 // Comments stripped, for the third time in this change: the proxy's own note
@@ -1026,8 +1085,8 @@ const proxyCode = proxySource
 
 for (const route of ["/api/bookings", "/api/bookings/rail", "/api/bookings/paypal/capture"]) {
   ok(
-    `the Flying Dresses domain cannot reach ${route}, so its own checkout cannot complete`,
-    proxyCode.includes(`pathname === "${route}"`)
+    `${route} answers on the Flying Dresses domain, for a checkout that does not run there`,
+    !proxyCode.includes(`pathname === "${route}"`)
   );
 }
 ok(
@@ -2205,7 +2264,13 @@ for (const section of ["celebrations", "creative"]) {
   const TITLE_MAX = 60;
 
   // Proven by lengthening one seoTitle past the budget: red.
-  for (const story of flyingDressStories) {
+  //
+  // liveStories(), not every entry. A researched brief is deliberately a stub
+  // with a placeholder section: it has no URL, no sitemap entry and no card on
+  // the index, so holding it to the word floor a published reference article
+  // owes a reader would mean the pipeline could not hold work in progress at
+  // all, which is the whole point of StoryStatus.
+  for (const story of liveStories()) {
     const rendered = story.seoTitle.length + SUFFIX;
     ok(
       `story ${story.slug}: <title> renders ${rendered} chars with the brand suffix, past the ${TITLE_MAX} a result list shows`,
@@ -2345,17 +2410,43 @@ for (const section of ["celebrations", "creative"]) {
   }
 
   // -------------------------------------------------------------------------
-  // NO PRICE AN ARTICLE INVENTED.
+  // NO PRICE AN ARTICLE INVENTED, AND NO PRICE AN ARTICLE HAS OUTLIVED.
   //
   // Prose is where a figure gets rounded, remembered or guessed. Only the
-  // confirmed numbers — the three photoshoot prices and the add-ons that
-  // already carry one — may appear as a dollar amount in a story.
+  // confirmed numbers — the photoshoot prices and the add-ons that already
+  // carry one — may appear as a dollar amount in a story.
   //
-  // Proven by writing "$250" into one paragraph: red.
+  // The second half of that heading is the half that bites later. Every
+  // figure in the cost article is also a field in content/flyingDresses.ts,
+  // which the owner edits. Change a package price and the article goes on
+  // confidently quoting the old one, in the one piece whose entire value is
+  // that its numbers are real, and nothing about the rendered page looks
+  // wrong. CLAUDE.md §5 is about money having one authority; this is what
+  // that means for prose.
+  //
+  // THE ONE EXCEPTION IS SOMEBODY ELSE'S PRICE. The cost article compares our
+  // figures to what else was being sold at Giza, which it cannot do without
+  // naming those figures, and they are not ours to keep in sync. So they are
+  // listed here one by one rather than waved through by a range, and a story
+  // may only use one if it is `basis: "cited"` and carries sources — which
+  // ties the exception to the evidence instead of to a promise.
+  //
+  // Proven by writing "$250" into one paragraph (red), by changing a package
+  // price in content and leaving the article alone (red), and by moving a
+  // market figure into a first-party article (red).
   // -------------------------------------------------------------------------
   const confirmedPrices = new Set<number>([
     ...packages.map((p) => p.priceUsd).filter((v): v is number => typeof v === "number"),
     ...addOns.map((a) => a.priceUsd).filter((v): v is number => typeof v === "number"),
+  ]);
+
+  /** Competitor figures researched on 2026-10-25, each supported by a source on the article. */
+  const RESEARCHED_MARKET_PRICES = new Map<number, string>([
+    [85, "Tripadvisor: pyramid photo sessions without a flying dress, listed from about $85"],
+    [180, "Tripadvisor: one-hour private flying-dress session, listed from $180"],
+    [189, "Tripadvisor: four-hour private flying-dress session, listed from $189"],
+    [450, "Arabian Moments: rooftop flying-dress sessions advertised from $450"],
+    [500, "Tinggly: pyramids rooftop flying-dress package listed at $500"],
   ]);
 
   for (const story of flyingDressStories) {
@@ -2367,11 +2458,21 @@ for (const section of ["celebrations", "creative"]) {
       ...story.faqs.flatMap((f) => [f.question, f.answer]),
     ].join(" ");
 
-    for (const match of prose.matchAll(/\$(\d[\d,]*)/g)) {
+    for (const match of prose.matchAll(/\$(\d(?:[\d,]*\d)?)/g)) {
       const value = Number(match[1].replace(/,/g, ""));
+      if (confirmedPrices.has(value)) continue;
+      const market = RESEARCHED_MARKET_PRICES.get(value);
       ok(
-        `story ${story.slug} states $${match[1]}, which is not a confirmed price`,
-        confirmedPrices.has(value)
+        `story ${story.slug} states $${match[1]}, which is neither a price in the catalogue nor a ` +
+          "researched market figure. If the catalogue changed, the article has to change with it.",
+        market !== undefined
+      );
+      if (market === undefined) continue;
+      ok(
+        `story ${story.slug} quotes another operator's $${match[1]} (${market}) but is not a cited ` +
+          "article with sources. A competitor's figure without the source that supports it is our " +
+          "claim, not theirs.",
+        story.basis === "cited" && (story.sources ?? []).length > 0
       );
     }
   }
@@ -2418,8 +2519,9 @@ for (const section of ["celebrations", "creative"]) {
     sitemapSource.includes('path: "/stories"')
   );
   ok(
-    "the sitemap does not map over flyingDressStories, so new articles would never be submitted",
-    sitemapSource.includes("flyingDressStories.map")
+    "the sitemap does not map over the stories, so new articles would never be submitted. It must " +
+      "map liveStories(), which is also what keeps a draft out of it.",
+    sitemapSource.includes("liveStories().map")
   );
 
   const footerSource = read("src/app/flying-dresses/_components/Footer.tsx");
@@ -3279,7 +3381,7 @@ for (const pkg of packages) {
 // The owner photographed each piece and had it composited onto generated
 // models, and states the pieces render identically to the wardrobe and that
 // delivering the exact piece shown is theirs. That is their call and it is
-// recorded in accessoryLookbook.ts. What this guards is everything that is
+// recorded in flyingDressAccessories.ts. What this guards is everything that is
 // NOT theirs to assert later by accident:
 //
 //  1. Every frame must resolve to a file. A gallery of missing images is the
@@ -3298,7 +3400,8 @@ for (const pkg of packages) {
 // red, then restored.
 // ---------------------------------------------------------------------------
 {
-  const lookbook = read("src/app/flying-dresses/_lib/accessoryLookbook.ts");
+  const lookbook = read("src/content/flyingDressAccessories.ts");
+  const lookbookComponent = read("src/app/flying-dresses/_components/AccessoryLookbook.tsx");
 
   ok(
     "the accessory lookbook is empty, so the collection page shows nothing",
@@ -3314,15 +3417,102 @@ for (const pkg of packages) {
     );
   }
 
-  // A reference, not a product name. "Headpiece 2" is a coordinate; "Cleopatra
-  // Collar" is a claim about an item nothing in the source material names.
+  // THE REFERENCE SURVIVES ALONGSIDE THE NAME.
+  //
+  // The pieces have names now — the owner asked for them, and naming your own
+  // stock is branding rather than an invented fact. The reference is not
+  // thereby redundant: it is stable when a name is reconsidered, it is
+  // unambiguous read out over a phone line, and it is what the desk matches
+  // an enquiry against. A name quietly replacing it would leave the desk with
+  // "the gold one" and nothing to match.
   for (const item of accessoryItems) {
     ok(
-      `accessory reference "${item.ref}" reads as a product name — the source names no piece, so a ` +
-        "name here would be invented. Keep it as <category> <number>.",
+      `accessory reference "${item.ref}" is no longer a reference — keep it as <category> <number>, ` +
+        "which is what the desk matches and what stays put when a name changes.",
       /^[A-Z][a-z]+ \d+$/.test(item.ref)
     );
   }
+
+  // ---------------------------------------------------------------------
+  // NAMED, DESCRIBED, AND SAID TO BE WORN SOMEWHERE.
+  //
+  // All three were asked for together and they fail separately. A piece with
+  // a name and no `worn` is the failure that matters most: "a wide gold cuff"
+  // tells a customer nothing about whether it will even be visible in the
+  // dress they picked, and "on the upper arm, above the elbow" tells them
+  // exactly that. It is also the field most likely to be skipped when a
+  // fourteenth piece is added in a hurry.
+  //
+  // A name must not be a reference wearing a name's clothes, either. If
+  // `name` is allowed to read "Headpiece 1" then the whole request has been
+  // satisfied on paper and not at all on the page.
+  //
+  // PROVEN by blanking one `worn`, by blanking one `description`, by setting
+  // a `name` to "Headpiece 1", and by giving two pieces the same name. All
+  // red, then restored.
+  // ---------------------------------------------------------------------
+  for (const item of accessoryItems) {
+    ok(
+      `accessory "${item.ref}" has no name, so the collection is a row of coordinates`,
+      item.name.trim().length > 2
+    );
+    ok(
+      `accessory "${item.ref}" has a name that is really a reference ("${item.name}") — the point of ` +
+        "the name is that it is a name",
+      !/^[A-Z][a-z]+ \d+$/.test(item.name)
+    );
+    ok(
+      `accessory "${item.ref}" has no description, so the page shows a photograph and a name`,
+      item.description.trim().length > 15
+    );
+    ok(
+      `accessory "${item.ref}" does not say where it is worn, which is the one thing a customer ` +
+        "cannot work out from the photograph",
+      item.worn.trim().length > 15
+    );
+  }
+  ok(
+    "two accessories share a name, so an enquiry naming one is ambiguous",
+    new Set(accessoryItems.map((i) => i.name.toLowerCase())).size === accessoryItems.length
+  );
+
+  // ---------------------------------------------------------------------
+  // A NAME IS NOT A PROVENANCE CLAIM, AND THE PAGE HAS TO SAY SO.
+  //
+  // Calling a collar "Nefertiti" is branding. Letting a visitor read it as a
+  // statement that the piece is an antiquity, or a documented reproduction of
+  // one, is CLAUDE.md §7 arriving by implication rather than by sentence —
+  // and implication is how it actually arrives. NAMING_NOTE is the sentence
+  // that closes it, and it is one string so it cannot drift between the
+  // collection page and the enquiry form.
+  //
+  // PROVEN by emptying NAMING_NOTE, by removing the word "ours" from it, and
+  // by deleting it from the lookbook component. All red, then restored.
+  // ---------------------------------------------------------------------
+  ok(
+    "the naming note is missing or too short to say anything, so the pieces carry invented-looking " +
+      "names with nothing explaining them",
+    NAMING_NOTE.trim().length > 60
+  );
+  ok(
+    "the naming note no longer says the names are the studio's own, which is the only thing that " +
+      "stops a name reading as a claim about an antiquity",
+    /\bours\b|\bour own\b|\bwe (?:call|refer)\b/i.test(NAMING_NOTE)
+  );
+  ok(
+    "the naming note no longer disowns the antiquity reading it exists to disown",
+    /antiquit|artefact|artifact|not because/i.test(NAMING_NOTE)
+  );
+  ok(
+    "the lookbook prints the names without the note saying whose names they are. (Matched as a " +
+      "rendered expression, not a substring: the first version of this passed on a component that " +
+      "imported NAMING_NOTE and never put it on the page.)",
+    /\{NAMING_NOTE\}/.test(lookbookComponent)
+  );
+  ok(
+    "the lookbook shows a photograph and a name but never says where the piece is worn",
+    /item\.worn/.test(lookbookComponent) && /item\.description/.test(lookbookComponent)
+  );
 
   // No price, anywhere near them.
   ok(
@@ -3339,10 +3529,9 @@ for (const pkg of packages) {
     "the lookbook note no longer says which part is created digitally",
     /digital/i.test(LOOKBOOK_NOTE) && /photograph/i.test(LOOKBOOK_NOTE)
   );
-  const lookbookComponent = read("src/app/flying-dresses/_components/AccessoryLookbook.tsx");
   ok(
     "the lookbook renders the pieces without the note about how the frames were made",
-    lookbookComponent.includes("LOOKBOOK_NOTE")
+    /\{LOOKBOOK_NOTE\}/.test(lookbookComponent)
   );
 
   // And the accessories page must actually render them.
@@ -3570,6 +3759,1869 @@ ok(
   "the men's gawns are honestly unphotographed rather than borrowing a dress",
   MENS_OUTFITS.every((o) => !o.image)
 );
+
+// ---------------------------------------------------------------------------
+// THE ENQUIRY FORM ASKS WHAT FIRST, AND EVERYTHING AFTER IT FOLLOWS.
+//
+// Four products shared one undivided form, and the form read as one product
+// with a lot of caveats: somebody hiring a dress for an afternoon scrolled
+// past a photoshoot location, a headcount and eleven priced photoshoot extras
+// before reaching anything that applied to them, and could tick "full makeup"
+// on a dress rental on the way past. The desk then unpicked it by hand.
+//
+// What is guarded is the SHAPE, not the wording:
+//
+//  1. There is a first question, with the four things we sell behind it.
+//  2. The hire branches do not offer photoshoot extras. This is the one that
+//     produced wrong enquiries rather than merely long ones.
+//  3. Switching away from a branch forgets what was typed into it. A rooftop
+//     left behind in a dress-rental enquiry is a question somebody has to
+//     ring up and resolve.
+//  4. `service` stays DERIVED from the answer. The payload, the route, the
+//     email and the analytics all still read a rental slug or an empty
+//     string, and a second piece of state saying the same thing as the first
+//     is a second thing that can disagree with it.
+//
+// Matched against the file with comments stripped, for the reason CLAUDE.md
+// §4 gives and this change has now hit five times: a guard that matches its
+// own explanatory prose passes on the broken code.
+//
+// PROVEN by deleting the fieldset, by moving the extras out of the isShoot
+// branch, by emptying chooseIntent's resets, and by storing `service` in
+// useState beside `intent`. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const formSource = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+  const formCode = formSource
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+    .replace(/\/\*[\s\S]*?\*\//g, " ")
+    .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  ok(
+    "the enquiry form no longer asks what the visitor wants before asking for anything else",
+    /fd-intent-grid/.test(formCode) && /name="intent"/.test(formCode)
+  );
+  for (const id of ["photoshoot", "dress-rental", "accessories", "mens-wear"] as const) {
+    ok(
+      `the enquiry form's first question does not offer "${id}", so one of the four things we sell ` +
+        "is unreachable from the form",
+      new RegExp(`id: "${id}"`).test(formCode)
+    );
+  }
+
+  ok(
+    "the enquiry form offers photoshoot extras on a hire, so somebody renting a dress can ask for " +
+      "makeup on a session that does not exist",
+    /isShoot \? \(\s*<div className="fd-field fd-field-full">[\s\S]{0,600}?addOns\.map/.test(formCode)
+  );
+
+  ok(
+    "the enquiry form keeps a photoshoot location, occasion, headcount or extras after the visitor " +
+      "switches to a hire, so the desk receives an answer to a question that was un-asked",
+    /const chooseIntent/.test(formCode) &&
+      /setPkg\(""\)/.test(formCode) &&
+      /setExperience\(""\)/.test(formCode) &&
+      /setExtras\(\[\]\)/.test(formCode)
+  );
+
+  ok(
+    "the enquiry form stores the hire slug beside the intent instead of deriving it, so the two can " +
+      "disagree and the payload stops matching what the visitor chose",
+    /const service = isShoot \? "" : intent/.test(formCode) &&
+      !/useState\(initialService\)/.test(formCode)
+  );
+
+  // -------------------------------------------------------------------
+  // THE TWO WARDROBES ARE GATED ON THE EXTRA THAT PAYS FOR THEM.
+  //
+  // Accessories and men's attire are each a priced extra AND a collection to
+  // choose from, and the flat form offered the collection to everybody. That
+  // is how a form implies something is included: a visitor who picks a gawn
+  // from a dropdown that was simply there has not been told it costs more,
+  // and the first they hear of it is the quote.
+  //
+  // Now the extra is the gate on a shoot, and the intent is the gate on a
+  // hire, where the collection IS the enquiry. Both are checked because they
+  // are separate conditions in the source and either can be lost alone.
+  // -------------------------------------------------------------------
+  ok(
+    "the accessory collection is offered without the extra that pays for it being ticked",
+    /const showAccessories = isShoot \? extras\.includes\(ACCESSORIES_EXTRA\)/.test(formCode)
+  );
+  ok(
+    "the gawn picker is offered without the extra that pays for it being ticked",
+    /const showMens = isShoot \? extras\.includes\(MENS_EXTRA\)/.test(formCode)
+  );
+  // Scoped to toggleExtra's own body. Matched against the whole file this
+  // passed on a form that had gutted it, because chooseIntent further up
+  // makes the same two calls for a different reason — a guard satisfied by
+  // the wrong function is a guard that checks nothing.
+  const toggleBody = /const toggleExtra[\s\S]*?\n  \};/.exec(formCode)?.[0] ?? "";
+  ok(
+    "unticking an extra leaves the collection open and its choices in the payload, so the desk is " +
+      "quoted for pieces the visitor took back",
+    /setAccessories\(\[\]\)/.test(toggleBody) && /setMens\(""\)/.test(toggleBody)
+  );
+
+  // The gawn costs extra, and this sentence is where most visitors find out.
+  ok(
+    "the gawn picker never says the attire is charged on top of the shoot, so a visitor who picks " +
+      "one from a dropdown has been told nothing about what it costs",
+    /Charged on top of the shoot, not included in it/.test(formCode)
+  );
+  const mensAddOn = addOns.find((a) => a.id === "mens-attire");
+  ok(
+    "the men's attire extra no longer says it is charged on top of the shoot",
+    mensAddOn !== undefined && /on top of the shoot/i.test(mensAddOn.detail)
+  );
+
+  // And the chosen pieces must be resolved server-side, like everything else.
+  const enquiryRoute = read("src/app/api/flying-dresses-enquiry/route.ts");
+  ok(
+    "the enquiry route takes the accessory labels from the request instead of resolving them " +
+      "against the collection, so a crafted payload puts a piece we do not own into an email the " +
+      "desk reads as fact",
+    /accessoryByRef\(/.test(enquiryRoute) && !/body\.accessories[\s\S]{0,80}?join/.test(enquiryRoute)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// IT IS THE NINE PYRAMIDS VIEW, INSIDE THE GIZA COMPLEX. NOT A LOUNGE.
+//
+// The brochure called it "Nine Pyramids Lounge, within the Giza pyramid
+// area"; a separate instruction said a Nine Pyramids rooftop "offers pyramid
+// views, it is not inside the archaeological complex". The site said neither,
+// which was the right answer to an unresolved question and the wrong one to
+// leave standing once the owner resolved it: it is the Nine Pyramids View,
+// in the complex, on request.
+//
+// This is not pedantry about a name. A session genuinely inside the
+// archaeological area carries ticketing and permit implications a rooftop
+// outside it does not, the sister brand sells that exact vantage point by
+// name, and there is a Stories article on this site whose whole subject is
+// competitors blurring the two. Drifting back to "Lounge" would put the two
+// brands' descriptions of one place out of step again.
+//
+// PROVEN by restoring the old label and the old detail. Both red.
+// ---------------------------------------------------------------------------
+{
+  const ninePyramids = addOns.find((a) => a.id === "nine-pyramids-view");
+  ok(
+    "the Nine Pyramids extra is gone or has been renumbered, so the shoot the owner confirmed is " +
+      "no longer offered",
+    ninePyramids !== undefined
+  );
+  if (ninePyramids) {
+    ok(
+      "the Nine Pyramids extra calls itself a session at a lounge again, which is the reading the " +
+        "owner corrected",
+      !/lounge/i.test(`${ninePyramids.label} ${ninePyramids.detail} ${ninePyramids.homeNote}`)
+    );
+    ok(
+      "the Nine Pyramids extra no longer says it is the Nine Pyramids View",
+      /nine pyramids view/i.test(ninePyramids.label) &&
+        /nine pyramids view/i.test(ninePyramids.detail)
+    );
+    ok(
+      "the Nine Pyramids extra no longer places itself inside the Giza complex, which is the part " +
+        "that carries the permit and ticketing implications",
+      /giza complex/i.test(ninePyramids.detail)
+    );
+  }
+  // Nowhere else in this brand's copy either.
+  const brandContent = read("src/content/flyingDresses.ts").replace(/\/\/[^\n]*/g, " ");
+  ok(
+    'this brand\'s content still says "Nine Pyramids Lounge" somewhere',
+    !/Nine Pyramids Lounge/i.test(brandContent)
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE URGENT CALL SITS UNDER THE FORM, TURNED DOWN.
+//
+// Asked for directly. It was a loud card above the form, so the first thing
+// every visitor met on the page that sells the shoot was an alarm about a
+// situation almost none of them were in. Below the form, the people it IS for
+// reach it at the moment they would otherwise hit send and wait.
+//
+// Both halves are checked because they fail separately: moved but still loud
+// is still an alarm, and quiet but still first is still first.
+//
+// PROVEN by putting the block back above <EnquiryForm> (red) and by dropping
+// variant="quiet" (red).
+// ---------------------------------------------------------------------------
+{
+  const page = read("src/app/flying-dresses/enquire/page.tsx").replace(
+    /\{\/\*[\s\S]*?\*\/\}/g,
+    " "
+  );
+  const form = page.indexOf("<EnquiryForm");
+  const urgent = page.indexOf("<UrgentCall");
+  ok(
+    "the urgent call card is back above the enquiry form, where every visitor meets it whether " +
+      "their date is tomorrow or next spring",
+    form !== -1 && urgent !== -1 && urgent > form
+  );
+  ok(
+    "the urgent call is under the form but still rendered at full volume",
+    /<UrgentCall[^>]*variant="quiet"/.test(page)
+  );
+  const urgentComponent = read("src/app/flying-dresses/_components/UrgentCall.tsx");
+  ok(
+    "UrgentCall has no quiet variant, so the enquiry page's quieter block falls back to the loud one",
+    /fd-urgent-quiet/.test(urgentComponent)
+  );
+  ok(
+    "brand.css has no rule for the quiet urgent block, so the class renders as unstyled markup. " +
+      "(Matched as a selector: a substring test passed when the rule was renamed to " +
+      ".fd-urgent-quietX, which still contains it.)",
+    /\.fd-urgent-quiet\s*\{/.test(read("src/app/flying-dresses/brand.css"))
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE STORIES ARE AN ENGINE, AND AN ENGINE HAS PARTS THAT CAN COME LOOSE.
+//
+// Six articles shipped here with three structural faults that nothing caught,
+// because nothing was looking: the related rail was `slice(0, 3)` and handed
+// every article the same three links, no article had a named commercial
+// destination, and nothing on the site linked to any of them except the index.
+// All three render perfectly. None of them is visible in a screenshot.
+//
+// What follows guards the parts of an editorial section that fail silently.
+// PROVEN, each by breaking the thing it names and watching it go red: a link
+// to a route that does not exist, a duplicate slug, a published article with
+// no destination, a draft in the sitemap, a repeated heading, and a price in
+// prose that no longer matches the catalogue. Then restored.
+// ---------------------------------------------------------------------------
+{
+  const stories = flyingDressStories;
+  const live = liveStories();
+  const allSlugs = stories.map((s) => s.slug);
+
+  ok(
+    "the Stories section is empty, so the editorial engine has nothing in it",
+    live.length > 0
+  );
+
+  // ---- Every link resolves. ------------------------------------------
+  // The one that actually costs money: an article is written to send people
+  // somewhere, and Next will happily build, deploy and render a <Link> to a
+  // route that does not exist. It looks correct until it is clicked.
+  for (const story of stories) {
+    for (const target of storyLinkTargets(story)) {
+      ok(
+        `story "${story.slug}" links to ${target}, which is not a route on this site. ` +
+          "See content/flyingDressRoutes.ts for what resolves.",
+        isFlyingDressRoute(target, allSlugs)
+      );
+    }
+  }
+
+  // ---- Identity. ------------------------------------------------------
+  ok(
+    "two stories share a slug, so one of them is unreachable",
+    new Set(allSlugs).size === allSlugs.length
+  );
+  const titles = stories.map((s) => s.title.toLowerCase());
+  ok(
+    "two stories share a title, which is how a library starts competing with itself in search",
+    new Set(titles).size === titles.length
+  );
+  const seoTitles = live.map((s) => s.seoTitle.toLowerCase());
+  ok(
+    "two published stories share a <title>, so a result list shows the same blue link twice",
+    new Set(seoTitles).size === seoTitles.length
+  );
+
+  // ---- What a published article owes the reader and the business. -----
+  for (const story of live) {
+    ok(
+      `published story "${story.slug}" has no commercial destination. An editorial page the ` +
+        "business pays to write and is never paid for is the default outcome, not a risk.",
+      story.destination !== undefined
+    );
+    ok(
+      `published story "${story.slug}" is an orphan: nothing on this site links to it except the ` +
+        "index. Name the pages it should be linked from in `inboundFrom`.",
+      (story.inboundFrom ?? []).length > 0
+    );
+    ok(
+      `published story "${story.slug}" has no sections`,
+      story.sections.length > 0
+    );
+    ok(
+      `published story "${story.slug}" has a meta description of ${story.metaDescription.length} ` +
+        "characters. Under 70 wastes the line; over 165 is cut off mid-sentence in a result.",
+      story.metaDescription.length >= 70 && story.metaDescription.length <= 165
+    );
+    ok(
+      `published story "${story.slug}" has an seoTitle of ${story.seoTitle.length} characters, and ` +
+        "the brand name appended to it costs 23 more. Keep it under 40.",
+      story.seoTitle.length > 0 && story.seoTitle.length <= 40
+    );
+    // The table of contents links to #headingId. Two identical headings in one
+    // article means one of those anchors silently goes to the wrong place.
+    const headings = story.sections.map((s) => s.heading);
+    ok(
+      `story "${story.slug}" repeats a section heading, so its contents list has two links to one anchor`,
+      new Set(headings).size === headings.length
+    );
+  }
+
+  // ---- `inboundFrom` has to mean something. ---------------------------
+  //
+  // THE FIRST VERSION OF THIS BLOCK PASSED ON BROKEN CODE, which is the
+  // reason the guard is written this way.
+  //
+  // Naming a page in `inboundFrom` only produces a link if that page renders
+  // <StoriesFromHere>. Nine paths were named across the articles and six
+  // pages had been wired, so /packages, /celebrations and /faq silently
+  // carried no link at all. The non-empty check above was green throughout:
+  // it asserted that somebody had written down an intention, not that the
+  // intention had been carried out. A browser found it.
+  //
+  // So the path is resolved to the file that serves it and the file is read.
+  // A dynamic segment collapses to its one route file, which is correct: wire
+  // /experiences/[slug] once and every package page has it.
+  const PAGE_FOR_PATH = (path: string): string => {
+    const segments = path.split("/").filter(Boolean);
+    if (segments.length === 0) return "src/app/flying-dresses/page.tsx";
+    if (segments.length === 1) return `src/app/flying-dresses/${segments[0]}/page.tsx`;
+    return `src/app/flying-dresses/${segments[0]}/[slug]/page.tsx`;
+  };
+  const inboundPaths = new Set(live.flatMap((s) => s.inboundFrom ?? []));
+  for (const path of inboundPaths) {
+    const file = PAGE_FOR_PATH(path);
+    ok(
+      `a story asks to be linked from ${path}, but ${file} does not render <StoriesFromHere>, so ` +
+        "the link does not exist. `inboundFrom` is a request, not a link.",
+      existsSync(file) && read(file).includes("<StoriesFromHere")
+    );
+  }
+
+  // A cited article without its citations is the failure the `basis` field
+  // exists to prevent. This guard predates the engine and is kept.
+  for (const story of stories) {
+    if (story.basis !== "cited") continue;
+    ok(
+      `story "${story.slug}" says it is cited and carries no sources`,
+      (story.sources ?? []).length > 0
+    );
+  }
+
+  // ---- Drafts are not published. --------------------------------------
+  const indexPage = read("src/app/flying-dresses/stories/page.tsx");
+  const storyPage = read("src/app/flying-dresses/stories/[slug]/page.tsx");
+  const storySitemap = read("src/app/flying-dresses/sitemap.xml/route.ts");
+  for (const [label, source] of [
+    ["the stories index", indexPage],
+    ["the article route", storyPage],
+    ["the sitemap", storySitemap],
+  ] as const) {
+    // Comments and the import SPECIFIER are stripped first. The first version
+    // of this matched `from "@/content/flyingDressStories"` and a sentence in
+    // a code comment, and failed on three files that were already correct —
+    // a guard that cannot tell a module path from a use of the value is a
+    // guard that gets switched off.
+    const code = source
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ")
+      .replace(/from\s+"[^"]*"/g, " ");
+    ok(
+      `${label} reads flyingDressStories directly, so a draft or a researched brief would be ` +
+        "published. It must go through liveStories().",
+      !/\bflyingDressStories\b/.test(code)
+    );
+  }
+
+  // ---- The related rail is scored, not sliced. ------------------------
+  // Asserted on behaviour rather than on the source text: the bug was a rail
+  // that returned the same thing for every article, so what is checked is
+  // that two articles do not get identical rails.
+  const rails = live.map((s) => relatedStories(s).map((r) => r.slug).join("|"));
+  const distinct = new Set(rails.filter((r) => r.length > 0));
+  ok(
+    "every article shows the same related rail, which is what slice(0, 3) did before " +
+      "relatedStories() replaced it. A reader learns in two articles that the rail is furniture.",
+    live.length < 3 || distinct.size > 1
+  );
+
+  // ---- Inline link markup is well formed. -----------------------------
+  //
+  // A malformed `[label](path` renders as literal brackets in the middle of a
+  // sentence. It survives review because it reads as a typo rather than as a
+  // broken feature, and it is invisible in the content file, where square
+  // brackets look like square brackets.
+  //
+  // Checked on the OUTPUT rather than by counting markers. The first version
+  // compared `](` occurrences to parsed links, which passes on the commonest
+  // malformation of all: drop the `]` and there are zero of each. What is
+  // actually wrong is residue in the text a reader sees, so that is what is
+  // asserted — after parsing, no bracket or `](` may survive into the prose.
+  for (const story of stories) {
+    const lines = [
+      ...story.sections.flatMap((s) => [...s.body, ...(s.list ?? [])]),
+      ...story.faqs.map((f) => f.answer),
+    ];
+    for (const line of lines) {
+      const rendered = storyPlainText(line);
+      ok(
+        `story "${story.slug}" has link markup that did not parse, so a reader sees brackets in ` +
+          `the middle of a sentence: "${rendered.slice(0, 70)}"`,
+        !/[[\]]/.test(rendered) && !rendered.includes("](")
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// THE PROPOSAL PAGE SELLS SOMETHING WE HAVE NEVER PHOTOGRAPHED.
+//
+// That is the fact the whole page is built around and the reason this block
+// exists. The repository holds real, credited agency work from the Giza
+// rooftop — couples, an anniversary shoot, a gender reveal, groups — and not one
+// frame of a proposal. The couples frames look exactly like proposal
+// photography, which is precisely why a caption that forgets to say what they
+// are becomes fabricated client work rather than an oversight.
+//
+// The other half is the venue. The owner supplied "Palm Hotel, Mansouriya
+// Street, near the Sphinx Gate area" and asked, in the same message, for it to
+// be verified before publishing. A street address is what somebody types into
+// a map on the morning of their proposal. It stays held until a human confirms
+// it, and the flag is the mechanism.
+//
+// PROVEN, each by breaking the thing it names: a price on the page, a venue
+// fact flipped to published, a decoration entry with no photograph, a caption
+// that stops saying what the frame is, and a lightbox stripped of its dialog
+// role. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const proposalContent = read("src/content/flyingDressProposal.ts");
+  const proposalPage = read("src/app/flying-dresses/_components/ProposalPage.tsx");
+  const galleryComponent = read("src/app/flying-dresses/_components/PhotoGallery.tsx");
+  const lightbox = read("src/app/flying-dresses/_components/Lightbox.tsx");
+  const decorations = read("src/app/flying-dresses/_components/ProposalDecorations.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  // ---- No price. Anywhere. -------------------------------------------
+  // No figure has been set for any proposal package. The page carries a
+  // deposit SPLIT, which is a percentage and not a price, so the test is for
+  // a currency amount rather than for digits.
+  for (const [label, source] of [
+    ["the proposal content file", proposalContent],
+    ["the proposal page", proposalPage],
+  ] as const) {
+    const code = strip(source);
+    const money = code.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `${label} states a currency amount (${money.join(", ")}). No price has been set for any ` +
+        "proposal package, so a figure here is an invented one. CLAUDE.md §7.",
+      money.length === 0
+    );
+  }
+  ok(
+    "the proposal payment split no longer adds up to the whole booking",
+    proposalPayment.depositPercent + proposalPayment.balancePercent === 100
+  );
+  ok(
+    "the proposal page stopped saying the price is quoted rather than published, so a visitor " +
+      "cannot tell whether a figure exists",
+    /no published price/i.test(proposalPayment.quoteNote)
+  );
+
+  // ---- The held facts stay held. --------------------------------------
+  //
+  // This is the guard that matters most, because flipping one of these is a
+  // one-character edit that silently publishes an unverified claim about
+  // somebody else's building.
+  const held: [string, { value: string; published: boolean; note?: string }][] = [
+    ["the venue name", proposalVenue.name],
+    ["the venue street address", proposalVenue.address],
+    ["the free changing room", proposalVenue.changingRoom],
+  ];
+  for (const [label, fact] of held) {
+    ok(
+      `${label} has been marked published. The owner supplied it AND asked for it to be verified; ` +
+        "until a human confirms it, it stays off the page. Flipping this flag is not the " +
+        "verification.",
+      fact.published === false
+    );
+    ok(
+      `${label} is held with no note saying what would release it, so nobody knows what to check`,
+      typeof fact.note === "string" && fact.note.length > 40
+    );
+    ok(
+      `${label} is held but its text appears on the proposal page anyway`,
+      !strip(proposalPage).includes(fact.value)
+    );
+  }
+
+  // ---- The rooftop is not the archaeological complex. -----------------
+  ok(
+    "the proposal page no longer distinguishes a rooftop with a pyramid view from the " +
+      "archaeological complex. That distinction is the one competitors blur and the one this " +
+      "brand has a whole article about.",
+    /archaeological complex/i.test(proposalVenue.notTheComplex) &&
+      strip(proposalPage).includes("notTheComplex")
+  );
+
+  // ---- Every gallery frame says what it actually is. ------------------
+  //
+  // The page has five captions and none of the photographs is a proposal.
+  // Each caption must name the real occasion, or the frame is passed off as
+  // something it is not.
+  const OCCASIONS = [
+    "couples shoot",
+    "anniversary shoot",
+    "vow renewal",
+    "gender reveal",
+    "flying-dress session",
+    "the roof",
+  ];
+  const captions = [...proposalPage.matchAll(/caption:\s*\n?\s*"([^"]+)"/g)].map((m) => m[1]);
+  ok(
+    `the proposal gallery has ${captions.length} captions, which is not the set the page composes. ` +
+      "Every frame must carry one: a caption is the only thing stopping a couples shoot reading " +
+      "as a proposal we photographed.",
+    captions.length >= 5
+  );
+  for (const caption of captions) {
+    ok(
+      `a proposal gallery caption never says what the photograph actually is: "${caption.slice(0, 60)}". ` +
+        `It must name one of: ${OCCASIONS.join(", ")}.`,
+      OCCASIONS.some((occasion) => caption.toLowerCase().includes(occasion))
+    );
+  }
+  ok(
+    "the proposal gallery stopped telling the visitor that none of these is a proposal, which is " +
+      "the sentence that makes the rest of the section honest",
+    /not photographed a proposal|nothing below is one/i.test(strip(proposalPage))
+  );
+
+  // ---- The catalogue cannot grow a fake entry. ------------------------
+  for (const decoration of proposalDecorations) {
+    ok(
+      `proposal decoration "${decoration.id}" points at ${decoration.src}, which is not in public/. ` +
+        "A catalogue entry without its photograph is a list item pretending to be a design.",
+      existsSync(`public${decoration.src}`)
+    );
+    ok(
+      `proposal decoration "${decoration.id}" has no alt text`,
+      decoration.alt.trim().length > 10
+    );
+  }
+  ok(
+    "the decoration catalogue has entries but the page no longer offers the interim copy for an " +
+      "empty one, so emptying it would render a heading over nothing",
+    decorations.includes("interim") && /DECORATION_INTERIM/.test(proposalPage)
+  );
+
+  // ---- The lightbox is a real dialog. ---------------------------------
+  //
+  // A lightbox is the easiest component on a site to ship broken for keyboard
+  // users, because it looks perfect to whoever built it with a mouse.
+  // Comments stripped first. The block comment at the top of Lightbox.tsx
+  // explains the component by NAMING every attribute this loop looks for, so
+  // matched against the raw file the role check passed on a component whose
+  // role had been changed to "group". CLAUDE.md §4.
+  const lightboxCode = strip(lightbox);
+  for (const [need, pattern] of [
+    ['role="dialog"', /role="dialog"/],
+    ["aria-modal", /aria-modal="true"/],
+    ["an Escape handler", /"Escape"/],
+    ["arrow-key navigation", /ArrowRight/],
+    ["a focus trap on Tab", /"Tab"/],
+    ["focus returned to the opener on close", /opener\?\.focus/],
+  ] as const) {
+    ok(
+      `the lightbox has lost ${need}, so it is a picture viewer a keyboard user cannot operate`,
+      pattern.test(lightboxCode)
+    );
+  }
+  ok(
+    "the gallery renders thumbnails that are not buttons, so the lightbox cannot be opened from " +
+      "the keyboard at all",
+    /<button[\s\S]{0,200}?fd-pgallery-btn/.test(galleryComponent)
+  );
+
+  // ---- The route still owns the URL. ----------------------------------
+  const categoryRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+  // Matched on the RENDER, not on the identifier. The first version tested
+  // for `category.id === "proposals"` anywhere in the file, which is also how
+  // the experience record is looked up two lines earlier — so switching the
+  // render off left the guard green and the page back to the generic body.
+  ok(
+    "the proposal body is no longer rendered from the shared celebrations route: either it has " +
+      "been forked to its own URL, taking the breadcrumbs and the FAQ structured data with it, " +
+      "or the category has fallen back to the generic renderer",
+    /category\.id === "proposals" && proposal \?[\s\S]{0,120}?<ProposalPage/.test(
+      strip(categoryRoute)
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE GENDER REVEAL PAGE
+//
+// The whole point of these guards is that this page is NOT the proposal page
+// with the nouns changed. The owner supplied a deposit split, payment methods,
+// a photograph count, a Google Drive gallery with a year of access and a hotel
+// name FOR THE PROPOSAL. Nothing of the kind was said about a gender reveal,
+// and the brief for this page warned twice against assuming it transfers.
+//
+// The cheapest possible mistake here is somebody later "finishing" this page by
+// copying the file next door. Every one of these assertions exists to make that
+// fail loudly instead of shipping invented terms to a paying customer.
+//
+// PROVEN, each by breaking the thing it names: a price in the content file, a
+// currency amount on the page, termsSet flipped to true, an import of the
+// proposal content, a hotel name, a named reveal effect advertised, the real
+// reveal frame put back into the gallery, a caption that stops naming its
+// occasion, a decoration entry with a missing photograph, a decoration entry
+// carrying a price, an em-dash in visitor-facing copy, and the route's render
+// switched off. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const revealContent = read("src/content/flyingDressGenderReveal.ts");
+  const revealPage = read("src/app/flying-dresses/_components/GenderRevealPage.tsx");
+  const revealThemesComponent = read("src/app/flying-dresses/_components/RevealThemes.tsx");
+  const revealRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+  const revealApi = read("src/app/api/flying-dresses-enquiry/route.ts");
+
+  // Comments explain what the code must NOT do, which means an unstripped
+  // match tests the explanation rather than the code. This has bitten this
+  // script repeatedly; see the header. Import specifiers go too, because a
+  // path like "@/content/flyingDressProposal" otherwise satisfies a guard
+  // looking for proposal facts.
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+  const stripWithImports = (source: string) =>
+    strip(source).replace(/from\s+"[^"]*"/g, " ");
+
+  // ---- No price. Anywhere. -------------------------------------------
+  // The record's first unanswered question is "PRICE. Nothing has been set
+  // for a gender reveal, with or without video." Unlike the proposal page
+  // there is not even a percentage split to allow for, so this is stricter:
+  // no currency amount AND no percentage.
+  for (const [label, source] of [
+    ["the gender reveal content file", revealContent],
+    ["the gender reveal page", revealPage],
+  ] as const) {
+    const code = strip(source);
+    const money = code.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `${label} states a currency amount (${money.join(", ")}). No price has been set for a ` +
+        "gender reveal, with or without video, so a figure here is an invented one. CLAUDE.md §7.",
+      money.length === 0
+    );
+    const percent = code.match(/\b\d{1,3}\s?(?:%|per cent)/g) ?? [];
+    ok(
+      `${label} states a percentage (${percent.join(", ")}). That is how the proposal page ` +
+        "expresses its deposit split, and NO deposit, balance or payment term has been agreed " +
+        "for a gender reveal. See revealPayment.teamNote.",
+      percent.length === 0
+    );
+  }
+
+  // ---- The absence of payment terms is recorded, not quietly filled. --
+  ok(
+    "revealPayment.termsSet is true, which says payment terms now exist for a gender reveal. " +
+      "If the owner has genuinely set them, add them deliberately and update the page and this " +
+      "guard together. If this was flipped to make a section look finished, that is the exact " +
+      "mistake the flag is here to catch.",
+    revealPayment.termsSet === false
+  );
+
+  // ---- STRUCTURAL: the proposal's facts cannot reach this page. -------
+  // Stronger than searching for each string, because it stops the next one
+  // too. If the gender reveal page cannot import the proposal content, it
+  // cannot render a proposal fact by accident.
+  for (const [label, source] of [
+    ["the gender reveal content file", revealContent],
+    ["the gender reveal page", revealPage],
+  ] as const) {
+    ok(
+      `${label} imports from flyingDressProposal. Those facts were supplied for the proposal ` +
+        "service: a 25/75 split, cash and PayPal, more than a hundred photographs, a Google " +
+        "Drive gallery expiring after a year, a named hotel. None of it was said about a gender " +
+        "reveal, and importing the module is how one of them ends up on this page.",
+      !/from\s+"[^"]*flyingDressProposal"/.test(source)
+    );
+  }
+
+  // ---- The proposal's specific claims, named, in case of a hand copy. -
+  const proposalOnlyClaims: [string, RegExp][] = [
+    ["a named hotel", /Palm Hotel/i],
+    ["a street address", /Mansouriya/i],
+    ["Google Drive delivery", /Google Drive/i],
+    ["a year of gallery access", /for a year|one year from/i],
+    ["a photograph count", /more than a hundred|over a hundred|100\+/i],
+    ["a speaker on the roof", /speaker/i],
+  ];
+  for (const [what, pattern] of proposalOnlyClaims) {
+    const code = stripWithImports(revealContent) + stripWithImports(revealPage);
+    ok(
+      `the gender reveal page or its content file claims ${what}. That was supplied for the ` +
+        "proposal service and has never been stated about a gender reveal. Publishing it here " +
+        "is inventing a term the first customer will hold us to.",
+      !pattern.test(code)
+    );
+  }
+
+  // ---- No reveal mechanism advertised as available. -------------------
+  // The record says it twice: "We will not confirm a particular prop or
+  // effect until they have" and "Nothing specific should be advertised until
+  // this is answered." The section explains how a method gets AGREED.
+  //
+  // "balloon arch" is deliberately NOT in this list: the page describes one
+  // in a photograph we actually took, as decoration, which is a statement
+  // about a past evening rather than an offer. The named EFFECTS below are
+  // what cannot be offered.
+  const unconfirmedEffects: [string, RegExp][] = [
+    ["confetti", /confetti/i],
+    ["a smoke effect", /smoke/i],
+    ["a cannon", /cannon/i],
+    ["fireworks", /firework/i],
+    ["sparklers", /sparkler/i],
+    ["coloured powder", /powder/i],
+  ];
+  for (const [what, pattern] of unconfirmedEffects) {
+    const code = strip(revealContent) + strip(revealPage) + strip(revealThemesComponent);
+    ok(
+      `the gender reveal page names ${what}. No venue has confirmed which reveal mechanisms it ` +
+        "permits, and the experience record says plainly that nothing specific should be " +
+        "advertised until that is answered. Somebody will arrive expecting it.",
+      !pattern.test(code)
+    );
+  }
+
+  // ---- THE ONE REAL PHOTOGRAPH IS NOT SPENT TWICE. -------------------
+  // There is exactly one genuine gender reveal frame in this repository. It
+  // is the hero, rendered by the shared route. Putting it in the gallery as
+  // well makes one photograph look like two, and makes the gallery's own
+  // first sentence ("nothing below is a reveal") false.
+  ok(
+    "the gender reveal gallery now includes agency.genderReveal. That frame is the hero. " +
+      "Showing it in the gallery as well spends the only real reveal photograph twice and " +
+      "contradicts the gallery's own intro, which tells the visitor nothing below it is a reveal.",
+    !/agency\.genderReveal/.test(strip(revealPage))
+  );
+  ok(
+    "the gender reveal gallery intro no longer tells the visitor that the frames below are not " +
+      "reveals. Four frames from couples shoots and flying-dress sessions, unqualified, read as " +
+      "a reveal portfolio four times the size of the real one.",
+    /nothing below is a reveal/i.test(revealPage)
+  );
+
+  // ---- Every gallery caption names what the frame actually is. -------
+  // Matched inside the caption STRINGS rather than across the file, so a
+  // single occurrence of "vow renewal" elsewhere cannot satisfy all four.
+  {
+    const captions = [...revealPage.matchAll(/caption:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map(
+      (match) => match[1]
+    );
+    ok(
+      `the gender reveal gallery has ${captions.length} captions rather than the four frames it ` +
+        "renders, so at least one photograph is shown without saying what it is",
+      captions.length === 4
+    );
+    const occasion = /couples shoot|anniversary shoot|vow renewal|flying-dress session|gender reveal/i;
+    for (const caption of captions) {
+      ok(
+        `a gender reveal gallery caption does not name the occasion it was photographed at: ` +
+          `"${caption.slice(0, 70)}". None of these frames is a gender reveal, and a visitor ` +
+          "must not have to guess which.",
+        occasion.test(caption)
+      );
+    }
+  }
+
+  // ---- The decoration catalogue, whenever it fills up. ---------------
+  for (const decoration of revealDecorations) {
+    ok(
+      `the gender reveal decoration "${decoration.id}" has no photograph at public${decoration.src}. ` +
+        "A catalogue entry without one is a list item, and the page renders it as a card with a " +
+        "broken image.",
+      decoration.src.startsWith("/") && existsSync(`public${decoration.src}`)
+    );
+    const priced = `${decoration.name} ${decoration.description}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `the gender reveal decoration "${decoration.id}" carries a price (${priced.join(", ")}). ` +
+        "No price has been set for a gender reveal or for any decoration in it.",
+      priced.length === 0
+    );
+  }
+
+  // ---- The colour themes resolve, and promise nothing priced. --------
+  ok(
+    "the gender reveal colour themes are empty. Unlike the decoration catalogue this list is " +
+      "CONFIRMED by the experience record (\"in a colour theme you pick\"), so an empty list is a " +
+      "regression rather than an honest gap.",
+    revealThemes.length > 0
+  );
+  for (const theme of revealThemes) {
+    ok(
+      `the gender reveal theme "${theme.id}" does not resolve through revealThemeById, so the ` +
+        "enquiry handoff would silently drop it",
+      revealThemeById(theme.id)?.id === theme.id
+    );
+  }
+  ok(
+    "revealThemeById resolves an id that is not in the catalogue, so a crafted query string " +
+      "could put a theme we do not offer into an enquiry email the desk reads as fact",
+    revealThemeById("not-a-real-theme") === undefined
+  );
+
+  // ---- The handoff is resolved server-side, never echoed. ------------
+  ok(
+    "the enquiry API no longer resolves the gender reveal theme through revealThemeById. " +
+      "Whatever arrives in that field ends up in an email the business reads as fact, so the " +
+      "LABEL must come off the catalogue rather than off the request.",
+    /revealThemeById\(clean\(body\.theme/.test(strip(revealApi))
+  );
+  ok(
+    "the enquiry API stopped putting the gender reveal colour theme in the desk email, so a " +
+      "choice the visitor made on the page is collected and then thrown away",
+    /push\("Gender reveal colour theme", theme\?\.label/.test(strip(revealApi))
+  );
+
+  // ---- No em-dashes in visitor-facing copy. --------------------------
+  // Project rule. Checked on the content file's STRING LITERALS, because the
+  // explanatory comments above them are not visitor-facing and legitimately
+  // contain them.
+  {
+    const literals = [...revealContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    const offenders = literals.filter((literal) => literal.includes("—"));
+    ok(
+      `the gender reveal content file uses an em-dash in visitor-facing copy: ` +
+        `"${offenders[0]?.slice(0, 70) ?? ""}". Repunctuate by hand with a colon, a full stop, a ` +
+        "comma or parentheses as the sentence needs.",
+      offenders.length === 0
+    );
+  }
+
+  // ---- The route still owns the URL. ---------------------------------
+  // Matched on the RENDER, not the identifier: `category.id === "gender-reveal"`
+  // also appears in the lookup two lines earlier, so testing for it anywhere
+  // in the file would stay green with the render switched off.
+  ok(
+    "the gender reveal body is no longer rendered from the shared celebrations route: either it " +
+      "has been forked to its own URL, taking the breadcrumbs and the FAQ structured data with " +
+      "it, or the category has fallen back to the generic renderer",
+    /category\.id === "gender-reveal" && genderReveal \?[\s\S]{0,140}?<GenderRevealPage/.test(
+      strip(revealRoute)
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// BIRTHDAYS AND PRIVATE CELEBRATIONS
+//
+// The money on this page is more complicated than on any other, and that is
+// what these guard. Eight elements sit in four different charge positions, and
+// ONE of them is the trap: transport is an ADDITIONAL charge on a celebration,
+// while the flying dress photoshoot packages include door-to-door transport in
+// their published price. A visitor who has read /experiences arrives believing
+// the second thing, correctly, about a different product.
+//
+// PROVEN, each by breaking the thing it names: a price, a percentage, termsSet
+// flipped, an import of the proposal content, a hotel name, transport
+// reclassified as included, a photograph count, the hero repeated in the
+// gallery, a caption that stops naming its occasion, the gallery's own
+// disclaimer removed, the cake and music disclaimers removed, a decoration
+// with a missing photograph, an occasion that does not resolve, the API
+// trusting the request, an em-dash, and the route's render switched off. All
+// red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const birthdayContent = read("src/content/flyingDressBirthday.ts");
+  const birthdayPage = read("src/app/flying-dresses/_components/BirthdayPage.tsx");
+  const birthdayChoices = read("src/app/flying-dresses/_components/CelebrationChoices.tsx");
+  const birthdayRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+  const birthdayApi = read("src/app/api/flying-dresses-enquiry/route.ts");
+  const birthdayForm = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+  const stripWithImports = (source: string) =>
+    strip(source).replace(/from\s+"[^"]*"/g, " ");
+
+  // ---- No price, and no percentage. ----------------------------------
+  for (const [label, source] of [
+    ["the celebration content file", birthdayContent],
+    ["the celebration page", birthdayPage],
+  ] as const) {
+    const code = strip(source);
+    const money = code.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `${label} states a currency amount (${money.join(", ")}). The experience record's first ` +
+        "unanswered question is \"PRICE. Nothing set for celebrations of any size\", and that is " +
+        "still true of the decoration, the cake and the transport. CLAUDE.md §7.",
+      money.length === 0
+    );
+    const percent = code.match(/\b\d{1,3}\s?(?:%|per cent)/g) ?? [];
+    ok(
+      `${label} states a percentage (${percent.join(", ")}). That is how the proposal page ` +
+        "expresses its deposit split, and no deposit or payment term has been agreed for a " +
+        "celebration.",
+      percent.length === 0
+    );
+  }
+
+  ok(
+    "celebrationPayment.termsSet is true, which says payment terms now exist for a celebration. " +
+      "If the owner has set them, add them deliberately and update the page and this guard " +
+      "together rather than flipping a flag to make a section look finished.",
+    celebrationPayment.termsSet === false
+  );
+
+  // ---- STRUCTURAL: the proposal's facts cannot reach this page. -------
+  for (const [label, source] of [
+    ["the celebration content file", birthdayContent],
+    ["the celebration page", birthdayPage],
+  ] as const) {
+    ok(
+      `${label} imports from flyingDressProposal. Those terms were supplied for the proposal ` +
+        "service and the celebration brief says explicitly not to assume they apply here.",
+      !/from\s+"[^"]*flyingDressProposal"/.test(source)
+    );
+  }
+
+  // NOTE: "speaker" is deliberately NOT in this list. It IS a proposal fact,
+  // and it is ALSO a confirmed celebration fact: the owner's brief states
+  // that speakers are available so customers can play their own songs. The
+  // gender reveal page, where nothing of the kind was said, still bans it.
+  for (const [what, pattern] of [
+    ["a named hotel", /Palm Hotel/i],
+    ["a street address", /Mansouriya/i],
+    ["Google Drive delivery", /Google Drive/i],
+    ["a year of gallery access", /for a year|one year from/i],
+    ["a photograph count", /more than a hundred|over a hundred|100\+|hundred-plus/i],
+  ] as [string, RegExp][]) {
+    const code = stripWithImports(birthdayContent) + stripWithImports(birthdayPage);
+    ok(
+      `the celebration page or its content file claims ${what}. That was supplied for a ` +
+        "different service and has never been stated about a celebration.",
+      !pattern.test(code)
+    );
+  }
+
+  // ---- THE TRANSPORT TRAP. -------------------------------------------
+  // The single most expensive thing to get wrong on this page.
+  {
+    const transportLine = celebrationLines.find((line) => /transport/i.test(line.title));
+    ok(
+      "the celebration's transport line has disappeared from celebrationLines, so the one " +
+        "element the owner stated as an additional charge is no longer listed with the rest",
+      Boolean(transportLine)
+    );
+    ok(
+      `the celebration's transport line is classified "${transportLine?.charge}" rather than ` +
+        '"extra". The owner stated transport as an ADDITIONAL charge. Our flying dress ' +
+        "photoshoot packages include door-to-door transport in their published price, so a " +
+        "visitor arriving from /experiences already believes it is included. Misclassifying it " +
+        "here is how they find out in the quotation.",
+      transportLine?.charge === "extra"
+    );
+    // MATCHED ON THE VALUE, NOT THE FILE. The first version of this tested
+    // the file text for the phrase, and the same sentence also appears in the
+    // transport FAQ answer further down: blanking `packagesDiffer` left the
+    // guard green and the distinction off the transport section entirely.
+    ok(
+      "transport.packagesDiffer no longer tells the visitor that transport here is different " +
+        "from the photoshoot packages, which DO include door-to-door transport in their " +
+        "published price. That is the single most expensive misunderstanding available on " +
+        "this page.",
+      /different from our flying dress photoshoot packages/i.test(
+        celebrationTransport.packagesDiffer
+      )
+    );
+    ok(
+      "the transport section stopped saying the charge is additional",
+      /additional charge/i.test(celebrationTransport.lede)
+    );
+  }
+
+  // ---- Every line is classified, and the labels exist. ---------------
+  for (const line of celebrationLines) {
+    ok(
+      `the celebration line "${line.title}" carries no charge label the page can render, so a ` +
+        "visitor cannot tell whether it is included or billed",
+      Boolean(CHARGE_LABEL[line.charge])
+    );
+  }
+  ok(
+    "the celebration page renders its lines without the charge tag, so eight elements in four " +
+      "different charge positions read as one undifferentiated included list",
+    /<ChargeTag charge=\{line\.charge\} \/>/.test(birthdayPage)
+  );
+
+  // ---- Nothing promised that nobody has set. -------------------------
+  ok(
+    "the cake section stopped saying which terms are NOT published. Flavours, sizes, dietary " +
+      "options, a price and an ordering deadline are exactly what a cake supplier fails on, and " +
+      "none of them has been set.",
+    /We do not publish flavours, sizes, dietary options/i.test(celebrationCake.notPromised)
+  );
+  ok(
+    "the cake section stopped disclosing that cakes come through a supplier rather than our own " +
+      "kitchen, which is what somebody with an allergy or a deadline needs to know",
+    /supplier/i.test(celebrationCake.supplierNote)
+  );
+  ok(
+    "the music section stopped declining to offer a DJ, a live musician or a professional sound " +
+      "system. The owner's brief names all three as things not to advertise without separate " +
+      "confirmation.",
+    /not offering a DJ, a live musician or a professional sound system/i.test(
+      celebrationMusic.notPromised
+    )
+  );
+  ok(
+    "the music section stopped saying that how loud and how late is the venue's decision. The " +
+      "experience record is explicit that amplified music on a rooftop is never assumed.",
+    /venue's decision/i.test(celebrationMusic.venueNote)
+  );
+
+  // ---- The gallery: no birthday photographs exist. -------------------
+  ok(
+    "the celebration gallery now includes agency.heroRooftop, which is the hero above it. " +
+      "Showing it twice makes one photograph look like two on a page that has no birthday " +
+      "photographs at all.",
+    !/slot: agency\.heroRooftop,\s*\n\s*span:/.test(strip(birthdayPage))
+  );
+  ok(
+    "the celebration gallery intro no longer tells the visitor that none of the frames is a " +
+      "birthday. We have never photographed one on this roof, and five frames from couples " +
+      "shoots and gender reveals read as a birthday portfolio unless the page says otherwise.",
+    /We have not photographed a birthday on this roof yet/i.test(birthdayPage)
+  );
+  {
+    const captions = [...birthdayPage.matchAll(/caption:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map(
+      (m) => m[1]
+    );
+    ok(
+      `the celebration gallery has ${captions.length} captions rather than the five frames it ` +
+        "renders, so at least one photograph is shown without saying what it is",
+      captions.length === 5
+    );
+    const occasion = /couples shoot|anniversary shoot|vow renewal|flying-dress session|gender reveal/i;
+    for (const caption of captions) {
+      ok(
+        `a celebration gallery caption does not name the occasion it was photographed at: ` +
+          `"${caption.slice(0, 70)}". None of these is a birthday.`,
+        occasion.test(caption)
+      );
+    }
+  }
+
+  // ---- The decoration catalogue, whenever it fills up. ---------------
+  for (const decoration of celebrationDecorations) {
+    ok(
+      `the celebration decoration "${decoration.id}" has no photograph at public${decoration.src}`,
+      decoration.src.startsWith("/") && existsSync(`public${decoration.src}`)
+    );
+    const priced = `${decoration.name} ${decoration.description}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `the celebration decoration "${decoration.id}" carries a price (${priced.join(", ")})`,
+      priced.length === 0
+    );
+  }
+
+  // ---- The occasions resolve. ----------------------------------------
+  ok(
+    "the celebration occasions are empty. They are confirmed by the experience record, which " +
+      "names a birthday, a graduation and a reunion by hand, so an empty list is a regression " +
+      "rather than an honest gap.",
+    celebrationOccasions.length > 0
+  );
+  for (const occasion of celebrationOccasions) {
+    ok(
+      `the celebration occasion "${occasion.id}" does not resolve through ` +
+        "celebrationOccasionById, so the enquiry handoff would silently drop it",
+      celebrationOccasionById(occasion.id)?.id === occasion.id
+    );
+  }
+  ok(
+    "celebrationOccasionById resolves an id that is not in the catalogue, so a crafted query " +
+      "string could put an occasion we do not offer into an enquiry email",
+    celebrationOccasionById("not-a-real-occasion") === undefined
+  );
+
+  // ---- The enquiry handoff. ------------------------------------------
+  ok(
+    "the enquiry API no longer resolves the celebration occasion through " +
+      "celebrationOccasionById, so whatever arrives in that field reaches an email the desk " +
+      "reads as fact",
+    /celebrationOccasionById\(clean\(body\.occasion/.test(strip(birthdayApi))
+  );
+  ok(
+    "the enquiry API accepts the transport request as anything truthy rather than exactly " +
+      "true, so a string in that field could turn into a transport booking the desk quotes for",
+    /body\.transport === true/.test(strip(birthdayApi))
+  );
+  ok(
+    "the enquiry API's transport row stopped saying the charge is additional. A bare \"Yes\" in " +
+      "a row called Transport is the ambiguity that costs a customer the difference between a " +
+      "celebration and a photoshoot package.",
+    /push\("Transport", wantsTransport \? "Requested: additional charge/.test(strip(birthdayApi))
+  );
+  for (const [label, pattern] of [
+    ["the cake", /push\("Cake", cakeRequest\)/],
+    ["the music", /push\("Music", songs\)/],
+    ["what is being celebrated", /push\("Celebrating", occasion\?\.label/],
+  ] as [string, RegExp][]) {
+    ok(
+      `the enquiry API stopped putting ${label} in the desk email, so something the visitor ` +
+        "typed on the celebration form is collected and then thrown away",
+      pattern.test(strip(birthdayApi))
+    );
+  }
+
+  // ---- The chooser actually hands its choice over. -------------------
+  // Caught by lint, not by me: this file read CelebrationChoices.tsx and then
+  // asserted nothing about it, which is a guard block that looks thorough and
+  // checks nothing. A chooser that collects a selection and drops it on the
+  // way to the enquiry is worse than no chooser, because the visitor believes
+  // they have already told us.
+  ok(
+    "the celebration chooser no longer carries the chosen occasion into the enquiry link, so a " +
+      "visitor who picks one is asked again on the form",
+    /occasion \? `&occasion=\$\{encodeURIComponent\(occasion\)\}` : ""/.test(birthdayChoices)
+  );
+  ok(
+    "the celebration chooser's enquiry link no longer names the celebration experience, so the " +
+      "form opens without the celebration fields the chooser was leading towards",
+    /experience=private-celebration/.test(birthdayChoices)
+  );
+
+  // ---- The form shows the celebration fields where they belong. ------
+  ok(
+    "the enquiry form no longer gates the celebration fields on the chosen occasion being a " +
+      "celebration, so a dress-rental enquiry is asked about its cake",
+    /const isCelebration = isShoot && isCelebrationExperience\(experience\)/.test(
+      strip(birthdayForm)
+    )
+  );
+  ok(
+    "isCelebrationExperience no longer recognises the celebration itself, so the cake, the " +
+      "songs and the transport request would never appear on the one enquiry that needs them",
+    isCelebrationExperience("private-celebration") === true
+  );
+  ok(
+    "isCelebrationExperience returns true for something that is not a celebration, so a " +
+      "visitor hiring a dress is asked what they would like written on their cake",
+    isCelebrationExperience("not-an-experience") === false
+  );
+  // BOTH TERNARIES, COUNTED. The pickup field adapts in two places, its
+  // LABEL and its HINT, and the first version of this guard tested for one
+  // match anywhere: breaking the label left the hint's copy of the same
+  // expression behind and the guard stayed green with the field mislabelled.
+  {
+    const gates =
+      strip(birthdayForm).match(/isCelebration\s*\n?\s*\?\s*transportWanted/g) ?? [];
+    ok(
+      `the enquiry form's pickup field adapts in ${gates.length} place(s) rather than two. Its ` +
+        "label and its hint must BOTH change for a celebration: the default hint promises " +
+        "door-to-door transport, which is true of the photoshoot packages and false here, " +
+        "where transport is an additional charge.",
+      gates.length === 2
+    );
+  }
+
+  // ---- No em-dashes in visitor-facing copy. --------------------------
+  {
+    const literals = [...birthdayContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    const offenders = literals.filter((literal) => literal.includes("—"));
+    ok(
+      `the celebration content file uses an em-dash in visitor-facing copy: ` +
+        `"${offenders[0]?.slice(0, 70) ?? ""}"`,
+      offenders.length === 0
+    );
+  }
+
+  // ---- The route still owns the URL. ---------------------------------
+  ok(
+    "the celebration body is no longer rendered from the shared celebrations route: either it " +
+      "has been forked to its own URL, taking the breadcrumbs and the FAQ structured data with " +
+      "it, or the category has fallen back to the generic renderer",
+    /category\.id === "celebrations" && celebration \?[\s\S]{0,140}?<BirthdayPage/.test(
+      strip(birthdayRoute)
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE ROOFTOP MUSIC SESSION
+//
+// The first Flying Dresses experience to carry a CONFIRMED PRICE, which makes
+// it the first that can be wrong about money in a way a customer acts on. The
+// rate is $150 AN HOUR for the ROOFTOP, and two mistakes are available:
+// showing the number without its unit, and letting it read as though the
+// production services are inside it.
+//
+// The other thing these protect is the record's loudest sentence: WE DO NOT
+// SUPPLY A SOUND SYSTEM, DJ EQUIPMENT OR GENERATORS. A DJ who arrives
+// expecting a booth has had their session ruined.
+//
+// PROVEN, each by breaking the thing it names: the rate unmoored from its
+// unit, the rate changed, the exclusion sentence removed, the no-sound
+// section gutted, the audio question answered, a camera count published, a
+// delivery promise added, the gallery's gaps filled with a real photograph,
+// a caption that stops naming its occasion, a setup with a missing image, the
+// API trusting the request, the hours left unvalidated, and the route's
+// render switched off. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const musicContent = read("src/content/flyingDressMusic.ts");
+  const musicPage = read("src/app/flying-dresses/_components/MusicProductionPage.tsx");
+  const musicRoute = read("src/app/flying-dresses/creative/[slug]/page.tsx");
+  const musicApi = read("src/app/api/flying-dresses-enquiry/route.ts");
+  const musicForm = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+  const musicGallery = read("src/app/flying-dresses/_components/PhotoGallery.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  const musicExperience = flyingDressExperiences.find((e) => e.slug === "rooftop-music-session");
+  ok("the rooftop-music-session experience has gone missing", Boolean(musicExperience));
+
+  // ---- THE RATE, AND ITS UNIT. ---------------------------------------
+  ok(
+    `the music session's pricing is "${musicExperience?.pricing.kind}" rather than hourly. The ` +
+      "owner confirmed $150 AN HOUR for the rooftop; any other shape renders the figure without " +
+      "its unit somewhere, and a rate read as a session price is wrong by however many hours " +
+      "somebody books.",
+    musicExperience?.pricing.kind === "hourly"
+  );
+  if (musicExperience?.pricing.kind === "hourly") {
+    ok(
+      `the music session's rate is $${musicExperience.pricing.fromUsd} rather than the $150 the ` +
+        "owner confirmed. A price may only change when the owner says so.",
+      musicExperience.pricing.fromUsd === 150
+    );
+    ok(
+      `the music session's rate unit is "${musicExperience.pricing.unit}" rather than "hour"`,
+      musicExperience.pricing.unit === "hour"
+    );
+  }
+  ok(
+    `rooftopRate carries $${rooftopRate.fromUsd} per ${rooftopRate.unit}, which disagrees with ` +
+      "the experience record. Two numbers for one rate is how a page and an email quote " +
+      "different figures at the same customer.",
+    rooftopRate.fromUsd === 150 && rooftopRate.unit === "hour"
+  );
+  // The display string is what a visitor actually reads.
+  ok(
+    `rooftopRate.display is "${rooftopRate.display}" and does not state the amount with its ` +
+      'unit. It must read as a rate ("per hour"), not as a price.',
+    /\$150/.test(rooftopRate.display) && /per hour/i.test(rooftopRate.display)
+  );
+  ok(
+    "the music page shows the rate without its unit beside it, so $150 reads as the price of the " +
+      "whole session rather than of one hour of it",
+    /rooftopRate\.display/.test(musicPage)
+  );
+
+  // ---- The rate is the ROOF, not the production. ---------------------
+  ok(
+    "rooftopRate.excludes no longer lists what sits outside the hourly rate. Filming, audio, " +
+      "editing, set dressing and the artist shoot are all quoted separately, and an hourly " +
+      "figure with no exclusions reads as an all-in package.",
+    /filming/i.test(rooftopRate.excludes) &&
+      /editing/i.test(rooftopRate.excludes) &&
+      /separately|outside|not inside/i.test(rooftopRate.excludes)
+  );
+  ok(
+    "the music page no longer renders rooftopRate.excludes, so the hourly rate appears with " +
+      "nothing saying what it does not buy",
+    /rooftopRate\.excludes/.test(musicPage)
+  );
+  for (const service of productionServices) {
+    const priced = `${service.name} ${service.detail}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `the production service "${service.id}" carries a price (${priced.join(", ")}). None of ` +
+        "them has a published figure; every one is quoted for the session.",
+      priced.length === 0
+    );
+  }
+
+  // ---- THE OPEN QUESTION STAYS OPEN. ---------------------------------
+  // The owner explicitly flagged this one as unverified before publication.
+  ok(
+    "the audio recording service is no longer marked unconfirmed. The owner asked for its " +
+      "commercial status to be verified before publication: nobody has said whether it is " +
+      "inside the hourly rate or charged separately, so the page must offer it and claim " +
+      "neither.",
+    productionServices.find((service) => service.id === "audio")?.status === "unconfirmed"
+  );
+  ok(
+    "audioRecording.pageWording now states whether recording equipment is included or charged. " +
+      "That is the one question the owner named as unverified.",
+    !/\bis included\b|\bincluded in the\b|\bcosts \$|\bfor \$/i.test(audioRecording.pageWording)
+  );
+
+  // ---- No invented production specifics. -----------------------------
+  // The owner described "2 to 3 angles" as an INTENDED APPROACH. The brief is
+  // explicit that it must not become a camera or crew count.
+  {
+    const code = strip(musicContent) + strip(musicPage);
+    for (const [what, pattern] of [
+      ["a camera count", /\b(two|three|2|3|four)\s+cameras?\b/i],
+      ["a crew size", /\b(two|three|2|3)\s+(operators?|camera operators?|crew)\b/i],
+      ["a photograph count", /\b\d{2,}\s+(edited\s+)?(photographs?|images?|frames?)\b/i],
+      ["a delivery deadline", /within\s+\d+\s+(hours|days|weeks)/i],
+      ["a video length", /\b\d+\s*(minute|min)\b/i],
+    ] as [string, RegExp][]) {
+      ok(
+        `the music page or its content publishes ${what}. The owner described two or three ` +
+          "ANGLES as an intended approach, and the brief is explicit that it must not be read " +
+          "as a confirmed number of cameras or operators. Nothing about deliverables has been set.",
+        !pattern.test(code)
+      );
+    }
+  }
+  ok(
+    "shootApproach.notPublished no longer names the deliverables we do NOT publish. A production " +
+      "customer asks for every one of them, and leaving the absence unsaid reads as an omission " +
+      "rather than as a position.",
+    /number of cameras/i.test(shootApproach.notPublished)
+  );
+
+  // ---- WE DO NOT SUPPLY SOUND. ---------------------------------------
+  // MATCHED ON THE RENDER AND ON THE DATA, not on the identifier and not on
+  // the file. The first versions of these two tested for `notSupplied`
+  // anywhere in the page (the heading and lede kept it green with the list
+  // gutted) and for the PA sentence anywhere in the content file (the FAQ
+  // answer further down kept it green with the warning deleted). Both passed
+  // on code with the warning removed, which is the one failure this whole
+  // section exists to prevent.
+  ok(
+    "the music page no longer RENDERS notSupplied.points, so the warning that we do not supply " +
+      "a sound system, decks or power has lost its list. The experience record states it in " +
+      "capitals and it is the single most likely way this service ruins somebody's session.",
+    /notSupplied\.points\.map/.test(strip(musicPage))
+  );
+  ok(
+    "no entry in notSupplied.points names a PA, DJ equipment or generators. " +
+      '"We provide cameras and lighting" is not the same warning as "we do not supply the PA", ' +
+      "and a DJ who arrives expecting a booth has had their session ruined.",
+    notSupplied.points.some((point) =>
+      /PA, DJ equipment or generators/i.test(`${point.title} ${point.detail}`)
+    )
+  );
+  ok(
+    "no entry in notSupplied.points says filming inside the archaeological complex is not what " +
+      "this is. That is a different, separately permitted activity and the record is explicit.",
+    // The DETAIL, not the title. A heading reading "Not inside the pyramids
+    // complex" matched the first version of this while the sentence
+    // explaining that it is a separately permitted activity had been
+    // deleted, which leaves the warning as a label with nothing behind it.
+    notSupplied.points.some((point) => /separately permitted/i.test(point.detail))
+  );
+  ok(
+    "the music content no longer says amplified sound is the venue's decision, which the " +
+      "experience record is emphatic about",
+    /venue's call|venue's decision/i.test(musicContent)
+  );
+
+  // ---- The gallery: designed gaps, never a borrowed photograph. ------
+  ok(
+    "PhotoGallery no longer renders a null-src frame as a designed labelled gap. The music page " +
+      "has no DJ photography at all, and a gallery that cannot hold a gap either ships empty or " +
+      "gets filled with somebody else's set.",
+    /frame\.src === null/.test(musicGallery)
+  );
+  ok(
+    "the lightbox is being handed the gaps as well as the photographs, so its arrows walk onto " +
+      "an empty box and it miscounts how many frames there are",
+    /frames=\{real\}/.test(musicGallery)
+  );
+  {
+    const gaps = [...musicPage.matchAll(/wanted:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    ok(
+      `the music gallery declares ${gaps.length} labelled gaps rather than the four shots it is ` +
+        "missing. Deleting one does not get the photograph taken; it hides that it is needed.",
+      gaps.length === 4
+    );
+    for (const gap of gaps) {
+      ok(
+        `a music gallery gap has no description of the shot it wants: "${gap}"`,
+        gap.trim().length > 10
+      );
+    }
+  }
+  {
+    const captions = [...musicPage.matchAll(/caption:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map(
+      (m) => m[1]
+    );
+    const real = captions.filter((c) => /Photographed at|flying-dress session/i.test(c));
+    ok(
+      `only ${real.length} of the music gallery's real frames name the occasion they were ` +
+        "photographed at. None of them is a music session, and a visitor must not have to guess.",
+      real.length === 3
+    );
+  }
+  ok(
+    "the music gallery intro no longer tells the visitor that we have not filmed a DJ set on " +
+      "this roof yet",
+    /not filmed a DJ set on this roof yet/i.test(musicPage)
+  );
+
+  // ---- The setup catalogue, whenever it fills up. --------------------
+  for (const setup of musicSetups) {
+    ok(
+      `the music setup "${setup.id}" has no photograph at public${setup.src}`,
+      setup.src.startsWith("/") && existsSync(`public${setup.src}`)
+    );
+    const priced = `${setup.name} ${setup.description}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(`the music setup "${setup.id}" carries a price (${priced.join(", ")})`, priced.length === 0);
+  }
+
+  // ---- The enquiry handoff. ------------------------------------------
+  ok(
+    "the enquiry API no longer resolves the requested production services against the " +
+      "catalogue, so a crafted payload could put a service we do not offer into the desk email",
+    /productionServices\.find\(\(service\) => service\.id === id\)/.test(strip(musicApi))
+  );
+  ok(
+    "the enquiry API no longer validates the rooftop hours. That field is the one number on " +
+      "this form that multiplies by a rate, so a negative or absurd value reaches a quotation.",
+    /hoursRaw >= 1 && hoursRaw <= 12/.test(strip(musicApi))
+  );
+  ok(
+    "the enquiry API's hours row no longer carries the rate, leaving a bare number in a row " +
+      "called Hours beside every other number on the form",
+    /rate: from \$150 per hour/.test(musicApi)
+  );
+  ok(
+    "the enquiry form no longer gates the music fields on the music experience, so everybody " +
+      "booking a photoshoot is asked how many rooftop hours they want",
+    /const isMusic = isShoot && experience === "rooftop-music-session"/.test(strip(musicForm))
+  );
+
+  // ---- NO QUESTION IS ASKED TWICE. -----------------------------------
+  // Caught by React, not by me: both custom pages concatenated their own FAQ
+  // list with the experience record's and shipped two copies of the same
+  // question a few lines apart. The duplicate-key error was the lucky part;
+  // the visible symptom was a page answering itself twice.
+  for (const [label, page, source] of [
+    ["music", musicPage, "musicFaqs"],
+    ["celebration", read("src/app/flying-dresses/_components/BirthdayPage.tsx"), "celebrationFaqs"],
+  ] as [string, string, string][]) {
+    ok(
+      `the ${label} page concatenates its own questions with the record's instead of merging ` +
+        "them, so a question answered in both renders twice and the FAQ structured data " +
+        "disagrees with the page",
+      new RegExp(`mergeFaqs\\(experience\\.faqs, ${source}\\)`).test(strip(page))
+    );
+  }
+  {
+    // The merge itself, exercised rather than trusted.
+    const merged = mergeFaqs(
+      [{ question: "Can I play loud on the rooftop?", answer: "record" }],
+      [
+        { question: "can i play loud on the rooftop", answer: "page duplicate" },
+        { question: "Something else entirely?", answer: "page only" },
+      ]
+    );
+    ok(
+      `mergeFaqs returned ${merged.length} questions rather than 2, so a duplicate question ` +
+        "survived the merge",
+      merged.length === 2
+    );
+    ok(
+      "mergeFaqs let a page answer displace the record's. The record drives the FAQ structured " +
+        "data, and Google requires the marked-up answer to be the one visible on the page.",
+      merged[0]?.answer === "record"
+    );
+  }
+
+  // ---- The route still owns the URL. ---------------------------------
+  ok(
+    "the music body is no longer rendered from the shared creative route: either it has been " +
+      "forked to its own URL, taking the breadcrumbs and the FAQ structured data with it, or " +
+      "the category has fallen back to the generic renderer",
+    /category\.id === "music-production" && experiences\[0\] \?[\s\S]{0,120}?<MusicProductionPage/.test(
+      strip(musicRoute)
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE THREE SHARED OCCASIONS: anniversaries, maternity, vow renewals
+//
+// All three now carry REAL PRICES, which makes this the first block where
+// being wrong costs a customer money rather than goodwill. The owner's rate
+// card, October 2026: the rooftop is $150 an hour, a flying dress photoshoot
+// is $200 per person, a regular photoshoot is $100 per person, decoration is
+// INCLUDED, and photography for an event is charged separately.
+//
+// Three ways to be wrong, and one guard each:
+//   - a figure that disagrees with the rate card, because two sources for one
+//     number is how two pages quote differently at one customer;
+//   - a rate rendered without its unit, because $200 is PER PERSON and $150 is
+//     PER HOUR and either read bare is wrong by a factor;
+//   - a ceremony priced like a photoshoot, which drops the event photography
+//     fee the owner was explicit about.
+//
+// PROVEN, each by breaking the thing it names: a rate changed, a display
+// string stripped of its unit, the vow renewal repriced per person, the
+// decoration line removed, a celebrant promised, dining reinstated, a gap
+// filled, a caption emptied, and the route's render switched off. All red,
+// then restored.
+// ---------------------------------------------------------------------------
+{
+  const occasionPage = read("src/app/flying-dresses/_components/OccasionPage.tsx");
+  const occasionContent = read("src/content/flyingDressOccasions.ts");
+  const rateContent = read("src/content/flyingDressRates.ts");
+  const occasionRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  // ---- THE RATE CARD IS THE OWNER'S, AND IT IS ONE SOURCE. -----------
+  for (const [id, amount, unit] of [
+    ["location", 150, "hour"],
+    ["flyingDress", 199, "person"],
+    ["regular", 100, "person"],
+  ] as [keyof typeof rates, number, string][]) {
+    const rate = rates[id];
+    ok(
+      `the ${id} rate is $${rate.amountUsd} per ${rate.unit} rather than $${amount} per ${unit}. ` +
+        "These are the owner's figures from October 2026 and a price may only change when they " +
+        "say so.",
+      rate.amountUsd === amount && rate.unit === unit
+    );
+    // The display string is what a visitor reads, and it is the only place
+    // the unit survives into the page.
+    ok(
+      `the ${id} rate's display string is "${rate.display}" and does not carry both the amount ` +
+        `and the unit. A rate rendered bare is wrong by however many ${rate.unit}s somebody books.`,
+      rate.display.includes(`$${amount}`) && new RegExp(`per ${unit}`, "i").test(rate.display)
+    );
+  }
+  // One source: no page may hold its own copy of a figure.
+  for (const [label, source] of [
+    ["the occasion content", occasionContent],
+    ["the occasion page", occasionPage],
+  ] as const) {
+    // THE ALLOWED FIGURES COME FROM THE RATE CARD, not a list typed here.
+    // The previous version hardcoded 100/150/200, so when the owner corrected
+    // the dress rate to $199 the guard would happily have passed three FAQ
+    // answers still saying $200. The prose now interpolates the rate card, and
+    // this derives what it may contain from the same place.
+    const allowed = new Set(Object.values(rates).map((rate) => `$${rate.amountUsd}`));
+    const money = strip(source).match(/[$£€]\s?\d+/g) ?? [];
+    const unexpected = money.filter((m) => !allowed.has(m.replace(/\s/g, "")));
+    ok(
+      `${label} writes a currency figure of its own (${unexpected.join(", ")}) instead of reading ` +
+        "it from flyingDressRates.ts. Two copies of one number is how two pages quote differently.",
+      unexpected.length === 0
+    );
+  }
+  ok(
+    "the occasion page renders rate.display in fewer than two places. The hero and the money " +
+      "section both show the figure, and a guard matching one occurrence anywhere stayed green " +
+      "with either stripped: a rate without its unit is wrong by a factor.",
+    (strip(occasionPage).match(/\{rate\.display\}/g) ?? []).length === 2
+  );
+
+  // ---- A CEREMONY IS AN EVENT, NOT A PHOTOSHOOT. ---------------------
+  {
+    const vows = occasionByCategory("vows-engagement");
+    ok("the vows-engagement occasion has gone missing", Boolean(vows));
+    ok(
+      "the vow renewal is no longer marked as an event, so the page drops the line saying event " +
+        "photography is charged on top of the rooftop hours. The owner's rate card is explicit " +
+        "about that fee.",
+      vows?.pricing.isEvent === true
+    );
+    ok(
+      `the vow renewal is priced at ${vows?.pricing.applies.map((r) => r.display).join(", ")} ` +
+        "rather than by the hour. A ceremony is an event: pricing it per person like a photoshoot " +
+        "silently drops the event photography fee.",
+      vows?.pricing.applies.length === 1 && vows.pricing.applies[0]?.unit === "hour"
+    );
+    ok(
+      "the occasion page no longer renders the event-photography line for an event",
+      /\{RATES_EVENT_PHOTOGRAPHY\}/.test(strip(occasionPage))
+    );
+    ok(
+      "RATES_EVENT_PHOTOGRAPHY no longer makes BOTH halves of the point: that a photoshoot is " +
+        "priced per person while an event is the room by the hour, AND that the photography is " +
+        "charged on top. Dropping either half leaves a ceremony looking per-person priced.",
+      /charged separately/i.test(RATES_EVENT_PHOTOGRAPHY) &&
+        /per person/i.test(RATES_EVENT_PHOTOGRAPHY) &&
+        /by the hour/i.test(RATES_EVENT_PHOTOGRAPHY)
+    );
+  }
+  for (const occasion of occasions) {
+    ok(
+      `the ${occasion.categoryId} occasion applies no rates, so its page shows a visitor nothing ` +
+        "about what it costs",
+      occasion.pricing.applies.length > 0
+    );
+  }
+
+  // ---- DECORATION IS INCLUDED, and that is unusual enough to state. --
+  ok(
+    "RATES_INCLUDE_DECORATION no longer says the decoration is included. The owner confirmed it " +
+      "in October 2026 and it is a real advantage: comparable services charge for styling " +
+      "separately or do not offer it.",
+    /decoration is included/i.test(RATES_INCLUDE_DECORATION)
+  );
+  ok(
+    "the occasion page no longer renders the included-decoration line, so the one genuinely " +
+      "generous thing about this rate card is invisible",
+    /\{RATES_INCLUDE_DECORATION\}/.test(strip(occasionPage))
+  );
+
+  // ---- NOTHING UNVERIFIED IS PROMISED. -------------------------------
+  // Both of these were explicitly decided in October 2026.
+  {
+    const vows = occasionByCategory("vows-engagement");
+    const vowsText = JSON.stringify(vows);
+    ok(
+      "the vow renewal page now offers a celebrant. The record flags one as unverified and the " +
+        "owner left the call open. A celebrant is a person who has to turn up to a ceremony: " +
+        "promising one we cannot produce does not disappoint a customer, it ruins the event.",
+      /not offering a celebrant/i.test(vows?.feature.note ?? "")
+    );
+    ok(
+      "the vow renewal's FEATURE section no longer states that the ceremony creates no legal " +
+        "marriage. It has to be the prominent statement, not only an answer buried in the " +
+        "questions: the first version of this guard searched the whole record and the FAQ kept " +
+        "it green while the prominent one had been deleted.",
+      // THE DETAIL, NOT THE TITLE. A heading reading "It creates no legal
+      // marriage" matched the previous version of this while the sentence
+      // under it had been replaced, which leaves the most important claim on
+      // the page as a label with nothing behind it. The same trap caught the
+      // pyramids-complex warning on the music page.
+      // ALL THREE CLAIMS, IN THE DETAILS. Two earlier versions of this guard
+      // passed on a gutted section: one matched a heading that still read "It
+      // creates no legal marriage", the other matched the word "embassy" in a
+      // different point. The section only does its job if it says all three
+      // things, so removing any one of them now goes red.
+      ["legal officiation", "legal effect", "embassy"].every((claim) =>
+        vows?.feature.points.some((point) =>
+          new RegExp(claim, "i").test(point.detail)
+        )
+      )
+    );
+    ok(
+      "the vow renewal's questions no longer carry the legal statement either",
+      /creates no legal marriage/i.test(vowsText)
+    );
+  }
+  {
+    const romance = occasionByCategory("romance");
+    ok(
+      "the anniversary page mentions private dining. The owner confirmed in October 2026 that it " +
+        "is unverified and should stay off the page until a venue has agreed it.",
+      !/private dining|dinner on the roof|rooftop dinner/i.test(JSON.stringify(romance))
+    );
+  }
+
+  // ---- THE GALLERIES: real frames captioned, gaps labelled. ---------
+  {
+    const occasionWords =
+      /couples shoot|anniversary shoot|vow renewal|flying-dress session|gender reveal|Fayoum/i;
+    for (const occasion of occasions) {
+      const real = occasion.frames.filter((frame) => frame.slot !== null);
+      const gaps = occasion.frames.filter((frame) => frame.slot === null);
+      ok(
+        `the ${occasion.categoryId} gallery has no photographs at all`,
+        real.length > 0
+      );
+      for (const frame of real) {
+        ok(
+          `a ${occasion.categoryId} gallery frame does not name the occasion it was photographed ` +
+            `at: "${frame.caption.slice(0, 64)}". None of these is the occasion the page sells.`,
+          occasionWords.test(frame.caption)
+        );
+        ok(
+          `the ${occasion.categoryId} gallery points at an asset key "${frame.slot}" that is not ` +
+            "in the registry, so the frame would silently vanish",
+          Object.prototype.hasOwnProperty.call(allSlots, frame.slot as string) ||
+            Boolean(frame.slot && frame.slot in (allSlots as Record<string, unknown>))
+        );
+      }
+      for (const gap of gaps) {
+        ok(
+          `a ${occasion.categoryId} gallery gap does not name the photograph it is waiting for`,
+          Boolean(gap.wanted && gap.wanted.length > 10)
+        );
+        ok(
+          `a ${occasion.categoryId} gallery gap has no alt text, so a screen reader hears nothing ` +
+            "where a designed slot sits",
+          Boolean(gap.alt && gap.alt.length > 10)
+        );
+      }
+    }
+    // The maternity page has no photograph of its own occasion, so its gaps
+    // are the only honest way to show what is missing.
+    const maternity = occasionByCategory("maternity-family");
+    ok(
+      "the maternity gallery has stopped declaring labelled gaps. There is no photograph of a " +
+        "pregnancy, a family or a child anywhere in this repository, and deleting the gaps does " +
+        "not get them taken, it hides that they are needed.",
+      (maternity?.frames.filter((f) => f.slot === null).length ?? 0) >= 3
+    );
+  }
+
+  // ---- No em-dashes in visitor-facing copy. --------------------------
+  {
+    const literals = [...occasionContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    const offenders = literals.filter((literal) => literal.includes("—"));
+    ok(
+      `the occasion content uses an em-dash in visitor-facing copy: "${offenders[0]?.slice(0, 60) ?? ""}"`,
+      offenders.length === 0
+    );
+  }
+  {
+    const literals = [...rateContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    ok(
+      "the rate card uses an em-dash in visitor-facing copy",
+      literals.every((literal) => !literal.includes("—"))
+    );
+  }
+
+  // ---- Each occasion matches a real experience and renders. ----------
+  for (const occasion of occasions) {
+    const experience = flyingDressExperiences.find((e) => e.slug === occasion.experienceSlug);
+    ok(
+      `the ${occasion.categoryId} occasion points at experience "${occasion.experienceSlug}", ` +
+        "which does not exist, so its page would never render",
+      Boolean(experience)
+    );
+    ok(
+      `the ${occasion.categoryId} occasion's experience is in category "${experience?.category}" ` +
+        `rather than "${occasion.categoryId}", so the route would hand it the wrong record`,
+      experience?.category === occasion.categoryId
+    );
+  }
+  // ---- DECORATION IS INCLUDED ONLY WHERE IT IS. ----------------------
+  // The owner confirmed it IS included in these three and is NOT included in
+  // birthdays and private celebrations, where it is arranged and quoted. A
+  // shared "decoration is included" sentence is one import away from making
+  // that false claim on the birthday page.
+  for (const occasion of occasions) {
+    ok(
+      `the ${occasion.categoryId} occasion no longer marks decoration as included. The owner ` +
+        "confirmed it is, and it is the one genuinely generous thing in this rate card.",
+      occasion.pricing.decorationIncluded === true
+    );
+  }
+  ok(
+    "the occasion page renders the included-decoration line unconditionally instead of behind " +
+      "pricing.decorationIncluded, so adding an occasion where it is not included would publish " +
+      "a false claim",
+    /decorationIncluded \?[\s\S]{0,120}?RATES_INCLUDE_DECORATION/.test(strip(occasionPage))
+  );
+  {
+    const birthdayBody = read("src/app/flying-dresses/_components/BirthdayPage.tsx");
+    const birthdayData = read("src/content/flyingDressBirthday.ts");
+    ok(
+      "the celebration page claims decoration is included. The owner confirmed in October 2026 " +
+        "that it is NOT included for birthdays and private celebrations: it is arranged and " +
+        "priced in the quotation, which is what its charge label says.",
+      !/decoration is included/i.test(birthdayBody + birthdayData)
+    );
+    ok(
+      "the celebration page no longer classifies its decoration line as arranged-and-quoted, " +
+        "which is what the owner confirmed it is",
+      celebrationLines.some(
+        (line) => /decoration/i.test(line.title) && line.charge === "arranged"
+      )
+    );
+  }
+
+  // ---- NO FRAME IS SHOWN TWICE ON ONE PAGE. --------------------------
+  // Found by looking at the rendered page, not by a check. The shared route
+  // renders `categoryPhoto[category.id]` large and uncaptioned above the
+  // body, and two of these occasions then added a hero of their own and put
+  // the same frame in the gallery underneath. One photograph appearing three
+  // times reads as a portfolio of one.
+  for (const occasion of occasions) {
+    const routePhoto = categoryPhoto[occasion.categoryId];
+    const gallerySlots = occasion.frames
+      .map((frame) => frame.slot)
+      .filter((slot): slot is string => typeof slot === "string");
+
+    ok(
+      `the ${occasion.categoryId} page renders its own hero AND the route renders a category ` +
+        "photograph, so the page opens with two large photographs where it meant to open with " +
+        "one. Set heroSlot to null when categoryPhoto carries this category.",
+      !(routePhoto && occasion.heroSlot)
+    );
+    ok(
+      `the ${occasion.categoryId} page has neither a category photograph nor a hero, so it opens ` +
+        "on type alone. That is a deliberate choice for the vow renewal, whose only candidate " +
+        "frame needs its caption to be honest, and a mistake anywhere else.",
+      Boolean(routePhoto) || Boolean(occasion.heroSlot) || occasion.categoryId === "vows-engagement"
+    );
+    if (occasion.heroSlot) {
+      ok(
+        `the ${occasion.categoryId} gallery repeats its own hero (${occasion.heroSlot})`,
+        !gallerySlots.includes(occasion.heroSlot)
+      );
+    }
+    if (routePhoto) {
+      const repeated = gallerySlots.filter(
+        (slot) => agency[slot as keyof typeof agency]?.src === routePhoto.src
+      );
+      ok(
+        `the ${occasion.categoryId} gallery repeats the photograph the route already shows above ` +
+          `it (${repeated.join(", ")})`,
+        repeated.length === 0
+      );
+    }
+    const seen = new Set<string>();
+    const dupes = gallerySlots.filter((slot) => (seen.has(slot) ? true : (seen.add(slot), false)));
+    ok(
+      `the ${occasion.categoryId} gallery shows the same frame twice (${dupes.join(", ")})`,
+      dupes.length === 0
+    );
+  }
+
+  // ---- A story reference that does not resolve renders NOTHING. ------
+  // Found by looking at the page rather than by a check: the anniversary
+  // occasion pointed at the Alessandra write-up, which is an Egypt Eye story,
+  // so the section silently vanished. A dead slug has no visible symptom.
+  for (const occasion of occasions) {
+    if (!occasion.storySlug) continue;
+    ok(
+      `the ${occasion.categoryId} occasion links story "${occasion.storySlug}", which this site ` +
+        "does not publish. The section renders nothing at all for a slug that does not resolve, " +
+        "so the page quietly loses a whole section with no error anywhere.",
+      Boolean(liveStoryBySlug(occasion.storySlug))
+    );
+  }
+
+  ok(
+    "the shared occasion body is no longer rendered from the celebrations route, so three " +
+      "categories have fallen back to the generic renderer",
+    /occasion && experiences\[0\] \?[\s\S]{0,120}?<OccasionPage/.test(strip(occasionRoute))
+  );
+}
 
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");

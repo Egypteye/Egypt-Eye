@@ -484,12 +484,30 @@ textarea {
   align-items: center;
 }
 
+/* Top-aligned, because two compared columns of different lengths centred
+   against each other start at two different heights. */
+.fd-split-even {
+  align-items: start;
+}
+
 @media (min-width: 60rem) {
   .fd-split {
     grid-template-columns: 1.15fr 0.85fr;
   }
   .fd-split-reverse {
     grid-template-columns: 0.85fr 1.15fr;
+  }
+  /* TWO THINGS BEING COMPARED, not content plus an aside.
+     `.fd-split` is 1.15fr / 0.85fr because almost every use of it is a
+     column of prose beside a supporting note. The celebration page has two
+     uses that are not that: the casual and flying dress photoshoots, and
+     the music and guest sections. Through the asymmetric grid the two
+     photographs came out 656px and 485px wide, so the same aspect ratio
+     produced two different heights and the headings beneath them did not
+     line up. A comparison whose halves are different sizes reads as a
+     preference. */
+  .fd-split-even {
+    grid-template-columns: 1fr 1fr;
   }
   /* Keeps the DOM in reading order while swapping the visual order, so a
      screen reader and the keyboard still get text-then-image. */
@@ -2388,18 +2406,64 @@ ol.fd-timeline h3::before {
   display: block;
 }
 
-/* The reference, not a product name. Set small and quiet: it is there to be
-   quoted in an enquiry, not to be read as a title. */
+/* The caption under each piece: name, reference, what it is, where it goes.
+   Four lines in a stack rather than a paragraph, because they are read at
+   different speeds — the name is scanned, the reference is copied, and the
+   two sentences are read only by somebody already interested in that piece.
+
+   The NAME carries the weight (display face, ink). The REFERENCE is set
+   small and quiet beneath it: it is there to be quoted in an enquiry, not to
+   be read as a title, and it must not compete with the name above it. */
+.fd-acc-name,
+.fd-acc-ref,
+.fd-acc-desc,
+.fd-acc-worn {
+  display: block;
+}
+
+.fd-acc-name {
+  margin-top: 0.7rem;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  line-height: 1.2;
+  color: var(--fd-ink);
+}
+
 .fd-acc-ref {
-  margin-top: 0.6rem;
+  margin-top: 0.2rem;
   font-size: var(--fd-step--1);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--fd-ink-soft);
 }
 
-.fd-on-dark .fd-acc-ref {
+.fd-acc-desc {
+  margin-top: 0.5rem;
+  font-size: var(--fd-step--1);
+  line-height: 1.6;
+  color: var(--fd-ink-soft);
+}
+
+/* Where it is worn, set apart from the description by a hairline rather than
+   a heading: it answers a different question and a reader scanning for it
+   should be able to find it without reading the sentence above. */
+.fd-acc-worn {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--fd-gold-line);
+  font-size: var(--fd-step--1);
+  line-height: 1.6;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-acc-ref,
+.fd-on-dark .fd-acc-desc,
+.fd-on-dark .fd-acc-worn {
   color: var(--fd-ivory-dim);
+}
+
+.fd-on-dark .fd-acc-name {
+  color: var(--fd-ivory);
 }
 
 .fd-on-dark .fd-acc-frame {
@@ -2451,6 +2515,31 @@ ol.fd-timeline h3::before {
   color: var(--fd-ink-soft);
 }
 
+/* ---- The same route, turned down ------------------------------------
+   The card above sat on top of the enquiry form, pink and loud, and it was
+   the first thing every visitor met whether their date was tomorrow or next
+   spring. The owner asked for it at the bottom and quieter, which is the
+   right call: somebody whose shoot is in two days does not need a shout, and
+   everybody else was reading an alarm that was not about them.
+
+   Quieter means quieter, not hidden. It keeps the number at a size a thumb
+   can hit and keeps the tel: link, and the gold rule still marks it as its
+   own thing — it just no longer competes with the form it sits under. */
+.fd-urgent-quiet {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--fd-gold-line);
+}
+
+.fd-urgent-quiet .fd-urgent-number {
+  margin: 0.15rem 0 0.35rem;
+  font-size: var(--fd-step-1);
+}
+
+.fd-urgent-quiet .fd-urgent-blurb {
+  max-width: 34rem;
+}
+
 .fd-on-dark .fd-urgent {
   background: var(--fd-ink-3);
 }
@@ -2487,6 +2576,182 @@ ol.fd-timeline h3::before {
   gap: 1.25rem;
 }
 
+/* ---- The first question ----------------------------------------------
+   Four products used to share one undivided form, and the form read as one
+   product with a lot of caveats. This control is the fork, so it is styled
+   to look like a decision rather than a field: a card per option, the label
+   in the display face, the choice filled solid in ink the way .fd-swatch
+   marks a selected colour.
+
+   The radio itself stays in the markup and stays operable — it is what makes
+   arrow keys work and what a screen reader announces. It is simply not what
+   a mouse user aims at: the whole card is the label, so the target is the
+   card. */
+.fd-intent {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.fd-intent-legend {
+  padding: 0;
+  margin-bottom: 0.75rem;
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+.fd-intent-grid {
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 34rem) {
+  .fd-intent-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.fd-intent-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid rgba(20, 20, 20, 0.18);
+  background: transparent;
+  cursor: pointer;
+  transition: border-color var(--fd-fast), background-color var(--fd-fast);
+}
+
+.fd-intent-option:hover {
+  border-color: var(--fd-ink);
+}
+
+.fd-intent-option input {
+  /* 24px, WCAG 2.2 2.5.8 Target Size (Minimum), and a hair of optical offset
+     so the dot lines up with the cap height of the label beside it. */
+  width: 1.5rem;
+  height: 1.5rem;
+  min-height: 0;
+  flex: none;
+  margin-top: 0.1rem;
+  accent-color: var(--fd-ink);
+}
+
+.fd-intent-option[data-selected="true"] {
+  border-color: var(--fd-ink);
+  background: var(--fd-sand);
+}
+
+.fd-intent-label {
+  display: block;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  line-height: 1.2;
+  color: var(--fd-ink);
+}
+
+.fd-intent-blurb {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-intent-option[data-selected="true"] {
+  background: var(--fd-ink-3);
+}
+
+.fd-on-dark .fd-intent-label {
+  color: var(--fd-ivory);
+}
+
+/* ---- Picking from a collection inside the form -----------------------
+   .fd-swatch is a chip: one short label, wrapped in a row. The accessories
+   need three lines each (name, reference, where it is worn), so a chip row
+   would wrap into something unreadable. This is the same visual family at
+   list proportions: one per row on a phone, two up once there is width. */
+.fd-pick-list {
+  display: grid;
+  gap: 0.4rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 34rem) {
+  .fd-pick-list {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* A .fd-pick IS a <label>, and it lives inside .fd-field — which sets every
+   label it contains in letterspaced uppercase, because every other label in
+   this form is a three-word field name. Two sentences of prose in that
+   treatment is unreadable, and it is how the first version of this shipped.
+   .fd-swatch works around the same inheritance with inline styles; this
+   undoes it in the stylesheet, where it belongs.
+
+   SELECTOR SPECIFICITY IS THE WHOLE POINT HERE. A bare `.fd-pick` (0,1,0)
+   loses to `.fd-field label` (0,1,1) and the uppercase survives, which is
+   exactly what the first attempt at this fix did. `.fd-field .fd-pick` is
+   (0,2,0) and wins. */
+.fd-field .fd-pick {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  font-weight: 400;
+  transition: border-color var(--fd-fast);
+}
+
+.fd-field .fd-pick:hover,
+.fd-field .fd-pick:focus-within {
+  border-color: var(--fd-ink);
+}
+
+.fd-pick input {
+  margin-top: 0.1rem;
+  accent-color: var(--fd-ink);
+}
+
+.fd-pick-name {
+  display: block;
+  font-size: var(--fd-step-0);
+  line-height: 1.3;
+  color: var(--fd-ink);
+}
+
+.fd-pick-ref {
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+.fd-pick-worn {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  color: var(--fd-ink-soft);
+}
+
+.fd-on-dark .fd-pick-name {
+  color: var(--fd-ivory);
+}
+
+.fd-on-dark .fd-pick-ref,
+.fd-on-dark .fd-pick-worn {
+  color: var(--fd-ivory-dim);
+}
+
 @media (min-width: 40rem) {
   .fd-form-2 {
     grid-template-columns: 1fr 1fr;
@@ -2506,6 +2771,63 @@ ol.fd-timeline h3::before {
   font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+/* ---- A checkbox with a sentence attached -----------------------------
+   The transport request on the celebration enquiry. It needs a real label
+   plus a line explaining that it is an ADDITIONAL charge, which the pill
+   shaped `.fd-swatch` used by the extras row cannot carry.
+
+   THE SPECIFICITY IS THE POINT. This is a <label> inside `.fd-field`, and
+   `.fd-field label` above sets uppercase with 0.14em tracking, which is
+   right for a one-word field label and unreadable across two sentences of
+   prose. That rule is (0,1,1); `.fd-field .fd-check` is (0,2,0) and wins.
+   The same mistake has already shipped once on this site, on `.fd-pick`.
+
+   The box is 1.5rem = 24px, matching the extras row, for WCAG 2.2 2.5.8
+   Target Size (Minimum). `flex: none` keeps it square when the sentence
+   beside it wraps onto three lines on a phone. */
+/* A fieldset's legend inside a form field. Same treatment as `.fd-field
+   label`, which a <legend> is not and therefore does not inherit. It was
+   written inline three times before this existed. */
+.fd-field-legend {
+  font-size: var(--fd-step--1);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+  padding: 0;
+  margin-bottom: 0.6rem;
+}
+
+.fd-field .fd-check {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  cursor: pointer;
+  font-size: var(--fd-step-0);
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--fd-ink);
+}
+
+.fd-field .fd-check input[type="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  min-height: 0;
+  margin: 0;
+  flex: none;
+}
+
+.fd-field .fd-check-note {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--fd-ink-soft);
 }
 
@@ -3476,6 +3798,531 @@ ol.fd-timeline h3::before {
    Ink with a red underline, rather than red text: red is the brand's accent
    and a paragraph with three red words in it reads as a warning. The offset
    keeps the rule off the descenders. */
+/* ==========================================================================
+   THE PROPOSAL PAGE
+   One category, its own composition. Everything here is prefixed so it
+   cannot leak into the seven celebration pages that share the route.
+   ========================================================================== */
+
+/* ---- The gallery ------------------------------------------------------
+   Editorial rather than a uniform grid: one frame across the top, then
+   pairs. A six-up grid of identical tiles is what the rest of this site
+   already does, and a page asked to feel art-directed should not open with
+   the same rhythm as the index it was reached from. */
+.fd-pgallery {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 48rem) {
+  .fd-pgallery {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  .fd-pgallery-lead {
+    grid-column: 1 / -1;
+  }
+}
+
+.fd-pgallery-cell {
+  margin: 0;
+}
+
+/* The whole frame is the control. A button wrapping an image needs its
+   own reset, or the user agent's padding and border put a grey box around
+   every photograph on the page. */
+.fd-pgallery-btn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.fd-pgallery-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform var(--fd-slow, 420ms) var(--fd-ease-soft, ease);
+}
+
+.fd-pgallery-btn:hover .fd-pgallery-img,
+.fd-pgallery-btn:focus-visible .fd-pgallery-img {
+  transform: scale(1.02);
+}
+
+/* The caption carries what the frame actually is, and its credit. It is
+   not decoration: this gallery contains no proposal photography, so the
+   caption is the thing keeping the page honest. It is never hidden. */
+.fd-pgallery-cap {
+  margin: 0.7rem 0 0;
+  font-size: var(--fd-step--1);
+  line-height: 1.55;
+  color: var(--fd-ink-soft);
+}
+
+/* ---- The lightbox ----------------------------------------------------- */
+.fd-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(20, 16, 12, 0.92);
+}
+
+.fd-lightbox-panel {
+  width: min(78rem, 100%);
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fd-lightbox-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  color: var(--fd-ivory);
+}
+
+.fd-lightbox-count {
+  margin: 0;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.12em;
+  color: var(--fd-ivory-dim);
+}
+
+/* 44px of target on every control, per WCAG 2.2 2.5.8. These are the
+   controls most likely to be used on a phone, one-handed. */
+.fd-lightbox-close,
+.fd-lightbox-nav {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--fd-ivory);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color var(--fd-fast, 160ms) ease;
+}
+
+.fd-lightbox-close:hover,
+.fd-lightbox-nav:hover,
+.fd-lightbox-close:focus-visible,
+.fd-lightbox-nav:focus-visible {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.fd-lightbox-stage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 0;
+}
+
+.fd-lightbox-img {
+  flex: 1;
+  min-width: 0;
+  width: 100%;
+  height: auto;
+  max-height: 72vh;
+  object-fit: contain;
+}
+
+.fd-lightbox-caption {
+  margin: 0;
+  font-size: var(--fd-step--1);
+  line-height: 1.6;
+  color: var(--fd-ivory-dim);
+  max-width: 46rem;
+}
+
+/* ---- The decoration catalogue ----------------------------------------
+   Renders nothing today: the owner has confirmed a catalogue exists and
+   has not supplied its entries, so the component shows the honest interim
+   instead. These rules are what a real entry lands into. */
+.fd-decor-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (min-width: 52rem) {
+  .fd-decor-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* A CARD FILLS ITS GRID CELL, so a row of them shares one bottom edge.
+   With a photograph on top the heights already matched, which is why this
+   was never needed for the proposal catalogue. The gender reveal's colour
+   themes are text only and three different sentence lengths left three
+   different bottom edges side by side. The pick line is pushed to the
+   bottom so those align too. */
+.fd-decor-grid > li {
+  display: grid;
+}
+
+.fd-decor-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  border: 1px solid rgba(20, 20, 20, 0.14);
+  background: var(--fd-ivory);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--fd-fast, 160ms) ease;
+}
+
+.fd-decor-card:hover,
+.fd-decor-card:focus-visible {
+  border-color: var(--fd-ink);
+}
+
+.fd-decor-card[aria-pressed="true"] {
+  border-color: var(--fd-ink);
+  box-shadow: inset 0 0 0 1px var(--fd-ink);
+}
+
+.fd-decor-frame {
+  display: block;
+  /* Never squashed by the flex column above: the ratio is the point. */
+  flex: none;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+}
+
+.fd-decor-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fd-decor-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 0.85rem 0.9rem 1rem;
+}
+
+.fd-decor-name {
+  display: block;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-0);
+  color: var(--fd-ink);
+}
+
+.fd-decor-desc {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  color: var(--fd-ink-soft);
+}
+
+.fd-decor-pick {
+  display: block;
+  /* auto, not a fixed gap: it sits at the bottom of the card however much
+     description is above it, so a row of cards aligns on this line. */
+  margin-top: auto;
+  padding-top: 0.6rem;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fd-gold-ink);
+}
+
+/* ---- The rate row ----------------------------------------------------
+   The figures in an occasion hero. Two of them at most, side by side on a
+   phone, because a $100 and a $200 rate read as a choice when they sit
+   together and as two unrelated numbers when they stack.
+
+   THE UNIT IS INSIDE THE FIGURE, not a separate element: "$150 per hour"
+   is one string from the rate card. Splitting the amount from the unit is
+   how a rate ends up rendered bare at some future breakpoint. */
+.fd-rate-row {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2.5rem;
+}
+
+.fd-rate-row > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.fd-rate-figure {
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-2);
+  line-height: 1.1;
+  color: var(--fd-ink);
+}
+
+.fd-rate-label {
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+/* ---- The charge tag --------------------------------------------------
+   Four labels on the celebration page: Included, Arranged for you,
+   Additional charge, Quoted for you. The brief asked for the distinction
+   and it is the usual place a premium experience page misleads, by
+   publishing one undifferentiated "what's included" list and letting the
+   charges surface at quotation.
+
+   NEARLY MONOCHROME, ON PURPOSE. Four coloured badges would fight the rule
+   this stylesheet opens with: the chrome carries almost no colour so the
+   photographs carry all of it. So three of the four are quiet, and only
+   ADDITIONAL CHARGE takes the brand's single accent, because it is the one
+   that costs money and the one a reader must not skim past.
+
+   Contrast on the backgrounds these actually sit on (ivory and sand):
+     --fd-ink-soft on --fd-ivory  7.1:1   on --fd-sand  6.6:1
+     --fd-gold-ink on --fd-ivory  6.9:1   on --fd-sand  5.7:1
+   Both clear WCAG 2.2 AA at this size.
+
+   `vertical-align: middle` rather than baseline: the tag sits inside an h3
+   in the display face, and on the baseline its border box drags the line
+   box down and opens an uneven gap above each list item. */
+.fd-charge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  padding: 0.15em 0.55em;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--fd-sans, inherit);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--fd-ink-soft);
+}
+
+.fd-charge-extra {
+  color: var(--fd-gold-ink);
+}
+
+/* Quieter still: these two are the default state of most lines, and a
+   border on every one of them turns a list into a form. */
+.fd-charge-included,
+.fd-charge-confirm {
+  border-color: rgba(20, 20, 20, 0.22);
+}
+
+/* ---- The numbered sequence -------------------------------------------
+   The numeral is set large and quiet in the display face. It is the one
+   place on this page where an ornamental element earns its space: it
+   turns a list of seven paragraphs into something a visitor can see the
+   length of before reading it. */
+.fd-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 1.75rem;
+  counter-reset: fd-step;
+}
+
+@media (min-width: 52rem) {
+  .fd-steps {
+    grid-template-columns: 1fr 1fr;
+    gap: 2.25rem 3rem;
+  }
+}
+
+.fd-steps li {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+}
+
+.fd-step-num {
+  flex: none;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-2);
+  line-height: 1;
+  color: var(--fd-gold-ink);
+  opacity: 0.75;
+}
+
+.fd-step-body {
+  display: block;
+}
+
+.fd-step-title {
+  display: block;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-1);
+  line-height: 1.25;
+  color: var(--fd-ink);
+}
+
+.fd-step-detail {
+  display: block;
+  margin-top: 0.5rem;
+  line-height: 1.7;
+  color: var(--fd-ink-soft);
+}
+
+/* ---- The payment split ------------------------------------------------
+   Two percentages set large, because the question this answers is "how
+   much do I pay now", and the answer is a shape rather than a sentence.
+   There is no PRICE anywhere on this page: no figure has been set for a
+   proposal, and the check script fails if one appears. */
+.fd-paysplit {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 52rem) {
+  .fd-paysplit {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+.fd-paysplit-cell {
+  padding: 1.5rem;
+  background: var(--fd-ivory);
+  border-top: 2px solid var(--fd-gold);
+}
+
+.fd-paysplit-figure {
+  margin: 0;
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-4);
+  line-height: 1;
+  color: var(--fd-ink);
+}
+
+.fd-paysplit-label {
+  margin: 0.6rem 0 0;
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
+.fd-paysplit-detail {
+  margin: 0.75rem 0 0;
+  font-size: var(--fd-step--1);
+  line-height: 1.6;
+  color: var(--fd-ink-soft);
+}
+
+.fd-paysplit-methods {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.35rem;
+  font-size: var(--fd-step-0);
+  color: var(--fd-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fd-pgallery-img,
+  .fd-pgallery-btn:hover .fd-pgallery-img,
+  .fd-pgallery-btn:focus-visible .fd-pgallery-img {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ---- The editorial section --------------------------------------------
+   A contents list, and one commercial next step.
+
+   Both are set QUIETLY on purpose. This brand's articles earn the click by
+   being right about something, and a reading experience interrupted by a
+   boxed, bordered, accented call to action every few hundred words reads as
+   advertising with prose around it. The contents list is a hairline and a
+   column of links; the next step is one sentence and one button, once, after
+   the article has finished saying what it came to say. */
+.fd-toc {
+  max-width: 46rem;
+  margin: 0 0 2.5rem;
+  padding: 1rem 0 1.1rem;
+  border-top: 1px solid var(--fd-gold-line);
+  border-bottom: 1px solid var(--fd-gold-line);
+}
+
+.fd-toc-list {
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+
+@media (min-width: 46rem) {
+  .fd-toc-list {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 2rem;
+  }
+}
+
+.fd-toc-list a {
+  color: var(--fd-ink-soft);
+  text-decoration: none;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  /* 44px of target for a thumb, per the tap-target pass. A contents list is
+     mostly used on a phone, which is the device the scrolling hurts on. */
+  display: block;
+  padding-block: 0.35rem;
+}
+
+.fd-toc-list a:hover,
+.fd-toc-list a:focus-visible {
+  color: var(--fd-gold-ink);
+}
+
+.fd-story-cta {
+  max-width: 46rem;
+}
+
+.fd-story-cta-note {
+  margin: 0 0 1.25rem;
+  font-size: var(--fd-step-0);
+  line-height: 1.7;
+  color: var(--fd-ink-soft);
+  max-width: 42rem;
+}
+
+.fd-on-dark .fd-toc-list a {
+  color: var(--fd-ivory-dim);
+}
+
 .fd-inline-link {
   display: inline-block;
   min-height: 2.75rem;
@@ -3486,6 +4333,28 @@ ol.fd-timeline h3::before {
   text-decoration-thickness: 1px;
   text-underline-offset: 0.25em;
   transition: color var(--fd-fast, 160ms) var(--fd-ease-soft, ease);
+}
+
+/* A LINK INSIDE A SENTENCE IS NOT A TAP TARGET.
+   .fd-inline-link carries display:inline-block, min-height:2.75rem and
+   vertical padding, which is the right treatment for a link standing on its
+   own: 44px of thumb, per WCAG 2.2 2.5.8.
+
+   Dropped into running prose it is a disaster, and a quiet one. Every line
+   containing a link gets a 44px line box, so a paragraph with one link in it
+   is set at one leading and the rest of the article at another, and the page
+   reads as though the typography is broken without any single line looking
+   wrong. That is exactly what happened when the stories grew contextual
+   links, and it was caught by looking at the page rather than by any check.
+
+   2.5.8 has an explicit exception for this case: a target "in a sentence or
+   whose size is otherwise constrained by the line-height of non-target text"
+   is exempt. So inside .fd-prose the link goes back to being text with an
+   underline, which is what it is. */
+.fd-prose .fd-inline-link {
+  display: inline;
+  min-height: 0;
+  padding-block: 0;
 }
 
 .fd-inline-link:hover,

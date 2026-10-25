@@ -7,7 +7,7 @@ import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { Wardrobe } from "../../_components/Wardrobe";
 import { AccessoryLookbook } from "../../_components/AccessoryLookbook";
-import { accessoryCategories, accessoryItems } from "../../_lib/accessoryLookbook";
+import { accessoryCategories, accessoryItems } from "@/content/flyingDressAccessories";
 import { empty } from "../../_lib/assets";
 import {
   fdBreadcrumbJsonLd,
@@ -16,6 +16,7 @@ import {
   fdMetadata,
   fdPath,
 } from "../../_lib/seo";
+import { StoriesFromHere } from "../../_components/StoriesFromHere";
 
 export async function generateStaticParams() {
   return (await fdRentals()).map((s) => ({ slug: s.slug }));
@@ -279,6 +280,8 @@ export default async function RentalServicePage({
           </div>
         </div>
       </section>
+
+      <StoriesFromHere path={`/rentals/${service.slug}`} />
 
       <script
         type="application/ld+json"

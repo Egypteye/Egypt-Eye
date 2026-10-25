@@ -22,6 +22,7 @@ import {
   fdMetadata,
   fdPath,
 } from "../../_lib/seo";
+import { StoriesFromHere } from "../../_components/StoriesFromHere";
 
 /**
  * One photoshoot location, in full.
@@ -488,6 +489,8 @@ export default async function ExperiencePage({
           </div>
         </div>
       </section>
+
+      <StoriesFromHere path={`/experiences/${pkg.slug}`} />
 
       <script
         type="application/ld+json"

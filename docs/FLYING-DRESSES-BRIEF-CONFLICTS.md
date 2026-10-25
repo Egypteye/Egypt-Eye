@@ -66,6 +66,21 @@ describing it only as "a different setting" and saying nothing about which
 side of the fence it is on. **Confirm which it is** and I will make both the
 add-on and the article precise.
 
+### RESOLVED, October 2026
+
+You confirmed it: it is the **Nine Pyramids View, inside the Giza complex**,
+offered on request. Not a lounge.
+
+The extra now says exactly that, and it matches how Egypt Eye already sells
+the same vantage point by name, so the two brands finally describe one place
+the same way. `scripts/check-flying-dresses.mts` fails if the word "Lounge"
+comes back anywhere in this brand's content, or if the extra stops saying it
+is inside the Giza complex, because that is the part carrying the ticketing
+and permit implications.
+
+Still outstanding on this one: **what it costs**, and whether access needs
+arranging per date. The extra says "on request" until you give us a figure.
+
 ---
 
 ## 3. "The cancellation policy is already published on its website"

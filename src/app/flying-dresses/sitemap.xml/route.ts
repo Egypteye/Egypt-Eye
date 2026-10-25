@@ -1,6 +1,6 @@
 import { packages, rentalServices } from "@/content/flyingDresses";
 import { categoryPath, experienceCategories } from "@/content/flyingDressExperiences";
-import { flyingDressStories } from "@/content/flyingDressStories";
+import { liveStories } from "@/content/flyingDressStories";
 import { fdUrl } from "../_lib/seo";
 
 /**
@@ -48,7 +48,9 @@ export function GET() {
     // someone who is not yet searching for a photoshoot by name, and to
     // answer them once they are here. They are not what the business sells.
     { path: "/stories", priority: "0.7" },
-    ...flyingDressStories.map((s) => ({ path: `/stories/${s.slug}`, priority: "0.6" })),
+    // liveStories(): a draft or a researched brief has no URL, so it must not
+    // be announced as one. See StoryStatus in content/flyingDressStories.ts.
+    ...liveStories().map((s) => ({ path: `/stories/${s.slug}`, priority: "0.6" })),
     { path: "/collaborate", priority: "0.7" },
     { path: "/faq", priority: "0.6" },
     { path: "/about", priority: "0.5" },

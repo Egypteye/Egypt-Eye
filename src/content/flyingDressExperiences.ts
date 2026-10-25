@@ -68,7 +68,23 @@ export const DELIVERY_LABELS: Record<ExperienceDelivery, string> = {
 export type ExperiencePricing =
   | { kind: "enquire" }
   | { kind: "from"; fromUsd: number }
-  | { kind: "fixed"; priceUsd: number };
+  | { kind: "fixed"; priceUsd: number }
+  /**
+   * A RATE, NOT A PRICE, and the unit is in the type for a reason.
+   *
+   * The rooftop music session is charged by the hour. Carried as
+   * `{ kind: "from", fromUsd: 150 }` it renders as "from $150", which a
+   * visitor reads as the price of the session rather than of one hour of it,
+   * and the number is wrong by however long they were planning to book.
+   *
+   * Putting the unit in the shape that carries the figure means no surface
+   * can show the number without it, and TypeScript makes every consumer
+   * handle the case rather than falling through to a bare amount.
+   */
+  | { kind: "hourly"; fromUsd: number; unit: "hour" };
+
+/** One question and its answer, as the record carries them. */
+export type ExperienceFaq = { question: string; answer: string };
 
 export type FlyingDressExperience = {
   slug: string;
@@ -93,7 +109,7 @@ export type FlyingDressExperience = {
   leadTimeNote: string;
   /** Shown on the page. A customer planning around this deserves to see it. */
   dependencies: string[];
-  faqs: { question: string; answer: string }[];
+  faqs: ExperienceFaq[];
   /** What the owner still has to confirm before any of this is sold as fixed. */
   confirm: string[];
 };
@@ -135,6 +151,13 @@ export const experienceCategories: ExperienceCategory[] = [
     title: "Proposals, above the pyramids",
     intro:
       "A private rooftop, a decoration you choose, and a photographer already in position when she turns around. We plan it with you and nobody else hears about it.",
+    // The intro reads as a promise once you have arrived. A result list is
+    // read by somebody who has not, and is deciding between us and four other
+    // operators, so the description carries the three facts that separate us
+    // there: the rooftop rather than the complex, the setup built before
+    // arrival, and the photograph of the moment rather than a re-enactment.
+    metaDescription:
+      "Plan a surprise proposal on a private rooftop overlooking the Great Pyramids. You choose the setup, we build it before you arrive, and the moment itself is photographed.",
   },
   {
     id: "gender-reveal",
@@ -209,9 +232,9 @@ export const experienceCategories: ExperienceCategory[] = [
     name: "DJ and music",
     title: "DJ, music and rooftop production",
     intro:
-      "A set filmed at golden hour with the pyramids on the skyline, planned properly rather than improvised.",
+      "Rent the rooftop by the hour and record a live set with the pyramids behind you. Bring your own setup, or build a full production around it.",
     metaDescription:
-      "A DJ set or music session filmed at golden hour on a rooftop above Giza, with the pyramids on the skyline. Planned with the venue, not improvised.",
+      "Record a DJ live set on a private rooftop above Giza with the Pyramids on the skyline. The rooftop is from $150 an hour; filming, audio recording and editing are arranged separately.",
   },
 ];
 
@@ -439,12 +462,12 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       {
         question: "Is there a minimum or maximum group size?",
         answer:
-          "Not one we set. The rooftop sets it, and it differs by venue and by date. Give us your number when you enquire.",
+          "You can add one to fifteen companions to the booking. Beyond that we set no minimum and no maximum ourselves: the rooftop does, and what it can take differs by venue and by date, so give us your number when you enquire and we confirm it with them.",
       },
       {
         question: "Can we have music?",
         answer:
-          "Sometimes, and it depends on the venue, the hour and how loud. We check rather than promise, because a rooftop above a hotel full of sleeping guests has rules.",
+          "Yes. There is a speaker, and you send us the tracks ahead of the date. How loud and how late depends on the venue and the hour, so we check that rather than promise it: a rooftop above a hotel full of sleeping guests has rules. We are not offering a DJ or a live musician on this page; ask if you want one and we will find out whether it can be arranged.",
       },
     ],
     confirm: [
@@ -478,11 +501,13 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "A personalised sign or message", delivery: "in-house" },
       { label: "Creative lighting for an evening session", delivery: "in-house" },
       { label: "Cake, flowers or refreshments", delivery: "partner" },
-      { label: "A private dining arrangement at the venue", delivery: "venue" },
       { label: "A musician", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner"],
-    pricing: { kind: "enquire" },
+    // Owner's October 2026 rate card: a regular photoshoot is $100 per
+    // person and a flying dress photoshoot is $200. The FROM figure is the
+    // regular session, with the dress rate shown beside it on the page.
+    pricing: { kind: "from", fromUsd: 100 },
     durationNote: "Around two hours for a session with a setup and portraits.",
     locationNote: ROOFTOP_LOCATION_NOTE,
     leadTimeNote: "A week or two is usually enough unless there is catering or a musician involved.",
@@ -498,8 +523,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set.",
-      "Whether a private dining arrangement is genuinely available at any venue, and on what terms.",
+      "Whether a private dining arrangement is genuinely available at any venue, and on what terms. Confirmed UNVERIFIED by the owner in October 2026 and deliberately kept off this page until a venue has agreed it.",
+      "How many photographs a session delivers and when they arrive. The rate is set; the deliverable is not.",
     ],
   },
   {
@@ -529,7 +554,10 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "Hair and makeup", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner"],
-    pricing: { kind: "enquire" },
+    // Same rate card. A maternity session in a dress from the collection is
+    // the $200 rate; anybody joining in their own clothes is $100, so a
+    // family is usually a mix. The FROM figure is the lower of the two.
+    pricing: { kind: "from", fromUsd: 100 },
     durationNote:
       "Allow around ninety minutes. We work at whatever pace the session needs, and there is somewhere to sit between frames.",
     locationNote: ROOFTOP_LOCATION_NOTE,
@@ -551,8 +579,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set for maternity or family sessions.",
-      "Whether hair and makeup is a supplier we can reliably call on.",
+      "Whether hair and makeup is a supplier we can reliably call on. Presented on the page as something to ask about rather than something we offer.",
+      "How many photographs a session delivers and when they arrive. The rate is set; the deliverable is not.",
     ],
   },
   {
@@ -583,7 +611,11 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "A celebrant to lead the words", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner"],
-    pricing: { kind: "enquire" },
+    // A CEREMONY IS AN EVENT, NOT A PHOTOSHOOT, which is why this is the
+    // hourly rooftop rate rather than a per-person one. The owner's rate
+    // card is explicit that photography for an event is charged separately,
+    // and the page says so beside the figure.
+    pricing: { kind: "hourly", fromUsd: 150, unit: "hour" },
     durationNote: "Two to three hours including the setup and the portraits.",
     locationNote: ROOFTOP_LOCATION_NOTE,
     leadTimeNote: "A month is comfortable, because the venue, the styling and any musician all have to line up.",
@@ -603,8 +635,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set.",
-      "Whether a celebrant is genuinely available through a partner, or whether this should be removed.",
+      "Whether a celebrant is genuinely available through a partner. Kept OFF the page until answered: a celebrant is a person who has to turn up, and promising one we cannot produce does not disappoint a customer, it ruins the ceremony.",
+      "What the event photography for a ceremony costs. The rooftop hours are set at $150; the photography on top of them is not.",
       "LEGAL REVIEW of the wording above before it is published, since it is the sentence that stops a symbolic ceremony being mistaken for a legal one.",
     ],
   },
@@ -703,7 +735,12 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "Power beyond what the venue provides", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner", "permissions"],
-    pricing: { kind: "enquire" },
+    // CONFIRMED BY THE OWNER, October 2026 brief: the rooftop is rented by the
+    // hour, from $150. That answers the commercial-model question this record
+    // carried ("a coordination fee, an hourly production rate, a package, or a
+    // custom quote") for the SPACE. It does not price the production services,
+    // which is why the confirm list below still carries that question.
+    pricing: { kind: "hourly", fromUsd: 150, unit: "hour" },
     durationNote:
       "Most sessions are built around one hour of usable light. The shoot around it is longer.",
     locationNote: ROOFTOP_LOCATION_NOTE,
@@ -720,12 +757,12 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       {
         question: "Do you provide the sound system?",
         answer:
-          "No. We bring cameras and lighting. Sound, decks and power are either yours or arranged through a supplier, and we are happy to make the introduction. We would rather say this now than have you arrive expecting a booth.",
+          "No, and this is the one to read twice. We do not supply a PA, DJ equipment or generators. We bring cameras and lighting. Sound, decks and power are either yours or arranged through a supplier, and we are happy to make the introduction. We would rather say this now than have you arrive expecting a booth.",
       },
       {
         question: "Can I play loud on the rooftop?",
         answer:
-          "That is the venue's call and it usually comes with conditions about the hour and the volume. We put the request in and tell you the answer. Nobody should plan a set around a rooftop that has not said yes yet.",
+          "That is the venue's call and it usually comes with conditions about the hour and the volume. We put the request in and tell you the answer. Nobody should plan a set around a rooftop that has not said yes yet. If you are recording direct and monitoring on headphones, it is a much easier conversation.",
       },
       {
         question: "Is this a public event?",
@@ -739,7 +776,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set. The commercial model itself is still open: a coordination fee, an hourly production rate, a package, or a custom quote.",
+      "RATES for the production services. The rooftop is confirmed at $150 an hour; filming, audio recording, editing and the DJ photoshoot are all quoted rather than listed, and none of them has a published figure.",
+      "WHETHER AUDIO RECORDING EQUIPMENT is included in the hourly rooftop rate or charged separately. The owner flagged this as unverified and the page presents it as available without saying which.",
       "EQUIPMENT INVENTORY. Exactly what cameras and lighting exist, so `included` can be specific instead of general.",
       "WHICH VENUES will agree to amplified music at all, and under what conditions. Until this is answered, no music session should be presented as straightforwardly available.",
       "Whether there are sound and equipment suppliers we can genuinely introduce people to.",
@@ -781,4 +819,60 @@ export function experiencePath(experience: FlyingDressExperience): string {
 
 export function categoryPath(category: ExperienceCategory): string {
   return `/${category.section}/${category.slug}`;
+}
+
+/**
+ * Is this experience one of the celebrations?
+ *
+ * Used by the enquiry form to decide whether to show the celebration-only
+ * fields (the cake, the songs, transport and its pickup address). Derived
+ * from the category's own `section` rather than from a hand-kept list of
+ * slugs, which is the list that silently goes stale the next time a
+ * celebration is added.
+ */
+export function isCelebrationExperience(slug: string): boolean {
+  const experience = experienceBySlug(slug);
+  if (!experience) return false;
+  return experienceCategoryById(experience.category)?.section === "celebrations";
+}
+
+
+/**
+ * The questions a page shows: the experience record's, then any the page adds
+ * that are not already answered.
+ *
+ * WHY THIS EXISTS. The music page concatenated its own FAQ list with the
+ * record's and shipped two copies of "Do you provide the sound system?" and
+ * "Can I play loud on the rooftop?". React raised a duplicate-key error, which
+ * is the lucky version: the visible symptom was a page asking and answering
+ * the same question twice, a few lines apart.
+ *
+ * THE RECORD'S COME FIRST AND WIN, which is not arbitrary. The celebration and
+ * creative routes build their FAQPage structured data from the RECORD, and
+ * Google requires the marked-up answer to be the one visible on the page. If a
+ * page's own version of a question displaced the record's, the schema and the
+ * page would answer the same question differently. So where both have a
+ * question, the record is the single source and the page's extra wording
+ * belongs in the record instead.
+ *
+ * Matching ignores case, punctuation and surrounding whitespace, because
+ * "Can I play loud on the rooftop?" and "Can I play loud on the rooftop"
+ * are the same question to everybody except a string comparison.
+ */
+export function mergeFaqs(
+  record: readonly ExperienceFaq[],
+  page: readonly ExperienceFaq[]
+): ExperienceFaq[] {
+  const key = (question: string) =>
+    question.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+  const seen = new Set(record.map((faq) => key(faq.question)));
+  return [
+    ...record,
+    ...page.filter((faq) => {
+      const id = key(faq.question);
+      if (seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    }),
+  ];
 }

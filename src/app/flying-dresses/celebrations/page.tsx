@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ExperienceHub } from "../_components/ExperienceHub";
 import { experienceCategories } from "@/content/flyingDressExperiences";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
+import { StoriesFromHere } from "../_components/StoriesFromHere";
 
 const categories = experienceCategories.filter((c) => c.section === "celebrations");
 
@@ -58,6 +59,8 @@ export default function CelebrationsPage() {
           <ExperienceHub categories={categories} section="celebrations" />
         </div>
       </section>
+      <StoriesFromHere path="/celebrations" />
+
     </>
   );
 }

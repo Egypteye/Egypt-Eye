@@ -20,14 +20,21 @@ import { urgentCall } from "@/content/flyingDresses";
  * whatever the person uses for calls. No click handler, no analytics wrapper:
  * a link that needs JavaScript to dial is a link that fails in the one case
  * this exists for.
+ *
+ * THREE WEIGHTS, BECAUSE THE SAME ROUTE IS NOT EQUALLY URGENT EVERYWHERE.
+ * "card" is the loud one, for a page that is not otherwise about getting in
+ * touch. "quiet" is the same content turned down, for the foot of a page that
+ * already IS a way of getting in touch — on the enquiry page the loud card sat
+ * above the form and shouted at every visitor, including the ones whose date
+ * is next spring. "inline" is one sentence, for inside another block.
  */
 export function UrgentCall({
   phone,
   variant = "card",
 }: {
   phone: { display: string; tel: string };
-  /** "card" for a page section, "inline" for inside another block. */
-  variant?: "card" | "inline";
+  /** "card" for a page section, "quiet" for under one, "inline" for inside a block. */
+  variant?: "card" | "quiet" | "inline";
 }) {
   if (variant === "inline") {
     return (
@@ -41,7 +48,7 @@ export function UrgentCall({
   }
 
   return (
-    <div className="fd-urgent">
+    <div className={variant === "quiet" ? "fd-urgent-quiet" : "fd-urgent"}>
       <p className="fd-eyebrow">{urgentCall.eyebrow}</p>
       <p className="fd-urgent-number">
         <a href={`tel:${phone.tel}`}>{phone.display}</a>

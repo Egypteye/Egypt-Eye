@@ -3,11 +3,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FaqList } from "../../_components/FaqList";
 import {
-  flyingDressStories,
-  storyBySlug,
+  liveStories,
+  liveStoryBySlug,
+  relatedStories,
   storyClusters,
   storyReadingMinutes,
 } from "@/content/flyingDressStories";
+import { StoryProse } from "../../_components/StoryProse";
+import { StoryCta } from "../../_components/StoryCta";
+import { StoryToc, headingId } from "../../_components/StoryToc";
 import {
   fdArticleJsonLd,
   fdBreadcrumbJsonLd,
@@ -18,7 +22,8 @@ import {
 } from "../../_lib/seo";
 
 export function generateStaticParams() {
-  return flyingDressStories.map((story) => ({ slug: story.slug }));
+  // liveStories, not every entry: a draft must not get a URL. See StoryStatus.
+  return liveStories().map((story) => ({ slug: story.slug }));
 }
 
 export async function generateMetadata({
@@ -27,7 +32,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const story = storyBySlug(slug);
+  const story = liveStoryBySlug(slug);
   if (!story) return fdMetadata({ title: "Not found", description: "", noindex: true });
 
   return fdMetadata({
@@ -51,11 +56,14 @@ function formatDate(iso: string): string {
 
 export default async function StoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const story = storyBySlug(slug);
+  const story = liveStoryBySlug(slug);
   if (!story) notFound();
 
   const cluster = storyClusters.find((c) => c.id === story.cluster);
-  const siblings = flyingDressStories.filter((s) => s.slug !== story.slug).slice(0, 3);
+  // Scored, not sliced. The previous version took the first three articles in
+  // file order and handed the same rail to every page on the site; see
+  // relatedStories() for what replaced it and why.
+  const siblings = relatedStories(story);
 
   return (
     <>
@@ -128,19 +136,28 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
 
       <section className="fd-section-tight">
         <div className="fd-shell">
+          <StoryToc headings={story.sections.map((section) => section.heading)} />
           <article className="fd-prose">
             {story.sections.map((section) => (
-              <div key={section.heading} style={{ marginBottom: "2.75rem" }}>
+              <div
+                key={section.heading}
+                id={headingId(section.heading)}
+                style={{ marginBottom: "2.75rem", scrollMarginTop: "6rem" }}
+              >
                 <h2 className="fd-display fd-h4" style={{ marginBottom: "1.25rem" }}>
                   {section.heading}
                 </h2>
                 {section.body.map((paragraph) => (
-                  <p key={paragraph.slice(0, 48)}>{paragraph}</p>
+                  <p key={paragraph.slice(0, 48)}>
+                    <StoryProse text={paragraph} />
+                  </p>
                 ))}
                 {section.list ? (
                   <ul className="fd-list" style={{ marginTop: "1.25rem" }}>
                     {section.list.map((item) => (
-                      <li key={item.slice(0, 48)}>{item}</li>
+                      <li key={item.slice(0, 48)}>
+                        <StoryProse text={item} />
+                      </li>
                     ))}
                   </ul>
                 ) : null}
@@ -192,19 +209,36 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         </section>
       ) : null}
 
-      <section className="fd-section-tight fd-sand">
+      {/* THE ONE NEXT STEP, BEFORE THE READING LIST.
+          These used to be a single undifferentiated <ul>: three product links
+          and three article links, same size, same weight, no indication which
+          was which. A reader who finished convinced had to pick their own way
+          out of six options, and the commercial page — the only one of the
+          six the business is paid for — had no more prominence than a
+          sideways link to another article.
+
+          So the destination is its own block, it carries the sentence that
+          earns the click, and it is the single measured event in this
+          section. See StoryCta. */}
+      {story.destination ? (
+        <section className="fd-section-tight fd-sand">
+          <div className="fd-shell" style={{ maxWidth: "46rem" }}>
+            <StoryCta
+              storySlug={story.slug}
+              label={story.destination.label}
+              path={story.destination.path}
+              note={story.destination.note}
+            />
+          </div>
+        </section>
+      ) : null}
+
+      <section className="fd-section-tight">
         <div className="fd-shell">
           <h2 className="fd-display fd-h3" style={{ marginBottom: "2rem" }}>
-            Next
+            Keep reading
           </h2>
           <ul className="fd-list fd-list-2">
-            {story.related.map((link) => (
-              <li key={link.path}>
-                <h3>
-                  <Link href={fdPath(link.path)}>{link.label}</Link>
-                </h3>
-              </li>
-            ))}
             {siblings.map((other) => (
               <li key={other.slug}>
                 <h3>
@@ -213,6 +247,18 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
                 <p>{other.excerpt}</p>
               </li>
             ))}
+            {story.related
+              // The destination is rendered above as the next step. Repeating
+              // it here is the "three identical calls to action" pattern that
+              // makes a page read like a funnel instead of an article.
+              .filter((link) => link.path !== story.destination?.path)
+              .map((link) => (
+                <li key={link.path}>
+                  <h3>
+                    <Link href={fdPath(link.path)}>{link.label}</Link>
+                  </h3>
+                </li>
+              ))}
           </ul>
         </div>
       </section>
