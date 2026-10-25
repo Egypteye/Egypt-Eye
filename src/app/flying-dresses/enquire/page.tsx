@@ -9,6 +9,7 @@ import {
 import { experienceBySlug } from "@/content/flyingDressExperiences";
 import { proposalDecorations } from "@/content/flyingDressProposal";
 import { revealThemeById } from "@/content/flyingDressGenderReveal";
+import { celebrationOccasionById } from "@/content/flyingDressBirthday";
 import { urgentCall } from "@/content/flyingDresses";
 import { UrgentCall } from "../_components/UrgentCall";
 import { EnquiryForm } from "../_components/EnquiryForm";
@@ -78,6 +79,10 @@ export default async function EnquirePage({
   // customer picks a colour theme, so this one resolves for real visitors
   // today. An unknown id still becomes "" and selects nothing.
   const theme = revealThemeById(one(params.theme))?.id ?? "";
+  // What is being celebrated, chosen on the celebration page beside the four
+  // explanations. Resolved the same way: unknown becomes "" and selects
+  // nothing, so a stale or crafted link opens a working form.
+  const occasion = celebrationOccasionById(one(params.occasion))?.id ?? "";
   const dressParam = one(params.dress).toLowerCase();
   const dress = dresses.find((d) => d.id.toLowerCase() === dressParam)?.id ?? "";
   const mensParam = one(params.mens).toLowerCase();
@@ -120,6 +125,7 @@ export default async function EnquirePage({
               initialExperience={experience}
               initialSetup={setup}
               initialTheme={theme}
+              initialOccasion={occasion}
               initialDress={dress}
               initialMens={mens}
               phone={urgentPhone}

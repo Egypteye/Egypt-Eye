@@ -789,3 +789,18 @@ export function experiencePath(experience: FlyingDressExperience): string {
 export function categoryPath(category: ExperienceCategory): string {
   return `/${category.section}/${category.slug}`;
 }
+
+/**
+ * Is this experience one of the celebrations?
+ *
+ * Used by the enquiry form to decide whether to show the celebration-only
+ * fields (the cake, the songs, transport and its pickup address). Derived
+ * from the category's own `section` rather than from a hand-kept list of
+ * slugs, which is the list that silently goes stale the next time a
+ * celebration is added.
+ */
+export function isCelebrationExperience(slug: string): boolean {
+  const experience = experienceBySlug(slug);
+  if (!experience) return false;
+  return experienceCategoryById(experience.category)?.section === "celebrations";
+}

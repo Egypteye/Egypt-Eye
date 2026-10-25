@@ -484,12 +484,30 @@ textarea {
   align-items: center;
 }
 
+/* Top-aligned, because two compared columns of different lengths centred
+   against each other start at two different heights. */
+.fd-split-even {
+  align-items: start;
+}
+
 @media (min-width: 60rem) {
   .fd-split {
     grid-template-columns: 1.15fr 0.85fr;
   }
   .fd-split-reverse {
     grid-template-columns: 0.85fr 1.15fr;
+  }
+  /* TWO THINGS BEING COMPARED, not content plus an aside.
+     `.fd-split` is 1.15fr / 0.85fr because almost every use of it is a
+     column of prose beside a supporting note. The celebration page has two
+     uses that are not that: the casual and flying dress photoshoots, and
+     the music and guest sections. Through the asymmetric grid the two
+     photographs came out 656px and 485px wide, so the same aspect ratio
+     produced two different heights and the headings beneath them did not
+     line up. A comparison whose halves are different sizes reads as a
+     preference. */
+  .fd-split-even {
+    grid-template-columns: 1fr 1fr;
   }
   /* Keeps the DOM in reading order while swapping the visual order, so a
      screen reader and the keyboard still get text-then-image. */
@@ -2756,6 +2774,50 @@ ol.fd-timeline h3::before {
   color: var(--fd-ink-soft);
 }
 
+/* ---- A checkbox with a sentence attached -----------------------------
+   The transport request on the celebration enquiry. It needs a real label
+   plus a line explaining that it is an ADDITIONAL charge, which the pill
+   shaped `.fd-swatch` used by the extras row cannot carry.
+
+   THE SPECIFICITY IS THE POINT. This is a <label> inside `.fd-field`, and
+   `.fd-field label` above sets uppercase with 0.14em tracking, which is
+   right for a one-word field label and unreadable across two sentences of
+   prose. That rule is (0,1,1); `.fd-field .fd-check` is (0,2,0) and wins.
+   The same mistake has already shipped once on this site, on `.fd-pick`.
+
+   The box is 1.5rem = 24px, matching the extras row, for WCAG 2.2 2.5.8
+   Target Size (Minimum). `flex: none` keeps it square when the sentence
+   beside it wraps onto three lines on a phone. */
+.fd-field .fd-check {
+  display: flex;
+  gap: 0.75rem;
+  align-items: flex-start;
+  cursor: pointer;
+  font-size: var(--fd-step-0);
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--fd-ink);
+}
+
+.fd-field .fd-check input[type="checkbox"] {
+  width: 1.5rem;
+  height: 1.5rem;
+  min-height: 0;
+  margin: 0;
+  flex: none;
+}
+
+.fd-field .fd-check-note {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: var(--fd-step--1);
+  line-height: 1.5;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--fd-ink-soft);
+}
+
 .fd-field .fd-hint {
   font-size: var(--fd-step--1);
   text-transform: none;
@@ -3976,6 +4038,54 @@ ol.fd-timeline h3::before {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--fd-gold-ink);
+}
+
+/* ---- The charge tag --------------------------------------------------
+   Four labels on the celebration page: Included, Arranged for you,
+   Additional charge, Quoted for you. The brief asked for the distinction
+   and it is the usual place a premium experience page misleads, by
+   publishing one undifferentiated "what's included" list and letting the
+   charges surface at quotation.
+
+   NEARLY MONOCHROME, ON PURPOSE. Four coloured badges would fight the rule
+   this stylesheet opens with: the chrome carries almost no colour so the
+   photographs carry all of it. So three of the four are quiet, and only
+   ADDITIONAL CHARGE takes the brand's single accent, because it is the one
+   that costs money and the one a reader must not skim past.
+
+   Contrast on the backgrounds these actually sit on (ivory and sand):
+     --fd-ink-soft on --fd-ivory  7.1:1   on --fd-sand  6.6:1
+     --fd-gold-ink on --fd-ivory  6.9:1   on --fd-sand  5.7:1
+   Both clear WCAG 2.2 AA at this size.
+
+   `vertical-align: middle` rather than baseline: the tag sits inside an h3
+   in the display face, and on the baseline its border box drags the line
+   box down and opens an uneven gap above each list item. */
+.fd-charge {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 0.5rem;
+  padding: 0.15em 0.55em;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  font-family: var(--fd-sans, inherit);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--fd-ink-soft);
+}
+
+.fd-charge-extra {
+  color: var(--fd-gold-ink);
+}
+
+/* Quieter still: these two are the default state of most lines, and a
+   border on every one of them turns a list into a form. */
+.fd-charge-included,
+.fd-charge-confirm {
+  border-color: rgba(20, 20, 20, 0.22);
 }
 
 /* ---- The numbered sequence -------------------------------------------

@@ -20,6 +20,7 @@ import { experienceBySlug, experiencePath } from "@/content/flyingDressExperienc
 import { accessoryByRef } from "@/content/flyingDressAccessories";
 import { proposalDecorations } from "@/content/flyingDressProposal";
 import { revealThemeById } from "@/content/flyingDressGenderReveal";
+import { celebrationOccasionById } from "@/content/flyingDressBirthday";
 
 /**
  * The Flying Dresses enquiry.
@@ -157,6 +158,20 @@ export async function POST(request: NextRequest) {
   // cannot post a theme that promises something we do not offer.
   const theme = revealThemeById(clean(body.theme, 60));
 
+  // The celebration fields. The OCCASION is resolved against the catalogue
+  // like every other id here, so the label the desk reads is ours. The cake
+  // and the songs are free text the customer wrote about their own evening:
+  // they are trimmed and length-capped, not resolved, because there is no
+  // catalogue of cakes to resolve them against and nothing in them is a
+  // claim the business would be held to.
+  const occasion = celebrationOccasionById(clean(body.occasion, 60));
+  const cakeRequest = clean(body.cake, 600);
+  const songs = clean(body.songs, 400);
+  // A boolean, never a label from the request: the desk reads "yes" here and
+  // quotes for it. `=== true` rather than truthiness, so a string arriving in
+  // this field cannot turn into a transport booking.
+  const wantsTransport = body.transport === true;
+
   const deliveryKey = clean(body.delivery, 40);
   const delivery =
     deliveryKey === "hotel-delivery" || deliveryKey === "collection"
@@ -185,6 +200,14 @@ export async function POST(request: NextRequest) {
   push("Accessories", chosenAccessories.join(", "));
   push("Proposal setup", setup?.name ?? "");
   push("Gender reveal colour theme", theme?.label ?? "");
+  push("Celebrating", occasion?.label ?? "");
+  push("Cake", cakeRequest);
+  push("Music", songs);
+  // Spelled out in the desk email, because transport on a celebration is an
+  // additional charge and our photoshoot packages include it in the price.
+  // A bare "Yes" in a row called Transport is the ambiguity that costs a
+  // customer the difference.
+  push("Transport", wantsTransport ? "Requested: additional charge, quote with the booking" : "");
   push("Extras", extras.join(", "));
   push("Hotel / pickup area", hotel);
   push("Delivery", delivery);

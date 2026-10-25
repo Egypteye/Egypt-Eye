@@ -70,6 +70,18 @@ import {
 } from "../src/content/flyingDressStories.js";
 import { isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
 import {
+  CHARGE_LABEL,
+  cake as celebrationCake,
+  celebrationDecorations,
+  celebrationLines,
+  celebrationOccasionById,
+  celebrationOccasions,
+  celebrationPayment,
+  music as celebrationMusic,
+  transport as celebrationTransport,
+} from "../src/content/flyingDressBirthday.js";
+import { isCelebrationExperience } from "../src/content/flyingDressExperiences.js";
+import {
   revealDecorations,
   revealPayment,
   revealThemeById,
@@ -4585,6 +4597,345 @@ ok(
       "it, or the category has fallen back to the generic renderer",
     /category\.id === "gender-reveal" && genderReveal \?[\s\S]{0,140}?<GenderRevealPage/.test(
       strip(revealRoute)
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// BIRTHDAYS AND PRIVATE CELEBRATIONS
+//
+// The money on this page is more complicated than on any other, and that is
+// what these guard. Eight elements sit in four different charge positions, and
+// ONE of them is the trap: transport is an ADDITIONAL charge on a celebration,
+// while the flying dress photoshoot packages include door-to-door transport in
+// their published price. A visitor who has read /experiences arrives believing
+// the second thing, correctly, about a different product.
+//
+// PROVEN, each by breaking the thing it names: a price, a percentage, termsSet
+// flipped, an import of the proposal content, a hotel name, transport
+// reclassified as included, a photograph count, the hero repeated in the
+// gallery, a caption that stops naming its occasion, the gallery's own
+// disclaimer removed, the cake and music disclaimers removed, a decoration
+// with a missing photograph, an occasion that does not resolve, the API
+// trusting the request, an em-dash, and the route's render switched off. All
+// red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const birthdayContent = read("src/content/flyingDressBirthday.ts");
+  const birthdayPage = read("src/app/flying-dresses/_components/BirthdayPage.tsx");
+  const birthdayChoices = read("src/app/flying-dresses/_components/CelebrationChoices.tsx");
+  const birthdayRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+  const birthdayApi = read("src/app/api/flying-dresses-enquiry/route.ts");
+  const birthdayForm = read("src/app/flying-dresses/_components/EnquiryForm.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+  const stripWithImports = (source: string) =>
+    strip(source).replace(/from\s+"[^"]*"/g, " ");
+
+  // ---- No price, and no percentage. ----------------------------------
+  for (const [label, source] of [
+    ["the celebration content file", birthdayContent],
+    ["the celebration page", birthdayPage],
+  ] as const) {
+    const code = strip(source);
+    const money = code.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `${label} states a currency amount (${money.join(", ")}). The experience record's first ` +
+        "unanswered question is \"PRICE. Nothing set for celebrations of any size\", and that is " +
+        "still true of the decoration, the cake and the transport. CLAUDE.md §7.",
+      money.length === 0
+    );
+    const percent = code.match(/\b\d{1,3}\s?(?:%|per cent)/g) ?? [];
+    ok(
+      `${label} states a percentage (${percent.join(", ")}). That is how the proposal page ` +
+        "expresses its deposit split, and no deposit or payment term has been agreed for a " +
+        "celebration.",
+      percent.length === 0
+    );
+  }
+
+  ok(
+    "celebrationPayment.termsSet is true, which says payment terms now exist for a celebration. " +
+      "If the owner has set them, add them deliberately and update the page and this guard " +
+      "together rather than flipping a flag to make a section look finished.",
+    celebrationPayment.termsSet === false
+  );
+
+  // ---- STRUCTURAL: the proposal's facts cannot reach this page. -------
+  for (const [label, source] of [
+    ["the celebration content file", birthdayContent],
+    ["the celebration page", birthdayPage],
+  ] as const) {
+    ok(
+      `${label} imports from flyingDressProposal. Those terms were supplied for the proposal ` +
+        "service and the celebration brief says explicitly not to assume they apply here.",
+      !/from\s+"[^"]*flyingDressProposal"/.test(source)
+    );
+  }
+
+  // NOTE: "speaker" is deliberately NOT in this list. It IS a proposal fact,
+  // and it is ALSO a confirmed celebration fact: the owner's brief states
+  // that speakers are available so customers can play their own songs. The
+  // gender reveal page, where nothing of the kind was said, still bans it.
+  for (const [what, pattern] of [
+    ["a named hotel", /Palm Hotel/i],
+    ["a street address", /Mansouriya/i],
+    ["Google Drive delivery", /Google Drive/i],
+    ["a year of gallery access", /for a year|one year from/i],
+    ["a photograph count", /more than a hundred|over a hundred|100\+|hundred-plus/i],
+  ] as [string, RegExp][]) {
+    const code = stripWithImports(birthdayContent) + stripWithImports(birthdayPage);
+    ok(
+      `the celebration page or its content file claims ${what}. That was supplied for a ` +
+        "different service and has never been stated about a celebration.",
+      !pattern.test(code)
+    );
+  }
+
+  // ---- THE TRANSPORT TRAP. -------------------------------------------
+  // The single most expensive thing to get wrong on this page.
+  {
+    const transportLine = celebrationLines.find((line) => /transport/i.test(line.title));
+    ok(
+      "the celebration's transport line has disappeared from celebrationLines, so the one " +
+        "element the owner stated as an additional charge is no longer listed with the rest",
+      Boolean(transportLine)
+    );
+    ok(
+      `the celebration's transport line is classified "${transportLine?.charge}" rather than ` +
+        '"extra". The owner stated transport as an ADDITIONAL charge. Our flying dress ' +
+        "photoshoot packages include door-to-door transport in their published price, so a " +
+        "visitor arriving from /experiences already believes it is included. Misclassifying it " +
+        "here is how they find out in the quotation.",
+      transportLine?.charge === "extra"
+    );
+    // MATCHED ON THE VALUE, NOT THE FILE. The first version of this tested
+    // the file text for the phrase, and the same sentence also appears in the
+    // transport FAQ answer further down: blanking `packagesDiffer` left the
+    // guard green and the distinction off the transport section entirely.
+    ok(
+      "transport.packagesDiffer no longer tells the visitor that transport here is different " +
+        "from the photoshoot packages, which DO include door-to-door transport in their " +
+        "published price. That is the single most expensive misunderstanding available on " +
+        "this page.",
+      /different from our flying dress photoshoot packages/i.test(
+        celebrationTransport.packagesDiffer
+      )
+    );
+    ok(
+      "the transport section stopped saying the charge is additional",
+      /additional charge/i.test(celebrationTransport.lede)
+    );
+  }
+
+  // ---- Every line is classified, and the labels exist. ---------------
+  for (const line of celebrationLines) {
+    ok(
+      `the celebration line "${line.title}" carries no charge label the page can render, so a ` +
+        "visitor cannot tell whether it is included or billed",
+      Boolean(CHARGE_LABEL[line.charge])
+    );
+  }
+  ok(
+    "the celebration page renders its lines without the charge tag, so eight elements in four " +
+      "different charge positions read as one undifferentiated included list",
+    /<ChargeTag charge=\{line\.charge\} \/>/.test(birthdayPage)
+  );
+
+  // ---- Nothing promised that nobody has set. -------------------------
+  ok(
+    "the cake section stopped saying which terms are NOT published. Flavours, sizes, dietary " +
+      "options, a price and an ordering deadline are exactly what a cake supplier fails on, and " +
+      "none of them has been set.",
+    /We do not publish flavours, sizes, dietary options/i.test(celebrationCake.notPromised)
+  );
+  ok(
+    "the cake section stopped disclosing that cakes come through a supplier rather than our own " +
+      "kitchen, which is what somebody with an allergy or a deadline needs to know",
+    /supplier/i.test(celebrationCake.supplierNote)
+  );
+  ok(
+    "the music section stopped declining to offer a DJ, a live musician or a professional sound " +
+      "system. The owner's brief names all three as things not to advertise without separate " +
+      "confirmation.",
+    /not offering a DJ, a live musician or a professional sound system/i.test(
+      celebrationMusic.notPromised
+    )
+  );
+  ok(
+    "the music section stopped saying that how loud and how late is the venue's decision. The " +
+      "experience record is explicit that amplified music on a rooftop is never assumed.",
+    /venue's decision/i.test(celebrationMusic.venueNote)
+  );
+
+  // ---- The gallery: no birthday photographs exist. -------------------
+  ok(
+    "the celebration gallery now includes agency.heroRooftop, which is the hero above it. " +
+      "Showing it twice makes one photograph look like two on a page that has no birthday " +
+      "photographs at all.",
+    !/slot: agency\.heroRooftop,\s*\n\s*span:/.test(strip(birthdayPage))
+  );
+  ok(
+    "the celebration gallery intro no longer tells the visitor that none of the frames is a " +
+      "birthday. We have never photographed one on this roof, and five frames from couples " +
+      "shoots and gender reveals read as a birthday portfolio unless the page says otherwise.",
+    /We have not photographed a birthday on this roof yet/i.test(birthdayPage)
+  );
+  {
+    const captions = [...birthdayPage.matchAll(/caption:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map(
+      (m) => m[1]
+    );
+    ok(
+      `the celebration gallery has ${captions.length} captions rather than the five frames it ` +
+        "renders, so at least one photograph is shown without saying what it is",
+      captions.length === 5
+    );
+    const occasion = /couples shoot|vow renewal|flying-dress session|gender reveal/i;
+    for (const caption of captions) {
+      ok(
+        `a celebration gallery caption does not name the occasion it was photographed at: ` +
+          `"${caption.slice(0, 70)}". None of these is a birthday.`,
+        occasion.test(caption)
+      );
+    }
+  }
+
+  // ---- The decoration catalogue, whenever it fills up. ---------------
+  for (const decoration of celebrationDecorations) {
+    ok(
+      `the celebration decoration "${decoration.id}" has no photograph at public${decoration.src}`,
+      decoration.src.startsWith("/") && existsSync(`public${decoration.src}`)
+    );
+    const priced = `${decoration.name} ${decoration.description}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `the celebration decoration "${decoration.id}" carries a price (${priced.join(", ")})`,
+      priced.length === 0
+    );
+  }
+
+  // ---- The occasions resolve. ----------------------------------------
+  ok(
+    "the celebration occasions are empty. They are confirmed by the experience record, which " +
+      "names a birthday, a graduation and a reunion by hand, so an empty list is a regression " +
+      "rather than an honest gap.",
+    celebrationOccasions.length > 0
+  );
+  for (const occasion of celebrationOccasions) {
+    ok(
+      `the celebration occasion "${occasion.id}" does not resolve through ` +
+        "celebrationOccasionById, so the enquiry handoff would silently drop it",
+      celebrationOccasionById(occasion.id)?.id === occasion.id
+    );
+  }
+  ok(
+    "celebrationOccasionById resolves an id that is not in the catalogue, so a crafted query " +
+      "string could put an occasion we do not offer into an enquiry email",
+    celebrationOccasionById("not-a-real-occasion") === undefined
+  );
+
+  // ---- The enquiry handoff. ------------------------------------------
+  ok(
+    "the enquiry API no longer resolves the celebration occasion through " +
+      "celebrationOccasionById, so whatever arrives in that field reaches an email the desk " +
+      "reads as fact",
+    /celebrationOccasionById\(clean\(body\.occasion/.test(strip(birthdayApi))
+  );
+  ok(
+    "the enquiry API accepts the transport request as anything truthy rather than exactly " +
+      "true, so a string in that field could turn into a transport booking the desk quotes for",
+    /body\.transport === true/.test(strip(birthdayApi))
+  );
+  ok(
+    "the enquiry API's transport row stopped saying the charge is additional. A bare \"Yes\" in " +
+      "a row called Transport is the ambiguity that costs a customer the difference between a " +
+      "celebration and a photoshoot package.",
+    /push\("Transport", wantsTransport \? "Requested: additional charge/.test(strip(birthdayApi))
+  );
+  for (const [label, pattern] of [
+    ["the cake", /push\("Cake", cakeRequest\)/],
+    ["the music", /push\("Music", songs\)/],
+    ["what is being celebrated", /push\("Celebrating", occasion\?\.label/],
+  ] as [string, RegExp][]) {
+    ok(
+      `the enquiry API stopped putting ${label} in the desk email, so something the visitor ` +
+        "typed on the celebration form is collected and then thrown away",
+      pattern.test(strip(birthdayApi))
+    );
+  }
+
+  // ---- The chooser actually hands its choice over. -------------------
+  // Caught by lint, not by me: this file read CelebrationChoices.tsx and then
+  // asserted nothing about it, which is a guard block that looks thorough and
+  // checks nothing. A chooser that collects a selection and drops it on the
+  // way to the enquiry is worse than no chooser, because the visitor believes
+  // they have already told us.
+  ok(
+    "the celebration chooser no longer carries the chosen occasion into the enquiry link, so a " +
+      "visitor who picks one is asked again on the form",
+    /occasion \? `&occasion=\$\{encodeURIComponent\(occasion\)\}` : ""/.test(birthdayChoices)
+  );
+  ok(
+    "the celebration chooser's enquiry link no longer names the celebration experience, so the " +
+      "form opens without the celebration fields the chooser was leading towards",
+    /experience=private-celebration/.test(birthdayChoices)
+  );
+
+  // ---- The form shows the celebration fields where they belong. ------
+  ok(
+    "the enquiry form no longer gates the celebration fields on the chosen occasion being a " +
+      "celebration, so a dress-rental enquiry is asked about its cake",
+    /const isCelebration = isShoot && isCelebrationExperience\(experience\)/.test(
+      strip(birthdayForm)
+    )
+  );
+  ok(
+    "isCelebrationExperience no longer recognises the celebration itself, so the cake, the " +
+      "songs and the transport request would never appear on the one enquiry that needs them",
+    isCelebrationExperience("private-celebration") === true
+  );
+  ok(
+    "isCelebrationExperience returns true for something that is not a celebration, so a " +
+      "visitor hiring a dress is asked what they would like written on their cake",
+    isCelebrationExperience("not-an-experience") === false
+  );
+  // BOTH TERNARIES, COUNTED. The pickup field adapts in two places, its
+  // LABEL and its HINT, and the first version of this guard tested for one
+  // match anywhere: breaking the label left the hint's copy of the same
+  // expression behind and the guard stayed green with the field mislabelled.
+  {
+    const gates =
+      strip(birthdayForm).match(/isCelebration\s*\n?\s*\?\s*transportWanted/g) ?? [];
+    ok(
+      `the enquiry form's pickup field adapts in ${gates.length} place(s) rather than two. Its ` +
+        "label and its hint must BOTH change for a celebration: the default hint promises " +
+        "door-to-door transport, which is true of the photoshoot packages and false here, " +
+        "where transport is an additional charge.",
+      gates.length === 2
+    );
+  }
+
+  // ---- No em-dashes in visitor-facing copy. --------------------------
+  {
+    const literals = [...birthdayContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    const offenders = literals.filter((literal) => literal.includes("—"));
+    ok(
+      `the celebration content file uses an em-dash in visitor-facing copy: ` +
+        `"${offenders[0]?.slice(0, 70) ?? ""}"`,
+      offenders.length === 0
+    );
+  }
+
+  // ---- The route still owns the URL. ---------------------------------
+  ok(
+    "the celebration body is no longer rendered from the shared celebrations route: either it " +
+      "has been forked to its own URL, taking the breadcrumbs and the FAQ structured data with " +
+      "it, or the category has fallen back to the generic renderer",
+    /category\.id === "celebrations" && celebration \?[\s\S]{0,140}?<BirthdayPage/.test(
+      strip(birthdayRoute)
     )
   );
 }

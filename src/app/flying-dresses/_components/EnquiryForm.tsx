@@ -1,12 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { experienceBySlug, flyingDressExperiences } from "@/content/flyingDressExperiences";
+import { experienceBySlug, flyingDressExperiences, isCelebrationExperience } from "@/content/flyingDressExperiences";
 import { track } from "../_lib/analytics";
 import { RENTAL_DELIVERY_LABELS, addOns, dresses, flyingDressEnquiry, mensOutfits, packagePricePhrase, packages, rentalServices, urgentCall, whatsappHref } from "@/content/flyingDresses";
 import { NAMING_NOTE, accessoryCategories, accessoryByRef } from "@/content/flyingDressAccessories";
 import { proposalDecorations } from "@/content/flyingDressProposal";
 import { revealThemeById } from "@/content/flyingDressGenderReveal";
+import { celebrationOccasionById } from "@/content/flyingDressBirthday";
 import { PhoneField } from "@/components/PhoneField";
 
 /**
@@ -122,6 +123,7 @@ export function EnquiryForm({
   initialExperience = "",
   initialSetup = "",
   initialTheme = "",
+  initialOccasion = "",
   initialDress = "",
   initialMens = "",
   phone: contactPhone = urgentCall.fallback,
@@ -133,6 +135,8 @@ export function EnquiryForm({
   initialSetup?: string;
   /** A gender reveal colour theme chosen on that page, already resolved. */
   initialTheme?: string;
+  /** What is being celebrated, chosen on the celebration page. Resolved. */
+  initialOccasion?: string;
   initialDress?: string;
   initialMens?: string;
   /**
@@ -175,6 +179,13 @@ export function EnquiryForm({
   // reveal page beside the explanation of what each option means, and asking
   // again here would be a worse place to make the same decision.
   const [theme] = useState(initialTheme);
+  // Carried from the celebration page, where the four options are explained.
+  const [occasion] = useState(initialOccasion);
+  // The celebration-only fields. All optional, and all genuinely useful to
+  // the desk: without them the first reply is four questions back.
+  const [cakeRequest, setCakeRequest] = useState("");
+  const [songs, setSongs] = useState("");
+  const [transportWanted, setTransportWanted] = useState(false);
   const [date, setDate] = useState("");
   const [people, setPeople] = useState("");
   const [dress, setDress] = useState(initialDress);
@@ -203,6 +214,16 @@ export function EnquiryForm({
 
   /** Delivery only makes sense when something is being handed over. */
   const needsDelivery = !isShoot;
+
+  /**
+   * THE CELEBRATION FIELDS, AND WHY THEY ARE GATED.
+   *
+   * A cake, a playlist and a pickup address are the right questions for a
+   * birthday on a rooftop and noise on a dress-rental enquiry. Derived from
+   * the chosen experience's SECTION rather than a list of slugs here, so a
+   * celebration added later is covered without touching this file.
+   */
+  const isCelebration = isShoot && isCelebrationExperience(experience);
 
   // Which wardrobes are open. On a shoot the priced extra is the gate; on a
   // hire the intent is, because there the wardrobe is the whole enquiry.
@@ -273,13 +294,22 @@ export function EnquiryForm({
         ...(revealThemeById(theme)?.label
           ? [`Gender reveal colour theme: ${revealThemeById(theme)?.label}`]
           : []),
+        ...(celebrationOccasionById(occasion)?.label
+          ? [`Celebrating: ${celebrationOccasionById(occasion)?.label}`]
+          : []),
+        ...(cakeRequest.trim() ? [`Cake: ${cakeRequest.trim()}`] : []),
+        ...(songs.trim() ? [`Music: ${songs.trim()}`] : []),
+        // Named as an ADDITIONAL CHARGE in the draft too. The desk reads this
+        // message as the brief for its reply, and transport on a celebration
+        // is not the included transport our photoshoot packages carry.
+        ...(transportWanted ? ["Transport requested (additional charge)"] : []),
         ...extras.map((id) => addOns.find((a) => a.id === id)?.label),
       ].filter((label): label is string => Boolean(label)),
       hotel,
       delivery: delivery ? RENTAL_DELIVERY_LABELS[delivery as "hotel-delivery" | "collection"] : undefined,
       notes: message,
     });
-  }, [pkg, service, experience, setup, theme, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
+  }, [pkg, service, experience, setup, theme, occasion, cakeRequest, songs, transportWanted, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -330,6 +360,10 @@ export function EnquiryForm({
           experience,
           setup,
           theme,
+          occasion,
+          cake: cakeRequest,
+          songs,
+          transport: transportWanted,
           date,
           people,
           dress,
@@ -769,13 +803,94 @@ export function EnquiryForm({
           </Field>
         ) : null}
 
+        {/* ===============================================================
+            THE CELEBRATION FIELDS.
+
+            Shown only when the chosen occasion is one of the celebrations,
+            because a cake and a playlist are the right questions for a
+            birthday on a rooftop and noise on a dress-rental enquiry.
+
+            All three are optional, and all three save a round trip: without
+            them the desk's first reply is four questions back.
+            =============================================================== */}
+        {isCelebration ? (
+          <>
+            <Field
+              id="fd-cake"
+              label="A cake, if you would like one"
+              full
+              hint="What the occasion is, the name or message you want on it, a style or colour, and anything anybody coming cannot eat. Cakes come through a supplier, so the design and the cost are confirmed with you before anything is ordered."
+            >
+              <textarea
+                id="fd-cake"
+                name="cake"
+                rows={3}
+                value={cakeRequest}
+                onChange={(e) => setCakeRequest(e.target.value)}
+              />
+            </Field>
+
+            <Field
+              id="fd-songs"
+              label="Songs you want playing"
+              full
+              hint="There is a speaker. Send the tracks and we cue them. How loud and how late is the venue's decision for your date, so we check it rather than promise it."
+            >
+              <textarea
+                id="fd-songs"
+                name="songs"
+                rows={2}
+                value={songs}
+                onChange={(e) => setSongs(e.target.value)}
+              />
+            </Field>
+
+            {/* A CHECKBOX, NOT A SELECT, and the price position is in the
+                label itself. Transport on a celebration is an ADDITIONAL
+                charge; our flying dress packages include it in the price.
+                A visitor who has read /experiences arrives believing the
+                second thing, correctly, about a different product. */}
+            <div className="fd-field fd-field-full">
+              <label className="fd-check" htmlFor="fd-transport">
+                <input
+                  id="fd-transport"
+                  name="transport"
+                  type="checkbox"
+                  checked={transportWanted}
+                  onChange={(e) => setTransportWanted(e.target.checked)}
+                />
+                <span>
+                  I would like transport arranged, within Cairo or Giza
+                  <span className="fd-check-note">
+                    An additional charge on top of your quotation, unlike our photoshoot packages
+                    which include it. Give us the pickup address below and the cost comes back in
+                    writing.
+                  </span>
+                </span>
+              </label>
+            </div>
+          </>
+        ) : null}
+
         <Field
           id="fd-hotel"
-          label={isShoot ? "Hotel or pickup area" : "Hotel or delivery area"}
+          label={
+            isCelebration
+              ? transportWanted
+                ? "Pickup address"
+                : "Where you are staying"
+              : isShoot
+                ? "Hotel or pickup area"
+                : "Hotel or delivery area"
+          }
           hint={
-            isShoot
-              ? "For door-to-door transport on the day."
-              : "Where in Cairo we would be delivering to, if you would rather not collect."
+            isCelebration
+              ? transportWanted
+                ? "Where we would be collecting you from, within Cairo or Giza. The transport cost comes back with your quotation."
+                : "Helps us judge timings. Tick the box above if you would like us to arrange transport as well."
+              : isShoot
+                ? "For door-to-door transport on the day."
+                : "Where in Cairo we would be delivering to, if you would rather not collect."
           }
           full
         >

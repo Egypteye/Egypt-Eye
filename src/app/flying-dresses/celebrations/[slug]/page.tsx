@@ -13,6 +13,7 @@ import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from ".
 import { StoriesFromHere } from "../../_components/StoriesFromHere";
 import { ProposalPage } from "../../_components/ProposalPage";
 import { GenderRevealPage } from "../../_components/GenderRevealPage";
+import { BirthdayPage } from "../../_components/BirthdayPage";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -65,6 +66,7 @@ export default async function ExperienceCategoryPage({
   // read from the same array the generic renderer uses so there is one source.
   const proposal = category.id === "proposals" ? experiences[0] : undefined;
   const genderReveal = category.id === "gender-reveal" ? experiences[0] : undefined;
+  const celebration = category.id === "celebrations" ? experiences[0] : undefined;
 
   return (
     <>
@@ -146,7 +148,7 @@ export default async function ExperienceCategoryPage({
         </div>
       </section>
 
-      {/* TWO CATEGORIES GET THEIR OWN BODY, AND ONLY THE BODY.
+      {/* THREE CATEGORIES GET THEIR OWN BODY, AND ONLY THE BODY.
           =================================================================
           The proposal is the page somebody plans for months and compares
           against other suppliers before they ever speak to us, and the
@@ -155,11 +157,17 @@ export default async function ExperienceCategoryPage({
           The shared renderer gave each of them the same four sections as a
           birthday. So they compose their own sections instead.
 
+          The celebration is the third, and the one with the most moving
+          parts: decoration, a cake through a supplier, a speaker, two
+          photoshoots, up to fifteen companions and transport at an extra
+          charge.
+
           They are NOT variations of one another. The proposal's deposit
           split, payment methods, photograph count and gallery expiry were
           supplied for the proposal; nothing of the kind has been set for a
-          gender reveal, and neither page may borrow the other's terms. See
-          content/flyingDressGenderReveal.ts.
+          gender reveal or a celebration, and no page may borrow another's
+          terms. See content/flyingDressGenderReveal.ts and
+          content/flyingDressBirthday.ts.
 
           What it deliberately does NOT get is its own route. The URL, the
           metadata, the breadcrumbs, the FAQ structured data, the sibling
@@ -171,6 +179,8 @@ export default async function ExperienceCategoryPage({
         <ProposalPage experience={proposal} />
       ) : category.id === "gender-reveal" && genderReveal ? (
         <GenderRevealPage experience={genderReveal} />
+      ) : category.id === "celebrations" && celebration ? (
+        <BirthdayPage experience={celebration} />
       ) : (
         /* `headless` when this category holds exactly one experience: the
            h1 and lede above are already that experience's title and intro,
