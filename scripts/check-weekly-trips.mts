@@ -331,6 +331,45 @@ if (!/Number\.isFinite\(targetMs\)/.test(featuredSource)) {
   errors.push("FeaturedDeparture renders a countdown without checking the instant is real");
 }
 
+// No prose anywhere may promise a seat count either.
+//
+// The components were made silent while a trip's own FAQ still said "the
+// seats left on this departure are shown on this page and update as they go"
+// — true when it was written, false the moment the pills stopped printing a
+// number, and live for a while because the guards only read components.
+// Only an affirmative claim counts. The page is allowed - required, really -
+// to explain the policy, and an earlier version of this flagged the FAQ
+// "Why don't you show how many seats are left?" along with the sentence
+// distinguishing travellers-still-needed from seats-for-sale. A check that
+// fires on the copy explaining the rule is a check people switch off, so it
+// reads sentence by sentence and skips any sentence that negates or draws a
+// contrast.
+const CLAIMS_A_COUNT = [
+  /\d+\s*(seats?|places?)\s*(left|remaining|available)/i,
+  /(seats?|places?)\s+(left|remaining)\b[^.]{0,60}\b(shown|displayed|listed|update)/i,
+  /(shows?|display(s|ed)?|tells? you)\s+how many\s+(seats?|places?)/i,
+];
+const EXPLAINS_INSTEAD = /\b(do not|don't|doesn't|never|no longer|not\b|rather than|instead of|a different number|why we)\b/i;
+const prose: [string, string][] = [];
+for (const trip of weeklyTrips) {
+  prose.push([`${trip.slug} tagline`, trip.tagline], [`${trip.slug} description`, trip.description]);
+  for (const f of trip.faqs ?? []) prose.push([`${trip.slug} faq "${f.question.slice(0, 40)}"`, `${f.question} ${f.answer}`]);
+  for (const g of trip.included) prose.push([`${trip.slug} included`, g]);
+  for (const h of trip.highlights) prose.push([`${trip.slug} highlight`, h]);
+}
+for (const m of read("src/app/[locale]/(site)/weekly-trips/page.tsx").matchAll(/"((?:[^"\\]|\\.){40,})"/g)) {
+  prose.push(["weekly-trips page copy", m[1]!]);
+}
+for (const [where, text] of prose) {
+  for (const sentence of text.split(/(?<=[.?!])\s+/)) {
+    if (EXPLAINS_INSTEAD.test(sentence)) continue;
+    if (CLAIMS_A_COUNT.some((p) => p.test(sentence))) {
+      errors.push(`${where} claims the site shows a seat count: "${sentence.slice(0, 90)}"`);
+      break;
+    }
+  }
+}
+
 // The hub must not hardcode how many trips there are.
 const hubSource = read("src/app/[locale]/(site)/weekly-trips/page.tsx");
 for (const word of ["Five trips", "Six trips", "Seven trips", "Eight trips"]) {
