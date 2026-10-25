@@ -567,7 +567,7 @@ export function EnquiryForm({
           <Field
             id="fd-dress"
             label="Dress"
-            hint={isShoot ? "A preference, not a reservation." : "Twelve colours. We will confirm the one you pick is free."}
+            hint={isShoot ? "A preference, not a reservation." : "We will confirm the one you pick is free."}
           >
             <select
               id="fd-dress"

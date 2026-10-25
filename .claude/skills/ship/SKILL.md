@@ -37,6 +37,28 @@ its own shell here (exit 144) and silently skipped the commit that followed.
 a check you added that would also pass on the broken code, an import left
 unused, a debug log. Keep the change minimal — do not widen it.
 
+## Deploying is authorised. Do not ask.
+
+The owner's standing instruction, 25 October 2026: **"Always push and dont ask
+me again."**
+
+So a finished, verified change goes to production without a confirmation step.
+Asking "shall I deploy?" is not caution here, it is a round trip the owner has
+explicitly removed, twice. Deploy, then tell them what went out.
+
+What this authorisation does NOT cover, because it is about the deploy step and
+nothing else:
+
+* The three gates still run, every time. The authorisation is to skip the
+  question, not the checks. A red check is still a stop.
+* Everything under "Never without being asked" below is still never without
+  being asked.
+* A change the owner has not asked for is still not ours to invent and ship.
+  This authorises pushing finished work; it does not authorise deciding what
+  the work is.
+* A dependency or framework upgrade is a separate conversation. It changes
+  what runs in production rather than what the production code says.
+
 ## Pushing
 
 ```bash

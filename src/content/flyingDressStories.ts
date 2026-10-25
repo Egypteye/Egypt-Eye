@@ -377,7 +377,7 @@ export const flyingDressStories: FlyingDressStory[] = [
     destination: {
       label: "Look through the wardrobe",
       path: "/wardrobe",
-      note: "Twelve colours, photographed. Nothing is reserved by looking, and the colour is confirmed with you before the day rather than decided on it.",
+      note: "Every colour in the collection, photographed. Nothing is reserved by looking, and the colour is confirmed with you before the day rather than decided on it.",
     },
     inboundFrom: ["/wardrobe"],
     relatedStorySlugs: ["one-size-cut-to-fit"],
@@ -412,7 +412,7 @@ export const flyingDressStories: FlyingDressStory[] = [
           "The hour before the site opens. A private roof has no opening time, which is why these sessions can start in the best light of the day rather than after the first coaches.",
           "Nobody else in the frame. A wide shot on the plateau is a wide shot with other people's holidays in it. A roof is yours for the session.",
           "No ticket, no gate, no queue, and no walk in a five-metre train across open sand before you have taken a photograph.",
-          "Somewhere to change, and somewhere to put the other twelve colours.",
+          "Somewhere to change, and somewhere to put the rest of the colours.",
         ],
       },
       {
@@ -764,7 +764,7 @@ export const flyingDressStories: FlyingDressStory[] = [
     destination: {
       label: "The wardrobe",
       path: "/wardrobe",
-      note: "Twelve dresses, one adjustable cut. Tell us your measurements when you enquire and we will tell you honestly how it will sit.",
+      note: "One adjustable cut, in every colour we hold. Tell us your measurements when you enquire and we will tell you honestly how it will sit.",
     },
     inboundFrom: ["/wardrobe", "/rentals/dress-rental"],
     relatedStorySlugs: ["choosing-a-dress-colour"],
@@ -808,7 +808,7 @@ export const flyingDressStories: FlyingDressStory[] = [
         ],
         list: [
           "The photographer, and the assistant. The assistant is not optional staffing we add for larger groups. A five-metre train does not fly without somebody throwing it, which is [the whole physics of the photograph](/stories/how-a-flying-dress-flies).",
-          "The dress, from the twelve in [the wardrobe](/wardrobe). Hire is included in the shoot; you are not renting it separately.",
+          "The dress, from [the wardrobe](/wardrobe). Hire is included in the shoot; you are not renting it separately.",
           "Transport as described on the individual shoot page, which for Fayoum is the larger part of the day.",
           "Over a hundred colour-graded photographs, delivered as a gallery. Basic editing is on all of them.",
           "One short vertical edit, included with every experience.",
