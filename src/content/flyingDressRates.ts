@@ -64,12 +64,20 @@ export const rates = {
       "The rooftop above Giza, for the hours you book, with the pyramids across the skyline. Confirmed with the venue for your date.",
   },
 
-  /** A flying dress session on that rooftop. */
+  /**
+   * A flying dress session on that rooftop.
+   *
+   * $199, NOT $200. The owner first said two hundred and then confirmed the
+   * exact figure when asked, which matters because the Pyramids Rooftop
+   * package in flyingDresses.ts has carried $199 with a verified flag all
+   * along. Two figures a dollar apart for one product is worse than either,
+   * because it is the kind of difference nobody notices until a customer does.
+   */
   flyingDress: {
     id: "flying-dress",
-    amountUsd: 200,
+    amountUsd: 199,
     unit: "person",
-    display: "$200 per person",
+    display: "$199 per person",
     label: "Flying dress photoshoot",
     detail:
       "A dress from the collection in the colour you choose, an assistant throwing the fabric, and the directed session that goes with it.",
@@ -93,8 +101,19 @@ export const rates = {
  * photography carrying a fee is the thing a customer should not discover in a
  * quotation.
  */
+/**
+ * ONLY WHERE IT IS TRUE. The owner confirmed decoration is included in the
+ * anniversary, maternity and vow renewal services, and confirmed separately
+ * that it is NOT included in birthdays and private celebrations, where it is
+ * arranged and priced in the quotation.
+ *
+ * So this sentence is rendered behind `pricing.decorationIncluded` rather than
+ * printed on anything that imports the rate card. A shared module stating a
+ * blanket "decoration is included" is one import away from making a false
+ * claim on the birthday page.
+ */
 export const RATES_INCLUDE_DECORATION =
-  "Decoration is included in these services. You choose a setup from the designs we are running for your date and it is part of what you are paying, not an extra on top.";
+  "Decoration is included in this service. You choose a setup from the designs we are running for your date and it is part of what you are paying, not an extra on top.";
 
 export const RATES_EVENT_PHOTOGRAPHY =
   "Photography for an event is charged separately. A photoshoot is priced per person; a ceremony or a party is the rooftop by the hour, with the photography quoted on top of it.";

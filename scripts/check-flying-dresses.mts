@@ -5300,7 +5300,7 @@ ok(
   // ---- THE RATE CARD IS THE OWNER'S, AND IT IS ONE SOURCE. -----------
   for (const [id, amount, unit] of [
     ["location", 150, "hour"],
-    ["flyingDress", 200, "person"],
+    ["flyingDress", 199, "person"],
     ["regular", 100, "person"],
   ] as [keyof typeof rates, number, string][]) {
     const rate = rates[id];
@@ -5323,8 +5323,14 @@ ok(
     ["the occasion content", occasionContent],
     ["the occasion page", occasionPage],
   ] as const) {
+    // THE ALLOWED FIGURES COME FROM THE RATE CARD, not a list typed here.
+    // The previous version hardcoded 100/150/200, so when the owner corrected
+    // the dress rate to $199 the guard would happily have passed three FAQ
+    // answers still saying $200. The prose now interpolates the rate card, and
+    // this derives what it may contain from the same place.
+    const allowed = new Set(Object.values(rates).map((rate) => `$${rate.amountUsd}`));
     const money = strip(source).match(/[$£€]\s?\d+/g) ?? [];
-    const unexpected = money.filter((m) => !/\$(100|150|200)\b/.test(m));
+    const unexpected = money.filter((m) => !allowed.has(m.replace(/\s/g, "")));
     ok(
       `${label} writes a currency figure of its own (${unexpected.join(", ")}) instead of reading ` +
         "it from flyingDressRates.ts. Two copies of one number is how two pages quote differently.",
@@ -5512,6 +5518,42 @@ ok(
       experience?.category === occasion.categoryId
     );
   }
+  // ---- DECORATION IS INCLUDED ONLY WHERE IT IS. ----------------------
+  // The owner confirmed it IS included in these three and is NOT included in
+  // birthdays and private celebrations, where it is arranged and quoted. A
+  // shared "decoration is included" sentence is one import away from making
+  // that false claim on the birthday page.
+  for (const occasion of occasions) {
+    ok(
+      `the ${occasion.categoryId} occasion no longer marks decoration as included. The owner ` +
+        "confirmed it is, and it is the one genuinely generous thing in this rate card.",
+      occasion.pricing.decorationIncluded === true
+    );
+  }
+  ok(
+    "the occasion page renders the included-decoration line unconditionally instead of behind " +
+      "pricing.decorationIncluded, so adding an occasion where it is not included would publish " +
+      "a false claim",
+    /decorationIncluded \?[\s\S]{0,120}?RATES_INCLUDE_DECORATION/.test(strip(occasionPage))
+  );
+  {
+    const birthdayBody = read("src/app/flying-dresses/_components/BirthdayPage.tsx");
+    const birthdayData = read("src/content/flyingDressBirthday.ts");
+    ok(
+      "the celebration page claims decoration is included. The owner confirmed in October 2026 " +
+        "that it is NOT included for birthdays and private celebrations: it is arranged and " +
+        "priced in the quotation, which is what its charge label says.",
+      !/decoration is included/i.test(birthdayBody + birthdayData)
+    );
+    ok(
+      "the celebration page no longer classifies its decoration line as arranged-and-quoted, " +
+        "which is what the owner confirmed it is",
+      celebrationLines.some(
+        (line) => /decoration/i.test(line.title) && line.charge === "arranged"
+      )
+    );
+  }
+
   // ---- NO FRAME IS SHOWN TWICE ON ONE PAGE. --------------------------
   // Found by looking at the rendered page, not by a check. The shared route
   // renders `categoryPhoto[category.id]` large and uncaptioned above the

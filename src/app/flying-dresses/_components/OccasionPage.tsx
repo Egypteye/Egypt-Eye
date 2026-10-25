@@ -231,7 +231,9 @@ export function OccasionPage({
               <p style={{ margin: "0 0 0.75rem", fontWeight: 500, color: "var(--fd-ink)" }}>
                 Included, and not included
               </p>
-              <p style={{ margin: "0 0 0.75rem" }}>{RATES_INCLUDE_DECORATION}</p>
+              {occasion.pricing.decorationIncluded ? (
+                <p style={{ margin: "0 0 0.75rem" }}>{RATES_INCLUDE_DECORATION}</p>
+              ) : null}
               {occasion.pricing.isEvent ? (
                 <p style={{ margin: "0 0 0.75rem" }}>{RATES_EVENT_PHOTOGRAPHY}</p>
               ) : null}

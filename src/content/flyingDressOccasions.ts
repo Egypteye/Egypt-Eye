@@ -24,8 +24,10 @@
  * =========================================================================
  * THE PRICES ARE THE OWNER'S, AND THEY COME FROM ONE PLACE
  * =========================================================================
- * October 2026: the rooftop is $150 an hour, a flying dress photoshoot is $200
- * per person, a regular photoshoot is $100 per person, decoration is INCLUDED,
+ * October 2026: the rooftop is $150 an hour, a flying dress photoshoot is $199
+ * per person, a regular photoshoot is $100 per person, decoration is included
+ * in THESE THREE services (and not in birthdays, which the owner confirmed
+ * separately),
  * and photography for an event is charged separately. Every figure is read
  * from `flyingDressRates.ts` so no two pages can quote different numbers.
  *
@@ -61,6 +63,13 @@ export type OccasionPricing = {
   note: string;
   /** True when this is an EVENT, so event photography is charged separately. */
   isEvent: boolean;
+  /**
+   * Whether decoration is part of the price. TRUE for all three of these,
+   * confirmed by the owner in October 2026, and deliberately a per-occasion
+   * flag rather than a fact of the rate card: the owner confirmed separately
+   * that birthdays and private celebrations do NOT include it.
+   */
+  decorationIncluded: boolean;
 };
 
 export type Occasion = {
@@ -143,6 +152,7 @@ const romance: Occasion = {
     applies: [rates.regular, rates.flyingDress],
     note: "Priced per person, so a couple is two. Choose a regular session in your own clothes or a flying dress session with a dress from the collection. Decoration is included in both.",
     isEvent: false,
+    decorationIncluded: true,
   },
   highlights: [
     {
@@ -272,7 +282,7 @@ const romance: Occasion = {
     {
       question: "What does it cost?",
       answer:
-        "A regular photoshoot is $100 per person and a flying dress photoshoot is $200 per person, both on the rooftop above Giza, and decoration is included in both. A couple is two people. If you want the rooftop reserved for longer than the session itself, that is $150 an hour. Anything else you add is quoted with it.",
+        `A regular photoshoot is ${rates.regular.display} and a flying dress photoshoot is ${rates.flyingDress.display}, both on the rooftop above Giza, and decoration is included in both. A couple is two people. If you want the rooftop reserved for longer than the session itself, that is ${rates.location.display}. Anything else you add is quoted with it.`,
     },
     {
       question: "Is the decoration really included?",
@@ -334,6 +344,7 @@ const maternity: Occasion = {
     applies: [rates.flyingDress, rates.regular],
     note: "Priced per person. A maternity session in a dress from the collection is the flying dress rate; anybody joining in their own clothes is the regular rate, so a family is usually a mix of the two. Decoration is included either way.",
     isEvent: false,
+    decorationIncluded: true,
   },
   highlights: [
     {
@@ -474,7 +485,7 @@ const maternity: Occasion = {
     {
       question: "What does it cost?",
       answer:
-        "A maternity session in a dress from the collection is $200 per person, and a regular session in your own clothes is $100 per person, both on the rooftop above Giza. A family is usually a mix: the dress rate for whoever wears one, the regular rate for everybody else. Decoration is included. If you want the rooftop reserved for longer than the session, that is $150 an hour.",
+        `A maternity session in a dress from the collection is ${rates.flyingDress.display}, and a regular session in your own clothes is ${rates.regular.display}, both on the rooftop above Giza. A family is usually a mix: the dress rate for whoever wears one, the regular rate for everybody else. Decoration is included. If you want the rooftop reserved for longer than the session, that is ${rates.location.display}.`,
     },
     {
       question: "Will a dress fit at any stage of pregnancy?",
@@ -542,6 +553,7 @@ const vows: Occasion = {
     applies: [rates.location],
     note: "A ceremony is an event rather than a photoshoot, so it is the rooftop by the hour with the photography quoted on top. Decoration is included. If you want a flying dress session afterwards, that is priced per person like any other session.",
     isEvent: true,
+    decorationIncluded: true,
   },
   highlights: [
     {
@@ -686,7 +698,7 @@ const vows: Occasion = {
     {
       question: "What does it cost?",
       answer:
-        "A ceremony is an event rather than a photoshoot, so the rooftop is $150 an hour and the event photography is quoted on top of it. Decoration is included. A flying dress session afterwards is priced per person, at $200 for a dress from the collection or $100 in your own clothes.",
+        `A ceremony is an event rather than a photoshoot, so the rooftop is ${rates.location.display} and the event photography is quoted on top of it. Decoration is included. A flying dress session afterwards is priced per person, at ${rates.flyingDress.display} for a dress from the collection or ${rates.regular.display} in your own clothes.`,
     },
     {
       question: "Do you provide someone to lead the ceremony?",

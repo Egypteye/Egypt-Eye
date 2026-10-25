@@ -40,11 +40,11 @@ figures at the same customer.
 
 | Page | Priced at |
 |---|---|
-| Anniversaries | $100 per person, or $200 with a dress |
-| Maternity and family | $200 per person with a dress, $100 without |
+| Anniversaries | $100 per person, or $199 with a dress |
+| Maternity and family | $199 per person with a dress, $100 without |
 | Vow renewals | $150 per hour, photography quoted on top |
 
-**The unit is part of the figure, never separate.** $150 is per *hour* and $200
+**The unit is part of the figure, never separate.** $150 is per *hour* and $199
 is per *person*; either rendered bare is wrong by a factor of however many
 hours or people. A check fails if the amount and the unit are ever split.
 
@@ -58,20 +58,29 @@ that silently drops the event photography fee.
 is why I gave it that much room: comparable services either charge for styling
 separately or do not offer it.
 
-### One thing to confirm
+### Both pricing questions are now answered
 
-Your **Pyramids Rooftop package** is recorded at **$199 per person** with a
-verified flag, and you have now told me the rooftop flying dress photoshoot is
-**$200 per person**. I have left the package at $199 and not touched it. If
-they are the same product, tell me which figure is right.
+**The flying dress photoshoot is $199 per person**, not $200, which you
+confirmed when I asked. That matches the Pyramids Rooftop package, which has
+carried $199 with a verified flag all along, so there is now one figure for one
+product rather than two a dollar apart. Nobody notices a difference that size
+until a customer does.
 
-### One inconsistency I have created, and want your call on
+The three FAQ answers that quoted the figure in prose now **interpolate it from
+the rate card** rather than repeating it, so the next correction is one edit
+instead of four. The check that catches a stray figure on these pages now
+derives what it allows from the rate card too: the old version hardcoded
+100/150/200 and would have passed three FAQ answers still saying $200.
 
-The **Birthdays and Private Celebrations** page I built earlier says decoration
-is *"Arranged for you"* and priced in the quotation. You have now told me
-decoration is **included**. I have applied that to these three pages only,
-because your answer came in the context of these three. **Should the birthday
-page say included too?** One word from you and I will change it.
+**Decoration is NOT included in birthdays**, which you confirmed. The birthday
+page already said *"Arranged for you"* and priced in the quotation, so nothing
+changed there, which is the right outcome.
+
+What did change is that inclusion is now a **per-occasion flag** rather than a
+fact of the shared rate card. A shared module stating a blanket "decoration is
+included" is one import away from making that false claim on the birthday page.
+Two checks now hold the line in both directions: these three must say it, and
+the birthday page must not.
 
 ---
 
@@ -155,15 +164,17 @@ including the one section each occasion genuinely needs that the others do not:
 
 ## 7. Still open
 
-1. **$199 or $200** for the rooftop flying dress photoshoot. See §2.
-2. **Decoration on the birthday page**: included, or arranged and quoted? See §2.
-3. **Private dining**, if a venue has agreed it. See §3.
-4. **A celebrant**, if one is genuinely available.
-5. **Legal review** of the vow renewal wording. Your own flag, still open.
-6. **Hair and makeup** for maternity: a supplier we can reliably call on? The
+1. **Private dining**, if a venue has agreed it. See §3. The highest-value
+   thing you could confirm: it is the core premium offer competitors sell.
+2. **A celebrant**, if one is genuinely available.
+3. **Legal review** of the vow renewal wording. Your own flag, still open.
+4. **Hair and makeup** for maternity: a supplier we can reliably call on? The
    page presents it as something to ask about rather than something we offer.
-7. **How many photographs a session delivers, and when they arrive.** The rates
+5. **How many photographs a session delivers, and when they arrive.** The rates
    are now set; the deliverable is not, on any of the three.
+
+*(The two pricing questions from the first version of this document are
+answered and closed. See §2.)*
 
 ---
 
