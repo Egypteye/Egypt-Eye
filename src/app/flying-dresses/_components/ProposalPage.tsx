@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Scene } from "./Scene";
 import { FaqList } from "./FaqList";
-import { ProposalGallery, type ProposalFrame } from "./ProposalGallery";
+import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { ProposalDecorations } from "./ProposalDecorations";
 import { agency } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
@@ -42,7 +42,7 @@ import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
  * vow renewal, a gender reveal, groups. Every frame below says what it
  * actually is. The page sells by showing the ROOM, the LIGHT and the TEAM'S
  * WORK honestly, which it can, rather than by implying a portfolio it does
- * not have. See ProposalGallery.
+ * not have. See PhotoGallery.
  *
  * Likewise the venue. The owner supplied a name and a street and asked for
  * both to be verified; they are recorded in content/flyingDressProposal.ts
@@ -59,8 +59,8 @@ import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
  * editorial: the roof and the view first, because that is the question a
  * visitor arrives with.
  */
-function galleryFrames(): ProposalFrame[] {
-  const slots: { slot: (typeof agency)[keyof typeof agency]; span: ProposalFrame["span"]; caption: string }[] = [
+function galleryFrames(): GalleryFrame[] {
+  const slots: { slot: (typeof agency)[keyof typeof agency]; span: GalleryFrame["span"]; caption: string }[] = [
     {
       slot: agency.couplesRomance,
       span: "lead",
@@ -184,7 +184,7 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
         </div>
       </section>
 
-      <ProposalGallery
+      <PhotoGallery
         frames={frames}
         heading="The roof, and the light on it"
         intro="We have not photographed a proposal yet, so nothing below is one, and each frame says what it actually is. What they show is the room you would be standing in: the view, the width of the roof, the light at either end of the day, and a decorated setup this team built up there."

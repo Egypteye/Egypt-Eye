@@ -19,6 +19,7 @@ import {
 import { experienceBySlug, experiencePath } from "@/content/flyingDressExperiences";
 import { accessoryByRef } from "@/content/flyingDressAccessories";
 import { proposalDecorations } from "@/content/flyingDressProposal";
+import { revealThemeById } from "@/content/flyingDressGenderReveal";
 
 /**
  * The Flying Dresses enquiry.
@@ -151,6 +152,11 @@ export async function POST(request: NextRequest) {
   const setupId = clean(body.setup, 60);
   const setup = proposalDecorations.find((d) => d.id === setupId);
 
+  // The gender reveal colour theme, resolved the same way. The LABEL the desk
+  // reads comes off the catalogue, never off the request, so a crafted payload
+  // cannot post a theme that promises something we do not offer.
+  const theme = revealThemeById(clean(body.theme, 60));
+
   const deliveryKey = clean(body.delivery, 40);
   const delivery =
     deliveryKey === "hotel-delivery" || deliveryKey === "collection"
@@ -178,6 +184,7 @@ export async function POST(request: NextRequest) {
   push("Men's attire", mens?.name ?? "");
   push("Accessories", chosenAccessories.join(", "));
   push("Proposal setup", setup?.name ?? "");
+  push("Gender reveal colour theme", theme?.label ?? "");
   push("Extras", extras.join(", "));
   push("Hotel / pickup area", hotel);
   push("Delivery", delivery);

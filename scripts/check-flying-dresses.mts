@@ -70,6 +70,12 @@ import {
 } from "../src/content/flyingDressStories.js";
 import { isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
 import {
+  revealDecorations,
+  revealPayment,
+  revealThemeById,
+  revealThemes,
+} from "../src/content/flyingDressGenderReveal.js";
+import {
   proposalDecorations,
   proposalPayment,
   proposalVenue,
@@ -4166,7 +4172,7 @@ ok(
 {
   const proposalContent = read("src/content/flyingDressProposal.ts");
   const proposalPage = read("src/app/flying-dresses/_components/ProposalPage.tsx");
-  const galleryComponent = read("src/app/flying-dresses/_components/ProposalGallery.tsx");
+  const galleryComponent = read("src/app/flying-dresses/_components/PhotoGallery.tsx");
   const lightbox = read("src/app/flying-dresses/_components/Lightbox.tsx");
   const decorations = read("src/app/flying-dresses/_components/ProposalDecorations.tsx");
 
@@ -4322,6 +4328,263 @@ ok(
       "or the category has fallen back to the generic renderer",
     /category\.id === "proposals" && proposal \?[\s\S]{0,120}?<ProposalPage/.test(
       strip(categoryRoute)
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE GENDER REVEAL PAGE
+//
+// The whole point of these guards is that this page is NOT the proposal page
+// with the nouns changed. The owner supplied a deposit split, payment methods,
+// a photograph count, a Google Drive gallery with a year of access and a hotel
+// name FOR THE PROPOSAL. Nothing of the kind was said about a gender reveal,
+// and the brief for this page warned twice against assuming it transfers.
+//
+// The cheapest possible mistake here is somebody later "finishing" this page by
+// copying the file next door. Every one of these assertions exists to make that
+// fail loudly instead of shipping invented terms to a paying customer.
+//
+// PROVEN, each by breaking the thing it names: a price in the content file, a
+// currency amount on the page, termsSet flipped to true, an import of the
+// proposal content, a hotel name, a named reveal effect advertised, the real
+// reveal frame put back into the gallery, a caption that stops naming its
+// occasion, a decoration entry with a missing photograph, a decoration entry
+// carrying a price, an em-dash in visitor-facing copy, and the route's render
+// switched off. All red, then restored.
+// ---------------------------------------------------------------------------
+{
+  const revealContent = read("src/content/flyingDressGenderReveal.ts");
+  const revealPage = read("src/app/flying-dresses/_components/GenderRevealPage.tsx");
+  const revealThemesComponent = read("src/app/flying-dresses/_components/RevealThemes.tsx");
+  const revealRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+  const revealApi = read("src/app/api/flying-dresses-enquiry/route.ts");
+
+  // Comments explain what the code must NOT do, which means an unstripped
+  // match tests the explanation rather than the code. This has bitten this
+  // script repeatedly; see the header. Import specifiers go too, because a
+  // path like "@/content/flyingDressProposal" otherwise satisfies a guard
+  // looking for proposal facts.
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+  const stripWithImports = (source: string) =>
+    strip(source).replace(/from\s+"[^"]*"/g, " ");
+
+  // ---- No price. Anywhere. -------------------------------------------
+  // The record's first unanswered question is "PRICE. Nothing has been set
+  // for a gender reveal, with or without video." Unlike the proposal page
+  // there is not even a percentage split to allow for, so this is stricter:
+  // no currency amount AND no percentage.
+  for (const [label, source] of [
+    ["the gender reveal content file", revealContent],
+    ["the gender reveal page", revealPage],
+  ] as const) {
+    const code = strip(source);
+    const money = code.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `${label} states a currency amount (${money.join(", ")}). No price has been set for a ` +
+        "gender reveal, with or without video, so a figure here is an invented one. CLAUDE.md §7.",
+      money.length === 0
+    );
+    const percent = code.match(/\b\d{1,3}\s?(?:%|per cent)/g) ?? [];
+    ok(
+      `${label} states a percentage (${percent.join(", ")}). That is how the proposal page ` +
+        "expresses its deposit split, and NO deposit, balance or payment term has been agreed " +
+        "for a gender reveal. See revealPayment.teamNote.",
+      percent.length === 0
+    );
+  }
+
+  // ---- The absence of payment terms is recorded, not quietly filled. --
+  ok(
+    "revealPayment.termsSet is true, which says payment terms now exist for a gender reveal. " +
+      "If the owner has genuinely set them, add them deliberately and update the page and this " +
+      "guard together. If this was flipped to make a section look finished, that is the exact " +
+      "mistake the flag is here to catch.",
+    revealPayment.termsSet === false
+  );
+
+  // ---- STRUCTURAL: the proposal's facts cannot reach this page. -------
+  // Stronger than searching for each string, because it stops the next one
+  // too. If the gender reveal page cannot import the proposal content, it
+  // cannot render a proposal fact by accident.
+  for (const [label, source] of [
+    ["the gender reveal content file", revealContent],
+    ["the gender reveal page", revealPage],
+  ] as const) {
+    ok(
+      `${label} imports from flyingDressProposal. Those facts were supplied for the proposal ` +
+        "service: a 25/75 split, cash and PayPal, more than a hundred photographs, a Google " +
+        "Drive gallery expiring after a year, a named hotel. None of it was said about a gender " +
+        "reveal, and importing the module is how one of them ends up on this page.",
+      !/from\s+"[^"]*flyingDressProposal"/.test(source)
+    );
+  }
+
+  // ---- The proposal's specific claims, named, in case of a hand copy. -
+  const proposalOnlyClaims: [string, RegExp][] = [
+    ["a named hotel", /Palm Hotel/i],
+    ["a street address", /Mansouriya/i],
+    ["Google Drive delivery", /Google Drive/i],
+    ["a year of gallery access", /for a year|one year from/i],
+    ["a photograph count", /more than a hundred|over a hundred|100\+/i],
+    ["a speaker on the roof", /speaker/i],
+  ];
+  for (const [what, pattern] of proposalOnlyClaims) {
+    const code = stripWithImports(revealContent) + stripWithImports(revealPage);
+    ok(
+      `the gender reveal page or its content file claims ${what}. That was supplied for the ` +
+        "proposal service and has never been stated about a gender reveal. Publishing it here " +
+        "is inventing a term the first customer will hold us to.",
+      !pattern.test(code)
+    );
+  }
+
+  // ---- No reveal mechanism advertised as available. -------------------
+  // The record says it twice: "We will not confirm a particular prop or
+  // effect until they have" and "Nothing specific should be advertised until
+  // this is answered." The section explains how a method gets AGREED.
+  //
+  // "balloon arch" is deliberately NOT in this list: the page describes one
+  // in a photograph we actually took, as decoration, which is a statement
+  // about a past evening rather than an offer. The named EFFECTS below are
+  // what cannot be offered.
+  const unconfirmedEffects: [string, RegExp][] = [
+    ["confetti", /confetti/i],
+    ["a smoke effect", /smoke/i],
+    ["a cannon", /cannon/i],
+    ["fireworks", /firework/i],
+    ["sparklers", /sparkler/i],
+    ["coloured powder", /powder/i],
+  ];
+  for (const [what, pattern] of unconfirmedEffects) {
+    const code = strip(revealContent) + strip(revealPage) + strip(revealThemesComponent);
+    ok(
+      `the gender reveal page names ${what}. No venue has confirmed which reveal mechanisms it ` +
+        "permits, and the experience record says plainly that nothing specific should be " +
+        "advertised until that is answered. Somebody will arrive expecting it.",
+      !pattern.test(code)
+    );
+  }
+
+  // ---- THE ONE REAL PHOTOGRAPH IS NOT SPENT TWICE. -------------------
+  // There is exactly one genuine gender reveal frame in this repository. It
+  // is the hero, rendered by the shared route. Putting it in the gallery as
+  // well makes one photograph look like two, and makes the gallery's own
+  // first sentence ("nothing below is a reveal") false.
+  ok(
+    "the gender reveal gallery now includes agency.genderReveal. That frame is the hero. " +
+      "Showing it in the gallery as well spends the only real reveal photograph twice and " +
+      "contradicts the gallery's own intro, which tells the visitor nothing below it is a reveal.",
+    !/agency\.genderReveal/.test(strip(revealPage))
+  );
+  ok(
+    "the gender reveal gallery intro no longer tells the visitor that the frames below are not " +
+      "reveals. Four frames from couples shoots and flying-dress sessions, unqualified, read as " +
+      "a reveal portfolio four times the size of the real one.",
+    /nothing below is a reveal/i.test(revealPage)
+  );
+
+  // ---- Every gallery caption names what the frame actually is. -------
+  // Matched inside the caption STRINGS rather than across the file, so a
+  // single occurrence of "vow renewal" elsewhere cannot satisfy all four.
+  {
+    const captions = [...revealPage.matchAll(/caption:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map(
+      (match) => match[1]
+    );
+    ok(
+      `the gender reveal gallery has ${captions.length} captions rather than the four frames it ` +
+        "renders, so at least one photograph is shown without saying what it is",
+      captions.length === 4
+    );
+    const occasion = /couples shoot|vow renewal|flying-dress session|gender reveal/i;
+    for (const caption of captions) {
+      ok(
+        `a gender reveal gallery caption does not name the occasion it was photographed at: ` +
+          `"${caption.slice(0, 70)}". None of these frames is a gender reveal, and a visitor ` +
+          "must not have to guess which.",
+        occasion.test(caption)
+      );
+    }
+  }
+
+  // ---- The decoration catalogue, whenever it fills up. ---------------
+  for (const decoration of revealDecorations) {
+    ok(
+      `the gender reveal decoration "${decoration.id}" has no photograph at public${decoration.src}. ` +
+        "A catalogue entry without one is a list item, and the page renders it as a card with a " +
+        "broken image.",
+      decoration.src.startsWith("/") && existsSync(`public${decoration.src}`)
+    );
+    const priced = `${decoration.name} ${decoration.description}`.match(/[$£€]\s?\d/g) ?? [];
+    ok(
+      `the gender reveal decoration "${decoration.id}" carries a price (${priced.join(", ")}). ` +
+        "No price has been set for a gender reveal or for any decoration in it.",
+      priced.length === 0
+    );
+  }
+
+  // ---- The colour themes resolve, and promise nothing priced. --------
+  ok(
+    "the gender reveal colour themes are empty. Unlike the decoration catalogue this list is " +
+      "CONFIRMED by the experience record (\"in a colour theme you pick\"), so an empty list is a " +
+      "regression rather than an honest gap.",
+    revealThemes.length > 0
+  );
+  for (const theme of revealThemes) {
+    ok(
+      `the gender reveal theme "${theme.id}" does not resolve through revealThemeById, so the ` +
+        "enquiry handoff would silently drop it",
+      revealThemeById(theme.id)?.id === theme.id
+    );
+  }
+  ok(
+    "revealThemeById resolves an id that is not in the catalogue, so a crafted query string " +
+      "could put a theme we do not offer into an enquiry email the desk reads as fact",
+    revealThemeById("not-a-real-theme") === undefined
+  );
+
+  // ---- The handoff is resolved server-side, never echoed. ------------
+  ok(
+    "the enquiry API no longer resolves the gender reveal theme through revealThemeById. " +
+      "Whatever arrives in that field ends up in an email the business reads as fact, so the " +
+      "LABEL must come off the catalogue rather than off the request.",
+    /revealThemeById\(clean\(body\.theme/.test(strip(revealApi))
+  );
+  ok(
+    "the enquiry API stopped putting the gender reveal colour theme in the desk email, so a " +
+      "choice the visitor made on the page is collected and then thrown away",
+    /push\("Gender reveal colour theme", theme\?\.label/.test(strip(revealApi))
+  );
+
+  // ---- No em-dashes in visitor-facing copy. --------------------------
+  // Project rule. Checked on the content file's STRING LITERALS, because the
+  // explanatory comments above them are not visitor-facing and legitimately
+  // contain them.
+  {
+    const literals = [...revealContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    const offenders = literals.filter((literal) => literal.includes("—"));
+    ok(
+      `the gender reveal content file uses an em-dash in visitor-facing copy: ` +
+        `"${offenders[0]?.slice(0, 70) ?? ""}". Repunctuate by hand with a colon, a full stop, a ` +
+        "comma or parentheses as the sentence needs.",
+      offenders.length === 0
+    );
+  }
+
+  // ---- The route still owns the URL. ---------------------------------
+  // Matched on the RENDER, not the identifier: `category.id === "gender-reveal"`
+  // also appears in the lookup two lines earlier, so testing for it anywhere
+  // in the file would stay green with the render switched off.
+  ok(
+    "the gender reveal body is no longer rendered from the shared celebrations route: either it " +
+      "has been forked to its own URL, taking the breadcrumbs and the FAQ structured data with " +
+      "it, or the category has fallen back to the generic renderer",
+    /category\.id === "gender-reveal" && genderReveal \?[\s\S]{0,140}?<GenderRevealPage/.test(
+      strip(revealRoute)
     )
   );
 }

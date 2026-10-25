@@ -3895,8 +3895,20 @@ ol.fd-timeline h3::before {
   }
 }
 
+/* A CARD FILLS ITS GRID CELL, so a row of them shares one bottom edge.
+   With a photograph on top the heights already matched, which is why this
+   was never needed for the proposal catalogue. The gender reveal's colour
+   themes are text only and three different sentence lengths left three
+   different bottom edges side by side. The pick line is pushed to the
+   bottom so those align too. */
+.fd-decor-grid > li {
+  display: grid;
+}
+
 .fd-decor-card {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   width: 100%;
   padding: 0;
   border: 1px solid rgba(20, 20, 20, 0.14);
@@ -3918,6 +3930,8 @@ ol.fd-timeline h3::before {
 
 .fd-decor-frame {
   display: block;
+  /* Never squashed by the flex column above: the ratio is the point. */
+  flex: none;
   aspect-ratio: 4 / 5;
   overflow: hidden;
 }
@@ -3930,7 +3944,10 @@ ol.fd-timeline h3::before {
 }
 
 .fd-decor-body {
-  display: block;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 0.85rem 0.9rem 1rem;
 }
 
@@ -3951,7 +3968,10 @@ ol.fd-timeline h3::before {
 
 .fd-decor-pick {
   display: block;
-  margin-top: 0.6rem;
+  /* auto, not a fixed gap: it sits at the bottom of the card however much
+     description is above it, so a row of cards aligns on this line. */
+  margin-top: auto;
+  padding-top: 0.6rem;
   font-size: var(--fd-step--1);
   letter-spacing: 0.1em;
   text-transform: uppercase;

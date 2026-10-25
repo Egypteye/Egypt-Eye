@@ -8,6 +8,7 @@ import {
 } from "../_lib/content";
 import { experienceBySlug } from "@/content/flyingDressExperiences";
 import { proposalDecorations } from "@/content/flyingDressProposal";
+import { revealThemeById } from "@/content/flyingDressGenderReveal";
 import { urgentCall } from "@/content/flyingDresses";
 import { UrgentCall } from "../_components/UrgentCall";
 import { EnquiryForm } from "../_components/EnquiryForm";
@@ -72,6 +73,11 @@ export default async function EnquirePage({
   // a real design is added it arrives here already working.
   const setupParam = one(params.setup);
   const setup = proposalDecorations.find((d) => d.id === setupParam)?.id ?? "";
+  // The gender reveal colour theme, same discipline. Unlike the decoration
+  // catalogue this list is NOT empty: the experience record confirms the
+  // customer picks a colour theme, so this one resolves for real visitors
+  // today. An unknown id still becomes "" and selects nothing.
+  const theme = revealThemeById(one(params.theme))?.id ?? "";
   const dressParam = one(params.dress).toLowerCase();
   const dress = dresses.find((d) => d.id.toLowerCase() === dressParam)?.id ?? "";
   const mensParam = one(params.mens).toLowerCase();
@@ -113,6 +119,7 @@ export default async function EnquirePage({
               initialService={service}
               initialExperience={experience}
               initialSetup={setup}
+              initialTheme={theme}
               initialDress={dress}
               initialMens={mens}
               phone={urgentPhone}

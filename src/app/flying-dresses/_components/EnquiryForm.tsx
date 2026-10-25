@@ -6,6 +6,7 @@ import { track } from "../_lib/analytics";
 import { RENTAL_DELIVERY_LABELS, addOns, dresses, flyingDressEnquiry, mensOutfits, packagePricePhrase, packages, rentalServices, urgentCall, whatsappHref } from "@/content/flyingDresses";
 import { NAMING_NOTE, accessoryCategories, accessoryByRef } from "@/content/flyingDressAccessories";
 import { proposalDecorations } from "@/content/flyingDressProposal";
+import { revealThemeById } from "@/content/flyingDressGenderReveal";
 import { PhoneField } from "@/components/PhoneField";
 
 /**
@@ -120,6 +121,7 @@ export function EnquiryForm({
   initialService = "",
   initialExperience = "",
   initialSetup = "",
+  initialTheme = "",
   initialDress = "",
   initialMens = "",
   phone: contactPhone = urgentCall.fallback,
@@ -129,6 +131,8 @@ export function EnquiryForm({
   initialExperience?: string;
   /** A proposal decoration chosen on the proposal page, already resolved. */
   initialSetup?: string;
+  /** A gender reveal colour theme chosen on that page, already resolved. */
+  initialTheme?: string;
   initialDress?: string;
   initialMens?: string;
   /**
@@ -167,6 +171,10 @@ export function EnquiryForm({
   // a worse position. It travels into the payload and the WhatsApp draft so
   // nobody has to describe their setup again.
   const [setup] = useState(initialSetup);
+  // Carried the same way, and for the same reason: it is chosen on the gender
+  // reveal page beside the explanation of what each option means, and asking
+  // again here would be a worse place to make the same decision.
+  const [theme] = useState(initialTheme);
   const [date, setDate] = useState("");
   const [people, setPeople] = useState("");
   const [dress, setDress] = useState(initialDress);
@@ -262,13 +270,16 @@ export function EnquiryForm({
         ...(proposalDecorations.find((d) => d.id === setup)?.name
           ? [`Proposal setup: ${proposalDecorations.find((d) => d.id === setup)?.name}`]
           : []),
+        ...(revealThemeById(theme)?.label
+          ? [`Gender reveal colour theme: ${revealThemeById(theme)?.label}`]
+          : []),
         ...extras.map((id) => addOns.find((a) => a.id === id)?.label),
       ].filter((label): label is string => Boolean(label)),
       hotel,
       delivery: delivery ? RENTAL_DELIVERY_LABELS[delivery as "hotel-delivery" | "collection"] : undefined,
       notes: message,
     });
-  }, [pkg, service, experience, setup, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
+  }, [pkg, service, experience, setup, theme, name, date, people, dress, mens, accessories, extras, hotel, delivery, message]);
 
   const onSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -318,6 +329,7 @@ export function EnquiryForm({
           service,
           experience,
           setup,
+          theme,
           date,
           people,
           dress,

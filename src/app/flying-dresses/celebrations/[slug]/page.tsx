@@ -12,6 +12,7 @@ import {
 import { fdBreadcrumbJsonLd, fdFaqJsonLd, fdJsonLd, fdMetadata, fdPath } from "../../_lib/seo";
 import { StoriesFromHere } from "../../_components/StoriesFromHere";
 import { ProposalPage } from "../../_components/ProposalPage";
+import { GenderRevealPage } from "../../_components/GenderRevealPage";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -60,9 +61,10 @@ export default async function ExperienceCategoryPage({
   const siblings = experienceCategories.filter(
     (c) => c.section === SECTION && c.id !== category.id
   );
-  // The proposal's own record, when this is that category. Read from the
-  // same array the generic renderer uses, so there is one source.
+  // The records belonging to the two categories that compose their own body,
+  // read from the same array the generic renderer uses so there is one source.
   const proposal = category.id === "proposals" ? experiences[0] : undefined;
+  const genderReveal = category.id === "gender-reveal" ? experiences[0] : undefined;
 
   return (
     <>
@@ -144,12 +146,20 @@ export default async function ExperienceCategoryPage({
         </div>
       </section>
 
-      {/* ONE CATEGORY GETS ITS OWN BODY, AND ONLY THE BODY.
+      {/* TWO CATEGORIES GET THEIR OWN BODY, AND ONLY THE BODY.
           =================================================================
           The proposal is the page somebody plans for months and compares
           against other suppliers before they ever speak to us, and the
-          shared renderer gave it the same four sections as a birthday. So
-          it composes its own sections instead.
+          gender reveal is a family event with guests, a supplier-dependent
+          cake and a venue that has to approve whatever happens in the air.
+          The shared renderer gave each of them the same four sections as a
+          birthday. So they compose their own sections instead.
+
+          They are NOT variations of one another. The proposal's deposit
+          split, payment methods, photograph count and gallery expiry were
+          supplied for the proposal; nothing of the kind has been set for a
+          gender reveal, and neither page may borrow the other's terms. See
+          content/flyingDressGenderReveal.ts.
 
           What it deliberately does NOT get is its own route. The URL, the
           metadata, the breadcrumbs, the FAQ structured data, the sibling
@@ -159,6 +169,8 @@ export default async function ExperienceCategoryPage({
           duplicated every one of those and then drifted from them. */}
       {category.id === "proposals" && proposal ? (
         <ProposalPage experience={proposal} />
+      ) : category.id === "gender-reveal" && genderReveal ? (
+        <GenderRevealPage experience={genderReveal} />
       ) : (
         /* `headless` when this category holds exactly one experience: the
            h1 and lede above are already that experience's title and intro,
