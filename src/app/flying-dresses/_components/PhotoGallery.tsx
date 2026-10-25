@@ -18,7 +18,7 @@ import { Lightbox, useLightbox, type LightboxFrame } from "./Lightbox";
  *
  *   - The proposal page has NO photograph of a proposal. Not one. What it has
  *     is real, credited agency work from the same roof: couples, a vow
- *     renewal, a gender reveal, groups. The Alessandra couple frames look
+ *     anniversary shoot, a gender reveal, groups. The Alessandra frames look
  *     exactly like proposal photography, and captioning them as a proposal
  *     would be fabricating client work.
  *   - The gender reveal page has EXACTLY ONE, and it is genuinely a gender

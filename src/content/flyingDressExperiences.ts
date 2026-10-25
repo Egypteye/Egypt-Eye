@@ -501,11 +501,13 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "A personalised sign or message", delivery: "in-house" },
       { label: "Creative lighting for an evening session", delivery: "in-house" },
       { label: "Cake, flowers or refreshments", delivery: "partner" },
-      { label: "A private dining arrangement at the venue", delivery: "venue" },
       { label: "A musician", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner"],
-    pricing: { kind: "enquire" },
+    // Owner's October 2026 rate card: a regular photoshoot is $100 per
+    // person and a flying dress photoshoot is $200. The FROM figure is the
+    // regular session, with the dress rate shown beside it on the page.
+    pricing: { kind: "from", fromUsd: 100 },
     durationNote: "Around two hours for a session with a setup and portraits.",
     locationNote: ROOFTOP_LOCATION_NOTE,
     leadTimeNote: "A week or two is usually enough unless there is catering or a musician involved.",
@@ -521,8 +523,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set.",
-      "Whether a private dining arrangement is genuinely available at any venue, and on what terms.",
+      "Whether a private dining arrangement is genuinely available at any venue, and on what terms. Confirmed UNVERIFIED by the owner in October 2026 and deliberately kept off this page until a venue has agreed it.",
+      "How many photographs a session delivers and when they arrive. The rate is set; the deliverable is not.",
     ],
   },
   {
@@ -552,7 +554,10 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "Hair and makeup", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner"],
-    pricing: { kind: "enquire" },
+    // Same rate card. A maternity session in a dress from the collection is
+    // the $200 rate; anybody joining in their own clothes is $100, so a
+    // family is usually a mix. The FROM figure is the lower of the two.
+    pricing: { kind: "from", fromUsd: 100 },
     durationNote:
       "Allow around ninety minutes. We work at whatever pace the session needs, and there is somewhere to sit between frames.",
     locationNote: ROOFTOP_LOCATION_NOTE,
@@ -574,8 +579,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set for maternity or family sessions.",
-      "Whether hair and makeup is a supplier we can reliably call on.",
+      "Whether hair and makeup is a supplier we can reliably call on. Presented on the page as something to ask about rather than something we offer.",
+      "How many photographs a session delivers and when they arrive. The rate is set; the deliverable is not.",
     ],
   },
   {
@@ -606,7 +611,11 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "A celebrant to lead the words", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner"],
-    pricing: { kind: "enquire" },
+    // A CEREMONY IS AN EVENT, NOT A PHOTOSHOOT, which is why this is the
+    // hourly rooftop rate rather than a per-person one. The owner's rate
+    // card is explicit that photography for an event is charged separately,
+    // and the page says so beside the figure.
+    pricing: { kind: "hourly", fromUsd: 150, unit: "hour" },
     durationNote: "Two to three hours including the setup and the portraits.",
     locationNote: ROOFTOP_LOCATION_NOTE,
     leadTimeNote: "A month is comfortable, because the venue, the styling and any musician all have to line up.",
@@ -626,8 +635,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set.",
-      "Whether a celebrant is genuinely available through a partner, or whether this should be removed.",
+      "Whether a celebrant is genuinely available through a partner. Kept OFF the page until answered: a celebrant is a person who has to turn up, and promising one we cannot produce does not disappoint a customer, it ruins the ceremony.",
+      "What the event photography for a ceremony costs. The rooftop hours are set at $150; the photography on top of them is not.",
       "LEGAL REVIEW of the wording above before it is published, since it is the sentence that stops a symbolic ceremony being mistaken for a legal one.",
     ],
   },

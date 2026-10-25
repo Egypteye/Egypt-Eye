@@ -14,6 +14,8 @@ import { StoriesFromHere } from "../../_components/StoriesFromHere";
 import { ProposalPage } from "../../_components/ProposalPage";
 import { GenderRevealPage } from "../../_components/GenderRevealPage";
 import { BirthdayPage } from "../../_components/BirthdayPage";
+import { OccasionPage } from "../../_components/OccasionPage";
+import { occasionByCategory } from "@/content/flyingDressOccasions";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -67,6 +69,10 @@ export default async function ExperienceCategoryPage({
   const proposal = category.id === "proposals" ? experiences[0] : undefined;
   const genderReveal = category.id === "gender-reveal" ? experiences[0] : undefined;
   const celebration = category.id === "celebrations" ? experiences[0] : undefined;
+  // The three remaining celebrations share one composition: anniversaries,
+  // maternity and family, and vow renewals. See _components/OccasionPage.tsx
+  // for why they are not three near-identical files.
+  const occasion = occasionByCategory(category.id);
 
   return (
     <>
@@ -148,7 +154,7 @@ export default async function ExperienceCategoryPage({
         </div>
       </section>
 
-      {/* THREE CATEGORIES GET THEIR OWN BODY, AND ONLY THE BODY.
+      {/* EVERY CELEBRATION NOW COMPOSES ITS OWN BODY, AND ONLY THE BODY.
           =================================================================
           The proposal is the page somebody plans for months and compares
           against other suppliers before they ever speak to us, and the
@@ -181,6 +187,8 @@ export default async function ExperienceCategoryPage({
         <GenderRevealPage experience={genderReveal} />
       ) : category.id === "celebrations" && celebration ? (
         <BirthdayPage experience={celebration} />
+      ) : occasion && experiences[0] ? (
+        <OccasionPage occasion={occasion} experience={experiences[0]} />
       ) : (
         /* `headless` when this category holds exactly one experience: the
            h1 and lede above are already that experience's title and intro,

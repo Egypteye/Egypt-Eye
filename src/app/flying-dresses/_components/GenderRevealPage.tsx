@@ -89,7 +89,7 @@ function galleryFrames(): GalleryFrame[] {
     {
       slot: agency.couplesVows,
       span: "pair",
-      caption: "Golden hour on the same roof. Photographed at a vow renewal.",
+      caption: "Golden hour on the same roof. Photographed at an anniversary shoot.",
     },
     {
       slot: agency.rooftopPortrait,

@@ -4053,6 +4053,43 @@ ol.fd-timeline h3::before {
   color: var(--fd-gold-ink);
 }
 
+/* ---- The rate row ----------------------------------------------------
+   The figures in an occasion hero. Two of them at most, side by side on a
+   phone, because a $100 and a $200 rate read as a choice when they sit
+   together and as two unrelated numbers when they stack.
+
+   THE UNIT IS INSIDE THE FIGURE, not a separate element: "$150 per hour"
+   is one string from the rate card. Splitting the amount from the unit is
+   how a rate ends up rendered bare at some future breakpoint. */
+.fd-rate-row {
+  list-style: none;
+  margin: 2rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 2.5rem;
+}
+
+.fd-rate-row > li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.fd-rate-figure {
+  font-family: var(--fd-display);
+  font-size: var(--fd-step-2);
+  line-height: 1.1;
+  color: var(--fd-ink);
+}
+
+.fd-rate-label {
+  font-size: var(--fd-step--1);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fd-ink-soft);
+}
+
 /* ---- The charge tag --------------------------------------------------
    Four labels on the celebration page: Included, Arranged for you,
    Additional charge, Quoted for you. The brief asked for the distinction

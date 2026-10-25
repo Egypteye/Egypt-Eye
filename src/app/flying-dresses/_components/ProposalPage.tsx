@@ -39,7 +39,7 @@ import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
  * =========================================================================
  * We have no photograph of a proposal we have run. The agency work on this
  * roof is real and credited, and none of it is a proposal — it is couples, a
- * vow renewal, a gender reveal, groups. Every frame below says what it
+ * anniversary shoot, a gender reveal, groups. Every frame below says what it
  * actually is. The page sells by showing the ROOM, the LIGHT and the TEAM'S
  * WORK honestly, which it can, rather than by implying a portfolio it does
  * not have. See PhotoGallery.
@@ -70,7 +70,7 @@ function galleryFrames(): GalleryFrame[] {
     {
       slot: agency.couplesVows,
       span: "pair",
-      caption: "Golden hour on the same roof. Photographed at a vow renewal.",
+      caption: "Golden hour on the same roof. Photographed at an anniversary shoot.",
     },
     {
       slot: agency.genderReveal,

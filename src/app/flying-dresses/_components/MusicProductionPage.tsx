@@ -102,7 +102,7 @@ function galleryFrames(): GalleryFrame[] {
       slot: agency.couplesVows,
       span: "pair",
       caption:
-        "The light on this roof at golden hour, which is the hour most sessions are built around. Photographed at a vow renewal.",
+        "The light on this roof at golden hour, which is the hour most sessions are built around. Photographed at an anniversary shoot.",
     },
     {
       slot: agency.genderReveal,

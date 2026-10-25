@@ -48,7 +48,7 @@ import {
 } from "../src/content/outfitCollection.js";
 import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
-import { allSlots, location } from "../src/app/flying-dresses/_lib/assets.js";
+import { agency, allSlots, categoryPhoto, location } from "../src/app/flying-dresses/_lib/assets.js";
 import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
@@ -67,6 +67,7 @@ import {
   storyClusters,
   storyLinkTargets,
   storyWordCount,
+  liveStoryBySlug,
 } from "../src/content/flyingDressStories.js";
 import { isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
 import {
@@ -81,6 +82,12 @@ import {
   transport as celebrationTransport,
 } from "../src/content/flyingDressBirthday.js";
 import { isCelebrationExperience, mergeFaqs } from "../src/content/flyingDressExperiences.js";
+import { occasions, occasionByCategory } from "../src/content/flyingDressOccasions.js";
+import {
+  RATES_EVENT_PHOTOGRAPHY,
+  RATES_INCLUDE_DECORATION,
+  rates,
+} from "../src/content/flyingDressRates.js";
 import {
   audioRecording,
   musicSetups,
@@ -4173,7 +4180,7 @@ ok(
 //
 // That is the fact the whole page is built around and the reason this block
 // exists. The repository holds real, credited agency work from the Giza
-// rooftop — couples, a vow renewal, a gender reveal, groups — and not one
+// rooftop — couples, an anniversary shoot, a gender reveal, groups — and not one
 // frame of a proposal. The couples frames look exactly like proposal
 // photography, which is precisely why a caption that forgets to say what they
 // are becomes fabricated client work rather than an oversight.
@@ -4269,7 +4276,14 @@ ok(
   // The page has five captions and none of the photographs is a proposal.
   // Each caption must name the real occasion, or the frame is passed off as
   // something it is not.
-  const OCCASIONS = ["couples shoot", "vow renewal", "gender reveal", "flying-dress session", "the roof"];
+  const OCCASIONS = [
+    "couples shoot",
+    "anniversary shoot",
+    "vow renewal",
+    "gender reveal",
+    "flying-dress session",
+    "the roof",
+  ];
   const captions = [...proposalPage.matchAll(/caption:\s*\n?\s*"([^"]+)"/g)].map((m) => m[1]);
   ok(
     `the proposal gallery has ${captions.length} captions, which is not the set the page composes. ` +
@@ -4520,7 +4534,7 @@ ok(
         "renders, so at least one photograph is shown without saying what it is",
       captions.length === 4
     );
-    const occasion = /couples shoot|vow renewal|flying-dress session|gender reveal/i;
+    const occasion = /couples shoot|anniversary shoot|vow renewal|flying-dress session|gender reveal/i;
     for (const caption of captions) {
       ok(
         `a gender reveal gallery caption does not name the occasion it was photographed at: ` +
@@ -4802,7 +4816,7 @@ ok(
         "renders, so at least one photograph is shown without saying what it is",
       captions.length === 5
     );
-    const occasion = /couples shoot|vow renewal|flying-dress session|gender reveal/i;
+    const occasion = /couples shoot|anniversary shoot|vow renewal|flying-dress session|gender reveal/i;
     for (const caption of captions) {
       ok(
         `a celebration gallery caption does not name the occasion it was photographed at: ` +
@@ -5245,6 +5259,325 @@ ok(
     /category\.id === "music-production" && experiences\[0\] \?[\s\S]{0,120}?<MusicProductionPage/.test(
       strip(musicRoute)
     )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE THREE SHARED OCCASIONS: anniversaries, maternity, vow renewals
+//
+// All three now carry REAL PRICES, which makes this the first block where
+// being wrong costs a customer money rather than goodwill. The owner's rate
+// card, October 2026: the rooftop is $150 an hour, a flying dress photoshoot
+// is $200 per person, a regular photoshoot is $100 per person, decoration is
+// INCLUDED, and photography for an event is charged separately.
+//
+// Three ways to be wrong, and one guard each:
+//   - a figure that disagrees with the rate card, because two sources for one
+//     number is how two pages quote differently at one customer;
+//   - a rate rendered without its unit, because $200 is PER PERSON and $150 is
+//     PER HOUR and either read bare is wrong by a factor;
+//   - a ceremony priced like a photoshoot, which drops the event photography
+//     fee the owner was explicit about.
+//
+// PROVEN, each by breaking the thing it names: a rate changed, a display
+// string stripped of its unit, the vow renewal repriced per person, the
+// decoration line removed, a celebrant promised, dining reinstated, a gap
+// filled, a caption emptied, and the route's render switched off. All red,
+// then restored.
+// ---------------------------------------------------------------------------
+{
+  const occasionPage = read("src/app/flying-dresses/_components/OccasionPage.tsx");
+  const occasionContent = read("src/content/flyingDressOccasions.ts");
+  const rateContent = read("src/content/flyingDressRates.ts");
+  const occasionRoute = read("src/app/flying-dresses/celebrations/[slug]/page.tsx");
+
+  const strip = (source: string) =>
+    source
+      .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
+      .replace(/\/\*[\s\S]*?\*\//g, " ")
+      .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+
+  // ---- THE RATE CARD IS THE OWNER'S, AND IT IS ONE SOURCE. -----------
+  for (const [id, amount, unit] of [
+    ["location", 150, "hour"],
+    ["flyingDress", 200, "person"],
+    ["regular", 100, "person"],
+  ] as [keyof typeof rates, number, string][]) {
+    const rate = rates[id];
+    ok(
+      `the ${id} rate is $${rate.amountUsd} per ${rate.unit} rather than $${amount} per ${unit}. ` +
+        "These are the owner's figures from October 2026 and a price may only change when they " +
+        "say so.",
+      rate.amountUsd === amount && rate.unit === unit
+    );
+    // The display string is what a visitor reads, and it is the only place
+    // the unit survives into the page.
+    ok(
+      `the ${id} rate's display string is "${rate.display}" and does not carry both the amount ` +
+        `and the unit. A rate rendered bare is wrong by however many ${rate.unit}s somebody books.`,
+      rate.display.includes(`$${amount}`) && new RegExp(`per ${unit}`, "i").test(rate.display)
+    );
+  }
+  // One source: no page may hold its own copy of a figure.
+  for (const [label, source] of [
+    ["the occasion content", occasionContent],
+    ["the occasion page", occasionPage],
+  ] as const) {
+    const money = strip(source).match(/[$£€]\s?\d+/g) ?? [];
+    const unexpected = money.filter((m) => !/\$(100|150|200)\b/.test(m));
+    ok(
+      `${label} writes a currency figure of its own (${unexpected.join(", ")}) instead of reading ` +
+        "it from flyingDressRates.ts. Two copies of one number is how two pages quote differently.",
+      unexpected.length === 0
+    );
+  }
+  ok(
+    "the occasion page renders rate.display in fewer than two places. The hero and the money " +
+      "section both show the figure, and a guard matching one occurrence anywhere stayed green " +
+      "with either stripped: a rate without its unit is wrong by a factor.",
+    (strip(occasionPage).match(/\{rate\.display\}/g) ?? []).length === 2
+  );
+
+  // ---- A CEREMONY IS AN EVENT, NOT A PHOTOSHOOT. ---------------------
+  {
+    const vows = occasionByCategory("vows-engagement");
+    ok("the vows-engagement occasion has gone missing", Boolean(vows));
+    ok(
+      "the vow renewal is no longer marked as an event, so the page drops the line saying event " +
+        "photography is charged on top of the rooftop hours. The owner's rate card is explicit " +
+        "about that fee.",
+      vows?.pricing.isEvent === true
+    );
+    ok(
+      `the vow renewal is priced at ${vows?.pricing.applies.map((r) => r.display).join(", ")} ` +
+        "rather than by the hour. A ceremony is an event: pricing it per person like a photoshoot " +
+        "silently drops the event photography fee.",
+      vows?.pricing.applies.length === 1 && vows.pricing.applies[0]?.unit === "hour"
+    );
+    ok(
+      "the occasion page no longer renders the event-photography line for an event",
+      /\{RATES_EVENT_PHOTOGRAPHY\}/.test(strip(occasionPage))
+    );
+    ok(
+      "RATES_EVENT_PHOTOGRAPHY no longer makes BOTH halves of the point: that a photoshoot is " +
+        "priced per person while an event is the room by the hour, AND that the photography is " +
+        "charged on top. Dropping either half leaves a ceremony looking per-person priced.",
+      /charged separately/i.test(RATES_EVENT_PHOTOGRAPHY) &&
+        /per person/i.test(RATES_EVENT_PHOTOGRAPHY) &&
+        /by the hour/i.test(RATES_EVENT_PHOTOGRAPHY)
+    );
+  }
+  for (const occasion of occasions) {
+    ok(
+      `the ${occasion.categoryId} occasion applies no rates, so its page shows a visitor nothing ` +
+        "about what it costs",
+      occasion.pricing.applies.length > 0
+    );
+  }
+
+  // ---- DECORATION IS INCLUDED, and that is unusual enough to state. --
+  ok(
+    "RATES_INCLUDE_DECORATION no longer says the decoration is included. The owner confirmed it " +
+      "in October 2026 and it is a real advantage: comparable services charge for styling " +
+      "separately or do not offer it.",
+    /decoration is included/i.test(RATES_INCLUDE_DECORATION)
+  );
+  ok(
+    "the occasion page no longer renders the included-decoration line, so the one genuinely " +
+      "generous thing about this rate card is invisible",
+    /\{RATES_INCLUDE_DECORATION\}/.test(strip(occasionPage))
+  );
+
+  // ---- NOTHING UNVERIFIED IS PROMISED. -------------------------------
+  // Both of these were explicitly decided in October 2026.
+  {
+    const vows = occasionByCategory("vows-engagement");
+    const vowsText = JSON.stringify(vows);
+    ok(
+      "the vow renewal page now offers a celebrant. The record flags one as unverified and the " +
+        "owner left the call open. A celebrant is a person who has to turn up to a ceremony: " +
+        "promising one we cannot produce does not disappoint a customer, it ruins the event.",
+      /not offering a celebrant/i.test(vows?.feature.note ?? "")
+    );
+    ok(
+      "the vow renewal's FEATURE section no longer states that the ceremony creates no legal " +
+        "marriage. It has to be the prominent statement, not only an answer buried in the " +
+        "questions: the first version of this guard searched the whole record and the FAQ kept " +
+        "it green while the prominent one had been deleted.",
+      // THE DETAIL, NOT THE TITLE. A heading reading "It creates no legal
+      // marriage" matched the previous version of this while the sentence
+      // under it had been replaced, which leaves the most important claim on
+      // the page as a label with nothing behind it. The same trap caught the
+      // pyramids-complex warning on the music page.
+      // ALL THREE CLAIMS, IN THE DETAILS. Two earlier versions of this guard
+      // passed on a gutted section: one matched a heading that still read "It
+      // creates no legal marriage", the other matched the word "embassy" in a
+      // different point. The section only does its job if it says all three
+      // things, so removing any one of them now goes red.
+      ["legal officiation", "legal effect", "embassy"].every((claim) =>
+        vows?.feature.points.some((point) =>
+          new RegExp(claim, "i").test(point.detail)
+        )
+      )
+    );
+    ok(
+      "the vow renewal's questions no longer carry the legal statement either",
+      /creates no legal marriage/i.test(vowsText)
+    );
+  }
+  {
+    const romance = occasionByCategory("romance");
+    ok(
+      "the anniversary page mentions private dining. The owner confirmed in October 2026 that it " +
+        "is unverified and should stay off the page until a venue has agreed it.",
+      !/private dining|dinner on the roof|rooftop dinner/i.test(JSON.stringify(romance))
+    );
+  }
+
+  // ---- THE GALLERIES: real frames captioned, gaps labelled. ---------
+  {
+    const occasionWords =
+      /couples shoot|anniversary shoot|vow renewal|flying-dress session|gender reveal|Fayoum/i;
+    for (const occasion of occasions) {
+      const real = occasion.frames.filter((frame) => frame.slot !== null);
+      const gaps = occasion.frames.filter((frame) => frame.slot === null);
+      ok(
+        `the ${occasion.categoryId} gallery has no photographs at all`,
+        real.length > 0
+      );
+      for (const frame of real) {
+        ok(
+          `a ${occasion.categoryId} gallery frame does not name the occasion it was photographed ` +
+            `at: "${frame.caption.slice(0, 64)}". None of these is the occasion the page sells.`,
+          occasionWords.test(frame.caption)
+        );
+        ok(
+          `the ${occasion.categoryId} gallery points at an asset key "${frame.slot}" that is not ` +
+            "in the registry, so the frame would silently vanish",
+          Object.prototype.hasOwnProperty.call(allSlots, frame.slot as string) ||
+            Boolean(frame.slot && frame.slot in (allSlots as Record<string, unknown>))
+        );
+      }
+      for (const gap of gaps) {
+        ok(
+          `a ${occasion.categoryId} gallery gap does not name the photograph it is waiting for`,
+          Boolean(gap.wanted && gap.wanted.length > 10)
+        );
+        ok(
+          `a ${occasion.categoryId} gallery gap has no alt text, so a screen reader hears nothing ` +
+            "where a designed slot sits",
+          Boolean(gap.alt && gap.alt.length > 10)
+        );
+      }
+    }
+    // The maternity page has no photograph of its own occasion, so its gaps
+    // are the only honest way to show what is missing.
+    const maternity = occasionByCategory("maternity-family");
+    ok(
+      "the maternity gallery has stopped declaring labelled gaps. There is no photograph of a " +
+        "pregnancy, a family or a child anywhere in this repository, and deleting the gaps does " +
+        "not get them taken, it hides that they are needed.",
+      (maternity?.frames.filter((f) => f.slot === null).length ?? 0) >= 3
+    );
+  }
+
+  // ---- No em-dashes in visitor-facing copy. --------------------------
+  {
+    const literals = [...occasionContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    const offenders = literals.filter((literal) => literal.includes("—"));
+    ok(
+      `the occasion content uses an em-dash in visitor-facing copy: "${offenders[0]?.slice(0, 60) ?? ""}"`,
+      offenders.length === 0
+    );
+  }
+  {
+    const literals = [...rateContent.matchAll(/"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
+    ok(
+      "the rate card uses an em-dash in visitor-facing copy",
+      literals.every((literal) => !literal.includes("—"))
+    );
+  }
+
+  // ---- Each occasion matches a real experience and renders. ----------
+  for (const occasion of occasions) {
+    const experience = flyingDressExperiences.find((e) => e.slug === occasion.experienceSlug);
+    ok(
+      `the ${occasion.categoryId} occasion points at experience "${occasion.experienceSlug}", ` +
+        "which does not exist, so its page would never render",
+      Boolean(experience)
+    );
+    ok(
+      `the ${occasion.categoryId} occasion's experience is in category "${experience?.category}" ` +
+        `rather than "${occasion.categoryId}", so the route would hand it the wrong record`,
+      experience?.category === occasion.categoryId
+    );
+  }
+  // ---- NO FRAME IS SHOWN TWICE ON ONE PAGE. --------------------------
+  // Found by looking at the rendered page, not by a check. The shared route
+  // renders `categoryPhoto[category.id]` large and uncaptioned above the
+  // body, and two of these occasions then added a hero of their own and put
+  // the same frame in the gallery underneath. One photograph appearing three
+  // times reads as a portfolio of one.
+  for (const occasion of occasions) {
+    const routePhoto = categoryPhoto[occasion.categoryId];
+    const gallerySlots = occasion.frames
+      .map((frame) => frame.slot)
+      .filter((slot): slot is string => typeof slot === "string");
+
+    ok(
+      `the ${occasion.categoryId} page renders its own hero AND the route renders a category ` +
+        "photograph, so the page opens with two large photographs where it meant to open with " +
+        "one. Set heroSlot to null when categoryPhoto carries this category.",
+      !(routePhoto && occasion.heroSlot)
+    );
+    ok(
+      `the ${occasion.categoryId} page has neither a category photograph nor a hero, so it opens ` +
+        "on type alone. That is a deliberate choice for the vow renewal, whose only candidate " +
+        "frame needs its caption to be honest, and a mistake anywhere else.",
+      Boolean(routePhoto) || Boolean(occasion.heroSlot) || occasion.categoryId === "vows-engagement"
+    );
+    if (occasion.heroSlot) {
+      ok(
+        `the ${occasion.categoryId} gallery repeats its own hero (${occasion.heroSlot})`,
+        !gallerySlots.includes(occasion.heroSlot)
+      );
+    }
+    if (routePhoto) {
+      const repeated = gallerySlots.filter(
+        (slot) => agency[slot as keyof typeof agency]?.src === routePhoto.src
+      );
+      ok(
+        `the ${occasion.categoryId} gallery repeats the photograph the route already shows above ` +
+          `it (${repeated.join(", ")})`,
+        repeated.length === 0
+      );
+    }
+    const seen = new Set<string>();
+    const dupes = gallerySlots.filter((slot) => (seen.has(slot) ? true : (seen.add(slot), false)));
+    ok(
+      `the ${occasion.categoryId} gallery shows the same frame twice (${dupes.join(", ")})`,
+      dupes.length === 0
+    );
+  }
+
+  // ---- A story reference that does not resolve renders NOTHING. ------
+  // Found by looking at the page rather than by a check: the anniversary
+  // occasion pointed at the Alessandra write-up, which is an Egypt Eye story,
+  // so the section silently vanished. A dead slug has no visible symptom.
+  for (const occasion of occasions) {
+    if (!occasion.storySlug) continue;
+    ok(
+      `the ${occasion.categoryId} occasion links story "${occasion.storySlug}", which this site ` +
+        "does not publish. The section renders nothing at all for a slug that does not resolve, " +
+        "so the page quietly loses a whole section with no error anywhere.",
+      Boolean(liveStoryBySlug(occasion.storySlug))
+    );
+  }
+
+  ok(
+    "the shared occasion body is no longer rendered from the celebrations route, so three " +
+      "categories have fallen back to the generic renderer",
+    /occasion && experiences\[0\] \?[\s\S]{0,120}?<OccasionPage/.test(strip(occasionRoute))
   );
 }
 
