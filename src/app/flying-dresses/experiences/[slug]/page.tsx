@@ -45,7 +45,7 @@ export const dynamicParams = false;
 const ART: Partial<Record<string, { hero: ImageSlot; detail: ImageSlot }>> = {
   "sand-dunes": { hero: location.saharaDunes, detail: agency.fayoumDress },
   "pyramids-rooftop": { hero: agency.rooftopPortrait, detail: location.gizaPlateau },
-  fayoum: { hero: location.fayoumLake, detail: agency.fayoumDress },
+  fayoum: { hero: location.fayoumLake, detail: agency.fayoumRedShore },
   // No photographs of the yacht yet: both slots render the labelled gap, so
   // the page says what is missing rather than showing the wrong water.
   "red-sea-yacht": { hero: empty.redSeaYacht, detail: empty.redSeaYacht },

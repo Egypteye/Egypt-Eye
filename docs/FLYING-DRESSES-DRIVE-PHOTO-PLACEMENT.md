@@ -61,6 +61,19 @@ Eight frames, all from the camera originals.
 | `gender-reveal-girl.jpg` | Gender reveal gallery, lead | "The answer, at the same gender reveal. A girl." |
 | `gender-reveal-couple.jpg` | Gender reveal gallery | "The parents at the lit letters as the sun went down." |
 
+Then a second pass, from the same camera originals:
+
+| File | Where | Replaces |
+|---|---|---|
+| `rooftop-red/green/purple.jpg` | The home gallery, "What a morning looks like" | Two 2022/2023 collaboration frames at 533x800 and 800x533 |
+| `rooftop-blue/bronze/amber.jpg` | Registered and available | Three more colours from the same morning |
+| `fayoum-red-lake.jpg` | The Fayoum hero: the shoot page, the experiences card, the home page and the marquee | A 1600x1067 frame where the lake was a thin line at the back |
+| `fayoum-red-shore.jpg` | The Fayoum shoot page, second position | |
+
+That retires the top line of the asset checklist. The Fayoum shoot is sold as
+"the lakes and the white dunes" and is now illustrated by the frames that
+show both.
+
 The proposal page used to open by admitting it had never photographed a
 proposal. It has three now, and the assertion in `check-flying-dresses.mts`
 that required that disclaimer has been **inverted**: the page now fails the
@@ -115,7 +128,14 @@ The real folders do not contain, anywhere:
 - The five gawns together (`empty.mensGawn`).
 - The accessory collection in one landscape frame (`empty.accessories`).
 
-Four of the remaining folders (Pyramids Rooftop, Nine Pyramids, Fayoum/Nayma,
-Rooftop Anniversary) hold roughly 160 more real frames than the site currently
-uses. They are not missing, they are unplaced, and they are the obvious next
-pass.
+The remaining folders still hold well over a hundred real frames the site does
+not use. They are not missing, they are unplaced, and they are the obvious
+next pass: the rest of the AAT rooftop morning, 34 more Fayoum frames, and the
+Alessandra anniversary shoot in full.
+
+**Nine Pyramids needs your word before anything from it is published.** Those
+50 frames are a Giza tour photoshoot: camels, a solo traveller, and a family
+with a young child. Two things make it a decision rather than a job. It is
+Egypt Eye Travel's product rather than this brand's, and it shows identifiable
+people including a minor, so it needs whatever consent the shoot was booked
+under before a single frame goes on a public page.

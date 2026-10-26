@@ -338,6 +338,29 @@ export const agency = {
     height: 1333,
     credit: "AAT shoot, supplied October 2026",
   }),
+
+  /* The Fayoum frame that used to be location.fayoumLake, kept because it
+     is real work and nothing is gained by losing it. See the comment on
+     that slot for why it was replaced. */
+  fayoumBlack: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/fayoum-black.jpg",
+    alt: "A black flying dress on the desert shore at Fayoum, its train thrown out along the ground with Lake Qarun behind",
+    width: 1600,
+    height: 1067,
+    credit: "Fayoum shoot",
+  }),
+  /* The second Nayma frame: the dress standing, the train laid out down
+     the rock towards the water. It goes in the Fayoum detail position so
+     that shoot's page shows the place twice rather than once. */
+  fayoumRedShore: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/fayoum-red-shore.jpg",
+    alt: "A red flying dress standing on the white rock at Fayoum with the train laid out down the slope behind it, Lake Qarun and the pale desert beyond",
+    width: 2000,
+    height: 1333,
+    credit: "Nayma shoot, Fayoum",
+  }),
 };
 
 /**
@@ -404,13 +427,30 @@ export const location = {
      The archway photograph is not deleted. It is still the right frame
      for the credibility rail on the About page, where the subject is
      the collaboration and not the shoot. */
+  /* UPGRADED OCTOBER 2026, and the reason is in the sales copy.
+     ------------------------------------------------------------------
+     The Fayoum shoot is sold as "the lakes and the white dunes". The
+     black-dress frame that held this slot showed the dress and the
+     ground it was lying on, with Lake Qarun a thin line at the back,
+     and at 1600x1067 it was the smallest hero on the site. It was
+     chosen because it was the best of three.
+
+     The Nayma folder has the frame the copy was describing: the dress
+     on the white rock with the train running the width of the picture
+     and the lake filling the middle distance behind it. Same shoot,
+     6000x4000. It carries this slot across all four places that read
+     it: the Fayoum hero, the experiences card, the home page and the
+     marquee.
+
+     The black frame is kept below rather than deleted. It is real
+     work. */
   fayoumLake: slot({
     kind: "agency",
-    src: "/photos/flying-dresses/fayoum-black.jpg",
-    alt: "A black flying dress on the desert shore at Fayoum, its train thrown out along the ground with Lake Qarun behind",
-    width: 1600,
-    height: 1067,
-    credit: "Fayoum shoot",
+    src: "/photos/flying-dresses/fayoum-red-lake.jpg",
+    alt: "A red flying dress on the white rock above Lake Qarun at Fayoum, the train running the full width of the frame behind it and the lake and pale desert beyond",
+    width: 2000,
+    height: 1333,
+    credit: "Nayma shoot, Fayoum",
   }),
 };
 

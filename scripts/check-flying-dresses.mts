@@ -599,6 +599,13 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/rooftop-blue.jpg",
   "/photos/flying-dresses/rooftop-bronze.jpg",
   "/photos/flying-dresses/rooftop-amber.jpg",
+
+  // Two frames from the Nayma Fayoum shoot, July 2024, same library. These
+  // replace the 1600x1067 black-dress frame as the Fayoum hero: the shoot is
+  // sold as the lakes and the white dunes, and these are the frames that
+  // actually show both.
+  "/photos/flying-dresses/fayoum-red-lake.jpg",
+  "/photos/flying-dresses/fayoum-red-shore.jpg",
 ]);
 
 for (const [key, slot] of Object.entries(allSlots)) {
