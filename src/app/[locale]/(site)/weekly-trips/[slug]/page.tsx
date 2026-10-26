@@ -25,8 +25,9 @@ import {
 import { site } from "@/content/site";
 import { jsonLdScript } from "@/content/jsonLd";
 
-// Same 60-second window as the hub: the seat counts on this page are the
-// reason to visit it, and /api/trip-seats re-checks them under a lock anyway.
+// Same 60-second window as the hub. Availability here is a snapshot a minute
+// old at worst, which is fine because it is never the deciding read:
+// /api/trip-seats re-checks under a row lock before any seat is held.
 export const revalidate = 60;
 
 export function generateStaticParams() {
@@ -121,7 +122,6 @@ export default async function WeeklyTripPage({ params }: { params: Promise<{ slu
       departsOn: d.departsOn,
       returnsOn: d.returnsOn,
       priceUsd: d.priceUsd,
-      seatsLeft: d.seatsLeft,
       capacity: d.capacity,
       state: d.state,
       departsFrom: trip.departsFrom,

@@ -72,6 +72,7 @@ const OUTCOME_MESSAGES: Record<string, string> = {
   departed: "This departure has already left. Please pick another date.",
   closed: "Bookings for this departure have closed. Please pick another date.",
   not_enough_seats: "There aren't enough seats left on this departure for that many travellers.",
+  not_on_sale: "This date is announced but not open for booking yet. Ask us to tell you the moment it is.",
   invalid_seats: "Please choose a valid number of seats.",
 };
 
@@ -205,7 +206,14 @@ export async function POST(request: NextRequest) {
   const reservationId: string = result.reservation_id;
   const waitlisted = outcome === "waitlisted";
   const seatsLeft: number = typeof result.seats_left === "number" ? result.seats_left : departure.seatsLeft;
-  const totalUsd = waitlisted ? null : Math.round(departure.priceUsd * seats * 100) / 100;
+  // priceUsd is null on an announced departure. book_departure_seats refuses
+  // those under its row lock and returns `not_on_sale`, so reaching here with
+  // no price should be impossible — this is the belt to that braces, and it
+  // refuses rather than arithmetic-ing its way to NaN.
+  const totalUsd =
+    waitlisted || departure.priceUsd === null
+      ? null
+      : Math.round(departure.priceUsd * seats * 100) / 100;
 
   // Re-derive "does it run" from the seat count this booking just produced,
   // rather than the figure read before it — otherwise the traveller who
@@ -360,7 +368,9 @@ export async function POST(request: NextRequest) {
     reference,
     waitlisted,
     seats,
-    seatsLeft,
+    // seatsLeft is deliberately absent. The team email carries it because the
+    // desk needs it; this body is public, and anyone could read the remaining
+    // count straight out of it.
     guaranteed,
     seatsToGuarantee,
     total: totalUsd,

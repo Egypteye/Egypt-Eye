@@ -278,7 +278,7 @@ export const weeklyTrips: WeeklyTrip[] = [
       {
         question: "How many people will be on the trip?",
         answer:
-          "Eight at the absolute most, because that is the size of the vehicle. It is not a coach trip and it is not sold as one. The seats left on this departure are shown on this page and update as they go.",
+          "Eight at the absolute most, because that is the size of the vehicle. It is not a coach trip and it is not sold as one. Whether this date is still open is shown on this page and updates as bookings come in.",
       },
       {
         question: "Can a solo traveller join?",

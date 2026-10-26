@@ -188,7 +188,6 @@ export function tripDepartureEventJsonLd({
   departsOn,
   returnsOn,
   priceUsd,
-  seatsLeft,
   capacity,
   state,
   departsFrom,
@@ -199,10 +198,10 @@ export function tripDepartureEventJsonLd({
   image?: SanityImage;
   departsOn: string;
   returnsOn?: string | null;
-  priceUsd: number;
-  seatsLeft: number;
+  /** Null on an announced departure, which carries no offer at all. */
+  priceUsd: number | null;
   capacity: number;
-  state: "open" | "almost_full" | "sold_out" | "closed" | "cancelled" | "departed";
+  state: "open" | "almost_full" | "sold_out" | "closed" | "cancelled" | "departed" | "announced";
   departsFrom: string;
 }) {
   const imageUrl = urlForImage(image)?.width(1200).height(630).url();
@@ -214,6 +213,26 @@ export function tripDepartureEventJsonLd({
       : state === "closed" || state === "cancelled" || state === "departed"
         ? "https://schema.org/OutOfStock"
         : "https://schema.org/InStock";
+
+  // An announced departure is a real, dated event that nobody can buy yet.
+  //
+  // It therefore gets no Offer at all, rather than an Offer with a guessed
+  // price or an InStock claim. Both would be false, and an availability claim
+  // in structured data is exactly the kind of thing a search engine renders
+  // as fact next to the result.
+  const offers =
+    state === "announced" || priceUsd === null
+      ? {}
+      : {
+          offers: {
+            "@type": "Offer",
+            url,
+            price: priceUsd,
+            priceCurrency: "USD",
+            availability,
+            validFrom: new Date().toISOString().slice(0, 10),
+          },
+        };
 
   return {
     "@context": "https://schema.org",
@@ -236,19 +255,18 @@ export function tripDepartureEventJsonLd({
       name: "Egypt Eye Travel and Tours",
       url: siteUrl,
     },
-    // maximumAttendeeCapacity and remainingAttendeeCapacity are real counts
-    // from the departure row, never estimates — publishing a capacity that
-    // isn't the one being sold against would be fabricated structured data.
+    // maximumAttendeeCapacity is a real count from the departure row, never an
+    // estimate - publishing a capacity that isn't the one being sold against
+    // would be fabricated structured data. It is also a fact the trips state
+    // out loud anyway ("Up to 12 travellers"): it describes the vehicle, not
+    // the order book.
+    //
+    // remainingAttendeeCapacity is deliberately NOT published. It is the
+    // remaining-seat count under another name, and structured data is a public
+    // surface that search engines render; emitting it there while hiding it in
+    // the page would publish the number and only pretend not to.
     maximumAttendeeCapacity: capacity,
-    remainingAttendeeCapacity: seatsLeft,
-    offers: {
-      "@type": "Offer",
-      url,
-      price: priceUsd,
-      priceCurrency: "USD",
-      availability,
-      validFrom: new Date().toISOString().slice(0, 10),
-    },
+    ...offers,
   };
 }
 

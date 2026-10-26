@@ -9,10 +9,12 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { SmartImage } from "@/components/SmartImage";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { TripCard } from "@/components/TripCard";
+import { FeaturedDeparture } from "@/components/FeaturedDeparture";
+import { NoDeparturesPanel } from "@/components/NoDeparturesPanel";
 import { WeeklyTripsCalendar } from "@/components/WeeklyTripsCalendar";
 import { weeklyTrips, weeklyTripCategoryLabels } from "@/content/weeklyTrips";
 import { getUpcomingDepartures } from "@/lib/departures";
-import { fromPriceByTrip, nextDepartureByTrip } from "@/lib/departureModel";
+import { fromPriceByTrip, nextDepartureByTrip, selectFeaturedDeparture } from "@/lib/departureModel";
 import { breadcrumbJsonLd, tripDepartureEventJsonLd } from "@/content/seo";
 import { site } from "@/content/site";
 import { jsonLdScript } from "@/content/jsonLd";
@@ -41,7 +43,9 @@ export default async function WeeklyTripsPage() {
     "Upcoming Departures",
     "Every date we're running, soonest first.",
     "The Trips",
-    "Six trips out of Cairo, run on fixed dates through the season.",
+    "The destinations we run on set dates, out of Cairo. Each one also runs privately.",
+    "Explore upcoming trips",
+    "Find your next adventure",
     "How It Works",
     "Good to Know",
     "Sunrise over the Western Desert",
@@ -55,6 +59,10 @@ export default async function WeeklyTripsPage() {
 
   const locale = await getLocale();
   const departures = await getUpcomingDepartures();
+
+  // The one departure the page leads with, chosen from the data rather than
+  // flagged by hand. Null is a real answer, not a failure: see the panel.
+  const featured = selectFeaturedDeparture(departures);
 
   const fromPrices = fromPriceByTrip(departures);
   const nextByTrip = nextDepartureByTrip(departures);
@@ -77,7 +85,6 @@ export default async function WeeklyTripsPage() {
       departsOn: d.departsOn,
       returnsOn: d.returnsOn,
       priceUsd: d.priceUsd,
-      seatsLeft: d.seatsLeft,
       capacity: d.capacity,
       state: d.state,
       departsFrom: d.trip.departsFrom,
@@ -87,11 +94,11 @@ export default async function WeeklyTripsPage() {
   const steps = [
     {
       title: "Pick a date",
-      body: "Every departure we've scheduled is on this page with its price and how many seats are left. No enquiry needed to find that out.",
+      body: "Every departure we've scheduled is on this page with its date and its price, and whether you can still join it. No enquiry needed to find that out.",
     },
     {
       title: "Reserve your seat",
-      body: "Name, email, how many of you. Your seats are held immediately — that's what drops the seat count everyone else sees.",
+      body: "Name, email, how many of you. Your places are held the moment you reserve, under a lock that cannot hand the same seat to two people.",
     },
     {
       title: "We confirm",
@@ -112,12 +119,12 @@ export default async function WeeklyTripsPage() {
     {
       question: "What happens if not enough people book?",
       answer:
-        "Each departure has a minimum group size, and the page tells you how many more are needed before it's confirmed to run. If a trip doesn't reach it, we contact everyone booked, move you to another date or refund in full. You pay nothing for a trip that doesn't run.",
+        "Each departure has a minimum group size, and the page says how many more travellers are needed before it's confirmed to run — a different number from how many seats are for sale, and the one that decides whether you travel. If a trip doesn't reach it, we contact everyone booked, move you to another date or refund in full. You pay nothing for a trip that doesn't run.",
     },
     {
-      question: "Are the seat counts real?",
+      question: "Why don't you show how many seats are left?",
       answer:
-        "Yes. The number shown is the actual remaining capacity on that vehicle, and it drops the moment someone reserves. If two people reserve the last seats at the same time, only one booking succeeds — the other is offered the waitlist rather than quietly oversold.",
+        "Because how full a vehicle is is our business, not a sales tactic. You see whether a date is still open, almost full, or fully booked — which is everything that changes what you can do. Behind it the inventory is real and locked: if two people reserve the last places at the same moment only one booking succeeds, and the other is offered the waitlist rather than quietly oversold. What we will tell you is whether a trip has reached the minimum group size it needs to run, because that is a fact about whether you travel at all.",
     },
     {
       question: "How do I pay?",
@@ -127,7 +134,7 @@ export default async function WeeklyTripsPage() {
     {
       question: "Can I book for a group of friends?",
       answer:
-        "Up to ten seats in one booking, as long as that many are left. Beyond that you're most of a vehicle already, so message us and we'll usually run it privately for a similar price per person.",
+        "Up to ten places in one booking. If that date can't fit all of you we'll say so when you reserve and offer you the waitlist or another date. Beyond ten you're most of a vehicle already, so message us and we'll usually run it privately for a similar price per person.",
     },
     {
       question: "What if a trip is sold out?",
@@ -168,8 +175,22 @@ export default async function WeeklyTripsPage() {
             {ui["Weekly Trips"]}
           </h1>
           <p className="max-w-xl text-lg text-cream/80">
-            Fixed dates. Limited seats. Somewhere in Egypt worth the drive.
+            Fixed dates. A seat rather than the whole vehicle. Somewhere in Egypt worth the drive.
           </p>
+          <div className="mt-3 flex flex-wrap gap-3">
+            <a
+              href="#upcoming"
+              className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
+            >
+              {ui["Explore upcoming trips"]}
+            </a>
+            <a
+              href="#the-trips"
+              className="rounded-full border border-cream/30 px-6 py-3 text-sm font-semibold text-cream transition hover:border-gold"
+            >
+              {ui["Find your next adventure"]}
+            </a>
+          </div>
         </Container>
       </section>
 
@@ -189,7 +210,15 @@ export default async function WeeklyTripsPage() {
         </Container>
       </section>
 
-      <section className="py-16">
+      {/* The lead. Either the soonest bookable departure, or the truth that
+          none is scheduled — never an empty frame where one should be. */}
+      <section className="py-14" id="next">
+        <Container>
+          {featured ? <FeaturedDeparture departure={featured} /> : <NoDeparturesPanel trip={weeklyTrips[0]} />}
+        </Container>
+      </section>
+
+      <section className="py-16" id="upcoming">
         <Container>
           <SectionHeading
             eyebrow={ui["Upcoming Departures"]}
@@ -202,12 +231,12 @@ export default async function WeeklyTripsPage() {
         </Container>
       </section>
 
-      <section className="bg-sand/40 py-16">
+      <section className="bg-sand/40 py-16" id="the-trips">
         <Container>
           <SectionHeading
             eyebrow={ui["The Trips"]}
             title={ui["The Trips"]}
-            description={ui["Six trips out of Cairo, run on fixed dates through the season."]}
+            description={ui["The destinations we run on set dates, out of Cairo. Each one also runs privately."]}
           />
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {weeklyTrips.map((trip) => (
