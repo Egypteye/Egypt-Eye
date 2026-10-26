@@ -422,7 +422,12 @@ export function TripDepartures({
               />
             </div>
 
-            {!selected.waitlistable && (
+            {/* No price, no total. Defaulting the missing price to zero would
+                put "$0.00" on a booking form, which is a placeholder price in
+                the one place a customer is most likely to screenshot it. A
+                departure without a price cannot reach this form anyway — it
+                has no booking form — so this is the guard, not the layout. */}
+            {!selected.waitlistable && selected.priceUsd !== null && (
               <div className="mt-4 flex items-baseline justify-between border-t border-black/5 pt-3">
                 <span className="text-sm text-ink-soft">{tr("Total")}</span>
                 <span className="font-display text-xl font-semibold text-ink">

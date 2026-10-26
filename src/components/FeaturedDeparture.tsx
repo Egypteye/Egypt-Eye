@@ -7,6 +7,7 @@ import { DepartureCountdown } from "./DepartureCountdown";
 import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { localePath } from "@/i18n/locales";
 import { formatDateRange, departureInstantMs } from "@/lib/departureModel";
+import { site } from "@/content/site";
 import type { Departure } from "@/lib/departureModel";
 
 // The next departure anyone can actually get on.
@@ -34,11 +35,16 @@ export function FeaturedDeparture({ departure }: { departure: Departure }) {
   const targetMs = departureInstantMs(departure.departsOn, departure.departureTime);
   const hasClock = Number.isFinite(targetMs);
 
+  const announced = departure.state === "announced";
+
   const facts: { label: string; value: string }[] = [
     { label: tr("Dates"), value: formatDateRange(departure.departsOn, departure.returnsOn, locale) },
     { label: tr("Duration"), value: trip.duration },
     { label: tr("Leaves from"), value: departure.meetingPoint ?? trip.departsFrom },
   ];
+  if (departure.observingWindow) {
+    facts.push({ label: tr("Best viewing"), value: departure.observingWindow });
+  }
 
   return (
     <div className="overflow-hidden rounded-3xl bg-ink shadow-xl shadow-black/10">
@@ -84,6 +90,21 @@ export function FeaturedDeparture({ departure }: { departure: Departure }) {
               {trip.title}
             </h3>
             <p className="mt-2 text-cream/75">{trip.tagline}</p>
+            {/* Why this date and not another one. On a stargazing departure
+                this is the product: the sky on one particular night. */}
+            {(departure.astroEvent || departure.moonIllumination !== null) && (
+              <p className="mt-3 inline-flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-gold-light">
+                {departure.astroEvent && <span className="font-semibold">{departure.astroEvent}</span>}
+                {departure.astroEvent && departure.moonIllumination !== null && (
+                  <span aria-hidden className="text-cream/30">·</span>
+                )}
+                {departure.moonIllumination !== null && (
+                  <span className="text-cream/70">
+                    {tr("Moon {n}% lit").replace("{n}", String(Math.round(departure.moonIllumination * 100)))}
+                  </span>
+                )}
+              </p>
+            )}
           </div>
 
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-y border-cream/10 py-4 sm:grid-cols-3">
@@ -97,19 +118,40 @@ export function FeaturedDeparture({ departure }: { departure: Departure }) {
             ))}
           </dl>
 
-          <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <span className="font-display text-3xl font-semibold text-cream">${departure.priceUsd}</span>
-            <span className="text-sm text-cream/65">{tr("per seat")}</span>
-            <GuaranteeNote departure={departure} className="w-full !text-cream/70 sm:w-auto" />
-          </div>
+          {/* An announced date has no price and no booking button, because
+              neither exists yet. It says so plainly instead of leaving a gap
+              where a price should be — and the ask is the one thing a
+              visitor can actually do today. */}
+          {announced || departure.priceUsd === null ? (
+            <p className="text-sm text-cream/70">
+              {tr("The date is set. Pricing for this departure is confirmed closer to the time — ask us and we will come to you with it first.")}
+            </p>
+          ) : (
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className="font-display text-3xl font-semibold text-cream">${departure.priceUsd}</span>
+              <span className="text-sm text-cream/65">{tr("per seat")}</span>
+              <GuaranteeNote departure={departure} className="w-full !text-cream/70 sm:w-auto" />
+            </div>
+          )}
 
           <div className="mt-auto flex flex-wrap gap-3">
-            <Link
-              href={href}
-              className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
-            >
-              {tr("Reserve a seat")}
-            </Link>
+            {announced || departure.priceUsd === null ? (
+              <a
+                href={site.contact.whatsappLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
+              >
+                {tr("Ask about this date")}
+              </a>
+            ) : (
+              <Link
+                href={href}
+                className="rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
+              >
+                {tr("Reserve a seat")}
+              </Link>
+            )}
             <Link
               href={href}
               className="rounded-full border border-cream/25 px-6 py-3 text-sm font-semibold text-cream transition hover:border-gold"

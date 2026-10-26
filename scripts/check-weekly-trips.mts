@@ -140,8 +140,14 @@ const pillBlock = seatSource.slice(
 // cannot drift from what is rendered, and the strings stay in the shape the
 // i18n extractor can find.
 const labels = [...pillBlock.matchAll(/\btr\(\s*"((?:[^"\\]|\\.)*)"\s*\)/g)].map((m) => m[1]!);
-if (labels.length !== 6) {
-  errors.push(`SeatPill renders ${labels.length} availability labels, expected one per departure state (6)`);
+// Counted from the TONE table rather than hardcoded, so adding a departure
+// state fails here until the state has a label too - which is how the
+// "announced" state was caught the first time.
+const toneBlock = seatSource.slice(seatSource.indexOf("const TONE"), seatSource.indexOf("export function SeatPill"));
+const stateCount = [...toneBlock.matchAll(/^\s{2}([a-z_]+):/gm)].length;
+if (stateCount < 6) errors.push(`only ${stateCount} departure states found in the TONE table`);
+if (labels.length !== stateCount) {
+  errors.push(`SeatPill renders ${labels.length} availability labels for ${stateCount} departure states`);
 }
 for (const label of labels) {
   if (/\d/.test(label)) errors.push(`availability label "${label}" contains a number`);

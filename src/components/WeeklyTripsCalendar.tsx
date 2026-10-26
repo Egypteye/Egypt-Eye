@@ -135,6 +135,21 @@ export function WeeklyTripsCalendar({
                           <p className="mt-0.5 text-sm text-ink-soft">
                             {d.trip.duration} · {tr("from")} {d.trip.departsFrom}
                           </p>
+                          {/* On a stargazing date the sky IS the product, so
+                              the reason for the date sits on the row rather
+                              than being buried on the trip page. */}
+                          {(d.astroEvent || d.moonIllumination !== null) && (
+                            <p className="mt-1 flex flex-wrap items-center gap-x-2 text-sm">
+                              {d.astroEvent && (
+                                <span className="font-semibold text-gold-dark">{d.astroEvent}</span>
+                              )}
+                              {d.moonIllumination !== null && (
+                                <span className="text-ink-soft/85">
+                                  {tr("Moon {n}% lit").replace("{n}", String(Math.round(d.moonIllumination * 100)))}
+                                </span>
+                              )}
+                            </p>
+                          )}
                           {d.state === "cancelled" ? (
                             <p className="mt-1.5 text-xs text-rose-800">
                               {d.cancellationReason || tr("This departure was cancelled.")}
@@ -146,8 +161,19 @@ export function WeeklyTripsCalendar({
                           )}
                         </div>
                         <div className="flex shrink-0 flex-col items-end justify-between text-right">
-                          <span className="font-display text-lg font-semibold text-ink">${d.priceUsd}</span>
-                          <span className="text-xs text-ink-soft/85">{tr("per seat")}</span>
+                          {/* No price until the business sets one. The column
+                              says what is true rather than rendering "$null"
+                              or quietly implying free. */}
+                          {d.priceUsd === null ? (
+                            <span className="text-xs font-semibold uppercase tracking-[0.12em] text-ink-soft/85">
+                              {tr("Pricing to come")}
+                            </span>
+                          ) : (
+                            <>
+                              <span className="font-display text-lg font-semibold text-ink">${d.priceUsd}</span>
+                              <span className="text-xs text-ink-soft/85">{tr("per seat")}</span>
+                            </>
+                          )}
                           <span className="mt-2 hidden text-sm font-semibold text-gold-dark transition group-hover:translate-x-0.5 sm:inline">
                             {d.instantBooking ? tr("Instant Booking →") : d.bookable ? tr("Reserve →") : tr("View →")}
                           </span>

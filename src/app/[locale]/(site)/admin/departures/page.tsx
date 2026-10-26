@@ -115,10 +115,17 @@ export default async function AdminDeparturesPage() {
                   <p className="font-display text-lg font-semibold text-ink">
                     {d.seatsTaken}/{d.capacity}
                   </p>
-                  <p className="text-xs text-ink-soft/85">seats · ${d.priceUsd} each</p>
-                  <p className="mt-0.5 text-xs font-semibold text-ink-soft">
-                    ${(d.seatsTaken * d.priceUsd).toFixed(0)} booked
+                  {/* An announced departure has no price yet, on purpose.
+                      The team sets it by hand; until then the admin says so
+                      rather than rendering "$null each". */}
+                  <p className="text-xs text-ink-soft/85">
+                    {d.priceUsd === null ? "seats · price not set" : `seats · $${d.priceUsd} each`}
                   </p>
+                  {d.priceUsd !== null && (
+                    <p className="mt-0.5 text-xs font-semibold text-ink-soft">
+                      ${(d.seatsTaken * d.priceUsd).toFixed(0)} booked
+                    </p>
+                  )}
                 </div>
               </div>
               <DepartureActions departure={d} />

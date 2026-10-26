@@ -28,6 +28,9 @@ import type { Departure, DepartureState } from "@/lib/departureModel";
 
 const TONE: Record<DepartureState, string> = {
   open: "bg-emerald-50 text-emerald-800 ring-emerald-600/20",
+  // Deliberately not green. "Dates announced" is news, not an invitation to
+  // click: a departure in this state has no price and no booking form.
+  announced: "bg-sky-50 text-sky-900 ring-sky-600/20",
   almost_full: "bg-amber-50 text-amber-900 ring-amber-600/25",
   sold_out: "bg-rose-50 text-rose-800 ring-rose-600/20",
   closed: "bg-black/5 text-ink-soft ring-black/10",
@@ -56,6 +59,8 @@ export function SeatPill({ departure, className = "" }: { departure: Departure; 
   const label =
     state === "cancelled"
       ? tr("Cancelled")
+      : state === "announced"
+        ? tr("Date announced")
       : state === "departed"
         ? tr("Departed")
         : state === "closed"
@@ -92,7 +97,12 @@ export function SeatPill({ departure, className = "" }: { departure: Departure; 
  */
 export function GuaranteeNote({ departure, className = "" }: { departure: Departure; className?: string }) {
   const tr = useTr();
-  if (departure.state === "cancelled" || departure.state === "departed") return null;
+  // Not shown on a departure that is not yet on sale. "Needs 3 more
+  // travellers to run" is a fact about a booking process that has not opened,
+  // and it would publish the minimum group size for a date carrying no price.
+  if (departure.state === "cancelled" || departure.state === "departed" || departure.state === "announced") {
+    return null;
+  }
 
   if (departure.guaranteed) {
     return (

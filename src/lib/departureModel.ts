@@ -18,7 +18,7 @@ export type DepartureRow = {
   departs_on: string;
   returns_on: string | null;
   departure_time: string | null;
-  price_usd: number;
+  price_usd: number | null;
   child_price_usd: number | null;
   capacity: number;
   seats_taken: number;
@@ -29,6 +29,10 @@ export type DepartureRow = {
   meeting_point: string | null;
   note: string | null;
   instant_booking?: boolean | null;
+  readiness?: "research" | "announced" | "open" | null;
+  astro_event?: string | null;
+  moon_illumination?: number | null;
+  observing_window?: string | null;
 };
 
 /**
@@ -38,6 +42,15 @@ export type DepartureRow = {
 export type DepartureState =
   | "cancelled"
   | "departed"
+  /**
+   * A real, public date that cannot yet be booked.
+   *
+   * The stargazing calendar is fixed a year out by the Moon, and the price
+   * for a night that far away is not known. Rather than invent one, the date
+   * is announced and the booking form withheld until the business sets a
+   * price by hand.
+   */
+  | "announced"
   | "closed"
   | "sold_out"
   | "almost_full"
@@ -49,7 +62,8 @@ export type Departure = {
   departsOn: string;
   returnsOn: string | null;
   departureTime: string | null;
-  priceUsd: number;
+  /** Null until the business has set it by hand. Never a placeholder. */
+  priceUsd: number | null;
   childPriceUsd: number | null;
   capacity: number;
   seatsTaken: number;
@@ -77,6 +91,12 @@ export type Departure = {
   cancellationReason: string | null;
   meetingPoint: string | null;
   note: string | null;
+  /** "Geminid meteor shower", "Total solar eclipse", or null for an ordinary night. */
+  astroEvent: string | null;
+  /** Illuminated fraction of the Moon at local midnight, 0-1, or null. */
+  moonIllumination: number | null;
+  /** The hours worth being outside, in words: "22:00 to 03:00". */
+  observingWindow: string | null;
 };
 
 /** Few enough left that "Almost full" is a true sentence, whatever the vehicle. */
@@ -122,18 +142,30 @@ export function deriveDeparture(row: DepartureRow, trip: WeeklyTrip): Departure 
   const closed = row.booking_closes_at !== null && Date.now() >= Date.parse(row.booking_closes_at);
   const departed = row.status === "completed" || row.departs_on < todayInCairo();
 
+  // A departure is sellable only when the business has said so AND set a
+  // price. Both halves matter: readiness is the deliberate act, and the price
+  // is the thing that cannot be faked. A row that is somehow marked open with
+  // no price is treated as merely announced rather than trusted - the
+  // database constraint should make that impossible, and this is what holds
+  // if it ever does not.
+  const priceUsd = row.price_usd === null || row.price_usd === undefined ? null : Number(row.price_usd);
+  const readiness = row.readiness ?? "open";
+  const sellable = readiness === "open" && priceUsd !== null;
+
   const state: DepartureState =
     row.status === "cancelled"
       ? "cancelled"
       : departed
         ? "departed"
-        : closed
-          ? "closed"
-          : seatsLeft === 0
-            ? "sold_out"
-            : isAlmostFull(seatsLeft, row.capacity)
-              ? "almost_full"
-              : "open";
+        : !sellable
+          ? "announced"
+          : closed
+            ? "closed"
+            : seatsLeft === 0
+              ? "sold_out"
+              : isAlmostFull(seatsLeft, row.capacity)
+                ? "almost_full"
+                : "open";
 
   return {
     id: row.id,
@@ -141,8 +173,8 @@ export function deriveDeparture(row: DepartureRow, trip: WeeklyTrip): Departure 
     departsOn: row.departs_on,
     returnsOn: row.returns_on,
     departureTime: row.departure_time,
-    priceUsd: Number(row.price_usd),
-    instantBooking: row.instant_booking === true && Number(row.price_usd) > 0,
+    priceUsd,
+    instantBooking: row.instant_booking === true && priceUsd !== null && priceUsd > 0,
     childPriceUsd: row.child_price_usd === null ? null : Number(row.child_price_usd),
     capacity: row.capacity,
     seatsTaken: row.seats_taken,
@@ -159,6 +191,12 @@ export function deriveDeparture(row: DepartureRow, trip: WeeklyTrip): Departure 
     cancellationReason: row.cancellation_reason,
     meetingPoint: row.meeting_point,
     note: row.note,
+    astroEvent: row.astro_event ?? null,
+    moonIllumination:
+      row.moon_illumination === null || row.moon_illumination === undefined
+        ? null
+        : Number(row.moon_illumination),
+    observingWindow: row.observing_window ?? null,
   };
 }
 
@@ -173,7 +211,7 @@ export function deriveDeparture(row: DepartureRow, trip: WeeklyTrip): Departure 
 export function fromPriceByTrip(departures: Departure[]): Map<string, number> {
   const out = new Map<string, number>();
   for (const d of departures) {
-    if (!d.bookable) continue;
+    if (!d.bookable || d.priceUsd === null) continue;
     const current = out.get(d.trip.slug);
     if (current === undefined || d.priceUsd < current) out.set(d.trip.slug, d.priceUsd);
   }
@@ -254,7 +292,25 @@ export function groupByMonth(departures: Departure[], locale: string): { month: 
  * which is where someone holding a booking for it will look.
  */
 export function selectFeaturedDeparture(departures: Departure[]): Departure | null {
-  const candidates = departures.filter((d) => d.bookable);
+  // A bookable date first - the featured slot is the page's one
+  // conversion-focused section, and a date somebody can buy belongs there
+  // ahead of one they cannot.
+  //
+  // Failing that, the soonest ANNOUNCED date. A year of real, dated
+  // departures with no price yet is still the most useful thing on the page,
+  // and leading with "no dates scheduled" while holding fourteen of them
+  // would be false. The panel renders an announced departure without a price
+  // or a booking button, so nothing is oversold by promoting it.
+  //
+  // Sold-out, closed, cancelled and departed dates are never featured: they
+  // are not leads, and they stay visible in the calendar below where anyone
+  // holding a booking will look.
+  return pickSoonest(departures.filter((d) => d.bookable))
+    ?? pickSoonest(departures.filter((d) => d.state === "announced"));
+}
+
+/** Soonest by date, ties broken by id so the choice is stable across renders. */
+function pickSoonest(candidates: Departure[]): Departure | null {
   if (candidates.length === 0) return null;
   return candidates.reduce((best, d) => {
     if (d.departsOn !== best.departsOn) return d.departsOn < best.departsOn ? d : best;

@@ -22,7 +22,19 @@ export type { Departure, DepartureRow } from "./departureModel";
 const SELECT =
   "id, trip_slug, departs_on, returns_on, departure_time, price_usd, child_price_usd, instant_booking, " +
   "capacity, seats_taken, min_seats, booking_closes_at, status, cancellation_reason, " +
-  "meeting_point, note";
+  "meeting_point, note, readiness, astro_event, moon_illumination, observing_window";
+
+/**
+ * Readiness levels a visitor is allowed to see.
+ *
+ * `research` is where a date sits while somebody is still checking whether it
+ * can run at all - a permit, a vehicle, a supplier. Those are working notes,
+ * not a schedule, and publishing one would announce a trip that may never
+ * exist. Filtered here rather than in the page so there is one answer to
+ * "what is public", and getDeparture below applies it too: a research
+ * departure must not be reachable by guessing its id either.
+ */
+const PUBLIC_READINESS = ["announced", "open"] as const;
 
 /**
  * Attaches trip content to rows, dropping any whose slug no longer resolves.
@@ -57,6 +69,7 @@ export async function getUpcomingDepartures(limit = 60): Promise<Departure[]> {
       .select(SELECT)
       .gte("departs_on", todayInCairo())
       .neq("status", "completed")
+      .in("readiness", PUBLIC_READINESS as unknown as string[])
       .order("departs_on", { ascending: true })
       .limit(limit);
     if (error) {
@@ -81,6 +94,7 @@ export async function getDeparturesForTrip(tripSlug: string, limit = 24): Promis
       .eq("trip_slug", tripSlug)
       .gte("departs_on", todayInCairo())
       .neq("status", "completed")
+      .in("readiness", PUBLIC_READINESS as unknown as string[])
       .order("departs_on", { ascending: true })
       .limit(limit);
     if (error) {
@@ -99,7 +113,12 @@ export async function getDeparture(id: string): Promise<Departure | null> {
   if (!supabaseAdminConfigured) return null;
   try {
     const supabase = createAdminSupabaseClient();
-    const { data, error } = await supabase.from("trip_departures").select(SELECT).eq("id", id).maybeSingle();
+    const { data, error } = await supabase
+      .from("trip_departures")
+      .select(SELECT)
+      .eq("id", id)
+      .in("readiness", PUBLIC_READINESS as unknown as string[])
+      .maybeSingle();
     if (error || !data) return null;
     const row = data as unknown as DepartureRow;
     const trip = weeklyTripBySlug(row.trip_slug);
@@ -125,6 +144,7 @@ export async function getPastDepartures(limit = 8): Promise<Departure[]> {
       .select(SELECT)
       .lt("departs_on", todayInCairo())
       .neq("status", "cancelled")
+      .in("readiness", PUBLIC_READINESS as unknown as string[])
       .order("departs_on", { ascending: false })
       .limit(limit);
     if (error) return [];
