@@ -160,9 +160,18 @@ alternative costs real darkness. Your call.
    pyramids alone; the product that exists includes Saqqara and Memphis.
    Customers on these dates get the broader itinerary. If the narrower
    "forgotten pyramids" trip is what you want to sell, it is a new product.
-4. **No collision guard exists.** I resolved four by hand. Nothing stops the
-   next one, because departures live in the database and the build cannot see
-   them. A warning in `/admin/departures` when two departures share a date is
-   the right place for it.
+4. ~~No collision guard exists.~~ **Built.** `/admin/departures` now detects
+   departures whose dates overlap and warns at the top of the screen. It
+   compares date *ranges*, not start dates, because the clash that actually
+   mattered was a four-day Siwa departure lying across a Saturday day trip —
+   two departures starting on different days that still want the same vehicle
+   on the Tuesday in between. It warns rather than blocks: two departures on
+   one day is a question, not an error.
+
+   Fixing it surfaced three regressions on the same screen, now also fixed:
+   research departures were invisible there (the admin page was using the
+   public fetcher), the "announced" state rendered a blank badge, and the
+   "below minimum" alarm was firing on all 27 announced departures — which
+   take no bookings and so cannot be below a minimum.
 5. **Ramadan dates are approximate** and confirmed by moon sighting about a day
    ahead. Treat 8 Feb – 9 Mar 2027 as a window to plan around, not a fact.
