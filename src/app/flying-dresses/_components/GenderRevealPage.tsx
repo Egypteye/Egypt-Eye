@@ -27,24 +27,23 @@ import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
  * =========================================================================
  * THE ASSET POSITION, WHICH DECIDED THE WHOLE LAYOUT
  * =========================================================================
- * There is exactly ONE genuine gender reveal photograph in this repository:
- * the Kayan shoot, a balloon arch and lit letters on the roof at sunset with
- * the family in frame. One. It is also one of the best photographs the brand
- * owns, and it is the only frame on this site that shows the thing this page
- * is selling.
+ * There is exactly ONE genuine gender reveal in this repository: the Kayan
+ * shoot, a balloon arch and lit letters on the roof at sunset with the family
+ * in frame. One evening, now held as three frames rather than the single one
+ * this page was first built around. They are among the best photographs the
+ * brand owns, and they are the only frames on this site that show the thing
+ * this page is selling.
  *
- * That is the opposite problem from the proposal page, which has no photograph
- * of a proposal at all, and it needs the opposite discipline. The danger here
- * is not captioning somebody else's occasion as a reveal: it is padding. Four
- * supporting frames from couples shoots, uncaptioned, read as a reveal
- * portfolio five times the size of the real one.
+ * The danger here is not the proposal page's old one, of captioning somebody
+ * else's occasion as a reveal. It is padding: four supporting frames from
+ * couples shoots, uncaptioned, read as a reveal portfolio several times the
+ * size of the real one.
  *
- * So the single real frame is given the hero, alone, at full width, where it
- * does the most work. It is then deliberately ABSENT FROM THE GALLERY, and the
- * gallery says so in its own first sentence: that photograph is the only reveal
- * we have, and these show the roof it happened on. Repeating it as the gallery
- * lead as well would make one photograph look like two and make a four-frame
- * gallery look like a portfolio.
+ * So one frame is given the hero, alone, at full width, where it does the most
+ * work, and it stays deliberately ABSENT FROM THE GALLERY: repeating it would
+ * make one photograph look like two. The other two open the gallery, and the
+ * intro draws the line explicitly between the frames that are the reveal and
+ * the frames that are only the roof on another day.
  *
  * The brief asked for the missing assets to be documented rather than faked.
  * docs/FLYING-DRESSES-GENDER-REVEAL-PAGE.md is that list.
@@ -65,12 +64,17 @@ import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
  */
 
 /**
- * The gallery: the roof, not the reveal.
+ * The gallery: the reveal we photographed, and then the roof.
  *
  * Built from the asset registry rather than from paths typed here, so a
  * photograph that is retired or re-credited moves in one place. Every caption
- * names the real occasion, because none of these is a gender reveal and a
- * visitor must not have to guess which.
+ * names the real occasion, because MOST of these are still not gender
+ * reveals and a visitor must not have to guess which is which.
+ *
+ * The first two ARE. They come from the same Kayan evening as the hero, so
+ * the page shows one real reveal from three angles rather than one frame and
+ * four arguments. The rest remain what they were: the roof, captioned as the
+ * occasions they were actually taken at.
  *
  * `agency.genderReveal` is intentionally not in this list. It is the hero.
  */
@@ -81,8 +85,19 @@ function galleryFrames(): GalleryFrame[] {
     caption: string;
   }[] = [
     {
-      slot: agency.heroRooftop,
+      slot: agency.genderRevealGirl,
       span: "lead",
+      caption: "The answer, at the same gender reveal. A girl.",
+    },
+    {
+      slot: agency.genderRevealCouple,
+      span: "pair",
+      caption:
+        "The parents at the lit letters as the sun went down, at that same gender reveal.",
+    },
+    {
+      slot: agency.heroRooftop,
+      span: "pair",
       caption:
         "The width of the roof with a group standing on it, which is the question most families ask first. A flying-dress session.",
     },
@@ -207,7 +222,7 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
       <PhotoGallery
         frames={frames}
         heading="The roof it happens on"
-        intro="The photograph at the top of this page is the one gender reveal we have photographed, and it is the only one, so nothing below is a reveal and each frame says what it actually is. What they show is the place: the width of the roof, how a group stands on it, and the light at either end of the day."
+        intro="We have photographed one gender reveal on this roof. The first frames below are from that evening, including the moment the answer went up. The rest are the place rather than the occasion: the width of the roof, how a group stands on it, and the light at either end of the day. Each one says what it actually is."
       />
 
       {/* ---------------------------------------------------------------

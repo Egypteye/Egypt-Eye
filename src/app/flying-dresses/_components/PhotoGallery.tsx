@@ -16,15 +16,17 @@ import { Lightbox, useLightbox, type LightboxFrame } from "./Lightbox";
  * decoration. Both pages using this component sell an occasion they have
  * photographed less often than they would like:
  *
- *   - The proposal page has NO photograph of a proposal. Not one. What it has
- *     is real, credited agency work from the same roof: couples, a vow
- *     anniversary shoot, a gender reveal, groups. The Alessandra frames look
- *     exactly like proposal photography, and captioning them as a proposal
- *     would be fabricating client work.
- *   - The gender reveal page has EXACTLY ONE, and it is genuinely a gender
- *     reveal this team ran. The temptation there is the opposite one: four
+ *   - The proposal page HAD no photograph of a proposal, and for most of this
+ *     site's life that was the hard case: the Alessandra frames look exactly
+ *     like proposal photography, and captioning them as one would have been
+ *     fabricating client work. Three real proposals arrived in October 2026,
+ *     so the page now shows those. The residual duty is smaller but real: one
+ *     of the three was photographed on the plateau rather than on the roof
+ *     the page sells, and its caption has to say so.
+ *   - The gender reveal page has exactly ONE reveal, photographed from three
+ *     angles in one evening. The temptation there is the opposite one: four
  *     supporting frames from other occasions, uncaptioned, read as a reveal
- *     portfolio four times the size of the real one.
+ *     portfolio several times the size of the real one.
  *
  * So the discipline is the same in both directions. The caption says what the
  * frame is, the credit travels with it, and the intro tells the visitor how

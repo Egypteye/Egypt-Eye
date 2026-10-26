@@ -37,12 +37,19 @@ import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
  * =========================================================================
  * THE RULE THIS PAGE IS BUILT AROUND
  * =========================================================================
- * We have no photograph of a proposal we have run. The agency work on this
- * roof is real and credited, and none of it is a proposal — it is couples, a
- * anniversary shoot, a gender reveal, groups. Every frame below says what it
- * actually is. The page sells by showing the ROOM, the LIGHT and the TEAM'S
- * WORK honestly, which it can, rather than by implying a portfolio it does
- * not have. See PhotoGallery.
+ * THIS PAGE USED TO OPEN BY ADMITTING IT HAD NEVER PHOTOGRAPHED A PROPOSAL.
+ *
+ * That was true and it is not any more. The October 2026 folder carries three
+ * of them: two on this roof (one under a red floral heart with the sign in
+ * frame, one under a white arch on dressed steps) and one down on the
+ * plateau. Each has the ring box open in the photograph, so none of them
+ * needs a caption arguing that it is what it looks like.
+ *
+ * What survives from the old version is the rule that produced it: every
+ * frame still says what it actually is. The plateau frame is captioned as the
+ * plateau, because this page sells a private roof and a visitor who booked
+ * expecting the sand would have been mis-sold by a caption that stayed quiet.
+ * See PhotoGallery.
  *
  * Likewise the venue. The owner supplied a name and a street and asked for
  * both to be verified; they are recorded in content/flyingDressProposal.ts
@@ -62,26 +69,26 @@ import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
 function galleryFrames(): GalleryFrame[] {
   const slots: { slot: (typeof agency)[keyof typeof agency]; span: GalleryFrame["span"]; caption: string }[] = [
     {
-      slot: agency.couplesRomance,
+      slot: agency.proposalHeartAsk,
       span: "lead",
+      caption: "The moment itself, under the heart arch. Photographed as it happened.",
+    },
+    {
+      slot: agency.proposalHeartRing,
+      span: "pair",
+      caption: "A few seconds later, the ring on her hand.",
+    },
+    {
+      slot: agency.proposalWhiteTrain,
+      span: "pair",
       caption:
-        "The rooftop at sunrise, with the pyramids across the horizon. A couples shoot, not a proposal.",
+        "The same roof dressed in white for a second proposal. Each setup is built for the morning it is booked for rather than kept standing.",
     },
     {
-      slot: agency.couplesVows,
-      span: "pair",
-      caption: "Golden hour on the same roof. Photographed at an anniversary shoot.",
-    },
-    {
-      slot: agency.genderReveal,
+      slot: agency.proposalPlateauAsk,
       span: "pair",
       caption:
-        "A decorated setup our team built on this roof, with a lit sign, an arch and evening lighting. Photographed at a gender reveal.",
-    },
-    {
-      slot: agency.rooftopPortrait,
-      span: "pair",
-      caption: "The view the roof gives you, in daylight. A flying-dress session.",
+        "Not the roof: this one was asked down on the plateau, on the sand. We photograph both, and the roof is what this page books.",
     },
     {
       slot: agency.heroRooftop,
@@ -106,7 +113,10 @@ function galleryFrames(): GalleryFrame[] {
 }
 
 export function ProposalPage({ experience }: { experience: FlyingDressExperience }) {
-  const hero = agency.couplesRomance;
+  // The white-arch ask: landscape, the ring box open, three pyramids behind.
+  // Deliberately NOT proposalHeartArch, which the proposals category already
+  // renders large and uncaptioned directly above this page's own hero.
+  const hero = agency.proposalWhiteAsk;
   const frames = galleryFrames();
   const enquire = fdPath("/enquire?experience=rooftop-proposal");
 
@@ -186,8 +196,8 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
 
       <PhotoGallery
         frames={frames}
-        heading="The roof, and the light on it"
-        intro="We have not photographed a proposal yet, so nothing below is one, and each frame says what it actually is. What they show is the room you would be standing in: the view, the width of the roof, the light at either end of the day, and a decorated setup this team built up there."
+        heading="Three proposals, and the roof they were asked on"
+        intro="Three proposals we were asked to photograph, and the roof they were asked on. Each frame says what it actually is, including the one taken down on the plateau rather than up here."
       />
 
       <ProposalDecorations decorations={proposalDecorations} interim={DECORATION_INTERIM} />

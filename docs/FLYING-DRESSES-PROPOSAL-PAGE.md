@@ -6,6 +6,13 @@ Built 25 October 2026. URL unchanged: `/flying-dresses/celebrations/marriage-pro
 
 ## 1. The finding that shaped everything
 
+> **Superseded on 26 October 2026.** You sent three real proposals: two on the
+> roof (the red heart arch with the sign, and the white arch on dressed steps)
+> and one down on the plateau. The page now leads with those, and the check
+> that used to require the disclaimer below now fails if anyone puts it back.
+> See `FLYING-DRESSES-DRIVE-PHOTO-PLACEMENT.md`. The section is kept because
+> it explains why the page is shaped the way it is.
+
 **We have no photograph of a proposal we have run.** Not one, anywhere in the
 repository.
 

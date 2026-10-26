@@ -552,6 +552,39 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/couple-vows-rooftop.jpg",
   "/photos/flying-dresses/gender-reveal-rooftop.jpg",
   "/photos/flying-dresses/giza-plateau.jpg",
+
+  // Supplied October 2026, same library, from the shoot folders the owner
+  // foldered by occasion. These are the first PROPOSALS the site has ever
+  // had, which is why the proposal page no longer opens by apologising for
+  // not having any:
+  //
+  //   proposal-heart-arch    Moustafa shoot  rooftop, red floral heart, sign
+  //   proposal-heart-ask     Moustafa shoot  rooftop, ring box open
+  //   proposal-heart-ring    Moustafa shoot  rooftop, the ring on her hand
+  //   proposal-white-ask     Parca shoot     rooftop, white arch, ring box
+  //   proposal-white-train   Parca shoot     rooftop, white train, same setup
+  //   proposal-plateau-ask   Jos shoot       THE PLATEAU, not the roof
+  //   gender-reveal-girl     Kayan shoot     rooftop, the "Girl" balloon
+  //   gender-reveal-couple   Kayan shoot     rooftop, BABY letters at sunset
+  //
+  // HOW PROVENANCE WAS ESTABLISHED, because "the owner sent it" is not on its
+  // own enough and the same folder contained images that FAIL this test.
+  // Every file above is a 6000x4000 or 4000x6000 camera original carrying
+  // EXIF copyright=EGYPT.EYE and an Adobe export tag. The same Drive folder
+  // also offered a ready illustration for the birthday, maternity, music,
+  // creator and Red Sea yacht gaps, and those are 1536x1024 PNGs whose bytes
+  // carry C2PA provenance naming OpenAI, "gpt-image" and
+  // "trainedAlgorithmicMedia". None of them is installed anywhere on this
+  // site, and none may be added to this list: see
+  // docs/FLYING-DRESSES-DRIVE-PHOTO-PLACEMENT.md.
+  "/photos/flying-dresses/proposal-heart-arch.jpg",
+  "/photos/flying-dresses/proposal-heart-ask.jpg",
+  "/photos/flying-dresses/proposal-heart-ring.jpg",
+  "/photos/flying-dresses/proposal-white-ask.jpg",
+  "/photos/flying-dresses/proposal-white-train.jpg",
+  "/photos/flying-dresses/proposal-plateau-ask.jpg",
+  "/photos/flying-dresses/gender-reveal-girl.jpg",
+  "/photos/flying-dresses/gender-reveal-couple.jpg",
 ]);
 
 for (const [key, slot] of Object.entries(allSlots)) {
@@ -591,6 +624,67 @@ for (const [key, slot] of Object.entries(allSlots)) {
         "frames whose provenance has been established. Add it to AGENCY_WORK with a reason, or leave the slot " +
         'as kind:"location" or kind:"empty".',
       slot.src !== null && AGENCY_WORK.has(slot.src)
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// A GENERATED IMAGE MAY NOT BE INSTALLED AS THE AGENCY'S OWN WORK.
+//
+// AGENCY_WORK above is a list of filenames, and a list of filenames is only as
+// honest as whoever edited it. This reads the BYTES instead, so the claim is
+// checked against the file rather than against a promise about the file.
+//
+// It matters here and not in the abstract. The October 2026 Drive folder
+// contained a ready-made image for every gap the site still has: the birthday
+// roof, a maternity session, a DJ set, a creator shoot, and the Red Sea yacht.
+// Each is a 1536x1024 PNG whose bytes carry C2PA provenance naming OpenAI,
+// "gpt-image" and "trainedAlgorithmicMedia". Installing any of them in a
+// kind:"agency" slot would put a generated event at the top of a page that
+// sells that event as work we have done, which is the one thing the owner
+// asked never to happen.
+//
+// kind:"styled" is deliberately NOT checked, because those files are supposed
+// to carry exactly these markers: the jewellery and dress composites are real
+// photographed pieces on generated models, and the slot says so.
+//
+// A BARE /c2pa/i IS NOT THE TEST, and the first version of this block used
+// one. It went red on couple-romance-rooftop.jpg, which is a real photograph
+// from a real shoot: the four bytes "C2pa" occur once, by chance, inside its
+// compressed scan data. Entropy-coded JPEG will eventually contain any short
+// string you care to name, so a single hit means nothing.
+//
+// Two things separate a manifest from a coincidence, and both are required:
+// an AI-specific declaration (the IPTC digital source type, or a named
+// generator), or a C2PA box that actually repeats the way a real manifest
+// does. The generated PNGs carry "openai" 19 times and "c2pa" 25; the camera
+// originals carry at most one stray hit and no generator at all.
+//
+// Proven twice: by copying one of the folder's PNGs over a real frame (red,
+// naming the marker), and by confirming all 22 genuine frames pass. Restored.
+{
+  const GENERATED = [
+    /\btrainedAlgorithmicMedia\b/,
+    /\bcompositeWithTrainedAlgorithmicMedia\b/,
+    /\bgpt-image\b/,
+    /openai/i,
+    /\bdall-e\b/i,
+    /\bmidjourney\b/i,
+    /\bstable[ -]?diffusion\b/i,
+  ];
+  for (const [key, slot] of Object.entries(allSlots)) {
+    if (slot.kind !== "agency" || !slot.src || !existsSync(`public${slot.src}`)) continue;
+    const bytes = readFileSync(`public${slot.src}`).toString("latin1");
+    const declared = GENERATED.find((marker) => marker.test(bytes));
+    // A real embedded manifest repeats its own box name many times over. One
+    // or two hits is noise in the entropy-coded data; see above.
+    const c2paHits = (bytes.match(/c2pa/gi) ?? []).length;
+    const reason = declared ? declared.source : c2paHits >= 5 ? `a C2PA manifest (${c2paHits} hits)` : null;
+    ok(
+      `image slot "${key}" is marked as the agency's own photography, but ${slot.src} carries ` +
+        `generated-media provenance in its own bytes (${reason}). A generated frame cannot ` +
+        "be published as client work. Leave the slot empty instead.",
+      reason === null
     );
   }
 }
@@ -4176,14 +4270,19 @@ ok(
 }
 
 // ---------------------------------------------------------------------------
-// THE PROPOSAL PAGE SELLS SOMETHING WE HAVE NEVER PHOTOGRAPHED.
+// THE PROPOSAL PAGE SOLD SOMETHING IT HAD NEVER PHOTOGRAPHED, UNTIL IT DID.
 //
-// That is the fact the whole page is built around and the reason this block
-// exists. The repository holds real, credited agency work from the Giza
-// rooftop — couples, an anniversary shoot, a gender reveal, groups — and not one
+// That was the fact the whole page was built around and the reason this block
+// exists. The repository held real, credited agency work from the Giza
+// rooftop (couples, an anniversary shoot, a gender reveal, groups) and not one
 // frame of a proposal. The couples frames look exactly like proposal
 // photography, which is precisely why a caption that forgets to say what they
 // are becomes fabricated client work rather than an oversight.
+//
+// October 2026 supplied three real proposals, so the assertions below have
+// been inverted rather than retired: the page must no longer carry the old
+// disclaimer, and the one frame taken on the plateau instead of the roof must
+// still admit it. The discipline did not change. The facts did.
 //
 // The other half is the venue. The owner supplied "Palm Hotel, Mansouriya
 // Street, near the Sphinx Gate area" and asked, in the same message, for it to
@@ -4276,6 +4375,12 @@ ok(
   // The page has five captions and none of the photographs is a proposal.
   // Each caption must name the real occasion, or the frame is passed off as
   // something it is not.
+  // The vocabulary a caption may use to say what its frame actually is.
+  //
+  // "proposal" and "plateau" were added when the real proposals arrived. Note
+  // what that does NOT relax: the rule is still that every caption names the
+  // thing in the picture, and the plateau frame still has to admit it is not
+  // the roof (the separate assertion below).
   const OCCASIONS = [
     "couples shoot",
     "anniversary shoot",
@@ -4283,6 +4388,10 @@ ok(
     "gender reveal",
     "flying-dress session",
     "the roof",
+    "proposal",
+    "plateau",
+    "heart arch",
+    "ring",
   ];
   const captions = [...proposalPage.matchAll(/caption:\s*\n?\s*"([^"]+)"/g)].map((m) => m[1]);
   ok(
@@ -4298,10 +4407,30 @@ ok(
       OCCASIONS.some((occasion) => caption.toLowerCase().includes(occasion))
     );
   }
+  // THIS ASSERTION USED TO BE ITS OWN OPPOSITE.
+  //
+  // Until October 2026 it required the page to say "we have not photographed
+  // a proposal", because that was true and the couples frames would otherwise
+  // have read as proposal work. Three real proposals then arrived, and the
+  // sentence that made the section honest became the only dishonest sentence
+  // in it. So the guard is inverted rather than deleted: the page must NOT
+  // carry the disclaimer any more, and the check fails if somebody restores
+  // it from an old draft.
   ok(
-    "the proposal gallery stopped telling the visitor that none of these is a proposal, which is " +
-      "the sentence that makes the rest of the section honest",
-    /not photographed a proposal|nothing below is one/i.test(strip(proposalPage))
+    "the proposal page still tells the visitor it has never photographed a proposal. It has: see " +
+      "AGENCY_WORK. That sentence is now false and it is the kind of false that costs a booking.",
+    !/not photographed a proposal|nothing below is one/i.test(strip(proposalPage))
+  );
+
+  // The replacement duty. One of the frames is NOT on the roof this page
+  // sells, and the gallery has to say so in the caption rather than letting
+  // the sand pass for the rooftop.
+  const plateauCaption = captions.find((caption) => /plateau/i.test(caption));
+  ok(
+    "the proposal gallery shows the plateau proposal without a caption admitting it is not the " +
+      "roof. This page books a private rooftop; a visitor who books it expecting the sand has " +
+      "been mis-sold by omission.",
+    Boolean(plateauCaption) && /not the roof|rather than up here|on the sand/i.test(plateauCaption ?? "")
   );
 
   // ---- The catalogue cannot grow a fake entry. ------------------------
@@ -4511,15 +4640,32 @@ ok(
   // first sentence ("nothing below is a reveal") false.
   ok(
     "the gender reveal gallery now includes agency.genderReveal. That frame is the hero. " +
-      "Showing it in the gallery as well spends the only real reveal photograph twice and " +
-      "contradicts the gallery's own intro, which tells the visitor nothing below it is a reveal.",
-    !/agency\.genderReveal/.test(strip(revealPage))
+      "Showing it in the gallery as well spends the hero photograph twice.",
+    // ANCHORED. Written as /agency\.genderReveal/ this matched
+    // agency.genderRevealGirl and agency.genderRevealCouple, which are two
+    // DIFFERENT frames from the same evening, and failed the moment they were
+    // added. A prefix is not a name.
+    !/agency\.genderReveal\b(?!Girl|Couple)/.test(strip(revealPage))
+  );
+  // THE SITE NOW HAS THREE FRAMES OF ONE REAL REVEAL, not one.
+  //
+  // This assertion used to require the sentence "nothing below is a reveal",
+  // which was true when the hero was the only reveal photograph in existence.
+  // Two more arrived from the same Kayan evening. The duty it was protecting
+  // has not changed: a visitor must still be able to tell which frames are
+  // reveals and which are the roof on another day. So it now requires the
+  // intro to make that split explicitly, and still forbids the old blanket
+  // sentence, which would now be false.
+  ok(
+    "the gender reveal gallery intro still says nothing below it is a reveal. Two of the frames " +
+      "are: they are from the same evening as the hero. That sentence is now false.",
+    !/nothing below is a reveal/i.test(revealPage)
   );
   ok(
-    "the gender reveal gallery intro no longer tells the visitor that the frames below are not " +
-      "reveals. Four frames from couples shoots and flying-dress sessions, unqualified, read as " +
-      "a reveal portfolio four times the size of the real one.",
-    /nothing below is a reveal/i.test(revealPage)
+    "the gender reveal gallery intro no longer separates the frames that ARE the reveal from the " +
+      "ones that are only the roof. Unqualified, four couples and flying-dress frames read as a " +
+      "reveal portfolio several times the size of the real one.",
+    /from that evening/i.test(revealPage) && /rather than the occasion/i.test(revealPage)
   );
 
   // ---- Every gallery caption names what the frame actually is. -------
@@ -4530,9 +4676,9 @@ ok(
       (match) => match[1]
     );
     ok(
-      `the gender reveal gallery has ${captions.length} captions rather than the four frames it ` +
+      `the gender reveal gallery has ${captions.length} captions rather than the six frames it ` +
         "renders, so at least one photograph is shown without saying what it is",
-      captions.length === 4
+      captions.length === 6
     );
     const occasion = /couples shoot|anniversary shoot|vow renewal|flying-dress session|gender reveal/i;
     for (const caption of captions) {

@@ -178,6 +178,101 @@ export const agency = {
     height: 1400,
     credit: "Luis shoot, supplied October 2026",
   }),
+
+  /* ---------------------------------------------------------------------
+     THE PROPOSALS, supplied October 2026.
+
+     Until this folder arrived the proposal page opened by admitting it had
+     never photographed a proposal, and its gallery was the roof with the
+     captions saying so. That was the honest thing to publish at the time and
+     it is simply no longer true: there are three proposals here, two on the
+     roof and one on the plateau, each with the ring box open in frame.
+
+     They are kept as separate slots rather than one "proposal" slot because
+     they are three different clients on two different sites, and a page that
+     wants "a proposal" almost always wants a specific one: the ask, the ring,
+     the setup, or the plateau rather than the roof.
+     --------------------------------------------------------------------- */
+
+  /* The complete rooftop setup, sharp and legible, which is why this is the
+     frame the proposals category renders uncaptioned at the top. */
+  proposalHeartArch: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/proposal-heart-arch.jpg",
+    alt: "A couple standing inside a heart-shaped arch of red and white roses on the Giza rooftop, gold letters reading Will You Marry Me hung in the arch, a bouquet in her hands and a red carpet and candles at their feet, two pyramids on the horizon",
+    width: 2000,
+    height: 1333,
+    credit: "Moustafa shoot, supplied October 2026",
+  }),
+  /* The ask itself. Portrait, because the photographer shot it portrait. */
+  proposalHeartAsk: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/proposal-heart-ask.jpg",
+    alt: "A man on one knee holding an open red ring box up to a woman whose hand has gone to her mouth, both inside the heart-shaped floral arch with Will You Marry Me in gold behind them, a pyramid and the Giza skyline beyond the rooftop rail",
+    width: 1400,
+    height: 2100,
+    credit: "Moustafa shoot, supplied October 2026",
+  }),
+  proposalHeartRing: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/proposal-heart-ring.jpg",
+    alt: "The same couple a moment later, holding each other inside the floral heart arch with her hand raised to show the ring, the pyramids behind them",
+    width: 2000,
+    height: 1333,
+    credit: "Moustafa shoot, supplied October 2026",
+  }),
+  /* A second rooftop proposal, a different client and a different setup:
+     white flowers rather than red, and the steps dressed instead of an arch
+     over a carpet. Worth its own slot because it is the evidence that the
+     decoration is built per booking rather than one fixed prop. */
+  proposalWhiteAsk: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/proposal-white-ask.jpg",
+    alt: "A man on one knee with a ring box on flower-lined rooftop steps beneath a white floral arch, the woman's hands raised to her face, three pyramids across the horizon behind them",
+    width: 2000,
+    height: 1333,
+    credit: "Parca shoot, supplied October 2026",
+  }),
+  proposalWhiteTrain: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/proposal-white-train.jpg",
+    alt: "A woman on the rooftop steps beside the white floral arch with one arm raised, the long train of her white gown thrown out across the decking behind her, the pyramids beyond",
+    width: 2000,
+    height: 1333,
+    credit: "Parca shoot, supplied October 2026",
+  }),
+  /* NOT THE ROOFTOP. This one is down on the sand, and every caption that
+     uses it has to say so: the proposal page sells a private roof, and a
+     visitor who books expecting this frame would be booking the wrong
+     thing. */
+  proposalPlateauAsk: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/proposal-plateau-ask.jpg",
+    alt: "A man on one knee on the sand of the Giza plateau holding an open ring box, the woman turning to him with a hand at her face, three pyramids filling the horizon behind them",
+    width: 2000,
+    height: 1333,
+    credit: "Jos shoot, supplied October 2026",
+  }),
+
+  /* Two more from the Kayan gender reveal already in the library. The first
+     is the only frame in the folder that shows the ANSWER rather than the
+     setup, which is the thing the reveal page was describing in words. */
+  genderRevealGirl: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/gender-reveal-girl.jpg",
+    alt: "A couple sitting together on the decorated rooftop steps holding a large pink script balloon reading Girl, pink and blue balloons banked around them",
+    width: 1400,
+    height: 2100,
+    credit: "Kayan shoot, supplied October 2026",
+  }),
+  genderRevealCouple: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/gender-reveal-couple.jpg",
+    alt: "A couple holding each other beside lit BABY letters and a pink and blue balloon arch on the rooftop at sunset, the pyramids on the horizon behind them",
+    width: 2000,
+    height: 1333,
+    credit: "Kayan shoot, supplied October 2026",
+  }),
 };
 
 /**
@@ -268,15 +363,23 @@ export const location = {
  *
  * Eight categories; three photographs. That ratio is the point of this map
  * rather than an embarrassment to be padded out. There is a real gender
- * reveal, a real couple on the rooftop and a real couple in formal dress, so
- * those three categories get a picture. There is no proposal, no birthday,
- * no maternity session, no creator shoot and no DJ set in the library, so
- * those five get none — and they render the designed card they rendered
- * before, which says what the experience is in words.
+ * reveal, a real couple on the rooftop and now a real proposal, so those
+ * three categories get a picture. There is no birthday, no maternity
+ * session, no creator shoot and no DJ set in the library, so those four get
+ * none — and they render the designed card they rendered before, which says
+ * what the experience is in words.
  *
- * The alternative was to illustrate "Proposals above the pyramids" with the
- * wedding couple, who are not proposing. A visitor cannot tell the
- * difference, which is exactly why it would be a lie rather than a liberty.
+ * The four that go without are NOT short of candidates: the October 2026
+ * folder offers an image for every one of them. They are generated, and
+ * their own bytes say so (C2PA, "OpenAI", "trainedAlgorithmicMedia"). An
+ * uncaptioned frame at the top of a category page is the strongest "this is
+ * our work" claim the site makes, so a generated one cannot go there. See
+ * docs/FLYING-DRESSES-DRIVE-PHOTO-PLACEMENT.md.
+ *
+ * The alternative, before the proposals arrived, was to illustrate
+ * "Proposals above the pyramids" with the wedding couple, who are not
+ * proposing. A visitor cannot tell the difference, which is exactly why it
+ * would have been a lie rather than a liberty.
  *
  * Keyed by ExperienceCategoryId. Missing is the normal case.
  */
@@ -285,6 +388,9 @@ export const categoryPhoto: Partial<Record<string, ImageSlot>> = {
   // bar for appearing here: the route renders this frame large, at the top,
   // with a credit but NO CAPTION, so it reads as "this is what we do".
   "gender-reveal": agency.genderReveal,
+  // The whole rooftop setup with the sign legible in frame. Nobody has to be
+  // told what they are looking at, which is the test for this map.
+  proposals: agency.proposalHeartArch,
   // The Alessandra shoot is an anniversary shoot in wedding clothes, so it
   // belongs to this category and needs no qualifier.
   romance: agency.couplesRomance,
