@@ -22,6 +22,7 @@ import {
   departureInstantMs,
   parseDepartureClock,
   isAlmostFull,
+  overlappingDepartures,
   todayInCairo,
   type DepartureRow,
 } from "../src/lib/departureModel";
@@ -398,6 +399,56 @@ for (const f of [
     }
   }
 }
+
+// ===========================================================================
+// OVERLAPPING DEPARTURES, AND THE ADMIN SCREEN THAT HAS TO SHOW THEM
+// ===========================================================================
+// Four date clashes were found by hand while scheduling a year of trips. The
+// one that mattered was a four-day Siwa departure lying across a Saturday day
+// trip - two departures that start on different days and still want the same
+// vehicle on the Tuesday in between, which a same-start-date check misses.
+const dayTrip = (id: string, on: string) => dep({ id, departs_on: on, readiness: "open", price_usd: 100 });
+const multiDay = (id: string, on: string, back: string) =>
+  dep({ id, departs_on: on, returns_on: back, readiness: "open", price_usd: 100 });
+
+const assert = (label: string, condition: boolean) => {
+  if (!condition) errors.push(label);
+};
+
+assert("two departures on the same day are not reported as overlapping",
+  overlappingDepartures([dayTrip("x", dayAfter(10)), dayTrip("y", dayAfter(10))]).length === 1);
+assert("departures on different days are wrongly reported as overlapping",
+  overlappingDepartures([dayTrip("x", dayAfter(10)), dayTrip("y", dayAfter(11))]).length === 0);
+assert("a multi-day departure lying across a later day trip is not reported",
+  overlappingDepartures([multiDay("x", dayAfter(10), dayAfter(14)), dayTrip("y", dayAfter(12))]).length === 1);
+assert("a multi-day departure ending before the next one starts is wrongly reported",
+  overlappingDepartures([multiDay("x", dayAfter(10), dayAfter(12)), dayTrip("y", dayAfter(13))]).length === 0);
+assert("a cancelled departure is treated as competing for a vehicle",
+  overlappingDepartures([
+    dayTrip("x", dayAfter(10)),
+    dep({ id: "y", departs_on: dayAfter(10), status: "cancelled" }),
+  ]).length === 0);
+assert("overlap detection depends on the order rows arrive in",
+  overlappingDepartures([dayTrip("b", dayAfter(12)), multiDay("a", dayAfter(10), dayAfter(14))]).length === 1);
+
+// The admin screen must see what the public cannot, and must label what it
+// sees. Both broke when the readiness ladder was added: research departures
+// vanished from the one screen built to work on them, and the "announced"
+// state rendered a blank pill because the label table was not extended.
+const adminSource = read("src/app/[locale]/(site)/admin/departures/page.tsx");
+assert("the admin screen no longer reads research departures",
+  /getAllDeparturesForAdmin/.test(adminSource) && !/getUpcomingDepartures/.test(adminSource));
+for (const table of ["STATE_STYLES", "STATE_LABELS"]) {
+  const at = adminSource.indexOf(`const ${table}`);
+  const block = adminSource.slice(at, at + 400);
+  assert(`${table} has no entry for the announced state, so it renders blank`, /announced:/.test(block));
+}
+assert("the admin screen does not surface overlapping departures",
+  /overlappingDepartures/.test(adminSource));
+// "Below minimum" is a selling alarm. A departure that takes no bookings
+// cannot be below its minimum, and before this every announced date tripped it.
+assert("the below-minimum alarm still counts departures that are not on sale",
+  /belowMinimum[\s\S]{0,260}state !== "announced"/.test(adminSource));
 
 // The hub must not hardcode how many trips there are.
 const hubSource = read("src/app/[locale]/(site)/weekly-trips/page.tsx");

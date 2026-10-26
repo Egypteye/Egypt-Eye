@@ -153,3 +153,33 @@ export async function getPastDepartures(limit = 8): Promise<Departure[]> {
     return [];
   }
 }
+
+/**
+ * Every scheduled departure, including the ones the public never sees.
+ *
+ * The admin screen is the one place `research` rows have to appear - they are
+ * dates somebody is still working on, and hiding them there means the person
+ * doing the work cannot see their own notes. PUBLIC_READINESS deliberately
+ * does not apply.
+ */
+export async function getAllDeparturesForAdmin(limit = 200): Promise<Departure[]> {
+  if (!supabaseAdminConfigured) return [];
+  try {
+    const supabase = createAdminSupabaseClient();
+    const { data, error } = await supabase
+      .from("trip_departures")
+      .select(SELECT)
+      .gte("departs_on", todayInCairo())
+      .neq("status", "completed")
+      .order("departs_on", { ascending: true })
+      .limit(limit);
+    if (error) {
+      console.error("getAllDeparturesForAdmin failed:", error.message);
+      return [];
+    }
+    return joinTrips((data ?? []) as unknown as DepartureRow[]);
+  } catch (err) {
+    console.error("getAllDeparturesForAdmin threw:", err);
+    return [];
+  }
+}

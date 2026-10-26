@@ -3,9 +3,9 @@ import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/session";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { NotConfiguredNotice } from "../NotConfiguredNotice";
-import { getPastDepartures, getUpcomingDepartures } from "@/lib/departures";
+import { getAllDeparturesForAdmin, getPastDepartures } from "@/lib/departures";
 import { weeklyTrips } from "@/content/weeklyTrips";
-import { formatDateRange } from "@/lib/departureModel";
+import { formatDateRange, overlappingDepartures } from "@/lib/departureModel";
 import { CreateDepartureForm, DepartureActions } from "./DepartureForms";
 
 export const metadata = { title: "Weekly Trip Departures", robots: { index: false, follow: false } };
@@ -20,6 +20,7 @@ export const metadata = { title: "Weekly Trip Departures", robots: { index: fals
 
 const STATE_STYLES: Record<string, string> = {
   open: "bg-emerald-50 text-emerald-800",
+  announced: "bg-sky-50 text-sky-900",
   almost_full: "bg-amber-50 text-amber-900",
   sold_out: "bg-rose-50 text-rose-800",
   closed: "bg-black/5 text-ink-soft",
@@ -29,6 +30,7 @@ const STATE_STYLES: Record<string, string> = {
 
 const STATE_LABELS: Record<string, string> = {
   open: "Open",
+  announced: "Announced — no price",
   almost_full: "Almost full",
   sold_out: "Sold out",
   closed: "Closed",
@@ -41,20 +43,29 @@ export default async function AdminDeparturesPage() {
   if (user?.role !== "admin") redirect("/admin/reservations");
   if (!supabaseAdminConfigured) return <NotConfiguredNotice />;
 
-  const [upcoming, past] = await Promise.all([getUpcomingDepartures(200), getPastDepartures(12)]);
+  // The admin fetcher, not the public one: research departures are dates
+  // somebody is still working on, and this is the screen they work on.
+  const [upcoming, past] = await Promise.all([getAllDeparturesForAdmin(200), getPastDepartures(12)]);
 
   // Departures that have already left but nobody has closed off. Left visible
   // rather than auto-completed, because "did that actually run" is a question
   // only the team can answer.
   const needsClosing = past.filter((d) => d.state === "departed");
 
-  const belowMinimum = upcoming.filter((d) => d.state !== "cancelled" && !d.guaranteed);
+  // Only departures that are actually on sale. An announced date has no
+  // price and takes no bookings, so "below minimum" is not a fact about it -
+  // before this, all 27 announced dates showed up here as an alarm.
+  const belowMinimum = upcoming.filter(
+    (d) => d.state !== "cancelled" && d.state !== "announced" && !d.guaranteed
+  );
+  const clashes = overlappingDepartures(upcoming);
   const totalSeatsSold = upcoming.reduce((n, d) => n + d.seatsTaken, 0);
 
   const stats = [
     { label: "Upcoming departures", value: upcoming.length },
     { label: "Seats sold on them", value: totalSeatsSold },
     { label: "Below minimum", value: belowMinimum.length },
+    { label: "Overlapping dates", value: clashes.length },
     { label: "Waiting to be closed", value: needsClosing.length },
   ];
 
@@ -66,6 +77,30 @@ export default async function AdminDeparturesPage() {
           View the public page →
         </Link>
       </div>
+
+      {clashes.length > 0 && (
+        <div className="mt-5 rounded-xl border border-amber-600/25 bg-amber-50 px-4 py-3">
+          <p className="text-sm font-semibold text-amber-900">
+            {clashes.length === 1
+              ? "Two departures overlap"
+              : `${clashes.length} pairs of departures overlap`}
+          </p>
+          <p className="mt-0.5 text-xs text-amber-900/80">
+            Not necessarily wrong — but each pair wants a vehicle and a guide on the same day.
+          </p>
+          <ul className="mt-2 space-y-1">
+            {clashes.map(([a, b]) => (
+              <li key={`${a.id}-${b.id}`} className="text-xs text-amber-900">
+                <span className="font-semibold">{formatDateRange(a.departsOn, a.returnsOn, "en")}</span>{" "}
+                {a.trip.title}
+                <span className="mx-1.5 text-amber-900/50">overlaps</span>
+                <span className="font-semibold">{formatDateRange(b.departsOn, b.returnsOn, "en")}</span>{" "}
+                {b.trip.title}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((s) => (

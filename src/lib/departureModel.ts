@@ -420,3 +420,38 @@ export function countdownTo(targetMs: number, nowMs: number): Countdown {
     done: false,
   };
 }
+
+/**
+ * Departures whose dates overlap, soonest first.
+ *
+ * Found by hand four times while scheduling a year of trips, which is three
+ * times too many. Two departures on one Saturday is not automatically wrong -
+ * a bigger operator runs several - but for a company with one vehicle and one
+ * guide it is a question somebody has to answer before a customer asks it.
+ *
+ * Compares ranges rather than start dates, because the case that actually
+ * bit was a four-day Siwa departure sitting across a Saturday day trip. Two
+ * departures that merely start on different days can still want the same van
+ * on the Tuesday in between.
+ *
+ * Cancelled and departed ones are ignored: they are not competing for
+ * anything.
+ */
+export function overlappingDepartures(departures: Departure[]): [Departure, Departure][] {
+  const live = departures
+    .filter((d) => d.state !== "cancelled" && d.state !== "departed")
+    .sort((a, b) => (a.departsOn < b.departsOn ? -1 : a.departsOn > b.departsOn ? 1 : a.id < b.id ? -1 : 1));
+
+  const endOf = (d: Departure) => d.returnsOn ?? d.departsOn;
+  const pairs: [Departure, Departure][] = [];
+  for (let i = 0; i < live.length; i++) {
+    for (let j = i + 1; j < live.length; j++) {
+      const a = live[i]!;
+      const b = live[j]!;
+      // Sorted by start, so once b starts after a ends nothing later can overlap a.
+      if (b.departsOn > endOf(a)) break;
+      pairs.push([a, b]);
+    }
+  }
+  return pairs;
+}
