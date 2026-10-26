@@ -585,6 +585,20 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/proposal-plateau-ask.jpg",
   "/photos/flying-dresses/gender-reveal-girl.jpg",
   "/photos/flying-dresses/gender-reveal-couple.jpg",
+
+  // Six colours from the AAT rooftop session, same library, same October
+  // 2026 delivery. 6000x4000 camera originals, EGYPT.EYE in EXIF, and the
+  // byte-level check below passes on every one of them.
+  //
+  // These are what finally retires the top line of the asset checklist: the
+  // home gallery no longer has to be built around two 800px collaboration
+  // frames from 2022 and 2023.
+  "/photos/flying-dresses/rooftop-purple.jpg",
+  "/photos/flying-dresses/rooftop-red.jpg",
+  "/photos/flying-dresses/rooftop-green.jpg",
+  "/photos/flying-dresses/rooftop-blue.jpg",
+  "/photos/flying-dresses/rooftop-bronze.jpg",
+  "/photos/flying-dresses/rooftop-amber.jpg",
 ]);
 
 for (const [key, slot] of Object.entries(allSlots)) {

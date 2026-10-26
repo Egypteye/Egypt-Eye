@@ -273,6 +273,71 @@ export const agency = {
     height: 1333,
     credit: "Kayan shoot, supplied October 2026",
   }),
+
+  /* ---------------------------------------------------------------------
+     SIX COLOURS FROM ONE ROOFTOP SESSION, supplied October 2026.
+
+     These replace the two frames the asset checklist has had at the top of
+     its list since the site was built: briana-trip (533x800) and
+     cherry-travel (800x533), both creator collaborations from 2022 and 2023,
+     both too small to use anywhere but a card. They were the only genuine
+     flying-dress photographs the brand had, and the home gallery had to be
+     designed around their size.
+
+     These are 6000x4000 camera originals from a single morning, which is
+     also why they work as a set: one roof, one light, six colours. The
+     collaboration frames are NOT deleted. They are real work, properly
+     credited, and they stay on the About page where the subject is the
+     collaboration rather than the dress.
+     --------------------------------------------------------------------- */
+  rooftopPurple: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-purple.jpg",
+    alt: "A woman in a purple gown on the Giza rooftop, the train swept out in a long arc across the decking behind her, two pyramids on the horizon",
+    width: 2000,
+    height: 1333,
+    credit: "AAT shoot, supplied October 2026",
+  }),
+  rooftopRed: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-red.jpg",
+    alt: "A red gown on the Giza rooftop with its train caught by the wind and filling most of the frame, the pyramids beyond it",
+    width: 2000,
+    height: 1333,
+    credit: "AAT shoot, supplied October 2026",
+  }),
+  rooftopGreen: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-green.jpg",
+    alt: "A woman in an emerald gown standing at the rooftop rail, the train fanned out across the decking, the pyramids pale behind her",
+    width: 2000,
+    height: 1333,
+    credit: "AAT shoot, supplied October 2026",
+  }),
+  rooftopBlue: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-blue.jpg",
+    alt: "A cobalt blue gown on the Giza rooftop, its train drawn out along the decking to one side, the pyramids on the skyline",
+    width: 2000,
+    height: 1333,
+    credit: "AAT shoot, supplied October 2026",
+  }),
+  rooftopBronze: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-bronze.jpg",
+    alt: "A bronze gown on the Giza rooftop with the train lifted and billowing above the cushions along the rail, a pyramid behind",
+    width: 2000,
+    height: 1333,
+    credit: "AAT shoot, supplied October 2026",
+  }),
+  rooftopAmber: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/rooftop-amber.jpg",
+    alt: "An amber gown on the Giza rooftop, the train streaming out the full width of the frame, the pyramids behind it",
+    width: 2000,
+    height: 1333,
+    credit: "AAT shoot, supplied October 2026",
+  }),
 };
 
 /**
