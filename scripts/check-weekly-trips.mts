@@ -376,6 +376,29 @@ for (const [where, text] of prose) {
   }
 }
 
+// A nullable price must never be interpolated next to a currency symbol.
+//
+// `${d.priceUsd}` with no price produces "$ per seat" - a dangling dollar
+// sign - which shipped on every announced date on the trip page. The absence
+// of a price is something to say, not a gap to leave.
+for (const f of [
+  "src/components/TripDepartures.tsx",
+  "src/components/WeeklyTripsCalendar.tsx",
+  "src/components/FeaturedDeparture.tsx",
+  "src/components/TripCard.tsx",
+]) {
+  const src = read(f);
+  for (const m of src.matchAll(/\$\$\{[^}]*priceUsd[^}]*\}/g)) {
+    const snippet = m[0];
+    // Allowed only where the surrounding expression has already proved the
+    // price is present - a ternary or a guard naming priceUsd and null.
+    const around = src.slice(Math.max(0, m.index! - 240), m.index! + 120);
+    if (!/priceUsd\s*===\s*null|priceUsd\s*!==\s*null/.test(around)) {
+      errors.push(`${f}: renders ${snippet} without checking the price exists`);
+    }
+  }
+}
+
 // The hub must not hardcode how many trips there are.
 const hubSource = read("src/app/[locale]/(site)/weekly-trips/page.tsx");
 for (const word of ["Five trips", "Six trips", "Seven trips", "Eight trips"]) {

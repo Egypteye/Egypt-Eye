@@ -323,8 +323,15 @@ export function TripDepartures({
                           </span>
                         </div>
                         <div className="mt-1.5 flex flex-wrap items-center justify-between gap-x-3 gap-y-1">
+                          {/* A null price rendered straight into the template
+                              produced "$ per seat" - a dangling currency
+                              symbol with nothing after it - on every announced
+                              date. The absence of a price is a thing to say,
+                              not a gap to leave. */}
                           <span className="text-sm text-ink-soft">
-                            ${d.priceUsd} {tr("per seat")}
+                            {d.priceUsd === null
+                              ? tr("Pricing to come")
+                              : `$${d.priceUsd} ${tr("per seat")}`}
                             {d.departureTime ? ` · ${d.departureTime}` : ""}
                           </span>
                           <GuaranteeNote departure={d} />
