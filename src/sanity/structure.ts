@@ -93,6 +93,13 @@ export const structure: StructureResolver = (S) =>
             .schemaType("flyingDressProposalPage")
             .documentId("flyingDressProposalPage")
         ),
+      S.listItem()
+        .title("✿ Flying Dresses — Gender reveal page")
+        .child(
+          S.document()
+            .schemaType("flyingDressRevealPage")
+            .documentId("flyingDressRevealPage")
+        ),
       S.documentTypeListItem("flyingDressPackage").title("✿ Flying Dresses — Photoshoots"),
       S.documentTypeListItem("flyingDressAddOn").title("✿ Flying Dresses — Extras"),
       S.documentTypeListItem("flyingDressRental").title("✿ Flying Dresses — Hire services"),

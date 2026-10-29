@@ -17,8 +17,16 @@ import { BirthdayPage } from "../../_components/BirthdayPage";
 import { OccasionPage } from "../../_components/OccasionPage";
 import { occasionByCategory } from "@/content/flyingDressOccasions";
 import { fillRates } from "@/content/flyingDressRates";
-import { getFlyingDressProposalPage, getFlyingDressRateCard } from "@/sanity/fetchers";
-import { mergeProposalPage, mergeRateCard } from "../../_lib/contentMerge";
+import {
+  getFlyingDressProposalPage,
+  getFlyingDressRateCard,
+  getFlyingDressRevealPage,
+} from "@/sanity/fetchers";
+import {
+  mergeProposalPage,
+  mergeRateCard,
+  mergeRevealPage,
+} from "../../_lib/contentMerge";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -63,12 +71,14 @@ export default async function ExperienceCategoryPage({
   // land either side of an edit.
   // Both reads happen before the branch below picks a composition, so the
   // two are fetched together rather than one per render path.
-  const [rateCardDoc, proposalDoc] = await Promise.all([
+  const [rateCardDoc, proposalDoc, revealDoc] = await Promise.all([
     getFlyingDressRateCard(),
     getFlyingDressProposalPage(),
+    getFlyingDressRevealPage(),
   ]);
   const rateCard = mergeRateCard(rateCardDoc);
   const proposalPage = mergeProposalPage(proposalDoc);
+  const revealPage = mergeRevealPage(revealDoc);
   const category = experienceCategoryBySlug(slug);
   // A category from the OTHER section is a 404 here rather than a redirect:
   // one canonical URL per category, so the two sections cannot both answer.
@@ -207,7 +217,7 @@ export default async function ExperienceCategoryPage({
       {category.id === "proposals" && proposal ? (
         <ProposalPage experience={proposal} page={proposalPage} />
       ) : category.id === "gender-reveal" && genderReveal ? (
-        <GenderRevealPage experience={genderReveal} />
+        <GenderRevealPage experience={genderReveal} page={revealPage} />
       ) : category.id === "celebrations" && celebration ? (
         <BirthdayPage experience={celebration} />
       ) : occasion && experiences[0] ? (

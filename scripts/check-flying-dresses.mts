@@ -120,10 +120,12 @@ import {
   mergeProposalPage,
   mergeRateCard,
   mergeRentals,
+  mergeRevealPage,
   mergeSettings,
   mergeWardrobe,
   type FdProposalPageDoc,
   type FdRateCardDoc,
+  type FdRevealPageDoc,
   type FdSettingsDoc,
 } from "../src/app/flying-dresses/_lib/contentMerge.js";
 import { hardenFlyingDressGallery } from "../src/lib/sanityShape.js";
@@ -6279,6 +6281,129 @@ ok(
         `the proposals page GROQ projection asks for "${word}", which is not a field on the ` +
           "schema. It returns null forever, which the merge reads as \"not set\", so the page " +
           "silently keeps rendering the sentence from the code.",
+        schemaFields.includes(word)
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// THE GENDER REVEAL PAGE IS EDITABLE.
+//
+// Its themes and decorations carry an ID into the enquiry, so an entry that
+// lost one is worse than absent: the page renders a choice the handoff cannot
+// name. Both lists drop an incomplete entry rather than render it.
+//
+// WHAT THESE CHECKS CANNOT DO, said plainly because it is new: they read the
+// CODE. Once a field is editable, somebody can type a price into
+// `quoteNote` from a browser and no offline check will see it. The schema
+// warns in the field description, the fallback text here is still guarded,
+// and that is the whole of the protection. It is a real change in what this
+// file can promise.
+// ---------------------------------------------------------------------------
+{
+  const revealSchema = read("src/sanity/schemaTypes/flyingDressRevealPage.ts");
+  const fetchers = read("src/sanity/fetchers.ts");
+
+  // ---- A half-filled theme or decoration is dropped. -------------------
+  const broken = mergeRevealPage({
+    themes: [
+      { id: "neutral", label: "Neutral", detail: "Nothing gives it away." },
+      { id: null, label: "Nameless", detail: "No id to carry." },
+      { id: "no-label", label: null, detail: "An empty button." },
+    ],
+    decorations: [
+      { id: "ok", name: "Arch", description: "Balloons", src: "/a.jpg", alt: "An arch" },
+      { id: "no-photo", name: "Arch", description: "Balloons", src: null, alt: null },
+    ],
+  } as unknown as FdRevealPageDoc);
+  ok(
+    `mergeRevealPage kept ${broken.themes.length} themes when only one is complete. A theme with ` +
+      "no id renders a choice the enquiry handoff cannot name, and one with no label is an empty " +
+      "button.",
+    broken.themes.length === 1 && broken.themes[0]?.id === "neutral"
+  );
+  ok(
+    `mergeRevealPage kept ${broken.decorations.length} decorations when only one is complete`,
+    broken.decorations.length === 1 && broken.decorations[0]?.id === "ok"
+  );
+
+  // ---- A missing document falls back; an empty list clears. ------------
+  ok(
+    "mergeRevealPage no longer falls back to the content file, so an unfilled document would " +
+      "empty the whole page",
+    mergeRevealPage(null).inclusions.length > 0 &&
+      mergeRevealPage(null).themes.length > 0 &&
+      mergeRevealPage(null).secret.steps.length > 0
+  );
+  ok(
+    "mergeRevealPage treats an empty inclusions list as a fallback rather than a clearing",
+    mergeRevealPage({ inclusions: [] } as unknown as FdRevealPageDoc).inclusions.length === 0
+  );
+
+  // ---- The absences stay absences in the fallback. ---------------------
+  const fallback = mergeRevealPage(null);
+  for (const [label, text] of [
+    ["the photograph count", fallback.photography.noCountPromise],
+    ["the delivery deadline", fallback.photography.noTurnaroundPromise],
+    ["the quotation note", fallback.quoteNote],
+  ] as const) {
+    ok(
+      `the gender reveal fallback for ${label} now contains a currency figure: "${text.slice(0, 70)}". ` +
+        "Nothing has been priced for this service and the page's whole shape depends on saying so.",
+      !/[$€£]\s?\d/.test(text)
+    );
+  }
+
+  // ---- No payment terms were quietly copied from the proposal. ---------
+  ok(
+    "the gender reveal page schema now carries a deposit or payment split. No terms have EVER " +
+      "been agreed for this service; the proposal's 25/75 was supplied for the proposal and does " +
+      "not transfer. Copying it here invents a commitment.",
+    !/name:\s*"\w*(?:[Dd]eposit|[Bb]alance|[Pp]ercent)\w*"/.test(revealSchema)
+  );
+
+  // ---- The projection names the schema's real fields. ------------------
+  {
+    const schemaFields = [...revealSchema.matchAll(/name:\s*"([a-zA-Z]+)"/g)]
+      .map((m) => m[1])
+      .filter(
+        (n) =>
+          ![
+            "flyingDressRevealPage",
+            "fdRevealTheme",
+            "secret", "included", "mechanism", "themes", "how", "photos", "practical",
+            "id", "label", "detail", "name",
+          ].includes(n)
+      );
+    const projection =
+      /_type == "flyingDressRevealPage"\]\[0\]\{([\s\S]*?)\n    \}`/.exec(fetchers)?.[1] ?? "";
+    const projected = new Set([...projection.matchAll(/[a-zA-Z]+/g)].map((m) => m[0]));
+    const groqWords = new Set([
+      "decorations", "image", "asset", "url", "src", "alt", "id", "name",
+      "description", "title", "detail", "label", "themes",
+    ]);
+
+    ok(
+      "the gender reveal GROQ projection could not be found in src/sanity/fetchers.ts",
+      projection.trim().length > 50
+    );
+    ok(
+      `only ${schemaFields.length} field names were read out of the gender reveal schema, so the ` +
+        "comparison below proves little. It defines more than twenty.",
+      schemaFields.length >= 20
+    );
+    for (const field of schemaFields) {
+      ok(
+        `the gender reveal schema defines "${field}" but the GROQ projection never asks for it, ` +
+          "so anything typed into it is silently ignored",
+        projected.has(field)
+      );
+    }
+    for (const word of projected) {
+      if (groqWords.has(word)) continue;
+      ok(
+        `the gender reveal GROQ projection asks for "${word}", which is not a field on the schema`,
         schemaFields.includes(word)
       );
     }

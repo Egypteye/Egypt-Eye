@@ -1093,6 +1093,7 @@ import type {
   FdPackageDoc,
   FdProposalPageDoc,
   FdRateCardDoc,
+  FdRevealPageDoc,
   FdRentalDoc,
   FdSettingsDoc,
 } from "@/app/flying-dresses/_lib/contentMerge";
@@ -1116,6 +1117,35 @@ import type {
    The projections return plain data, never Sanity image objects: `asset->url`
    is resolved here so nothing downstream has to know what a Sanity image is.
    ========================================================================== */
+
+
+export async function getFlyingDressRevealPage(): Promise<FdRevealPageDoc | null> {
+  return safeFetch<FdRevealPageDoc>(
+    `*[_type == "flyingDressRevealPage"][0]{
+      secretLede,
+      secretSteps[]{title, detail},
+      inclusions[]{title, detail},
+      mechanismLede,
+      mechanismPoints[]{title, detail},
+      mechanismEvidenceNote,
+      themes[]{id, label, detail},
+      themeNote,
+      "decorations": decorations[]{
+        id, name, description,
+        "src": image.asset->url,
+        "alt": image.alt
+      },
+      decorationInterim,
+      steps[]{title, detail},
+      photographyHeading, photographyCovers, photographyDelivery,
+      photographyNoCount, photographyNoTurnaround,
+      videoLede, videoPoints, videoNote,
+      quoteNote, venueHeading, venueGuestsNote,
+      durationNote, leadTimeNote, whoItIsFor,
+      maternityHeading, maternityDetail
+    }`
+  );
+}
 
 
 export async function getFlyingDressProposalPage(): Promise<FdProposalPageDoc | null> {

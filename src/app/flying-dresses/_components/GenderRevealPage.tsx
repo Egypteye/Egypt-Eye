@@ -4,21 +4,17 @@ import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { RevealThemes } from "./RevealThemes";
 import { agency } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
+// revealVenue's location/dependency/namingNote and revealPayment's termsSet
+// and team note stay direct imports: they are shared constants or the record
+// that no payment terms exist, not sentences an editor should contradict.
+// revealPractical is here only for the maternity link LABEL, which is the text
+// on a link to another page rather than a claim about the service.
 import {
-  DECORATION_INTERIM,
-  THEME_NOTE,
-  revealDecorations,
-  revealInclusions,
-  revealMechanism,
   revealPayment,
-  revealPhotography,
   revealPractical,
-  revealSecret,
-  revealSteps,
-  revealThemes,
   revealVenue,
-  revealVideo,
 } from "@/content/flyingDressGenderReveal";
+import type { FdRevealPage } from "../_lib/contentMerge";
 import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
 
 /**
@@ -133,7 +129,14 @@ function galleryFrames(): GalleryFrame[] {
     }));
 }
 
-export function GenderRevealPage({ experience }: { experience: FlyingDressExperience }) {
+export function GenderRevealPage({
+  experience,
+  page,
+}: {
+  experience: FlyingDressExperience;
+  /** The page's words, from the Studio where it has them. */
+  page: FdRevealPage;
+}) {
   const frames = galleryFrames();
   const enquire = fdPath("/enquire?experience=gender-reveal");
 
@@ -185,11 +188,11 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
               Somebody has to know
             </h2>
             <p className="fd-muted" style={{ marginTop: "1rem" }}>
-              {revealSecret.lede}
+              {page.secret.lede}
             </p>
           </div>
           <ul className="fd-list fd-list-2">
-            {revealSecret.steps.map((item) => (
+            {page.secret.steps.map((item) => (
               <li key={item.title}>
                 <h3>{item.title}</h3>
                 <p>{item.detail}</p>
@@ -209,7 +212,7 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
             </h2>
           </div>
           <ul className="fd-list fd-list-2">
-            {revealInclusions.map((item) => (
+            {page.inclusions.map((item) => (
               <li key={item.title}>
                 <h3>{item.title}</h3>
                 <p>{item.detail}</p>
@@ -243,11 +246,11 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
               How the reveal happens is agreed with the roof
             </h2>
             <p className="fd-muted" style={{ marginTop: "1rem" }}>
-              {revealMechanism.lede}
+              {page.mechanism.lede}
             </p>
           </div>
           <ul className="fd-list fd-list-2">
-            {revealMechanism.points.map((item) => (
+            {page.mechanism.points.map((item) => (
               <li key={item.title}>
                 <h3>{item.title}</h3>
                 <p>{item.detail}</p>
@@ -255,16 +258,16 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
             ))}
           </ul>
           <div className="fd-note" style={{ marginTop: "2.5rem", maxWidth: "46rem" }}>
-            <p style={{ margin: 0 }}>{revealMechanism.evidenceNote}</p>
+            <p style={{ margin: 0 }}>{page.mechanism.evidenceNote}</p>
           </div>
         </div>
       </section>
 
       <RevealThemes
-        themes={revealThemes}
-        themeNote={THEME_NOTE}
-        decorations={revealDecorations}
-        interim={DECORATION_INTERIM}
+        themes={page.themes}
+        themeNote={page.themeNote}
+        decorations={page.decorations}
+        interim={page.decorationInterim}
       />
 
       {/* G. THE SEQUENCE. Numbered, because the question underneath is
@@ -279,7 +282,7 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
             </h2>
           </div>
           <ol className="fd-steps">
-            {revealSteps.map((step, i) => (
+            {page.steps.map((step, i) => (
               <li key={step.title}>
                 <span className="fd-step-num" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
@@ -305,10 +308,10 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
           <div>
             <p className="fd-eyebrow">What you receive</p>
             <h2 className="fd-display fd-h3" style={{ marginTop: "0.75rem" }}>
-              {revealPhotography.heading}
+              {page.photography.heading}
             </h2>
             <ul className="fd-list" style={{ marginTop: "1.5rem" }}>
-              {revealPhotography.covers.map((line) => (
+              {page.photography.covers.map((line) => (
                 <li key={line}>
                   <p>{line}</p>
                 </li>
@@ -318,9 +321,9 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
               <p style={{ margin: "0 0 0.75rem", fontWeight: 500, color: "var(--fd-ink)" }}>
                 How they reach you
               </p>
-              <p style={{ margin: "0 0 0.75rem" }}>{revealPhotography.delivery}</p>
-              <p style={{ margin: "0 0 0.75rem" }}>{revealPhotography.noCountPromise}</p>
-              <p style={{ margin: 0 }}>{revealPhotography.noTurnaroundPromise}</p>
+              <p style={{ margin: "0 0 0.75rem" }}>{page.photography.delivery}</p>
+              <p style={{ margin: "0 0 0.75rem" }}>{page.photography.noCountPromise}</p>
+              <p style={{ margin: 0 }}>{page.photography.noTurnaroundPromise}</p>
             </div>
           </div>
 
@@ -330,17 +333,17 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
               Filmed as well as photographed
             </h2>
             <p className="fd-muted" style={{ marginTop: "1rem" }}>
-              {revealVideo.lede}
+              {page.video.lede}
             </p>
             <ul className="fd-list" style={{ marginTop: "1.5rem" }}>
-              {revealVideo.points.map((line) => (
+              {page.video.points.map((line) => (
                 <li key={line}>
                   <p>{line}</p>
                 </li>
               ))}
             </ul>
             <p className="fd-muted" style={{ marginTop: "1.5rem", fontSize: "var(--fd-step--1)" }}>
-              {revealVideo.note}
+              {page.video.note}
             </p>
           </aside>
         </div>
@@ -356,7 +359,7 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
           <div>
             <p className="fd-eyebrow">Where it happens</p>
             <h2 className="fd-display fd-h3" style={{ marginTop: "0.75rem" }}>
-              {revealVenue.heading}
+              {page.venue.heading}
             </h2>
             <p className="fd-muted" style={{ marginTop: "1rem" }}>
               {revealVenue.location}
@@ -370,7 +373,7 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
               <p style={{ margin: "0 0 0.75rem", fontWeight: 500, color: "var(--fd-ink)" }}>
                 How many people can come
               </p>
-              <p style={{ margin: 0 }}>{revealVenue.guestsNote}</p>
+              <p style={{ margin: 0 }}>{page.venue.guestsNote}</p>
             </div>
           </aside>
         </div>
@@ -395,18 +398,18 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
             <ul className="fd-list" style={{ marginTop: "1.5rem" }}>
               <li>
                 <h3>On the evening</h3>
-                <p>{revealPractical.durationNote}</p>
+                <p>{page.practical.durationNote}</p>
               </li>
               <li>
                 <h3>Before the date</h3>
-                <p>{revealPractical.leadTimeNote}</p>
+                <p>{page.practical.leadTimeNote}</p>
               </li>
             </ul>
             <p className="fd-eyebrow" style={{ marginTop: "2rem" }}>
               Who books it
             </p>
             <ul className="fd-list" style={{ marginTop: "1rem" }}>
-              {revealPractical.whoItIsFor.map((line) => (
+              {page.practical.whoItIsFor.map((line) => (
                 <li key={line}>
                   <p>{line}</p>
                 </li>
@@ -417,9 +420,9 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
           <aside>
             <div className="fd-note">
               <p style={{ margin: "0 0 0.75rem", fontWeight: 500, color: "var(--fd-ink)" }}>
-                {revealPractical.maternityHeading}
+                {page.practical.maternityHeading}
               </p>
-              <p style={{ margin: "0 0 1rem" }}>{revealPractical.maternityDetail}</p>
+              <p style={{ margin: "0 0 1rem" }}>{page.practical.maternityDetail}</p>
               <Link className="fd-link" href={fdPath("/celebrations/maternity-and-family")}>
                 {revealPractical.maternityLinkLabel}
               </Link>
@@ -443,7 +446,7 @@ export function GenderRevealPage({ experience }: { experience: FlyingDressExperi
               How the quotation works
             </h2>
             <p className="fd-muted" style={{ marginTop: "1rem" }}>
-              {revealPayment.quoteNote}
+              {page.quoteNote}
             </p>
           </div>
           <ul className="fd-list fd-list-2">

@@ -37,6 +37,22 @@ import {
   proposalVenue as localProposalVenue,
   type ProposalDecoration,
 } from "@/content/flyingDressProposal";
+import {
+  DECORATION_INTERIM as localRevealDecorationInterim,
+  THEME_NOTE as localThemeNote,
+  revealDecorations as localRevealDecorations,
+  revealInclusions as localRevealInclusions,
+  revealMechanism as localRevealMechanism,
+  revealPayment as localRevealPayment,
+  revealPhotography as localRevealPhotography,
+  revealPractical as localRevealPractical,
+  revealSecret as localRevealSecret,
+  revealSteps as localRevealSteps,
+  revealThemes as localRevealThemes,
+  revealVenue as localRevealVenue,
+  revealVideo as localRevealVideo,
+  type RevealTheme,
+} from "@/content/flyingDressGenderReveal";
 
 /* ------------------------------------------------------------------------ */
 /* The shapes the GROQ projections return                                    */
@@ -772,6 +788,150 @@ export function mergeProposalPage(doc: FdProposalPageDoc | null): FdProposalPage
         doc?.photographyNoTurnaround,
         localProposalPhotography.noTurnaroundPromise
       ),
+    },
+  };
+}
+
+
+/* ------------------------------------------------------------------------ */
+/* The gender reveal page                                                    */
+/* ------------------------------------------------------------------------ */
+
+type DocEntry = { title: string | null; detail: string | null };
+
+export type FdRevealPageDoc = {
+  secretLede: string | null;
+  secretSteps: DocEntry[] | null;
+  inclusions: DocEntry[] | null;
+  mechanismLede: string | null;
+  mechanismPoints: DocEntry[] | null;
+  mechanismEvidenceNote: string | null;
+  themes: { id: string | null; label: string | null; detail: string | null }[] | null;
+  themeNote: string | null;
+  decorations:
+    | { id: string | null; name: string | null; description: string | null; src: string | null; alt: string | null }[]
+    | null;
+  decorationInterim: string | null;
+  steps: DocEntry[] | null;
+  photographyHeading: string | null;
+  photographyCovers: string[] | null;
+  photographyDelivery: string | null;
+  photographyNoCount: string | null;
+  photographyNoTurnaround: string | null;
+  videoLede: string | null;
+  videoPoints: string[] | null;
+  videoNote: string | null;
+  quoteNote: string | null;
+  venueHeading: string | null;
+  venueGuestsNote: string | null;
+  durationNote: string | null;
+  leadTimeNote: string | null;
+  whoItIsFor: string[] | null;
+  maternityHeading: string | null;
+  maternityDetail: string | null;
+};
+
+export type FdRevealPage = {
+  secret: { lede: string; steps: Inclusion[] };
+  inclusions: Inclusion[];
+  mechanism: { lede: string; points: Inclusion[]; evidenceNote: string };
+  themes: RevealTheme[];
+  themeNote: string;
+  decorations: ProposalDecoration[];
+  decorationInterim: string;
+  steps: Inclusion[];
+  photography: {
+    heading: string;
+    covers: string[];
+    delivery: string;
+    noCountPromise: string;
+    noTurnaroundPromise: string;
+  };
+  video: { lede: string; points: string[]; note: string };
+  quoteNote: string;
+  venue: { heading: string; guestsNote: string };
+  practical: {
+    durationNote: string;
+    leadTimeNote: string;
+    whoItIsFor: string[];
+    maternityHeading: string;
+    maternityDetail: string;
+  };
+};
+
+/** Trimmed strings, dropping blanks, falling back when the list is absent. */
+function lines(value: string[] | null | undefined, fallback: readonly string[]): string[] {
+  if (!Array.isArray(value)) return [...fallback];
+  return value.map((v) => (typeof v === "string" ? v.trim() : "")).filter((v) => v.length > 0);
+}
+
+export function mergeRevealPage(doc: FdRevealPageDoc | null): FdRevealPage {
+  return {
+    secret: {
+      lede: str(doc?.secretLede, localRevealSecret.lede),
+      steps: entries(doc?.secretSteps, localRevealSecret.steps),
+    },
+    inclusions: entries(doc?.inclusions, localRevealInclusions),
+    mechanism: {
+      lede: str(doc?.mechanismLede, localRevealMechanism.lede),
+      points: entries(doc?.mechanismPoints, localRevealMechanism.points),
+      evidenceNote: str(doc?.mechanismEvidenceNote, localRevealMechanism.evidenceNote),
+    },
+    // A theme with no id cannot be carried into the enquiry, and one with no
+    // label is an empty button. Either way it is dropped rather than rendered.
+    themes: Array.isArray(doc?.themes)
+      ? doc.themes
+          .map((t) => ({
+            id: str(t?.id, undefined),
+            label: str(t?.label, undefined),
+            detail: str(t?.detail, undefined),
+          }))
+          .filter((t) => t.id && t.label && t.detail)
+      : [...localRevealThemes],
+    themeNote: str(doc?.themeNote, localThemeNote),
+    decorations: Array.isArray(doc?.decorations)
+      ? doc.decorations
+          .map((d) => ({
+            id: str(d?.id, undefined),
+            name: str(d?.name, undefined),
+            description: str(d?.description, undefined),
+            src: str(d?.src, undefined),
+            alt: str(d?.alt, undefined),
+          }))
+          .filter((d) => d.id && d.name && d.description && d.src && d.alt)
+      : [...localRevealDecorations],
+    decorationInterim: str(doc?.decorationInterim, localRevealDecorationInterim),
+    steps: entries(doc?.steps, localRevealSteps),
+    photography: {
+      heading: str(doc?.photographyHeading, localRevealPhotography.heading),
+      covers: lines(doc?.photographyCovers, localRevealPhotography.covers),
+      delivery: str(doc?.photographyDelivery, localRevealPhotography.delivery),
+      noCountPromise: str(doc?.photographyNoCount, localRevealPhotography.noCountPromise),
+      noTurnaroundPromise: str(
+        doc?.photographyNoTurnaround,
+        localRevealPhotography.noTurnaroundPromise
+      ),
+    },
+    video: {
+      lede: str(doc?.videoLede, localRevealVideo.lede),
+      points: lines(doc?.videoPoints, localRevealVideo.points),
+      note: str(doc?.videoNote, localRevealVideo.note),
+    },
+    // The visitor-facing half of the money section only. `termsSet` and the
+    // team note stay in the code: they are the record that NO terms exist,
+    // read by the check script, and not a sentence an editor should be able
+    // to contradict from a browser.
+    quoteNote: str(doc?.quoteNote, localRevealPayment.quoteNote),
+    venue: {
+      heading: str(doc?.venueHeading, localRevealVenue.heading),
+      guestsNote: str(doc?.venueGuestsNote, localRevealVenue.guestsNote),
+    },
+    practical: {
+      durationNote: str(doc?.durationNote, localRevealPractical.durationNote),
+      leadTimeNote: str(doc?.leadTimeNote, localRevealPractical.leadTimeNote),
+      whoItIsFor: lines(doc?.whoItIsFor, localRevealPractical.whoItIsFor),
+      maternityHeading: str(doc?.maternityHeading, localRevealPractical.maternityHeading),
+      maternityDetail: str(doc?.maternityDetail, localRevealPractical.maternityDetail),
     },
   };
 }
