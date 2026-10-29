@@ -164,10 +164,32 @@ function flyingDressesProxy(request: NextRequest): NextResponse {
     return NextResponse.next({ request });
   }
 
+  // THE STUDIO ANSWERS HERE, AND IT DID NOT USED TO.
+  //
+  // This domain refused /studio outright, on the reasoning that an admin
+  // surface should not exist on a second public hostname. The owner runs this
+  // brand from this domain and asked twice for its backend to live on it, so
+  // the refusal moved rather than stayed: /studio is served, and /api/ and
+  // /auth/ below are still refused.
+  //
+  // That split is the point. What the old rule was really protecting was the
+  // money and the session: a second origin answering /api/bookings/paypal or
+  // /auth/ is a second way to settle an order or mint a session. The Studio
+  // is neither. It is a client-side React app that talks to sanity.io
+  // directly, never through this origin's /api, and Sanity will not answer it
+  // at all unless this exact origin is on the project's CORS allow-list, which
+  // is a second lock the owner holds and can revoke without a deploy.
+  //
+  // /_next is already allowed above, so its chunks load. next.config.ts
+  // excludes /studio from the site CSP by path, which covers it on both hosts.
+  if (pathname === "/studio" || pathname.startsWith("/studio/")) {
+    return NextResponse.next({ request });
+  }
+
   // Anything else addressed at an Egypt Eye route on this domain is refused
-  // outright rather than rewritten, so /studio and /api/bookings/paypal are a
+  // outright rather than rewritten, so /api/bookings/paypal and /auth/ are a
   // 404 here and not a working endpoint on a second hostname.
-  if (pathname.startsWith("/api/") || pathname.startsWith("/auth/") || pathname.startsWith("/studio")) {
+  if (pathname.startsWith("/api/") || pathname.startsWith("/auth/")) {
     return new NextResponse("Not found", {
       status: 404,
       headers: { "content-type": "text/plain; charset=utf-8", "x-robots-tag": "noindex" },

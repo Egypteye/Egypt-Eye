@@ -1152,12 +1152,61 @@ ok(
 // changing the booking href back to a relative `/secure/photoshoot/...`:
 // red in both cases.
 // ---------------------------------------------------------------------------
+// THE STUDIO WAS DELIBERATELY ADDED TO THIS HOST IN OCTOBER 2026.
+//
+// This assertion used to require /studio to be refused alongside /api/ and
+// /auth/. The owner runs this brand from this domain and asked for its
+// backend on it, so the refusal was split: /studio is served, the money and
+// the session are not.
+//
+// What is checked has therefore changed shape but not strength. /api/ and
+// /auth/ must still be refused, because a second origin answering
+// /api/bookings/paypal or /auth/ is a second way to settle an order or mint a
+// session, and that was always the real reason for the rule. The Studio is
+// neither: it is a client-side app that talks to sanity.io directly and that
+// Sanity refuses unless this origin is on the project's CORS allow-list.
+//
+// SCOPED TO flyingDressesProxy, AND THE FIRST VERSION WAS NOT.
+//
+// Written against the whole file with `\s*` between the two calls, this
+// passed with "/api/" deleted from the refusal: isLocaleExempt further down
+// lists `pathname.startsWith("/api/") ||` and `pathname.startsWith("/auth/")`
+// on consecutive lines, \s matches the newline between them, and a function
+// that has nothing to do with this host satisfied the assertion. Caught by
+// reverting the fix and watching it stay green. CLAUDE.md §4.
+//
+// So the source is sliced to the one function first, and the two calls must
+// sit on a SINGLE line, which is the shape of the refusal and not of the
+// exempt list.
+//
+// Proven by deleting "/api/" from the refusal (red), by deleting "/auth/"
+// (red), and by widening the studio allow to a bare startsWith (red).
+const fdProxySource = proxySource.slice(
+  proxySource.indexOf("function flyingDressesProxy"),
+  proxySource.indexOf("export async function proxy")
+);
 ok(
-  "src/proxy.ts no longer refuses Egypt Eye's routes on the Flying Dresses host — /studio, /auth and every " +
-    "/api route would answer on that domain, on a deployment that also carries the booking and CMS endpoints",
-  /pathname\.startsWith\("\/api\/"\) \|\| pathname\.startsWith\("\/auth\/"\) \|\| pathname\.startsWith\("\/studio"\)/.test(
-    proxySource
-  ) && proxySource.includes("status: 404")
+  "the check could not find flyingDressesProxy in src/proxy.ts, so every assertion below it is " +
+    "reading an empty string and proving nothing",
+  fdProxySource.length > 500
+);
+ok(
+  "src/proxy.ts no longer refuses /api/ and /auth/ on the Flying Dresses host. Every API route, the " +
+    "PayPal capture and the account pages would answer on that domain, on a deployment that carries " +
+    "the booking endpoints.",
+  /pathname\.startsWith\("\/api\/"\)[^\n]*\|\|[^\n]*pathname\.startsWith\("\/auth\/"\)/.test(
+    fdProxySource
+  ) && fdProxySource.includes("status: 404")
+);
+
+// The studio allow must be EXACT. A bare startsWith("/studio") also admits
+// /studiolisting and anything else that merely begins with those letters,
+// which is how an allow-list for one route quietly becomes a prefix.
+ok(
+  "src/proxy.ts admits the Studio on the Flying Dresses host with a loose prefix. " +
+    'It must be `pathname === "/studio" || pathname.startsWith("/studio/")`, so that a future route ' +
+    "whose name merely starts with those letters is not admitted with it.",
+  /pathname === "\/studio" \|\| pathname\.startsWith\("\/studio\/"\)/.test(fdProxySource)
 );
 
 ok(
