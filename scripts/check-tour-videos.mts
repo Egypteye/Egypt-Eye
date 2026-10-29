@@ -111,6 +111,22 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// THE SANITY ROUND TRIP — the failure that has no symptom in development.
+//
+// A Studio document replaces its content-file entry wholesale. `video` is
+// authored in code and points at a file in this repository, so Studio has
+// nothing to say about it — but without a gap-fill in hardenTour, a tour with
+// a Studio document loses it entirely. That is not hypothetical: these
+// shipped once with the assets deployed and serving, and not one <video>
+// rendered on the live site.
+// ---------------------------------------------------------------------------
+const shape = readFileSync("src/lib/sanityShape.ts", "utf8");
+ok(
+  "video has no fallback in hardenTour — any tour with a Studio document will render no video at all",
+  /video:\s*tour\.video\s*\?\?\s*local\?\.video/.test(shape)
+);
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-tour-videos: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);
