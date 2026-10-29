@@ -9,11 +9,13 @@ import { unsplashCredit, unsplashUrl, type UnsplashCredit } from "./unsplash";
 // tiles showed the identical picture. Giving every destination its own photo
 // here fixes that at the source rather than by re-pointing the tours.
 //
-// Each entry is an Unsplash photo picked for that specific place: the Cairo
-// Tower over the Nile, the Sphinx, Qaitbay's citadel in Alexandria, Karnak in
-// Luxor, the Treasury at Petra. Several are by photographers based in the city
-// they shot. All ten are different photos, and none of them is reused by the
-// activity heroes in ./activities.ts.
+// Cairo, Luxor and Aswan are Egypt Eye's own photographs, shot on its own
+// trips: the Khan el-Khalili lanes, Hatshepsut's temple, a Nubian village
+// above Aswan. They carry no credit because there is nobody to credit — see
+// `credit` below. The remaining seven are Unsplash photos picked for that
+// specific place, several by photographers based in the city they shot. All
+// ten are different photos, and none is reused by the activity heroes in
+// ./activities.ts.
 //
 // A photo uploaded in Studio under Site Settings > Destinations panel photos
 // still wins for that destination — see getSiteSettings() in sanity/fetchers.ts,
@@ -23,7 +25,16 @@ export type DestinationPhoto = {
   /** Must match a destination `name` in ./destinations.ts exactly. */
   name: string;
   image: SanityImage;
-  credit: UnsplashCredit;
+  /**
+   * Required for a stock photo, absent for one of Egypt Eye's own. Attribution
+   * is a condition of the Unsplash licence, so an Unsplash entry must carry
+   * it; a photograph the business owns has no third party to attribute, and
+   * inventing a credit line for it would be worse than having none.
+   *
+   * Nothing renders this today — `check-destination-photos.mts` is what keeps
+   * an Unsplash entry from quietly losing it.
+   */
+  credit?: UnsplashCredit;
 };
 
 // Rendered in a 4:5 tile, so 1200px wide is more than enough.
@@ -32,12 +43,8 @@ const TILE_WIDTH = 1200;
 export const destinationPhotos: DestinationPhoto[] = [
   {
     name: "Cairo",
-    // A felucca on the Nile with the Cairo Tower behind it.
-    image: unsplashUrl("photo-1719659018185-8a239c35fb4a", TILE_WIDTH),
-    credit: unsplashCredit(
-      "Hatem Ramadan",
-      "https://unsplash.com/photos/felucca-on-nile-river-in-cairo-59RY-ykUIAg"
-    ),
+    // Egypt Eye's own: a lane in Khan el-Khalili under hanging lanterns.
+    image: "/photos/destinations/cairo-khan-el-khalili.jpg",
   },
   {
     name: "Giza",
@@ -68,21 +75,13 @@ export const destinationPhotos: DestinationPhoto[] = [
   },
   {
     name: "Luxor",
-    // Karnak Temple.
-    image: unsplashUrl("photo-1678640982613-70150a406d0a", TILE_WIDTH),
-    credit: unsplashCredit(
-      "Nemanja Raca",
-      "https://unsplash.com/photos/a-statue-of-an-egyptian-god-next-to-a-pillar-1FsIxaKwCuY"
-    ),
+    // Egypt Eye's own: the colonnades of Hatshepsut's temple at Deir el-Bahari.
+    image: "/photos/destinations/luxor-hatshepsut.jpg",
   },
   {
     name: "Aswan",
-    // The Nile at Aswan, shot by a photographer based there.
-    image: unsplashUrl("photo-1603756997808-3e38bf152283", TILE_WIDTH),
-    credit: unsplashCredit(
-      "Abdullah Omar",
-      "https://unsplash.com/photos/white-boat-on-water-near-bridge-during-daytime-wU6S5-pMlns"
-    ),
+    // Egypt Eye's own: painted stairs in a Nubian village above Aswan.
+    image: "/photos/destinations/aswan-nubian-village.jpg",
   },
   {
     name: "Siwa Oasis",
