@@ -723,6 +723,54 @@ for (const [key, slot] of Object.entries(allSlots)) {
 //
 // Read out of the CSS with comments stripped, so the paragraph above cannot
 // satisfy it. Proven by setting the drawer's rule back to 64rem: red.
+
+// ---------------------------------------------------------------------------
+// A CLOSED <dialog> MUST STAY HIDDEN.
+//
+// Two elements share the .fd-lightbox class and need opposite defaults.
+// Lightbox.tsx mounts a <div class="fd-lightbox"> only while it is open, so it
+// needs display:flex unconditionally. Wardrobe.tsx leaves a real
+// <dialog class="fd-lightbox"> in the DOM for the life of the page and opens
+// it with showModal(); it is hidden when closed ONLY by the browser's own
+// dialog:not([open]) { display: none }.
+//
+// An author rule beats the UA rule. So a bare `.fd-lightbox { display: flex }`
+// un-hid every closed dialog: the wardrobe and each rental page painted a
+// fixed, full-viewport, 92%-opaque dark panel over themselves on load. The
+// page looked dimmed to the point of being unreadable, and the body
+// background underneath still computed to cream, so nothing that sampled
+// colours noticed. The owner found it in a browser.
+//
+// This reads the real cascade order rather than looking for a string: it
+// finds the last rule that gives .fd-lightbox ITSELF a visible display, and
+// requires a dialog:not([open]) → display:none rule after it. Descendants
+// (.fd-lightbox-panel and friends) are excluded by the hyphen guard.
+//
+// Proven by deleting the :not([open]) rule: red. And by moving it ABOVE the
+// display:flex, where it would lose the cascade: also red.
+{
+  const css = stripComments(read("src/app/flying-dresses/brand.css"));
+  const rules = /([^{}]+)\{([^{}]*)\}/g;
+  let lastVisible = -1;
+  let hideClosed = -1;
+  for (let m = rules.exec(css); m !== null; m = rules.exec(css)) {
+    const selector = m[1];
+    const display = /display\s*:\s*([a-z-]+)/i.exec(m[2])?.[1]?.toLowerCase();
+    if (!display) continue;
+    // .fd-lightbox itself, never .fd-lightbox-panel: the lookahead rejects a
+    // following word character or hyphen.
+    if (!/\.fd-lightbox(?![\w-])/.test(selector)) continue;
+    if (/:not\(\s*\[open\]\s*\)/.test(selector) && display === "none") hideClosed = m.index;
+    else if (display !== "none") lastVisible = m.index;
+  }
+  ok(
+    "brand.css gives .fd-lightbox a visible display with no later rule returning a CLOSED <dialog> " +
+      "to display:none. That paints a fixed, full-viewport dark panel over the wardrobe and every " +
+      "rental page on load, and the page underneath is unreadable.",
+    lastVisible === -1 || hideClosed > lastVisible
+  );
+}
+
 {
   const css = stripComments(read("src/app/flying-dresses/brand.css"));
   const widthOf = (selector: string): string | null => {

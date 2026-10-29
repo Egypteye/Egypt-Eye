@@ -3868,6 +3868,29 @@ ol.fd-timeline h3::before {
 }
 
 /* ---- The lightbox ----------------------------------------------------- */
+/*
+ * TWO DIFFERENT ELEMENTS WEAR THIS CLASS, and they need opposite defaults.
+ *
+ *   Lightbox.tsx   renders a <div class="fd-lightbox"> and mounts it ONLY
+ *                  while it is open. A div has no open/closed state of its
+ *                  own, so it needs display:flex unconditionally.
+ *   Wardrobe.tsx   renders a real <dialog class="fd-lightbox"> that stays in
+ *                  the DOM for the life of the page and is opened with
+ *                  showModal(). It is hidden when closed only because the
+ *                  browser's own stylesheet says dialog:not([open]) is
+ *                  display:none.
+ *
+ * The display:flex below is an author rule, and an author rule beats the UA
+ * rule. So it un-hid every closed dialog on the site: the wardrobe and each
+ * rental page painted a fixed, full-viewport, 92%-opaque dark panel over
+ * themselves on load, under the header and over everything else. The page
+ * looked like it had been dimmed. Reported from a browser, not caught here,
+ * because the body background underneath still computed to cream.
+ *
+ * The :not([open]) rule restores the browser's behaviour for the dialog form
+ * only, and leaves the div alone. Keep it AFTER the display:flex, and keep
+ * both selectors specific enough to win: see check-flying-dresses.mts.
+ */
 .fd-lightbox {
   position: fixed;
   inset: 0;
@@ -3877,6 +3900,10 @@ ol.fd-timeline h3::before {
   justify-content: center;
   padding: 1rem;
   background: rgba(20, 16, 12, 0.92);
+}
+
+dialog.fd-lightbox:not([open]) {
+  display: none;
 }
 
 .fd-lightbox-panel {
