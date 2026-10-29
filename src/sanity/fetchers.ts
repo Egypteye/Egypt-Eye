@@ -1091,6 +1091,7 @@ import type {
   FdAddOnDoc,
   FdOutfitDoc,
   FdPackageDoc,
+  FdRateCardDoc,
   FdRentalDoc,
   FdSettingsDoc,
 } from "@/app/flying-dresses/_lib/contentMerge";
@@ -1114,6 +1115,18 @@ import type {
    The projections return plain data, never Sanity image objects: `asset->url`
    is resolved here so nothing downstream has to know what a Sanity image is.
    ========================================================================== */
+
+
+export async function getFlyingDressRateCard(): Promise<FdRateCardDoc | null> {
+  return safeFetch<FdRateCardDoc>(
+    `*[_type == "flyingDressRateCard"][0]{
+      locationAmountUsd, locationLabel, locationDetail,
+      flyingDressAmountUsd, flyingDressLabel, flyingDressDetail,
+      regularAmountUsd, regularLabel, regularDetail,
+      decorationIncluded, eventPhotography, termsNotSet
+    }`
+  );
+}
 
 
 export async function getFlyingDressSettings(): Promise<FdSettingsDoc | null> {

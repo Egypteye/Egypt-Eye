@@ -17,6 +17,13 @@ import {
   FLYING_DRESS_COLLECTION,
   MENS_OUTFITS,
 } from "@/content/outfitCollection";
+import {
+  displayFor,
+  localRateCard,
+  type Rate,
+  type RateCard,
+  type RateUnit,
+} from "@/content/flyingDressRates";
 import type { Outfit } from "@/lib/booking/outfits";
 import { dressPhotos } from "./dressPhotos";
 
@@ -521,4 +528,100 @@ export function mergeWardrobe(docs: FdOutfitDoc[] | null): FdWardrobe {
   }
 
   return { dresses, mensOutfits: mens, photos };
+}
+
+
+/* ------------------------------------------------------------------------ */
+/* The rate card                                                             */
+/* ------------------------------------------------------------------------ */
+
+export type FdRateCardDoc = {
+  locationAmountUsd: number | null;
+  locationLabel: string | null;
+  locationDetail: string | null;
+  flyingDressAmountUsd: number | null;
+  flyingDressLabel: string | null;
+  flyingDressDetail: string | null;
+  regularAmountUsd: number | null;
+  regularLabel: string | null;
+  regularDetail: string | null;
+  decorationIncluded: string | null;
+  eventPhotography: string | null;
+  termsNotSet: string | null;
+};
+
+/**
+ * A price, or the one in the code.
+ *
+ * REFUSES ANYTHING THAT IS NOT A WHOLE POSITIVE NUMBER, and that is not
+ * belt-and-braces over the Studio's own validation. Validation runs in the
+ * editor; it does not run over a document written by a script, by the API, or
+ * by an older version of this schema, and a NaN here renders "$NaN per
+ * person" on a live price. Zero is refused with the rest: a rooftop at $0 an
+ * hour reads as free to a customer and as a price to a crawler, and neither
+ * is what an empty field was trying to say.
+ */
+function money(value: number | null | undefined, fallback: number): number {
+  if (typeof value !== "number") return fallback;
+  if (!Number.isFinite(value) || !Number.isInteger(value) || value < 1) return fallback;
+  return value;
+}
+
+function mergeRate(
+  local: Rate,
+  unit: RateUnit,
+  amount: number | null,
+  label: string | null,
+  detail: string | null
+): Rate {
+  const amountUsd = money(amount, local.amountUsd);
+  return {
+    id: local.id,
+    amountUsd,
+    // The unit is NOT editable: it is the charging model, and the occasion
+    // pages carry copy built on it. See the schema for the argument.
+    unit,
+    // Derived, never stored. The one thing that guarantees the figure a
+    // visitor reads is the figure this object holds.
+    display: displayFor(amountUsd, unit),
+    label: str(label, local.label),
+    detail: str(detail, local.detail),
+  };
+}
+
+/**
+ * The rate card in force: the Studio's where it has one, the content file's
+ * everywhere else.
+ *
+ * Field by field rather than wholesale, which is the convention in this
+ * module and the right one for money: a half-filled document should not be
+ * able to blank a price on a live page.
+ */
+export function mergeRateCard(doc: FdRateCardDoc | null): RateCard {
+  return {
+    location: mergeRate(
+      localRateCard.location,
+      "hour",
+      doc?.locationAmountUsd ?? null,
+      doc?.locationLabel ?? null,
+      doc?.locationDetail ?? null
+    ),
+    flyingDress: mergeRate(
+      localRateCard.flyingDress,
+      "person",
+      doc?.flyingDressAmountUsd ?? null,
+      doc?.flyingDressLabel ?? null,
+      doc?.flyingDressDetail ?? null
+    ),
+    regular: mergeRate(
+      localRateCard.regular,
+      "person",
+      doc?.regularAmountUsd ?? null,
+      doc?.regularLabel ?? null,
+      doc?.regularDetail ?? null
+    ),
+    decorationIncluded: str(doc?.decorationIncluded, localRateCard.decorationIncluded),
+    eventPhotography: str(doc?.eventPhotography, localRateCard.eventPhotography),
+    termsNotSet: str(doc?.termsNotSet, localRateCard.termsNotSet),
+  };
 }

@@ -6,11 +6,7 @@ import { agency } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 import { mergeFaqs, type ExperienceFaq } from "@/content/flyingDressExperiences";
 import { occasionVenue, type Occasion } from "@/content/flyingDressOccasions";
-import {
-  RATES_EVENT_PHOTOGRAPHY,
-  RATES_INCLUDE_DECORATION,
-  RATES_TERMS_NOT_SET,
-} from "@/content/flyingDressRates";
+import { fillRates, type RateCard } from "@/content/flyingDressRates";
 import { liveStoryBySlug } from "@/content/flyingDressStories";
 
 /**
@@ -79,10 +75,23 @@ function buildFrames(occasion: Occasion): GalleryFrame[] {
 export function OccasionPage({
   occasion,
   experience,
+  rateCard,
 }: {
   occasion: Occasion;
   experience: { faqs: ExperienceFaq[] };
+  /**
+   * The rate card in force, from the Studio when a document exists and from
+   * the content file otherwise. Passed in rather than imported so this
+   * component cannot render a figure the page's own structured data
+   * disagrees with: the route resolves the card once and hands the same one
+   * to both.
+   */
+  rateCard: RateCard;
 }) {
+  // Ids, resolved here against the card that arrived. Storing the rate
+  // objects on the occasion captured whatever the content file held at
+  // import, which is stale the moment a price is edited in the Studio.
+  const applied = occasion.pricing.applies.map((id) => rateCard[id]);
   const hero = occasion.heroSlot
     ? agency[occasion.heroSlot as keyof typeof agency]
     : undefined;
@@ -107,7 +116,7 @@ export function OccasionPage({
             </p>
 
             <ul className="fd-rate-row">
-              {occasion.pricing.applies.map((rate) => (
+              {applied.map((rate) => (
                 <li key={rate.id}>
                   <span className="fd-rate-figure">{rate.display}</span>
                   <span className="fd-rate-label">{rate.label}</span>
@@ -216,7 +225,7 @@ export function OccasionPage({
               The rates, and what sits outside them
             </h2>
             <ul className="fd-list" style={{ marginTop: "1.5rem" }}>
-              {occasion.pricing.applies.map((rate) => (
+              {applied.map((rate) => (
                 <li key={rate.id}>
                   <h3>
                     {rate.label} <span className="fd-charge fd-charge-confirm">{rate.display}</span>
@@ -232,12 +241,12 @@ export function OccasionPage({
                 Included, and not included
               </p>
               {occasion.pricing.decorationIncluded ? (
-                <p style={{ margin: "0 0 0.75rem" }}>{RATES_INCLUDE_DECORATION}</p>
+                <p style={{ margin: "0 0 0.75rem" }}>{rateCard.decorationIncluded}</p>
               ) : null}
               {occasion.pricing.isEvent ? (
-                <p style={{ margin: "0 0 0.75rem" }}>{RATES_EVENT_PHOTOGRAPHY}</p>
+                <p style={{ margin: "0 0 0.75rem" }}>{rateCard.eventPhotography}</p>
               ) : null}
-              <p style={{ margin: 0 }}>{RATES_TERMS_NOT_SET}</p>
+              <p style={{ margin: 0 }}>{rateCard.termsNotSet}</p>
             </div>
           </aside>
         </div>
@@ -343,7 +352,16 @@ export function OccasionPage({
           <h2 className="fd-display fd-h3" style={{ marginBottom: "2rem" }}>
             Questions
           </h2>
-          <FaqList faqs={mergeFaqs(experience.faqs, occasion.faqs)} headingLevel={3} />
+          <FaqList
+            // The answers hold {{flyingDress}} and friends rather than a
+            // baked figure, so the price in an answer is the price in the
+            // money section above it even after an edit in the Studio.
+            faqs={mergeFaqs(experience.faqs, occasion.faqs).map((faq) => ({
+              ...faq,
+              answer: fillRates(faq.answer, rateCard),
+            }))}
+            headingLevel={3}
+          />
         </div>
       </section>
 

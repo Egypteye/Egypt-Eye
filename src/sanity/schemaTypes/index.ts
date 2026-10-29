@@ -38,6 +38,7 @@ import {
   flyingDressRental,
 } from "./flyingDressCommerce";
 import { flyingDressOutfit } from "./flyingDressWardrobe";
+import { flyingDressRateCard } from "./flyingDressRates";
 import {
   takeEgyptHomePage,
   treasureCategory,
@@ -81,6 +82,7 @@ export const schemaTypes = [
   // and zero documents of it, so every price, photograph and sentence on
   // that site needed a developer and a deploy.
   flyingDressSettings,
+  flyingDressRateCard,
   flyingDressPackage,
   flyingDressAddOn,
   flyingDressRental,

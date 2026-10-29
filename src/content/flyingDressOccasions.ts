@@ -37,7 +37,7 @@
  */
 
 import { ROOFTOP_LOCATION_NOTE, VENUE_DEPENDENCY } from "./flyingDressExperiences";
-import { rates, type Rate } from "./flyingDressRates";
+import type { RateId } from "./flyingDressRates";
 
 /** A line with a short title, as every page on this site renders them. */
 export type OccasionLine = { title: string; detail: string };
@@ -57,8 +57,18 @@ export type OccasionFrame = {
 };
 
 export type OccasionPricing = {
-  /** Which rates this occasion is actually sold at. */
-  applies: Rate[];
+  /**
+   * Which rates this occasion is actually sold at, BY ID rather than by
+   * value.
+   *
+   * These used to be the rate objects themselves, read out of the content
+   * file at module load. That was fine while the content file was the only
+   * source and became a bug the moment the Studio could change a price: the
+   * objects captured here would still carry the old amount, so a page would
+   * render the new figure in one place and the stale one in another. An id
+   * is resolved against whichever card is in force at render.
+   */
+  applies: RateId[];
   /** How those rates combine, in a sentence. */
   note: string;
   /** True when this is an EVENT, so event photography is charged separately. */
@@ -149,7 +159,7 @@ const romance: Occasion = {
   heroSlot: null,
   primaryCta: "Plan your evening",
   pricing: {
-    applies: [rates.regular, rates.flyingDress],
+    applies: ["regular", "flyingDress"],
     note: "Priced per person, so a couple is two. Choose a regular session in your own clothes or a flying dress session with a dress from the collection. Decoration is included in both.",
     isEvent: false,
     decorationIncluded: true,
@@ -282,7 +292,7 @@ const romance: Occasion = {
     {
       question: "What does it cost?",
       answer:
-        `A regular photoshoot is ${rates.regular.display} and a flying dress photoshoot is ${rates.flyingDress.display}, both on the rooftop above Giza, and decoration is included in both. A couple is two people. If you want the rooftop reserved for longer than the session itself, that is ${rates.location.display}. Anything else you add is quoted with it.`,
+        `A regular photoshoot is {{regular}} and a flying dress photoshoot is {{flyingDress}}, both on the rooftop above Giza, and decoration is included in both. A couple is two people. If you want the rooftop reserved for longer than the session itself, that is {{location}}. Anything else you add is quoted with it.`,
     },
     {
       question: "Is the decoration really included?",
@@ -341,7 +351,7 @@ const maternity: Occasion = {
   heroSlot: "rooftopPortrait",
   primaryCta: "Plan your session",
   pricing: {
-    applies: [rates.flyingDress, rates.regular],
+    applies: ["flyingDress", "regular"],
     note: "Priced per person. A maternity session in a dress from the collection is the flying dress rate; anybody joining in their own clothes is the regular rate, so a family is usually a mix of the two. Decoration is included either way.",
     isEvent: false,
     decorationIncluded: true,
@@ -485,7 +495,7 @@ const maternity: Occasion = {
     {
       question: "What does it cost?",
       answer:
-        `A maternity session in a dress from the collection is ${rates.flyingDress.display}, and a regular session in your own clothes is ${rates.regular.display}, both on the rooftop above Giza. A family is usually a mix: the dress rate for whoever wears one, the regular rate for everybody else. Decoration is included. If you want the rooftop reserved for longer than the session, that is ${rates.location.display}.`,
+        `A maternity session in a dress from the collection is {{flyingDress}}, and a regular session in your own clothes is {{regular}}, both on the rooftop above Giza. A family is usually a mix: the dress rate for whoever wears one, the regular rate for everybody else. Decoration is included. If you want the rooftop reserved for longer than the session, that is {{location}}.`,
     },
     {
       question: "Will a dress fit at any stage of pregnancy?",
@@ -550,7 +560,7 @@ const vows: Occasion = {
   heroSlot: null,
   primaryCta: "Plan your ceremony",
   pricing: {
-    applies: [rates.location],
+    applies: ["location"],
     note: "A ceremony is an event rather than a photoshoot, so it is the rooftop by the hour with the photography quoted on top. Decoration is included. If you want a flying dress session afterwards, that is priced per person like any other session.",
     isEvent: true,
     decorationIncluded: true,
@@ -698,7 +708,7 @@ const vows: Occasion = {
     {
       question: "What does it cost?",
       answer:
-        `A ceremony is an event rather than a photoshoot, so the rooftop is ${rates.location.display} and the event photography is quoted on top of it. Decoration is included. A flying dress session afterwards is priced per person, at ${rates.flyingDress.display} for a dress from the collection or ${rates.regular.display} in your own clothes.`,
+        `A ceremony is an event rather than a photoshoot, so the rooftop is {{location}} and the event photography is quoted on top of it. Decoration is included. A flying dress session afterwards is priced per person, at {{flyingDress}} for a dress from the collection or {{regular}} in your own clothes.`,
     },
     {
       question: "Do you provide someone to lead the ceremony?",

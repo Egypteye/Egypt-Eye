@@ -16,6 +16,9 @@ import { GenderRevealPage } from "../../_components/GenderRevealPage";
 import { BirthdayPage } from "../../_components/BirthdayPage";
 import { OccasionPage } from "../../_components/OccasionPage";
 import { occasionByCategory } from "@/content/flyingDressOccasions";
+import { fillRates } from "@/content/flyingDressRates";
+import { getFlyingDressRateCard } from "@/sanity/fetchers";
+import { mergeRateCard } from "../../_lib/contentMerge";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -54,6 +57,11 @@ export default async function ExperienceCategoryPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  // Fetched once per render and handed to whichever page composition needs
+  // it, so the money a visitor reads and the money in this page's structured
+  // data come from the same object rather than from two reads that could
+  // land either side of an edit.
+  const rateCard = mergeRateCard(await getFlyingDressRateCard());
   const category = experienceCategoryBySlug(slug);
   // A category from the OTHER section is a 404 here rather than a redirect:
   // one canonical URL per category, so the two sections cannot both answer.
@@ -108,7 +116,15 @@ export default async function ExperienceCategoryPage({
           { name: SECTION_LABEL, path: `/${SECTION}` },
           { name: category.name, path: `/${SECTION}/${category.slug}` },
           ]),
-          fdFaqJsonLd(experiences.flatMap((e) => e.faqs)),
+          fdFaqJsonLd(
+            // Through fillRates for the same reason the visible list is:
+            // Google requires the marked-up answer to match what is on the
+            // page, and an unresolved {{flyingDress}} in structured data is
+            // a rich-result warning as well as a wrong price.
+            experiences
+              .flatMap((e) => e.faqs)
+              .map((faq) => ({ ...faq, answer: fillRates(faq.answer, rateCard) }))
+          ),
           ].filter(Boolean)
           ),
         }}
@@ -188,7 +204,7 @@ export default async function ExperienceCategoryPage({
       ) : category.id === "celebrations" && celebration ? (
         <BirthdayPage experience={celebration} />
       ) : occasion && experiences[0] ? (
-        <OccasionPage occasion={occasion} experience={experiences[0]} />
+        <OccasionPage occasion={occasion} experience={experiences[0]} rateCard={rateCard} />
       ) : (
         /* `headless` when this category holds exactly one experience: the
            h1 and lede above are already that experience's title and intro,

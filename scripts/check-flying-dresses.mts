@@ -86,7 +86,12 @@ import { occasions, occasionByCategory } from "../src/content/flyingDressOccasio
 import {
   RATES_EVENT_PHOTOGRAPHY,
   RATES_INCLUDE_DECORATION,
+  displayFor,
+  fillRates,
+  localRateCard,
+  rateTokensIn,
   rates,
+  RATE_TOKENS,
 } from "../src/content/flyingDressRates.js";
 import {
   audioRecording,
@@ -112,9 +117,11 @@ import {
 import {
   mergeAddOns,
   mergePackages,
+  mergeRateCard,
   mergeRentals,
   mergeSettings,
   mergeWardrobe,
+  type FdRateCardDoc,
   type FdSettingsDoc,
 } from "../src/app/flying-dresses/_lib/contentMerge.js";
 import { hardenFlyingDressGallery } from "../src/lib/sanityShape.js";
@@ -5619,14 +5626,15 @@ ok(
       vows?.pricing.isEvent === true
     );
     ok(
-      `the vow renewal is priced at ${vows?.pricing.applies.map((r) => r.display).join(", ")} ` +
-        "rather than by the hour. A ceremony is an event: pricing it per person like a photoshoot " +
-        "silently drops the event photography fee.",
-      vows?.pricing.applies.length === 1 && vows.pricing.applies[0]?.unit === "hour"
+      `the vow renewal is priced at ${vows?.pricing.applies.join(", ")} rather than by the hour. ` +
+        "A ceremony is an event: pricing it per person like a photoshoot silently drops the event " +
+        "photography fee.",
+      vows?.pricing.applies.length === 1 &&
+        localRateCard[vows.pricing.applies[0]!].unit === "hour"
     );
     ok(
       "the occasion page no longer renders the event-photography line for an event",
-      /\{RATES_EVENT_PHOTOGRAPHY\}/.test(strip(occasionPage))
+      /\{rateCard\.eventPhotography\}/.test(strip(occasionPage))
     );
     ok(
       "RATES_EVENT_PHOTOGRAPHY no longer makes BOTH halves of the point: that a photoshoot is " +
@@ -5655,7 +5663,7 @@ ok(
   ok(
     "the occasion page no longer renders the included-decoration line, so the one genuinely " +
       "generous thing about this rate card is invisible",
-    /\{RATES_INCLUDE_DECORATION\}/.test(strip(occasionPage))
+    /\{rateCard\.decorationIncluded\}/.test(strip(occasionPage))
   );
 
   // ---- NOTHING UNVERIFIED IS PROMISED. -------------------------------
@@ -5798,7 +5806,12 @@ ok(
     "the occasion page renders the included-decoration line unconditionally instead of behind " +
       "pricing.decorationIncluded, so adding an occasion where it is not included would publish " +
       "a false claim",
-    /decorationIncluded \?[\s\S]{0,120}?RATES_INCLUDE_DECORATION/.test(strip(occasionPage))
+    // `pricing.decorationIncluded` is the per-occasion flag; the sentence it
+    // guards now comes off the rate card, so the two names look alike. The
+    // flag is the one with `pricing.` in front of it.
+    /pricing\.decorationIncluded \?[\s\S]{0,160}?rateCard\.decorationIncluded/.test(
+      strip(occasionPage)
+    )
   );
   {
     const birthdayBody = read("src/app/flying-dresses/_components/BirthdayPage.tsx");
@@ -5884,6 +5897,162 @@ ok(
     "the shared occasion body is no longer rendered from the celebrations route, so three " +
       "categories have fallen back to the generic renderer",
     /occasion && experiences\[0\] \?[\s\S]{0,120}?<OccasionPage/.test(strip(occasionRoute))
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE RATE CARD IS EDITABLE NOW, SO THE WAYS A PRICE CAN GO WRONG CHANGED.
+//
+// Until October 2026 the three figures were constants and the only risk was a
+// second copy somewhere. A Studio document can now supply them, which adds
+// three new ways to publish a wrong price:
+//
+//   a figure that is not a figure   -> "$NaN per person" on a live page
+//   a figure stored beside its own display string -> the two disagree
+//   a figure baked into prose at import -> the money row updates, the FAQ
+//                                          answer underneath does not
+//
+// Each one gets an assertion. The third is the one that actually happened in
+// the first draft of this work: the occasion answers were built with
+// `${rates.regular.display}` at module load, which is correct while the
+// content file is the only source and silently stale the moment Sanity can
+// override it.
+//
+// Proven by: passing each junk value below through mergeRateCard and watching
+// the fallback hold; by storing a display string in the schema (red); and by
+// putting a literal $199 back into an occasion answer (red).
+// ---------------------------------------------------------------------------
+{
+  const rateSchema = read("src/sanity/schemaTypes/flyingDressRates.ts");
+
+  // ---- A figure that is not a figure never reaches a page. ------------
+  //
+  // The Studio validates, but validation runs in the EDITOR. It does not run
+  // over a document written by the API, by a script, or by an older version
+  // of this schema, and this merge is what every one of those passes through.
+  const junk: { label: string; doc: FdRateCardDoc }[] = [
+    { label: "a missing document", doc: null as unknown as FdRateCardDoc },
+    { label: "every field null", doc: {} as FdRateCardDoc },
+    { label: "NaN", doc: { flyingDressAmountUsd: Number.NaN } as FdRateCardDoc },
+    { label: "Infinity", doc: { flyingDressAmountUsd: Number.POSITIVE_INFINITY } as FdRateCardDoc },
+    { label: "zero", doc: { flyingDressAmountUsd: 0 } as FdRateCardDoc },
+    { label: "a negative amount", doc: { flyingDressAmountUsd: -199 } as FdRateCardDoc },
+    { label: "a fraction", doc: { flyingDressAmountUsd: 199.5 } as FdRateCardDoc },
+    { label: "a string", doc: { flyingDressAmountUsd: "199" as unknown as number } as FdRateCardDoc },
+  ];
+  for (const { label, doc } of junk) {
+    const card = mergeRateCard(doc);
+    ok(
+      `mergeRateCard publishes ${label} as a price: it rendered "${card.flyingDress.display}". ` +
+        "A bad amount must fall back to the figure in the content file, never reach a page.",
+      card.flyingDress.amountUsd === localRateCard.flyingDress.amountUsd &&
+        /^\$\d+ per (hour|person)$/.test(card.flyingDress.display)
+    );
+  }
+
+  // ---- A real edit DOES come through, or this whole exercise is theatre.
+  const edited = mergeRateCard({ flyingDressAmountUsd: 249 } as FdRateCardDoc);
+  ok(
+    `mergeRateCard ignored an edited amount: it rendered "${edited.flyingDress.display}" for 249. ` +
+      "The fallback is for junk, not for every value.",
+    edited.flyingDress.amountUsd === 249 && edited.flyingDress.display === "$249 per person"
+  );
+
+  // ---- The display string is DERIVED, never stored. --------------------
+  ok(
+    "the rate card schema has a field that stores a rendered figure (display/priceText/amountLabel). " +
+      "Two places to change one price, and when they disagree the page shows the old one. The " +
+      "string must come from displayFor(amount, unit).",
+    !/name:\s*"(.*display.*|.*priceText.*|.*amountLabel.*)"/i.test(rateSchema)
+  );
+  ok(
+    "mergeRateCard no longer derives the display from the amount and the unit",
+    /display: displayFor\(amountUsd, unit\)/.test(
+      read("src/app/flying-dresses/_lib/contentMerge.ts")
+    )
+  );
+
+  // ---- The unit stays out of the Studio. -------------------------------
+  ok(
+    "the rate card schema now lets an editor change a UNIT. The rooftop is let by the hour and a " +
+      "session is priced per head; every occasion page carries copy built on that distinction, and " +
+      "flipping one would make the copy false without the page noticing.",
+    !/name:\s*"\w*[Uu]nit"/.test(rateSchema)
+  );
+
+  // ---- Prose quotes a rate by TOKEN, never by figure. ------------------
+  const occasionSource = read("src/content/flyingDressOccasions.ts");
+  const figures = [
+    localRateCard.location.amountUsd,
+    localRateCard.flyingDress.amountUsd,
+    localRateCard.regular.amountUsd,
+  ];
+  for (const occasion of occasions) {
+    const prose = [
+      occasion.pricing.note,
+      ...occasion.faqs.map((f) => f.answer),
+      ...occasion.faqs.map((f) => f.question),
+    ];
+    for (const text of prose) {
+      const baked = figures.find((f) => text.includes(`$${f}`));
+      ok(
+        `the ${occasion.categoryId} occasion bakes $${baked} into prose: "${text.slice(0, 60)}". ` +
+          "That figure was captured at import and will not follow an edit in the Studio, so the " +
+          "money row and this sentence will show different prices. Use {{flyingDress}}, " +
+          "{{regular}} or {{location}}.",
+        baked === undefined
+      );
+      for (const token of rateTokensIn(text)) {
+        ok(
+          `the ${occasion.categoryId} occasion uses the unknown rate token {{${token}}}, which ` +
+            `renders to a visitor literally. Known tokens: ${RATE_TOKENS.join(", ")}.`,
+          (RATE_TOKENS as readonly string[]).includes(token)
+        );
+      }
+    }
+  }
+
+  // ---- Every applied rate id exists on the card. -----------------------
+  for (const occasion of occasions) {
+    for (const id of occasion.pricing.applies) {
+      ok(
+        `the ${occasion.categoryId} occasion applies the rate "${id}", which is not on the rate ` +
+          "card, so its money section renders undefined",
+        Boolean(localRateCard[id])
+      );
+    }
+  }
+
+  // ---- fillRates actually substitutes, and leaves strangers alone. -----
+  const filled = fillRates(
+    "A session is {{flyingDress}} and the roof is {{location}}. {{nonsense}} stays.",
+    localRateCard
+  );
+  ok(
+    `fillRates did not substitute a known token: "${filled}"`,
+    filled.includes(localRateCard.flyingDress.display) &&
+      filled.includes(localRateCard.location.display)
+  );
+  ok(
+    "fillRates swallowed an unknown token. It must be left visible: a stray {{nonsense}} is a bug " +
+      "report, while a sentence that quietly loses its price is a quotation nobody questions.",
+    filled.includes("{{nonsense}}")
+  );
+
+  // ---- displayFor keeps the unit welded to the figure. -----------------
+  ok(
+    `displayFor dropped the unit: "${displayFor(150, "hour")}". A bare figure is wrong by however ` +
+      "many hours or people.",
+    displayFor(150, "hour") === "$150 per hour" && displayFor(199, "person") === "$199 per person"
+  );
+
+  // The occasion source must not import the rate VALUES any more, only the
+  // id type: an import of `rates` is how the baked figures came back.
+  ok(
+    "src/content/flyingDressOccasions.ts imports the rate values again. It must import only the " +
+      "RateId type: holding a rate object captures whatever the content file had at import, which " +
+      "is stale as soon as the Studio changes a price.",
+    !/import \{[^}]*\brates\b[^}]*\} from "\.\/flyingDressRates"/.test(occasionSource)
   );
 }
 

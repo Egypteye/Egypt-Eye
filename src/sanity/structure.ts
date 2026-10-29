@@ -79,6 +79,13 @@ export const structure: StructureResolver = (S) =>
             .schemaType("flyingDressSettings")
             .documentId("flyingDressSettings")
         ),
+      S.listItem()
+        .title("✿ Flying Dresses — Rates")
+        .child(
+          S.document()
+            .schemaType("flyingDressRateCard")
+            .documentId("flyingDressRateCard")
+        ),
       S.documentTypeListItem("flyingDressPackage").title("✿ Flying Dresses — Photoshoots"),
       S.documentTypeListItem("flyingDressAddOn").title("✿ Flying Dresses — Extras"),
       S.documentTypeListItem("flyingDressRental").title("✿ Flying Dresses — Hire services"),
