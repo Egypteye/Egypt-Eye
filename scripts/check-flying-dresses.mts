@@ -6046,6 +6046,65 @@ ok(
     displayFor(150, "hour") === "$150 per hour" && displayFor(199, "person") === "$199 per person"
   );
 
+  // ---- The GROQ projection names the schema's real fields. -----------
+  //
+  // THIS IS THE FAILURE THAT CANNOT BE SEEN. A typo in a projection field
+  // name does not error: GROQ returns null for the name it was given, the
+  // merge treats null as "not set", falls back to the content file, and the
+  // page renders EXACTLY what it rendered before. The owner edits a price in
+  // the Studio, publishes, reloads, and the old figure is still there with
+  // nothing anywhere saying why.
+  //
+  // It cannot be caught by looking at the site, and it cannot be caught here
+  // by fetching, because the check scripts have no network. So the two lists
+  // are compared as text: every field the schema defines must appear in the
+  // projection, and every name in the projection must exist in the schema.
+  //
+  // Proven by renaming one field in the projection: red, naming the field.
+  {
+    // Field names arrive two ways in this schema, and reading only one of
+    // them is how the first version of this check reported every projected
+    // field as unknown: the three sentences are written out as
+    // `name: "decorationIncluded"`, while the nine rate fields are the first
+    // argument to the amountField/labelField/detailField helpers.
+    const schemaFields = [
+      ...[...rateSchema.matchAll(/name:\s*"([a-zA-Z]+)"/g)].map((m) => m[1]),
+      ...[...rateSchema.matchAll(/(?:amountField|labelField|detailField)\(\s*\n?\s*"([a-zA-Z]+)"/g)].map(
+        (m) => m[1]
+      ),
+    ].filter((n) => !["flyingDressRateCard", "rates", "sentences", "name"].includes(n));
+    const fetchers = read("src/sanity/fetchers.ts");
+    const projection =
+      /_type == "flyingDressRateCard"\]\[0\]\{([\s\S]*?)\}`/.exec(fetchers)?.[1] ?? "";
+    const projected = [...projection.matchAll(/[a-zA-Z]+/g)].map((m) => m[0]);
+
+    ok(
+      "the rate card GROQ projection could not be found in src/sanity/fetchers.ts, so the " +
+        "assertions below are comparing against an empty string",
+      projection.trim().length > 20
+    );
+    ok(
+      `only ${schemaFields.length} field names were read out of the rate card schema, so the ` +
+        "comparison below proves almost nothing. The schema defines twelve.",
+      schemaFields.length >= 12
+    );
+    for (const field of schemaFields) {
+      ok(
+        `the rate card schema defines "${field}" but the GROQ projection does not ask for it, so ` +
+          "it is always null and the Studio value is silently ignored. The page keeps rendering " +
+          "the figure from the code and nothing says why.",
+        projected.includes(field)
+      );
+    }
+    for (const field of projected) {
+      ok(
+        `the rate card GROQ projection asks for "${field}", which is not a field on the schema. ` +
+          "It returns null forever, which the merge reads as \"not set\".",
+        schemaFields.includes(field)
+      );
+    }
+  }
+
   // The occasion source must not import the rate VALUES any more, only the
   // id type: an import of `rates` is how the baked figures came back.
   ok(
