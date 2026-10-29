@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import { activities, experienceThemes } from "../src/content/activities";
 import type { Experience } from "../src/content/types";
 
@@ -22,6 +22,11 @@ const ok = (label: string, condition: boolean) => {
 };
 
 const THEMED = activities.filter((a) => a.theme);
+
+// A hero renders at aspect-[16/10] in a column around 640px wide, so ~1920px
+// covers a 2x screen. At that size a well-compressed JPEG lands near 250KB;
+// this budget leaves room above it without admitting a straight camera export.
+const MAX_OWN_PHOTO_BYTES = 420_000;
 const bySlug = new Map(activities.map((a) => [a.slug, a]));
 
 const prose = (e: Experience): string =>
@@ -212,6 +217,19 @@ for (const e of activities) {
 //
 // Anything that DOES carry a photo must name the photographer. The content
 // file's own header asks for it; this is the assertion behind that request.
+//
+// Two changes to that rule, both load-bearing:
+//
+//   It now covers all 28 experiences, not the 10 that carry a theme. The
+//   narrow scope was invisible: the other 18 were all credited anyway, so
+//   nothing was failing — an uncredited photo could simply have been added to
+//   any of them and no check would have noticed.
+//
+//   A photo whose `image` is a path under /public is Egypt Eye's own, and must
+//   NOT carry a credit. This is not cosmetic. The experience page renders
+//   `imageCredit.creator` as a visible "Photo: ..." caption, so a credit left
+//   on an owned photograph prints an attribution to somebody who did not take
+//   it, on a live page.
 // ---------------------------------------------------------------------------
 const UNPHOTOGRAPHED = [
   "city-of-the-dead-heritage-walk",
@@ -227,15 +245,37 @@ for (const slug of UNPHOTOGRAPHED) {
     e !== undefined && !e.image
   );
 }
-for (const e of THEMED) {
+for (const e of activities) {
   if (!e.image) continue;
-  ok(`${e.slug} credits the photographer`, Boolean(e.imageCredit?.creator?.trim()));
-  ok(
-    `${e.slug} links the photo's own page, not the raw file`,
-    typeof e.imageCredit?.sourceUrl === "string" &&
-      /^https:\/\/unsplash\.com\/photos\//.test(e.imageCredit.sourceUrl)
-  );
   ok(`${e.slug} carries a tone to fall back to`, Boolean(e.imageTone));
+
+  const own = typeof e.image === "string" && e.image.startsWith("/");
+  if (own) {
+    ok(
+      `${e.slug} is our own photograph and must not credit an Unsplash photographer — the page prints that caption verbatim`,
+      e.imageCredit === undefined
+    );
+    const onDisk = `public${e.image as string}`;
+    ok(`${e.slug} points at a photo that does not exist: ${onDisk}`, existsSync(onDisk));
+    if (!existsSync(onDisk)) continue;
+
+    // urlForImage hands a plain path straight to the browser with no resizing
+    // step, so whatever is committed here is what every visitor downloads.
+    const bytes = statSync(onDisk).size;
+    ok(
+      `${e.slug}'s photo is ${Math.round(bytes / 1024)}KB, over the ${Math.round(
+        MAX_OWN_PHOTO_BYTES / 1024
+      )}KB budget — it is served at full size, exactly as committed`,
+      bytes <= MAX_OWN_PHOTO_BYTES
+    );
+  } else {
+    ok(`${e.slug} credits the photographer`, Boolean(e.imageCredit?.creator?.trim()));
+    ok(
+      `${e.slug} links the photo's own page, not the raw file`,
+      typeof e.imageCredit?.sourceUrl === "string" &&
+        /^https:\/\/unsplash\.com\/photos\//.test(e.imageCredit.sourceUrl)
+    );
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -257,11 +297,22 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
+const carry = (n: number) => (n === 1 ? "carries" : "carry");
+
+const OWN_PHOTOS = activities.filter(
+  (e) => typeof e.image === "string" && e.image.startsWith("/")
+);
+const STOCK_PHOTOS = activities.filter(
+  (e) => e.image && !(typeof e.image === "string" && e.image.startsWith("/"))
+);
+
 console.log(
   `check-experience-collections: ok — ${THEMED.length} experiences across ${experienceThemes.length} collections, ` +
     `none carrying a price, a bookable flag or a claimed artisan, permit or partnership; the seven products with an ` +
     `open question each disclose it; the photography products all state the consent rule and point at one another so ` +
-    `nobody buys the wrong one; no neighbourhood is sold as a sight; ${THEMED.filter((e) => e.image).length} carry a ` +
-    `credited photograph and ${UNPHOTOGRAPHED.length} carry none rather than a picture of somewhere else; and theme ` +
-    `survives the Sanity round trip.`
+    `nobody buys the wrong one; no neighbourhood is sold as a sight; and theme survives the Sanity round trip. ` +
+    `Across all ${activities.length} experiences: ${OWN_PHOTOS.length} ${carry(OWN_PHOTOS.length)} Egypt Eye's own photograph ` +
+    `(${OWN_PHOTOS.map((e) => e.slug).join(", ")}) and credit nobody for it, ` +
+    `${STOCK_PHOTOS.length} ${carry(STOCK_PHOTOS.length)} stock and every one names its photographer, and ` +
+    `${UNPHOTOGRAPHED.length} ${carry(UNPHOTOGRAPHED.length)} none rather than a picture of somewhere else.`
 );
