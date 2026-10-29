@@ -1358,11 +1358,12 @@ export const activities: Experience[] = [
     location: "Abu Simbel, 280 km south of Aswan",
     price: { amount: null },
     imageTone: "desert",
-    image: unsplash("photo-1702909171830-2c4dca2ac090"),
-    imageCredit: credit(
-      "Michael Starkie",
-      "https://unsplash.com/photos/an-image-of-an-ancient-building-in-the-desert-jKbHZwXIVcg"
-    ),
+    // Egypt Eye's own: the Great Temple on one of its own Aswan trips. The
+    // traveller at the base is what makes the scale legible — the description
+    // says twenty metres, and a photograph of bare rock cannot show that.
+    // No credit, because there is no third party to credit; the caption on
+    // the page is rendered only when `imageCredit` is present.
+    image: "/photos/experiences/abu-simbel-great-temple.jpg",
     description:
       "Four seated colossi of Ramesses II, twenty metres high, cut into a cliff at the far southern edge of Egypt — then sawn into a thousand blocks in the 1960s and rebuilt sixty metres higher to keep Lake Nasser off them. It is the single most impressive thing in the country, and it is a long way to go. Worth every hour.",
     steps: [
