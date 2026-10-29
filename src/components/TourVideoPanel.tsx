@@ -80,6 +80,11 @@ export function TourVideoPanel({
           className="h-full w-full bg-ink object-cover"
           aria-label={video.alt}
         >
+          {/* WebM first: a browser that understands both will take it, and a
+              Chromium built without the proprietary H.264 decoder has
+              nothing else it can play. The browser picks the first source it
+              can decode, so ordering is the whole mechanism. */}
+          <source src={video.srcWebm} type="video/webm" />
           <source src={video.src} type="video/mp4" />
         </video>
 

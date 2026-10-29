@@ -35,14 +35,14 @@ for (const tour of withVideo) {
   const v = tour.video!;
   const where = `tours[${tour.slug}].video`;
 
-  for (const [field, path] of [["src", v.src], ["poster", v.poster]] as const) {
+  for (const [field, path] of [["src", v.src], ["srcWebm", v.srcWebm], ["poster", v.poster]] as const) {
     ok(`${where}.${field} must be an absolute path under /public`, path.startsWith("/"));
     const onDisk = `public${path}`;
     ok(`${where}.${field} points at a file that does not exist: ${onDisk}`, existsSync(onDisk));
     if (!existsSync(onDisk)) continue;
 
     const bytes = statSync(onDisk).size;
-    const limit = field === "src" ? MAX_VIDEO_BYTES : MAX_POSTER_BYTES;
+    const limit = field === "poster" ? MAX_POSTER_BYTES : MAX_VIDEO_BYTES;
     ok(
       `${where}.${field} is ${(bytes / 1_048_576).toFixed(1)}MB, over the ${(limit / 1_048_576).toFixed(1)}MB budget — re-encode it rather than shipping the original`,
       bytes <= limit
@@ -50,6 +50,11 @@ for (const tour of withVideo) {
   }
 
   ok(`${where}.src is an .mp4`, v.src.endsWith(".mp4"));
+  // H.264 is patent-encumbered and Chromium builds ship without the decoder.
+  // A headless Chromium used to verify this page reports H.264 as unplayable
+  // and VP9 as "probably": for that browser the MP4 streams and never
+  // decodes, so the WebM is the only thing it can actually watch.
+  ok(`${where}.srcWebm is a .webm`, v.srcWebm.endsWith(".webm"));
   ok(`${where}.alt describes the video for a screen reader`, (v.alt ?? "").trim().length > 25);
   ok(`${where}.durationSeconds is a real duration`, v.durationSeconds > 0 && v.durationSeconds < 600);
 
@@ -94,6 +99,15 @@ ok(
   !/\bautoPlay\b/.test(panel)
 );
 ok("TourVideoPanel must play inline rather than taking over the screen on iOS", /playsInline/.test(panel));
+// The browser takes the first source it can decode, so the order IS the
+// fallback. WebM before MP4, or a Chromium without H.264 gets nothing.
+const webmAt = panel.indexOf('type="video/webm"');
+const mp4At = panel.indexOf('type="video/mp4"');
+ok("TourVideoPanel offers no WebM source", webmAt !== -1);
+ok(
+  "TourVideoPanel lists MP4 before WebM — a browser without the H.264 decoder would take the MP4 and fail to decode it",
+  webmAt !== -1 && mp4At !== -1 && webmAt < mp4At
+);
 
 // ---------------------------------------------------------------------------
 // Both placements, and the order that makes the mobile one work.

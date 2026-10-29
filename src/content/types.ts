@@ -72,6 +72,15 @@ export type PageSeo = {
 export type TourVideo = {
   /** Path under /public. H.264 MP4, faststart, so playback starts before it downloads. */
   src: string;
+  /**
+   * VP9/WebM of the same clip, offered first.
+   *
+   * Not belt-and-braces: H.264 is patent-encumbered and Chromium builds
+   * ship without the decoder. A headless Chromium on this project reports
+   * canPlayType('video/mp4; codecs="avc1..."') as "" and VP9 as "probably" -
+   * for that browser the MP4 streams fine and simply never decodes.
+   */
+  srcWebm: string;
   /** A real frame from the video. Shown until someone presses play, and the only thing fetched before then. */
   poster: string;
   /** What a screen reader is told the video is. Not a transcript - see the note in TourVideoPanel. */
