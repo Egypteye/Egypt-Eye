@@ -50,6 +50,21 @@ export type ProposalFact<T> = {
 };
 
 // ---------------------------------------------------------------------------
+// THE HEADLINE
+//
+// Lifted out of ProposalPage.tsx in October 2026. It was three string
+// literals in the JSX, which meant the one thing on the page a visitor reads
+// first was the one thing the owner could not change without a developer.
+// ---------------------------------------------------------------------------
+
+export const proposalHero = {
+  eyebrow: "A private rooftop. Your setup. The moment you ask.",
+  headline: "Plan it so she never sees it coming",
+  lede:
+    "You tell us the date and what she loves. We confirm a rooftop above Giza, build the setup before you arrive, and put the photographer where she will not be looking. The moment is photographed as it happens, not staged again afterwards.",
+} as const;
+
+// ---------------------------------------------------------------------------
 // THE VENUE
 // ---------------------------------------------------------------------------
 

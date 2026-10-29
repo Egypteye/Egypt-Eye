@@ -5,16 +5,11 @@ import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { ProposalDecorations } from "./ProposalDecorations";
 import { agency } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
-import {
-  DECORATION_INTERIM,
-  proposalDecorations,
-  proposalInclusions,
-  proposalPayment,
-  proposalPersonalisation,
-  proposalPhotography,
-  proposalSteps,
-  proposalVenue,
-} from "@/content/flyingDressProposal";
+// proposalPayment stays a direct import: the deposit split is a money
+// authority and is deliberately not in the Studio. Everything else on this
+// page now arrives as `page`, merged from the Studio document.
+import { proposalPayment } from "@/content/flyingDressProposal";
+import type { FdProposalPage } from "../_lib/contentMerge";
 import type { FlyingDressExperience } from "@/content/flyingDressExperiences";
 
 /**
@@ -112,7 +107,14 @@ function galleryFrames(): GalleryFrame[] {
     }));
 }
 
-export function ProposalPage({ experience }: { experience: FlyingDressExperience }) {
+export function ProposalPage({
+  experience,
+  page,
+}: {
+  experience: FlyingDressExperience;
+  /** The page's words, from the Studio where it has them. */
+  page: FdProposalPage;
+}) {
   // The white-arch ask: landscape, the ring box open, three pyramids behind.
   // Deliberately NOT proposalHeartArch, which the proposals category already
   // renders large and uncaptioned directly above this page's own hero.
@@ -184,7 +186,7 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
             </h2>
           </div>
           <ul className="fd-list fd-list-2">
-            {proposalInclusions.map((item) => (
+            {page.inclusions.map((item) => (
               <li key={item.title}>
                 <h3>{item.title}</h3>
                 <p>{item.detail}</p>
@@ -200,7 +202,7 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
         intro="Three proposals we were asked to photograph, and the roof they were asked on. Each frame says what it actually is, including the one taken down on the plateau rather than up here."
       />
 
-      <ProposalDecorations decorations={proposalDecorations} interim={DECORATION_INTERIM} />
+      <ProposalDecorations decorations={page.decorations} interim={page.decorationInterim} />
 
       {/* ---------------------------------------------------------------
           E. THE SEQUENCE. Numbered, because the question underneath this
@@ -216,7 +218,7 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
             </h2>
           </div>
           <ol className="fd-steps">
-            {proposalSteps.map((step, i) => (
+            {page.steps.map((step, i) => (
               <li key={step.title}>
                 <span className="fd-step-num" aria-hidden="true">
                   {String(i + 1).padStart(2, "0")}
@@ -244,7 +246,7 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
               What you can change
             </h2>
             <ul className="fd-list">
-              {proposalPersonalisation.map((item) => (
+              {page.personalisation.map((item) => (
                 <li key={item.title}>
                   <h3>{item.title}</h3>
                   <p>{item.detail}</p>
@@ -259,13 +261,13 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
               A rooftop above Giza
             </h2>
             <p className="fd-muted" style={{ marginTop: "1rem" }}>
-              {proposalVenue.description}
+              {page.venue.description}
             </p>
             <div className="fd-note" style={{ marginTop: "1.5rem" }}>
-              <p style={{ margin: 0 }}>{proposalVenue.notTheComplex}</p>
+              <p style={{ margin: 0 }}>{page.venue.notTheComplex}</p>
             </div>
             <p className="fd-muted" style={{ marginTop: "1.5rem", fontSize: "var(--fd-step--1)" }}>
-              {proposalVenue.changingRoomInterim}
+              {page.venue.changingRoomInterim}
             </p>
           </aside>
         </div>
@@ -281,10 +283,10 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
           <div>
             <p className="fd-eyebrow">What you receive</p>
             <h2 className="fd-display fd-h3" style={{ marginTop: "0.75rem" }}>
-              {proposalPhotography.countNote}
+              {page.photography.countNote}
             </h2>
             <ul className="fd-list" style={{ marginTop: "1.5rem" }}>
-              {proposalPhotography.covers.map((line) => (
+              {page.photography.covers.map((line) => (
                 <li key={line}>
                   <p>{line}</p>
                 </li>
@@ -296,8 +298,8 @@ export function ProposalPage({ experience }: { experience: FlyingDressExperience
               <p style={{ margin: "0 0 0.75rem", fontWeight: 500, color: "var(--fd-ink)" }}>
                 How they reach you
               </p>
-              <p style={{ margin: "0 0 0.75rem" }}>{proposalPhotography.delivery}</p>
-              <p style={{ margin: 0 }}>{proposalPhotography.noTurnaroundPromise}</p>
+              <p style={{ margin: "0 0 0.75rem" }}>{page.photography.delivery}</p>
+              <p style={{ margin: 0 }}>{page.photography.noTurnaroundPromise}</p>
             </div>
           </aside>
         </div>

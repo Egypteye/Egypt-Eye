@@ -117,10 +117,12 @@ import {
 import {
   mergeAddOns,
   mergePackages,
+  mergeProposalPage,
   mergeRateCard,
   mergeRentals,
   mergeSettings,
   mergeWardrobe,
+  type FdProposalPageDoc,
   type FdRateCardDoc,
   type FdSettingsDoc,
 } from "../src/app/flying-dresses/_lib/contentMerge.js";
@@ -4573,7 +4575,11 @@ ok(
   ok(
     "the decoration catalogue has entries but the page no longer offers the interim copy for an " +
       "empty one, so emptying it would render a heading over nothing",
-    decorations.includes("interim") && /DECORATION_INTERIM/.test(proposalPage)
+    // The interim sentence moved from a module constant to the merged page
+    // object when the proposals page became editable, so the name the
+    // component uses changed. The duty did not: an empty catalogue must
+    // still render words rather than a heading over nothing.
+    decorations.includes("interim") && /page\.decorationInterim/.test(proposalPage)
   );
 
   // ---- The lightbox is a real dialog. ---------------------------------
@@ -6113,6 +6119,170 @@ ok(
       "is stale as soon as the Studio changes a price.",
     !/import \{[^}]*\brates\b[^}]*\} from "\.\/flyingDressRates"/.test(occasionSource)
   );
+}
+
+// ---------------------------------------------------------------------------
+// THE PROPOSALS PAGE IS EDITABLE, INCLUDING THE THREE HELD FACTS.
+//
+// The venue name, the street address and the changing room are recorded and
+// kept OFF the page until somebody verifies them. That switch now lives in
+// the Studio, because the owner is the only person who can do the verifying.
+// Which means the release mechanism is no longer a code review: it is a
+// toggle, and the toggle has to be impossible to trip by accident.
+//
+// `held()` is the whole mechanism, so it is tested directly rather than
+// inferred from the page: a value with the switch off must not publish, and
+// a switch ON with nothing behind it must publish NOTHING rather than an
+// empty sentence where a hotel's name should be.
+//
+// Proven by making held() return the value whenever it is present: red.
+// ---------------------------------------------------------------------------
+{
+  const proposalSchema = read("src/sanity/schemaTypes/flyingDressProposalPage.ts");
+  const fetchers = read("src/sanity/fetchers.ts");
+
+  // ---- A held fact stays held. ----------------------------------------
+  const heldCases: { label: string; doc: FdProposalPageDoc; expect: string | null }[] = [
+    { label: "no document at all", doc: null as unknown as FdProposalPageDoc, expect: null },
+    { label: "a value with the switch off", doc: { venueName: "Palm Hotel", venueNamePublished: false } as FdProposalPageDoc, expect: null },
+    { label: "a value with the switch unset", doc: { venueName: "Palm Hotel" } as FdProposalPageDoc, expect: null },
+    { label: "the switch on with no value", doc: { venueNamePublished: true } as FdProposalPageDoc, expect: null },
+    { label: "the switch on with blank space", doc: { venueName: "   ", venueNamePublished: true } as FdProposalPageDoc, expect: null },
+    { label: "the switch on with a value", doc: { venueName: "Palm Hotel", venueNamePublished: true } as FdProposalPageDoc, expect: "Palm Hotel" },
+  ];
+  for (const { label, doc, expect } of heldCases) {
+    const merged = mergeProposalPage(doc);
+    ok(
+      `mergeProposalPage published the venue name for "${label}": it returned ` +
+        `${JSON.stringify(merged.venue.name)} and should have returned ${JSON.stringify(expect)}. ` +
+        "Naming the hotel is a claim about somebody else's business and must take both a value " +
+        "AND the switch.",
+      merged.venue.name === expect
+    );
+  }
+
+  // The page must never print a held fact's interim wording AND the fact.
+  ok(
+    "the proposals page no longer renders the changing-room interim sentence. With the switch " +
+      "off there would be nothing in its place.",
+    /page\.venue\.changingRoomInterim/.test(read("src/app/flying-dresses/_components/ProposalPage.tsx"))
+  );
+
+  // ---- A broken decoration entry is dropped, not rendered. -------------
+  const halfDecoration = mergeProposalPage({
+    decorations: [
+      { id: "ok-one", name: "Red heart arch", description: "Roses", src: "/x.jpg", alt: "An arch" },
+      { id: "no-photo", name: "White arch", description: "Roses", src: null, alt: null },
+      { id: null, name: "Nameless", description: "Roses", src: "/y.jpg", alt: "An arch" },
+    ],
+  } as FdProposalPageDoc);
+  ok(
+    `mergeProposalPage kept ${halfDecoration.decorations.length} decorations when only one is ` +
+      "complete. An entry with no photograph is a list item pretending to be a design, and one " +
+      "with no id cannot be carried into the enquiry.",
+    halfDecoration.decorations.length === 1 && halfDecoration.decorations[0]?.id === "ok-one"
+  );
+
+  // ---- An empty list clears; a missing list falls back. ----------------
+  ok(
+    "mergeProposalPage treats an EMPTY inclusions list as a fallback rather than a clearing. " +
+      "Emptying the list is the only way to drop something you have stopped offering.",
+    mergeProposalPage({ inclusions: [] } as unknown as FdProposalPageDoc).inclusions.length === 0
+  );
+  ok(
+    "mergeProposalPage no longer falls back to the content file when the Studio holds no " +
+      "inclusions, so the section would vanish for a document that simply has not been filled in",
+    mergeProposalPage(null).inclusions.length > 0
+  );
+
+  // ---- The deposit stays out of the Studio. ----------------------------
+  ok(
+    "the proposals page schema now carries a deposit or a price. The deposit split is a money " +
+      "authority and lives in the code with the others: a percentage edited here while the " +
+      "sentence spelling it out in words sits elsewhere is two numbers that will disagree.",
+    !/name:\s*"\w*(?:[Dd]eposit|[Pp]rice|[Pp]ercent)\w*"/.test(proposalSchema)
+  );
+
+  // ---- The projection names the schema's real fields. ------------------
+  //
+  // Same invisible failure as the rate card: a misspelt name returns null,
+  // the merge reads null as "not set", and the page renders exactly what it
+  // did before. See that block for the full argument.
+  {
+    const schemaFields = [
+      ...[...proposalSchema.matchAll(/name:\s*"([a-zA-Z]+)"/g)].map((m) => m[1]),
+      // heldFact("venueName", ...) declares BOTH venueName and
+      // venueNamePublished, and neither appears as a name: literal.
+      ...[...proposalSchema.matchAll(/heldFact\(\s*\n?\s*"([a-zA-Z]+)"/g)].flatMap((m) => [
+        m[1],
+        `${m[1]}Published`,
+      ]),
+    ].filter(
+      (n) =>
+        ![
+          "flyingDressProposalPage",
+          "fdDecoration",
+          "hero",
+          "included",
+          "how",
+          "venue",
+          "decorations",
+          "photos",
+          "name",
+          // fdDecoration's own inner fields are projected through a rename,
+          // so they are checked by the decoration merge test above instead.
+          "id",
+          "description",
+          "image",
+          "alt",
+          "title",
+          "detail",
+        ].includes(n)
+    );
+    const projection =
+      /_type == "flyingDressProposalPage"\]\[0\]\{([\s\S]*?)\n    \}`/.exec(fetchers)?.[1] ?? "";
+
+    ok(
+      "the proposals page GROQ projection could not be found in src/sanity/fetchers.ts, so the " +
+        "assertions below compare against an empty string",
+      projection.trim().length > 50
+    );
+    ok(
+      `only ${schemaFields.length} field names were read out of the proposals page schema, so the ` +
+        "comparison below proves little. It defines more than twenty.",
+      schemaFields.length >= 20
+    );
+    // EXACT TOKENS, never includes(). The first version of this used
+    // projection.includes(field) and passed on a real typo: with
+    // "venueNotTheComplexx" in the projection, includes("venueNotTheComplex")
+    // is true, because the correct name is a substring of the broken one.
+    // Found by making that exact typo and watching the check stay green.
+    const projected = new Set(
+      [...projection.matchAll(/[a-zA-Z]+/g)].map((m) => m[0])
+    );
+    // Names that belong to the GROQ itself or to a renamed sub-selection,
+    // not to the document's own fields.
+    const groqWords = new Set([
+      "decorations", "image", "asset", "url", "src", "alt", "id", "name",
+      "description", "title", "detail",
+    ]);
+    for (const field of schemaFields) {
+      ok(
+        `the proposals page schema defines "${field}" but the GROQ projection never asks for it, ` +
+          "so it is always null and anything typed into it is silently ignored",
+        projected.has(field)
+      );
+    }
+    for (const word of projected) {
+      if (groqWords.has(word)) continue;
+      ok(
+        `the proposals page GROQ projection asks for "${word}", which is not a field on the ` +
+          "schema. It returns null forever, which the merge reads as \"not set\", so the page " +
+          "silently keeps rendering the sentence from the code.",
+        schemaFields.includes(word)
+      );
+    }
+  }
 }
 
 if (errors.length > 0) {

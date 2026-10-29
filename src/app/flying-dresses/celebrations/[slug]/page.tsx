@@ -17,8 +17,8 @@ import { BirthdayPage } from "../../_components/BirthdayPage";
 import { OccasionPage } from "../../_components/OccasionPage";
 import { occasionByCategory } from "@/content/flyingDressOccasions";
 import { fillRates } from "@/content/flyingDressRates";
-import { getFlyingDressRateCard } from "@/sanity/fetchers";
-import { mergeRateCard } from "../../_lib/contentMerge";
+import { getFlyingDressProposalPage, getFlyingDressRateCard } from "@/sanity/fetchers";
+import { mergeProposalPage, mergeRateCard } from "../../_lib/contentMerge";
 
 const SECTION = "celebrations" as const;
 // Written out rather than derived from SECTION: a ternary on a literal type
@@ -61,7 +61,14 @@ export default async function ExperienceCategoryPage({
   // it, so the money a visitor reads and the money in this page's structured
   // data come from the same object rather than from two reads that could
   // land either side of an edit.
-  const rateCard = mergeRateCard(await getFlyingDressRateCard());
+  // Both reads happen before the branch below picks a composition, so the
+  // two are fetched together rather than one per render path.
+  const [rateCardDoc, proposalDoc] = await Promise.all([
+    getFlyingDressRateCard(),
+    getFlyingDressProposalPage(),
+  ]);
+  const rateCard = mergeRateCard(rateCardDoc);
+  const proposalPage = mergeProposalPage(proposalDoc);
   const category = experienceCategoryBySlug(slug);
   // A category from the OTHER section is a 404 here rather than a redirect:
   // one canonical URL per category, so the two sections cannot both answer.
@@ -198,7 +205,7 @@ export default async function ExperienceCategoryPage({
           than to the celebrations section. A second route would have
           duplicated every one of those and then drifted from them. */}
       {category.id === "proposals" && proposal ? (
-        <ProposalPage experience={proposal} />
+        <ProposalPage experience={proposal} page={proposalPage} />
       ) : category.id === "gender-reveal" && genderReveal ? (
         <GenderRevealPage experience={genderReveal} />
       ) : category.id === "celebrations" && celebration ? (

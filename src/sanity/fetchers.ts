@@ -1091,6 +1091,7 @@ import type {
   FdAddOnDoc,
   FdOutfitDoc,
   FdPackageDoc,
+  FdProposalPageDoc,
   FdRateCardDoc,
   FdRentalDoc,
   FdSettingsDoc,
@@ -1115,6 +1116,29 @@ import type {
    The projections return plain data, never Sanity image objects: `asset->url`
    is resolved here so nothing downstream has to know what a Sanity image is.
    ========================================================================== */
+
+
+export async function getFlyingDressProposalPage(): Promise<FdProposalPageDoc | null> {
+  return safeFetch<FdProposalPageDoc>(
+    `*[_type == "flyingDressProposalPage"][0]{
+      heroEyebrow, heroHeadline, heroLede,
+      inclusions[]{title, detail},
+      personalisation[]{title, detail},
+      steps[]{title, detail},
+      venueDescription, venueNotTheComplex,
+      venueName, venueNamePublished,
+      venueAddress, venueAddressPublished,
+      changingRoom, changingRoomPublished, changingRoomInterim,
+      "decorations": decorations[]{
+        id, name, description,
+        "src": image.asset->url,
+        "alt": image.alt
+      },
+      decorationInterim,
+      photographyCountNote, photographyCovers, photographyDelivery, photographyNoTurnaround
+    }`
+  );
+}
 
 
 export async function getFlyingDressRateCard(): Promise<FdRateCardDoc | null> {

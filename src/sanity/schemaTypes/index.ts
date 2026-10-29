@@ -40,6 +40,10 @@ import {
 import { flyingDressOutfit } from "./flyingDressWardrobe";
 import { flyingDressRateCard } from "./flyingDressRates";
 import {
+  fdDecorationObject,
+  flyingDressProposalPage,
+} from "./flyingDressProposalPage";
+import {
   takeEgyptHomePage,
   treasureCategory,
   treasureOption,
@@ -83,6 +87,8 @@ export const schemaTypes = [
   // that site needed a developer and a deploy.
   flyingDressSettings,
   flyingDressRateCard,
+  fdDecorationObject,
+  flyingDressProposalPage,
   flyingDressPackage,
   flyingDressAddOn,
   flyingDressRental,

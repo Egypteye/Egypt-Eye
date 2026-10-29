@@ -26,6 +26,17 @@ import {
 } from "@/content/flyingDressRates";
 import type { Outfit } from "@/lib/booking/outfits";
 import { dressPhotos } from "./dressPhotos";
+import {
+  DECORATION_INTERIM as localDecorationInterim,
+  proposalDecorations as localProposalDecorations,
+  proposalHero as localProposalHero,
+  proposalInclusions as localProposalInclusions,
+  proposalPersonalisation as localProposalPersonalisation,
+  proposalPhotography as localProposalPhotography,
+  proposalSteps as localProposalSteps,
+  proposalVenue as localProposalVenue,
+  type ProposalDecoration,
+} from "@/content/flyingDressProposal";
 
 /* ------------------------------------------------------------------------ */
 /* The shapes the GROQ projections return                                    */
@@ -530,7 +541,6 @@ export function mergeWardrobe(docs: FdOutfitDoc[] | null): FdWardrobe {
   return { dresses, mensOutfits: mens, photos };
 }
 
-
 /* ------------------------------------------------------------------------ */
 /* The rate card                                                             */
 /* ------------------------------------------------------------------------ */
@@ -623,5 +633,145 @@ export function mergeRateCard(doc: FdRateCardDoc | null): RateCard {
     decorationIncluded: str(doc?.decorationIncluded, localRateCard.decorationIncluded),
     eventPhotography: str(doc?.eventPhotography, localRateCard.eventPhotography),
     termsNotSet: str(doc?.termsNotSet, localRateCard.termsNotSet),
+  };
+}
+
+/* ------------------------------------------------------------------------ */
+/* The proposals page                                                        */
+/* ------------------------------------------------------------------------ */
+
+export type FdProposalPageDoc = {
+  heroEyebrow: string | null;
+  heroHeadline: string | null;
+  heroLede: string | null;
+  inclusions: { title: string | null; detail: string | null }[] | null;
+  personalisation: { title: string | null; detail: string | null }[] | null;
+  steps: { title: string | null; detail: string | null }[] | null;
+  venueDescription: string | null;
+  venueNotTheComplex: string | null;
+  venueName: string | null;
+  venueNamePublished: boolean | null;
+  venueAddress: string | null;
+  venueAddressPublished: boolean | null;
+  changingRoom: string | null;
+  changingRoomPublished: boolean | null;
+  changingRoomInterim: string | null;
+  decorations:
+    | {
+        id: string | null;
+        name: string | null;
+        description: string | null;
+        src: string | null;
+        alt: string | null;
+      }[]
+    | null;
+  decorationInterim: string | null;
+  photographyCountNote: string | null;
+  photographyCovers: string[] | null;
+  photographyDelivery: string | null;
+  photographyNoTurnaround: string | null;
+};
+
+export type FdProposalPage = {
+  hero: { eyebrow: string; headline: string; lede: string };
+  inclusions: Inclusion[];
+  personalisation: Inclusion[];
+  steps: Inclusion[];
+  venue: {
+    description: string;
+    notTheComplex: string;
+    /** Null unless the owner has switched it on in the Studio. */
+    name: string | null;
+    address: string | null;
+    changingRoom: string | null;
+    changingRoomInterim: string;
+  };
+  decorations: ProposalDecoration[];
+  decorationInterim: string;
+  photography: {
+    countNote: string;
+    covers: string[];
+    delivery: string;
+    noTurnaroundPromise: string;
+  };
+};
+
+/**
+ * A fact that is recorded but held back until somebody verifies it.
+ *
+ * BOTH HALVES ARE REQUIRED. A value with the switch off stays off the page,
+ * and a switch turned on with no value behind it publishes nothing rather
+ * than an empty sentence where a hotel's name should be. The page then falls
+ * through to its interim wording, which is written to be true either way.
+ */
+function held(value: string | null | undefined, published: boolean | null | undefined): string | null {
+  if (published !== true) return null;
+  const v = typeof value === "string" ? value.trim() : "";
+  return v.length > 0 ? v : null;
+}
+
+/** title/detail pairs, dropping any entry that lost one of its halves. */
+function entries(
+  docEntries: { title: string | null; detail: string | null }[] | null | undefined,
+  fallback: readonly Inclusion[]
+): Inclusion[] {
+  if (!Array.isArray(docEntries)) return [...fallback];
+  // An EMPTY list is a deliberate clearing: it is the only way to remove
+  // something no longer offered. A list whose entries are half-filled is not,
+  // so those entries are dropped rather than rendered as a blank row.
+  return docEntries
+    .map((e) => ({ title: str(e?.title, undefined), detail: str(e?.detail, undefined) }))
+    .filter((e) => e.title.length > 0 && e.detail.length > 0);
+}
+
+export function mergeProposalPage(doc: FdProposalPageDoc | null): FdProposalPage {
+  return {
+    hero: {
+      eyebrow: str(doc?.heroEyebrow, localProposalHero.eyebrow),
+      headline: str(doc?.heroHeadline, localProposalHero.headline),
+      lede: str(doc?.heroLede, localProposalHero.lede),
+    },
+    inclusions: entries(doc?.inclusions, localProposalInclusions),
+    personalisation: entries(doc?.personalisation, localProposalPersonalisation),
+    steps: entries(doc?.steps, localProposalSteps),
+    venue: {
+      description: str(doc?.venueDescription, localProposalVenue.description),
+      notTheComplex: str(doc?.venueNotTheComplex, localProposalVenue.notTheComplex),
+      // The content file's own `published` flags are false for all three, and
+      // stay the record of WHY. The Studio switch is what releases one.
+      name: held(doc?.venueName, doc?.venueNamePublished),
+      address: held(doc?.venueAddress, doc?.venueAddressPublished),
+      changingRoom: held(doc?.changingRoom, doc?.changingRoomPublished),
+      changingRoomInterim: str(
+        doc?.changingRoomInterim,
+        localProposalVenue.changingRoomInterim
+      ),
+    },
+    // Every field of a decoration is required, because a catalogue entry
+    // missing its photograph or its id is not a choice a customer can make
+    // and not a choice the enquiry can carry.
+    decorations: Array.isArray(doc?.decorations)
+      ? doc.decorations
+          .map((d) => ({
+            id: str(d?.id, undefined),
+            name: str(d?.name, undefined),
+            description: str(d?.description, undefined),
+            src: str(d?.src, undefined),
+            alt: str(d?.alt, undefined),
+          }))
+          .filter((d) => d.id && d.name && d.description && d.src && d.alt)
+      : [...localProposalDecorations],
+    decorationInterim: str(doc?.decorationInterim, localDecorationInterim),
+    photography: {
+      countNote: str(doc?.photographyCountNote, localProposalPhotography.countNote),
+      covers: arr(doc?.photographyCovers, localProposalPhotography.covers)
+        .map((c) => (typeof c === "string" ? c.trim() : ""))
+        .filter((c) => c.length > 0),
+      delivery: str(doc?.photographyDelivery, localProposalPhotography.delivery),
+      noTurnaroundPromise: str(
+        doc?.photographyNoTurnaround,
+        localProposalPhotography.noTurnaroundPromise
+      ),
+    },
   };
 }
