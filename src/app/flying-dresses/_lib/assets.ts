@@ -361,6 +361,57 @@ export const agency = {
     height: 1333,
     credit: "Nayma shoot, Fayoum",
   }),
+
+  /* ---- THE ROOFTOP WORKING AS A PRODUCTION LOCATION -------------------
+     Supplied 29 October 2026 from the owner's Drive, from a real commercial
+     production run on the rooftop: a DJ set filmed with a camera rig.
+
+     These are the first frames this site has ever had of a CREW WORKING on
+     the roof rather than a finished portrait made there, which is exactly
+     what a brand booking a location wants to see and what the creator page
+     had nothing of.
+
+     PROVENANCE IS ESTABLISHED DIFFERENTLY FROM THE OCTOBER DRIVE FRAMES and
+     it is worth being exact about how, because the usual test does not apply.
+     Those were 6000x4000 camera originals carrying EXIF copyright=EGYPT.EYE.
+     These two are 3072x4096 phone frames whose EXIF has been stripped, which
+     a share or an export does, so there is no copyright tag to read.
+
+     What stands behind them instead:
+       - They carry NO generated-media provenance at all. Nothing matching
+         c2pa, openai, gpt-image or trainedAlgorithmicMedia appears anywhere
+         in their bytes. The generated images in the SAME Drive library carry
+         those markers in abundance, so the absence is a real signal here.
+       - Their dimensions are phone-native. Every generated image in that
+         library is exactly 1536x1024; neither of these is.
+       - They are frames from the same session as nine video clips in the
+         same folder, which agree with them on venue, light, equipment and
+         people.
+     check-flying-dresses.mts re-runs the first of those on every run.
+
+     A THIRD FRAME FROM THIS SESSION IS DELIBERATELY NOT HERE, and the reason
+     matters more than the frame did. production-rooftop-sunset.jpg was the
+     best wide view of the deck in the whole delivery, and it carried the
+     VENUE'S WORDMARK on the railing, twice, large and perfectly legible.
+
+     The venue's NAME is a held fact: its Studio switch is off until the owner
+     confirms the hotel is happy to be named publicly. A photograph must not
+     publish what the switch withholds, and blurring it was tried and
+     abandoned — the first pass masked one instance and missed the second,
+     which is exactly how this kind of fix fails, and a photograph with two
+     smudged patches across it is worse than no photograph.
+
+     So it is withheld rather than doctored, and the owner has been asked. If
+     they turn the switch on, this frame goes straight back in at full
+     resolution and unaltered. See docs/FLYING-DRESSES-CREATOR-SHOOTS.md. */
+  productionDecks: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/production-decks-daylight.jpg",
+    alt: "Pioneer DJ decks and a mixer set up on the rooftop in full daylight, looking out over the Sphinx and four pyramids of the Giza plateau",
+    width: 1350,
+    height: 1800,
+    credit: "Rooftop production shoot, supplied October 2026",
+  }),
 };
 
 /**

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CreatorShootsPage } from "../../_components/CreatorShootsPage";
 import { ExperienceDetail } from "../../_components/ExperienceDetail";
 import { MusicProductionPage } from "../../_components/MusicProductionPage";
 import { Scene } from "../../_components/Scene";
@@ -155,7 +156,16 @@ export default async function ExperienceCategoryPage({
           The URL, metadata, breadcrumbs, FAQ structured data and sibling
           rail stay with this route, exactly as for the celebration
           pages. Only the body differs. */}
-      {category.id === "music-production" && experiences[0] ? (
+      {/* THE SECOND CATEGORY TO COMPOSE ITS OWN BODY, for the same reason
+          as the first. The owner's October 2026 creator brief set an
+          hourly rooftop rate, a discount that applies to the rooftop
+          hours and NOT to the optional services, and a deposit. The
+          shared renderer has nowhere to put any of the three, and this
+          page also carries the production footage, which it has nowhere
+          to put either. The record and the route are unchanged. */}
+      {category.id === "creators" && experiences[0] ? (
+        <CreatorShootsPage experience={experiences[0]} />
+      ) : category.id === "music-production" && experiences[0] ? (
         <MusicProductionPage experience={experiences[0]} />
       ) : (
         experiences.map((experience) => (

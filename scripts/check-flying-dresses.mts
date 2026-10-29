@@ -59,6 +59,24 @@ import {
   flyingDressExperiences,
 } from "../src/content/flyingDressExperiences.js";
 import {
+  ADDITIONAL_HOUR_DISCOUNT_PERCENT,
+  DEPOSIT_PERCENT,
+  ROOFTOP_HOURLY_USD,
+  additionalHourCents,
+  bookingTerms,
+  audiences,
+  creatorFaqs,
+  creatorSteps,
+  creatorsVenue,
+  depositOnCents,
+  discountedHourCents,
+  firstHourCents,
+  optionalServices,
+  productionClips,
+  rooftopAccess,
+  rooftopQuote,
+} from "../src/content/flyingDressCreators.js";
+import {
   EGYPT_EYE_FLYING_DRESS_STORIES,
   flyingDressStories,
   liveStories,
@@ -617,6 +635,34 @@ const AGENCY_WORK = new Set([
   // actually show both.
   "/photos/flying-dresses/fayoum-red-lake.jpg",
   "/photos/flying-dresses/fayoum-red-shore.jpg",
+
+  // THE ROOFTOP WORKING, 29 October 2026, from a real commercial production
+  // on the roof. The first frames this site has of a crew at work there.
+  //
+  // THE USUAL TEST DOES NOT APPLY TO THESE TWO and pretending otherwise would
+  // be the dishonest move. Every frame above is a 6000x4000 camera original
+  // carrying EXIF copyright=EGYPT.EYE. These are 3072x4096 phone frames whose
+  // EXIF was stripped by whatever exported them, so there is no tag to read.
+  //
+  // They are admitted on a different and weaker but still real basis, stated
+  // plainly so a reviewer can disagree with it:
+  //   - ZERO generated-media provenance in their bytes. The byte-level guard
+  //     below runs on them like everything else and passes. In the same Drive
+  //     library the generated images carry c2pa, openai, gpt-image and
+  //     trainedAlgorithmicMedia; these carry none of the four.
+  //   - Phone-native dimensions. Every generated image in that library is
+  //     exactly 1536x1024. Neither of these is.
+  //   - Nine video clips of the same session sit in the same folder and agree
+  //     with them on venue, equipment, light and people.
+  //
+  // A THIRD FRAME FROM THIS SESSION IS NOT ON THIS LIST ON PURPOSE.
+  // production-rooftop-sunset.jpg was the best wide view of the deck in the
+  // delivery and it carried the venue's wordmark on the railing, twice and
+  // legibly. The venue's NAME is a held fact whose Studio switch is off, and
+  // a photograph must not publish what the switch withholds. Blurring was
+  // tried, masked one instance, missed the second, and was abandoned. The
+  // frame is withheld until the owner turns the switch on.
+  "/photos/flying-dresses/production-decks-daylight.jpg",
 ]);
 
 for (const [key, slot] of Object.entries(allSlots)) {
@@ -1972,11 +2018,39 @@ for (const pkg of packages) {
   ];
 
   for (const exp of flyingDressExperiences) {
-    const priceStillOpen = exp.confirm.some((line) => /price/i.test(line));
+    // A FIGURE ON THE SITE NEEDS A NAMED SOURCE.
+    //
+    // THE GUARD THIS REPLACED WAS A WORD SEARCH and it was weaker than it
+    // looked: it read every confirm line for /price/i and blocked any printed
+    // figure if it matched. The rooftop music record carries a genuinely open
+    // money question and passed anyway, because it is worded "RATES for the
+    // production services" and never says "price". Any record could keep an
+    // unconfirmed figure on the site by reaching for a synonym, which is the
+    // failure mode CLAUDE.md §4 is about.
+    //
+    // Three structural tests instead, each proven red:
+    //   1. priceConfirmedBy deleted from creator-session (red).
+    //   2. priceConfirmedBy added to a kind:"enquire" record (red).
+    //   3. "PRICE. Nothing set." put back on creator-session (red).
     if (exp.pricing.kind !== "enquire") {
       ok(
-        `${exp.slug} shows a price while its own confirm list still has an open price question — that figure is not confirmed`,
-        !priceStillOpen
+        `${exp.slug} prints a figure but names nobody who confirmed it — priceConfirmedBy is empty, so that number reached the site unattributed`,
+        typeof exp.priceConfirmedBy === "string" && exp.priceConfirmedBy.trim().length > 0
+      );
+      // "PRICE." at the head of a confirm line is the reserved tag meaning
+      // "the headline figure on this record is unset". Anchored, so a line
+      // about some OTHER open money question ("PRICE OF A PRODUCED SESSION",
+      // "RATES for the production services") is left alone, which is the
+      // distinction the old guard could not draw.
+      const headlineUnset = exp.confirm.find((line) => /^\s*PRICE\.\s/.test(line));
+      ok(
+        `${exp.slug} prints a figure while its confirm list still says the headline price is unset: "${headlineUnset?.slice(0, 60)}"`,
+        headlineUnset === undefined
+      );
+    } else {
+      ok(
+        `${exp.slug} is sold on enquiry but claims a confirmed price source — priceConfirmedBy belongs only on a record that actually prints a figure`,
+        exp.priceConfirmedBy === undefined
       );
     }
 
@@ -6409,6 +6483,323 @@ ok(
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// THE CREATOR, EDITORIAL AND BRAND SHOOTS PAGE.
+//
+// The owner's October 2026 creator brief set FOUR money facts and warned about
+// THREE things not to overstate. Every guard below defends one of them, and
+// every one was proven by breaking it and watching it go red before it was
+// left in place.
+//
+// THE BLOCK SITS ABOVE THE VERDICT ON PURPOSE. A previous guard block in this
+// file was appended below `process.exit(1)` and never ran at all: three
+// break-tests came back green and the mistake was invisible. Anything added
+// here goes above this line.
+// ---------------------------------------------------------------------------
+{
+  const creatorsSrc = readFileSync("src/content/flyingDressCreators.ts", "utf8");
+  const pageSrc = readFileSync(
+    "src/app/flying-dresses/_components/CreatorShootsPage.tsx",
+    "utf8"
+  );
+  const reelSrc = readFileSync(
+    "src/app/flying-dresses/_components/ProductionReel.tsx",
+    "utf8"
+  );
+
+  // 1. THE DISCOUNTED HOUR IS DERIVED, NOT TYPED.
+  //
+  // The brief gave both the rate and the discounted figure. The single most
+  // likely way this page rots is the owner changing $150 and leaving a
+  // hand-typed $135 behind it, so the arithmetic is checked against the
+  // brief's own stated answer.
+  //
+  // Proven by: changing ROOFTOP_HOURLY_USD to 200 (red here), and by
+  // replacing the body of discountedHourCents() with a flat `return 13500`
+  // (red on the derivation tests below, which is the point of parameterising
+  // it — the same break-test against the OLD unparameterised assertion came
+  // back green, and that is how this guard got rewritten).
+  ok(
+    `the rooftop rate has moved off the owner's brief: ROOFTOP_HOURLY_USD is ${ROOFTOP_HOURLY_USD}, the brief says 150`,
+    ROOFTOP_HOURLY_USD === 150
+  );
+  ok(
+    `the additional-hour discount has moved off the brief: ${ADDITIONAL_HOUR_DISCOUNT_PERCENT}%, the brief says 10%`,
+    ADDITIONAL_HOUR_DISCOUNT_PERCENT === 10
+  );
+  ok(
+    `the deposit has moved off the brief: ${DEPOSIT_PERCENT}%, the brief says 25%`,
+    DEPOSIT_PERCENT === 25
+  );
+  ok(
+    `additionalHourCents() returns ${additionalHourCents()}, but 10% off $150 is 13500 cents ($135), which is the figure the owner's brief states`,
+    additionalHourCents() === 13500
+  );
+  // THE DERIVATION ITSELF, asked about figures that are NOT $150.
+  //
+  // The first version of this test compared additionalHourCents() against the
+  // same arithmetic written out again, and replacing the function body with a
+  // flat `return 13500` left it green: at $150 and 10% the hard-coded answer
+  // and the correct one are the same number, so the assertion was restating
+  // the implementation rather than testing it. CLAUDE.md §4, caught by running
+  // the break-test instead of assuming it.
+  //
+  // discountedHourCents() takes the rate as an argument precisely so this can
+  // ask about rates the page does not use. A hard-coded return now fails.
+  for (const [full, expected] of [
+    [15000, 13500], // the brief's own figures: $150 -> $135
+    [20000, 18000],
+    [9999, 8999], // rounds the discount, not the result
+    [100, 90],
+  ] as const) {
+    ok(
+      `discountedHourCents(${full}) returned ${discountedHourCents(full)}, not ${expected} — the discount is not being derived from the figure it is given`,
+      discountedHourCents(full) === expected
+    );
+  }
+  for (const [total, expected] of [
+    [42000, 10500],
+    [15000, 3750],
+    [333, 83], // one rounding, half up
+  ] as const) {
+    ok(
+      `depositOnCents(${total}) returned ${depositOnCents(total)}, not ${expected}`,
+      depositOnCents(total) === expected
+    );
+  }
+  ok(
+    "additionalHourCents() does not agree with the shared discount function, so the page and the quote can disagree",
+    additionalHourCents() === discountedHourCents(firstHourCents())
+  );
+
+  // 2. THE QUOTE IS INTEGER CENTS WITH ONE ROUNDING, AND REFUSES NONSENSE.
+  //
+  // CLAUDE.md §5. Proven by making rooftopQuote() accept a fractional hour
+  // (red) and by returning a float total (red).
+  {
+    const three = rooftopQuote(3);
+    ok("rooftopQuote(3) returned nothing for a perfectly ordinary booking", three !== null);
+    if (three) {
+      ok(
+        `rooftopQuote(3) totals ${three.totalCents}, but one hour at 15000 plus two at 13500 is 42000`,
+        three.totalCents === 42000
+      );
+      ok(
+        `rooftopQuote(3) deposit is ${three.depositCents}, but 25% of 42000 is 10500`,
+        three.depositCents === 10500
+      );
+      ok(
+        "rooftopQuote() is returning a fractional number of cents, so a figure on the page can print a third of a penny",
+        Number.isInteger(three.totalCents) && Number.isInteger(three.depositCents)
+      );
+      ok(
+        "rooftopQuote() deposit and balance do not add back up to the total",
+        three.depositCents + three.balanceCents === three.totalCents
+      );
+    }
+    ok(
+      "rooftopQuote() accepts a half hour, inventing a part-hour rate the owner has never set",
+      rooftopQuote(1.5) === null
+    );
+    ok("rooftopQuote() accepts zero or negative hours", rooftopQuote(0) === null && rooftopQuote(-2) === null);
+    const one = rooftopQuote(1);
+    ok(
+      "a single hour is not quoted at the plain hourly rate, but the brief says there is no minimum booking",
+      one !== null && one.totalCents === 15000
+    );
+  }
+
+  // 3. NO PRICE IS TYPED INTO THE PAGE OR THE COPY.
+  //
+  // Every figure a visitor reads comes through the computed display strings.
+  // A literal dollar amount in either file would survive the owner changing
+  // the rate, which is precisely the drift this page is built to avoid.
+  //
+  // Proven by: writing "$135 per additional hour" into the hero (red).
+  for (const [label, src] of [
+    ["CreatorShootsPage.tsx", stripComments(pageSrc)],
+    ["flyingDressCreators.ts", stripComments(creatorsSrc)],
+  ] as const) {
+    const literal = src.match(/\$\d[\d,.]*/);
+    ok(
+      `${label} types a price literal (${literal?.[0]}) into text a visitor reads — it must come from the computed display strings so it follows the rate`,
+      literal === null
+    );
+  }
+
+  // 4. THE NINE PYRAMIDS, AND NOT THREE.
+  //
+  // The owner was explicit: the rooftop overlooks all nine pyramids of the
+  // plateau and must not be described as simply overlooking the three main
+  // ones. Proven by rewriting the venue lede to say "the three pyramids" (red).
+  const creatorsCopy = stripComments(creatorsSrc) + stripComments(pageSrc);
+  ok(
+    "the creator page no longer says the rooftop overlooks all NINE pyramids, which is the positioning the owner's brief asked for by name",
+    /nine pyramids/i.test(creatorsCopy)
+  );
+  ok(
+    'the creator page describes the view as "the three pyramids", which is the exact reduction the owner\'s brief forbade',
+    !/\bthe three (main )?pyramids\b/i.test(creatorsCopy)
+  );
+
+  // 5. THE PREPARATION ROOM IS NEVER AN INCLUSION.
+  //
+  // The owner named a five-star hotel room AND said its inclusion conditions
+  // must be verified and not assumed for every booking. So it may appear, and
+  // it may not appear in the list of what the hourly rate covers.
+  //
+  // Proven by moving the room into rooftopAccess.covers (red).
+  ok(
+    "the preparation room has been moved into what the hourly rate covers, but the owner's own brief says its inclusion conditions are unverified",
+    !rooftopAccess.covers.some((line) => /hotel room|five-star|preparation room/i.test(line))
+  );
+  ok(
+    "the preparation room is described without the condition that it is not automatically included",
+    /not automatically included/i.test(creatorsVenue.preparationRoom)
+  );
+
+  // 6. THE DISCOUNT NEVER REACHES THE OPTIONAL SERVICES.
+  //
+  // The brief: "do not apply the additional-hour discount to optional
+  // services". rooftopQuote() has no way to see them, and the page says so.
+  // Proven by deleting optionalServicesNote from the terms section (red).
+  ok(
+    "the page no longer states that the additional-hour discount does not apply to the optional services, which the brief required",
+    /does not apply to them/i.test(bookingTerms.optionalServicesNote) &&
+      pageSrc.includes("optionalServicesNote")
+  );
+  ok(
+    "an optional service has acquired a published price, but every one of them is quoted separately",
+    !optionalServices.some((s) => /\$\d/.test(s.detail))
+  );
+
+  // 7. NO INVENTED TERMS.
+  //
+  // The brief forbade inventing cancellation policies, refund conditions,
+  // overtime rules and restrictions. The record of their absence is what
+  // proves the silence is deliberate. Proven by deleting termsNotSet (red).
+  ok(
+    "the record saying no cancellation policy, refund conditions or overtime rate has been set is gone from the creator page",
+    /cancellation policy/i.test(bookingTerms.termsNotSet) &&
+      /none has been set/i.test(bookingTerms.termsNotSet) &&
+      pageSrc.includes("termsNotSet")
+  );
+
+  // 8. THE FOOTAGE IS REALLY THERE, AND REALLY SILENT.
+  //
+  // Each clip claims three files. A path typo would render a dead poster and
+  // a video that never starts, and nothing else would notice.
+  //
+  // THE AUDIO TEST IS THE IMPORTANT ONE. The clips were filmed at a live DJ
+  // set, so their original audio is someone else's recorded music. They were
+  // encoded without an audio track rather than muted in the player, because a
+  // muted <video> still ships the soundtrack to every visitor.
+  //
+  // Proven by: pointing one clip at a missing file (red), and by re-encoding
+  // one clip with its audio track left in (red).
+  ok("the creator page lists no production clips at all", productionClips.length > 0);
+  for (const clip of productionClips) {
+    for (const [what, href] of [
+      ["mp4", clip.mp4],
+      ["webm", clip.webm],
+      ["poster", clip.poster],
+    ] as const) {
+      ok(
+        `production clip "${clip.id}" points at a ${what} that is not in public${href}`,
+        existsSync(`public${href}`)
+      );
+    }
+    const mp4 = `public${clip.mp4}`;
+    if (existsSync(mp4)) {
+      const bytes = readFileSync(mp4);
+      // An MP4 names each track's handler in an 'hdlr' box: 'soun' is audio.
+      ok(
+        `production clip "${clip.id}" still carries an audio track. It was filmed at a live DJ set, so that audio is third-party recorded music being shipped to every visitor`,
+        bytes.indexOf("soun", 0, "latin1") < 0
+      );
+      // The codec the player asks canPlayType about must be the codec the
+      // file actually is. Same failure, and same fix, as the home page hero.
+      const at = bytes.indexOf("avcC", 0, "latin1");
+      const codec =
+        at < 0
+          ? null
+          : `avc1.${[...bytes.subarray(at + 5, at + 8)].map((b) => b.toString(16).padStart(2, "0")).join("")}`;
+      ok(`production clip "${clip.id}" has no readable avcC box`, codec !== null);
+      if (codec) {
+        ok(
+          `ProductionReel asks the browser about a codec clip "${clip.id}" is not — the file is ${codec}, and no canPlayType call in the component asks about it, so a decoder that refuses this profile is handed it anyway`,
+          new RegExp(`codecs=\\s*\\\\?["']${codec.replace(".", "\\.")}`).test(stripComments(reelSrc))
+        );
+      }
+    }
+  }
+  // The clips are decoration and must not cost a visitor who never sees them.
+  // Proven by removing preload="none" (red) and the observer (red).
+  ok(
+    "ProductionReel fetches its clips eagerly — four files at well over a megabyte each, for a visitor who may never scroll to them",
+    /preload="none"/.test(reelSrc) && /IntersectionObserver/.test(reelSrc)
+  );
+  ok(
+    "ProductionReel ignores reduced motion or Save-Data, so a looping clip plays for somebody who asked for neither",
+    /prefers-reduced-motion/.test(reelSrc) && /saveData/.test(reelSrc)
+  );
+
+  // 9. NO SENTENCE IS PRINTED TWICE.
+  //
+  // The terms card originally reused rooftopAccess.lede, which put the same
+  // three lines on the page twice, two sections apart. It read exactly like
+  // the copy-paste it was, and only looking at the rendered page caught it.
+  //
+  // Proven by pointing bookingTerms.hourly back at rooftopAccess.lede (red).
+  {
+    const visible: string[] = [
+      creatorsVenue.lede,
+      creatorsVenue.preparationRoom,
+      creatorsVenue.dependency,
+      ...creatorsVenue.points.flatMap((p) => [p.title, p.detail]),
+      rooftopAccess.lede,
+      rooftopAccess.excludes,
+      ...rooftopAccess.covers,
+      bookingTerms.hourly,
+      bookingTerms.noMinimum,
+      bookingTerms.additionalHours,
+      bookingTerms.deposit,
+      bookingTerms.optionalServicesNote,
+      bookingTerms.termsNotSet,
+      ...audiences.flatMap((a) => [a.detail, ...a.uses]),
+      ...optionalServices.map((s) => s.detail),
+      ...creatorSteps.flatMap((s) => [s.title, s.detail]),
+      ...creatorFaqs.flatMap((f) => [f.question, f.answer]),
+    ];
+    const seen = new Map<string, number>();
+    for (const line of visible) {
+      const key = line.trim().toLowerCase();
+      seen.set(key, (seen.get(key) ?? 0) + 1);
+    }
+    for (const [key, count] of seen) {
+      ok(
+        `the creator page prints the same sentence ${count} times: "${key.slice(0, 70)}"`,
+        count === 1
+      );
+    }
+  }
+
+  // 10. THE PAGE IS ACTUALLY WIRED UP.
+  //
+  // The composition can be perfect and unreachable. Proven by reverting the
+  // route to render ExperienceDetail for this category (red).
+  {
+    const route = stripComments(
+      readFileSync("src/app/flying-dresses/creative/[slug]/page.tsx", "utf8")
+    );
+    ok(
+      "the creative route no longer renders CreatorShootsPage, so the upgraded page is in the repository and not on the site",
+      /category\.id === "creators"/.test(route) && /<CreatorShootsPage/.test(route)
+    );
+  }
+}
+
 
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");

@@ -103,6 +103,28 @@ export type FlyingDressExperience = {
   extras: { label: string; delivery: ExperienceDelivery }[];
   delivery: ExperienceDelivery[];
   pricing: ExperiencePricing;
+  /**
+   * WHO CONFIRMED THE FIGURE THIS RECORD PRINTS, and when.
+   *
+   * Required whenever `pricing.kind` is not "enquire", and FORBIDDEN when it
+   * is: you cannot claim confirmation for a figure you do not publish. The
+   * check script enforces both directions.
+   *
+   * It exists because the guard it replaced was a word search. It read every
+   * `confirm` line for /price/i and refused to print a figure if it found one,
+   * which sounds strict and was not: the music record carries an open money
+   * question worded "RATES for the production services" and sailed through,
+   * because it happens not to use the word. A record could therefore keep a
+   * genuinely unconfirmed figure on the site by choosing a synonym.
+   *
+   * So the test is now structural. A figure needs a named source here, and the
+   * `confirm` list keeps its own separate rule: a line beginning "PRICE." is
+   * reserved for "the headline figure on this record is unset", and a record
+   * printing a figure may not carry one. Other open money questions are
+   * written however they read best, which is what the music record was
+   * actually doing.
+   */
+  priceConfirmedBy?: string;
   durationNote: string;
   locationNote: string;
   /** How far ahead this realistically needs booking. */
@@ -220,10 +242,14 @@ export const experienceCategories: ExperienceCategory[] = [
     section: "creative",
     name: "Creators and editorial",
     title: "Creator, editorial and brand shoots",
+    // WIDENED to the four audiences the owner's October 2026 brief named, and
+    // to the commercial framing it asked for: this is a location you hire, not
+    // only a session you book. The creator and the agency now both find
+    // themselves on the first line.
     intro:
-      "For people whose work is the picture: creators, models, fashion labels and personal brands.",
+      "A commercial location above the Giza plateau for fashion labels, agencies, beauty and lifestyle brands, international production teams and the creators whose work is the picture.",
     metaDescription:
-      "Rooftop and desert shoots near Giza for creators, models, fashion labels and personal brands, with the pyramids on the skyline behind you.",
+      "Hire a private rooftop overlooking all nine pyramids of Giza for commercial shoots, from $150 an hour with no minimum booking. Photography, video, models, wardrobe and styling quoted separately.",
   },
   {
     id: "music-production",
@@ -508,6 +534,7 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     // person and a flying dress photoshoot is $200. The FROM figure is the
     // regular session, with the dress rate shown beside it on the page.
     pricing: { kind: "from", fromUsd: 100 },
+    priceConfirmedBy: "Owner's October 2026 rate card: regular session $100 per person, flying dress $200.",
     durationNote: "Around two hours for a session with a setup and portraits.",
     locationNote: ROOFTOP_LOCATION_NOTE,
     leadTimeNote: "A week or two is usually enough unless there is catering or a musician involved.",
@@ -558,6 +585,7 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     // the $200 rate; anybody joining in their own clothes is $100, so a
     // family is usually a mix. The FROM figure is the lower of the two.
     pricing: { kind: "from", fromUsd: 100 },
+    priceConfirmedBy: "Owner's October 2026 rate card: $100 per person in their own clothes, $200 in a dress from the collection.",
     durationNote:
       "Allow around ninety minutes. We work at whatever pace the session needs, and there is somewhere to sit between frames.",
     locationNote: ROOFTOP_LOCATION_NOTE,
@@ -616,6 +644,7 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     // card is explicit that photography for an event is charged separately,
     // and the page says so beside the figure.
     pricing: { kind: "hourly", fromUsd: 150, unit: "hour" },
+    priceConfirmedBy: "Owner's October 2026 rate card: the rooftop is $150 an hour and event photography is charged separately.",
     durationNote: "Two to three hours including the setup and the portraits.",
     locationNote: ROOFTOP_LOCATION_NOTE,
     leadTimeNote: "A month is comfortable, because the venue, the styling and any musician all have to line up.",
@@ -670,9 +699,21 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       { label: "Hair, makeup and styling", delivery: "partner" },
     ],
     delivery: ["in-house", "venue", "partner", "permissions"],
-    pricing: { kind: "enquire" },
+    // CONFIRMED BY THE OWNER, October 2026 creator brief: the rooftop is the
+    // same roof the music session rents, at the same $150 an hour, and a
+    // commercial booking has no minimum. So the listing pages can finally
+    // print a figure for this category instead of "on request".
+    //
+    // THIS IS THE ROOFTOP AND ONLY THE ROOFTOP. What a produced session costs
+    // is still unset, which is why `confirm` below still carries that line and
+    // why the page states the distinction rather than letting a reader infer a
+    // package. The discount on additional hours and the deposit are derived in
+    // content/flyingDressCreators.ts, which is the single authority for both.
+    pricing: { kind: "hourly", fromUsd: 150, unit: "hour" },
+    priceConfirmedBy:
+      "Owner's October 2026 creator brief: the rooftop is $150 an hour with no minimum booking, 10% off additional hours, 25% deposit. Optional services excluded and undiscounted.",
     durationNote:
-      "From a single session to a full day. A content block is quoted by the hour rather than by the frame.",
+      "From a single hour to a full day, with no minimum booking. Hours after the first cost less, and the rooftop is quoted by the hour rather than by the frame.",
     locationNote: ROOFTOP_LOCATION_NOTE,
     leadTimeNote:
       "Two weeks for a straightforward session. Longer for a brand campaign, which may need usage terms agreed first.",
@@ -699,7 +740,9 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
       },
     ],
     confirm: [
-      "PRICE. Nothing set for sessions, half-days or full days.",
+      "PRICE OF A PRODUCED SESSION. Nothing set for sessions, half-days or full days. The ROOFTOP is now set ($150 an hour, October 2026 brief) and that is a different figure: photography, video, talent, wardrobe, makeup, decoration and production assistance are all still quoted case by case.",
+      "THE PREPARATION ROOM. The owner named a five-star hotel room for changing and said in the same brief that its inclusion conditions must be verified and not assumed for every booking. Until they are, the page offers to check it per booking.",
+      "CANCELLATION, REFUNDS AND OVERTIME for a commercial rooftop booking. None set, and the brief explicitly forbade inventing them.",
       "What the standard delivery actually is: how many edited images, and in what time.",
       "COMMERCIAL USAGE is deliberately not advertised as a standard offering (owner's rule, October 2026): these enquiries are handled individually. Standard usage terms could still be drafted so the case-by-case answer starts from something rather than nothing.",
       "Whether hair and makeup is a reliable supplier.",
@@ -741,6 +784,8 @@ export const flyingDressExperiences: FlyingDressExperience[] = [
     // custom quote") for the SPACE. It does not price the production services,
     // which is why the confirm list below still carries that question.
     pricing: { kind: "hourly", fromUsd: 150, unit: "hour" },
+    priceConfirmedBy:
+      "Owner's October 2026 brief: the rooftop is $150 an hour. The production services on top of it are not priced, which is the open question the confirm list still carries.",
     durationNote:
       "Most sessions are built around one hour of usable light. The shoot around it is longer.",
     locationNote: ROOFTOP_LOCATION_NOTE,
