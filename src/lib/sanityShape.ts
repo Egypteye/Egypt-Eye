@@ -83,6 +83,13 @@ export function hardenTour(tour: Tour, local?: Tour): Tour {
     included: arr(tour.included, local?.included),
     excluded: arr(tour.excluded, local?.excluded),
     faqs: arr(tour.faqs, local?.faqs),
+    // The video is a file in this repository, not a Sanity asset, so the
+    // content file is its authority and Studio has nothing to say about it.
+    // Without this line a Studio document silently replaces it with nothing,
+    // which is exactly what happened the first time these shipped: the files
+    // deployed and served, and the <video> never rendered on any tour that
+    // had a Studio document.
+    video: tour.video ?? local?.video,
     relatedExperiences: tour.relatedExperiences?.map((e) => hardenExperience(e)),
   };
 }

@@ -69,6 +69,26 @@ export type PageSeo = {
   noindex?: boolean;
 };
 
+export type TourVideo = {
+  /** Path under /public. H.264 MP4, faststart, so playback starts before it downloads. */
+  src: string;
+  /**
+   * VP9/WebM of the same clip, offered first.
+   *
+   * Not belt-and-braces: H.264 is patent-encumbered and Chromium builds
+   * ship without the decoder. A headless Chromium on this project reports
+   * canPlayType('video/mp4; codecs="avc1..."') as "" and VP9 as "probably" -
+   * for that browser the MP4 streams fine and simply never decodes.
+   */
+  srcWebm: string;
+  /** A real frame from the video. Shown until someone presses play, and the only thing fetched before then. */
+  poster: string;
+  /** What a screen reader is told the video is. Not a transcript - see the note in TourVideoPanel. */
+  alt: string;
+  /** Whole seconds, for the label. */
+  durationSeconds: number;
+};
+
 export type Tour = {
   slug: string;
   title: string;
@@ -98,6 +118,14 @@ export type Tour = {
   highlights: string[];
   included: string[];
   excluded: string[];
+  /**
+   * A short vertical video of someone describing this tour.
+   *
+   * Shot 9:16 for social and reused here, which is why the player is portrait
+   * rather than letterboxed into a 16:9 frame. Optional, and most tours have
+   * none: the page is complete without it.
+   */
+  video?: TourVideo;
   itinerary?: ItineraryDay[];
   relatedExperiences?: Experience[];
   price: Price;
