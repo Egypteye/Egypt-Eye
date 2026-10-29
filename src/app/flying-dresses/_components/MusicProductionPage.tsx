@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Scene } from "./Scene";
 import { FaqList } from "./FaqList";
 import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
+import { ProductionReel } from "./ProductionReel";
 import { MusicSetups } from "./MusicSetups";
 import { agency } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
@@ -15,6 +16,7 @@ import {
   musicSteps,
   musicVenue,
   notSupplied,
+  productionClips,
   prepare,
   productionServices,
   rooftopRate,
@@ -62,13 +64,19 @@ import {
  * =========================================================================
  * THE PHOTOGRAPHS
  * =========================================================================
- * There is no photograph of a DJ, a set, decks or a stage anywhere in this
- * repository. Not one. So the gallery shows the real rooftop frames, which
- * genuinely answer the question a DJ arrives with (what does the roof look
- * like, what is the light, how much of the skyline do I get), and the frames
- * that do not exist render as the brand's designed, labelled gaps naming the
- * shot that is missing. Never a stock photograph, and never somebody else's
- * set. docs/FLYING-DRESSES-MUSIC-PAGE.md lists what is needed.
+ * THIS USED TO READ: "there is no photograph of a DJ, a set, decks or a stage
+ * anywhere in this repository. Not one." That stopped being true on 29 October
+ * 2026, when the owner delivered a real production filmed on this roof: an
+ * artist behind Pioneer decks, speakers, a camera rig on tripods, shot through
+ * golden hour into the dark.
+ *
+ * So the page now leads with FOUR VERTICAL CLIPS of that session, directly
+ * under the hero, because they are the only thing here that proves the rest.
+ * The gallery keeps its discipline: one frame is the real set and says so,
+ * three are the same roof on other occasions and each caption names which, and
+ * the one shot still genuinely missing is still a labelled gap rather than a
+ * borrowed photograph. Never a stock image, and never somebody else's set.
+ * docs/FLYING-DRESSES-MUSIC-PAGE.md lists what is still needed.
  */
 
 function StatusTag({ status }: { status: ServiceStatus }) {
@@ -110,27 +118,17 @@ function galleryFrames(): GalleryFrame[] {
       caption:
         "An evening setup this team lit and built on the same roof, after dark. Photographed at a gender reveal.",
     },
+    /* THE FIRST REAL ONE. October 2026: an actual set on this roof, which is
+       what the four labelled gaps above it used to be waiting for. */
+    {
+      slot: agency.productionDecks,
+      span: "pair",
+      caption:
+        "Decks, mixer and the plateau behind them. Photographed at a music production on this roof, October 2026.",
+    },
   ];
 
   const gaps: { wanted: string; alt: string; span: GalleryFrame["span"]; caption: string }[] = [
-    {
-      span: "pair",
-      wanted: "A DJ behind the equipment, pyramids on the skyline",
-      alt: "A DJ performing behind their equipment on the rooftop with the Pyramids of Giza on the skyline behind them",
-      caption: "The shot this page is really for. We have not photographed one yet.",
-    },
-    {
-      span: "pair",
-      wanted: "The filming setup, mid-session",
-      alt: "The camera and lighting setup on the rooftop during a music session, shot from behind the crew",
-      caption: "Behind the scenes: the rig, the positions, the crew working.",
-    },
-    {
-      span: "pair",
-      wanted: "Equipment detail, hands on the controller",
-      alt: "A close frame of a DJ controller and hands on the faders, lit for filming on the rooftop",
-      caption: "The close cutaway an edit needs.",
-    },
     {
       span: "pair",
       wanted: "An artist portrait on the roof",
@@ -225,6 +223,17 @@ export function MusicProductionPage({
       ) : null}
 
       {/* ---------------------------------------------------------------
+          THE FOOTAGE. It sits directly under the hero because it is the
+          only thing on this page that PROVES the rest. Everything above
+          it is a claim; this is a set actually filmed on this roof.
+          --------------------------------------------------------------- */}
+      <ProductionReel
+        clips={productionClips}
+        heading="A set, filmed on this roof"
+        intro="Our own footage from a music production here: an artist behind the decks, filmed with a camera rig across one evening, golden hour into the dark. The clips are silent because the original audio is the artist's own set."
+      />
+
+      {/* ---------------------------------------------------------------
           B + 4. THE RATE, AND WHAT IT IS NOT. One section, because the
           hourly rate only means something next to the list of what sits
           outside it. Competitors blur this; the clearest venues in the
@@ -263,7 +272,7 @@ export function MusicProductionPage({
       <PhotoGallery
         frames={frames}
         heading="The roof, and the shots we are still missing"
-        intro="We have not filmed a DJ set on this roof yet, so none of the photographs below is one, and each says what it actually is. What they show is the thing you are really booking: the width of the roof, the skyline, and the light at golden hour and after dark. The labelled frames are the shots we want and do not have, left visible rather than filled with somebody else's."
+        intro="One of these is a real set on this roof, photographed at a music production in October 2026. The rest are the same roof on other occasions, and each caption says which is which. What they all show is the thing you are really booking: the width of the roof, the skyline, and the light at golden hour and after dark. The labelled frames are shots we still want and do not have, left visible rather than filled with somebody else's."
       />
 
       {/* ---------------------------------------------------------------

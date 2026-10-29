@@ -389,3 +389,95 @@ export const musicFaqs: MusicFaq[] = [
       "Send us the date, the hours and what you are planning. We put the request to the venue, which takes three to four weeks for a music session because it needs their agreement in writing. The quotation comes back covering the rooftop hours and any production you asked for. Nothing is held until that is agreed and the venue has said yes.",
   },
 ];
+
+// ---------------------------------------------------------------------------
+// THE FOOTAGE. The gap this page opened with, finally closed.
+//
+// This file used to say, in the component above it, that there was no
+// photograph of a DJ, a set, decks or a stage anywhere in this repository.
+// Not one. The gallery was built around that absence: real rooftop frames
+// from other occasions, honestly captioned, plus four labelled gaps naming
+// the shots nobody had taken.
+//
+// On 29 October 2026 the owner delivered them. A real commercial production
+// on this exact roof: an artist behind Pioneer decks, speakers, a camera rig
+// on tripods, shot through golden hour into the dark. Seven vertical phone
+// clips, a GoPro cut, a camera cut and two stills.
+//
+// Four vertical clips are cut from that delivery here. They were briefly put
+// on the CREATOR page, which was the wrong page: a DJ set is not evidence a
+// fashion label is looking for, and this site already has a complete page for
+// DJs and music. The owner said so, and they moved here.
+//
+// EVERY ONE IS SILENT, and not merely muted. The session is a live DJ set, so
+// the original audio is someone else's recorded music; the track is absent
+// from the files rather than turned down in the player, because a muted
+// <video> still ships the soundtrack to every visitor. A check reads the hdlr
+// boxes and fails on a clip that carries sound.
+//
+// Declared here rather than inside the component so the check script can
+// confirm every file is really in public/ and that the posters exist.
+// ---------------------------------------------------------------------------
+
+export type ProductionClip = {
+  id: string;
+  mp4: string;
+  webm: string;
+  poster: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption: string;
+};
+
+const CLIP_DIR = "/brand/flying-dresses/creators";
+
+function clip(
+  id: string,
+  width: number,
+  height: number,
+  alt: string,
+  caption: string
+): ProductionClip {
+  return {
+    id,
+    mp4: `${CLIP_DIR}/${id}.mp4`,
+    webm: `${CLIP_DIR}/${id}.webm`,
+    poster: `${CLIP_DIR}/${id}.jpg`,
+    width,
+    height,
+    alt,
+    caption,
+  };
+}
+
+export const productionClips: readonly ProductionClip[] = [
+  clip(
+    "rooftop-rig",
+    720,
+    960,
+    "The rooftop at sunset with speakers, a DJ booth and camera tripods set up, the sun going down between two pyramids",
+    "The booth, the monitors and the camera positions, with the sun dropping between the pyramids.",
+  ),
+  clip(
+    "rooftop-decks",
+    720,
+    960,
+    "An artist working at Pioneer decks on the rooftop with a pyramid and the hotel pool behind them",
+    "Behind the decks. This is the working end of the roof and the backdrop you get from it.",
+  ),
+  clip(
+    "rooftop-set",
+    720,
+    1280,
+    "A vertical frame of an artist performing on the rooftop, a pyramid on the skyline behind them",
+    "A vertical cut, framed for social. Filmed on a phone alongside the main camera.",
+  ),
+  clip(
+    "rooftop-sunset",
+    720,
+    960,
+    "An artist at the rooftop booth in the last of the light, a pyramid behind them and the sun low",
+    "The last of the light. Golden hour runs long up here, and the roof faces it.",
+  ),
+] as const;
