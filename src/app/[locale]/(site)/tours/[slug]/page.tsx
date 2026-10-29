@@ -10,6 +10,7 @@ import { ExperienceRatingLink } from "@/components/ExperienceRatingLink";
 import { AddToJourneyButton } from "@/components/AddToJourneyButton";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
+import { TourVideoPanel } from "@/components/TourVideoPanel";
 import { PhysicalLevelBar } from "@/components/PhysicalLevelBar";
 import { RouteMap } from "@/components/RouteMap";
 import { resolveStops } from "@/lib/placeCoords";
@@ -203,6 +204,21 @@ export default async function TourDetailPage({
               </ul>
             </div>
 
+            {/* The video, on a phone.
+                Placed here rather than in the sidebar because the sidebar is
+                a second grid column that stacks AFTER the whole main column -
+                so anything in it lands below the itinerary on a narrow
+                screen, which is the opposite of where this belongs. Rendered
+                twice, once per breakpoint, which is free: preload="none"
+                means the hidden copy fetches nothing, and `display: none`
+                keeps it out of the accessibility tree so nothing is
+                announced twice. */}
+            {tour.video && (
+              <div className="mt-10 lg:hidden">
+                <TourVideoPanel video={tour.video} title={tour.title} className="mx-auto max-w-[18rem]" />
+              </div>
+            )}
+
             {tour.itinerary && (
               <div id="itinerary" className="mt-10 scroll-mt-24">
                 <h2 className="font-display text-2xl font-semibold text-ink"><T>Itinerary</T></h2>
@@ -301,6 +317,22 @@ export default async function TourDetailPage({
             )}
           </div>
 
+          {/* The second column: the video, then the booking card.
+              Wrapped so both can live in one grid cell. The video sits ABOVE
+              the card and the card keeps its own sticky, which is the order
+              that works: a sticky element last in the flow pins without
+              anything sliding under it, and the card is short enough that the
+              price is still high on the page. Reversed, the card would pin
+              and the video would scroll up into it. */}
+          <div>
+            {tour.video && (
+              <TourVideoPanel
+                video={tour.video}
+                title={tour.title}
+                className="mb-6 hidden w-full max-w-[15rem] lg:block"
+              />
+            )}
+
           {/* Booking sidebar */}
           <aside className="h-fit rounded-2xl border border-black/5 bg-cream p-6 shadow-sm lg:sticky lg:top-24">
             <PriceTag price={tour.price} />
@@ -337,6 +369,7 @@ export default async function TourDetailPage({
               </p>
             </div>
           </aside>
+          </div>
         </Container>
       </section>
 

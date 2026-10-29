@@ -17,6 +17,13 @@ function experiencesBySlug(...slugs: string[]) {
 export const tours: Tour[] = [
   {
     slug: "cairo-giza-nile-cruise-signature-trip",
+    video: {
+      src: "/videos/tours/cairo-giza-nile-cruise.mp4",
+      poster: "/videos/tours/cairo-giza-nile-cruise-poster.jpg",
+      alt:
+        "A guide from Egypt Eye describing the Cairo, Giza and Nile cruise signature trip to camera, seated in the office in front of an Egyptian mural.",
+      durationSeconds: 30,
+    },
     physicalLevel: {
       tier: "moderate",
       note:
@@ -115,6 +122,13 @@ export const tours: Tour[] = [
   },
   {
     slug: "1-day-giza-tour",
+    video: {
+      src: "/videos/tours/1-day-giza.mp4",
+      poster: "/videos/tours/1-day-giza-poster.jpg",
+      alt:
+        "A guide from Egypt Eye describing the one-day Giza tour to camera, seated in the office in front of an Egyptian mural.",
+      durationSeconds: 30,
+    },
     physicalLevel: {
       tier: "moderate",
       note:
@@ -162,6 +176,13 @@ export const tours: Tour[] = [
   },
   {
     slug: "fayoum-nature-tour",
+    video: {
+      src: "/videos/tours/fayoum-nature.mp4",
+      poster: "/videos/tours/fayoum-nature-poster.jpg",
+      alt:
+        "A guide from Egypt Eye describing the Fayoum nature tour to camera, seated in the office in front of an Egyptian mural.",
+      durationSeconds: 30,
+    },
     physicalLevel: {
       tier: "moderate",
       note:
@@ -235,6 +256,13 @@ export const tours: Tour[] = [
   },
   {
     slug: "3-day-cairo-giza",
+    video: {
+      src: "/videos/tours/3-day-cairo-giza.mp4",
+      poster: "/videos/tours/3-day-cairo-giza-poster.jpg",
+      alt:
+        "A guide from Egypt Eye describing the three-day Cairo and Giza excursion to camera, seated in the office in front of an Egyptian mural.",
+      durationSeconds: 30,
+    },
     physicalLevel: {
       tier: "moderate",
       note:
