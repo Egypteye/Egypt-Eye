@@ -23,6 +23,28 @@
  *                       carry C2PA provenance naming OpenAI, so this is not a
  *                       judgement call — it is in the bytes, and a slot that
  *                       said "agency" would be contradicted by its own file.
+ *   kind: "reference"   a generated SCENE, commissioned and art-directed by
+ *                       the owner against a real location and a real
+ *                       offering. Distinct from "styled", which means a real
+ *                       photographed product placed in a generated setting:
+ *                       here nothing in the frame is claimed as a photograph
+ *                       of anything. The owner builds these from their own
+ *                       reference of the roof, the view and the wardrobe, and
+ *                       takes responsibility for delivering what they show.
+ *
+ *                       WHAT THEY MAY AND MAY NOT DO. They may illustrate
+ *                       what a session produces. They may never stand as
+ *                       evidence that it already has, never appear in a
+ *                       gallery of client work, and never carry a caption
+ *                       naming a shoot, a customer or a date. Every one
+ *                       renders with a visible credit saying it is generated.
+ *
+ *                       It exists because the alternative was worse in both
+ *                       directions: filing them as "agency" would be the one
+ *                       promotion this file says nobody may make quietly, and
+ *                       refusing them outright would throw away imagery the
+ *                       owner art-directed for exactly this purpose.
+ *
  *   kind: "empty"       no photograph exists. Renders as a designed, labelled
  *                       slot (components/Scene.tsx), never as a stock photo.
  *
@@ -37,7 +59,7 @@
  */
 
 export type ImageSlot = {
-  kind: "agency" | "location" | "styled" | "empty";
+  kind: "agency" | "location" | "styled" | "reference" | "empty";
   /** null only when kind is "empty". */
   src: string | null;
   /** Describes the image to someone who cannot see it. */
@@ -539,6 +561,63 @@ export const location = {
  *
  * Keyed by ExperienceCategoryId. Missing is the normal case.
  */
+/**
+ * Generated scenes the owner art-directed, for the commercial shoots page.
+ *
+ * Supplied October 2026 in the Drive library's own "Creator, editorial and
+ * brand shoots" folder, and the owner was explicit about them: they are built
+ * with careful reference to the real roof, the real view and the real
+ * wardrobe, and delivering what they show is the business's responsibility.
+ *
+ * All four are 1536x1024 and their source files carry C2PA provenance naming
+ * OpenAI, "gpt-image" and "trainedAlgorithmicMedia". That is not a judgement
+ * call, it is in the bytes, which is exactly why they are filed here and not
+ * as agency work. (The served JPEGs lose the C2PA box in conversion, the same
+ * way the dress-rental composite does. The provenance record is this file.)
+ *
+ * WHAT THEY ARE FOR. The creator page sells a LOCATION and a set of services,
+ * to brands planning a shoot that has not happened yet. An illustration of
+ * what the roof produces is a legitimate thing to show them, in the way an
+ * architect's render is. What it must never become is a portfolio: not one of
+ * these may be captioned as a client session, given a date, or placed in a
+ * gallery of real work. scripts/check-flying-dresses.mts enforces the credit;
+ * the rest is editorial discipline on whoever writes the captions.
+ */
+export const reference = {
+  creatorPortrait: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/creator-rooftop-portrait.jpg",
+    alt: "A woman in a cream two-piece seated on a kilim-covered rooftop daybed at golden hour, three pyramids of the Giza plateau behind her",
+    width: 1536,
+    height: 1024,
+    credit: "Generated scene, art-directed from our own rooftop and wardrobe. Not a photograph of a client session.",
+  }),
+  creatorCouple: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/creator-rooftop-couple.jpg",
+    alt: "A couple in cream linen reclining together on the rooftop daybed at golden hour with the pyramids behind them",
+    width: 1536,
+    height: 1024,
+    credit: "Generated scene, art-directed from our own rooftop and wardrobe. Not a photograph of a client session.",
+  }),
+  creatorLinen: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/creator-rooftop-linen.jpg",
+    alt: "A woman in an open cream linen shirt and wide trousers reclining on the rooftop daybed, the pyramids across the skyline behind her",
+    width: 1536,
+    height: 1024,
+    credit: "Generated scene, art-directed from our own rooftop and wardrobe. Not a photograph of a client session.",
+  }),
+  creatorWorking: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/creator-rooftop-working.jpg",
+    alt: "A woman working on the rooftop daybed with a laptop, notebook and coffee, the pyramids behind her at golden hour",
+    width: 1536,
+    height: 1024,
+    credit: "Generated scene, art-directed from our own rooftop and wardrobe. Not a photograph of a client session.",
+  }),
+};
+
 export const categoryPhoto: Partial<Record<string, ImageSlot>> = {
   // Each of these is GENUINELY the occasion its category sells, which is the
   // bar for appearing here: the route renders this frame large, at the top,
@@ -645,6 +724,7 @@ export const wardrobeLineup = slot({
 export const allSlots: Record<string, ImageSlot> = {
   ...agency,
   ...location,
+  ...reference,
   ...empty,
   wardrobeLineup,
 };

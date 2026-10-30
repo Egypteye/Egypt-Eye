@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Scene } from "./Scene";
 import { FaqList } from "./FaqList";
-import { ProductionReel } from "./ProductionReel";
-import { agency } from "../_lib/assets";
+import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
+import { reference } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 import { mergeFaqs } from "@/content/flyingDressExperiences";
 import {
@@ -18,7 +18,6 @@ import {
   hourlyDisplay,
   limits,
   optionalServices,
-  productionClips,
   rooftopAccess,
 } from "@/content/flyingDressCreators";
 
@@ -65,15 +64,61 @@ import {
  * owner changing the rate, and the check script fails on one.
  */
 
+
+/**
+ * The four art-directed scenes, as gallery frames.
+ *
+ * ALL FOUR ARE GENERATED and each carries its slot's credit into the caption,
+ * so the provenance note is attached to the picture rather than living only in
+ * the section intro. A reader who scrolls past the intro still sees it.
+ *
+ * There are no labelled gaps here, which is a departure from the music and
+ * proposal galleries. Those pages sell an occasion they have photographed less
+ * often than they would like, so a named absence is the honest filler. This
+ * page sells a LOCATION, and the roof is not missing: it is on the celebration
+ * pages in quantity. What this gallery adds is what the roof looks like set up
+ * for a commercial shoot, which is a different question.
+ */
+function galleryFrames(): GalleryFrame[] {
+  const entries: { slot: (typeof reference)[keyof typeof reference]; span: GalleryFrame["span"]; caption: string }[] = [
+    {
+      slot: reference.creatorCouple,
+      span: "lead",
+      caption: "Two-up on the daybed at golden hour, which is the hour most shoots here are built around.",
+    },
+    {
+      slot: reference.creatorLinen,
+      span: "pair",
+      caption: "Soft neutrals against the plateau: the palette this light flatters most.",
+    },
+    {
+      slot: reference.creatorWorking,
+      span: "pair",
+      caption: "The content-day setup, for a creator shooting their own desk against the skyline.",
+    },
+  ];
+
+  return entries
+    .filter((e) => typeof e.slot.src === "string" && e.slot.src.length > 0)
+    .map((e) => ({
+      src: e.slot.src as string,
+      alt: e.slot.alt,
+      width: e.slot.width,
+      height: e.slot.height,
+      span: e.span,
+      // The credit is appended rather than replaced: the caption says what the
+      // frame shows, the credit says what it is. Both, on every frame.
+      caption: e.slot.credit ? `${e.caption} ${e.slot.credit}` : e.caption,
+    }));
+}
+
 export function CreatorShootsPage({
   experience,
 }: {
   experience: { faqs: { question: string; answer: string }[] };
 }) {
-  // The only still from the production delivery that is publishable today.
-  // The wide deck frame carried the venue's wordmark and is withheld until
-  // the owner releases the venue name: see _lib/assets.ts.
-  const hero = agency.productionDecks;
+  const hero = reference.creatorPortrait;
+  const frames = galleryFrames();
   const enquire = fdPath("/enquire?experience=creator-session");
 
   return (
@@ -168,12 +213,12 @@ export function CreatorShootsPage({
       </section>
 
       {/* ---------------------------------------------------------------
-          3. THE FOOTAGE. Everything above this is a claim until here.
+          3. WHAT THE ROOF PRODUCES.
           --------------------------------------------------------------- */}
-      <ProductionReel
-        clips={productionClips}
-        heading="A production, on this roof, filmed as it ran"
-        intro="These are our own clips from a commercial shoot on this rooftop: a live set, filmed with a camera rig across one evening. It was a music production rather than a brand campaign, so take it for what it is, which is the thing worth proving. A crew loaded in, built a set, lit it and worked through golden hour into the dark on this roof. They are silent because the original audio is the artist's set."
+      <PhotoGallery
+        frames={frames}
+        heading="What the setting looks like"
+        intro="These four are generated scenes, art-directed from our own rooftop, the real skyline and the wardrobe we hold. They are here to show what the location gives you, the way a render shows a building that has not been photographed yet. NONE of them is a client session, none is a past campaign, and every one says so under it. The work we have actually photographed is on the celebration and photoshoot pages, where it is captioned as what it is."
       />
 
       {/* ---------------------------------------------------------------

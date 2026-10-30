@@ -72,7 +72,6 @@ import {
   discountedHourCents,
   firstHourCents,
   optionalServices,
-  productionClips,
   rooftopAccess,
   rooftopQuote,
 } from "../src/content/flyingDressCreators.js";
@@ -112,6 +111,7 @@ import {
   RATE_TOKENS,
 } from "../src/content/flyingDressRates.js";
 import {
+  productionClips,
   audioRecording,
   musicSetups,
   notSupplied,
@@ -3880,6 +3880,51 @@ for (const [name, slot] of Object.entries(allSlots)) {
   );
 }
 
+// A GENERATED SCENE SAYS SO, AND MAY NEVER CLAIM A CLIENT.
+//
+// kind:"reference" was added in October 2026 for the commercial shoots page.
+// The owner art-directs these from their own roof, their own view and their
+// own wardrobe, and takes responsibility for delivering what they show. They
+// are legitimate for illustrating a LOCATION to a brand planning a shoot that
+// has not happened yet, in the way a render illustrates a building.
+//
+// What they must never be is a portfolio. The whole risk of this kind is that
+// a generated scene is persuasive enough to read as proof of past work, and
+// on a photography site that is the worst thing the code can say.
+//
+// So the kind earns itself the same way "styled" does: a credit, saying it is
+// generated, on every one. And one rule "styled" does not need, because a
+// product composite is not mistakable for a client session the way a whole
+// generated scene is: the credit must also deny the client claim outright.
+//
+// PROVEN by removing the credit from creatorPortrait (red), by writing a
+// credit that says only "art-directed in house" with no mention of generation
+// (red), by dropping the "not a photograph" sentence (red), and by changing
+// one slot's kind to "agency" (red, on the agency allow-list guard above).
+for (const [name, slot] of Object.entries(allSlots)) {
+  if (slot.kind !== "reference") continue;
+  ok(
+    `the reference slot "${name}" carries no credit, so a generated scene renders with nothing saying so`,
+    typeof slot.credit === "string" && slot.credit.trim().length > 20
+  );
+  ok(
+    `the reference slot "${name}" has a credit that never says the image is generated`,
+    /generated/i.test(slot.credit ?? "")
+  );
+  ok(
+    `the reference slot "${name}" does not deny being client work. A generated scene on a photography site reads as a past session unless its credit says otherwise`,
+    /not a photograph|not a client|no client/i.test(slot.credit ?? "")
+  );
+  ok(
+    `the reference slot "${name}" has no image, which is what kind:"empty" is for`,
+    typeof slot.src === "string" && slot.src.length > 0
+  );
+  ok(
+    `the reference slot "${name}" names a shoot, a customer or a date in its alt text, which is the caption a generated scene may never carry`,
+    !/\bshoot\b|\bsession\b|client|October|September|wedding of/i.test(slot.alt)
+  );
+}
+
 // AND THE CREDIT HAS TO REACH THE PAGE.
 //
 // The three assertions above check the DATA, and the first version of this
@@ -5504,12 +5549,23 @@ ok(
       "an empty box and it miscounts how many frames there are",
     /frames=\{real\}/.test(musicGallery)
   );
+  // THE FOUR GAPS ARE NOW ONE, AND THAT IS A REAL CHANGE RATHER THAN A
+  // DELETION. This block used to require exactly four labelled gaps and an
+  // intro saying no DJ set had ever been filmed on this roof, because none
+  // had. In October 2026 the owner delivered a real production: four vertical
+  // clips and a frame of the decks with the plateau behind them.
+  //
+  // So three of the four gaps are filled by actual footage and are gone. The
+  // remaining one is still genuinely missing and still named. The rule the
+  // block was written to enforce has not been relaxed: a gap may only
+  // disappear because the photograph now EXISTS, which is why the count below
+  // moved in lockstep with the clip guards that prove the files are there.
   {
     const gaps = [...musicPage.matchAll(/wanted:\s*\n?\s*"((?:[^"\\]|\\.)*)"/g)].map((m) => m[1]);
     ok(
-      `the music gallery declares ${gaps.length} labelled gaps rather than the four shots it is ` +
-        "missing. Deleting one does not get the photograph taken; it hides that it is needed.",
-      gaps.length === 4
+      `the music gallery declares ${gaps.length} labelled gaps rather than the one shot it is ` +
+        "still missing. Deleting one does not get the photograph taken; it hides that it is needed.",
+      gaps.length === 1
     );
     for (const gap of gaps) {
       ok(
@@ -5525,14 +5581,44 @@ ok(
     const real = captions.filter((c) => /Photographed at|flying-dress session/i.test(c));
     ok(
       `only ${real.length} of the music gallery's real frames name the occasion they were ` +
-        "photographed at. None of them is a music session, and a visitor must not have to guess.",
-      real.length === 3
+        "photographed at. Three of the four are from other occasions, and a visitor must not " +
+        "have to guess which.",
+      real.length === 4
     );
   }
+  // The intro's duty flipped with the facts. It used to have to admit there
+  // was no DJ footage; now it has to tell the visitor WHICH frame is the real
+  // set, because three of the four beside it are from other occasions and a
+  // gallery that does not say so reads as a music portfolio four times the
+  // size of the real one.
   ok(
-    "the music gallery intro no longer tells the visitor that we have not filmed a DJ set on " +
-      "this roof yet",
-    /not filmed a DJ set on this roof yet/i.test(musicPage)
+    "the music gallery intro no longer identifies which frame is the real set, so three frames " +
+      "from other occasions read as music-session photography",
+    /real set on this roof/i.test(musicPage)
+  );
+  ok(
+    "the music page no longer shows the rooftop production clips, which are the only moving " +
+      "evidence this service has that a set has been filmed here",
+    /<ProductionReel/.test(musicPage) && /productionClips/.test(musicPage)
+  );
+  // THE CAPTION AND THE SLOT HAVE TO BE THE SAME PHOTOGRAPH.
+  //
+  // Found by break-testing: swapping agency.productionDecks for
+  // agency.heroRooftop left every other guard green, because the caption
+  // count did not change and the caption text was not touched. The result
+  // would have been a flying-dress group portrait captioned "Photographed at
+  // a music production on this roof, October 2026" — a fabricated claim about
+  // a client shoot, produced by a one-word edit, with the whole gallery
+  // discipline still nominally passing.
+  //
+  // So the one caption that claims a music production is pinned to the one
+  // slot that is one. Proven by making exactly that swap (red).
+  ok(
+    'the music gallery\'s "music production" caption is attached to a frame that is not the ' +
+      "production photograph. That caption on any other slot invents a client session.",
+    /slot:\s*agency\.productionDecks,\s*\n\s*span:[^\n]*\n\s*caption:\s*\n?\s*"[^"]*music production[^"]*"/.test(
+      musicPage
+    )
   );
 
   // ---- The setup catalogue, whenever it fills up. --------------------
@@ -6688,6 +6774,12 @@ ok(
 
   // 8. THE FOOTAGE IS REALLY THERE, AND REALLY SILENT.
   //
+  // THE CLIPS LIVE ON THE MUSIC PAGE, NOT THIS ONE. They were briefly put on
+  // the creator page, which was the wrong page: a DJ set is not the evidence
+  // a fashion label or an agency is looking for, and this site already has a
+  // complete page for DJs and music. The owner said so and they moved. The
+  // guards travelled with them and now read the music component.
+  //
   // Each clip claims three files. A path typo would render a dead poster and
   // a video that never starts, and nothing else would notice.
   //
@@ -6785,7 +6877,43 @@ ok(
     }
   }
 
-  // 10. THE PAGE IS ACTUALLY WIRED UP.
+  // 10. THE DJ FOOTAGE IS ON THE DJ PAGE, AND NOT ON THIS ONE.
+  //
+  // Proven by putting <ProductionReel> back into CreatorShootsPage (red) and
+  // by removing it from MusicProductionPage (red).
+  {
+    const musicSrc = stripComments(
+      readFileSync("src/app/flying-dresses/_components/MusicProductionPage.tsx", "utf8")
+    );
+    ok(
+      "the rooftop production clips are not on the music page, which is the page that sells a filmed DJ set",
+      /<ProductionReel/.test(musicSrc) && /productionClips/.test(musicSrc)
+    );
+    ok(
+      "the DJ production clips are back on the creator page. A filmed DJ set is not the evidence a fashion label or an agency is looking for, and the DJ page already exists",
+      !/<ProductionReel/.test(stripComments(pageSrc))
+    );
+  }
+
+  // 11. THE GENERATED SCENES ARE LABELLED WHEREVER THEY APPEAR.
+  //
+  // The creator page is the only page on this site built around kind
+  // "reference" imagery. The slot-level guards below this block require the
+  // credit; this one requires the PAGE to render it, because a credit nothing
+  // prints is a note to ourselves.
+  //
+  // Proven by dropping the credit from the gallery caption builder (red) and
+  // by removing the Scene credit prop from the hero (red).
+  ok(
+    "the creator page renders a generated scene without its credit reaching the page",
+    /credit=\{hero\.credit\}/.test(pageSrc) && /slot\.credit/.test(pageSrc)
+  );
+  ok(
+    "the creator page gallery intro no longer says the scenes are generated, so four art-directed images read as a portfolio of past client work",
+    /generated scenes/i.test(pageSrc)
+  );
+
+  // 12. THE PAGE IS ACTUALLY WIRED UP.
   //
   // The composition can be perfect and unreachable. Proven by reverting the
   // route to render ExperienceDetail for this category (red).
@@ -6813,7 +6941,7 @@ console.log(
     `${rentalServices.length} hire services none of which can carry a price, ` +
     `${FLYING_DRESS_COLLECTION.length} dresses and ${MENS_OUTFITS.length} gawns from one shared wardrobe, ` +
     `${Object.values(allSlots).filter((s) => s.kind === "agency" || s.kind === "location").length} ` +
-    `photographs and ${Object.values(allSlots).filter((s) => s.kind === "styled").length} styled ` +
+    `photographs, ${Object.values(allSlots).filter((s) => s.kind === "reference").length} credited generated scenes and ${Object.values(allSlots).filter((s) => s.kind === "styled").length} styled ` +
     `composites all present, ${Object.values(allSlots).filter((s) => s.kind === "empty").length} ` +
     "labelled gaps, " +
     `${flyingDressStories.length} stories none of which duplicate a slug on egypteyetravel.com, ` +

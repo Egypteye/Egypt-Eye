@@ -30,27 +30,47 @@ services, the two things we will not do, the seven steps, eleven questions.
 
 ---
 
-## 2. The videos
+## 2. The pictures, and where the videos went
 
-Four vertical clips from the rooftop production in your Drive folder, cut to
-about twelve seconds each and compressed for the web.
+**The DJ footage moved to the DJ page.** You were right: a filmed DJ set is not
+the evidence a fashion label or an agency is looking for, and
+`/creative/dj-and-music` already sells exactly that.
 
-**They have no sound, and that is deliberate.** The original audio is a live DJ
-set, which is somebody else's recorded music. Publishing it would be publishing
-their track. The audio is not turned down in the player, it is not in the files
-at all, and a check fails if a clip with sound ever gets added.
+It has gone somewhere useful. That page used to say, in its own code, that
+there was no photograph of a DJ, a set, decks or a stage anywhere on this site.
+Not one. Its gallery was built around four labelled gaps naming the shots
+nobody had taken. Your footage closed three of them. The DJ page now opens with
+four vertical clips right under the hero, plus a still of the decks with the
+plateau behind, and one gap is left because that shot genuinely does not exist
+yet.
 
-They also cost a visitor nothing until they scroll to them. Four files at over a
-megabyte each would be a real bill on a phone, so nothing downloads until the
-clips are nearly on screen, and nothing plays for somebody whose phone has asked
-for reduced motion or data saving.
+**The creator page now uses your four art-directed images** from the Drive
+folder's own "Creator, editorial and brand shoots" directory: the solo portrait,
+the couple, the linen look and the creator working with a laptop. One is the
+hero, three are a gallery.
 
-Of the nine clips you sent, these four were chosen: the wide rig at sunset, the
-decks with the plateau behind, the true vertical cut, and the last of the light.
-The two landscape cuts (GoPro and the camera file) were left out because the
-page is built around vertical and they are both small and soft.
+They are filed under a provenance kind built for them. The site already had
+"agency" (your real client work), "location" (real Egypt photography), "styled"
+(a real photographed product in a generated setting) and "empty" (a labelled
+gap). None of those fitted a whole scene you art-directed, so there is now a
+fifth, **"reference"**, and the rules that come with it are:
 
----
+- Every one carries a visible credit, printed under the picture: *"Generated
+  scene, art-directed from our own rooftop and wardrobe. Not a photograph of a
+  client session."*
+- None may ever be captioned with a shoot, a customer or a date.
+- None may appear in a gallery of real client work.
+
+Automated checks enforce all three. That is what lets the page use them
+confidently: a brand reading it is told plainly what it is looking at, so the
+images illustrate the location the way a render illustrates a building, and
+your real photographed work on the celebration and photoshoot pages keeps its
+separate, stronger claim.
+
+**About the clips' sound.** They have none, deliberately. The original audio is
+a live DJ set, which is somebody else's recorded music. It is not turned down
+in the player, it is not in the files at all, and a check fails if a clip with
+sound is ever added.
 
 ## 3. Three things I need you to decide
 
@@ -59,7 +79,7 @@ page is built around vertical and they are both small and soft.
 This is the one that needs you.
 
 Your rooftop photographs show **the hotel's name on the railing**, large and
-perfectly legible in one of them, and readable in parts of one video clip.
+perfectly legible in one of them, and readable in parts of one video clip (now on the DJ page).
 
 In the Studio, the switch for publishing the venue's name is **off**, because
 naming the hotel publicly is a claim about their business as well as yours and
