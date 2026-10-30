@@ -12,6 +12,7 @@ import { HostCard } from "@/components/HostCard";
 import { TestimonialCard } from "@/components/TestimonialCard";
 import { FaqAccordion } from "@/components/FaqAccordion";
 import { StoryCard } from "@/components/StoryCard";
+import { IllustrationGallery } from "@/components/IllustrationGallery";
 import { EnquiryButton } from "@/components/EnquiryButton";
 import { whatsappHref as buildWhatsAppHref } from "@/lib/whatsapp";
 import {
@@ -19,6 +20,7 @@ import {
   getSignatureExperienceBySlug,
   getSiteSettings,
 } from "@/sanity/fetchers";
+import { illustrationGalleries } from "@/content/illustrations";
 import { getLocale } from "@/i18n/dictionary";
 import { breadcrumbJsonLd, faqJsonLd, resolveMetadata, touristTripJsonLd } from "@/content/seo";
 import { T, trAll } from "@/i18n/T";
@@ -63,6 +65,12 @@ export default async function SignatureExperienceDetailPage({
 }) {
   const ui = await trAll([
     "A Journey Through Your Days",
+    // The illustration gallery's three strings. They go through trAll like
+    // every other label because a disclosure a visitor cannot read is not a
+    // disclosure — an Arabic or Spanish reader must get it in their language.
+    "AI illustration",
+    "Inside the Grand Egyptian Museum",
+    "Your day includes a visit here. These are AI illustrations of the museum's spaces, not photographs of it, and not a record of your day. Every other photograph on this site is real.",
     "From Past Guests",
     "Good to Know",
     "In Their Words",
@@ -95,6 +103,8 @@ export default async function SignatureExperienceDetailPage({
       : "Hi! I'd love to know more about this experience.",
   });
   const ctaLabel = isComingSoon ? ui["Ask to Be Notified"] : ui["Enquire About This Experience"];
+  // Keyed by slug in the repo, so a Studio document cannot empty it.
+  const galleryIllustrations = illustrationGalleries[slug] ?? [];
 
   const breadcrumbs = breadcrumbJsonLd([
     { name: "Signature Experiences", path: "/signature-experiences" },
@@ -226,6 +236,30 @@ export default async function SignatureExperienceDetailPage({
             </Reveal>
             <Reveal delay={100} className="mt-10">
               <Itinerary days={experience.itineraryDays} />
+            </Reveal>
+          </Container>
+        </section>
+      )}
+
+      {/* Generated illustrations of the Grand Egyptian Museum.
+          Published at the owner's explicit decision, labelled on every frame.
+          The registry is keyed by slug and lives in the repo, not in Sanity,
+          so a Studio document for this experience cannot replace or silently
+          empty it — see CLAUDE.md #3. */}
+      {galleryIllustrations.length > 0 && (
+        <section className="py-20">
+          <Container>
+            <Reveal>
+              <IllustrationGallery
+                illustrations={galleryIllustrations}
+                heading={ui["Inside the Grand Egyptian Museum"]}
+                label={ui["AI illustration"]}
+                note={
+                  ui[
+                    "Your day includes a visit here. These are AI illustrations of the museum's spaces, not photographs of it, and not a record of your day. Every other photograph on this site is real."
+                  ]
+                }
+              />
             </Reveal>
           </Container>
         </section>
