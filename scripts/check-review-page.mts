@@ -99,6 +99,31 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// 2b. The "next, on Google" steps, and their position.
+//
+// Google opens in a new tab, so the traveller is looking at Google the instant
+// the button is pressed. Anything below the button is on a tab they have left.
+// These steps therefore only work above it, and moving them down — which is a
+// perfectly reasonable-looking tidy-up in a diff — makes them invisible at the
+// one moment they could be read, with no other symptom.
+//
+// Step 2 is checked by name because it is the reason the list exists: photos
+// cannot be carried to Google by any mechanism, so telling the traveller to
+// add them there is the entire feature.
+// ---------------------------------------------------------------------------
+const stepsAt = composer.indexOf('tr("Next, on Google")');
+const buttonAt = composer.indexOf("onClick={copyAndContinue}");
+ok("the composer no longer shows the Google steps", stepsAt !== -1);
+ok(
+  "the Google steps sit below the button — Google opens in a new tab, so nothing under the button is ever read",
+  stepsAt !== -1 && buttonAt !== -1 && stepsAt < buttonAt
+);
+ok(
+  "the steps no longer tell the traveller to add photos on Google — photos cannot be transferred, so this instruction is the only way they get there",
+  /photo/i.test(composer.slice(stepsAt, buttonAt))
+);
+
+// ---------------------------------------------------------------------------
 // 3. No claim that the review was published.
 // ---------------------------------------------------------------------------
 const PUBLICATION_CLAIMS = [

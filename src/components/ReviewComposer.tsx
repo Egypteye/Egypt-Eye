@@ -177,6 +177,37 @@ export function ReviewComposer() {
         />
       </div>
 
+      {/* ------------------------------------------------------------------
+          WHY THIS SITS ABOVE THE BUTTON AND NOT BELOW IT
+
+          Google opens in a NEW TAB. The moment this button is pressed the
+          traveller is looking at Google, not at this page, so anything
+          written below the button is on a tab they have left — it may as
+          well not exist. These steps have to be read before the tap, which
+          is the only reason they are here rather than in the confirmation.
+
+          Numbered because it is a real sequence in a form they are about to
+          see, not decoration: paste, then photos, then post.
+
+          Step 2 is the whole point of the list. Photos cannot be carried
+          across — a browser will not let a script fill a file input, the
+          clipboard holds text or one image but never both, and Google's
+          photo control is a picker rather than a paste target. The
+          traveller's pictures are already on their phone and Google's own
+          photo button is right there, so the shortest path is to tell them
+          to use it.
+          ------------------------------------------------------------------ */}
+      <div className="mt-6 rounded-2xl bg-sand-dim/60 px-5 py-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">
+          {tr("Next, on Google")}
+        </p>
+        <ol className="mt-2 space-y-1.5 text-sm leading-relaxed text-ink">
+          <li>{tr("1. Paste your review")}</li>
+          <li>{tr("2. Tap the photo icon and add a few pictures")}</li>
+          <li>{tr("3. Press Post")}</li>
+        </ol>
+      </div>
+
       <button
         type="button"
         onClick={copyAndContinue}
@@ -188,7 +219,7 @@ export function ReviewComposer() {
       {/* Said before they leave, not after they come back: this page never
           learns whether the review was published, and must not imply it did. */}
       <p className="mt-3 text-center text-xs leading-relaxed text-ink-soft">
-        {tr("Google opens in a new tab. Paste your review there and press Post — Google publishes it, under your own Google account.")}
+        {tr("Google opens in a new tab. Google publishes your review, under your own Google account.")}
       </p>
 
       {copied === "copied" && (
