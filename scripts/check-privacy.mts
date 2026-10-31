@@ -265,6 +265,13 @@ const PREFIX_OWNER: Record<string, string> = {
   // of personal data here, not a content tool. This check is what found it:
   // the key was in the stack and the policy had never mentioned it.
   GEMINI: "Google",
+  // The review page reads Egypt Eye's own Google reviews so they can be shown
+  // on the site. Unlike GEMINI above, this direction is READ-ONLY and sends
+  // Google nothing about a customer — but it is still Google, it still holds
+  // credentials, and the policy page already names them, so it is attributed
+  // rather than exempted. Exempting it would hide a Google integration from
+  // the check whose whole job is to surface third parties.
+  GOOGLE_BUSINESS: "Google",
 };
 
 /**

@@ -7,6 +7,10 @@
     {
       "path": "/api/bookings/reconcile",
       "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/google-reviews/sync",
+      "schedule": "0 5 * * *"
     }
   ]
 }

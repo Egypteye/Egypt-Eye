@@ -88,7 +88,7 @@ export function photoCutoff(now: Date, days = COMMISSION_PHOTO_DAYS): Date {
 }
 
 /** The day the wording below last changed. Shown to the reader. */
-export const POLICY_UPDATED = "15 October 2026";
+export const POLICY_UPDATED = "31 October 2026";
 
 /**
  * Every third party that receives customer personal data, and what for.
@@ -107,7 +107,7 @@ export const PROCESSORS = [
   {
     name: "Google",
     role:
-      'Runs the "Ask Egypt Eye" assistant, which opens once you have a confirmed booking. It is sent your first name and your itinerary so it can answer questions about your own trip.',
+      'Runs the "Ask Egypt Eye" assistant, which opens once you have a confirmed booking. It is sent your first name and your itinerary so it can answer questions about your own trip. Separately, we read our own Google reviews from Google so we can show them on this site; that direction sends Google nothing about you.',
     where: "Outside the EU",
   },
   { name: "PayPal", role: "Takes card and PayPal payments.", where: "Outside the EU" },
@@ -217,6 +217,10 @@ export function policySections(
         {
           label: 'If you use the "Ask Egypt Eye" assistant',
           text: "This opens only once you have a confirmed booking. To answer questions about your own trip it is sent your first name, your booking reference, your dates, how many people are travelling, your hotels and your itinerary, along with what you type. The assistant is run by Google. Your questions and its answers are saved so our staff can follow up on anything it could not settle, and so we can see when it gets something wrong.",
+        },
+        {
+          label: "If you write a review on our review page",
+          text: "Nothing you type there is sent to us. It is kept in your own browser only, so it survives you switching to Google and back, and it is gone when you close the browser. Your review is published on Google, under your own Google account, and Google decides what appears — we cannot edit or remove it.",
         },
         {
           label: "To keep the site standing up",

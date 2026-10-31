@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { GoogleIntegrationStatus } from "@/components/GoogleIntegrationStatus";
 import { getCurrentUser } from "@/lib/auth/session";
 import { getExperiences, getPhotoshoots, getTestimonials, getTours } from "@/sanity/fetchers";
 import { getAttributionCoverage, getProductRating } from "@/lib/reviewAttribution";
@@ -71,6 +72,10 @@ export default async function AdminReviewsPage() {
         The rest still count toward the Egypt Eye total shown everywhere else — they&rsquo;re real
         reviews, just not evidence about one tour.
       </p>
+
+      {/* The only place the owner can see whether the Google sync is alive.
+          They have no terminal and do not read Vercel logs — CLAUDE.md #2. */}
+      <GoogleIntegrationStatus />
 
       <div className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Stat label="Reviews imported" value={coverage.total.toLocaleString()} />
