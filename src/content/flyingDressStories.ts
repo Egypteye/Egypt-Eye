@@ -1003,6 +1003,228 @@ export const flyingDressStories: FlyingDressStory[] = [
     relatedStorySlugs: ["photographing-a-proposal-she-does-not-know-about", "what-a-flying-dress-photoshoot-costs"],
   },
   // -----------------------------------------------------------------------
+  // THE PLACE CLUSTER, NOVEMBER 2026. Two articles, and the reason there are
+  // two rather than the ten an SEO brief asked for is worth recording.
+  //
+  // Of the ten titles proposed, SIX already existed on this domain and THREE
+  // already exist on egypteyetravel.com: the pillar guide, what to wear, and
+  // best time of year. Writing those three again here is precisely the
+  // cannibalisation the guard above this file's travel-site check exists to
+  // prevent, and precisely what the brief's own content-separation section
+  // forbids. So the gap was never ten articles. It was the two below, both in
+  // `the-place`, which was also the thinnest cluster on the site: one
+  // published article against three in `the-dress`.
+  // -----------------------------------------------------------------------
+  {
+    slug: "rooftop-or-dunes",
+    cluster: "the-place",
+    title: "Rooftop or dunes: the same dress, two completely different photographs",
+    seoTitle: "Rooftop or Dunes?",
+    metaDescription:
+      "The two shoots closest to Cairo, compared on what actually differs: what is behind you, what the morning costs you, and which colours survive each.",
+    excerpt:
+      "Twenty dollars and forty-five minutes of driving separate these two. Neither of those is the real difference, and the real difference is not a matter of which is better.",
+    publishedAt: "2026-11-01T00:00:00.000Z",
+    basis: "first-party",
+    sections: [
+      {
+        heading: "The two that people actually choose between",
+        body: [
+          "Four shoots are bookable and two of them settle themselves. [Fayoum](/experiences/fayoum) is a full day three hours each way, and the [Red Sea yacht](/experiences/red-sea-yacht) is on water off Ain Sokhna. Nobody weighs either of those against a morning near Cairo; they are chosen because someone wants that specific thing.",
+          "The real decision is between the other two. The [Pyramids Rooftop](/experiences/pyramids-rooftop) is $199 per person. The [Sand Dunes](/experiences/sand-dunes) are $179. Both are a morning, both include the dress in the colour you choose, door-to-door transport, an assistant and more than a hundred colour-graded photographs. On paper they are twenty dollars apart.",
+          "That is not the difference, and the question is not which is better. It is which photograph you want to come home with.",
+        ],
+      },
+      {
+        heading: "What is behind you",
+        body: [
+          "This is the whole thing, and everything else follows from it.",
+          "On the rooftop the pyramids are in the frame, across a skyline, held at a distance. The photograph says where it was taken before anyone reads a caption. It is also unmistakably a photograph of a place, which means the place is a second subject: you are sharing the frame.",
+          "In the dunes there is nothing. No skyline, no buildings, no other people, and nothing that dates the picture to a decade. It is sand, sky, wind and whichever colour you chose. You are the only subject there is, and the landscape is a background rather than a landmark.",
+          "People arrive assuming the pyramids are obviously the better choice, and for a lot of people they are. But a surprising number look at both sets afterwards and prefer the dunes, because a photograph with nothing else in it is about them in a way the other one cannot be.",
+        ],
+      },
+      {
+        heading: "What the morning costs you",
+        body: [
+          "The rooftop runs early for a specific reason: the Giza site does not open until eight. From a private roof there is no gate and no ticket, so at seven the pyramids are taking the first low sun and the plateau below is still empty. That hour is the one thing no shoot inside the complex can sell, and it is why the start time is not negotiable.",
+          "The dunes are about forty-five minutes from central Cairo heading towards New Cairo, and the shoot runs about an hour and a half out in the dunes. It is also an early start, for the low sun rather than for a gate.",
+          "Both are a morning rather than a day. The rooftop is the stricter of the two about when it begins, because its whole value is a deadline.",
+        ],
+      },
+      {
+        heading: "What happens to the colour",
+        body: [
+          "Both backgrounds are made of the same light: limestone, sand, and a pale haze that lifts the sky towards white near the horizon. So the [colour advice](/stories/choosing-a-dress-colour) is largely the same in both places, with one practical difference.",
+          "The dunes are the more demanding of the two. With nothing in the frame but sand, a dress in a warm earth tone has nowhere to separate itself: Golden, Ginger, BronZey and Snowy all risk becoming the same object as the ground. On the roof there is more to work with. There is sky, there is the shaded face of a building, and there is the stone of the pyramids themselves at a different tone from the sand in front of them.",
+          "If a warm tone is the colour you want, the roof is the more forgiving booking. If you have chosen Cherry, Orchid, Emerald or Navy, both work and the dunes may well give you the stronger photograph, because a saturated colour against empty sand is as clean as this gets.",
+        ],
+      },
+      {
+        heading: "The questions that decide it quickly",
+        body: [
+          "If you are stuck, these tend to settle it in under a minute.",
+        ],
+        list: [
+          "Do you need the photograph to say Egypt without a caption? Rooftop. That is the only one of the two that does it.",
+          "Is this for a feed, a portfolio or a wall where you are the subject and the location is incidental? Dunes.",
+          "Is anyone in the group likely to find an early, structured, deadline-driven start difficult? The dunes are the gentler morning. The roof has a gate time working against it.",
+          "Have you already been to the pyramids as a visitor? A lot of people have, and the rooftop is then a second version of a view they have. The dunes are somewhere they have not been.",
+          "Is it a proposal, a birthday or an anniversary? Almost always the roof, and for a reason that has nothing to do with photography: it is a place you can tell a story about afterwards. See [the celebrations](/celebrations).",
+        ],
+      },
+      {
+        heading: "You are allowed to want both",
+        body: [
+          "Two sessions on two mornings is a normal booking rather than an unusual one, and it is the honest answer for anyone who reads the two sections above and wants both photographs. They are different enough that the second does not feel like a repeat.",
+          "Tell us when you enquire that you are considering both and we will tell you what the two mornings look like together, including whether they can sit on consecutive days in the week you are here.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Which is better value, the rooftop or the dunes?",
+        answer:
+          "They are $199 and $179 per person and both include the dress, transport, an assistant and 100+ edited photographs, so value is not really what separates them. The rooftop buys the pyramids in frame and the hour before the site opens. The dunes buy an empty landscape with nothing else in the picture.",
+      },
+      {
+        question: "Can I do both?",
+        answer:
+          "Yes, and it is a normal booking. They are different enough that the second morning does not feel like a repeat. Say so when you enquire and we will tell you how the two days fit together while you are here.",
+      },
+      {
+        question: "Do I need a ticket to the pyramids for the rooftop shoot?",
+        answer:
+          "No. The rooftop is private property with a view of the plateau rather than a location inside the archaeological site, so there is no entry ticket and no queue.",
+      },
+      {
+        question: "Is the dunes shoot in the actual desert?",
+        answer:
+          "It is open dune country about forty-five minutes from central Cairo, towards New Cairo. Close enough to shoot at first light and be back for the rest of your morning.",
+      },
+    ],
+    related: [
+      { label: "The Pyramids Rooftop", path: "/experiences/pyramids-rooftop" },
+      { label: "The Sand Dunes", path: "/experiences/sand-dunes" },
+      { label: "Choosing a dress colour", path: "/stories/choosing-a-dress-colour" },
+    ],
+    destination: {
+      label: "Compare the shoots",
+      path: "/experiences",
+      note: "All four side by side, with what each costs, how long it takes and what is actually in the frame.",
+    },
+    inboundFrom: ["/experiences", "/experiences/sand-dunes"],
+    relatedStorySlugs: ["choosing-a-dress-colour", "what-a-flying-dress-photoshoot-costs"],
+  },
+  {
+    slug: "a-day-in-fayoum",
+    cluster: "the-place",
+    title: "A day in Fayoum, and why it costs more than a morning at the pyramids",
+    seoTitle: "A Day in Fayoum",
+    metaDescription:
+      "Pale dunes, still water and six hours of driving. What the Fayoum photoshoot day actually involves, why it is $349, and who should not book it.",
+    excerpt:
+      "The same dress, the same forty-five minutes in front of the camera, and nearly twice the price. The difference is not the photoshoot. It is the day wrapped around it.",
+    publishedAt: "2026-11-01T00:00:00.000Z",
+    basis: "first-party",
+    sections: [
+      {
+        heading: "What you are actually booking",
+        body: [
+          "[Fayoum](/experiences/fayoum) is $349 per person. The rooftop is $199 and the dunes are $179, and the first thing worth saying is that the photoshoot inside all three is the same photoshoot: the same dress from the same collection in the colour you choose, the same assistant, the same thirty to forty-five minutes in front of the camera, and the same hundred-plus colour-graded photographs afterwards.",
+          "Nothing about the session is larger. What is larger is the day. Fayoum is about three hours from central Cairo, so there is roughly six hours of driving wrapped around the shoot, and the whole thing runs four to six hours including the moves between locations.",
+          "That is the entire price difference, and it is worth being plain about it rather than dressing it up as a premium tier. You are paying for distance.",
+        ],
+      },
+      {
+        heading: "What the landscape gives you that the other two cannot",
+        body: [
+          "Three things, and they are the reason anyone takes the day.",
+        ],
+        list: [
+          "Water. Neither the rooftop nor the dunes has any. Fayoum has still lakes, and a horizon where pale ground meets water rather than meeting more sand.",
+          "Pale sand instead of gold. This sounds like a small distinction and it is not: it changes which dresses work. Dark and jewel colours read completely differently against near-white ground than they do against the warm sand outside Cairo.",
+          "The widest panoramas of the four. There is more room here, and the photographs that come back are the widest the business takes.",
+        ],
+      },
+      {
+        heading: "What it is not",
+        body: [
+          "It is not the White Desert. Those two names get used interchangeably online and by more than one operator, and they are different places: Egypt's White Desert is far beyond Fayoum, a different journey entirely, and this day does not go there. If you have seen the chalk formations in photographs and that is what you are booking for, this is not that trip and we would rather you knew before you paid than after you arrived.",
+          "What Fayoum has is its own pale dune country, lakes and waterfalls, three hours from Cairo rather than a long expedition. It looks like nowhere else in Egypt. It does not look like the White Desert.",
+        ],
+      },
+      {
+        heading: "Who should book it, and who should not",
+        body: [
+          "The honest version, because this is the one booking on the site where the wrong choice costs somebody a whole day rather than a morning.",
+        ],
+        list: [
+          "Book it if the landscape is the point. If you want a photograph that does not look like any other Egypt photograph, this is the one.",
+          "Book it if you have time. It eats a day. On a four-night trip with the pyramids, a museum and a Nile evening already in it, that day has to come from somewhere.",
+          "Do not book it if what you actually want is the pyramids in the picture. They are not in it. The [rooftop](/experiences/pyramids-rooftop) is the shoot for that, at a lower price and a fraction of the travel.",
+          "Think carefully if anyone in the party finds long car journeys difficult, or if you are travelling with small children. Six hours of driving is six hours of driving however good the destination is.",
+          "Think about the season. This is a long day largely outdoors, and the months either side of midsummer are a different experience from the winter ones.",
+        ],
+      },
+      {
+        heading: "What the day looks like",
+        body: [
+          "A car collects you door to door, as it does for every shoot here. The drive is roughly three hours. On arrival the day moves between locations rather than staying in one place, which is where the four-to-six hour range comes from: the dunes, the water, and the driving between them.",
+          "The photoshoot itself sits inside that. Thirty to forty-five minutes of actual shooting, in the dress, with the assistant managing the fabric. Then the drive back.",
+          "Because it is a day rather than a morning, the practical questions are different from the other shoots: what you eat, where you can change, and what happens if the weather turns. Those are settled with you before the date rather than assumed, and if the answer to one of them is not yet fixed we will say so rather than improvise.",
+        ],
+      },
+      {
+        heading: "Which colour, here specifically",
+        body: [
+          "The [colour advice](/stories/choosing-a-dress-colour) shifts for Fayoum, and it is the only one of the four where it shifts much.",
+          "Against pale, near-white ground, the warm earth tones that struggle in the dunes outside Cairo have much less to fight: Golden, Ginger and BronZey separate here in a way they do not against gold sand. Snowy is the opposite and becomes the hardest choice of the thirteen, because white fabric on white dunes is a tonal photograph with nothing to hold an edge.",
+          "The deep and jewel colours remain the safest bet. Cherry, Orchid, Emerald and Navy against pale ground and still water are about as graphic as this gets, and they are what most of the wide panoramas are built around.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Why is Fayoum more expensive than the pyramids shoot?",
+        answer:
+          "Distance, and nothing else. It is the same dress, the same assistant, the same thirty to forty-five minutes of shooting and the same 100+ edited photographs as the $199 rooftop. Fayoum is about three hours from Cairo each way, so roughly six hours of driving is wrapped around the session.",
+      },
+      {
+        question: "How long does the Fayoum day take?",
+        answer:
+          "Four to six hours including the driving between locations, on top of roughly three hours of travel in each direction from central Cairo. It is a day rather than a morning.",
+      },
+      {
+        question: "Is Fayoum the same as the White Desert?",
+        answer:
+          "No. They are different places and they get confused constantly. Egypt's White Desert is far beyond Fayoum and a separate journey; this day does not go there. Fayoum has its own pale dunes, lakes and waterfalls about three hours from Cairo.",
+      },
+      {
+        question: "Are the pyramids visible from Fayoum?",
+        answer:
+          "No. If you want the pyramids in your photographs, the rooftop shoot is the one to book. Fayoum is a landscape shoot and the landscape is the reason to take it.",
+      },
+      {
+        question: "Which dress colour works best in Fayoum?",
+        answer:
+          "Deep and jewel colours against the pale ground and the water are the strongest. The warm tones work better here than they do in the gold dunes outside Cairo. Snowy is the hardest choice, because white fabric on near-white dunes has nothing to hold an edge against.",
+      },
+    ],
+    related: [
+      { label: "The Fayoum photoshoot", path: "/experiences/fayoum" },
+      { label: "Rooftop or dunes", path: "/stories/rooftop-or-dunes" },
+      { label: "What a photoshoot costs", path: "/stories/what-a-flying-dress-photoshoot-costs" },
+    ],
+    destination: {
+      label: "See the Fayoum day",
+      path: "/experiences/fayoum",
+      note: "What the day includes, how long it runs, and what the drive actually involves before you give up a day to it.",
+    },
+    inboundFrom: ["/experiences/fayoum", "/experiences"],
+    relatedStorySlugs: ["rooftop-or-dunes", "what-a-flying-dress-photoshoot-costs"],
+  },
+  // -----------------------------------------------------------------------
   // RESEARCHED, NOT PUBLISHED. It has no URL, it is not in the sitemap, and
   // the index does not show it. See StoryStatus.
   //

@@ -59,6 +59,10 @@ import {
   flyingDressExperiences,
 } from "../src/content/flyingDressExperiences.js";
 import {
+  canonicalFlyingDressPath,
+  legacyFlyingDressRedirect,
+} from "../src/content/flyingDressRedirects.js";
+import {
   ADDITIONAL_HOUR_DISCOUNT_PERCENT,
   DEPOSIT_PERCENT,
   ROOFTOP_HOURLY_USD,
@@ -6926,6 +6930,199 @@ ok(
       /category\.id === "creators"/.test(route) && /<CreatorShootsPage/.test(route)
     );
   }
+}
+
+
+// ---------------------------------------------------------------------------
+// THE SITEMAP'S DATES ARE REAL, OR ABSENT.
+//
+// Every URL in this sitemap used to carry `new Date().toISOString()`, so with
+// revalidate = 3600 the whole brand claimed to have changed within the last
+// hour, every hour, forever. Google uses lastmod only where it is
+// consistently accurate; a site that reports everything as always-just-changed
+// teaches the crawler to ignore the field here, including on the pages where
+// it was true. A wrong date is worse than no date.
+//
+// This runs the real handler and parses the real XML rather than grepping the
+// source, because the bug was in a template literal and a grep for "lastmod"
+// would have passed on the broken version just as happily as on the fixed one.
+//
+// PROVEN by restoring the single generated timestamp (red on the stale-date
+// test), and by dropping the lastmod from the story entries (red on the
+// stories test).
+{
+  const { GET } = await import("../src/app/flying-dresses/sitemap.xml/route.js");
+  const xml = await (GET() as Response).text();
+
+  const blocks = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1]);
+  ok("the Flying Dresses sitemap generated no URLs at all", blocks.length > 0);
+
+  const dated = blocks.filter((b) => /<lastmod>/.test(b));
+  const now = Date.now();
+
+  // 1. NOTHING CLAIMS TO HAVE CHANGED JUST NOW. Every real date on this site
+  //    is a story's publishedAt or updatedAt, none of which is today.
+  for (const b of dated) {
+    const loc = b.match(/<loc>([^<]*)<\/loc>/)?.[1] ?? "?";
+    const when = new Date(b.match(/<lastmod>([^<]*)<\/lastmod>/)?.[1] ?? "").getTime();
+    ok(
+      `the sitemap says ${loc} changed within the last hour, which is the generated-timestamp bug: ` +
+        "it reports every page as always-just-edited and costs the field its credibility",
+      Number.isFinite(when) && now - when > 3_600_000
+    );
+  }
+
+  // 2. THE PAGES THAT DO KNOW THEIR DATE STILL PUBLISH IT. Deleting lastmod
+  //    everywhere would pass test 1 and lose a real signal, so the stories,
+  //    which are the only URLs with a genuine edit date, must carry one.
+  for (const story of liveStories()) {
+    const entry = blocks.find((b) => b.includes(`/stories/${story.slug}<`));
+    ok(`the sitemap is missing the story "${story.slug}" entirely`, entry !== undefined);
+    if (!entry) continue;
+    const got = entry.match(/<lastmod>([^<]*)<\/lastmod>/)?.[1];
+    const want = new Date(story.updatedAt ?? story.publishedAt).toISOString();
+    ok(
+      `the story "${story.slug}" publishes lastmod ${got ?? "(none)"} rather than its own ` +
+        `${story.updatedAt ? "updatedAt" : "publishedAt"} of ${want}`,
+      got === want
+    );
+  }
+
+  // 3. A PAGE WITH NO KNOWN DATE SAYS NOTHING. The products and listings have
+  //    no edit date anywhere in the content files, so inventing one for them
+  //    is the original bug in a smaller coat.
+  const undatedWithLastmod = blocks.filter(
+    (b) => !/\/stories\//.test(b) && /<lastmod>/.test(b)
+  );
+  ok(
+    `${undatedWithLastmod.length} sitemap entries publish a lastmod for a page whose edit date ` +
+      "the content layer does not actually record",
+    undatedWithLastmod.length === 0
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// URL CONSOLIDATION, from Search Console rather than from reading the code.
+//
+// Two bugs that no amount of inspecting this repository had surfaced, because
+// both are invisible until something external crawls the site. The owner's
+// three-month export on 1 November 2026 showed them immediately.
+//
+//   1. The whole brand indexed TWICE, at /x and at /flying-dresses/x, with
+//      the two competing. /packages had 26 impressions against
+//      /flying-dresses/packages' 12; /rentals 53 against 2.
+//   2. The previous site's URLs 404ing while still taking clicks: /blog-post1
+//      6 clicks and 37 impressions, /about-us 2 and 41.
+//
+// The logic lives in content/flyingDressRedirects.ts rather than in proxy.ts
+// because the proxy is edge-runtime and out of reach of this script
+// (CLAUDE.md §6), so the decisions are tested here directly.
+// ---------------------------------------------------------------------------
+{
+  const proxySrc = stripComments(readFileSync("src/proxy.ts", "utf8"));
+
+  // 1. THE LONG FORM RESOLVES TO THE SHORT FORM.
+  //
+  // Proven by making canonicalFlyingDressPath return null for everything
+  // (red), and by making it return the path unchanged (red on the loop test).
+  for (const [long, short] of [
+    ["/flying-dresses", "/"],
+    ["/flying-dresses/", "/"],
+    ["/flying-dresses/wardrobe", "/wardrobe"],
+    ["/flying-dresses/stories/how-a-flying-dress-flies", "/stories/how-a-flying-dress-flies"],
+    ["/flying-dresses/celebrations/marriage-proposals", "/celebrations/marriage-proposals"],
+    ["/flying-dresses/packages/", "/packages"],
+  ] as const) {
+    ok(
+      `canonicalFlyingDressPath("${long}") returned ${JSON.stringify(canonicalFlyingDressPath(long))}, not "${short}" — the duplicate URL stays indexed`,
+      canonicalFlyingDressPath(long) === short
+    );
+  }
+
+  // A path that is ALREADY canonical must not be redirected, or the domain
+  // redirects its own real URLs.
+  for (const already of ["/", "/wardrobe", "/stories", "/celebrations/gender-reveals", "/about"]) {
+    ok(
+      `canonicalFlyingDressPath("${already}") wants to redirect a URL that is already canonical`,
+      canonicalFlyingDressPath(already) === null
+    );
+  }
+
+  // 2. NO REDIRECT LOOP. This is the one that would take the site down, so it
+  //    is tested as a property rather than on a handful of examples: whatever
+  //    the function returns must itself be a destination, not another
+  //    redirect. Proven by making it return the path unchanged: red.
+  for (const long of [
+    "/flying-dresses",
+    "/flying-dresses/wardrobe",
+    "/flying-dresses/stories/a-day-in-fayoum",
+    "/flying-dresses/rentals/dress-rental",
+  ]) {
+    const once = canonicalFlyingDressPath(long);
+    ok(`canonicalFlyingDressPath("${long}") returned nothing`, once !== null);
+    if (once === null) continue;
+    ok(
+      `REDIRECT LOOP: "${long}" redirects to "${once}", which redirects again to ` +
+        `"${canonicalFlyingDressPath(once)}"`,
+      canonicalFlyingDressPath(once) === null
+    );
+    ok(
+      `REDIRECT LOOP: "${long}" redirects to "${once}", which is itself a legacy redirect to ` +
+        `"${legacyFlyingDressRedirect(once)}"`,
+      legacyFlyingDressRedirect(once) === null
+    );
+  }
+
+  // 3. THE FOUR URLS SEARCH CONSOLE SHOWS WITH REAL TRAFFIC.
+  //
+  // Named individually rather than spot-checked, because each one is a
+  // measured number of clicks a quarter and a regression on any of them is a
+  // regression on a known figure.
+  //
+  // Proven by deleting the /about-us entry from the map: red.
+  for (const [from, to, why] of [
+    ["/about-us", "/about", "2 clicks, 41 impressions a quarter"],
+    ["/blog-post1", "/stories", "6 clicks, 37 impressions a quarter — the most-clicked legacy URL"],
+    ["/blog-post5", "/stories", "1 click, 16 impressions a quarter"],
+    ["/blog", "/stories", "3 impressions a quarter at position 2"],
+    ["/about-us/", "/about", "the trailing-slash form of the same URL"],
+    ["/blog-post12", "/stories", "the old blog numbered its posts and Google may hold others"],
+    ["/blog/some-old-post", "/stories", "the old blog's child URLs"],
+  ] as const) {
+    ok(
+      `legacyFlyingDressRedirect("${from}") returned ${JSON.stringify(legacyFlyingDressRedirect(from))}, not "${to}" — that URL 404s and it is worth ${why}`,
+      legacyFlyingDressRedirect(from) === to
+    );
+  }
+
+  // And a live URL must never be mistaken for a legacy one.
+  for (const live of ["/stories", "/about", "/wardrobe", "/stories/rooftop-or-dunes", "/"]) {
+    ok(
+      `legacyFlyingDressRedirect("${live}") wants to redirect a page that exists`,
+      legacyFlyingDressRedirect(live) === null
+    );
+  }
+
+  // 4. THE PROXY ACTUALLY CALLS THEM.
+  //
+  // The functions can be perfect and unreachable. Proven by removing each
+  // call from proxy.ts in turn: red.
+  ok(
+    "proxy.ts no longer redirects the long-form /flying-dresses/* URLs, so the brand is served at " +
+      "two addresses again",
+    /canonicalFlyingDressPath\(/.test(proxySrc)
+  );
+  ok(
+    "proxy.ts no longer maps the previous site's URLs, so /blog-post1 and /about-us 404 again",
+    /legacyFlyingDressRedirect\(/.test(proxySrc)
+  );
+  ok(
+    "proxy.ts still passes /flying-dresses/* straight through, which is the duplicate-URL bug",
+    !/pathname\.startsWith\(`\$\{FLYING_DRESSES_BASE\}\/`\)\)\s*\{\s*return NextResponse\.next/.test(
+      proxySrc
+    )
+  );
 }
 
 
