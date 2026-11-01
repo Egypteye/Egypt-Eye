@@ -7,6 +7,7 @@
 // scripts/check-redirects.mts imports this and matches real URLs against it
 // with the same path-to-regexp Next compiles it with.
 import { storyRedirectRules } from "./redirectedStories";
+import { GOOGLE_REVIEW_URL } from "./googleReviews";
 
 export type RedirectRule = {
   source: string;
@@ -16,6 +17,24 @@ export type RedirectRule = {
 
 export function redirectRules(): RedirectRule[] {
   return [
+    // The short review link to hand out: WhatsApp follow-ups, QR codes,
+    // business cards. Straight out to Google, no page in between.
+    //
+    // Temporary (302), not permanent, and that is the whole decision here. A
+    // 301 is cached by the browser indefinitely and there is no way to call
+    // it back — if the Google listing's review URL ever changes, everyone who
+    // already used this link would keep being sent to the old one, and the
+    // only fix would be a different URL on everything already printed.
+    //
+    // The destination is imported rather than retyped so there is still one
+    // definition of the review URL; check-review-page.mts asserts nothing
+    // hardcodes a second copy.
+    { source: "/google_review", destination: GOOGLE_REVIEW_URL, permanent: false },
+    // The same link with a hyphen, because that is what people type and what
+    // autocorrect produces. One line, and it stops a predictable mistype
+    // becoming a 404 on a card that is already in someone's wallet.
+    { source: "/google-review", destination: GOOGLE_REVIEW_URL, permanent: false },
+
     // The old WordPress/Yoast sitemap URLs. Search Console keeps fetching
     // whatever sitemap URL was submitted years ago, and a submission that
     // 404s is reported as "Sitemap could not be read" with 0 discovered
