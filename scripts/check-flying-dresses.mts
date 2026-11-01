@@ -6929,6 +6929,75 @@ ok(
 }
 
 
+// ---------------------------------------------------------------------------
+// THE SITEMAP'S DATES ARE REAL, OR ABSENT.
+//
+// Every URL in this sitemap used to carry `new Date().toISOString()`, so with
+// revalidate = 3600 the whole brand claimed to have changed within the last
+// hour, every hour, forever. Google uses lastmod only where it is
+// consistently accurate; a site that reports everything as always-just-changed
+// teaches the crawler to ignore the field here, including on the pages where
+// it was true. A wrong date is worse than no date.
+//
+// This runs the real handler and parses the real XML rather than grepping the
+// source, because the bug was in a template literal and a grep for "lastmod"
+// would have passed on the broken version just as happily as on the fixed one.
+//
+// PROVEN by restoring the single generated timestamp (red on the stale-date
+// test), and by dropping the lastmod from the story entries (red on the
+// stories test).
+{
+  const { GET } = await import("../src/app/flying-dresses/sitemap.xml/route.js");
+  const xml = await (GET() as Response).text();
+
+  const blocks = [...xml.matchAll(/<url>([\s\S]*?)<\/url>/g)].map((m) => m[1]);
+  ok("the Flying Dresses sitemap generated no URLs at all", blocks.length > 0);
+
+  const dated = blocks.filter((b) => /<lastmod>/.test(b));
+  const now = Date.now();
+
+  // 1. NOTHING CLAIMS TO HAVE CHANGED JUST NOW. Every real date on this site
+  //    is a story's publishedAt or updatedAt, none of which is today.
+  for (const b of dated) {
+    const loc = b.match(/<loc>([^<]*)<\/loc>/)?.[1] ?? "?";
+    const when = new Date(b.match(/<lastmod>([^<]*)<\/lastmod>/)?.[1] ?? "").getTime();
+    ok(
+      `the sitemap says ${loc} changed within the last hour, which is the generated-timestamp bug: ` +
+        "it reports every page as always-just-edited and costs the field its credibility",
+      Number.isFinite(when) && now - when > 3_600_000
+    );
+  }
+
+  // 2. THE PAGES THAT DO KNOW THEIR DATE STILL PUBLISH IT. Deleting lastmod
+  //    everywhere would pass test 1 and lose a real signal, so the stories,
+  //    which are the only URLs with a genuine edit date, must carry one.
+  for (const story of liveStories()) {
+    const entry = blocks.find((b) => b.includes(`/stories/${story.slug}<`));
+    ok(`the sitemap is missing the story "${story.slug}" entirely`, entry !== undefined);
+    if (!entry) continue;
+    const got = entry.match(/<lastmod>([^<]*)<\/lastmod>/)?.[1];
+    const want = new Date(story.updatedAt ?? story.publishedAt).toISOString();
+    ok(
+      `the story "${story.slug}" publishes lastmod ${got ?? "(none)"} rather than its own ` +
+        `${story.updatedAt ? "updatedAt" : "publishedAt"} of ${want}`,
+      got === want
+    );
+  }
+
+  // 3. A PAGE WITH NO KNOWN DATE SAYS NOTHING. The products and listings have
+  //    no edit date anywhere in the content files, so inventing one for them
+  //    is the original bug in a smaller coat.
+  const undatedWithLastmod = blocks.filter(
+    (b) => !/\/stories\//.test(b) && /<lastmod>/.test(b)
+  );
+  ok(
+    `${undatedWithLastmod.length} sitemap entries publish a lastmod for a page whose edit date ` +
+      "the content layer does not actually record",
+    undatedWithLastmod.length === 0
+  );
+}
+
+
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");
   for (const error of errors) console.error(`  ✗ ${error}`);
