@@ -1,3 +1,4 @@
+import { shortFlyingDressPath } from "@/content/flyingDressRedirects";
 import {
   addOns as localAddOns,
   brand as localBrand,
@@ -333,9 +334,23 @@ export function mergeSettings(doc: FdSettingsDoc | null): FdSettings {
       // for whoever writes the real policy; it is not published copy.
       ambiguity: localCancellation.ambiguity,
     },
+    // STUDIO HREFS ARE NORMALISED TO THE SHORT FORM.
+    //
+    // Menu items saved before 1 November 2026 hold "/flying-dresses/wardrobe",
+    // because that was what the Studio asked for and what the field validated.
+    // Those links still resolve, but only through the 308 the proxy now serves
+    // for the long form, so every nav click out of a stale Studio value would
+    // cost a redirect hop for as long as nobody re-saved the document.
+    //
+    // Normalising here fixes them without the owner touching anything, and
+    // without a migration that would rewrite their content behind their back.
+    // A value already short passes through untouched.
     nav: arr(
       doc?.nav
-        ?.map((n) => ({ label: str(n.label, undefined), href: str(n.href, undefined) }))
+        ?.map((n) => ({
+          label: str(n.label, undefined),
+          href: shortFlyingDressPath(str(n.href, undefined)),
+        }))
         .filter((n) => n.label !== "" && n.href !== ""),
       localNav
     ),

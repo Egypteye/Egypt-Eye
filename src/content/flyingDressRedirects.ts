@@ -137,6 +137,22 @@ export function legacyFlyingDressRedirect(pathname: string): string | null {
 export function canonicalFlyingDressPath(pathname: string): string | null {
   const path = normalise(pathname);
 
+  // AN ASSET IS NOT A PAGE, AND REDIRECTING ONE BROKE THE FAVICON.
+  //
+  // Next generates a route per metadata file, so the brand's own icons live at
+  // /flying-dresses/icon.png and /flying-dresses/apple-icon.png. The first
+  // version of this function redirected them like everything else, to
+  // /icon.png — which exists, belongs to EGYPT EYE, and answered 200. The
+  // Flying Dresses site quietly started serving the travel brand's favicon:
+  // 49207 bytes where its own is 23508. Every status code was green.
+  //
+  // Caught by diffing the bytes rather than trusting the 200. The rule that
+  // prevents it is the honest one anyway: this redirect exists to stop two
+  // URLs competing for one PAGE in the index, and an icon, a stylesheet or a
+  // sitemap is not a page. Anything with a file extension is served where it
+  // was asked for.
+  if (/\.[a-z0-9]+$/i.test(path)) return null;
+
   if (path === FLYING_DRESSES_BASE) return "/";
   if (path.startsWith(`${FLYING_DRESSES_BASE}/`)) {
     const short = path.slice(FLYING_DRESSES_BASE.length);
@@ -146,4 +162,17 @@ export function canonicalFlyingDressPath(pathname: string): string | null {
   }
 
   return null;
+}
+
+/**
+ * The short form of any brand path, whether or not it started long.
+ *
+ * `canonicalFlyingDressPath` answers "does this need redirecting?" and returns
+ * null when it does not. This answers "what is the right link?", which is a
+ * different question and the one the Studio nav merge is asking: a menu item
+ * saved before the switch holds the long form, and rewriting it on read is
+ * cheaper than a content migration and cheaper than a redirect on every click.
+ */
+export function shortFlyingDressPath(path: string): string {
+  return canonicalFlyingDressPath(path) ?? path;
 }

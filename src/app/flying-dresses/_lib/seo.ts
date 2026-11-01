@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { FLYING_DRESSES_PATH, brand, contact, packages } from "@/content/flyingDresses";
+import { brand, contact, packages } from "@/content/flyingDresses";
 
 /**
  * Metadata, canonical URLs and structured data for the Flying Dresses site.
@@ -64,9 +64,35 @@ import { FLYING_DRESSES_PATH, brand, contact, packages } from "@/content/flyingD
 export const fdSiteUrl = process.env.NEXT_PUBLIC_FLYING_DRESSES_URL || brand.url;
 
 /** An internal link. Always prefixed, so it resolves on every host. */
+/**
+ * A link to a page on this brand, as an href.
+ *
+ * =========================================================================
+ * THIS USED TO EMIT THE LONG FORM, AND SEARCH CONSOLE SHOWED THE COST
+ * =========================================================================
+ * It returned "/flying-dresses/wardrobe", because the same HTML was served
+ * both on this brand's domain AND at egypteyetravel.com/flying-dresses/*, and
+ * a static href cannot vary by host. The long form was the one address that
+ * worked on both.
+ *
+ * It also meant every internal link on flyingdressesegypt.com pointed at a
+ * second, crawlable copy of the page it was already on. Google indexed the
+ * whole site twice and the two copies competed; on the stories the long form
+ * was winning. See content/flyingDressRedirects.ts for the numbers.
+ *
+ * The owner confirmed on 1 November 2026 that the travel domain no longer
+ * needs to serve this brand, which removes the constraint. Links are now the
+ * short, canonical form, which is what the canonical tags, the sitemap and
+ * every real visitor's address bar already said.
+ *
+ * It is safe on every host where this brand is actually served, because the
+ * proxy rewrites the short form into the route tree for all of them:
+ * flyingdressesegypt.com, this brand's own *.vercel.app previews, and
+ * flyingdressesegypt.*.localhost. See lib/brand/flyingDressesHost.ts.
+ */
 export function fdPath(path = ""): string {
-  if (path === "" || path === "/") return FLYING_DRESSES_PATH;
-  return `${FLYING_DRESSES_PATH}${path.startsWith("/") ? path : `/${path}`}`;
+  if (path === "" || path === "/") return "/";
+  return path.startsWith("/") ? path : `/${path}`;
 }
 
 /**

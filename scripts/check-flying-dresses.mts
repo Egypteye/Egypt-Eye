@@ -16,7 +16,7 @@
  * records three separate guards in this project that passed on the broken
  * version. The notes under each section say what was broken to prove it.
  */
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { execSync } from "node:child_process";
 import {
   NAV_MAX_ITEMS,
@@ -948,10 +948,17 @@ ok(
 // page. Resolved against the directory tree, which is where App Router routes
 // actually come from.
 //
-// Proven by renaming the wardrobe nav href to /flying-dresses/wardrobes: red.
+// SHORT FORM SINCE 1 NOVEMBER 2026. The hrefs used to carry the
+// /flying-dresses prefix and the resolver stripped it; now they are already
+// short and the prefix is only the directory to look under. Both shapes are
+// still resolved, because a menu item saved in the Studio before the switch
+// holds the long form and the site serves it through a redirect rather than
+// a 404 — a header link that works must not fail this check.
+//
+// Proven by renaming the wardrobe nav href to /wardrobes: red.
 // ---------------------------------------------------------------------------
 const routeExists = (href: string) => {
-  const rest = href.replace(/^\/flying-dresses\/?/, "");
+  const rest = href.replace(/^\/flying-dresses\/?/, "").replace(/^\//, "");
   if (rest === "") return existsSync("src/app/flying-dresses/page.tsx");
   return existsSync(`src/app/flying-dresses/${rest}/page.tsx`);
 };
@@ -959,7 +966,9 @@ const routeExists = (href: string) => {
 for (const item of nav) {
   ok(
     `the header links ${item.href} ("${item.label}"), which is not a page on this site`,
-    item.href.startsWith("/flying-dresses") && routeExists(item.href)
+    // A path, and a real one. The prefix is no longer required: it was, and
+    // requiring it is what kept every nav link pointing at the duplicate.
+    item.href.startsWith("/") && routeExists(item.href)
   );
 }
 
@@ -990,15 +999,46 @@ ok(
 // are duplicates of the real brand domain, and nothing visible breaks — the
 // symptom is two sites splitting one set of rankings, months later.
 //
-// Proven by removing "/flying-dresses" from robots.ts's disallow list: red.
-// And by removing the /flying-dresses case from proxy.ts's isLocaleExempt: red.
+// THE RULE CHANGED ON 1 NOVEMBER 2026, AND IT IS STRICTER NOW, NOT LOOSER.
+//
+// It used to be "robots.ts must disallow /flying-dresses". The owner confirmed
+// the travel domain no longer needs to serve this brand, so the proxy now 308s
+// those paths to flyingdressesegypt.com instead.
+//
+// A Disallow would have BROKEN that: Google cannot follow a redirect on a URL
+// it is not allowed to fetch, so anything already indexed here would have been
+// stranded. The disallow was therefore removed deliberately.
+//
+// What replaces it is the pairing, which is the real invariant and was never
+// checked before: the travel domain must either refuse to be crawled for these
+// paths OR redirect them away. What it must never do is allow the crawl and
+// then serve the page, which is the duplicate it was always about.
+//
+// Proven three ways, each red: removing the redirect from proxy.ts while
+// robots allows the path; putting the disallow back while the redirect stands
+// (red, because the redirect can then never be followed); and removing the
+// /flying-dresses case from proxy.ts's isLocaleExempt.
 // ---------------------------------------------------------------------------
 const robotsSource = read("src/app/robots.ts");
-ok(
-  "src/app/robots.ts no longer disallows /flying-dresses, so the second brand's pages can be indexed on the " +
-    "travel domain as duplicates of its own",
-  robotsSource.includes('"/flying-dresses"')
-);
+{
+  const proxySource = stripComments(read("src/proxy.ts"));
+  const disallowed = robotsSource.includes('"/flying-dresses"');
+  const redirected =
+    /host === CANONICAL_HOST/.test(proxySource) &&
+    /canonicalFlyingDressPath\(request\.nextUrl\.pathname\)/.test(proxySource);
+
+  ok(
+    "the travel domain neither disallows /flying-dresses nor redirects it away, so it serves a second " +
+      "crawlable copy of the whole brand",
+    disallowed || redirected
+  );
+  ok(
+    "the travel domain redirects /flying-dresses away AND disallows it in robots.txt — Google cannot " +
+      "follow a redirect on a URL it may not fetch, so the two cancel out and anything already indexed " +
+      "there is stranded",
+    !(disallowed && redirected)
+  );
+}
 
 // ---------------------------------------------------------------------------
 // NO EM-DASHES IN ANYTHING A VISITOR READS.
@@ -7046,6 +7086,38 @@ ok(
     ok(
       `canonicalFlyingDressPath("${already}") wants to redirect a URL that is already canonical`,
       canonicalFlyingDressPath(already) === null
+    );
+  }
+
+  // 1b. ASSETS ARE NOT REDIRECTED.
+  //
+  // Each brand has its own icon.png and apple-icon.png, and Next serves them
+  // at the route segment they sit in. Redirecting /flying-dresses/icon.png to
+  // /icon.png found EGYPT EYE's icon, answered 200, and put the travel
+  // brand's favicon on the Flying Dresses site. The status code was green and
+  // the bytes were wrong.
+  //
+  // Proven by deleting the extension guard from canonicalFlyingDressPath: red.
+  for (const asset of [
+    "/flying-dresses/icon.png",
+    "/flying-dresses/apple-icon.png",
+    "/flying-dresses/sitemap.xml",
+    "/flying-dresses/robots.txt",
+  ]) {
+    ok(
+      `canonicalFlyingDressPath("${asset}") redirects an ASSET. It would resolve against the other ` +
+        "brand's file of the same name, answer 200, and serve the wrong bytes",
+      canonicalFlyingDressPath(asset) === null
+    );
+  }
+  // And the two icons really are different files, which is the only reason
+  // the bug above was visible at all.
+  {
+    const fd = statSync("src/app/flying-dresses/icon.png").size;
+    const eye = statSync("src/app/icon.png").size;
+    ok(
+      `both brands' icon.png are now ${fd} bytes, so nothing would reveal one being served for the other`,
+      fd !== eye
     );
   }
 

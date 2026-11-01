@@ -353,3 +353,47 @@ WordPress post IDs.
 4. `/rentals/dress-rental`: 41 impressions and no clicks is a title and
    description problem before it is anything else.
 5. The travel-site pillar overlap from section 6, unchanged.
+
+
+---
+
+## 11. Short links, 1 November 2026
+
+The owner confirmed the travel domain no longer needs to serve this brand,
+which removed the constraint that forced the long form. Done in one pass:
+
+- **`fdPath()` and the nav emit the short form.** Every internal link on
+  flyingdressesegypt.com now points at the canonical URL, so the redirect hop
+  introduced earlier today is gone for real visitors. Verified: zero
+  `/flying-dresses/*` links in the rendered HTML of the home page, a
+  celebration page and a story.
+- **Studio menu items are shortened on read.** The live settings document
+  holds the long form (confirmed in the Sanity fixture), so without this the
+  owner's own nav would have kept taking the redirect until someone re-saved
+  it. The Studio field now accepts both and documents the short one.
+- **The travel domain 308s `/flying-dresses/*` to the brand's own domain**,
+  cross-domain and permanent, on the production host only. Preview hosts are
+  left alone, for the same reason the www redirect leaves them alone.
+- **The travel domain's robots.txt no longer disallows `/flying-dresses`.**
+  This looks like a loosening and is the opposite: Google cannot follow a
+  redirect on a URL it is not allowed to fetch, so the Disallow would have
+  stranded anything already indexed there. The guard that enforced the
+  Disallow has been replaced by a stricter one that enforces the *pairing*:
+  the travel domain must either refuse the crawl or redirect it away, and
+  may never do both or neither.
+
+### A regression I introduced and caught
+
+The first version of the long-to-short redirect applied to **every** path,
+including Next's generated metadata routes. `/flying-dresses/icon.png`
+redirected to `/icon.png`, which exists, belongs to Egypt Eye, and answered
+200 — so the Flying Dresses site quietly served the travel brand's favicon.
+49,207 bytes where its own is 23,508.
+
+Every status code was green. It was caught by comparing the bytes rather than
+trusting the 200, and the fix is the rule that should have been there from the
+start: this redirect consolidates **pages**, and an icon, a stylesheet or a
+sitemap is not a page. Anything with a file extension is served where it was
+asked for. Guarded, with a break-test, plus a check that the two brands' icons
+are still different files — because that difference is the only reason the bug
+was visible at all.

@@ -46,6 +46,17 @@ import {
   MENS_OUTFITS,
 } from "./outfitCollection";
 
+/**
+ * The brand's segment in the app directory, and NOT a link prefix.
+ *
+ * It used to be both, and that is what put the whole site in the index twice:
+ * fdPath() and the nav glued it onto every href, so every internal link
+ * pointed at a second crawlable copy of the page it was already on. Links are
+ * the short form now; the proxy rewrites them into this segment.
+ *
+ * Kept exported because it names a real thing, and because the route tree
+ * does still live at this path. Do not put it back in front of an href.
+ */
 export const FLYING_DRESSES_PATH = "/flying-dresses";
 
 /**
@@ -1354,13 +1365,16 @@ export function mailtoHref(draft: EnquiryDraft = {}): string {
  * new sections took their places. "Experiences" became "Photoshoots" because
  * it now has to mean one specific thing beside Celebrations and Creative.
  */
+// SHORT FORM, as of 1 November 2026. These were prefixed with
+// FLYING_DRESSES_PATH, which made every nav link point at a second crawlable
+// copy of the site. See the note on fdPath in app/flying-dresses/_lib/seo.ts.
 export const nav: { label: string; href: string }[] = [
-  { label: "Photoshoots", href: `${FLYING_DRESSES_PATH}/experiences` },
-  { label: "Celebrations", href: `${FLYING_DRESSES_PATH}/celebrations` },
-  { label: "Creative", href: `${FLYING_DRESSES_PATH}/creative` },
-  { label: "The Wardrobe", href: `${FLYING_DRESSES_PATH}/wardrobe` },
-  { label: "Rent & Hire", href: `${FLYING_DRESSES_PATH}/rentals` },
-  { label: "About", href: `${FLYING_DRESSES_PATH}/about` },
+  { label: "Photoshoots", href: "/experiences" },
+  { label: "Celebrations", href: "/celebrations" },
+  { label: "Creative", href: "/creative" },
+  { label: "The Wardrobe", href: "/wardrobe" },
+  { label: "Rent & Hire", href: "/rentals" },
+  { label: "About", href: "/about" },
 ];
 
 /**
