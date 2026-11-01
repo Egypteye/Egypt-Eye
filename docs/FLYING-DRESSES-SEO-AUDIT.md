@@ -28,9 +28,14 @@ I expected to find gaps here and mostly did not.
 
 ### The `/blog` question
 
+> **Corrected 1 November 2026, after the Search Console export.** What follows
+> was right about the codebase and wrong about the consequence. There is no
+> `/blog` route, but the previous site's blog URLs are still being clicked and
+> they were 404ing. See section 9. The conclusion "no rankings at risk" was
+> wrong and is retracted.
+
 The brief flagged `/blog` versus `/flying-dresses/stories` as a critical
-duplicate-content problem. **It is not a problem, and `/blog` does not exist in
-this codebase.**
+duplicate-content problem. **There is no `/blog` route in this codebase.**
 
 What exists is a redirect: `/blog` and `/blog/:slug` return 308 to `/stories`,
 and they are part of a block of WordPress legacy redirects built for the
@@ -38,8 +43,9 @@ and they are part of a block of WordPress legacy redirects built for the
 `/wp-sitemap.xml`). There was never a Flying Dresses blog to merge.
 
 I verified this live: `/blog` → 308, `/flying-dresses/stories` → 200,
-`/flying-dresses/blog` → 404. Nothing to merge, nothing to redirect, no
-rankings at risk. I changed nothing here.
+`/flying-dresses/blog` → 404 — but I checked those on the **travel** domain,
+where that redirect block lives. On flyingdressesegypt.com itself nothing
+handled them at all. That gap is now fixed; see section 9.
 
 ### Editorial categories
 
@@ -244,3 +250,106 @@ available is "compiles with zero type errors", which it does.
 4. Add `lastmod` to the product pages properly, by recording an edit date in
    the content files, rather than by guessing one.
 5. Resolve the venue name, which unlocks the withheld rooftop photograph.
+
+
+---
+
+## 9. What the Search Console data showed, and what I had missed
+
+Added 1 November 2026, from the owner's three-month export.
+
+Two bugs that **no amount of reading the code had surfaced**, because both are
+invisible until something external crawls the site. My audit above checked that
+canonical tags existed and that each brand had its own robots and sitemap. Both
+were true. Neither was sufficient, and the data said so in about a minute.
+
+### Bug one: the entire brand was indexed twice
+
+The proxy served every page at **both** shapes on this domain:
+
+    flyingdressesegypt.com/packages
+    flyingdressesegypt.com/flying-dresses/packages
+
+The first is the public URL and the one every canonical tag points at. The
+second is the internal route tree, which the proxy passed straight through on
+the reasoning that it is "the form every internal link uses, so it is the
+common case". Both halves of that were true, and together they were the bug:
+the internal links are crawlable, so Google crawled and indexed them.
+
+At least eight pages were in the index at both shapes, competing:
+
+| Page | Short form | Long form |
+|---|---|---|
+| `/rentals` | 53 impressions | 2 |
+| `/packages` | 26 | 12 |
+| `/stories/how-a-flying-dress-flies` | 6 | 14 |
+| `/stories/choosing-a-dress-colour` | 3 | 4 |
+| `/creative/dj-and-music` | 2 (pos 45) | 3 (pos 28.7) |
+
+On the stories the long form was *winning*, which is the clearest possible
+evidence that the canonical tag was not being honoured. A canonical is a hint,
+and on a domain this new it had no authority to spend.
+
+**Fixed:** the long form now 308s to the short form on this domain only.
+Verified single-hop to 200, and verified that the travel domain, where
+`/flying-dresses/*` is the real and only address, is unaffected.
+
+**The cost, stated plainly:** `fdPath()` emits the long form for every internal
+link, because the same HTML is served to both domains and a static href cannot
+vary by host. So an internal click on flyingdressesegypt.com now costs one
+redirect hop. That is a real regression and it is the cheaper of the two
+evils. To remove it, the links must become short-form, which is only safe once
+you confirm the travel domain no longer needs to serve the review copy — see
+section 10.
+
+### Bug two: the previous site's URLs 404, and they still have traffic
+
+| URL | Clicks | Impressions | Position |
+|---|---|---|---|
+| `/blog-post1` | 6 | 37 | 12.2 |
+| `/about-us` | 2 | 41 | 6.3 |
+| `/blog-post5` | 1 | 16 | 11.8 |
+| `/blog` | 0 | 3 | 2.0 |
+
+Nine clicks and ninety-seven impressions a quarter, landing on a 404.
+`/blog-post1` on its own out-clicked every celebration page on the site.
+
+**Fixed:** `/about-us` → `/about` (the one unambiguous one-to-one rename), and
+`/blog`, `/blog-post<n>` and `/blog/<slug>` → `/stories`. Nobody kept a mapping
+from the old post numbers, and inventing one would send a reader to an article
+that is not what they clicked, so they go to the listing holding the same kind
+of content. That is what the travel site's rules already do for its orphaned
+WordPress post IDs.
+
+### What the data says about the business, not the code
+
+- **Mobile is the site.** 467 of 608 impressions and 46 of 65 clicks.
+- **The head terms are already won.** "flying dress photoshoot egypt" sits at
+  position 1.1 with 86% CTR; "flying dress egypt" at 1.2. There is no upside
+  left there.
+- **Hurghada is real demand you do not serve.** "hurghada flying dress" (25
+  impressions) and "flying dress hurghada" (6) are the largest non-brand
+  cluster on the whole export, at positions 8–9. You run Ain Sokhna on the Red
+  Sea, not Hurghada. **I have not written a word about Hurghada**, because
+  inventing a location is exactly what CLAUDE.md §7 forbids. If you do or could
+  serve it, say so and it is a page. If you do not, this stays unserved.
+- **`/rentals/dress-rental` is the clearest content problem.** 41 impressions,
+  **zero** clicks, position 12.7. It is on page two and nothing about the
+  result is making anyone click.
+- **Traffic is tiny and that is fine.** 65 clicks a quarter on a domain whose
+  DNS was pointed weeks ago. The chart only holds thirteen days of data.
+
+---
+
+## 10. Revised next thirty days
+
+1. **Confirm whether the travel domain still needs to serve the Flying Dresses
+   review copy.** If it does not, internal links become short-form and the
+   redirect hop introduced above disappears. This is now the highest-value
+   technical item and it needs your answer, not my judgement.
+2. **Decide the Hurghada question.** Largest unserved demand in the data.
+3. **Re-submit the sitemap** in Search Console and watch the duplicate URLs
+   drop out of the index. Expect weeks, not days.
+4. `/rentals/dress-rental`: 41 impressions and no clicks is a title and
+   description problem before it is anything else.
+5. The travel-site pillar overlap from section 6, unchanged.

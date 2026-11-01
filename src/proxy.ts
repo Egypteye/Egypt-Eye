@@ -1,5 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  canonicalFlyingDressPath,
+  legacyFlyingDressRedirect,
+} from "@/content/flyingDressRedirects";
 import { RETIRED_STORY_SLUGS } from "@/content/retiredStories";
 import { DEFAULT_LOCALE, LOCALE_CODES } from "@/i18n/locales";
 // The single authority for "is this request for the other brand?". Kept in
@@ -154,10 +158,52 @@ function flyingDressesProxy(request: NextRequest): NextResponse {
     return NextResponse.rewrite(url, { request });
   }
 
-  // Already addressing the real tree. This is the form every internal link
-  // uses, so it is the common case.
-  if (pathname === FLYING_DRESSES_BASE || pathname.startsWith(`${FLYING_DRESSES_BASE}/`)) {
-    return NextResponse.next({ request });
+  // THE PREVIOUS SITE'S URLS, which still have traffic.
+  //
+  // Search Console, three months to 1 November 2026: /blog-post1 took 6
+  // clicks and 37 impressions, /about-us 2 and 41, /blog-post5 1 and 16.
+  // Every one of them lands on this brand's 404 today, because the catch-all
+  // at the bottom of this function rewrites an unknown path into the route
+  // tree and finds nothing there. Nine clicks a quarter, thrown away.
+  //
+  // Checked BEFORE the long-form branch below so that an old URL which
+  // happens to start with the prefix is still treated as an old URL.
+  const legacy = legacyFlyingDressRedirect(pathname);
+  if (legacy) {
+    const url = request.nextUrl.clone();
+    url.pathname = legacy;
+    url.search = "";
+    return NextResponse.redirect(url, 308);
+  }
+
+  // THE LONG FORM IS A DUPLICATE OF THE SHORT FORM, AND IT USED TO BE SERVED.
+  //
+  // This branch returned NextResponse.next(), on the reasoning that
+  // /flying-dresses/* is "the form every internal link uses, so it is the
+  // common case". Both halves of that are true and together they were the
+  // bug: the internal links are crawlable, so Google indexed the whole site
+  // twice, once at each shape, with the two competing.
+  //
+  // Search Console had at least eight pages in both forms, including
+  // /packages (26 impressions) against /flying-dresses/packages (12) and
+  // /rentals (53) against /flying-dresses/rentals (2). Every canonical tag on
+  // the site already pointed at the short form and had not won, because a
+  // canonical is a hint and this domain is new.
+  //
+  // A 308 settles it. The cost is that every internal link on this domain now
+  // takes one redirect hop, because fdPath() emits the long form and the same
+  // HTML is also served under egypteyetravel.com/flying-dresses/*, where the
+  // long form is the only real address. That is a real regression, it is the
+  // cheaper of the two, and docs/FLYING-DRESSES-SEO-AUDIT.md says how to
+  // remove it.
+  //
+  // The rewrites above and below are internal and do not re-enter the proxy,
+  // so there is no loop here.
+  const canonicalPath = canonicalFlyingDressPath(pathname);
+  if (canonicalPath) {
+    const url = request.nextUrl.clone();
+    url.pathname = canonicalPath;
+    return NextResponse.redirect(url, 308);
   }
 
   if (isFlyingDressesAllowed(pathname)) {
