@@ -5,7 +5,37 @@ import { useTr } from "@/i18n/LocaleProvider";
 import type { TourVideo } from "@/content/types";
 
 /**
- * The short vertical video on a tour page.
+ * PARKED — not rendered anywhere. Kept deliberately.
+ *
+ * The vertical tour videos were switched off at the owner's request, with the
+ * feature possibly returning later. Nothing imports this component: the tour
+ * page renders no video at either breakpoint, no tour carries a `video`, and
+ * the twelve media files are deleted from public/.
+ *
+ * scripts/check-tour-videos.mts now asserts the OFF state rather than the on
+ * one, so a half-revival — data back but no render, or a render with no files
+ * — fails the build instead of shipping.
+ *
+ * ---------------------------------------------------------------------------
+ * TO BRING IT BACK
+ * ---------------------------------------------------------------------------
+ *   1. Restore the media:  git checkout d24510a -- public/videos/tours
+ *   2. Put `video: { … }` back on the tours that should have one. The shape is
+ *      TourVideo in content/types.ts, which was kept for exactly this.
+ *   3. Render this component at both breakpoints on the tour page. The mobile
+ *      copy must come BEFORE the itinerary, and the desktop copy sits above
+ *      the booking aside inside a wrapper div — the sticky card has to be last
+ *      in the flow or the video scrolls up underneath it.
+ *   4. Invert check-tour-videos.mts back to its on-state assertions. Its git
+ *      history has them.
+ *
+ * The gap-fill in lib/sanityShape.ts (`video: tour.video ?? local?.video`) was
+ * left in place on purpose. Without it, a tour with a Studio document loses
+ * its video entirely — that shipped once, with the files deployed and serving
+ * and not one <video> on the live site. Deleting the line would mean
+ * rediscovering that the hard way.
+ * ---------------------------------------------------------------------------
+ * * The short vertical video on a tour page.
  *
  * =========================================================================
  * WHY IT DOES NOT AUTOPLAY, UNLIKE THE FLYING DRESSES HERO

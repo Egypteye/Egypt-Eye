@@ -1,18 +1,27 @@
 /**
- * Guards the short vertical videos on the best-selling tour pages.
+ * Asserts the vertical tour videos are OFF.
  *
- * These are 9:16 clips of a guide describing a tour. Four things about them
- * are easy to break silently and expensive to break on a live page:
+ * This file used to guard the feature working. It now guards it being
+ * switched off, at the owner's request, with the possibility of coming back.
+ * The inversion is deliberate: a parked feature with no check is one careless
+ * edit from a half-revival, and every half-revival is silent.
  *
- *   the files          a renamed asset leaves a dead <video> and a dead poster
- *   the weight         a re-export straight off a phone is 8MB, not 1.5MB
- *   faststart          without it nothing plays until the whole file lands
- *   preload="none"     without it every visitor pays for a video nobody played
+ * The three ways back on are all worth failing:
  *
- * The first three are checked by reading the actual files rather than
- * trusting that whoever replaced one did it the same way.
+ *   data without a render    a `video` returns to a tour, nothing renders it,
+ *                            and the only symptom is a field nobody reads
+ *   render without data      the panel returns to the page, renders nothing,
+ *                            and leaves a dead import and an empty column
+ *   render without files     both return but the media is still deleted, so
+ *                            every tour page ships a broken <video> and a
+ *                            broken poster — which is the loudest failure and
+ *                            still invisible until someone opens a tour page
+ *
+ * Reviving the feature properly means turning all three on together AND
+ * restoring this file's on-state assertions, which are in its git history.
+ * TourVideoPanel.tsx's header has the full sequence.
  */
-import { readFileSync, existsSync, statSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { tours } from "../src/content/tours";
 
 const errors: string[] = [];
@@ -20,124 +29,74 @@ const ok = (label: string, condition: boolean) => {
   if (!condition) errors.push(label);
 };
 
-const withVideo = tours.filter((t) => t.video);
-ok("no tour carries a video any more — the panel is dead code", withVideo.length > 0);
-
-// A 30-second 480x854 clip has no business being larger than this. The
-// sources were 4.4-8.3MB straight off the camera roll; re-encoded they are
-// 0.9-1.6MB. The budget sits above the largest and well below the smallest
-// original, so it catches "someone dropped the raw file in" without being
-// tripped by ordinary re-encoding.
-const MAX_VIDEO_BYTES = 2_500_000;
-const MAX_POSTER_BYTES = 160_000;
-
-for (const tour of withVideo) {
-  const v = tour.video!;
-  const where = `tours[${tour.slug}].video`;
-
-  for (const [field, path] of [["src", v.src], ["srcWebm", v.srcWebm], ["poster", v.poster]] as const) {
-    ok(`${where}.${field} must be an absolute path under /public`, path.startsWith("/"));
-    const onDisk = `public${path}`;
-    ok(`${where}.${field} points at a file that does not exist: ${onDisk}`, existsSync(onDisk));
-    if (!existsSync(onDisk)) continue;
-
-    const bytes = statSync(onDisk).size;
-    const limit = field === "poster" ? MAX_POSTER_BYTES : MAX_VIDEO_BYTES;
-    ok(
-      `${where}.${field} is ${(bytes / 1_048_576).toFixed(1)}MB, over the ${(limit / 1_048_576).toFixed(1)}MB budget — re-encode it rather than shipping the original`,
-      bytes <= limit
-    );
-  }
-
-  ok(`${where}.src is an .mp4`, v.src.endsWith(".mp4"));
-  // H.264 is patent-encumbered and Chromium builds ship without the decoder.
-  // A headless Chromium used to verify this page reports H.264 as unplayable
-  // and VP9 as "probably": for that browser the MP4 streams and never
-  // decodes, so the WebM is the only thing it can actually watch.
-  ok(`${where}.srcWebm is a .webm`, v.srcWebm.endsWith(".webm"));
-  ok(`${where}.alt describes the video for a screen reader`, (v.alt ?? "").trim().length > 25);
-  ok(`${where}.durationSeconds is a real duration`, v.durationSeconds > 0 && v.durationSeconds < 600);
-
-  // faststart: the moov atom (the index) has to come before mdat (the data),
-  // or the browser cannot start playing until the whole file has arrived.
-  // Checked by reading the head of the file, which is where ffmpeg's
-  // `-movflags +faststart` puts moov.
-  const file = `public${v.src}`;
-  if (existsSync(file)) {
-    const head = readFileSync(file).subarray(0, 400_000);
-    const moov = head.indexOf("moov");
-    const mdat = head.indexOf("mdat");
-    ok(`${where}: no moov atom near the start — was it encoded with -movflags +faststart?`, moov !== -1);
-    ok(
-      `${where}: mdat comes before moov, so playback waits for the whole file — re-encode with -movflags +faststart`,
-      moov !== -1 && (mdat === -1 || moov < mdat)
-    );
-  }
-}
-
-// ---------------------------------------------------------------------------
-// The player's two load-bearing attributes.
-// ---------------------------------------------------------------------------
-// Comments stripped first. This file's whole subject is a component whose
-// header explains why it sets preload="none" and refuses to autoplay — so a
-// naive read finds those strings in the prose and passes however the JSX is
-// changed. Turning the attribute to preload="auto" was caught by nothing
-// until this was added.
 const stripComments = (src: string) =>
   src.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1");
-const panel = stripComments(readFileSync("src/components/TourVideoPanel.tsx", "utf8"));
+
+// ---------------------------------------------------------------------------
+// 1. No tour carries a video.
+// ---------------------------------------------------------------------------
+const withVideo = tours.filter((t) => t.video);
 ok(
-  'TourVideoPanel no longer sets preload="none" — every visitor would fetch a video most never play',
-  /preload="none"/.test(panel)
-);
-ok("TourVideoPanel no longer sets a poster, so the panel is a black box until pressed", /poster=\{/.test(panel));
-// These clips are a person speaking. Autoplaying speech on someone's phone in
-// public is the reason this is click-to-play, and it is the one change that
-// would look harmless in a diff.
-ok(
-  "TourVideoPanel autoplays — these are speech, and must not start by themselves",
-  !/\bautoPlay\b/.test(panel)
-);
-ok("TourVideoPanel must play inline rather than taking over the screen on iOS", /playsInline/.test(panel));
-// The browser takes the first source it can decode, so the order IS the
-// fallback. WebM before MP4, or a Chromium without H.264 gets nothing.
-const webmAt = panel.indexOf('type="video/webm"');
-const mp4At = panel.indexOf('type="video/mp4"');
-ok("TourVideoPanel offers no WebM source", webmAt !== -1);
-ok(
-  "TourVideoPanel lists MP4 before WebM — a browser without the H.264 decoder would take the MP4 and fail to decode it",
-  webmAt !== -1 && mp4At !== -1 && webmAt < mp4At
+  `the vertical video feature is off, but ${withVideo.length} tour(s) still carry one (${withVideo
+    .map((t) => t.slug)
+    .join(", ")}) — it would not render, so this is data nothing reads`,
+  withVideo.length === 0
 );
 
 // ---------------------------------------------------------------------------
-// Both placements, and the order that makes the mobile one work.
+// 2. The tour page renders no panel, at either breakpoint.
 // ---------------------------------------------------------------------------
-const page = readFileSync("src/app/[locale]/(site)/tours/[slug]/page.tsx", "utf8");
-const mobile = page.indexOf('lg:hidden">\n                <TourVideoPanel');
-const itinerary = page.indexOf('{tour.itinerary && (');
-const desktop = page.indexOf('hidden w-full max-w-[15rem] lg:block');
-
-ok("the tour page renders no phone-sized video panel", mobile !== -1);
-ok("the tour page renders no desktop video panel", desktop !== -1);
-ok(
-  "the phone video panel is not before the itinerary — on a narrow screen it has to come first, which is the whole reason it is rendered separately from the sidebar",
-  mobile !== -1 && itinerary !== -1 && mobile < itinerary
+const page = stripComments(
+  readFileSync("src/app/[locale]/(site)/tours/[slug]/page.tsx", "utf8")
 );
+ok(
+  "the tour page renders TourVideoPanel again — the feature is supposed to be off",
+  !/<TourVideoPanel[\s/>]/.test(page)
+);
+ok(
+  "the tour page still imports TourVideoPanel, which is a dead import",
+  !/TourVideoPanel/.test(page)
+);
+ok("the tour page still reads tour.video", !/tour\.video/.test(page));
 
 // ---------------------------------------------------------------------------
-// THE SANITY ROUND TRIP — the failure that has no symptom in development.
+// 3. No media is left serving.
 //
-// A Studio document replaces its content-file entry wholesale. `video` is
-// authored in code and points at a file in this repository, so Studio has
-// nothing to say about it — but without a gap-fill in hardenTour, a tour with
-// a Studio document loses it entirely. That is not hypothetical: these
-// shipped once with the assets deployed and serving, and not one <video>
-// rendered on the live site.
+// An unreferenced file in public/ is still fetchable by anyone who knows the
+// URL, and 9.8MB of it was deployed on every build. Deleting it is part of
+// being off rather than tidiness.
+// ---------------------------------------------------------------------------
+ok(
+  "public/videos still exists — the tour video media should be deleted while the feature is off (it is recoverable from git)",
+  !existsSync("public/videos")
+);
+
+// ---------------------------------------------------------------------------
+// 4. The revival path is intact.
+//
+// Not housekeeping. The gap-fill is the fix for a failure that already
+// happened once: the videos shipped, the files deployed and served, and not
+// one <video> rendered on the live site, because a tour with a Studio
+// document loses any field the content file supplies unless it is filled back
+// in here. Deleting the line while the feature is parked would mean
+// rediscovering that the same expensive way.
 // ---------------------------------------------------------------------------
 const shape = readFileSync("src/lib/sanityShape.ts", "utf8");
 ok(
-  "video has no fallback in hardenTour — any tour with a Studio document will render no video at all",
+  "the hardenTour video gap-fill was deleted — reviving the feature would silently render nothing on any tour with a Studio document, which is exactly what happened last time",
   /video:\s*tour\.video\s*\?\?\s*local\?\.video/.test(shape)
+);
+ok(
+  "TourVideoPanel.tsx is gone, so reviving the feature means rebuilding the player",
+  existsSync("src/components/TourVideoPanel.tsx")
+);
+ok(
+  "the TourVideo type is gone, so the shape to restore is no longer written down",
+  /export type TourVideo = \{/.test(readFileSync("src/content/types.ts", "utf8"))
+);
+ok(
+  "TourVideoPanel.tsx no longer says it is parked — the next person to open it will think it is live",
+  /PARKED/.test(readFileSync("src/components/TourVideoPanel.tsx", "utf8"))
 );
 
 // ---------------------------------------------------------------------------
@@ -148,9 +107,8 @@ if (errors.length > 0) {
   process.exit(1);
 }
 
-const total = withVideo.reduce((n, t) => n + statSync(`public${t.video!.src}`).size, 0);
 console.log(
-  `check-tour-videos: ok — ${withVideo.length} tours carry a vertical video, ` +
-    `${(total / 1_048_576).toFixed(1)}MB in total, every one faststart-encoded with a poster; ` +
-    `the player preloads nothing and cannot autoplay speech; and the phone copy sits before the itinerary.`
+  "check-tour-videos: ok — the vertical video feature is off: no tour carries one, the tour page renders " +
+    "and imports nothing, and no media is left serving. The player, the type and the Sanity gap-fill are " +
+    "kept so it can be switched back on without relearning why it broke the first time."
 );
