@@ -81,23 +81,66 @@ export function ReviewComposer() {
     }
   }, []);
 
-  async function copyAndContinue() {
-    const trimmed = (textRef.current?.value ?? "").trim();
-    let ok = false;
-    try {
-      if (trimmed && navigator.clipboard?.writeText) {
-        await navigator.clipboard.writeText(trimmed);
-        ok = true;
-      }
-    } catch {
-      ok = false;
-    }
-    setCopied(trimmed ? (ok ? "copied" : "failed") : "idle");
+  // --------------------------------------------------------------------
+  // NOT async, and that is the entire point of this function's shape.
+  //
+  // THE BUG THIS REPLACES: it used to `await navigator.clipboard.writeText()`
+  // and then call window.open(). On Safari that opens a tab which never
+  // loads — reported from a real Mac, and reproducible. Safari only honours
+  // window.open inside the click's transient user activation, and an await
+  // ends it: by the time the promise resolved, the gesture was gone and the
+  // open was neutered. The old comment here claimed the opposite.
+  //
+  // WHY THE OBVIOUS FIX IS ALSO WRONG: just moving window.open above the
+  // await trades one failure for another. Opening a tab moves focus to it,
+  // and navigator.clipboard.writeText rejects with "Document is not focused"
+  // on a page that no longer has focus. Copy-then-open and open-then-copy
+  // both break, in opposite directions.
+  //
+  // So the copy has to FINISH before anything else happens, which means it
+  // cannot be a promise at all. document.execCommand("copy") is synchronous:
+  // it completes within this call, before the tab opens and before focus
+  // moves. It is deprecated and still universally supported, and the modern
+  // API is kept below as a fallback for the day that stops being true —
+  // deliberately not awaited, so it can never reintroduce the original bug.
+  // --------------------------------------------------------------------
+  function copyAndContinue() {
+    const el = textRef.current;
+    const trimmed = (el?.value ?? "").trim();
+    let copiedOk = false;
 
-    // Opened after the copy attempt so the clipboard write still happens
-    // inside the click's user gesture. A new tab, so the draft above survives
-    // on the tab they came from.
-    window.open(GOOGLE_REVIEW_URL, "_blank", "noopener,noreferrer");
+    if (trimmed && el) {
+      try {
+        const start = el.selectionStart;
+        const end = el.selectionEnd;
+        el.select();
+        copiedOk = document.execCommand("copy");
+        // Put the caret back where they left it; select() above moved it, and
+        // a traveller returning to this tab should not find their review
+        // highlighted and one keystroke from being wiped.
+        el.setSelectionRange(start ?? trimmed.length, end ?? trimmed.length);
+      } catch {
+        copiedOk = false;
+      }
+
+      // Fallback only. Fire-and-forget: never awaited here, because an await
+      // before window.open is the bug this function exists to avoid.
+      if (!copiedOk && navigator.clipboard?.writeText) {
+        navigator.clipboard
+          .writeText(trimmed)
+          .then(() => setCopied("copied"))
+          .catch(() => setCopied("failed"));
+      }
+    }
+
+    setCopied(trimmed ? (copiedOk ? "copied" : "failed") : "idle");
+
+    // Synchronous, still inside the click. No features string: passing one
+    // makes some browsers open a cramped popup window instead of a tab, and
+    // popup blockers treat it more harshly. `opener = null` gets the
+    // protection that "noopener" was there for without that cost.
+    const opened = window.open(GOOGLE_REVIEW_URL, "_blank");
+    if (opened) opened.opener = null;
   }
 
   return (

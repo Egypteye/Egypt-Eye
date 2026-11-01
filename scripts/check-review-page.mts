@@ -124,6 +124,38 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// 2c. THE SAFARI GESTURE RULE.
+//
+// Safari only honours window.open inside the click's transient user
+// activation. An `await` anywhere before it ends that activation, and the
+// result is a tab that opens and never loads — which is what a real Mac did
+// with the first version of this handler, while Chromium was perfectly happy.
+// It is invisible in review, invisible in a Chromium test, and it breaks the
+// one action the page exists for.
+//
+// So the handler must not be async and must not await before opening. The
+// clipboard copy is synchronous (document.execCommand) precisely so it can
+// finish first: opening the tab moves focus, and navigator.clipboard
+// .writeText rejects on an unfocused document, so the two orderings fail in
+// opposite directions and only a synchronous copy satisfies both.
+// ---------------------------------------------------------------------------
+const handlerStart = composer.indexOf("function copyAndContinue");
+const openAt = composer.indexOf("window.open(GOOGLE_REVIEW_URL");
+ok("the composer no longer has a copyAndContinue handler", handlerStart !== -1);
+ok(
+  "copyAndContinue is async — Safari loses the user gesture across an await and opens a tab that never loads",
+  handlerStart !== -1 && !/async\s+function copyAndContinue/.test(composer)
+);
+ok(
+  "there is an await before window.open — that is the exact Safari bug this handler was rewritten to fix",
+  handlerStart !== -1 && openAt !== -1 && !/\bawait\b/.test(composer.slice(handlerStart, openAt))
+);
+ok(
+  "the clipboard copy is no longer synchronous — a promise-based copy cannot finish before the tab steals focus",
+  /document\.execCommand\("copy"\)/.test(composer)
+);
+
+// ---------------------------------------------------------------------------
 // 3. No claim that the review was published.
 // ---------------------------------------------------------------------------
 const PUBLICATION_CLAIMS = [
