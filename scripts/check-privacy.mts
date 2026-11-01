@@ -333,14 +333,22 @@ ok(
 
 // --- Claims the page makes that the code has to keep true. ----------------
 
-// "There is no advertising network, no analytics service and no tracking
-// pixel on this website." Patterns are specific URLs and call shapes, not
-// bare words: an earlier version of this matched the word "plausible" in a
-// story about a pyramid theory and would have failed for nothing.
-const TRACKERS = [
-  "googletagmanager\\.com",
-  "google-analytics\\.com",
-  "\\bgtag\\(",
+// The policy's claims about tracking, cross-referenced against the code.
+//
+// This section used to assert the opposite: that NOTHING analytics-shaped
+// existed anywhere in the site tree. Google Analytics 4 was added at the
+// owner's request, so the claim it defended is no longer true and keeping it
+// would only have meant deleting it the first time it fired.
+//
+// The replacement is not weaker, it is about a different promise. The policy
+// now says analytics runs ONLY WITH CONSENT, and that advertising signals are
+// off permanently. Both are claims the code has to keep true, and both are
+// easier to break by accident than the old absolute was: flipping a default
+// from denied to granted is one word.
+//
+// Patterns stay specific URLs and call shapes rather than bare words — an
+// earlier version matched "plausible" in a story about a pyramid theory.
+const AD_TRACKERS = [
   "plausible\\.io",
   "posthog\\.(com|js)",
   "cdn\\.mxpnl\\.com",
@@ -352,30 +360,60 @@ const TRACKERS = [
   "\\b_paq\\b",
 ];
 //
-// SCOPED TO THE SITE THE POLICY SPEAKS FOR. This page is served from
-// src/app/[locale]/(site)/privacy, on egypteyetravel.com. Flying Dresses
-// Egypt is a different brand on a different domain, under its own root
-// layout, and it DOES carry GA4 (off until a measurement ID is set). The
-// proxy rewrites /privacy on that domain into the Flying Dresses tree, so
-// this policy is never served beside that tracker — and a repo-wide grep
-// would read one brand's code as a claim about the other's.
-//
-// The exclusion is only safe while the separation holds, which is what the
-// second assertion below is for: the tracker is rendered from exactly one
-// place, and the day it is rendered from anywhere else the scoped grep above
-// sees it.
+// SCOPED TO THE SITE THE POLICY SPEAKS FOR, as before. Flying Dresses Egypt
+// is a different brand on a different domain under its own root layout with
+// its own GA4 property. The proxy rewrites /privacy on that domain into the
+// Flying Dresses tree, so this policy is never served beside that tag.
 const trackerHits = execSync(
-  `grep -rlE '${TRACKERS.join("|")}' src/ --include=*.ts --include=*.tsx --include=*.css --exclude-dir=flying-dresses || true`,
+  `grep -rlE '${AD_TRACKERS.join("|")}' src/ --include=*.ts --include=*.tsx --include=*.css --exclude-dir=flying-dresses || true`,
   { encoding: "utf8" },
 ).trim();
 ok(
-  `the no-analytics claim is still true${trackerHits ? ` (found in: ${trackerHits.split("\n").join(", ")})` : ""}`,
+  `the no-advertising claim is still true${trackerHits ? ` (found in: ${trackerHits.split("\n").join(", ")})` : ""}`,
   trackerHits === "",
 );
 
+// The old absolute claim must be gone, because it is now false.
+ok(
+  "the policy still claims there is no analytics service, which is no longer true",
+  !/no analytics service and no tracking pixel/.test(policyText),
+);
+
+// Analytics exists, so the policy has to name it and say it is consent-gated.
+// Checked in both directions below: the policy says it, and the code does it.
+const analyticsPresent = existsSync("src/components/SiteAnalytics.tsx");
+ok("the site analytics component is missing", analyticsPresent);
+ok(
+  "the policy does not name Google Analytics, which is running on this site",
+  /Google Analytics/.test(policyText),
+);
+ok(
+  "the policy does not say analytics needs the visitor's agreement",
+  /only if you agree|after you say yes/i.test(policyText),
+);
+ok(
+  "the policy does not tell the visitor how to change their mind",
+  /change your mind/i.test(policyText),
+);
+
+// The claims above, against the code that has to honour them.
+const analyticsSource = analyticsPresent
+  ? readFileSync("src/components/SiteAnalytics.tsx", "utf8")
+  : "";
+ok(
+  "analytics_storage does not default to denied — the policy says it is switched off when a visitor first arrives",
+  /analytics_storage:\s*eeStored === 'granted' \? 'granted' : 'denied'/.test(analyticsSource),
+);
+for (const signal of ["ad_storage", "ad_user_data", "ad_personalization"]) {
+  ok(
+    `${signal} is not denied by default — the policy says advertising signals are off permanently`,
+    new RegExp(`${signal}:\\s*'denied'`).test(analyticsSource),
+  );
+}
+
 // Who may render the other brand's analytics: its own root layout, and
-// nothing else. A second renderer anywhere in src/app is what would put a
-// tracker on the site this policy covers.
+// nothing else. More important now, not less — a second renderer would put
+// the WRONG brand's property on this site.
 const analyticsRenderers = execSync(
   `grep -rln 'flying-dresses/_components/Analytics\\|_components/Analytics' src/ --include=*.ts --include=*.tsx || true`,
   { encoding: "utf8" },
@@ -388,7 +426,6 @@ ok(
   `the Flying Dresses analytics is rendered only from its own root layout (renderers: ${analyticsRenderers.join(", ") || "none"})`,
   analyticsRenderers.length === 1 && analyticsRenderers[0] === "src/app/flying-dresses/layout.tsx",
 );
-ok("the policy makes the no-analytics claim", /no analytics service and no tracking pixel/.test(policyText));
 ok("the policy makes the no-selling claim", /do not sell your personal information/.test(policyText));
 
 // "We never see, receive or store your card number." Nothing in the codebase
@@ -841,5 +878,5 @@ console.log(
     "redactor; and the public EXECUTE grant that let anyone wipe the rate limiter is revoked from PUBLIC. " +
     `The privacy policy has ${sections.length} real sections naming ${PROCESSORS.length} processors and ` +
     `${RETENTION.length} retention periods, carries none of the 13 placeholder phrases it used to, and its ` +
-    "no-analytics, no-selling and never-see-your-card claims are each cross-referenced against the code.",
+    "consent-gated-analytics, no-advertising, no-selling and never-see-your-card claims are each cross-referenced against the code.",
 );

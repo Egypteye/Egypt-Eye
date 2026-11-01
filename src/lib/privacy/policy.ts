@@ -88,7 +88,7 @@ export function photoCutoff(now: Date, days = COMMISSION_PHOTO_DAYS): Date {
 }
 
 /** The day the wording below last changed. Shown to the reader. */
-export const POLICY_UPDATED = "31 October 2026";
+export const POLICY_UPDATED = "1 November 2026";
 
 /**
  * Every third party that receives customer personal data, and what for.
@@ -107,7 +107,7 @@ export const PROCESSORS = [
   {
     name: "Google",
     role:
-      'Runs the "Ask Egypt Eye" assistant, which opens once you have a confirmed booking. It is sent your first name and your itinerary so it can answer questions about your own trip. Separately, we read our own Google reviews from Google so we can show them on this site; that direction sends Google nothing about you.',
+      'Runs the "Ask Egypt Eye" assistant, which opens once you have a confirmed booking. It is sent your first name and your itinerary so it can answer questions about your own trip. Separately, we read our own Google reviews from Google so we can show them on this site; that direction sends Google nothing about you. Google Analytics also counts visits to this website, but only if you agree to it \u2014 see Cookies below.',
     where: "Outside the EU",
   },
   { name: "PayPal", role: "Takes card and PayPal payments.", where: "Outside the EU" },
@@ -248,7 +248,7 @@ export function policySections(
       body: [
         "We do not sell your personal information, and we never have.",
         "We do not share it with advertisers, data brokers or anyone else for marketing.",
-        "There is no advertising network, no analytics service and no tracking pixel on this website.",
+        "There is no advertising network on this website, and no advertising or marketing cookie. We use Google Analytics to count visits and see which pages are useful \u2014 and only if you agree to it. Advertising and personalisation signals are switched off there permanently, not merely left unused.",
         "We do not build a profile of you, and nothing about your booking is decided automatically.",
       ],
     },
@@ -263,8 +263,10 @@ export function policySections(
     {
       title: "Cookies",
       body: [
-        "This website sets one kind of cookie: the one that keeps you signed in, and only if you create an account. That is it.",
-        "There are no analytics cookies, no advertising cookies and no third-party trackers, which is why you have not been asked to accept any. If we ever add something that needs your consent, we will ask for it, and this page will say so before it happens.",
+        "This website sets one cookie of its own: the one that keeps you signed in, and only if you create an account.",
+        "Google Analytics sets a cookie too, but only after you say yes. When you first arrive it is switched off, nothing is stored on your device, and a notice asks you. Choose \u201cNo thanks\u201d and no analytics cookie is ever set \u2014 Google still receives an anonymous, cookieless note that a page was viewed, which cannot be tied to you or to your next visit. The site works identically either way.",
+        "To change your mind, clear this site\u2019s data in your browser and the notice will ask again.",
+        "There are no advertising cookies and no third-party trackers beyond that.",
       ],
     },
     {

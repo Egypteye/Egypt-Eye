@@ -18,6 +18,8 @@ import {
 } from "@/sanity/fetchers";
 import { collectReviewSubjects, reviewedSubjectKeys } from "@/lib/reviewSubjects";
 import { jsonLdScript } from "@/content/jsonLd";
+import { SiteAnalytics } from "@/components/SiteAnalytics";
+import { AnalyticsConsent } from "@/components/AnalyticsConsent";
 
 // Cyrillic is in the body face's subsets because Russian is one of the
 // supported languages and Cormorant covers it; without it every Russian page
@@ -189,6 +191,17 @@ export default async function RootLayout({
         />
         <LocaleProvider locale={locale} dict={dict} ui={ui} hasReviews={hasReviews} reviewedKeys={reviewedKeys}>
           {children}
+          {/* GA4 and its consent notice, mounted ONCE for the whole of
+              egypteyetravel.com. This is the root layout for every locale, so
+              every page gets it and no page gets it twice.
+
+              Deliberately not in a shared root above flying-dresses: that
+              brand is a separate root layout with its own GA4 property, and a
+              tag mounted above both would double-count its pages into the
+              wrong property. There is no src/app/layout.tsx, so the two trees
+              genuinely cannot collide — check-analytics.mts asserts it. */}
+          <SiteAnalytics />
+          <AnalyticsConsent />
         </LocaleProvider>
       </body>
     </html>
