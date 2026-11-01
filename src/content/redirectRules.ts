@@ -46,6 +46,106 @@ export function redirectRules(): RedirectRule[] {
     { source: "/wp-sitemap.xml", destination: "/sitemap.xml", permanent: true },
     { source: "/sitemap-index.xml", destination: "/sitemap.xml", permanent: true },
 
+    // ---------------------------------------------------------------------
+    // URLs Google still ranks that returned 404.
+    //
+    // Found by testing every URL in a Search Console export against the live
+    // site: 27 of them answered 404, carrying 629 impressions and 6 real
+    // clicks over three months. Several were on page one — the private
+    // photoshoot page at position 9.1, a luxury tour at 7.1, an award page at
+    // 4.8 — so these are not dead weight, they are live search results that
+    // land on nothing.
+    //
+    // None of them were in this file. check-redirects passed throughout,
+    // because it can only check the rules that exist; a URL nobody listed is
+    // a URL nobody checks. check-seo-404s.mts now pins this specific set.
+    //
+    // 301 throughout: these are permanent renames from the WordPress site, and
+    // a 301 is what passes the old URL's ranking to the new one. A 302 here
+    // would keep the value stranded on a page that does not exist.
+    //
+    // WHERE A MAPPING WAS NOT OBVIOUS, THE DESTINATION IS THE CATEGORY, NOT A
+    // GUESS. Sending someone searching for one tour to a different tour is
+    // worse than showing them the list and letting them choose — and it would
+    // be inventing a product equivalence nobody confirmed.
+    // ---------------------------------------------------------------------
+
+    // Tours whose slug changed in the rebuild. Same product, new address.
+    { source: "/tours/private-luxury-tour-of-egypt", destination: "/tours/10-day-private-luxurious-trip", permanent: true },
+    { source: "/tours/best-of-egypt-in-10-days", destination: "/tours/10-day-private-luxurious-trip", permanent: true },
+    { source: "/tours/cairo-giza-luxor-trip-6-days", destination: "/tours/6-day-cairo-giza-luxor", permanent: true },
+    { source: "/tours/siwa-oasis-3-days-package-from-cairo", destination: "/tours/siwa-oasis", permanent: true },
+    { source: "/tours/dahshour-sakkara-and-memphis", destination: "/tours/memphis-saqqara-dahshur-tour", permanent: true },
+    { source: "/tours/egypt-giza-alexandria-khan-el-khalili-pyramids-old-cairo-tour", destination: "/tours/5-day-giza-cairo-alexandria", permanent: true },
+
+    // Ambiguous tours. The old "pyramids + Egyptian Museum" day tour has no
+    // single successor — the museum tour here does not include the pyramids
+    // and the Giza tour does not include the museum. Same for the old
+    // pyramids/cruise/Abu Simbel package, which maps equally badly onto the
+    // 8-day cruise and the Aswan & Abu Simbel tour. The list is the honest
+    // answer.
+    { source: "/tours/tour-to-pyramids-the-egyptian-museum", destination: "/tours", permanent: true },
+    { source: "/tours/pyramids-nile-cruise-abu-simbel", destination: "/tours", permanent: true },
+
+    // Experiences whose slug changed.
+    { source: "/experiences/atv-quad-bikes-at-pyramidss-desert", destination: "/experiences/atv-quad-bikes-sahara", permanent: true },
+    { source: "/experiences/nile-cruise-dinner-belly-dancer-oriental-shows", destination: "/experiences/nile-cruise-dinner-show", permanent: true },
+    { source: "/experiences/egypt-horse-riding-photography", destination: "/photoshoots/jumping-horse-photoshoot", permanent: true },
+
+    // THE ONE I DELIBERATELY DID NOT MAP TO A PRODUCT.
+    //
+    // /experiences/425 is the second-best performing page on the site — 13
+    // clicks at position 5.0 — and the rule further down already sends every
+    // numeric WordPress id to /experiences, pinned by a check.
+    //
+    // I nearly overrode it to /photoshoots on the theory that 425 was a
+    // photoshoot product. That theory rests on nothing: the id is recorded
+    // nowhere in this repository, and the photo-related queries it probably
+    // serves ("photosession" at position 1, "photographer hire" at 3) are
+    // served just as well by /experiences, which does carry photography
+    // products — photographer-by-the-hour, zamalek-private-photoshoot and
+    // cairo-photography-class. Pointing it at a specific product would be
+    // exactly the invented equivalence this block's header warns against.
+    //
+    // Same for the named version. "Private photoshoot with professional
+    // photographer" is close to several live products and identical to none,
+    // and it lived under /experiences, so that is where it goes.
+    //
+    // Only the owner knows what these two pages were. If they say, both
+    // become one-line changes to a specific product.
+    { source: "/experiences/private-photoshoot-with-professional-photographer", destination: "/experiences", permanent: true },
+
+    // Old section and category pages.
+    { source: "/contact-us", destination: "/about#contact", permanent: true },
+    { source: "/customized-tours", destination: "/customize", permanent: true },
+    { source: "/multi-day-tours", destination: "/tours", permanent: true },
+    { source: "/populartours", destination: "/tours", permanent: true },
+    { source: "/tour_category/:slug", destination: "/tours", permanent: true },
+    { source: "/faqs/about-us", destination: "/faq", permanent: true },
+    { source: "/faqs/:slug", destination: "/faq", permanent: true },
+    { source: "/extra-experiences", destination: "/experiences", permanent: true },
+    { source: "/extra-experiences/:slug", destination: "/experiences", permanent: true },
+
+    // Featured-traveller pages from the old site. The reviews they showed now
+    // live on the reviews wall.
+    { source: "/award-winning/:slug", destination: "/testimonials", permanent: true },
+
+    // German was never published. /de is indexed and 404s; the site does not
+    // speak German, so the English home page is where it belongs.
+    { source: "/de", destination: "/", permanent: true },
+
+    // Three WordPress posts whose slug did NOT survive the rebuild, so the
+    // generic /:year/:month/:day/:slug rule below sends them to a /stories/
+    // address that does not exist — a redirect into a 404, which is worse
+    // than the 404 it replaced because it hides the cause. These must stay
+    // ABOVE that rule: Next matches in order.
+    { source: "/2024/:month(\\d{2})/:day(\\d{2})/7-best-spots-for-diving-in-egypt", destination: "/stories/is-scuba-diving-in-egypt-worth-it", permanent: true },
+    { source: "/2024/:month(\\d{2})/:day(\\d{2})/embracing-egypts-rich-tapestry-a-solo-journey-through-siwa-giza-and-cairo", destination: "/stories/siwa-oasis-travel-guide", permanent: true },
+    // No "best beaches" story exists to receive this one, and naming a
+    // different coast guide as its successor would be inventing an
+    // equivalence. The stories index is the honest destination.
+    { source: "/2024/:month(\\d{2})/:day(\\d{2})/12-best-beach-in-egypt-to-hit-in-2024", destination: "/stories", permanent: true },
+
     // WordPress date permalinks from the previous site — /2024/04/01/some-post.
     // Search Console reports 24 of these as 404s, and they are where most of
     // the domain's remaining search visibility still points. Mapping the
