@@ -1151,6 +1151,7 @@ export const flyingDressStories: FlyingDressStory[] = [
         heading: "What it is not",
         body: [
           "It is not the White Desert. Those two names get used interchangeably online and by more than one operator, and they are different places: Egypt's White Desert is far beyond Fayoum, a different journey entirely, and this day does not go there. If you have seen the chalk formations in photographs and that is what you are booking for, this is not that trip and we would rather you knew before you paid than after you arrived.",
+          "That trip now exists here as [its own two-day shoot](/experiences/white-desert), with a night at a desert camp in the middle of it. If the formations are what you came for, book that one instead of this one.",
           "What Fayoum has is its own pale dune country, lakes and waterfalls, three hours from Cairo rather than a long expedition. It looks like nowhere else in Egypt. It does not look like the White Desert.",
         ],
       },

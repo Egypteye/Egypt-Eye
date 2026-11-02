@@ -424,6 +424,21 @@ export type FlyingDressPackage = {
   priceUsd: number | null;
   priceConfidence: Confidence;
   /**
+   * PRICED BY THE SIZE OF THE PARTY, not by the head.
+   *
+   * Four of the five shoots charge one rate per person and `priceUsd` is the
+   * whole answer. The White Desert does not: it is $500 for one traveller and
+   * $800 for two, which is $400 each. Neither figure can stand in for the
+   * other, and a per-person field forced to hold one of them lies about the
+   * other, so the tiers live here and `priceUsd` holds the BEST per-person
+   * rate, which the phrase helper then renders as a "from".
+   *
+   * This is the only place those totals may be written. A tier repeated into
+   * prose is a second copy of a number that will not move when the first one
+   * does, which is the rule the priceStory guard already enforces.
+   */
+  partyPricing?: { people: number; totalUsd: number }[];
+  /**
    * HOW LONG THIS ONE ACTUALLY TAKES.
    *
    * This used to be a single shared inclusion reading "A 30 to 45 minute
@@ -485,6 +500,31 @@ export type FlyingDressPackage = {
    * `confirm`, not here.
    */
   timeline?: { when: string; what: string }[];
+  /**
+   * THE DAY AROUND THE SHOOT, where there is one.
+   *
+   * Two of these shoots sit inside a whole excursion, and until now the pages
+   * sold the photoshoot and said nothing about the hours either side of it.
+   * Fayoum can have a nine-hour tour attached for $75 on top; the Ain Sokhna
+   * yacht day already contains its activities and charges nothing extra.
+   *
+   * `addedPriceUsd` is the difference between those two cases and is the only
+   * figure this block may introduce:
+   *   a number  the tour is an upgrade and this is what it adds, per person
+   *   null      the itinerary is part of the price already on the page
+   *
+   * Null is NOT "price on request" here, which is what null means on
+   * `priceUsd`. The distinction is deliberate and the renderer states which it
+   * is in words rather than leaving a reader to infer it from an absent
+   * number.
+   */
+  tourItinerary?: {
+    heading: string;
+    lede: string;
+    addedPriceUsd: number | null;
+    durationNote: string;
+    steps: string[];
+  };
   /** Anything about this package the owner still has to confirm. */
   confirm: string[];
 };
@@ -656,9 +696,39 @@ export const packages: FlyingDressPackage[] = [
         "What you get for the day is a landscape neither of the others can offer: pale sand instead of gold, and water in the frame. Dark and jewel colours read completely differently against it, and the panoramas are the widest of the three.",
       ],
     },
+    tourItinerary: {
+      heading: "Add the full day in Fayoum",
+      lede:
+        "The photoshoot is the reason to come and it is not the only thing out here. For a supplement on top of the shoot, the day becomes a full nine-hour Fayoum excursion with the session inside it, rather than a drive out and a drive back.",
+      addedPriceUsd: 75,
+      durationNote: "About nine hours, door to door.",
+      steps: [
+        "Pick-up from your hotel.",
+        "Drive to the Fayoum Oasis.",
+        "Switch to a 4x4 for the desert.",
+        "The prehistoric fossils in the Valley of the Whales.",
+        "The Whales Museum and the Open Museum.",
+        "Desert safari.",
+        "Sandboarding on the dunes.",
+        "Time at the camp.",
+        "Bedouin lunch, barbecue, or vegan if you ask for it.",
+        "Stargazing before the drive back.",
+      ],
+    },
     confirm: [
       "Current price: brochure says $349 per person.",
-      "THE NAME. The brochure calls this \"White Desert / Fayoum\" and then describes Fayoum: three hours from Cairo, white dunes, waterfalls, lakes. Egypt's White Desert is at Farafra, far beyond Fayoum and a different trip entirely. This page says Fayoum, because the brochure's own description is Fayoum. If the product really does run to the White Desert, the distance, the duration and the price all need revisiting.",
+      "THE NINE-HOUR TOUR'S OWN INCLUSIONS. The owner confirmed $75 per person and the itinerary (November 2026). What that $75 covers of the 4x4, the museum entries, the lunch and the camp is not itemised, so the page does not itemise it.",
+      // RESOLVED, November 2026, and left here as the record of how. This
+      // read: "THE NAME. The brochure calls this 'White Desert / Fayoum' and
+      // then describes Fayoum... If the product really does run to the White
+      // Desert, the distance, the duration and the price all need revisiting."
+      //
+      // The owner has now bought a separate White Desert product into
+      // existence, two days with an overnight camp, so the answer is that
+      // they were always two trips and the brochure's title was conflating
+      // them. Nothing about this record needed revisiting after all. See the
+      // white-desert package below.
+      "RESOLVED (November 2026): the brochure's \"White Desert / Fayoum\" title conflated two trips. Fayoum is this one day; the White Desert is a separate two-day product. Nothing here changed as a result. Kept as a note because the two still get confused by customers and the copy on both pages is written to separate them.",
       "Whether the exact sites are Wadi El Rayan and the Magic Lake, as the sister brand's page states.",
     ],
   },
@@ -725,12 +795,142 @@ export const packages: FlyingDressPackage[] = [
           "That is one of the things confirmed per booking rather than assumed. Tell us where you are staying and we will tell you what the day includes and what it costs.",
       },
     ],
+    tourItinerary: {
+      heading: "What happens across the day",
+      lede:
+        "The photoshoot is one part of a day on the water rather than the whole of it, and nothing below is an upgrade: these are the activities the day already contains.",
+      // NULL MEANS INCLUDED, not "on request". See the field's own note.
+      addedPriceUsd: null,
+      durationNote: "The order is the venue's and the weather's, not a timetable.",
+      steps: [
+        "Pick-up from your hotel at 7:00 in the morning.",
+        "Travel to Ain Sokhna, on the Red Sea coast.",
+        "Board a private yacht for the day.",
+        "A fishing session, with the equipment provided.",
+        "Swimming and snorkelling over the reefs.",
+        "Lunch on board, with fresh seafood among the options.",
+        "Back to your hotel in the evening.",
+      ],
+    },
     confirm: [
+      "THE LENGTH OF THE DAY CONTRADICTS ITSELF and the page has not picked a side. The duration note says about six hours including the drive, which the owner confirmed; the November 2026 itinerary starts at 7:00am and returns 'in the evening', which is most of a day rather than six hours. The six hours is what is published because it is the confirmed figure, but one of the two is wrong and a customer planning a day around it needs the right one.",
       "The group discount: at what party size it starts and what it is worth. The $399 per person is confirmed; the saving is not yet a published figure.",
       "Exactly what the package includes: transport to Ain Sokhna, the yacht arrangement, catering, and any other amenity.",
       "Whether the yacht is chartered per booking or a standing arrangement.",
       "The maximum group size on the boat.",
       "Whether the photoshoot portion has its own duration within the six hours.",
+    ],
+  },
+  // -------------------------------------------------------------------------
+  // THE WHITE DESERT, added November 2026 from the owner's brief.
+  //
+  // The fifth shoot, the only overnight one, and the one that finally settles
+  // a question this file has carried an open note about since the beginning:
+  // the brochure called the Fayoum product "White Desert / Fayoum" and then
+  // described Fayoum, three hours from Cairo. They are two different trips and
+  // now both exist, so the Fayoum record's naming note can be closed and the
+  // stories article that says Fayoum "is not the White Desert" can point here.
+  //
+  // IT IS PRICED BY PARTY SIZE, which nothing else here is. See partyPricing.
+  //
+  // WHAT IT INCLUDES IS NOT PUBLISHED, on the owner's own instruction: the
+  // brief ends "flying dress, photographer, transfers, meals, and
+  // accommodation inclusions should be confirmed at the time of booking". So
+  // none of those five appears as an inclusion anywhere on this page. That is
+  // a lot to leave unstated on a two-day product and it is what the owner
+  // said, so it is in `confirm` rather than invented into `whyThis`.
+  // -------------------------------------------------------------------------
+  {
+    metaDescription:
+      "A two-day flying dress photoshoot in Egypt's White Desert, with the Black Desert, Crystal Mountain, sandboarding and a night at a desert camp. From $400 per person.",
+    slug: "white-desert",
+    // No Egypt Eye counterpart, so no deposit button. The page offers an
+    // enquiry, exactly as the yacht day does.
+    eyeSlug: "",
+    name: "White Desert",
+    title: "The White Desert: two days, and a night under the stars",
+    eyebrow: "Two days and one night",
+    // The better of the two party rates. partyPricing holds both and the
+    // phrase helper renders this as a "from" so it cannot be read as the
+    // price for travelling alone.
+    priceUsd: 400,
+    priceConfidence: "confirm",
+    partyPricing: [
+      { people: 1, totalUsd: 500 },
+      { people: 2, totalUsd: 800 },
+    ],
+    durationNote: "Two days and one night, with the photoshoot on the first afternoon.",
+    gettingThere:
+      "The Black Desert and the White Desert, by Land Cruiser, with a night at a desert camp between them. Far enough out that it is a two-day trip rather than a long day, and the route is confirmed with your booking.",
+    gettingThereConfidence: "confirm",
+    intro:
+      "The furthest of the shoots and the only one with a night in it. Chalk formations weathered into shapes that look like a sphinx, a rabbit, a chicken, and plenty that look like nothing at all, with a flying dress among them at golden hour and a camp under the stars afterwards.",
+    whyThis: [
+      "The only shoot here that includes a night in the desert rather than a drive home.",
+      "Two deserts in one trip: volcanic black rock on the way out, white chalk at the end of it.",
+      "Formations that exist nowhere else in Egypt, so the photographs do not look like anybody else's desert set.",
+    ],
+    visualDirection:
+      "White chalk against a hard blue sky by day, long shadows off the formations at golden hour, and firelight at the camp after dark. Fabric against rock rather than against dunes.",
+    image: null,
+    imageAlt:
+      "A flying dress among the white chalk formations of Egypt's White Desert at golden hour",
+    imageIsPlaceholder: true,
+    tone: "fayoum",
+    timeline: [
+      {
+        when: "Day one, morning",
+        what: "A Land Cruiser collects you from your hotel and the drive out begins, with a stop at a Bedouin cafeteria for tea on the way.",
+      },
+      {
+        when: "Day one, midday",
+        what: "The Black Desert: volcanic mountains, the climb up Panorama Mountain for the view across them, and Jabal Al-Marsous. A natural spring comes up out of the ground nearby.",
+      },
+      {
+        when: "Day one, afternoon",
+        what: "Crystal Mountain and its formations, sandboarding down the slopes, and then into the White Desert itself.",
+      },
+      {
+        when: "Day one, golden hour",
+        what: "The photoshoot. You choose the dress, and the formations and the low sun do the rest.",
+      },
+      {
+        when: "Day one, evening",
+        what: "Dinner at a desert camp, Bedouin style, and the night out there with the stars and very little else.",
+      },
+      {
+        when: "Day two, morning",
+        what: "Breakfast at the camp, the drive back out through the Black Desert, and a drop-off at your hotel in Cairo.",
+      },
+    ],
+    faqs: [
+      {
+        question: "How long is this one?",
+        answer:
+          "Two days and one night. The photoshoot itself is on the first afternoon, at golden hour, and the rest of the time is the deserts and the camp.",
+      },
+      {
+        question: "How is it priced?",
+        answer:
+          "By the size of the party rather than per head, which is unusual here and is why two people pay less each than one person travelling alone. Both rates are published above.",
+      },
+      {
+        question: "What is included?",
+        answer:
+          "That is confirmed with you at the time of booking rather than assumed here. The dress, the photographer, the transfers, the meals and the accommodation are all part of that conversation, and we would rather put them in writing for your dates than list them and be wrong about one.",
+      },
+      {
+        question: "Is this the same as the Fayoum shoot?",
+        answer:
+          "No, and the two get confused constantly. Fayoum is a single day about three hours from Cairo with lakes and pale dunes. The White Desert is further, takes two days, and is chalk rather than sand.",
+      },
+    ],
+    confirm: [
+      "WHAT THE PRICE INCLUDES. The owner's November 2026 brief says the flying dress, the photographer, the transfers, the meals and the accommodation are all to be confirmed at booking. None of the five is listed as an inclusion on this page, because none of them is confirmed. For a two-day product that is a lot left unsaid and it is what was asked for.",
+      "THE DISTANCE AND THE DRIVE TIME. Not given. The page says two days rather than naming a number of hours or kilometres.",
+      "PARTY SIZES ABOVE TWO. $500 for one and $800 for two are confirmed. A third traveller has no published rate and the page does not imply one.",
+      "Whether the photoshoot portion has its own duration within the first afternoon.",
+      "Whether the camp is a fixed site or arranged per trip, and what the sleeping arrangement actually is.",
     ],
   },
 ];
@@ -748,13 +948,30 @@ export const packages: FlyingDressPackage[] = [
  * page calls it, and scripts/check-flying-dresses.mts fails if any page
  * interpolates the raw field again.
  */
-export function packagePriceLabel(pkg: Pick<FlyingDressPackage, "priceUsd">): string {
-  return pkg.priceUsd === null ? "Price on request" : `$${pkg.priceUsd}`;
+export function packagePriceLabel(
+  pkg: Pick<FlyingDressPackage, "priceUsd" | "partyPricing">
+): string {
+  if (pkg.priceUsd === null) return "Price on request";
+  // Same reason as the phrase helper below: on a party-priced shoot this
+  // number is the BEST per-person rate, and printed bare in the hero it
+  // quotes the two-person price to somebody travelling alone.
+  if (pkg.partyPricing && pkg.partyPricing.length > 0) return `from $${pkg.priceUsd}`;
+  return `$${pkg.priceUsd}`;
 }
 
 /** The same answer for a sentence: "$179 per person" / "priced on request". */
-export function packagePricePhrase(pkg: Pick<FlyingDressPackage, "priceUsd">): string {
-  return pkg.priceUsd === null ? "priced on request" : `$${pkg.priceUsd} per person`;
+export function packagePricePhrase(
+  pkg: Pick<FlyingDressPackage, "priceUsd" | "partyPricing">
+): string {
+  if (pkg.priceUsd === null) return "priced on request";
+  // A party-priced shoot has no single per-person rate: the White Desert is
+  // $400 each for two and $500 for one alone. `priceUsd` holds the lower of
+  // the two, so the phrase has to say "from" or it quotes the cheaper tier at
+  // somebody travelling by themselves.
+  if (pkg.partyPricing && pkg.partyPricing.length > 0) {
+    return `from $${pkg.priceUsd} per person`;
+  }
+  return `$${pkg.priceUsd} per person`;
 }
 
 export function packageBySlug(slug: string): FlyingDressPackage | undefined {

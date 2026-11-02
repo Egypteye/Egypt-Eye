@@ -24,6 +24,7 @@ import {
   brand,
   packageIncludes,
   packagePriceLabel,
+  packagePricePhrase,
   cancellation,
   contact,
   dresses,
@@ -341,10 +342,18 @@ for (const pkg of packages) {
     photoshootSlugs.has(pkg.eyeSlug)
   );
 }
-ok(
-  "two Flying Dresses packages point at the same Egypt Eye product, so one of them books the wrong shoot",
-  new Set(packages.map((p) => p.eyeSlug)).size === packages.length
-);
+{
+  // EMPTY IS NOT A PRODUCT, so two packages with no Egypt Eye counterpart are
+  // not pointing at the same thing. This counted "" as a slug, which was fine
+  // while the yacht was the only shoot without a counterpart and broke the
+  // moment the White Desert became the second. The graceful empty case is
+  // already handled above, one package at a time.
+  const booked = packages.map((p) => p.eyeSlug).filter((slug) => slug !== "");
+  ok(
+    "two Flying Dresses packages point at the same Egypt Eye product, so one of them books the wrong shoot",
+    new Set(booked).size === booked.length
+  );
+}
 
 // THE TWO BRANDS MUST QUOTE ONE PRICE FOR ONE SHOOT.
 //
@@ -1993,7 +2002,12 @@ for (const file of brandTsx) {
 // package's own `priceUsd`. The Fayoum copy is written around this: it says
 // "the same photoshoot" and "about three hours", and names no figure at all.
 //
-// A timeline is held to the same rule, for the same reason.
+// A timeline is held to the same rule, for the same reason. So is a
+// tourItinerary, which was written in violation of it: the Fayoum lede said
+// "For $75 per person on top of the shoot" while `addedPriceUsd` already held
+// 75, so one figure existed in two places and the prose copy would not move
+// when the number did. The renderer prints the number; the prose says what it
+// buys.
 //
 // Proven by adding "only $150 more than the rooftop" to the Fayoum story
 // (red, naming the stray figure) and by writing "$349" into it (green, since
@@ -2003,6 +2017,9 @@ for (const pkg of packages) {
   const prose = [
     ...(pkg.priceStory ? [pkg.priceStory.heading, ...pkg.priceStory.body] : []),
     ...(pkg.timeline ?? []).flatMap((step) => [step.when, step.what]),
+    ...(pkg.tourItinerary
+      ? [pkg.tourItinerary.heading, pkg.tourItinerary.lede, pkg.tourItinerary.durationNote]
+      : []),
   ].join(" ");
 
   for (const match of prose.matchAll(/\$\s?([\d,]+)/g)) {
@@ -7394,6 +7411,186 @@ for (const addOn of addOns) {
       /per \{addOn\.priceUnit\}/.test(pricing)
     );
   }
+}
+
+
+// ---------------------------------------------------------------------------
+// THE DAY AROUND THE SHOOT.
+//
+// Two shoots now carry a `tourItinerary`, and they are priced in opposite
+// ways: Fayoum's nine-hour excursion is a $75-per-person upgrade, the Ain
+// Sokhna yacht day's activities are already inside its $399. The field
+// distinguishes them with a number against null.
+//
+// NULL HERE DOES NOT MEAN WHAT NULL MEANS ON priceUsd, where it is "price on
+// request". That collision is the whole risk: a reader who sees no figure on
+// the yacht itinerary must not conclude the activities cost extra and will be
+// quoted later. So the page has to SAY which case it is in words, and these
+// guards check the words and not just the data.
+// ---------------------------------------------------------------------------
+{
+  const detail = stripComments(
+    readFileSync("src/app/flying-dresses/experiences/[slug]/page.tsx", "utf8")
+  );
+
+  ok(
+    "no package carries a tourItinerary, so the two shoots that sit inside a whole excursion are " +
+      "back to describing only the photoshoot",
+    packages.some((pkg) => pkg.tourItinerary)
+  );
+
+  for (const pkg of packages) {
+    const tour = pkg.tourItinerary;
+    if (!tour) continue;
+
+    ok(`${pkg.slug}: the tour itinerary has no steps in it`, tour.steps.length > 0);
+    ok(
+      `${pkg.slug}: a tour step is blank or near enough`,
+      tour.steps.every((step) => step.trim().length > 8)
+    );
+    ok(`${pkg.slug}: the tour itinerary has no heading`, tour.heading.trim().length > 0);
+    ok(
+      `${pkg.slug}: the tour itinerary has no lede, so the steps arrive with nothing saying what they are`,
+      tour.lede.trim().length > 40
+    );
+
+    // THE UPGRADE PRICE IS PER PERSON AND MUST NOT CONTRADICT THE SHOOT'S OWN.
+    if (tour.addedPriceUsd !== null) {
+      ok(
+        `${pkg.slug}: the tour upgrade is $${tour.addedPriceUsd}, which is not a positive whole number of dollars`,
+        Number.isInteger(tour.addedPriceUsd) && tour.addedPriceUsd > 0
+      );
+      // A $75 upgrade on a $349 shoot is an upgrade. A $400 upgrade on it is a
+      // different product wearing an add-on's clothes.
+      if (pkg.priceUsd !== null) {
+        ok(
+          `${pkg.slug}: the tour upgrade is $${tour.addedPriceUsd} against a $${pkg.priceUsd} shoot. ` +
+            "At that share of the price it is not an add-on and should not be sold as one",
+          tour.addedPriceUsd < pkg.priceUsd
+        );
+      }
+    }
+  }
+
+  // THE RENDERER SAYS WHICH CASE IT IS.
+  //
+  // Checked as the test AND the output, because an earlier guard in this file
+  // matched an identifier that still appeared inside a branch that no longer
+  // ran. Proven by deleting the eyebrow ternary (red) and by deleting the
+  // "+$" line (red).
+  ok(
+    "the experience page never renders tourItinerary, so the itinerary is in the data and not on the site",
+    /pkg\.tourItinerary \?/.test(detail)
+  );
+  ok(
+    "the experience page renders the itinerary without distinguishing an upgrade from an inclusion. " +
+      "An absent figure then reads as 'we will quote you later', which for the yacht day is wrong",
+    /addedPriceUsd === null \? "Included in the day" : "An optional day"/.test(detail)
+  );
+  ok(
+    "the experience page never prints the upgrade price, so Fayoum's $75 tour looks free",
+    /\+\$\$\{pkg\.tourItinerary\.addedPriceUsd\} per person/.test(detail)
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// PRICED BY PARTY SIZE.
+//
+// The White Desert is $500 for one traveller and $800 for two, which is $400
+// each. Every other shoot here charges one rate per head, so `priceUsd` was
+// the whole answer and both helpers printed it bare.
+//
+// THE FAILURE THIS PREVENTS IS QUOTING THE CHEAPER TIER TO SOMEBODY ALONE.
+// `priceUsd` holds 400, the better of the two rates, so a hero reading "$400"
+// and a sentence reading "$400 per person" are both wrong for a solo booking
+// by a hundred dollars. Both helpers say "from" when tiers exist, and the
+// tiers are printed in full on the page.
+// ---------------------------------------------------------------------------
+for (const pkg of packages) {
+  const tiers = pkg.partyPricing;
+  if (!tiers) continue;
+
+  ok(`${pkg.slug}: partyPricing exists but is empty`, tiers.length > 0);
+  ok(
+    `${pkg.slug}: a party tier is for a non-positive number of people`,
+    tiers.every((t) => Number.isInteger(t.people) && t.people > 0)
+  );
+  ok(
+    `${pkg.slug}: a party tier total is not a positive whole number of dollars`,
+    tiers.every((t) => Number.isInteger(t.totalUsd) && t.totalUsd > 0)
+  );
+  ok(
+    `${pkg.slug}: two party tiers are for the same number of people`,
+    new Set(tiers.map((t) => t.people)).size === tiers.length
+  );
+
+  // priceUsd MUST be the best per-person rate on offer. If it is higher than
+  // one of the tiers works out at, the "from" is a lie in the other
+  // direction and the page undersells nobody but confuses everybody.
+  const perPerson = tiers.map((t) => Math.round(t.totalUsd / t.people));
+  const best = Math.min(...perPerson);
+  ok(
+    `${pkg.slug}: priceUsd is $${pkg.priceUsd} but the best per-person tier works out at $${best}. ` +
+      'It is rendered as "from", so it has to be the floor',
+    pkg.priceUsd === best
+  );
+
+  // A bigger party must not cost more each. That would make "from" meaningless
+  // and is the shape of a typo rather than a pricing decision.
+  const sorted = [...tiers].sort((a, b) => a.people - b.people);
+  for (let i = 1; i < sorted.length; i += 1) {
+    const prev = Math.round(sorted[i - 1].totalUsd / sorted[i - 1].people);
+    const here = Math.round(sorted[i].totalUsd / sorted[i].people);
+    ok(
+      `${pkg.slug}: ${sorted[i].people} people pay $${here} each against $${prev} each for ` +
+        `${sorted[i - 1].people}. A larger party costing more per head is a typo, not a tier`,
+      here <= prev
+    );
+  }
+}
+
+// THE HELPERS SAY "FROM", AND THE TIERS REACH THE PAGE.
+//
+// Proven by deleting the partyPricing branch from packagePriceLabel (red),
+// from packagePricePhrase (red), and by removing the tier section from the
+// experience page (red).
+{
+  const withTiers = packages.find((pkg) => pkg.partyPricing && pkg.partyPricing.length > 0);
+  ok("no package is party-priced, so the guards above check nothing", withTiers !== undefined);
+  if (withTiers) {
+    ok(
+      `packagePriceLabel renders "${packagePriceLabel(withTiers)}" for a party-priced shoot. Without ` +
+        'a "from" the hero quotes the two-person rate to somebody travelling alone',
+      packagePriceLabel(withTiers).startsWith("from $")
+    );
+    ok(
+      `packagePricePhrase renders "${packagePricePhrase(withTiers)}" for a party-priced shoot, which ` +
+        "states the cheaper tier as if it were the only one",
+      packagePricePhrase(withTiers).startsWith("from $")
+    );
+    // And a per-head shoot must NOT acquire a "from" it has not earned.
+    const flat = packages.find((pkg) => !pkg.partyPricing && pkg.priceUsd !== null);
+    if (flat) {
+      ok(
+        `packagePriceLabel renders "${packagePriceLabel(flat)}" for ${flat.slug}, which is a single ` +
+          'per-person rate and must not be hedged with "from"',
+        !packagePriceLabel(flat).startsWith("from $")
+      );
+    }
+  }
+  const detail = stripComments(
+    readFileSync("src/app/flying-dresses/experiences/[slug]/page.tsx", "utf8")
+  );
+  ok(
+    "the experience page never renders partyPricing, so the only figure a party-priced shoot shows " +
+      "is the hero's, and the tier a solo traveller actually pays appears nowhere",
+    /pkg\.partyPricing && pkg\.partyPricing\.length > 0 \?/.test(detail)
+  );
+  ok(
+    "the experience page renders the tiers without their totals",
+    /\$\{tier\.totalUsd\}/.test(detail)
+  );
 }
 
 
