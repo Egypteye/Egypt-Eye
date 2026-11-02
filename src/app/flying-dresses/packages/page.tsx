@@ -222,6 +222,12 @@ export default async function PackagesPage() {
                         <>
                           {addOn.fromPrice ? <span className="fd-price-from">from </span> : null}
                           <span className="fd-price">${addOn.priceUsd}</span>
+                          {/* Accessories are $5 EACH. The figure alone, beside
+                              the word "Accessories", reads as five dollars for
+                              all thirteen of them. */}
+                          {addOn.priceUnit ? (
+                            <span className="fd-price-from"> per {addOn.priceUnit}</span>
+                          ) : null}
                         </>
                       )}
                     </td>

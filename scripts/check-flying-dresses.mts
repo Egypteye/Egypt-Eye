@@ -7314,6 +7314,89 @@ ok(
 }
 
 
+// ---------------------------------------------------------------------------
+// A PRICED ADD-ON DOES NOT SAY IT HAS NO PRICE.
+//
+// Five of these were "price on request" until the owner sent figures on 2
+// November 2026, and the sentences beside them said so in words: "Price on
+// request, because it is quoted per booking", "the cost is on request",
+// "Charged on top of the shoot, on request". Setting priceUsd without
+// rewriting those left the table printing "$35" in one column and "Price on
+// request" in the next, which is not a cosmetic problem: a customer reading
+// the sentence rather than the number does not know what they owe.
+//
+// Proven by putting "Price on request" back into the professional-video
+// detail while it carries $35: red.
+for (const addOn of addOns) {
+  if (addOn.priceUsd === null) continue;
+  const prose = `${addOn.detail} ${addOn.homeNote}`;
+  const claim = prose.match(/\bon request\b|\bprice on request\b|\bquoted per booking\b/i);
+  ok(
+    `add-on "${addOn.id}" prints $${addOn.priceUsd} and its own copy still says "${claim?.[0]}". ` +
+      "The table shows the figure in one column and denies it in the next",
+    claim === null
+  );
+}
+
+// AND THE UNIT SURVIVES THE SANITY MERGE.
+//
+// CLAUDE.md §3, in the shape it usually takes: mergeAddOns rebuilds the object
+// from the Studio document rather than spreading the local one, so a field
+// added to content/flyingDresses.ts and not added to the merge silently
+// becomes undefined the moment an add-on document exists in the dataset.
+//
+// It matters for exactly one add-on and it matters a lot: accessories are $5
+// EACH, and "$5" printed beside the word "Accessories" reads as five dollars
+// for all thirteen of them.
+//
+// Run over a REAL document set rather than asserted against the source, so a
+// merge that drops the field fails here even though the local data still has
+// it. Proven by deleting the `priceUnit: l?.priceUnit` line from
+// mergeAddOns: red.
+{
+  const priced = addOns.filter((a) => a.priceUnit);
+  ok(
+    "no add-on carries a priceUnit any more, so the guard below is checking nothing. Accessories " +
+      "were the reason it exists",
+    priced.length > 0
+  );
+  const docs = addOns.map((a, i) => ({
+    addOnId: a.id,
+    label: a.label,
+    priceUsd: a.priceUsd,
+    priceIsFrom: a.fromPrice,
+    homeNote: a.homeNote,
+    detail: a.detail,
+    order: i,
+  }));
+  const merged = mergeAddOns(docs);
+  for (const a of priced) {
+    const after = merged.find((m) => m.id === a.id);
+    ok(
+      `add-on "${a.id}" is $${a.priceUsd} per ${a.priceUnit}, but the Sanity merge returns it with ` +
+        `priceUnit ${JSON.stringify(after?.priceUnit)}. Published, it reads as $${a.priceUsd} for all of them`,
+      after?.priceUnit === a.priceUnit
+    );
+  }
+  // And the unit has to reach the page, not just the data.
+  // The first version of this searched the page for "priceUnit" and passed on
+  // a page where the conditional had been replaced with `false ?` — because
+  // the identifier still appeared inside the branch that no longer ran. It has
+  // to see the test AND the output.
+  {
+    const pricing = stripComments(readFileSync("src/app/flying-dresses/packages/page.tsx", "utf8"));
+    ok(
+      "the pricing page no longer branches on priceUnit, so the per-piece figure prints as a flat price",
+      /addOn\.priceUnit\s*\?/.test(pricing)
+    );
+    ok(
+      'the pricing page branches on priceUnit but never prints "per <unit>", so $5 per piece renders as $5',
+      /per \{addOn\.priceUnit\}/.test(pricing)
+    );
+  }
+}
+
+
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");
   for (const error of errors) console.error(`  ✗ ${error}`);

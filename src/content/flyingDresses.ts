@@ -779,6 +779,14 @@ export type AddOn = {
   priceUsd: number | null;
   /** True where the brochure says "starts at". */
   fromPrice: boolean;
+  /**
+   * The thing the price buys, when it is not the booking.
+   *
+   * Everything else here is a one-off charge on a session, so the figure needs
+   * no unit. Accessories are $5 EACH, and "$5" on its own beside "Accessories"
+   * reads as five dollars for the lot of them. Rendered as "$5 per piece".
+   */
+  priceUnit?: string;
   detail: string;
   /**
    * THE SAME FACT WITH NO FIGURE IN IT, for the home page.
@@ -840,14 +848,13 @@ export const addOns: AddOn[] = [
     confidence: "confirm",
   },
   {
-    // The brief confirms the service and the fact that a dedicated video
-    // specialist joins the team for it. It does not confirm a price, so there
-    // is none here — `priceUsd: null` renders as "price on request".
+    // PRICED BY THE OWNER, 2 November 2026. It was "price on request" because
+    // the October brief confirmed the service and not a figure.
     id: "professional-video",
     label: "Professional video production",
-    priceUsd: null,
+    priceUsd: 35,
     fromPrice: false,
-    detail: "A separate piece of work from the Reel included with your session: a video specialist joins the team for the day and the footage is produced properly. Price on request, because it is quoted per booking.",
+    detail: "A separate piece of work from the Reel included with your session: a video specialist joins the team for the day and the footage is produced properly.",
     homeNote: "A video specialist joins the team. A different thing from the Reel that comes free.",
     confidence: "confirm",
   },
@@ -855,11 +862,12 @@ export const addOns: AddOn[] = [
     // "Customers requesting specific additional edits may select approximately
     // 7-10 preferred photographs. These specialized edits are charged
     // separately." Price not confirmed.
+    // PRICED BY THE OWNER, 2 November 2026.
     id: "additional-editing",
     label: "Additional retouching",
-    priceUsd: null,
+    priceUsd: 39,
     fromPrice: false,
-    detail: "Basic editing is included on all hundred-plus images. If you want deeper work on a handful, choose roughly seven to ten frames. Price on request for those.",
+    detail: "Basic editing is included on all hundred-plus images. If you want deeper work on a handful, choose roughly seven to ten frames.",
     homeNote: "Deeper retouching on seven to ten frames of your choosing.",
     confidence: "confirm",
   },
@@ -881,12 +889,25 @@ export const addOns: AddOn[] = [
     // sells by name — the one spot where all nine pyramids line up — so the
     // two brands now describe the same place the same way.
     // See docs/FLYING-DRESSES-BRIEF-CONFLICTS.md.
+    // PRICED BY THE OWNER, 2 November 2026: $99.
+    //
+    // THE NAME IS STILL THE OPEN QUESTION and the price does not settle it.
+    // The owner's 2 November message calls this "Nine Pyramids Lounge", which
+    // is what the original brochure called it and what the October resolution
+    // above replaced with "View" — on the owner's own correction that it is
+    // the Nine Pyramids VIEW inside the Giza complex rather than a lounge.
+    //
+    // So the two statements disagree and only one of them can be on the page.
+    // "View" is kept, because it is the later and more specific of the two and
+    // because it is what Egypt Eye already sells this vantage point as. A
+    // figure arriving under the older name is not a reason to reopen a naming
+    // decision the owner made deliberately; it is a reason to ask. Asked.
     id: "nine-pyramids-view",
     label: "A photoshoot at the Nine Pyramids View",
-    priceUsd: null,
+    priceUsd: 99,
     fromPrice: false,
-    detail: "A photoshoot at the Nine Pyramids View, inside the Giza complex: the vantage point where all nine pyramids line up in one frame. Added to an existing booking, on request. No flying dress involved, so it is ordinary portrait work. Availability is confirmed for your date and the cost is quoted with it.",
-    homeNote: "A photoshoot at the Nine Pyramids View, inside the Giza complex, on request. No flying dress; ordinary portraits.",
+    detail: "A photoshoot at the Nine Pyramids View, inside the Giza complex: the vantage point where all nine pyramids line up in one frame. Added to an existing booking. No flying dress involved, so it is ordinary portrait work, and availability is confirmed for your date.",
+    homeNote: "A photoshoot at the Nine Pyramids View, inside the Giza complex. No flying dress; ordinary portraits.",
     confidence: "confirm",
   },
   {
@@ -912,13 +933,17 @@ export const addOns: AddOn[] = [
     // was written, so the sentence no longer has to apologise for a list it
     // cannot show. It still carries no figure, for the same reason as the
     // gawns above: none has been given.
+    // PRICED BY THE OWNER, 2 November 2026: $5 PER PIECE, which is why this is
+    // the one add-on carrying a unit. "$5" beside "Accessories" would read as
+    // five dollars for all thirteen.
     id: "accessories",
     label: "Accessories",
-    priceUsd: null,
+    priceUsd: 5,
     fromPrice: false,
-    detail: "Thirteen pieces, for the head, the neck, the ears, the arms and the hands. Pick the ones you want when you enquire, or ask us to suggest what goes with your dress. Charged on top of the shoot, on request.",
+    priceUnit: "piece",
+    detail: "Thirteen pieces, for the head, the neck, the ears, the arms and the hands, at $5 each. Pick the ones you want when you enquire, or ask us to suggest what goes with your dress. Charged on top of the shoot.",
     homeNote: "Pieces for the head, neck, ears, arms and hands, chosen before the day rather than on it.",
-    confidence: "missing",
+    confidence: "confirm",
   },
   {
     // CHARGED IN ADDITION, AND THE WORDING HAS TO CARRY THAT ON ITS OWN.
@@ -930,13 +955,17 @@ export const addOns: AddOn[] = [
     // one is CLAUDE.md §7 — so what the sentence has to do instead is leave
     // nobody thinking it might be included. "Price on request" alone did
     // not: read quickly it sounds like a formality.
+    // PRICED BY THE OWNER, 2 November 2026: "starts with $75 depending on
+    // size". A FROM price, and the reason has to travel with it — a figure
+    // that moves with size and is printed without that becomes the number
+    // somebody expects to pay.
     id: "mens-attire",
     label: "Traditional attire for men",
-    priceUsd: null,
-    fromPrice: false,
-    detail: "Five styles of gawn, for a partner in the frame. It is charged on top of the shoot rather than included in it, and the cost is on request: it depends on the style and your dates, so we put it in writing before anything is agreed.",
+    priceUsd: 75,
+    fromPrice: true,
+    detail: "Five styles of gawn, for a partner in the frame. From $75, depending on the size, and charged on top of the shoot rather than included in it. The exact figure is confirmed with you in writing before anything is agreed.",
     homeNote: "Five styles of gawn, for a partner in the frame. Charged on top of the shoot, quoted before you commit.",
-    confidence: "missing",
+    confidence: "confirm",
   },
 ];
 

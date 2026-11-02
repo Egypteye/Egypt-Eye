@@ -444,6 +444,21 @@ export function mergeAddOns(docs: FdAddOnDoc[] | null): AddOn[] {
         // answer. `?? ` not `|| `: a genuine 0 would otherwise become null.
         priceUsd: typeof d.priceUsd === "number" ? d.priceUsd : null,
         fromPrice: Boolean(d.priceIsFrom ?? l?.fromPrice),
+        // THE UNIT IS NOT EDITORIAL AND HAS NO STUDIO FIELD, deliberately.
+        //
+        // "per piece" is a fact about how accessories are sold, not wording
+        // somebody should be able to change: $5 is five dollars EACH, and the
+        // figure printed without the unit reads as five dollars for all
+        // thirteen. So the owner edits the number in the Studio and the unit
+        // comes from the code, keyed by id, exactly as `confidence` below is.
+        //
+        // This is the CLAUDE.md §3 trap in its usual shape: this function
+        // rebuilds the object from the document rather than spreading the
+        // local one, so a field added to content/flyingDresses.ts and not
+        // added here silently becomes undefined the moment an add-on document
+        // exists in Sanity. The guard in check-flying-dresses.mts runs the
+        // real merge over a document set and fails if the unit is lost.
+        priceUnit: l?.priceUnit,
         homeNote: str(d.homeNote, l?.homeNote),
         detail: str(d.detail, l?.detail),
         // Editorial bookkeeping, as above: a Studio-only extra is
