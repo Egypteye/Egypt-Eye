@@ -7199,42 +7199,66 @@ ok(
 
 
 // ---------------------------------------------------------------------------
-// THE EMAIL-SIGNATURE LOGO.
+// THE EMAIL-SIGNATURE LOGOS.
 //
-// public/images/flying-dresses-egypt-logo.png is served to the open internet
-// and pasted into the owner's HTML email signature. NOTHING IN THIS
-// REPOSITORY LINKS TO IT, which is exactly why it needs a guard: it looks
-// like an orphan to anyone tidying up public/, and the only person who would
-// notice it going missing is whoever receives an email with a broken image in
-// it. The owner has no terminal (CLAUDE.md §2) and would learn about it from
-// a client.
+// Two files under public/images/ are served to the open internet and pasted
+// into the owner's HTML email signature: the normal mark, and a light variant
+// for dark-mode clients.
 //
-// Read out of the PNG header rather than from a filename, because the two
-// ways this breaks are both invisible to a file listing: someone re-exports
-// it flattened onto white, which looks fine in an email on a white background
-// and shows a white box everywhere else; or someone "optimises" it to a size
-// that is soft on a retina screen.
+// NOTHING IN THIS REPOSITORY LINKS TO EITHER, which is why they need a guard.
+// They look like orphans to anyone tidying public/, and the only person who
+// would notice one going missing is whoever receives an email with a broken
+// image in it. The owner has no terminal (CLAUDE.md §2) and would learn about
+// it from a client.
+//
+// WHY THE LIGHT VARIANT EXISTS. Both tones in this logo are the SAME brown:
+// the wordmark is #725047 at full alpha and the "Egypt" script is the same
+// brown at 36% alpha, which composites over white as rose-gold. On a dark
+// background that made the wordmark 2.25:1 against Gmail's #202124, which is
+// unreadable. The light variant is the identical artwork recoloured to
+// #f0ddd5, which measures 12.04:1 there.
+//
+// Read out of the PNG header rather than from filenames, because the two ways
+// this breaks are both invisible in a file listing: a re-export flattened onto
+// white, which looks right in an email on a white background and shows a white
+// box everywhere else; and a resize down to something soft on a retina screen.
 //
 // PNG layout: 8-byte signature, then the IHDR chunk (4-byte length, 4-byte
-// type), so the 13 bytes of IHDR data start at offset 16 — width at 16, height
+// type), so IHDR's 13 bytes of data start at offset 16 — width at 16, height
 // at 20, bit depth at 24, COLOUR TYPE at 25. Colour type 6 is truecolour with
-// an alpha channel; 4 is greyscale with alpha; 3 is a palette, whose
-// transparency lives in a separate tRNS chunk.
+// alpha, 4 is greyscale with alpha, 3 is a palette whose transparency lives in
+// a separate tRNS chunk.
 //
-// Proven by: deleting the file (red), flattening it onto white with
-// `-background white -alpha remove` (red on the alpha test), and resizing it
-// to 200px wide (red on the width test).
+// WHAT THIS CANNOT SEE, stated rather than implied: it does not decode pixels,
+// so it cannot confirm the light variant is actually light. `sharp` does not
+// resolve from this repository and shelling out to ImageMagick would put a
+// system binary in the middle of the offline check suite. What it can do is
+// refuse the realistic version of that mistake, which is one file being copied
+// over the other; a genuine recolour to the wrong tone would still get through
+// and has to be looked at.
+//
+// Proven by: deleting each file (red), flattening one onto white with
+// `-background white -alpha remove` (red on alpha), resizing one to 200px
+// wide (red on width), pasting the untrimmed 1563x1563 original over one (red
+// on aspect), and copying the dark file over the light one (red on the
+// duplication test).
 {
-  const LOGO = "public/images/flying-dresses-egypt-logo.png";
-  ok(
-    `${LOGO} is gone. It is hosted for the owner's email signature and nothing in this repository ` +
-      "links to it, so only an email recipient would ever notice",
-    existsSync(LOGO)
-  );
-  if (existsSync(LOGO)) {
-    const png = readFileSync(LOGO);
+  const LOGOS = [
+    ["public/images/flying-dresses-egypt-logo.png", "the normal mark"],
+    ["public/images/flying-dresses-egypt-logo-light.png", "the dark-mode light variant"],
+  ] as const;
+
+  for (const [path, label] of LOGOS) {
     ok(
-      `${LOGO} is not a PNG any more`,
+      `${path} is gone. It is ${label} for the owner's email signature and nothing in this ` +
+        "repository links to it, so only an email recipient would ever notice",
+      existsSync(path)
+    );
+    if (!existsSync(path)) continue;
+
+    const png = readFileSync(path);
+    ok(
+      `${path} is not a PNG any more`,
       png.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
     );
     const width = png.readUInt32BE(16);
@@ -7242,27 +7266,49 @@ ok(
     const colourType = png[25];
     const hasAlpha = colourType === 6 || colourType === 4 || png.includes(Buffer.from("tRNS"));
     ok(
-      `${LOGO} has lost its transparency (PNG colour type ${colourType}, no tRNS). Flattened onto ` +
+      `${path} has lost its transparency (PNG colour type ${colourType}, no tRNS). Flattened onto ` +
         "white it looks correct in an email on a white background and shows a white box on every " +
-        "other background, including dark mode",
+        "other background, which for the light variant is every background it is for",
       hasAlpha
     );
     ok(
-      `${LOGO} is ${width}x${height}. An email signature displays this around 200 to 240px wide, so ` +
-        "it needs to be stored at roughly twice that to stay sharp on a retina screen",
+      `${path} is ${width}x${height}. An email signature displays this around 200 to 240px wide, ` +
+        "so it needs to be stored at roughly twice that to stay sharp on a retina screen",
       width >= 400 && width <= 1200
     );
     ok(
-      `${LOGO} is ${png.length} bytes, which is heavy for an image that loads on every email open`,
+      `${path} is ${png.length} bytes, which is heavy for an image that loads on every email open`,
       png.length <= 200_000
     );
-    // The logo is wordmark-over-script and much wider than it is tall. A square
-    // or portrait file here means somebody replaced it with the untrimmed
-    // original, which is 1563x1563 and mostly empty space.
+    // The logo is a wordmark over a script and much wider than it is tall. A
+    // square or portrait file means somebody pasted back the untrimmed
+    // original, which is 1563x1563 and 96% empty space.
     ok(
-      `${LOGO} is ${width}x${height}, which is not the wordmark's shape. The untrimmed original is ` +
-        "square and 96% empty space; this file should be the trimmed logo",
+      `${path} is ${width}x${height}, which is not the wordmark's shape. The untrimmed original is ` +
+        "square and almost entirely empty; this file should be the trimmed logo",
       width > height * 1.8
+    );
+  }
+
+  // THE TWO MUST NOT BE THE SAME FILE.
+  //
+  // The realistic failure is somebody copying one over the other, which leaves
+  // the signature looking perfect in whichever mode they happened to test and
+  // invisible in the other. Byte equality catches exactly that.
+  if (LOGOS.every(([path]) => existsSync(path))) {
+    const [dark, light] = LOGOS.map(([path]) => readFileSync(path));
+    ok(
+      "the two email-signature logos are byte-identical, so one has been copied over the other and " +
+        "the signature is unreadable in either light or dark mode depending on which survived",
+      !dark.equals(light)
+    );
+    // Same artwork at the same size, so a mismatch means they have drifted
+    // apart and will not sit interchangeably in one signature's markup.
+    const dims = (b: Buffer) => `${b.readUInt32BE(16)}x${b.readUInt32BE(20)}`;
+    ok(
+      `the two email-signature logos are ${dims(dark)} and ${dims(light)}. They are the same artwork ` +
+        "and swap into the same <img> width and height, so they have to match",
+      dims(dark) === dims(light)
     );
   }
 }
