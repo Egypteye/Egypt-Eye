@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { sendEmail } from "@/lib/email/resend";
+import { markEnquiryDelivery, recordEnquiry } from "@/lib/enquiries/store";
 import {
   FLYING_DRESSES_FROM,
   flyingDressesCustomerEmail,
@@ -250,6 +251,28 @@ export async function POST(request: NextRequest) {
 
   const team = flyingDressesTeamEmail({ subject, rows, message, pageUrl });
 
+  // Written down BEFORE either send is attempted, and this route is the
+  // reason the table exists. Its own comment below says what happened
+  // without it: "nothing anywhere records that they tried." Now something
+  // does, whichever sender Resend refuses.
+  //
+  // `rows` is the human-readable summary the desk email is built from, so it
+  // is stored as the detail rather than re-deriving thirty optional fields —
+  // what the desk would have read is exactly what is worth keeping.
+  const enquiryId = await recordEnquiry({
+    kind: "flying_dresses",
+    brand: "flying_dresses",
+    subjectTitle: subject,
+    name,
+    email,
+    phone,
+    details: {
+      pageUrl,
+      message: message || undefined,
+      rows: Object.fromEntries(rows),
+    },
+  });
+
   // THE DESK COPY IS TRIED TWICE, FROM TWO SENDERS, AND THE REASON IS A
   // LOST-ENQUIRY INCIDENT.
   // -------------------------------------------------------------------------
@@ -300,6 +323,11 @@ export async function POST(request: NextRequest) {
       console.error("flying dresses enquiry: fallback sender refused too:", retry.error);
     }
   }
+
+  // Both senders have now been tried. Recorded either way: a `failed` row
+  // carrying Resend's own reason is what turns "enquiries seem down" into
+  // "the domain is unverified", without anyone reading a server log.
+  await markEnquiryDelivery(enquiryId, result);
 
   if (!result.ok) {
     // The customer is told the form failed and pointed at WhatsApp by the
