@@ -4289,46 +4289,61 @@ ok(
 }
 
 // ---------------------------------------------------------------------------
-// IT IS THE NINE PYRAMIDS VIEW, INSIDE THE GIZA COMPLEX. NOT A LOUNGE.
+// THE PRIVATE PYRAMIDS PHOTOSHOOT, AND THE NAME THAT WAS ABANDONED.
 //
-// The brochure called it "Nine Pyramids Lounge, within the Giza pyramid
-// area"; a separate instruction said a Nine Pyramids rooftop "offers pyramid
-// views, it is not inside the archaeological complex". The site said neither,
-// which was the right answer to an unresolved question and the wrong one to
-// leave standing once the owner resolved it: it is the Nine Pyramids View,
-// in the complex, on request.
+// This guard used to require the opposite of what it requires now, and the
+// history is the reason it still exists.
 //
-// This is not pedantry about a name. A session genuinely inside the
-// archaeological area carries ticketing and permit implications a rooftop
-// outside it does not, the sister brand sells that exact vantage point by
-// name, and there is a Stories article on this site whose whole subject is
-// competitors blurring the two. Drifting back to "Lounge" would put the two
-// brands' descriptions of one place out of step again.
+// The brochure called this "Nine Pyramids Lounge, within the Giza pyramid
+// area". A separate instruction said a Nine Pyramids rooftop "offers pyramid
+// views, it is not inside the archaeological complex". In October the owner
+// resolved it as the Nine Pyramids VIEW, inside the complex, and this block
+// enforced that. In November they called it the Lounge again. Two
+// contradictory descriptions of somewhere whose location carries real
+// ticketing and permit implications.
 //
-// PROVEN by restoring the old label and the old detail. Both red.
+// On 3 November the owner dropped both: "Private Pyramids photoshoot instead
+// of all that". So the entry no longer names a vantage point and no longer
+// says anything about the archaeological complex, and this guard no longer
+// requires it to. What it requires instead is that neither contested claim
+// creeps back, because the reason they were contested has not gone away: the
+// sister brand sells a named vantage point inside the complex, and there is a
+// Stories article here whose whole subject is competitors blurring that line.
+//
+// The concept is checked too. The owner was specific that this is a SECOND
+// photoshoot bought on top of the booked one, so the client gets both places,
+// and a sentence that loses that sells a $99 add-on without saying what it
+// adds.
+//
+// PROVEN by reinstating the "inside the Giza complex" wording (red), by
+// renaming it back to a lounge (red), and by rewriting the detail so it no
+// longer says a second shoot is added to the booked one (red).
 // ---------------------------------------------------------------------------
 {
-  const ninePyramids = addOns.find((a) => a.id === "nine-pyramids-view");
+  const pyramidsExtra = addOns.find((a) => a.id === "private-pyramids");
   ok(
-    "the Nine Pyramids extra is gone or has been renumbered, so the shoot the owner confirmed is " +
+    "the Private Pyramids extra is gone or has been renumbered, so the shoot the owner priced is " +
       "no longer offered",
-    ninePyramids !== undefined
+    pyramidsExtra !== undefined
   );
-  if (ninePyramids) {
+  if (pyramidsExtra) {
+    const prose = `${pyramidsExtra.label} ${pyramidsExtra.detail} ${pyramidsExtra.homeNote}`;
     ok(
-      "the Nine Pyramids extra calls itself a session at a lounge again, which is the reading the " +
-        "owner corrected",
-      !/lounge/i.test(`${ninePyramids.label} ${ninePyramids.detail} ${ninePyramids.homeNote}`)
+      "the Private Pyramids extra calls itself a lounge again, which is the description the owner " +
+        "corrected once and then abandoned",
+      !/lounge/i.test(prose)
     );
     ok(
-      "the Nine Pyramids extra no longer says it is the Nine Pyramids View",
-      /nine pyramids view/i.test(ninePyramids.label) &&
-        /nine pyramids view/i.test(ninePyramids.detail)
+      "the Private Pyramids extra places itself inside the Giza archaeological complex again. That " +
+        "claim carries ticketing and permit implications, it was contested twice, and the owner's " +
+        "final answer was to stop making it",
+      !/archaeological complex|giza complex|inside the complex/i.test(prose)
     );
     ok(
-      "the Nine Pyramids extra no longer places itself inside the Giza complex, which is the part " +
-        "that carries the permit and ticketing implications",
-      /giza complex/i.test(ninePyramids.detail)
+      "the Private Pyramids extra no longer says it is a SECOND shoot added to the one already " +
+        "booked, which is the entire concept: the client pays extra and gets both locations",
+      /second photoshoot/i.test(pyramidsExtra.detail) &&
+        /already booked|on top of/i.test(prose)
     );
   }
   // Nowhere else in this brand's copy either.
@@ -7448,6 +7463,25 @@ for (const addOn of addOns) {
       `${pkg.slug}: a tour step is blank or near enough`,
       tour.steps.every((step) => step.trim().length > 8)
     );
+    // AN UPGRADE WITH NO FIGURE MUST STILL READ AS AN UPGRADE.
+    //
+    // This is the state that broke the first version of the field, which had
+    // only "a number" and "included" and used null for the second. The yacht
+    // activities are an upgrade whose price is not set, and with the old
+    // shape that was indistinguishable from free.
+    //
+    // So where no figure exists, the words have to carry it: the lede or the
+    // duration note must say the day CHANGES, and the renderer prints
+    // "Quoted on request" rather than nothing at all.
+    if (tour.supplement.kind === "upgrade" && tour.supplement.usd === null) {
+      ok(
+        `${pkg.slug}: the tour is an upgrade with no price set, and nothing in its own copy says the ` +
+          "day is different from the one already paid for. With no figure beside it, it reads as free",
+        /\badd\b|\badds\b|\bupgrade\b|\bextra\b|\bon top\b|\bbecomes\b/i.test(
+          `${tour.lede} ${tour.durationNote} ${tour.heading}`
+        )
+      );
+    }
     ok(`${pkg.slug}: the tour itinerary has no heading`, tour.heading.trim().length > 0);
     ok(
       `${pkg.slug}: the tour itinerary has no lede, so the steps arrive with nothing saying what they are`,
@@ -7455,20 +7489,56 @@ for (const addOn of addOns) {
     );
 
     // THE UPGRADE PRICE IS PER PERSON AND MUST NOT CONTRADICT THE SHOOT'S OWN.
-    if (tour.addedPriceUsd !== null) {
+    if (tour.supplement.kind === "upgrade" && tour.supplement.usd !== null) {
+      const usd = tour.supplement.usd;
       ok(
-        `${pkg.slug}: the tour upgrade is $${tour.addedPriceUsd}, which is not a positive whole number of dollars`,
-        Number.isInteger(tour.addedPriceUsd) && tour.addedPriceUsd > 0
+        `${pkg.slug}: the tour upgrade is $${usd}, which is not a positive whole number of dollars`,
+        Number.isInteger(usd) && usd > 0
       );
       // A $75 upgrade on a $349 shoot is an upgrade. A $400 upgrade on it is a
       // different product wearing an add-on's clothes.
       if (pkg.priceUsd !== null) {
         ok(
-          `${pkg.slug}: the tour upgrade is $${tour.addedPriceUsd} against a $${pkg.priceUsd} shoot. ` +
+          `${pkg.slug}: the tour upgrade is $${usd} against a $${pkg.priceUsd} shoot. ` +
             "At that share of the price it is not an add-on and should not be sold as one",
-          tour.addedPriceUsd < pkg.priceUsd
+          usd < pkg.priceUsd
         );
       }
+    }
+  }
+
+  // THE YACHT ACTIVITIES ARE AN UPGRADE, NOT AN INCLUSION, AND I HAD IT WRONG.
+  //
+  // The owner first asked for "ability to do all activities during the yacht
+  // shoot" and I read that as the day already containing them, shipping it as
+  // `included`. Their correction: the photoshoot alone is six hours, and the
+  // activities are the added extra that makes the day open-ended.
+  //
+  // Nothing caught the first version, because every guard here only asked
+  // whether the two cases were DISTINGUISHED, not which one each product was
+  // in. A free-text correction is not a check; this is.
+  //
+  // Fayoum is pinned the same way, in the other direction: it is an upgrade
+  // with a figure, and quietly folding $75 into the shoot price would be the
+  // mirror of the same error.
+  //
+  // Proven by flipping each to the other kind: red both ways.
+  for (const [slug, kind, why] of [
+    [
+      "red-sea-yacht",
+      "upgrade",
+      "the photoshoot alone is six hours and the activities are the extra that opens the day up",
+    ],
+    ["fayoum", "upgrade", "the nine-hour excursion is $75 on top of the shoot"],
+  ] as const) {
+    const pkg = packages.find((p) => p.slug === slug);
+    ok(`${slug} is gone, so the guard pinning its supplement checks nothing`, pkg !== undefined);
+    if (pkg?.tourItinerary) {
+      ok(
+        `${slug}: its day is marked "${pkg.tourItinerary.supplement.kind}" rather than "${kind}". ` +
+          `The owner was explicit: ${why}`,
+        pkg.tourItinerary.supplement.kind === kind
+      );
     }
   }
 
@@ -7484,12 +7554,16 @@ for (const addOn of addOns) {
   );
   ok(
     "the experience page renders the itinerary without distinguishing an upgrade from an inclusion. " +
-      "An absent figure then reads as 'we will quote you later', which for the yacht day is wrong",
-    /addedPriceUsd === null \? "Included in the day" : "An optional day"/.test(detail)
+      "An absent figure then reads as free, which for the yacht activities is wrong",
+    /supplement\.kind === "included"/.test(detail)
   );
   ok(
     "the experience page never prints the upgrade price, so Fayoum's $75 tour looks free",
-    /\+\$\$\{pkg\.tourItinerary\.addedPriceUsd\} per person/.test(detail)
+    /\+\$\$\{pkg\.tourItinerary\.supplement\.usd\} per person/.test(detail)
+  );
+  ok(
+    "an upgrade with no figure set renders nothing at all, so the yacht activities read as included",
+    /Quoted on request/.test(detail)
   );
 }
 

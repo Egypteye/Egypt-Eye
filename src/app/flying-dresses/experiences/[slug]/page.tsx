@@ -289,7 +289,9 @@ export default async function ExperiencePage({
         <section className="fd-section-tight" aria-labelledby="fd-itinerary">
           <div className="fd-shell fd-shell-narrow">
             <p className="fd-eyebrow">
-              {pkg.tourItinerary.addedPriceUsd === null ? "Included in the day" : "An optional day"}
+              {pkg.tourItinerary.supplement.kind === "included"
+                ? "Included in the day"
+                : "An optional extra"}
             </p>
             <h2 id="fd-itinerary" className="fd-display fd-h3" style={{ marginTop: "0.75rem" }}>
               {pkg.tourItinerary.heading}
@@ -297,9 +299,14 @@ export default async function ExperiencePage({
             <p className="fd-muted" style={{ marginTop: "1rem" }}>
               {pkg.tourItinerary.lede}
             </p>
-            {pkg.tourItinerary.addedPriceUsd === null ? null : (
+            {/* Three states, said in words. An absent number is not
+                self-evident: a reader who sees none must not conclude the
+                extra is free, which is what "included" is for. */}
+            {pkg.tourItinerary.supplement.kind === "included" ? null : (
               <p className="fd-display fd-h4" style={{ marginTop: "1.5rem" }}>
-                {`+$${pkg.tourItinerary.addedPriceUsd} per person`}
+                {pkg.tourItinerary.supplement.usd === null
+                  ? "Quoted on request"
+                  : `+$${pkg.tourItinerary.supplement.usd} per person`}
               </p>
             )}
             <p className="fd-muted" style={{ marginTop: "0.5rem", fontSize: "var(--fd-step--1)" }}>

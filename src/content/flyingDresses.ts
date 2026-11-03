@@ -508,20 +508,28 @@ export type FlyingDressPackage = {
    * Fayoum can have a nine-hour tour attached for $75 on top; the Ain Sokhna
    * yacht day already contains its activities and charges nothing extra.
    *
-   * `addedPriceUsd` is the difference between those two cases and is the only
-   * figure this block may introduce:
-   *   a number  the tour is an upgrade and this is what it adds, per person
-   *   null      the itinerary is part of the price already on the page
+   * `supplement` says which, and it is a THREE-state answer rather than the
+   * two I first wrote. The first version was `addedPriceUsd: number | null`
+   * with null meaning "included", which worked until the owner clarified that
+   * the yacht's activities are an upgrade whose price is not set. There was
+   * nowhere for that to go: null already meant the opposite of what it needed
+   * to mean, and `priceUsd` uses null for "on request", so the same value
+   * would have meant "free" here and "ask us" twelve lines up.
    *
-   * Null is NOT "price on request" here, which is what null means on
-   * `priceUsd`. The distinction is deliberate and the renderer states which it
-   * is in words rather than leaving a reader to infer it from an absent
-   * number.
+   *   { kind: "included" }              no extra charge, it is in the price
+   *   { kind: "upgrade", usd: 75 }      an upgrade, and this is what it costs
+   *   { kind: "upgrade", usd: null }    an upgrade, and no figure is set yet
+   *
+   * The renderer says which in words. An absent number is not self-evident,
+   * and a reader who sees none must not conclude the day is free.
+   *
+   * `usd` is the only figure this block may introduce; the prose says what the
+   * supplement buys and never repeats the number.
    */
   tourItinerary?: {
     heading: string;
     lede: string;
-    addedPriceUsd: number | null;
+    supplement: { kind: "included" } | { kind: "upgrade"; usd: number | null };
     durationNote: string;
     steps: string[];
   };
@@ -700,7 +708,7 @@ export const packages: FlyingDressPackage[] = [
       heading: "Add the full day in Fayoum",
       lede:
         "The photoshoot is the reason to come and it is not the only thing out here. For a supplement on top of the shoot, the day becomes a full nine-hour Fayoum excursion with the session inside it, rather than a drive out and a drive back.",
-      addedPriceUsd: 75,
+      supplement: { kind: "upgrade", usd: 75 },
       durationNote: "About nine hours, door to door.",
       steps: [
         "Pick-up from your hotel.",
@@ -796,12 +804,16 @@ export const packages: FlyingDressPackage[] = [
       },
     ],
     tourItinerary: {
-      heading: "What happens across the day",
+      heading: "Make it the full day on the water",
+      // CORRECTED BY THE OWNER, 3 November 2026. This first said the
+      // activities were already inside the price. They are not: they are an
+      // upgrade, and taking them is what turns a six-hour photoshoot into an
+      // open-ended day. No figure has been set for it.
       lede:
-        "The photoshoot is one part of a day on the water rather than the whole of it, and nothing below is an upgrade: these are the activities the day already contains.",
-      // NULL MEANS INCLUDED, not "on request". See the field's own note.
-      addedPriceUsd: null,
-      durationNote: "The order is the venue's and the weather's, not a timetable.",
+        "The photoshoot on its own is about six hours. Add the activities and the day becomes the whole thing: fishing, snorkelling and lunch on board, out as long as the water allows.",
+      supplement: { kind: "upgrade", usd: null },
+      durationNote:
+        "With the activities the day runs past six hours, and there is no fixed return time. You come back when the day is done rather than to a timetable.",
       steps: [
         "Pick-up from your hotel at 7:00 in the morning.",
         "Travel to Ain Sokhna, on the Red Sea coast.",
@@ -813,7 +825,10 @@ export const packages: FlyingDressPackage[] = [
       ],
     },
     confirm: [
-      "THE LENGTH OF THE DAY CONTRADICTS ITSELF and the page has not picked a side. The duration note says about six hours including the drive, which the owner confirmed; the November 2026 itinerary starts at 7:00am and returns 'in the evening', which is most of a day rather than six hours. The six hours is what is published because it is the confirmed figure, but one of the two is wrong and a customer planning a day around it needs the right one.",
+      // RESOLVED 3 November 2026. Both figures were right and described
+      // different products: six hours is the photoshoot, the longer day is the
+      // photoshoot plus the activities upgrade.
+      "THE PRICE OF THE ACTIVITIES UPGRADE. The owner confirmed it is an upgrade rather than included, and that it has no fixed return time. No figure has been given, so the page says it is quoted rather than naming one.",
       "The group discount: at what party size it starts and what it is worth. The $399 per person is confirmed; the saving is not yet a published figure.",
       "Exactly what the package includes: transport to Ain Sokhna, the yacht arrangement, catering, and any other amenity.",
       "Whether the yacht is chartered per booking or a standing arrangement.",
@@ -833,12 +848,14 @@ export const packages: FlyingDressPackage[] = [
   //
   // IT IS PRICED BY PARTY SIZE, which nothing else here is. See partyPricing.
   //
-  // WHAT IT INCLUDES IS NOT PUBLISHED, on the owner's own instruction: the
-  // brief ends "flying dress, photographer, transfers, meals, and
-  // accommodation inclusions should be confirmed at the time of booking". So
-  // none of those five appears as an inclusion anywhere on this page. That is
-  // a lot to leave unstated on a two-day product and it is what the owner
-  // said, so it is in `confirm` rather than invented into `whyThis`.
+  // IT IS ALL INCLUSIVE, confirmed by the owner on 3 November 2026.
+  //
+  // The first brief ended "flying dress, photographer, transfers, meals, and
+  // accommodation inclusions should be confirmed at the time of booking", so
+  // this page shipped naming none of them and carrying the gap in `confirm`.
+  // Asked directly, the owner's answer was that the trip is all inclusive
+  // with the dress and the photoshoot, which turns that same list from five
+  // open questions into five inclusions.
   // -------------------------------------------------------------------------
   {
     metaDescription:
@@ -866,6 +883,7 @@ export const packages: FlyingDressPackage[] = [
     intro:
       "The furthest of the shoots and the only one with a night in it. Chalk formations weathered into shapes that look like a sphinx, a rabbit, a chicken, and plenty that look like nothing at all, with a flying dress among them at golden hour and a camp under the stars afterwards.",
     whyThis: [
+      "All inclusive: the transfers, the meals, the night at the camp, the dress and the photoshoot are all in the price.",
       "The only shoot here that includes a night in the desert rather than a drive home.",
       "Two deserts in one trip: volcanic black rock on the way out, white chalk at the end of it.",
       "Formations that exist nowhere else in Egypt, so the photographs do not look like anybody else's desert set.",
@@ -912,12 +930,17 @@ export const packages: FlyingDressPackage[] = [
       {
         question: "How is it priced?",
         answer:
-          "By the size of the party rather than per head, which is unusual here and is why two people pay less each than one person travelling alone. Both rates are published above.",
+          "By the size of the party rather than per head, which is unusual here and is why two people pay less each than one person travelling alone. Both published rates are above. More than two is quoted rather than published.",
       },
       {
         question: "What is included?",
         answer:
-          "That is confirmed with you at the time of booking rather than assumed here. The dress, the photographer, the transfers, the meals and the accommodation are all part of that conversation, and we would rather put them in writing for your dates than list them and be wrong about one.",
+          "It is all inclusive. The transfers from your hotel and back, the meals, the night at the desert camp, the dress and the photographer are all in the price. You are not paying for the trip and then paying again for the photoshoot inside it.",
+      },
+      {
+        question: "What if there are more than two of us?",
+        answer:
+          "The published rates cover one traveller and two. For a larger party we quote it rather than guessing, because what changes is the vehicle and the camp rather than a simple multiple. Tell us how many of you there are when you enquire.",
       },
       {
         question: "Is this the same as the Fayoum shoot?",
@@ -926,9 +949,9 @@ export const packages: FlyingDressPackage[] = [
       },
     ],
     confirm: [
-      "WHAT THE PRICE INCLUDES. The owner's November 2026 brief says the flying dress, the photographer, the transfers, the meals and the accommodation are all to be confirmed at booking. None of the five is listed as an inclusion on this page, because none of them is confirmed. For a two-day product that is a lot left unsaid and it is what was asked for.",
+      "RESOLVED (3 November 2026): the trip is all inclusive, with the dress and the photoshoot in the price. The five items the first brief left open (dress, photographer, transfers, meals, accommodation) are the inclusions, and the page now says so. What is NOT itemised is the detail of each: which meals, what the sleeping arrangement is. See below.",
       "THE DISTANCE AND THE DRIVE TIME. Not given. The page says two days rather than naming a number of hours or kilometres.",
-      "PARTY SIZES ABOVE TWO. $500 for one and $800 for two are confirmed. A third traveller has no published rate and the page does not imply one.",
+      "RESOLVED (3 November 2026): parties above two are quoted on request. $500 for one and $800 for two stay the only published rates, and the page says a larger party is quoted rather than implying a per-head multiple.",
       "Whether the photoshoot portion has its own duration within the first afternoon.",
       "Whether the camp is a fixed site or arranged per trip, and what the sleeping arrangement actually is.",
     ],
@@ -1106,25 +1129,33 @@ export const addOns: AddOn[] = [
     // sells by name — the one spot where all nine pyramids line up — so the
     // two brands now describe the same place the same way.
     // See docs/FLYING-DRESSES-BRIEF-CONFLICTS.md.
-    // PRICED BY THE OWNER, 2 November 2026: $99.
+    // RENAMED AND REFRAMED BY THE OWNER, 3 November 2026, which is what
+    // finally settles the question this entry has carried since the brochure.
     //
-    // THE NAME IS STILL THE OPEN QUESTION and the price does not settle it.
-    // The owner's 2 November message calls this "Nine Pyramids Lounge", which
-    // is what the original brochure called it and what the October resolution
-    // above replaced with "View" — on the owner's own correction that it is
-    // the Nine Pyramids VIEW inside the Giza complex rather than a lounge.
+    // It was "Nine Pyramids Lounge" in the brochure, corrected to "Nine
+    // Pyramids View, inside the Giza complex" in October, then called the
+    // Lounge again in November. Two contradictory descriptions of somewhere
+    // with real permit implications, and the price did not settle which.
     //
-    // So the two statements disagree and only one of them can be on the page.
-    // "View" is kept, because it is the later and more specific of the two and
-    // because it is what Egypt Eye already sells this vantage point as. A
-    // figure arriving under the older name is not a reason to reopen a naming
-    // decision the owner made deliberately; it is a reason to ask. Asked.
-    id: "nine-pyramids-view",
-    label: "A photoshoot at the Nine Pyramids View",
+    // The owner's answer was to drop both: "Private Pyramids photoshoot
+    // instead of all that". So the entry no longer describes a named vantage
+    // point or claims anything about the archaeological complex, because
+    // those were the contested parts and none of them has to be on the page
+    // for the thing to sell.
+    //
+    // WHAT IT IS, in the owner's own framing: a SECOND photoshoot, bought on
+    // top of the one already booked, so the client comes away with both
+    // locations. That is the whole concept and it is what the copy now says.
+    //
+    // The id changed with the label. Nothing pins it: no add-on document
+    // exists in the dataset, and the enquiry form resolves ids against this
+    // same array rather than storing them.
+    id: "private-pyramids",
+    label: "Private Pyramids photoshoot",
     priceUsd: 99,
     fromPrice: false,
-    detail: "A photoshoot at the Nine Pyramids View, inside the Giza complex: the vantage point where all nine pyramids line up in one frame. Added to an existing booking. No flying dress involved, so it is ordinary portrait work, and availability is confirmed for your date.",
-    homeNote: "A photoshoot at the Nine Pyramids View, inside the Giza complex. No flying dress; ordinary portraits.",
+    detail: "A second photoshoot at the pyramids, added to the session you have already booked, so you come away with two locations rather than one. It is private, and the date is confirmed with the rest of your booking.",
+    homeNote: "A second photoshoot at the pyramids on top of your session, so you get both locations.",
     confidence: "confirm",
   },
   {
