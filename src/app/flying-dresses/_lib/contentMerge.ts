@@ -370,7 +370,7 @@ export function mergePackages(docs: FdPackageDoc[] | null): FlyingDressPackage[]
 
   const local = bySlug(localPackages);
 
-  return docs
+  const merged = docs
     .filter((d): d is FdPackageDoc & { slug: string } => Boolean(d.slug))
     .map((d) => {
       const l = local.get(d.slug);
@@ -411,6 +411,21 @@ export function mergePackages(docs: FdPackageDoc[] | null): FlyingDressPackage[]
           d.timeline?.length
             ? d.timeline.map((t) => ({ when: str(t.when, undefined), what: str(t.what, undefined) }))
             : l?.timeline,
+        // LOCAL-ONLY, because the Studio schema has no field for either, so
+        // Studio can never have set them and `?? local` is the whole answer.
+        //
+        // Both were simply MISSING from this object until 3 November 2026, and
+        // nothing caught it: they are optional on FlyingDressPackage, so
+        // omitting them satisfies `satisfies FlyingDressPackage` and type
+        // checking passes. The cost was real. `tourItinerary` is the owner's
+        // nine-hour Fayoum excursion and the yacht's activities, and neither
+        // had EVER rendered in production — the Fayoum page shipped with the
+        // $75 upgrade invisible. `partyPricing` is worse because it is money:
+        // the two-day trip is $500 for one and $800 for two, and without the
+        // tiers the price helper falls back to priceUsd and prints "from $400
+        // per person", which is less than one person actually pays.
+        partyPricing: l?.partyPricing,
+        tourItinerary: l?.tourItinerary,
         // Editorial bookkeeping. See the note at the top of this file: a
         // Studio-only shoot is "unconfirmed" because nobody has said otherwise.
         priceConfidence: l?.priceConfidence ?? "confirm",
@@ -419,6 +434,29 @@ export function mergePackages(docs: FdPackageDoc[] | null): FlyingDressPackage[]
         confirm: l?.confirm ?? [],
       } satisfies FlyingDressPackage;
     });
+
+  // A PRODUCT THAT EXISTS IN CODE BUT NOT IN STUDIO IS STILL A PRODUCT.
+  //
+  // Mapping over the Sanity docs alone meant a package with no Studio
+  // document did not merely drop out of the listing: fdPackageBySlug() reads
+  // this same list, so its page called notFound(). The White Desert shipped
+  // that way and `/experiences/white-desert` was a 404 in production for its
+  // whole first day, with two articles linking to it.
+  //
+  // The empty-list fallback above already took the view that "no documents"
+  // means nobody has made them yet rather than "this brand sells nothing".
+  // This is the same judgement applied per product instead of all-or-nothing.
+  //
+  // The cost is that deleting a Studio document no longer removes a product
+  // that also exists in code; it reverts it to the code version. That is the
+  // right way round: a product is removed by deleting it from the content
+  // file, which is a reviewed change, rather than by a Studio deletion that
+  // silently 404s a page people are linking to.
+  //
+  // Studio order first, since that is what an editor dragged; the code-only
+  // ones follow in file order.
+  const seen = new Set(merged.map((p) => p.slug));
+  return [...merged, ...localPackages.filter((p) => !seen.has(p.slug))];
   // No sort here: the GROQ query already orders by the Position field, which
   // is what an editor dragged. Re-sorting in JavaScript would silently
   // override the one ordering control the Studio offers.

@@ -3203,6 +3203,71 @@ for (const section of ["celebrations", "creative"]) {
     "an empty Studio list empties the site — a brand with no photoshoots is not an edit, it is an unfinished migration",
     mergePackages([]).length === packages.length
   );
+  // A PARTIAL STUDIO LIST IS THE STATE PRODUCTION IS ACTUALLY IN, and nothing
+  // above tested it. The two guards before this one cover null and [], the two
+  // states where the merge falls back wholesale. Real life is neither: on 3
+  // November 2026 Sanity held four photoshoot documents and the content file
+  // held five, and because the merge mapped over the DOCUMENTS, the fifth did
+  // not merely drop out of the listing. fdPackageBySlug() reads the same list,
+  // so /experiences/white-desert returned a hard 404 in production, for a $500
+  // product, with two published articles linking to it.
+  //
+  // Proven by reverting the concat in mergePackages: red, naming the slug.
+  {
+    const partial = packages
+      .filter((pkg) => pkg.slug !== packages[packages.length - 1]!.slug)
+      .map((pkg) => ({ slug: pkg.slug, name: pkg.name }) as Parameters<typeof mergePackages>[0] extends
+        | (infer T)[]
+        | null
+        ? T
+        : never);
+    const merged = mergePackages(partial);
+    for (const pkg of packages) {
+      ok(
+        `"${pkg.slug}" exists in the content file but vanishes when Studio has documents for the ` +
+          `others. It is not just missing from the listing: fdPackageBySlug reads this same list, ` +
+          `so its page 404s`,
+        merged.some((m) => m.slug === pkg.slug)
+      );
+    }
+  }
+
+  // EVERY FIELD OF THE TYPE SURVIVES THE MERGE.
+  //
+  // This is the guard that would have caught the two that were lost, and the
+  // reason it is written by key rather than by name: `partyPricing` and
+  // `tourItinerary` were simply absent from the object mergePackages builds,
+  // and because both are OPTIONAL on FlyingDressPackage, the object still
+  // satisfied `satisfies FlyingDressPackage` and tsc passed. An optional field
+  // added to the type and the content file, and forgotten here, is invisible
+  // to the compiler and to every other check in this file.
+  //
+  // What it cost: the owner's nine-hour Fayoum excursion and the Red Sea
+  // yacht's activities had never rendered on production at all, and the
+  // two-day trip's $500/$800 party tiers would have fallen back to "from $400
+  // per person" the moment somebody created its Studio document — a published
+  // price lower than one traveller pays.
+  //
+  // Proven by deleting `partyPricing: l?.partyPricing` (red) and
+  // `tourItinerary: l?.tourItinerary` (red) from mergePackages.
+  for (const pkg of packages) {
+    const doc = { slug: pkg.slug, name: pkg.name } as NonNullable<
+      Parameters<typeof mergePackages>[0]
+    >[number];
+    const merged = mergePackages([doc]).find((m) => m.slug === pkg.slug);
+    ok(`mergePackages lost "${pkg.slug}" entirely`, merged !== undefined);
+    if (!merged) continue;
+    for (const key of Object.keys(pkg) as (keyof typeof pkg)[]) {
+      if (pkg[key] === undefined) continue;
+      ok(
+        `mergePackages does not carry "${String(key)}", so "${pkg.slug}" renders in production ` +
+          `without it. Optional fields are invisible to \`satisfies\`, so the compiler will not ` +
+          `tell you: add it to the object mergePackages builds`,
+        merged[key] !== undefined
+      );
+    }
+  }
+
   ok("an empty Studio list empties the extras", mergeAddOns([]).length === addOns.length);
   ok("an empty Studio list empties the hire services", mergeRentals([]).length === rentalServices.length);
   ok("with no Studio document the extras are lost", mergeAddOns(null).length === addOns.length);
