@@ -34,12 +34,19 @@ export async function sendEmail({
    * silently spoofing a domain.
    */
   from?: string;
-}): Promise<{ ok: boolean; error?: string }> {
+}): Promise<{ ok: boolean; error?: string; from?: string }> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     return { ok: false, error: "RESEND_API_KEY not configured" };
   }
 
+  // Resolved here and RETURNED, so callers can record which sender actually
+  // got through without re-deriving this expression. It matters because the
+  // three candidates mean very different things: a brand sender means the
+  // domain is verified, RESEND_FROM_EMAIL means the brand's is not and the
+  // platform's caught it, and onboarding@resend.dev means nothing was
+  // configured and Resend will refuse every recipient but the account
+  // owner's. "Sent" alone cannot tell those apart.
   const from =
     fromOverride || process.env.RESEND_FROM_EMAIL || "Egypt Eye Travel <onboarding@resend.dev>";
 
@@ -52,12 +59,12 @@ export async function sendEmail({
     if (!res.ok) {
       const errText = await res.text();
       console.error("Resend send failed:", res.status, errText);
-      return { ok: false, error: `Resend ${res.status}: ${errText}` };
+      return { ok: false, error: `Resend ${res.status}: ${errText}`, from };
     }
-    return { ok: true };
+    return { ok: true, from };
   } catch (err) {
     console.error("Resend request failed:", err);
-    return { ok: false, error: err instanceof Error ? err.message : String(err) };
+    return { ok: false, error: err instanceof Error ? err.message : String(err), from };
   }
 }
 

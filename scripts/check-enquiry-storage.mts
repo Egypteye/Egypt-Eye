@@ -64,6 +64,15 @@ for (const name of LEAD_ROUTES) {
     `${name}: never records whether the email actually left, so a failed delivery is indistinguishable from a successful one`,
     /markEnquiryDelivery\(/.test(src)
   );
+  // The sender has to reach the row. Passing the whole sendEmail result does
+  // it; a hand-built object must name `from` explicitly, and shop-visit does
+  // build one. Without this, a two-sender route reads "sent" whether the
+  // brand domain worked or the platform fallback rescued it.
+  const marks = src.match(/markEnquiryDelivery\([^;]*\)/g) ?? [];
+  ok(
+    `${name}: records delivery without the sender, so "sent" cannot distinguish the brand sender from the fallback`,
+    marks.length > 0 && marks.every((m) => /,\s*result\s*\)/.test(m) || /from:/.test(m))
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -133,6 +142,23 @@ if (existsSync(migration)) {
     /alter table public\.enquiries enable row level security/.test(sql)
   );
 }
+// sendEmail must keep reporting the address it resolved. It is the single
+// authority for that expression; a caller re-deriving it would drift the
+// moment a default changed.
+const resend = stripComments(readFileSync("src/lib/email/resend.ts", "utf8"));
+ok(
+  "sendEmail no longer returns the sender it used, so nothing can record which one Resend accepted",
+  /from\?: string/.test(resend) && /return \{ ok: true, from \}/.test(resend)
+);
+ok(
+  "sendEmail drops the sender on failure — which sender was refused is the more diagnostic half",
+  /error: `Resend \$\{res\.status\}: \$\{errText\}`, from \}/.test(resend)
+);
+ok(
+  "the store does not write email_sender",
+  /email_sender: result\.from/.test(storeCode)
+);
+
 const retention = stripComments(readFileSync("src/lib/privacy/retention.ts", "utf8"));
 ok(
   "the nightly sweep never calls apply_enquiry_retention, so enquiries are kept forever",

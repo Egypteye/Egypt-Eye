@@ -91,6 +91,11 @@ export async function recordEnquiry(record: EnquiryRecord): Promise<string | nul
 /**
  * Records what happened when the notification email was attempted.
  *
+ * `from` is the address sendEmail actually resolved — not a guess. For the
+ * two-sender Flying Dresses route it is the difference between "the brand
+ * domain is verified" and "the brand sender was refused and the platform's
+ * address caught it", which read identically as "sent" without it.
+ *
  * `error` is the provider's own message. It is stored because "failed" alone
  * does not tell the owner whether to re-verify a domain, replace a key or
  * wait out an outage — and they have no terminal to go looking in
@@ -98,7 +103,7 @@ export async function recordEnquiry(record: EnquiryRecord): Promise<string | nul
  */
 export async function markEnquiryDelivery(
   id: string | null,
-  result: { ok: boolean; error?: string }
+  result: { ok: boolean; error?: string; from?: string }
 ): Promise<void> {
   if (!id || !supabaseAdminConfigured) return;
 
@@ -111,6 +116,9 @@ export async function markEnquiryDelivery(
         // Truncated: a provider can return a long HTML error body, and the
         // useful part is always at the front.
         email_error: result.ok ? null : (result.error ?? "unknown").slice(0, 2000),
+        // Recorded on success AND failure. Which sender was refused is as
+        // diagnostic as which one worked.
+        email_sender: result.from ?? null,
         email_attempted_at: new Date().toISOString(),
       })
       .eq("id", id);

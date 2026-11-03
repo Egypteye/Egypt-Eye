@@ -113,6 +113,10 @@ export async function POST(request: NextRequest) {
 
   let delivered = false;
   let deliveryError: string | undefined;
+  // Captured so the stored row names the sender Resend accepted, like every
+  // other lead route. This one builds its result by hand, so it has to be
+  // threaded through explicitly.
+  let deliverySender: string | undefined;
   try {
     const team = shopVisitTeamEmail(facts);
     const sent = await sendEmail({
@@ -124,12 +128,13 @@ export async function POST(request: NextRequest) {
     });
     delivered = sent.ok;
     deliveryError = sent.error;
+    deliverySender = sent.from;
   } catch (err) {
     deliveryError = err instanceof Error ? err.message : String(err);
     console.error("shop visit: team email threw", err);
   }
 
-  await markEnquiryDelivery(enquiryId, { ok: delivered, error: deliveryError });
+  await markEnquiryDelivery(enquiryId, { ok: delivered, error: deliveryError, from: deliverySender });
 
   if (!delivered) {
     // The request did NOT reach anybody. Saying "we have it" here would be
