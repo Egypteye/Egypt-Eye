@@ -2793,8 +2793,20 @@ for (const section of ["celebrations", "creative"]) {
   // price in content and leaving the article alone (red), and by moving a
   // market figure into a first-party article (red).
   // -------------------------------------------------------------------------
+  // partyPricing TOTALS COUNT AS CONFIRMED PRICES, and leaving them out was a
+  // real hole rather than an omission. The two-day trip is the one product
+  // priced by the size of the party: $500 for one and $800 for two live in
+  // `partyPricing`, not in `priceUsd`, so an article quoting the rates the
+  // packages page itself prints was rejected.
+  //
+  // The $500 half was worse than rejected. It is also a Tinggly competitor
+  // figure in RESEARCHED_MARKET_PRICES below, so our own published price was
+  // being waved through as somebody else's, on a cited article, and would have
+  // gone on passing after the catalogue changed underneath it. A price is
+  // checked against the catalogue it came from or the check is theatre.
   const confirmedPrices = new Set<number>([
     ...packages.map((p) => p.priceUsd).filter((v): v is number => typeof v === "number"),
+    ...packages.flatMap((p) => (p.partyPricing ?? []).map((tier) => tier.totalUsd)),
     ...addOns.map((a) => a.priceUsd).filter((v): v is number => typeof v === "number"),
   ]);
 
@@ -7877,19 +7889,113 @@ for (const pkg of packages) {
     }
   }
 
-  // The open question itself. While the two-day page stands as a Bahariya
-  // trip, the owner's "beside the Magic Lake" is unreconciled, and a note
-  // quietly tidied away is how a contradiction gets published six months
-  // later by somebody who never saw this conversation.
-  const overnight = packages.find((pkg) => pkg.slug === "white-desert");
-  ok(
-    "the white-desert camp location is no longer recorded as blocked, but nothing on the " +
-      "page resolves it either. The owner placed the camp beside the Magic Lake, which is " +
-      "in Fayoum, on a trip whose itinerary is Bahariya to Farafra. Resolve it on the page " +
-      "or keep the note",
-    overnight !== undefined &&
-      overnight.confirm.some((line) => /magic lake/i.test(line) && /BLOCKED/.test(line))
-  );
+  // ---------------------------------------------------------------------
+  // THE DRIVE TIMES, which are what actually tell the two trips apart.
+  //
+  // Landmark names were the symptom; the drive time is the fact. The owner
+  // gave both on 3 November 2026: Fayoum is an hour and a half to two hours
+  // from Cairo or Giza, Bahariya is four to five. The brochure had said
+  // Fayoum was THREE hours, and that wrong figure was not decoration. It was
+  // the entire published reason the Fayoum day costs $349 rather than $199,
+  // repeated on the package page, in its price story, in its FAQs and in
+  // three articles, one of whose meta description was "six hours of driving".
+  // Correcting the number meant rewriting the argument it was holding up.
+  //
+  // So the old figure is banned by name. A revert to "three hours" or "six
+  // hours of driving" anywhere in the Fayoum copy puts a false reason for a
+  // real price back in front of a customer, and it got there once already.
+  //
+  // Proven by restoring the old gettingThere (red), by restoring the old
+  // price-story paragraph (red), by restoring the article's old meta
+  // description (red), and by deleting the Bahariya hours (red).
+  {
+    const DRIVE = [
+      {
+        slug: "fayoum",
+        states: /hour and a half to two hours|under two hours/i,
+        band: "an hour and a half to two hours",
+      },
+      {
+        slug: "white-desert",
+        states: /four to five hours/i,
+        band: "four to five hours",
+      },
+    ];
+    for (const { slug, states, band } of DRIVE) {
+      const pkg = packages.find((p) => p.slug === slug);
+      ok(`${slug} is gone, so the guard on its drive time checks nothing`, pkg !== undefined);
+      if (!pkg) continue;
+      const copy = [
+        pkg.metaDescription ?? "",
+        pkg.eyebrow,
+        pkg.gettingThere,
+        ...pkg.whyThis,
+        ...pkg.faqs.map((f) => f.answer),
+      ].join("\n");
+      ok(
+        `${slug} no longer tells anybody how far it is. The owner confirmed ${band} from ` +
+          `Cairo or Giza, and it is the fact that separates this trip from the other one`,
+        states.test(copy)
+      );
+    }
+
+    // The withdrawn figure, across every surface that carried it.
+    const STALE = /three hours|six hours of driving/i;
+    const fayoum = packages.find((p) => p.slug === "fayoum");
+    if (fayoum) {
+      const everything = [
+        fayoum.metaDescription ?? "",
+        fayoum.eyebrow,
+        fayoum.intro,
+        fayoum.gettingThere,
+        fayoum.durationNote ?? "",
+        ...fayoum.whyThis,
+        ...fayoum.faqs.flatMap((f) => [f.question, f.answer]),
+        fayoum.priceStory?.heading ?? "",
+        ...(fayoum.priceStory?.body ?? []),
+      ].join("\n");
+      const stale = STALE.exec(everything);
+      ok(
+        `the Fayoum page says "${stale?.[0]}" again. That figure is withdrawn: the drive is ` +
+          `an hour and a half to two hours, and the old one was the stated reason for the ` +
+          `$349 price, so putting it back puts a false justification under a real number`,
+        stale === null
+      );
+    }
+
+    for (const story of flyingDressStories) {
+      const prose = [
+        story.metaDescription,
+        story.excerpt,
+        ...story.sections.flatMap((sec) => [sec.heading, ...sec.body, ...(sec.list ?? [])]),
+        ...story.faqs.flatMap((f) => f.answer),
+      ].join("\n");
+      if (!/fayoum/i.test(prose)) continue;
+      const stale = STALE.exec(prose);
+      ok(
+        `story ${story.slug} writes about Fayoum and says "${stale?.[0]}". That was the ` +
+          `brochure's figure and it was roughly double the real one; the owner confirmed an ` +
+          `hour and a half to two hours on 3 November 2026`,
+        stale === null
+      );
+    }
+
+    // The four shoot locations, which are what the price argument now rests
+    // on in place of the mileage. Named by the owner, so the page may name
+    // them; if they come off the page the argument has nothing under it.
+    if (fayoum) {
+      const copy = [fayoum.gettingThere, ...fayoum.whyThis, ...(fayoum.priceStory?.body ?? [])].join(
+        "\n"
+      );
+      for (const site of ["Mudawara", "Wadi El Rayan", "Arab Castles", "Magic Lake"]) {
+        ok(
+          `the Fayoum page no longer names ${site}, one of the four shoot locations the owner ` +
+            `confirmed. They are the stated reason the day costs more than a morning`,
+          copy.includes(site)
+        );
+      }
+    }
+  }
 }
 
 if (errors.length > 0) {

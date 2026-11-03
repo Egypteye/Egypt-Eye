@@ -663,12 +663,12 @@ export const packages: FlyingDressPackage[] = [
     eyeSlug: "fayoum-flying-dress-photoshoot",
     name: "Fayoum",
     title: "Fayoum: the Lakes and the White Dunes",
-    eyebrow: "Three hours from Cairo",
+    eyebrow: "Under two hours from Cairo",
     priceUsd: 349,
     priceConfidence: "confirm",
     durationNote: "Four to six hours, including the driving between the locations.",
     gettingThere:
-      "Approximately three hours from central Cairo. White sand dunes, waterfalls and lakes.",
+      "An hour and a half to two hours from Cairo or Giza. The shoot locations out there are Mudawara Mountain, the Wadi El Rayan waterfalls, the Arab Castles sand dunes and the Magic Lake.",
     gettingThereConfidence: "confirm",
     intro:
       "The furthest of the three and the strangest-looking. Pale dunes running down to still water, with a horizon that does not look like anywhere else in Egypt. A full day rather than a morning, and the photographs are the reason people take it.",
@@ -676,6 +676,7 @@ export const packages: FlyingDressPackage[] = [
       "A landscape with water in it, which neither of the other two has.",
       "Pale sand instead of gold, so dark and jewel colours read completely differently here.",
       "The widest panoramas of the three.",
+      "Four locations rather than one spot: Mudawara Mountain, the Wadi El Rayan waterfalls, the Arab Castles dunes and the Magic Lake.",
     ],
     visualDirection:
       "Surreal pale formations, luminous sand, water where the real portfolio supports it, strong silhouettes and wide desert panoramas.",
@@ -688,19 +689,19 @@ export const packages: FlyingDressPackage[] = [
       {
         question: "How long does the day take?",
         answer:
-          "The brochure puts Fayoum at about three hours from central Cairo each way, so this one is a day rather than a morning. The photoshoot itself is the same 30 to 45 minutes.",
+          "An hour and a half to two hours each way, so three to four hours of driving across the day. What makes it a day rather than a morning is not only the distance but the moving between locations once you are out there. The photoshoot itself is the same 30 to 45 minutes.",
       },
       {
         question: "Why is it more than the other two?",
         answer:
-          "Distance. It is the same shoot and the same inclusions, with six hours of driving around it.",
+          "The size of the day. It is the same shoot and the same inclusions, inside a full day that travels further than the other two and moves between four locations rather than staying at one.",
       },
     ],
     priceStory: {
-      heading: "Why this one is the most expensive",
+      heading: "Why this one costs more than the pyramids or the dunes",
       body: [
         "It is the same photoshoot. The same dress, the same assistant, the same 30 to 45 minutes in front of the camera, the same hundred-plus colour-graded photographs afterwards. Nothing about the session is larger.",
-        "What is larger is the day around it. Fayoum is about three hours from central Cairo, so there is roughly six hours of driving wrapped around the shoot, and the car and the driver are yours for all of it. The other two locations give you your afternoon back. This one does not.",
+        "What is larger is the day around it. Fayoum is an hour and a half to two hours from Cairo, so three to four hours of driving, and once you are out there the day moves between locations rather than staying at one: Mudawara Mountain, the waterfalls at Wadi El Rayan, the Arab Castles dunes and the Magic Lake. The car and the driver are yours for all of it. The other two locations give you your afternoon back. This one does not.",
         "What you get for the day is a landscape neither of the others can offer: pale sand instead of gold, and water in the frame. Dark and jewel colours read completely differently against it, and the panoramas are the widest of the three.",
       ],
     },
@@ -733,18 +734,13 @@ export const packages: FlyingDressPackage[] = [
       //
       // The owner then bought a separate White Desert product into existence,
       // two days with an overnight camp, which read as proof that they were
-      // always two trips and the brochure's title was conflating them.
-      //
-      // IT IS OPEN AGAIN, and the note below says why. The owner has since
-      // placed that two-day trip's camp beside the Magic Lake, which is in
-      // Fayoum, two or three hours from Cairo, while its itinerary runs the
-      // Bahariya to Farafra road four or five hours out. One of the two is
-      // wrong, and the next line down is worth reading beside it: this day's
-      // own sites are UNCONFIRMED and the candidates are Wadi El Rayan and
-      // the Magic Lake. If the two-day trip's camp really is there, the two
-      // products may overlap far more than the pages currently say.
-      "REOPENED (3 November 2026). This was closed on the reading that the brochure's \"White Desert / Fayoum\" title conflated two genuinely separate trips: Fayoum in a day, the White Desert over two. That still describes what the two pages say, and it is now in doubt, because the owner has placed the White Desert trip's overnight camp beside the Magic Lake, which is in Fayoum. Either that camp is somewhere else, or the two-day product is a Fayoum product with Bahariya landmarks attached to it by mistake. Nothing on THIS page changes either way, since this day is Fayoum however the other one resolves. See the white-desert record.",
-      "Whether the exact sites are Wadi El Rayan and the Magic Lake, as the sister brand's page states.",
+      // always two trips. It reopened briefly when the owner placed that
+      // trip's camp beside the Magic Lake, which is in Fayoum, and it is now
+      // CLOSED on the owner's own words rather than on my inference.
+      "RESOLVED (3 November 2026), in the owner's words: \"These are two distinct experiences, with different locations, landscapes, and activities. They should be treated as two separate packages, not combined into one.\" The brochure's \"White Desert / Fayoum\" title was conflating them. This is the Fayoum day; the two-day trip runs from Bahariya Oasis. Kept as a note because customers still confuse the two and the copy on both pages is written to separate them.",
+      "RESOLVED (3 November 2026): the shoot locations in Fayoum are Mudawara Mountain, the Wadi El Rayan waterfalls, the Arab Castles sand dunes and the Magic Lake. All four are named on the page.",
+      "RESOLVED (3 November 2026): the drive is an hour and a half to two hours each way from Cairo or Giza, NOT the three hours the brochure said. The old figure was load-bearing: it was the whole stated reason this day costs more than the other two, on the page and in three articles. The price is unchanged at the owner's figure; what changed is the explanation, which is now the size of the day and the four locations rather than six hours in a car.",
+      "HOW MANY OF THE FOUR LOCATIONS ONE BOOKING COVERS. Not stated. The page names the four as the shoot locations out there and says the day moves between locations; it does not promise all four, because nobody has said it does.",
     ],
   },
   // ---------------------------------------------------------------------------
@@ -866,14 +862,14 @@ export const packages: FlyingDressPackage[] = [
   // -------------------------------------------------------------------------
   {
     metaDescription:
-      "A two-day flying dress photoshoot in Egypt's White Desert, with the Black Desert, Crystal Mountain, sandboarding and a night at a desert camp. From $400 per person.",
+      "A two-day flying dress photoshoot out past Bahariya Oasis, with the Black Desert, Crystal Mountain, the White Desert, sandboarding and a night at a desert camp. From $400 per person.",
     slug: "white-desert",
     // No Egypt Eye counterpart, so no deposit button. The page offers an
     // enquiry, exactly as the yacht day does.
     eyeSlug: "",
     name: "White Desert",
-    title: "The White Desert: two days, and a night under the stars",
-    eyebrow: "Two days and one night",
+    title: "Bahariya and the White Desert: two days, and a night under the stars",
+    eyebrow: "Bahariya Oasis, two days and one night",
     // The better of the two party rates. partyPricing holds both and the
     // phrase helper renders this as a "from" so it cannot be read as the
     // price for travelling alone.
@@ -885,7 +881,7 @@ export const packages: FlyingDressPackage[] = [
     ],
     durationNote: "Two days and one night, with the photoshoot on the first afternoon.",
     gettingThere:
-      "The Black Desert and the White Desert, by Land Cruiser, with a night at a desert camp between them. Far enough out that it is a two-day trip rather than a long day, and the route is confirmed with your booking.",
+      "Four to five hours west of Cairo or Giza to the Bahariya Oasis, then the Black Desert and the White Desert by Land Cruiser, with a night at a desert camp between them. Far enough out that it is a two-day trip rather than a long day.",
     gettingThereConfidence: "confirm",
     intro:
       "The furthest of the shoots and the only one with a night in it. Chalk formations weathered into shapes that look like a sphinx, a rabbit, a chicken, and plenty that look like nothing at all, with a flying dress among them at golden hour and a camp under the stars afterwards.",
@@ -933,7 +929,7 @@ export const packages: FlyingDressPackage[] = [
       {
         question: "How long is this one?",
         answer:
-          "Two days and one night. The photoshoot itself is on the first afternoon, at golden hour, and the rest of the time is the deserts and the camp.",
+          "Two days and one night. It is four to five hours out to Bahariya before the deserts even start, which is why it cannot be done in a day. The photoshoot is on the first afternoon, at golden hour, and the rest of the time is the deserts and the camp.",
       },
       {
         question: "How is it priced?",
@@ -958,16 +954,17 @@ export const packages: FlyingDressPackage[] = [
       {
         question: "Is this the same as the Fayoum shoot?",
         answer:
-          "No, and the two get confused constantly. Fayoum is a single day about three hours from Cairo with lakes and pale dunes. The White Desert is further, takes two days, and is chalk rather than sand.",
+          "No. They are two separate trips in two different directions and they get confused constantly. Fayoum is a single day, an hour and a half to two hours from Cairo, with lakes, waterfalls and pale dunes. This one is four to five hours out to Bahariya and then further still, takes two days with a night in the desert, and is black volcanic rock and white chalk rather than sand.",
       },
     ],
     confirm: [
       "RESOLVED (3 November 2026): the trip is all inclusive, with the dress and the photoshoot in the price. The five items the first brief left open (dress, photographer, transfers, meals, accommodation) are the inclusions, and the page now says so. What is NOT itemised is the detail of each: which meals, what the sleeping arrangement is. See below.",
-      "THE DISTANCE AND THE DRIVE TIME. Not given. The page says two days rather than naming a number of hours or kilometres.",
+      "RESOLVED (3 November 2026): four to five hours from Cairo or Giza to the Bahariya Oasis. On the page in three places, because it is the fact that explains why this cannot be a day trip. The distance in kilometres is still not given and the page does not guess one.",
       "RESOLVED (3 November 2026): parties above two are quoted on request. $500 for one and $800 for two stay the only published rates, and the page says a larger party is quoted rather than implying a per-head multiple.",
-      "Whether the photoshoot portion has its own duration within the first afternoon.",
+      "ANSWERED AND DELIBERATELY NOT PUBLISHED (3 November 2026): asked whether the shoot has a set length inside day one, the owner chose to leave it unstated. The page describes the afternoon and golden hour without committing to a number of hours. This is a decision, not a gap, and it should not be quietly filled in later with a guess.",
       "RESOLVED (3 November 2026): the sleeping arrangement is shared tents, and the meals are included. Both are on the page.",
-      "BLOCKED, AND IT IS A GEOGRAPHY PROBLEM. Asked whether the camp is a fixed site, the owner answered that it is a fixed site BESIDE THE MAGIC LAKE. The Magic Lake is in Wadi El Rayan, in Fayoum, roughly 150km and two to three hours southwest of Cairo. This trip's own itinerary names the Black Desert, Panorama Mountain, Jabal Al-Marsous, Crystal Mountain and the White Desert, every one of which sits on the Bahariya to Farafra road: Bahariya alone is about 350 to 365km from Cairo, four to five hours, and the White Desert is beyond it. The two sets of landmarks are roughly 300km apart and cannot be the same two-day trip. Nothing about the camp's location is published until one of them is corrected: either the camp is not at the Magic Lake, or this trip is a Fayoum trip and the Bahariya landmarks belong to a different product.",
+      "RESOLVED (3 November 2026), and it is worth keeping the whole story because it nearly shipped. Asked whether the camp was a fixed site, the owner answered that it is a fixed site BESIDE THE MAGIC LAKE. The Magic Lake is in Wadi El Rayan, in Fayoum, an hour and a half to two hours southwest of Cairo. This trip runs four to five hours WEST to Bahariya and then on to Farafra, roughly 300km away from it. Both could not be true, so nothing was published and the conflict was put to the owner, who confirmed these are two separate products and that the Magic Lake is one of the FAYOUM shoot locations. The camp belongs to this trip; the Magic Lake does not.",
+      "THE CAMP'S OWN LOCATION, still. Withdrawing the Magic Lake did not supply a replacement, so the page says \"a desert camp\" and \"shared tents\" and names no place. Whether it is one fixed Bedouin camp out past Bahariya or arranged per trip is unanswered, and the geography guard in scripts/check-flying-dresses.mts will reject a Fayoum place name if it is answered carelessly again.",
     ],
   },
 ];
