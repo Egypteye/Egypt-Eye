@@ -7745,6 +7745,153 @@ for (const pkg of packages) {
 }
 
 
+// ---------------------------------------------------------------------------
+// TWO DESERTS, 300km APART, CANNOT BE ONE TRIP.
+//
+// Egypt has two places a flying-dress trip calls "the white desert" and they
+// are not near each other:
+//
+//   Fayoum          ~150km southwest of Cairo. Lake Qarun, Wadi El Rayan,
+//                   the Magic Lake, Mudawara Mountain. Chalk formations and
+//                   a camping area by the lake.
+//   Bahariya to     ~365km west of Cairo and onward. The Black Desert,
+//   Farafra         Panorama Mountain, Crystal Mountain, and the White
+//                   Desert proper at Farafra.
+//
+// A single two-day itinerary cannot visit both, and this check exists because
+// the attempt was made. On 3 November 2026 the owner, asked whether the
+// overnight camp was a fixed site, answered that it is a fixed site beside the
+// Magic Lake. The two-day page's own timeline names the Black Desert, Panorama
+// Mountain, Jabal Al-Marsous, Crystal Mountain and the White Desert. Writing
+// the camp onto that page as instructed would have published a trip that
+// detours 400km in the middle of the night, which is the sort of invented
+// logistics CLAUDE.md §7 is about: a customer books it, arrives, and the trip
+// is not the one on the page.
+//
+// So the two vocabularies are kept apart until the owner says which trip this
+// is. Whichever way it resolves, ONE of these name sets has to come off the
+// page, and this is what makes that a failing check rather than a quiet
+// contradiction nobody reads twice.
+//
+// Proven by adding "the camp sits beside the Magic Lake" to the white-desert
+// whyThis (red, naming both regions), and by adding "Crystal Mountain" to the
+// fayoum timeline (red, the same clash from the other side).
+//
+// IT PINS WHICH DESERT EACH PRODUCT IS IN rather than only noticing when both
+// vocabularies collide. The first version compared the two sets and passed
+// unless a page named something from each, which left a page naming NEITHER
+// free to pick up the wrong one: adding "Crystal Mountain" to the Fayoum day
+// was green, because that page names Wadi El Rayan nowhere and so had no
+// Fayoum term for the clash to need. Naming the region per slug makes the
+// wrong vocabulary wrong on its own, with nothing to pair against.
+{
+  const REGIONS = {
+    // The region name itself belongs in its vocabulary. "Fayoum" is the word
+    // that page actually uses; its lakes are mostly unnamed in the copy, and
+    // the first version's list of them matched nothing there.
+    fayoum: {
+      pattern: /magic lake|wadi el[- ]rayan|lake qarun|mudawara|fayoum/i,
+      where: "Fayoum, ~150km southwest of Cairo",
+    },
+    bahariya: {
+      pattern: /bahariy|farafra|crystal mountain|black desert|panorama mountain/i,
+      where: "the Bahariya to Farafra road, ~365km west of Cairo and beyond",
+    },
+  } as const;
+
+  // Which desert each trip is in. The white-desert entry records what the page
+  // CURRENTLY says, not a settled fact: its own `confirm` note is blocked on
+  // exactly this, and if the owner says the trip is Fayoum-based then this
+  // line moves and the Bahariya copy is what has to come off.
+  const TRIP_REGION: [string, keyof typeof REGIONS][] = [
+    ["fayoum", "fayoum"],
+    ["white-desert", "bahariya"],
+  ];
+
+  // THE SCOPE IS THE ROUTE, NOT EVERY WORD ON THE PAGE, because naming the
+  // other desert in order to DENY it is correct copy and the first strict
+  // version went red on it. The two-day page carries "Is this the same as the
+  // Fayoum shoot? No, and the two get confused constantly" — which is true,
+  // useful, and the opposite of the error being guarded against.
+  //
+  // So the route fields, the ones that say where this trip actually goes, may
+  // not name the other desert at all. The FAQs may, under the rule below.
+  const route = (pkg: (typeof packages)[number]) =>
+    [
+      pkg.metaDescription ?? "",
+      pkg.name,
+      pkg.title,
+      pkg.eyebrow,
+      pkg.intro,
+      pkg.gettingThere,
+      ...pkg.whyThis,
+      ...(pkg.timeline ?? []).flatMap((step) => [step.when, step.what]),
+      pkg.tourItinerary?.heading ?? "",
+      pkg.tourItinerary?.lede ?? "",
+      pkg.tourItinerary?.durationNote ?? "",
+      ...(pkg.tourItinerary?.steps ?? []),
+    ].join("\n");
+
+  for (const [slug, region] of TRIP_REGION) {
+    const pkg = packages.find((p) => p.slug === slug);
+    ok(`${slug} is gone, so the guard pinning its desert checks nothing`, pkg !== undefined);
+    if (!pkg) continue;
+
+    const text = route(pkg);
+    const mine = REGIONS[region];
+    const other = Object.entries(REGIONS).find(([key]) => key !== region)!;
+
+    // Its own region has to be recognisable in the route copy, or the line
+    // above is a label on nothing and the check below guards an empty claim.
+    ok(
+      `${slug} is pinned to ${region} but its route copy never says so, which leaves the ` +
+        `pin unverifiable and the wrong-desert check with nothing to stand on`,
+      mine.pattern.test(text)
+    );
+
+    const stray = other[1].pattern.exec(text);
+    ok(
+      `${slug} is a ${region} trip and its route copy names "${stray?.[0]}", which is in ` +
+        `${other[1].where} rather than ${mine.where}. The two are roughly 300km apart, so ` +
+        `one itinerary cannot visit both and this page describes a journey nobody can ` +
+        `take. Either the pin above is wrong or the name is`,
+      stray === null
+    );
+
+    // AN FAQ MAY NAME THE OTHER DESERT ONLY WHERE THE VISITOR'S QUESTION IS
+    // ABOUT THE COMPARISON. That is the shape of honest contrast copy: the
+    // question asks "is this the same as X", the answer says no. It is not the
+    // shape of the error, which arrives as an answer quietly placing this
+    // trip's own camp or route in the other region, under a question that
+    // never mentions it ("Where do we sleep?" ... "beside the Magic Lake").
+    for (const faq of pkg.faqs) {
+      const named = other[1].pattern.exec(faq.answer);
+      if (named === null) continue;
+      ok(
+        `${slug}: the FAQ "${faq.question}" answers with "${named[0]}", which is in ` +
+          `${other[1].where}, and the question does not ask about that place. An answer ` +
+          `naming the other desert is only safe where the visitor asked how the two ` +
+          `differ; anywhere else it is putting this trip somewhere it does not go`,
+        other[1].pattern.test(faq.question)
+      );
+    }
+  }
+
+  // The open question itself. While the two-day page stands as a Bahariya
+  // trip, the owner's "beside the Magic Lake" is unreconciled, and a note
+  // quietly tidied away is how a contradiction gets published six months
+  // later by somebody who never saw this conversation.
+  const overnight = packages.find((pkg) => pkg.slug === "white-desert");
+  ok(
+    "the white-desert camp location is no longer recorded as blocked, but nothing on the " +
+      "page resolves it either. The owner placed the camp beside the Magic Lake, which is " +
+      "in Fayoum, on a trip whose itinerary is Bahariya to Farafra. Resolve it on the page " +
+      "or keep the note",
+    overnight !== undefined &&
+      overnight.confirm.some((line) => /magic lake/i.test(line) && /BLOCKED/.test(line))
+  );
+}
+
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");
   for (const error of errors) console.error(`  ✗ ${error}`);

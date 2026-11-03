@@ -731,12 +731,19 @@ export const packages: FlyingDressPackage[] = [
       // then describes Fayoum... If the product really does run to the White
       // Desert, the distance, the duration and the price all need revisiting."
       //
-      // The owner has now bought a separate White Desert product into
-      // existence, two days with an overnight camp, so the answer is that
-      // they were always two trips and the brochure's title was conflating
-      // them. Nothing about this record needed revisiting after all. See the
-      // white-desert package below.
-      "RESOLVED (November 2026): the brochure's \"White Desert / Fayoum\" title conflated two trips. Fayoum is this one day; the White Desert is a separate two-day product. Nothing here changed as a result. Kept as a note because the two still get confused by customers and the copy on both pages is written to separate them.",
+      // The owner then bought a separate White Desert product into existence,
+      // two days with an overnight camp, which read as proof that they were
+      // always two trips and the brochure's title was conflating them.
+      //
+      // IT IS OPEN AGAIN, and the note below says why. The owner has since
+      // placed that two-day trip's camp beside the Magic Lake, which is in
+      // Fayoum, two or three hours from Cairo, while its itinerary runs the
+      // Bahariya to Farafra road four or five hours out. One of the two is
+      // wrong, and the next line down is worth reading beside it: this day's
+      // own sites are UNCONFIRMED and the candidates are Wadi El Rayan and
+      // the Magic Lake. If the two-day trip's camp really is there, the two
+      // products may overlap far more than the pages currently say.
+      "REOPENED (3 November 2026). This was closed on the reading that the brochure's \"White Desert / Fayoum\" title conflated two genuinely separate trips: Fayoum in a day, the White Desert over two. That still describes what the two pages say, and it is now in doubt, because the owner has placed the White Desert trip's overnight camp beside the Magic Lake, which is in Fayoum. Either that camp is somewhere else, or the two-day product is a Fayoum product with Bahariya landmarks attached to it by mistake. Nothing on THIS page changes either way, since this day is Fayoum however the other one resolves. See the white-desert record.",
       "Whether the exact sites are Wadi El Rayan and the Magic Lake, as the sister brand's page states.",
     ],
   },
@@ -959,7 +966,8 @@ export const packages: FlyingDressPackage[] = [
       "THE DISTANCE AND THE DRIVE TIME. Not given. The page says two days rather than naming a number of hours or kilometres.",
       "RESOLVED (3 November 2026): parties above two are quoted on request. $500 for one and $800 for two stay the only published rates, and the page says a larger party is quoted rather than implying a per-head multiple.",
       "Whether the photoshoot portion has its own duration within the first afternoon.",
-      "RESOLVED (3 November 2026): the sleeping arrangement is shared tents, and the meals are included. STILL OPEN: whether the camp is a fixed site or arranged per trip, which is why the page describes the camp rather than naming one.",
+      "RESOLVED (3 November 2026): the sleeping arrangement is shared tents, and the meals are included. Both are on the page.",
+      "BLOCKED, AND IT IS A GEOGRAPHY PROBLEM. Asked whether the camp is a fixed site, the owner answered that it is a fixed site BESIDE THE MAGIC LAKE. The Magic Lake is in Wadi El Rayan, in Fayoum, roughly 150km and two to three hours southwest of Cairo. This trip's own itinerary names the Black Desert, Panorama Mountain, Jabal Al-Marsous, Crystal Mountain and the White Desert, every one of which sits on the Bahariya to Farafra road: Bahariya alone is about 350 to 365km from Cairo, four to five hours, and the White Desert is beyond it. The two sets of landmarks are roughly 300km apart and cannot be the same two-day trip. Nothing about the camp's location is published until one of them is corrected: either the camp is not at the Magic Lake, or this trip is a Fayoum trip and the Bahariya landmarks belong to a different product.",
     ],
   },
 ];
