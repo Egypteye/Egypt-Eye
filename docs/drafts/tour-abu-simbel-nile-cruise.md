@@ -7,7 +7,7 @@ not state is marked as needing confirmation at the end.
 
 ---
 
-## Read this first: it overlaps an existing product
+## Decided: this ships as its own tour, with Abu Simbel included
 
 This itinerary is the same skeleton as the live
 **Cairo, Giza & Nile Cruise Signature Trip** (`/tours/cairo-giza-nile-cruise-signature-trip`):
@@ -30,20 +30,21 @@ choose between two trips they cannot tell apart. So this draft is positioned
 on the one thing that is actually different — **Abu Simbel** — and the Kom
 Ombo/Edfu stops are stated honestly as optional rather than quietly implied.
 
-**Three ways forward, your call:**
+**The owner has chosen to keep this as its own tour**, with Abu Simbel
+included rather than optional, and the sent itinerary followed as written.
 
-1. **Publish as drafted** — a distinct Abu Simbel product alongside the
-   existing one, with cross-links between them so the pair reads as a choice
-   rather than a duplicate.
-2. **Replace the existing signature trip** with this itinerary, if this is
-   what you now actually sell. One stronger page instead of two competing ones.
-3. **Fold Abu Simbel into the existing trip** as an optional day and publish
-   nothing new.
+That makes Abu Simbel the whole basis on which the two products are told
+apart, so it is stated first in the inclusions, carried in the title, the
+tagline and the badge, and never softened to "optional". The existing
+signature trip must keep NOT offering it, or the distinction disappears and
+both pages compete for the same search.
 
-My recommendation is **2 or 3**. You have ten multi-day products already and
-only six non-brand search clicks a quarter; another near-identical page adds a
-page, not a customer. But if the two are genuinely sold as separate trips,
-option 1 is correct and the draft is ready.
+The recommendation I made before that decision is kept here as a record, not
+as a live objection: with ten multi-day products and six non-brand clicks a
+quarter, two near-identical pages split one page's authority. The mitigation
+now is cross-linking — each page should name the other and say plainly what
+the difference is, so a visitor comparing them is choosing rather than
+guessing.
 
 ---
 
@@ -108,15 +109,12 @@ hotel, check in, and nothing else asked of you.
 
 **Day 2 — Giza: the Pyramids, the Sphinx and a camera**
 Collected from the hotel for the Giza plateau. A camel or a horse, whichever
-you prefer, and a professional photoshoot at the pyramids — the photographs
-are the point here, not an upsell at the end. The Great Sphinx. A stop at an
+you prefer, and a professional photoshoot at the pyramids. The Great Sphinx. A stop at an
 oils and essence factory. Lunch, then back to the hotel.
 
 **Day 3 — Old Cairo and the market**
 The Coptic quarter and its churches, then the National Museum of Egyptian
-Civilization. Lunch. The afternoon is Khan el-Khalili, the old market — which
-is a place to walk and be spoken to, not a monument to look at. Back to the
-hotel.
+Civilization. Lunch. The afternoon is Khan el-Khalili, the old market. Back to the hotel.
 
 **Day 4 — South to Aswan, and aboard**
 Transfer to Cairo airport and fly to Aswan, where a car is waiting. Check in to
@@ -161,6 +159,10 @@ Collected from the hotel and taken to Cairo airport for your flight home.
 
 ## Included
 
+- **Abu Simbel — the temples of Ramses II and Nefertari, with the pre-dawn
+  drive there and back.** Included in full, not an optional extra: the source
+  itinerary lists it as a main Day 5 activity, and only Kom Ombo and Edfu are
+  marked optional.
 - Professional certified English-speaking Egyptologist guide
 - All in-town private transfers
 - Admission and entry fees to all historical sites listed above
@@ -231,9 +233,9 @@ a public page that nobody has agreed to:
    product, which also excludes Cairo hotels, so it probably is.
 4. **Breakfast** is stated on board the cruise only. Whether the Cairo nights
    include breakfast is not said, and follows from whoever books the hotel.
-5. **Kom Ombo and Edfu are marked optional and self-guided.** If they are in
-   fact included and guided, this is the single biggest difference from the
-   existing signature trip and the positioning above should change.
+5. **Kom Ombo and Edfu stay optional and self-guided**, exactly as the source
+   marks them. Confirmed by instruction: stick to the itinerary as sent. They
+   are therefore listed under optional add-ons, not inclusions.
 6. **Abu Simbel transport.** The source says "drive". Whether that is a private
    car or an escorted convoy is not stated — the convoy is the normal
    arrangement and it affects the departure time, so it is worth stating once
