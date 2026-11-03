@@ -7668,6 +7668,83 @@ for (const pkg of packages) {
 }
 
 
+// ---------------------------------------------------------------------------
+// THE OVERNIGHT SHOOT SAYS WHERE YOU SLEEP.
+//
+// The White Desert is the only product here with a night in it, and the owner
+// confirmed on 3 November 2026 that the camp is SHARED TENTS and the meals are
+// included.
+//
+// Shared tents is the fact most likely to disappoint if it is not on the page.
+// Somebody paying $500 for a two-day trip and picturing a private room finds
+// out at the camp, in the dark, hours from Cairo, with no alternative. That is
+// the same class of failure as the music page's "we do not supply a PA", and
+// it gets the same treatment: stated in the copy a visitor actually reads, not
+// only in an FAQ they may never open.
+//
+// It is checked in BOTH rendered places on purpose. The timeline is what
+// somebody reads to picture the trip; the FAQ is what somebody scans when they
+// are deciding. Either one alone can be edited away without the other
+// noticing, and this fact is not one to lose quietly.
+//
+// Proven by deleting the sentence from the timeline (red), by deleting the
+// FAQ (red), and by softening "shared tents" to "a desert camp" in the
+// inclusions (red).
+{
+  const overnight = packages.find((pkg) => pkg.slug === "white-desert");
+  ok(
+    "the white-desert package is gone, so the overnight guards below check nothing",
+    overnight !== undefined
+  );
+  if (overnight) {
+    const SHARED = /shared tents?/i;
+
+    const timeline = (overnight.timeline ?? []).map((step) => step.what).join(" ");
+    ok(
+      "the White Desert timeline no longer says the sleeping is shared tents. It is the one night " +
+        "on this site, and somebody picturing a private room finds out at the camp",
+      SHARED.test(timeline)
+    );
+
+    const faqs = overnight.faqs.map((f) => `${f.question} ${f.answer}`).join(" ");
+    // THE QUESTION AND THE ANSWER ARE CHECKED SEPARATELY, because the first
+    // version searched them joined together and passed on an FAQ whose
+    // question had been changed to something unrelated while the answer still
+    // happened to mention tents. An answer nobody can find by its question is
+    // not an answer, and this is the fact that most needs finding.
+    const sleeping = overnight.faqs.find((f) =>
+      /sleep|stay the night|accommodation|tent/i.test(f.question)
+    );
+    ok(
+      "no White Desert FAQ ASKS where you sleep, so the shared tents are only findable by reading " +
+        "the timeline through, which a scanner will not do",
+      sleeping !== undefined
+    );
+    ok(
+      "the White Desert sleeping FAQ does not answer with the shared tents",
+      sleeping !== undefined && SHARED.test(sleeping.answer)
+    );
+
+    ok(
+      "the White Desert inclusions no longer say the camp is shared tents. 'All inclusive' plus 'a " +
+        "night at the camp' reads as a room somebody has paid for",
+      overnight.whyThis.some((line) => SHARED.test(line))
+    );
+
+    // The meals half of the same answer. "All inclusive" has to survive as a
+    // statement about the meals specifically, because that is what was asked
+    // and answered.
+    ok(
+      "the White Desert copy no longer says the meals are included, which was half of the owner's " +
+        "answer and the half a two-day trip is judged on",
+      /every meal|meals are included|the meals/i.test(
+        `${overnight.whyThis.join(" ")} ${faqs}`
+      )
+    );
+  }
+}
+
+
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");
   for (const error of errors) console.error(`  ✗ ${error}`);

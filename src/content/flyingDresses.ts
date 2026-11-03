@@ -883,7 +883,8 @@ export const packages: FlyingDressPackage[] = [
     intro:
       "The furthest of the shoots and the only one with a night in it. Chalk formations weathered into shapes that look like a sphinx, a rabbit, a chicken, and plenty that look like nothing at all, with a flying dress among them at golden hour and a camp under the stars afterwards.",
     whyThis: [
-      "All inclusive: the transfers, the meals, the night at the camp, the dress and the photoshoot are all in the price.",
+      "All inclusive: the transfers, every meal, the night at the camp, the dress and the photoshoot are all in the price.",
+      "The camp is shared tents, which is worth knowing before you book rather than on arrival.",
       "The only shoot here that includes a night in the desert rather than a drive home.",
       "Two deserts in one trip: volcanic black rock on the way out, white chalk at the end of it.",
       "Formations that exist nowhere else in Egypt, so the photographs do not look like anybody else's desert set.",
@@ -914,7 +915,7 @@ export const packages: FlyingDressPackage[] = [
       },
       {
         when: "Day one, evening",
-        what: "Dinner at a desert camp, Bedouin style, and the night out there with the stars and very little else.",
+        what: "Dinner at a desert camp, Bedouin style, and the night out there with the stars and very little else. The sleeping is shared tents rather than private rooms.",
       },
       {
         when: "Day two, morning",
@@ -935,7 +936,12 @@ export const packages: FlyingDressPackage[] = [
       {
         question: "What is included?",
         answer:
-          "It is all inclusive. The transfers from your hotel and back, the meals, the night at the desert camp, the dress and the photographer are all in the price. You are not paying for the trip and then paying again for the photoshoot inside it.",
+          "It is all inclusive. The transfers from your hotel and back, every meal across the two days, the night in a shared tent at the desert camp, the dress and the photographer are all in the price. You are not paying for the trip and then paying again for the photoshoot inside it.",
+      },
+      {
+        question: "Where do we sleep?",
+        answer:
+          "In shared tents at the desert camp. It is a Bedouin camp rather than a hotel, so it is comfortable and simple rather than private, and that is the part worth being sure about before you book. The night is included in the price.",
       },
       {
         question: "What if there are more than two of us?",
@@ -953,7 +959,7 @@ export const packages: FlyingDressPackage[] = [
       "THE DISTANCE AND THE DRIVE TIME. Not given. The page says two days rather than naming a number of hours or kilometres.",
       "RESOLVED (3 November 2026): parties above two are quoted on request. $500 for one and $800 for two stay the only published rates, and the page says a larger party is quoted rather than implying a per-head multiple.",
       "Whether the photoshoot portion has its own duration within the first afternoon.",
-      "Whether the camp is a fixed site or arranged per trip, and what the sleeping arrangement actually is.",
+      "RESOLVED (3 November 2026): the sleeping arrangement is shared tents, and the meals are included. STILL OPEN: whether the camp is a fixed site or arranged per trip, which is why the page describes the camp rather than naming one.",
     ],
   },
 ];
