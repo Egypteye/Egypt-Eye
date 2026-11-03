@@ -400,7 +400,7 @@ export const flyingDressStories: FlyingDressStory[] = [
         heading: "Where you are actually standing",
         body: [
           "[The Pyramids Rooftop photoshoot](/experiences/pyramids-rooftop) happens on a private roof in the streets below the Giza plateau, looking across at it. It is not inside the archaeological complex, it is not on the sand beside the Great Pyramid, and there is no gate between you and your car.",
-          "Everything else about the brand's locations follows the same pattern. [The Sand Dunes shoot](/experiences/sand-dunes) is on open desert. [Fayoum](/experiences/fayoum) is the lakes and the white dunes, about three hours from central Cairo. None of the three is a shoot inside an antiquities site.",
+          "Everything else about the brand's locations follows the same pattern. [The Sand Dunes shoot](/experiences/sand-dunes) is on open desert. [Fayoum](/experiences/fayoum) is the lakes and the white dunes, under two hours from central Cairo. None of the three is a shoot inside an antiquities site.",
         ],
       },
       {
@@ -531,7 +531,7 @@ export const flyingDressStories: FlyingDressStory[] = [
         heading: "The collection, and the drive",
         body: [
           "Door-to-door transport is included in all three photoshoots. You are collected from your hotel or your address and brought back afterwards, which is both a convenience and a practical necessity: a flying dress is bulky, the locations are not somewhere to arrive on foot in one, and early light means leaving at an hour when arranging your own car is its own small project.",
-          "The drive is where the difference between the three photoshoots is largest. Sand Dunes and the Pyramids Rooftop give you your afternoon back. Fayoum is roughly three hours from central Cairo each way, so there is about six hours of driving wrapped around a forty-five minute shoot, with the car and driver yours for all of it. That is the honest shape of the Fayoum day, and it is the reason it is priced where it is.",
+          "The drive is where the difference between the three photoshoots is largest, though not as largely as the brochure used to claim. Sand Dunes and the Pyramids Rooftop give you your afternoon back. Fayoum is an hour and a half to two hours from central Cairo each way, so three to four hours of driving, and the day then moves between locations out there rather than staying at one. The car and driver are yours for all of it. That is the honest shape of the Fayoum day, and the size of the day rather than the mileage alone is why it is priced where it is.",
         ],
       },
       {
@@ -567,7 +567,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         question: "How long does the whole thing take, door to door?",
         answer:
-          "For the Pyramids Rooftop and Sand Dunes photoshoots, a morning. For Fayoum, a full day: it is about three hours from central Cairo each way, so roughly six hours of driving surround a forty-five minute shoot.",
+          "For the Pyramids Rooftop and Sand Dunes photoshoots, a morning. For Fayoum, a full day: an hour and a half to two hours from central Cairo each way, and the time out there is spent moving between locations rather than standing in one.",
       },
       {
         question: "Where do I change?",
@@ -777,7 +777,7 @@ export const flyingDressStories: FlyingDressStory[] = [
     title: "What a flying dress photoshoot in Egypt costs",
     seoTitle: "What a Flying Dress Shoot Costs",
     metaDescription:
-      "Our four shoots, what each price covers, what is charged on top, and where those figures sit against what else is sold at Giza. No login, no quote form.",
+      "Our five shoots, what each price covers, what is charged on top, and where those figures sit against what else is sold at Giza. No login, no quote form.",
     excerpt:
       "Every published price we have, what it already includes, what is charged on top of it, and the two things we still will not put a number on. Written because almost nobody selling this publishes a figure at all.",
     publishedAt: "2026-10-25T00:00:00.000Z",
@@ -786,18 +786,20 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "The short answer",
         body: [
-          "Our shoots are $179, $199, $349 and $399 per person. That is the whole published range, those are the figures on [the packages page](/packages), and they are per person rather than per booking.",
+          "Our shoots are $179, $199, $349 and $399 per person, and the two-day desert trip is $500 for one traveller or $800 for two. That is the whole published range and those are the figures on [the packages page](/packages). The first four are per person rather than per booking. The two-day trip is the exception and is priced by the size of the party, which is why two people pay less each than one travelling alone.",
           "Each one covers the photographer, the assistant whose job is the dress, the dress itself, the transport described on that shoot's page, and over a hundred colour-graded photographs. Makeup, hair, a second dress, accessories and traditional attire for a man in the frame are extras with their own figures, and three of those figures do not exist yet because we have not set them.",
           "Nothing on this website charges a card. The price is confirmed to you in writing before anything is agreed.",
         ],
       },
       {
-        heading: "The four shoots, and why they are not the same number",
+        heading: "The five shoots, and why they are not the same number",
         body: [
           "[Sand Dunes](/experiences/sand-dunes) is $179. Open desert south of Giza, a morning out of your day.",
           "[The Pyramids Rooftop](/experiences/pyramids-rooftop) is $199. A private roof in the streets below the plateau, looking across at it. The twenty dollars between this and the dunes buys the roof, not a longer session.",
-          "[Fayoum](/experiences/fayoum) is $349. The lakes and the white dunes, about three hours from central Cairo each way, so roughly six hours of driving surround the shoot. Most of what you are paying for above the Giza shoots is the day, not the photography.",
-          "The Red Sea Yacht experience is $399. It is the one of the four we quote rather than list, because the boat and the date have to be confirmed before we can promise it.",
+          "[Fayoum](/experiences/fayoum) is $349. The lakes, the waterfalls and the white dunes, an hour and a half to two hours from central Cairo each way, and a day that moves between four locations rather than standing in one. Most of what you are paying for above the Giza shoots is the day, not the photography.",
+          "The Red Sea Yacht experience is $399. A day on a yacht off Ain Sokhna rather than a session, with the activities on the water as a paid extra on top.",
+          "[Bahariya and the White Desert](/experiences/white-desert) is $500 for one traveller and $800 for two, which works out at $400 each. Two days and a night in the desert, four to five hours west of Cairo, and the only shoot here that is all inclusive: the transfers, every meal, the night in a shared tent at the camp, the dress and the photographer. A party larger than two is quoted rather than published, because what changes is the vehicle and the camp rather than a simple multiple.",
+          "Those last two are the ones we quote rather than take a deposit against, because the boat, the vehicle and the date have to be confirmed before we can promise them.",
           "The session itself is thirty to forty-five minutes at all of them. Anybody pricing by the hour is pricing something else; see [what those minutes actually consist of](/stories/inside-a-forty-five-minute-session).",
         ],
       },
@@ -1030,7 +1032,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "The two that people actually choose between",
         body: [
-          "Four shoots are bookable and two of them settle themselves. [Fayoum](/experiences/fayoum) is a full day three hours each way, and the [Red Sea yacht](/experiences/red-sea-yacht) is on water off Ain Sokhna. Nobody weighs either of those against a morning near Cairo; they are chosen because someone wants that specific thing.",
+          "Four shoots are bookable and two of them settle themselves. [Fayoum](/experiences/fayoum) is a full day out in the oasis, and the [Red Sea yacht](/experiences/red-sea-yacht) is on water off Ain Sokhna. Nobody weighs either of those against a morning near Cairo; they are chosen because someone wants that specific thing.",
           "The real decision is between the other two. The [Pyramids Rooftop](/experiences/pyramids-rooftop) is $199 per person. The [Sand Dunes](/experiences/sand-dunes) are $179. Both are a morning, both include the dress in the colour you choose, door-to-door transport, an assistant and more than a hundred colour-graded photographs. On paper they are twenty dollars apart.",
           "That is not the difference, and the question is not which is better. It is which photograph you want to come home with.",
         ],
@@ -1122,7 +1124,7 @@ export const flyingDressStories: FlyingDressStory[] = [
     title: "A day in Fayoum, and why it costs more than a morning at the pyramids",
     seoTitle: "A Day in Fayoum",
     metaDescription:
-      "Pale dunes, still water and six hours of driving. What the Fayoum photoshoot day actually involves, why it is $349, and who should not book it.",
+      "Pale dunes, waterfalls, still water and four locations in a day. What the Fayoum photoshoot day actually involves, why it is $349, and who should not book it.",
     excerpt:
       "The same dress, the same forty-five minutes in front of the camera, and nearly twice the price. The difference is not the photoshoot. It is the day wrapped around it.",
     publishedAt: "2026-11-01T00:00:00.000Z",
@@ -1132,8 +1134,8 @@ export const flyingDressStories: FlyingDressStory[] = [
         heading: "What you are actually booking",
         body: [
           "[Fayoum](/experiences/fayoum) is $349 per person. The rooftop is $199 and the dunes are $179, and the first thing worth saying is that the photoshoot inside all three is the same photoshoot: the same dress from the same collection in the colour you choose, the same assistant, the same thirty to forty-five minutes in front of the camera, and the same hundred-plus colour-graded photographs afterwards.",
-          "Nothing about the session is larger. What is larger is the day. Fayoum is about three hours from central Cairo, so there is roughly six hours of driving wrapped around the shoot, and the whole thing runs four to six hours including the moves between locations.",
-          "That is the entire price difference, and it is worth being plain about it rather than dressing it up as a premium tier. You are paying for distance.",
+          "Nothing about the session is larger. What is larger is the day. Fayoum is an hour and a half to two hours from central Cairo, so three to four hours of driving, and once you are out there the day moves between locations rather than standing at one: Mudawara Mountain, the waterfalls at Wadi El Rayan, the Arab Castles dunes and the Magic Lake. The whole thing runs four to six hours including the moves between them.",
+          "That is the entire price difference, and it is worth being plain about it rather than dressing it up as a premium tier. You are paying for the day: the distance, the car and driver for all of it, and a landscape that takes several stops to see rather than one.",
         ],
       },
       {
@@ -1144,14 +1146,15 @@ export const flyingDressStories: FlyingDressStory[] = [
         list: [
           "Water. Neither the rooftop nor the dunes has any. Fayoum has still lakes, and a horizon where pale ground meets water rather than meeting more sand.",
           "Pale sand instead of gold. This sounds like a small distinction and it is not: it changes which dresses work. Dark and jewel colours read completely differently against near-white ground than they do against the warm sand outside Cairo.",
-          "The widest panoramas of the four. There is more room here, and the photographs that come back are the widest the business takes.",
+          "The widest panoramas the business takes. There is more room here than at any of the shoots near Cairo.",
         ],
       },
       {
         heading: "What it is not",
         body: [
           "It is not the White Desert. Those two names get used interchangeably online and by more than one operator, and they are different places: Egypt's White Desert is far beyond Fayoum, a different journey entirely, and this day does not go there. If you have seen the chalk formations in photographs and that is what you are booking for, this is not that trip and we would rather you knew before you paid than after you arrived.",
-          "What Fayoum has is its own pale dune country, lakes and waterfalls, three hours from Cairo rather than a long expedition. It looks like nowhere else in Egypt. It does not look like the White Desert.",
+          "That trip now exists here as [its own two-day shoot](/experiences/white-desert), with a night at a desert camp in the middle of it. If the formations are what you came for, book that one instead of this one.",
+          "What Fayoum has is its own pale dune country, lakes and waterfalls, under two hours from Cairo rather than a long expedition. The two-day trip goes the other way, four to five hours west to Bahariya Oasis and on from there. Fayoum looks like nowhere else in Egypt. It does not look like the White Desert.",
         ],
       },
       {
@@ -1163,14 +1166,14 @@ export const flyingDressStories: FlyingDressStory[] = [
           "Book it if the landscape is the point. If you want a photograph that does not look like any other Egypt photograph, this is the one.",
           "Book it if you have time. It eats a day. On a four-night trip with the pyramids, a museum and a Nile evening already in it, that day has to come from somewhere.",
           "Do not book it if what you actually want is the pyramids in the picture. They are not in it. The [rooftop](/experiences/pyramids-rooftop) is the shoot for that, at a lower price and a fraction of the travel.",
-          "Think carefully if anyone in the party finds long car journeys difficult, or if you are travelling with small children. Six hours of driving is six hours of driving however good the destination is.",
+          "Think carefully if anyone in the party finds car journeys difficult, or if you are travelling with small children. It is three to four hours of driving in total, plus the moves between locations once you are there.",
           "Think about the season. This is a long day largely outdoors, and the months either side of midsummer are a different experience from the winter ones.",
         ],
       },
       {
         heading: "What the day looks like",
         body: [
-          "A car collects you door to door, as it does for every shoot here. The drive is roughly three hours. On arrival the day moves between locations rather than staying in one place, which is where the four-to-six hour range comes from: the dunes, the water, and the driving between them.",
+          "A car collects you door to door, as it does for every shoot here. The drive is an hour and a half to two hours. On arrival the day moves between locations rather than staying in one place, which is where the four-to-six hour range comes from: the mountain, the waterfalls, the dunes, the lake, and the driving between them.",
           "The photoshoot itself sits inside that. Thirty to forty-five minutes of actual shooting, in the dress, with the assistant managing the fabric. Then the drive back.",
           "Because it is a day rather than a morning, the practical questions are different from the other shoots: what you eat, where you can change, and what happens if the weather turns. Those are settled with you before the date rather than assumed, and if the answer to one of them is not yet fixed we will say so rather than improvise.",
         ],
@@ -1178,7 +1181,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "Which colour, here specifically",
         body: [
-          "The [colour advice](/stories/choosing-a-dress-colour) shifts for Fayoum, and it is the only one of the four where it shifts much.",
+          "The [colour advice](/stories/choosing-a-dress-colour) shifts for Fayoum, and it is the only shoot here where it shifts much.",
           "Against pale, near-white ground, the warm earth tones that struggle in the dunes outside Cairo have much less to fight: Golden, Ginger and BronZey separate here in a way they do not against gold sand. Snowy is the opposite and becomes the hardest choice of the thirteen, because white fabric on white dunes is a tonal photograph with nothing to hold an edge.",
           "The deep and jewel colours remain the safest bet. Cherry, Orchid, Emerald and Navy against pale ground and still water are about as graphic as this gets, and they are what most of the wide panoramas are built around.",
         ],
@@ -1188,17 +1191,17 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         question: "Why is Fayoum more expensive than the pyramids shoot?",
         answer:
-          "Distance, and nothing else. It is the same dress, the same assistant, the same thirty to forty-five minutes of shooting and the same 100+ edited photographs as the $199 rooftop. Fayoum is about three hours from Cairo each way, so roughly six hours of driving is wrapped around the session.",
+          "The day around it, not the session. It is the same dress, the same assistant, the same thirty to forty-five minutes of shooting and the same 100+ edited photographs as the $199 rooftop. What differs is that Fayoum is an hour and a half to two hours from Cairo each way and the day then moves between four locations out there, with the car and driver yours throughout, where the rooftop gives you your afternoon back.",
       },
       {
         question: "How long does the Fayoum day take?",
         answer:
-          "Four to six hours including the driving between locations, on top of roughly three hours of travel in each direction from central Cairo. It is a day rather than a morning.",
+          "Four to six hours including the driving between locations, on top of an hour and a half to two hours of travel in each direction from central Cairo. It is a day rather than a morning.",
       },
       {
         question: "Is Fayoum the same as the White Desert?",
         answer:
-          "No. They are different places and they get confused constantly. Egypt's White Desert is far beyond Fayoum and a separate journey; this day does not go there. Fayoum has its own pale dunes, lakes and waterfalls about three hours from Cairo.",
+          "No. They are two separate trips in two different directions and they get confused constantly. Egypt's White Desert is reached through Bahariya Oasis, four to five hours west of Cairo, and it is [its own two-day shoot](/experiences/white-desert); this day does not go there. Fayoum has its own pale dunes, lakes and waterfalls, under two hours from Cairo.",
       },
       {
         question: "Are the pyramids visible from Fayoum?",

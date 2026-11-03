@@ -323,12 +323,21 @@ export const flyingDressSettings = defineType({
               name: "href",
               title: "Where it goes",
               type: "string",
-              description: "A path on this site, starting with /flying-dresses — for example /flying-dresses/wardrobe.",
+              description:
+                "A path on this site, starting with a slash — for example /wardrobe. " +
+                "The older /flying-dresses/wardrobe form still works and is shortened automatically.",
+              // SHORT FORM AS OF 1 NOVEMBER 2026. This used to REQUIRE the
+              // /flying-dresses prefix, which is the form that had the whole
+              // site indexed twice. The long form is still accepted rather
+              // than rejected, because menu items saved under the old rule
+              // are sitting in the live document and failing their own
+              // validation would be the owner's problem to fix for no reason;
+              // contentMerge shortens them on read instead.
               validation: (r) =>
                 r.required().custom((v) =>
-                  typeof v === "string" && v.startsWith("/flying-dresses")
+                  typeof v === "string" && v.startsWith("/")
                     ? true
-                    : "Must be a path on this site, starting with /flying-dresses."
+                    : "Must be a path on this site, starting with a slash."
                 ),
             }),
           ],

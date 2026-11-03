@@ -277,6 +277,30 @@ export async function proxy(request: NextRequest) {
     return flyingDressesProxy(request);
   }
 
+  // THE BRAND HAS ONE HOME NOW.
+  //
+  // These pages were served here as well, so the owner could review them
+  // before flyingdressesegypt.com had DNS. That domain is live and the owner
+  // confirmed on 1 November 2026 that this copy is no longer needed, which is
+  // what let the brand's internal links move to their short form.
+  //
+  // So the old address sends people and crawlers to the real one, rather than
+  // leaving a second copy of an entire brand on a travel site. Cross-domain
+  // and permanent, so whatever authority these URLs hold moves with them.
+  //
+  // ONLY ON THE REAL PRODUCTION HOST. A preview deployment bounced to
+  // production is a preview nobody can review, which is the same reasoning
+  // the www redirect below is written with.
+  if (host === CANONICAL_HOST) {
+    const short = canonicalFlyingDressPath(request.nextUrl.pathname);
+    if (short) {
+      return NextResponse.redirect(
+        `https://${FLYING_DRESSES_HOST}${short}${request.nextUrl.search}`,
+        308
+      );
+    }
+  }
+
   if (host === `www.${CANONICAL_HOST}`) {
     const url = request.nextUrl.clone();
     url.host = CANONICAL_HOST;

@@ -16,7 +16,7 @@
  * records three separate guards in this project that passed on the broken
  * version. The notes under each section say what was broken to prove it.
  */
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { execSync } from "node:child_process";
 import {
   NAV_MAX_ITEMS,
@@ -24,6 +24,7 @@ import {
   brand,
   packageIncludes,
   packagePriceLabel,
+  packagePricePhrase,
   cancellation,
   contact,
   dresses,
@@ -341,10 +342,18 @@ for (const pkg of packages) {
     photoshootSlugs.has(pkg.eyeSlug)
   );
 }
-ok(
-  "two Flying Dresses packages point at the same Egypt Eye product, so one of them books the wrong shoot",
-  new Set(packages.map((p) => p.eyeSlug)).size === packages.length
-);
+{
+  // EMPTY IS NOT A PRODUCT, so two packages with no Egypt Eye counterpart are
+  // not pointing at the same thing. This counted "" as a slug, which was fine
+  // while the yacht was the only shoot without a counterpart and broke the
+  // moment the White Desert became the second. The graceful empty case is
+  // already handled above, one package at a time.
+  const booked = packages.map((p) => p.eyeSlug).filter((slug) => slug !== "");
+  ok(
+    "two Flying Dresses packages point at the same Egypt Eye product, so one of them books the wrong shoot",
+    new Set(booked).size === booked.length
+  );
+}
 
 // THE TWO BRANDS MUST QUOTE ONE PRICE FOR ONE SHOOT.
 //
@@ -948,10 +957,17 @@ ok(
 // page. Resolved against the directory tree, which is where App Router routes
 // actually come from.
 //
-// Proven by renaming the wardrobe nav href to /flying-dresses/wardrobes: red.
+// SHORT FORM SINCE 1 NOVEMBER 2026. The hrefs used to carry the
+// /flying-dresses prefix and the resolver stripped it; now they are already
+// short and the prefix is only the directory to look under. Both shapes are
+// still resolved, because a menu item saved in the Studio before the switch
+// holds the long form and the site serves it through a redirect rather than
+// a 404 — a header link that works must not fail this check.
+//
+// Proven by renaming the wardrobe nav href to /wardrobes: red.
 // ---------------------------------------------------------------------------
 const routeExists = (href: string) => {
-  const rest = href.replace(/^\/flying-dresses\/?/, "");
+  const rest = href.replace(/^\/flying-dresses\/?/, "").replace(/^\//, "");
   if (rest === "") return existsSync("src/app/flying-dresses/page.tsx");
   return existsSync(`src/app/flying-dresses/${rest}/page.tsx`);
 };
@@ -959,7 +975,9 @@ const routeExists = (href: string) => {
 for (const item of nav) {
   ok(
     `the header links ${item.href} ("${item.label}"), which is not a page on this site`,
-    item.href.startsWith("/flying-dresses") && routeExists(item.href)
+    // A path, and a real one. The prefix is no longer required: it was, and
+    // requiring it is what kept every nav link pointing at the duplicate.
+    item.href.startsWith("/") && routeExists(item.href)
   );
 }
 
@@ -990,15 +1008,46 @@ ok(
 // are duplicates of the real brand domain, and nothing visible breaks — the
 // symptom is two sites splitting one set of rankings, months later.
 //
-// Proven by removing "/flying-dresses" from robots.ts's disallow list: red.
-// And by removing the /flying-dresses case from proxy.ts's isLocaleExempt: red.
+// THE RULE CHANGED ON 1 NOVEMBER 2026, AND IT IS STRICTER NOW, NOT LOOSER.
+//
+// It used to be "robots.ts must disallow /flying-dresses". The owner confirmed
+// the travel domain no longer needs to serve this brand, so the proxy now 308s
+// those paths to flyingdressesegypt.com instead.
+//
+// A Disallow would have BROKEN that: Google cannot follow a redirect on a URL
+// it is not allowed to fetch, so anything already indexed here would have been
+// stranded. The disallow was therefore removed deliberately.
+//
+// What replaces it is the pairing, which is the real invariant and was never
+// checked before: the travel domain must either refuse to be crawled for these
+// paths OR redirect them away. What it must never do is allow the crawl and
+// then serve the page, which is the duplicate it was always about.
+//
+// Proven three ways, each red: removing the redirect from proxy.ts while
+// robots allows the path; putting the disallow back while the redirect stands
+// (red, because the redirect can then never be followed); and removing the
+// /flying-dresses case from proxy.ts's isLocaleExempt.
 // ---------------------------------------------------------------------------
 const robotsSource = read("src/app/robots.ts");
-ok(
-  "src/app/robots.ts no longer disallows /flying-dresses, so the second brand's pages can be indexed on the " +
-    "travel domain as duplicates of its own",
-  robotsSource.includes('"/flying-dresses"')
-);
+{
+  const proxySource = stripComments(read("src/proxy.ts"));
+  const disallowed = robotsSource.includes('"/flying-dresses"');
+  const redirected =
+    /host === CANONICAL_HOST/.test(proxySource) &&
+    /canonicalFlyingDressPath\(request\.nextUrl\.pathname\)/.test(proxySource);
+
+  ok(
+    "the travel domain neither disallows /flying-dresses nor redirects it away, so it serves a second " +
+      "crawlable copy of the whole brand",
+    disallowed || redirected
+  );
+  ok(
+    "the travel domain redirects /flying-dresses away AND disallows it in robots.txt — Google cannot " +
+      "follow a redirect on a URL it may not fetch, so the two cancel out and anything already indexed " +
+      "there is stranded",
+    !(disallowed && redirected)
+  );
+}
 
 // ---------------------------------------------------------------------------
 // NO EM-DASHES IN ANYTHING A VISITOR READS.
@@ -1953,7 +2002,12 @@ for (const file of brandTsx) {
 // package's own `priceUsd`. The Fayoum copy is written around this: it says
 // "the same photoshoot" and "about three hours", and names no figure at all.
 //
-// A timeline is held to the same rule, for the same reason.
+// A timeline is held to the same rule, for the same reason. So is a
+// tourItinerary, which was written in violation of it: the Fayoum lede said
+// "For $75 per person on top of the shoot" while `addedPriceUsd` already held
+// 75, so one figure existed in two places and the prose copy would not move
+// when the number did. The renderer prints the number; the prose says what it
+// buys.
 //
 // Proven by adding "only $150 more than the rooftop" to the Fayoum story
 // (red, naming the stray figure) and by writing "$349" into it (green, since
@@ -1963,6 +2017,9 @@ for (const pkg of packages) {
   const prose = [
     ...(pkg.priceStory ? [pkg.priceStory.heading, ...pkg.priceStory.body] : []),
     ...(pkg.timeline ?? []).flatMap((step) => [step.when, step.what]),
+    ...(pkg.tourItinerary
+      ? [pkg.tourItinerary.heading, pkg.tourItinerary.lede, pkg.tourItinerary.durationNote]
+      : []),
   ].join(" ");
 
   for (const match of prose.matchAll(/\$\s?([\d,]+)/g)) {
@@ -2736,8 +2793,20 @@ for (const section of ["celebrations", "creative"]) {
   // price in content and leaving the article alone (red), and by moving a
   // market figure into a first-party article (red).
   // -------------------------------------------------------------------------
+  // partyPricing TOTALS COUNT AS CONFIRMED PRICES, and leaving them out was a
+  // real hole rather than an omission. The two-day trip is the one product
+  // priced by the size of the party: $500 for one and $800 for two live in
+  // `partyPricing`, not in `priceUsd`, so an article quoting the rates the
+  // packages page itself prints was rejected.
+  //
+  // The $500 half was worse than rejected. It is also a Tinggly competitor
+  // figure in RESEARCHED_MARKET_PRICES below, so our own published price was
+  // being waved through as somebody else's, on a cited article, and would have
+  // gone on passing after the catalogue changed underneath it. A price is
+  // checked against the catalogue it came from or the check is theatre.
   const confirmedPrices = new Set<number>([
     ...packages.map((p) => p.priceUsd).filter((v): v is number => typeof v === "number"),
+    ...packages.flatMap((p) => (p.partyPricing ?? []).map((tier) => tier.totalUsd)),
     ...addOns.map((a) => a.priceUsd).filter((v): v is number => typeof v === "number"),
   ]);
 
@@ -3134,6 +3203,71 @@ for (const section of ["celebrations", "creative"]) {
     "an empty Studio list empties the site — a brand with no photoshoots is not an edit, it is an unfinished migration",
     mergePackages([]).length === packages.length
   );
+  // A PARTIAL STUDIO LIST IS THE STATE PRODUCTION IS ACTUALLY IN, and nothing
+  // above tested it. The two guards before this one cover null and [], the two
+  // states where the merge falls back wholesale. Real life is neither: on 3
+  // November 2026 Sanity held four photoshoot documents and the content file
+  // held five, and because the merge mapped over the DOCUMENTS, the fifth did
+  // not merely drop out of the listing. fdPackageBySlug() reads the same list,
+  // so /experiences/white-desert returned a hard 404 in production, for a $500
+  // product, with two published articles linking to it.
+  //
+  // Proven by reverting the concat in mergePackages: red, naming the slug.
+  {
+    const partial = packages
+      .filter((pkg) => pkg.slug !== packages[packages.length - 1]!.slug)
+      .map((pkg) => ({ slug: pkg.slug, name: pkg.name }) as Parameters<typeof mergePackages>[0] extends
+        | (infer T)[]
+        | null
+        ? T
+        : never);
+    const merged = mergePackages(partial);
+    for (const pkg of packages) {
+      ok(
+        `"${pkg.slug}" exists in the content file but vanishes when Studio has documents for the ` +
+          `others. It is not just missing from the listing: fdPackageBySlug reads this same list, ` +
+          `so its page 404s`,
+        merged.some((m) => m.slug === pkg.slug)
+      );
+    }
+  }
+
+  // EVERY FIELD OF THE TYPE SURVIVES THE MERGE.
+  //
+  // This is the guard that would have caught the two that were lost, and the
+  // reason it is written by key rather than by name: `partyPricing` and
+  // `tourItinerary` were simply absent from the object mergePackages builds,
+  // and because both are OPTIONAL on FlyingDressPackage, the object still
+  // satisfied `satisfies FlyingDressPackage` and tsc passed. An optional field
+  // added to the type and the content file, and forgotten here, is invisible
+  // to the compiler and to every other check in this file.
+  //
+  // What it cost: the owner's nine-hour Fayoum excursion and the Red Sea
+  // yacht's activities had never rendered on production at all, and the
+  // two-day trip's $500/$800 party tiers would have fallen back to "from $400
+  // per person" the moment somebody created its Studio document — a published
+  // price lower than one traveller pays.
+  //
+  // Proven by deleting `partyPricing: l?.partyPricing` (red) and
+  // `tourItinerary: l?.tourItinerary` (red) from mergePackages.
+  for (const pkg of packages) {
+    const doc = { slug: pkg.slug, name: pkg.name } as NonNullable<
+      Parameters<typeof mergePackages>[0]
+    >[number];
+    const merged = mergePackages([doc]).find((m) => m.slug === pkg.slug);
+    ok(`mergePackages lost "${pkg.slug}" entirely`, merged !== undefined);
+    if (!merged) continue;
+    for (const key of Object.keys(pkg) as (keyof typeof pkg)[]) {
+      if (pkg[key] === undefined) continue;
+      ok(
+        `mergePackages does not carry "${String(key)}", so "${pkg.slug}" renders in production ` +
+          `without it. Optional fields are invisible to \`satisfies\`, so the compiler will not ` +
+          `tell you: add it to the object mergePackages builds`,
+        merged[key] !== undefined
+      );
+    }
+  }
+
   ok("an empty Studio list empties the extras", mergeAddOns([]).length === addOns.length);
   ok("an empty Studio list empties the hire services", mergeRentals([]).length === rentalServices.length);
   ok("with no Studio document the extras are lost", mergeAddOns(null).length === addOns.length);
@@ -4232,46 +4366,61 @@ ok(
 }
 
 // ---------------------------------------------------------------------------
-// IT IS THE NINE PYRAMIDS VIEW, INSIDE THE GIZA COMPLEX. NOT A LOUNGE.
+// THE PRIVATE PYRAMIDS PHOTOSHOOT, AND THE NAME THAT WAS ABANDONED.
 //
-// The brochure called it "Nine Pyramids Lounge, within the Giza pyramid
-// area"; a separate instruction said a Nine Pyramids rooftop "offers pyramid
-// views, it is not inside the archaeological complex". The site said neither,
-// which was the right answer to an unresolved question and the wrong one to
-// leave standing once the owner resolved it: it is the Nine Pyramids View,
-// in the complex, on request.
+// This guard used to require the opposite of what it requires now, and the
+// history is the reason it still exists.
 //
-// This is not pedantry about a name. A session genuinely inside the
-// archaeological area carries ticketing and permit implications a rooftop
-// outside it does not, the sister brand sells that exact vantage point by
-// name, and there is a Stories article on this site whose whole subject is
-// competitors blurring the two. Drifting back to "Lounge" would put the two
-// brands' descriptions of one place out of step again.
+// The brochure called this "Nine Pyramids Lounge, within the Giza pyramid
+// area". A separate instruction said a Nine Pyramids rooftop "offers pyramid
+// views, it is not inside the archaeological complex". In October the owner
+// resolved it as the Nine Pyramids VIEW, inside the complex, and this block
+// enforced that. In November they called it the Lounge again. Two
+// contradictory descriptions of somewhere whose location carries real
+// ticketing and permit implications.
 //
-// PROVEN by restoring the old label and the old detail. Both red.
+// On 3 November the owner dropped both: "Private Pyramids photoshoot instead
+// of all that". So the entry no longer names a vantage point and no longer
+// says anything about the archaeological complex, and this guard no longer
+// requires it to. What it requires instead is that neither contested claim
+// creeps back, because the reason they were contested has not gone away: the
+// sister brand sells a named vantage point inside the complex, and there is a
+// Stories article here whose whole subject is competitors blurring that line.
+//
+// The concept is checked too. The owner was specific that this is a SECOND
+// photoshoot bought on top of the booked one, so the client gets both places,
+// and a sentence that loses that sells a $99 add-on without saying what it
+// adds.
+//
+// PROVEN by reinstating the "inside the Giza complex" wording (red), by
+// renaming it back to a lounge (red), and by rewriting the detail so it no
+// longer says a second shoot is added to the booked one (red).
 // ---------------------------------------------------------------------------
 {
-  const ninePyramids = addOns.find((a) => a.id === "nine-pyramids-view");
+  const pyramidsExtra = addOns.find((a) => a.id === "private-pyramids");
   ok(
-    "the Nine Pyramids extra is gone or has been renumbered, so the shoot the owner confirmed is " +
+    "the Private Pyramids extra is gone or has been renumbered, so the shoot the owner priced is " +
       "no longer offered",
-    ninePyramids !== undefined
+    pyramidsExtra !== undefined
   );
-  if (ninePyramids) {
+  if (pyramidsExtra) {
+    const prose = `${pyramidsExtra.label} ${pyramidsExtra.detail} ${pyramidsExtra.homeNote}`;
     ok(
-      "the Nine Pyramids extra calls itself a session at a lounge again, which is the reading the " +
-        "owner corrected",
-      !/lounge/i.test(`${ninePyramids.label} ${ninePyramids.detail} ${ninePyramids.homeNote}`)
+      "the Private Pyramids extra calls itself a lounge again, which is the description the owner " +
+        "corrected once and then abandoned",
+      !/lounge/i.test(prose)
     );
     ok(
-      "the Nine Pyramids extra no longer says it is the Nine Pyramids View",
-      /nine pyramids view/i.test(ninePyramids.label) &&
-        /nine pyramids view/i.test(ninePyramids.detail)
+      "the Private Pyramids extra places itself inside the Giza archaeological complex again. That " +
+        "claim carries ticketing and permit implications, it was contested twice, and the owner's " +
+        "final answer was to stop making it",
+      !/archaeological complex|giza complex|inside the complex/i.test(prose)
     );
     ok(
-      "the Nine Pyramids extra no longer places itself inside the Giza complex, which is the part " +
-        "that carries the permit and ticketing implications",
-      /giza complex/i.test(ninePyramids.detail)
+      "the Private Pyramids extra no longer says it is a SECOND shoot added to the one already " +
+        "booked, which is the entire concept: the client pays extra and gets both locations",
+      /second photoshoot/i.test(pyramidsExtra.detail) &&
+        /already booked|on top of/i.test(prose)
     );
   }
   // Nowhere else in this brand's copy either.
@@ -7049,6 +7198,38 @@ ok(
     );
   }
 
+  // 1b. ASSETS ARE NOT REDIRECTED.
+  //
+  // Each brand has its own icon.png and apple-icon.png, and Next serves them
+  // at the route segment they sit in. Redirecting /flying-dresses/icon.png to
+  // /icon.png found EGYPT EYE's icon, answered 200, and put the travel
+  // brand's favicon on the Flying Dresses site. The status code was green and
+  // the bytes were wrong.
+  //
+  // Proven by deleting the extension guard from canonicalFlyingDressPath: red.
+  for (const asset of [
+    "/flying-dresses/icon.png",
+    "/flying-dresses/apple-icon.png",
+    "/flying-dresses/sitemap.xml",
+    "/flying-dresses/robots.txt",
+  ]) {
+    ok(
+      `canonicalFlyingDressPath("${asset}") redirects an ASSET. It would resolve against the other ` +
+        "brand's file of the same name, answer 200, and serve the wrong bytes",
+      canonicalFlyingDressPath(asset) === null
+    );
+  }
+  // And the two icons really are different files, which is the only reason
+  // the bug above was visible at all.
+  {
+    const fd = statSync("src/app/flying-dresses/icon.png").size;
+    const eye = statSync("src/app/icon.png").size;
+    ok(
+      `both brands' icon.png are now ${fd} bytes, so nothing would reveal one being served for the other`,
+      fd !== eye
+    );
+  }
+
   // 2. NO REDIRECT LOOP. This is the one that would take the site down, so it
   //    is tested as a property rather than on a handful of examples: whatever
   //    the function returns must itself be a destination, not another
@@ -7125,6 +7306,762 @@ ok(
   );
 }
 
+
+// ---------------------------------------------------------------------------
+// THE EMAIL-SIGNATURE LOGOS.
+//
+// Two files under public/images/ are served to the open internet and pasted
+// into the owner's HTML email signature: the normal mark, and a light variant
+// for dark-mode clients.
+//
+// NOTHING IN THIS REPOSITORY LINKS TO EITHER, which is why they need a guard.
+// They look like orphans to anyone tidying public/, and the only person who
+// would notice one going missing is whoever receives an email with a broken
+// image in it. The owner has no terminal (CLAUDE.md §2) and would learn about
+// it from a client.
+//
+// WHY THE LIGHT VARIANT EXISTS. Both tones in this logo are the SAME brown:
+// the wordmark is #725047 at full alpha and the "Egypt" script is the same
+// brown at 36% alpha, which composites over white as rose-gold. On a dark
+// background that made the wordmark 2.25:1 against Gmail's #202124, which is
+// unreadable. The light variant is the identical artwork recoloured to
+// #f0ddd5, which measures 12.04:1 there.
+//
+// Read out of the PNG header rather than from filenames, because the two ways
+// this breaks are both invisible in a file listing: a re-export flattened onto
+// white, which looks right in an email on a white background and shows a white
+// box everywhere else; and a resize down to something soft on a retina screen.
+//
+// PNG layout: 8-byte signature, then the IHDR chunk (4-byte length, 4-byte
+// type), so IHDR's 13 bytes of data start at offset 16 — width at 16, height
+// at 20, bit depth at 24, COLOUR TYPE at 25. Colour type 6 is truecolour with
+// alpha, 4 is greyscale with alpha, 3 is a palette whose transparency lives in
+// a separate tRNS chunk.
+//
+// WHAT THIS CANNOT SEE, stated rather than implied: it does not decode pixels,
+// so it cannot confirm the light variant is actually light. `sharp` does not
+// resolve from this repository and shelling out to ImageMagick would put a
+// system binary in the middle of the offline check suite. What it can do is
+// refuse the realistic version of that mistake, which is one file being copied
+// over the other; a genuine recolour to the wrong tone would still get through
+// and has to be looked at.
+//
+// Proven by: deleting each file (red), flattening one onto white with
+// `-background white -alpha remove` (red on alpha), resizing one to 200px
+// wide (red on width), pasting the untrimmed 1563x1563 original over one (red
+// on aspect), and copying the dark file over the light one (red on the
+// duplication test).
+{
+  const LOGOS = [
+    ["public/images/flying-dresses-egypt-logo.png", "the normal mark"],
+    ["public/images/flying-dresses-egypt-logo-light.png", "the dark-mode light variant"],
+  ] as const;
+
+  for (const [path, label] of LOGOS) {
+    ok(
+      `${path} is gone. It is ${label} for the owner's email signature and nothing in this ` +
+        "repository links to it, so only an email recipient would ever notice",
+      existsSync(path)
+    );
+    if (!existsSync(path)) continue;
+
+    const png = readFileSync(path);
+    ok(
+      `${path} is not a PNG any more`,
+      png.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]))
+    );
+    const width = png.readUInt32BE(16);
+    const height = png.readUInt32BE(20);
+    const colourType = png[25];
+    const hasAlpha = colourType === 6 || colourType === 4 || png.includes(Buffer.from("tRNS"));
+    ok(
+      `${path} has lost its transparency (PNG colour type ${colourType}, no tRNS). Flattened onto ` +
+        "white it looks correct in an email on a white background and shows a white box on every " +
+        "other background, which for the light variant is every background it is for",
+      hasAlpha
+    );
+    ok(
+      `${path} is ${width}x${height}. An email signature displays this around 200 to 240px wide, ` +
+        "so it needs to be stored at roughly twice that to stay sharp on a retina screen",
+      width >= 400 && width <= 1200
+    );
+    ok(
+      `${path} is ${png.length} bytes, which is heavy for an image that loads on every email open`,
+      png.length <= 200_000
+    );
+    // The logo is a wordmark over a script and much wider than it is tall. A
+    // square or portrait file means somebody pasted back the untrimmed
+    // original, which is 1563x1563 and 96% empty space.
+    ok(
+      `${path} is ${width}x${height}, which is not the wordmark's shape. The untrimmed original is ` +
+        "square and almost entirely empty; this file should be the trimmed logo",
+      width > height * 1.8
+    );
+  }
+
+  // THE TWO MUST NOT BE THE SAME FILE.
+  //
+  // The realistic failure is somebody copying one over the other, which leaves
+  // the signature looking perfect in whichever mode they happened to test and
+  // invisible in the other. Byte equality catches exactly that.
+  if (LOGOS.every(([path]) => existsSync(path))) {
+    const [dark, light] = LOGOS.map(([path]) => readFileSync(path));
+    ok(
+      "the two email-signature logos are byte-identical, so one has been copied over the other and " +
+        "the signature is unreadable in either light or dark mode depending on which survived",
+      !dark.equals(light)
+    );
+    // Same artwork at the same size, so a mismatch means they have drifted
+    // apart and will not sit interchangeably in one signature's markup.
+    const dims = (b: Buffer) => `${b.readUInt32BE(16)}x${b.readUInt32BE(20)}`;
+    ok(
+      `the two email-signature logos are ${dims(dark)} and ${dims(light)}. They are the same artwork ` +
+        "and swap into the same <img> width and height, so they have to match",
+      dims(dark) === dims(light)
+    );
+  }
+}
+
+
+// ---------------------------------------------------------------------------
+// A PRICED ADD-ON DOES NOT SAY IT HAS NO PRICE.
+//
+// Five of these were "price on request" until the owner sent figures on 2
+// November 2026, and the sentences beside them said so in words: "Price on
+// request, because it is quoted per booking", "the cost is on request",
+// "Charged on top of the shoot, on request". Setting priceUsd without
+// rewriting those left the table printing "$35" in one column and "Price on
+// request" in the next, which is not a cosmetic problem: a customer reading
+// the sentence rather than the number does not know what they owe.
+//
+// Proven by putting "Price on request" back into the professional-video
+// detail while it carries $35: red.
+for (const addOn of addOns) {
+  if (addOn.priceUsd === null) continue;
+  const prose = `${addOn.detail} ${addOn.homeNote}`;
+  const claim = prose.match(/\bon request\b|\bprice on request\b|\bquoted per booking\b/i);
+  ok(
+    `add-on "${addOn.id}" prints $${addOn.priceUsd} and its own copy still says "${claim?.[0]}". ` +
+      "The table shows the figure in one column and denies it in the next",
+    claim === null
+  );
+}
+
+// AND THE UNIT SURVIVES THE SANITY MERGE.
+//
+// CLAUDE.md §3, in the shape it usually takes: mergeAddOns rebuilds the object
+// from the Studio document rather than spreading the local one, so a field
+// added to content/flyingDresses.ts and not added to the merge silently
+// becomes undefined the moment an add-on document exists in the dataset.
+//
+// It matters for exactly one add-on and it matters a lot: accessories are $5
+// EACH, and "$5" printed beside the word "Accessories" reads as five dollars
+// for all thirteen of them.
+//
+// Run over a REAL document set rather than asserted against the source, so a
+// merge that drops the field fails here even though the local data still has
+// it. Proven by deleting the `priceUnit: l?.priceUnit` line from
+// mergeAddOns: red.
+{
+  const priced = addOns.filter((a) => a.priceUnit);
+  ok(
+    "no add-on carries a priceUnit any more, so the guard below is checking nothing. Accessories " +
+      "were the reason it exists",
+    priced.length > 0
+  );
+  const docs = addOns.map((a, i) => ({
+    addOnId: a.id,
+    label: a.label,
+    priceUsd: a.priceUsd,
+    priceIsFrom: a.fromPrice,
+    homeNote: a.homeNote,
+    detail: a.detail,
+    order: i,
+  }));
+  const merged = mergeAddOns(docs);
+  for (const a of priced) {
+    const after = merged.find((m) => m.id === a.id);
+    ok(
+      `add-on "${a.id}" is $${a.priceUsd} per ${a.priceUnit}, but the Sanity merge returns it with ` +
+        `priceUnit ${JSON.stringify(after?.priceUnit)}. Published, it reads as $${a.priceUsd} for all of them`,
+      after?.priceUnit === a.priceUnit
+    );
+  }
+  // And the unit has to reach the page, not just the data.
+  // The first version of this searched the page for "priceUnit" and passed on
+  // a page where the conditional had been replaced with `false ?` — because
+  // the identifier still appeared inside the branch that no longer ran. It has
+  // to see the test AND the output.
+  {
+    const pricing = stripComments(readFileSync("src/app/flying-dresses/packages/page.tsx", "utf8"));
+    ok(
+      "the pricing page no longer branches on priceUnit, so the per-piece figure prints as a flat price",
+      /addOn\.priceUnit\s*\?/.test(pricing)
+    );
+    ok(
+      'the pricing page branches on priceUnit but never prints "per <unit>", so $5 per piece renders as $5',
+      /per \{addOn\.priceUnit\}/.test(pricing)
+    );
+  }
+}
+
+
+// ---------------------------------------------------------------------------
+// THE DAY AROUND THE SHOOT.
+//
+// Two shoots now carry a `tourItinerary`, and they are priced in opposite
+// ways: Fayoum's nine-hour excursion is a $75-per-person upgrade, the Ain
+// Sokhna yacht day's activities are already inside its $399. The field
+// distinguishes them with a number against null.
+//
+// NULL HERE DOES NOT MEAN WHAT NULL MEANS ON priceUsd, where it is "price on
+// request". That collision is the whole risk: a reader who sees no figure on
+// the yacht itinerary must not conclude the activities cost extra and will be
+// quoted later. So the page has to SAY which case it is in words, and these
+// guards check the words and not just the data.
+// ---------------------------------------------------------------------------
+{
+  const detail = stripComments(
+    readFileSync("src/app/flying-dresses/experiences/[slug]/page.tsx", "utf8")
+  );
+
+  ok(
+    "no package carries a tourItinerary, so the two shoots that sit inside a whole excursion are " +
+      "back to describing only the photoshoot",
+    packages.some((pkg) => pkg.tourItinerary)
+  );
+
+  for (const pkg of packages) {
+    const tour = pkg.tourItinerary;
+    if (!tour) continue;
+
+    ok(`${pkg.slug}: the tour itinerary has no steps in it`, tour.steps.length > 0);
+    ok(
+      `${pkg.slug}: a tour step is blank or near enough`,
+      tour.steps.every((step) => step.trim().length > 8)
+    );
+    // AN UPGRADE WITH NO FIGURE MUST STILL READ AS AN UPGRADE.
+    //
+    // This is the state that broke the first version of the field, which had
+    // only "a number" and "included" and used null for the second. The yacht
+    // activities are an upgrade whose price is not set, and with the old
+    // shape that was indistinguishable from free.
+    //
+    // So where no figure exists, the words have to carry it: the lede or the
+    // duration note must say the day CHANGES, and the renderer prints
+    // "Quoted on request" rather than nothing at all.
+    if (tour.supplement.kind === "upgrade" && tour.supplement.usd === null) {
+      ok(
+        `${pkg.slug}: the tour is an upgrade with no price set, and nothing in its own copy says the ` +
+          "day is different from the one already paid for. With no figure beside it, it reads as free",
+        /\badd\b|\badds\b|\bupgrade\b|\bextra\b|\bon top\b|\bbecomes\b/i.test(
+          `${tour.lede} ${tour.durationNote} ${tour.heading}`
+        )
+      );
+    }
+    ok(`${pkg.slug}: the tour itinerary has no heading`, tour.heading.trim().length > 0);
+    ok(
+      `${pkg.slug}: the tour itinerary has no lede, so the steps arrive with nothing saying what they are`,
+      tour.lede.trim().length > 40
+    );
+
+    // THE UPGRADE PRICE IS PER PERSON AND MUST NOT CONTRADICT THE SHOOT'S OWN.
+    if (tour.supplement.kind === "upgrade" && tour.supplement.usd !== null) {
+      const usd = tour.supplement.usd;
+      ok(
+        `${pkg.slug}: the tour upgrade is $${usd}, which is not a positive whole number of dollars`,
+        Number.isInteger(usd) && usd > 0
+      );
+      // A $75 upgrade on a $349 shoot is an upgrade. A $400 upgrade on it is a
+      // different product wearing an add-on's clothes.
+      if (pkg.priceUsd !== null) {
+        ok(
+          `${pkg.slug}: the tour upgrade is $${usd} against a $${pkg.priceUsd} shoot. ` +
+            "At that share of the price it is not an add-on and should not be sold as one",
+          usd < pkg.priceUsd
+        );
+      }
+    }
+  }
+
+  // THE YACHT ACTIVITIES ARE AN UPGRADE, NOT AN INCLUSION, AND I HAD IT WRONG.
+  //
+  // The owner first asked for "ability to do all activities during the yacht
+  // shoot" and I read that as the day already containing them, shipping it as
+  // `included`. Their correction: the photoshoot alone is six hours, and the
+  // activities are the added extra that makes the day open-ended.
+  //
+  // Nothing caught the first version, because every guard here only asked
+  // whether the two cases were DISTINGUISHED, not which one each product was
+  // in. A free-text correction is not a check; this is.
+  //
+  // Fayoum is pinned the same way, in the other direction: it is an upgrade
+  // with a figure, and quietly folding $75 into the shoot price would be the
+  // mirror of the same error.
+  //
+  // Proven by flipping each to the other kind: red both ways.
+  for (const [slug, kind, why] of [
+    [
+      "red-sea-yacht",
+      "upgrade",
+      "the photoshoot alone is six hours and the activities are the extra that opens the day up",
+    ],
+    ["fayoum", "upgrade", "the nine-hour excursion is $75 on top of the shoot"],
+  ] as const) {
+    const pkg = packages.find((p) => p.slug === slug);
+    ok(`${slug} is gone, so the guard pinning its supplement checks nothing`, pkg !== undefined);
+    if (pkg?.tourItinerary) {
+      ok(
+        `${slug}: its day is marked "${pkg.tourItinerary.supplement.kind}" rather than "${kind}". ` +
+          `The owner was explicit: ${why}`,
+        pkg.tourItinerary.supplement.kind === kind
+      );
+    }
+  }
+
+  // THE RENDERER SAYS WHICH CASE IT IS.
+  //
+  // Checked as the test AND the output, because an earlier guard in this file
+  // matched an identifier that still appeared inside a branch that no longer
+  // ran. Proven by deleting the eyebrow ternary (red) and by deleting the
+  // "+$" line (red).
+  ok(
+    "the experience page never renders tourItinerary, so the itinerary is in the data and not on the site",
+    /pkg\.tourItinerary \?/.test(detail)
+  );
+  ok(
+    "the experience page renders the itinerary without distinguishing an upgrade from an inclusion. " +
+      "An absent figure then reads as free, which for the yacht activities is wrong",
+    /supplement\.kind === "included"/.test(detail)
+  );
+  ok(
+    "the experience page never prints the upgrade price, so Fayoum's $75 tour looks free",
+    /\+\$\$\{pkg\.tourItinerary\.supplement\.usd\} per person/.test(detail)
+  );
+  ok(
+    "an upgrade with no figure set renders nothing at all, so the yacht activities read as included",
+    /Quoted on request/.test(detail)
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// PRICED BY PARTY SIZE.
+//
+// The White Desert is $500 for one traveller and $800 for two, which is $400
+// each. Every other shoot here charges one rate per head, so `priceUsd` was
+// the whole answer and both helpers printed it bare.
+//
+// THE FAILURE THIS PREVENTS IS QUOTING THE CHEAPER TIER TO SOMEBODY ALONE.
+// `priceUsd` holds 400, the better of the two rates, so a hero reading "$400"
+// and a sentence reading "$400 per person" are both wrong for a solo booking
+// by a hundred dollars. Both helpers say "from" when tiers exist, and the
+// tiers are printed in full on the page.
+// ---------------------------------------------------------------------------
+for (const pkg of packages) {
+  const tiers = pkg.partyPricing;
+  if (!tiers) continue;
+
+  ok(`${pkg.slug}: partyPricing exists but is empty`, tiers.length > 0);
+  ok(
+    `${pkg.slug}: a party tier is for a non-positive number of people`,
+    tiers.every((t) => Number.isInteger(t.people) && t.people > 0)
+  );
+  ok(
+    `${pkg.slug}: a party tier total is not a positive whole number of dollars`,
+    tiers.every((t) => Number.isInteger(t.totalUsd) && t.totalUsd > 0)
+  );
+  ok(
+    `${pkg.slug}: two party tiers are for the same number of people`,
+    new Set(tiers.map((t) => t.people)).size === tiers.length
+  );
+
+  // priceUsd MUST be the best per-person rate on offer. If it is higher than
+  // one of the tiers works out at, the "from" is a lie in the other
+  // direction and the page undersells nobody but confuses everybody.
+  const perPerson = tiers.map((t) => Math.round(t.totalUsd / t.people));
+  const best = Math.min(...perPerson);
+  ok(
+    `${pkg.slug}: priceUsd is $${pkg.priceUsd} but the best per-person tier works out at $${best}. ` +
+      'It is rendered as "from", so it has to be the floor',
+    pkg.priceUsd === best
+  );
+
+  // A bigger party must not cost more each. That would make "from" meaningless
+  // and is the shape of a typo rather than a pricing decision.
+  const sorted = [...tiers].sort((a, b) => a.people - b.people);
+  for (let i = 1; i < sorted.length; i += 1) {
+    const prev = Math.round(sorted[i - 1].totalUsd / sorted[i - 1].people);
+    const here = Math.round(sorted[i].totalUsd / sorted[i].people);
+    ok(
+      `${pkg.slug}: ${sorted[i].people} people pay $${here} each against $${prev} each for ` +
+        `${sorted[i - 1].people}. A larger party costing more per head is a typo, not a tier`,
+      here <= prev
+    );
+  }
+}
+
+// THE HELPERS SAY "FROM", AND THE TIERS REACH THE PAGE.
+//
+// Proven by deleting the partyPricing branch from packagePriceLabel (red),
+// from packagePricePhrase (red), and by removing the tier section from the
+// experience page (red).
+{
+  const withTiers = packages.find((pkg) => pkg.partyPricing && pkg.partyPricing.length > 0);
+  ok("no package is party-priced, so the guards above check nothing", withTiers !== undefined);
+  if (withTiers) {
+    ok(
+      `packagePriceLabel renders "${packagePriceLabel(withTiers)}" for a party-priced shoot. Without ` +
+        'a "from" the hero quotes the two-person rate to somebody travelling alone',
+      packagePriceLabel(withTiers).startsWith("from $")
+    );
+    ok(
+      `packagePricePhrase renders "${packagePricePhrase(withTiers)}" for a party-priced shoot, which ` +
+        "states the cheaper tier as if it were the only one",
+      packagePricePhrase(withTiers).startsWith("from $")
+    );
+    // And a per-head shoot must NOT acquire a "from" it has not earned.
+    const flat = packages.find((pkg) => !pkg.partyPricing && pkg.priceUsd !== null);
+    if (flat) {
+      ok(
+        `packagePriceLabel renders "${packagePriceLabel(flat)}" for ${flat.slug}, which is a single ` +
+          'per-person rate and must not be hedged with "from"',
+        !packagePriceLabel(flat).startsWith("from $")
+      );
+    }
+  }
+  const detail = stripComments(
+    readFileSync("src/app/flying-dresses/experiences/[slug]/page.tsx", "utf8")
+  );
+  ok(
+    "the experience page never renders partyPricing, so the only figure a party-priced shoot shows " +
+      "is the hero's, and the tier a solo traveller actually pays appears nowhere",
+    /pkg\.partyPricing && pkg\.partyPricing\.length > 0 \?/.test(detail)
+  );
+  ok(
+    "the experience page renders the tiers without their totals",
+    /\$\{tier\.totalUsd\}/.test(detail)
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// THE OVERNIGHT SHOOT SAYS WHERE YOU SLEEP.
+//
+// The White Desert is the only product here with a night in it, and the owner
+// confirmed on 3 November 2026 that the camp is SHARED TENTS and the meals are
+// included.
+//
+// Shared tents is the fact most likely to disappoint if it is not on the page.
+// Somebody paying $500 for a two-day trip and picturing a private room finds
+// out at the camp, in the dark, hours from Cairo, with no alternative. That is
+// the same class of failure as the music page's "we do not supply a PA", and
+// it gets the same treatment: stated in the copy a visitor actually reads, not
+// only in an FAQ they may never open.
+//
+// It is checked in BOTH rendered places on purpose. The timeline is what
+// somebody reads to picture the trip; the FAQ is what somebody scans when they
+// are deciding. Either one alone can be edited away without the other
+// noticing, and this fact is not one to lose quietly.
+//
+// Proven by deleting the sentence from the timeline (red), by deleting the
+// FAQ (red), and by softening "shared tents" to "a desert camp" in the
+// inclusions (red).
+{
+  const overnight = packages.find((pkg) => pkg.slug === "white-desert");
+  ok(
+    "the white-desert package is gone, so the overnight guards below check nothing",
+    overnight !== undefined
+  );
+  if (overnight) {
+    const SHARED = /shared tents?/i;
+
+    const timeline = (overnight.timeline ?? []).map((step) => step.what).join(" ");
+    ok(
+      "the White Desert timeline no longer says the sleeping is shared tents. It is the one night " +
+        "on this site, and somebody picturing a private room finds out at the camp",
+      SHARED.test(timeline)
+    );
+
+    const faqs = overnight.faqs.map((f) => `${f.question} ${f.answer}`).join(" ");
+    // THE QUESTION AND THE ANSWER ARE CHECKED SEPARATELY, because the first
+    // version searched them joined together and passed on an FAQ whose
+    // question had been changed to something unrelated while the answer still
+    // happened to mention tents. An answer nobody can find by its question is
+    // not an answer, and this is the fact that most needs finding.
+    const sleeping = overnight.faqs.find((f) =>
+      /sleep|stay the night|accommodation|tent/i.test(f.question)
+    );
+    ok(
+      "no White Desert FAQ ASKS where you sleep, so the shared tents are only findable by reading " +
+        "the timeline through, which a scanner will not do",
+      sleeping !== undefined
+    );
+    ok(
+      "the White Desert sleeping FAQ does not answer with the shared tents",
+      sleeping !== undefined && SHARED.test(sleeping.answer)
+    );
+
+    ok(
+      "the White Desert inclusions no longer say the camp is shared tents. 'All inclusive' plus 'a " +
+        "night at the camp' reads as a room somebody has paid for",
+      overnight.whyThis.some((line) => SHARED.test(line))
+    );
+
+    // The meals half of the same answer. "All inclusive" has to survive as a
+    // statement about the meals specifically, because that is what was asked
+    // and answered.
+    ok(
+      "the White Desert copy no longer says the meals are included, which was half of the owner's " +
+        "answer and the half a two-day trip is judged on",
+      /every meal|meals are included|the meals/i.test(
+        `${overnight.whyThis.join(" ")} ${faqs}`
+      )
+    );
+  }
+}
+
+
+// ---------------------------------------------------------------------------
+// TWO DESERTS, 300km APART, CANNOT BE ONE TRIP.
+//
+// Egypt has two places a flying-dress trip calls "the white desert" and they
+// are not near each other:
+//
+//   Fayoum          ~150km southwest of Cairo. Lake Qarun, Wadi El Rayan,
+//                   the Magic Lake, Mudawara Mountain. Chalk formations and
+//                   a camping area by the lake.
+//   Bahariya to     ~365km west of Cairo and onward. The Black Desert,
+//   Farafra         Panorama Mountain, Crystal Mountain, and the White
+//                   Desert proper at Farafra.
+//
+// A single two-day itinerary cannot visit both, and this check exists because
+// the attempt was made. On 3 November 2026 the owner, asked whether the
+// overnight camp was a fixed site, answered that it is a fixed site beside the
+// Magic Lake. The two-day page's own timeline names the Black Desert, Panorama
+// Mountain, Jabal Al-Marsous, Crystal Mountain and the White Desert. Writing
+// the camp onto that page as instructed would have published a trip that
+// detours 400km in the middle of the night, which is the sort of invented
+// logistics CLAUDE.md §7 is about: a customer books it, arrives, and the trip
+// is not the one on the page.
+//
+// So the two vocabularies are kept apart until the owner says which trip this
+// is. Whichever way it resolves, ONE of these name sets has to come off the
+// page, and this is what makes that a failing check rather than a quiet
+// contradiction nobody reads twice.
+//
+// Proven by adding "the camp sits beside the Magic Lake" to the white-desert
+// whyThis (red, naming both regions), and by adding "Crystal Mountain" to the
+// fayoum timeline (red, the same clash from the other side).
+//
+// IT PINS WHICH DESERT EACH PRODUCT IS IN rather than only noticing when both
+// vocabularies collide. The first version compared the two sets and passed
+// unless a page named something from each, which left a page naming NEITHER
+// free to pick up the wrong one: adding "Crystal Mountain" to the Fayoum day
+// was green, because that page names Wadi El Rayan nowhere and so had no
+// Fayoum term for the clash to need. Naming the region per slug makes the
+// wrong vocabulary wrong on its own, with nothing to pair against.
+{
+  const REGIONS = {
+    // The region name itself belongs in its vocabulary. "Fayoum" is the word
+    // that page actually uses; its lakes are mostly unnamed in the copy, and
+    // the first version's list of them matched nothing there.
+    fayoum: {
+      pattern: /magic lake|wadi el[- ]rayan|lake qarun|mudawara|fayoum/i,
+      where: "Fayoum, ~150km southwest of Cairo",
+    },
+    bahariya: {
+      pattern: /bahariy|farafra|crystal mountain|black desert|panorama mountain/i,
+      where: "the Bahariya to Farafra road, ~365km west of Cairo and beyond",
+    },
+  } as const;
+
+  // Which desert each trip is in. The white-desert entry records what the page
+  // CURRENTLY says, not a settled fact: its own `confirm` note is blocked on
+  // exactly this, and if the owner says the trip is Fayoum-based then this
+  // line moves and the Bahariya copy is what has to come off.
+  const TRIP_REGION: [string, keyof typeof REGIONS][] = [
+    ["fayoum", "fayoum"],
+    ["white-desert", "bahariya"],
+  ];
+
+  // THE SCOPE IS THE ROUTE, NOT EVERY WORD ON THE PAGE, because naming the
+  // other desert in order to DENY it is correct copy and the first strict
+  // version went red on it. The two-day page carries "Is this the same as the
+  // Fayoum shoot? No, and the two get confused constantly" — which is true,
+  // useful, and the opposite of the error being guarded against.
+  //
+  // So the route fields, the ones that say where this trip actually goes, may
+  // not name the other desert at all. The FAQs may, under the rule below.
+  const route = (pkg: (typeof packages)[number]) =>
+    [
+      pkg.metaDescription ?? "",
+      pkg.name,
+      pkg.title,
+      pkg.eyebrow,
+      pkg.intro,
+      pkg.gettingThere,
+      ...pkg.whyThis,
+      ...(pkg.timeline ?? []).flatMap((step) => [step.when, step.what]),
+      pkg.tourItinerary?.heading ?? "",
+      pkg.tourItinerary?.lede ?? "",
+      pkg.tourItinerary?.durationNote ?? "",
+      ...(pkg.tourItinerary?.steps ?? []),
+    ].join("\n");
+
+  for (const [slug, region] of TRIP_REGION) {
+    const pkg = packages.find((p) => p.slug === slug);
+    ok(`${slug} is gone, so the guard pinning its desert checks nothing`, pkg !== undefined);
+    if (!pkg) continue;
+
+    const text = route(pkg);
+    const mine = REGIONS[region];
+    const other = Object.entries(REGIONS).find(([key]) => key !== region)!;
+
+    // Its own region has to be recognisable in the route copy, or the line
+    // above is a label on nothing and the check below guards an empty claim.
+    ok(
+      `${slug} is pinned to ${region} but its route copy never says so, which leaves the ` +
+        `pin unverifiable and the wrong-desert check with nothing to stand on`,
+      mine.pattern.test(text)
+    );
+
+    const stray = other[1].pattern.exec(text);
+    ok(
+      `${slug} is a ${region} trip and its route copy names "${stray?.[0]}", which is in ` +
+        `${other[1].where} rather than ${mine.where}. The two are roughly 300km apart, so ` +
+        `one itinerary cannot visit both and this page describes a journey nobody can ` +
+        `take. Either the pin above is wrong or the name is`,
+      stray === null
+    );
+
+    // AN FAQ MAY NAME THE OTHER DESERT ONLY WHERE THE VISITOR'S QUESTION IS
+    // ABOUT THE COMPARISON. That is the shape of honest contrast copy: the
+    // question asks "is this the same as X", the answer says no. It is not the
+    // shape of the error, which arrives as an answer quietly placing this
+    // trip's own camp or route in the other region, under a question that
+    // never mentions it ("Where do we sleep?" ... "beside the Magic Lake").
+    for (const faq of pkg.faqs) {
+      const named = other[1].pattern.exec(faq.answer);
+      if (named === null) continue;
+      ok(
+        `${slug}: the FAQ "${faq.question}" answers with "${named[0]}", which is in ` +
+          `${other[1].where}, and the question does not ask about that place. An answer ` +
+          `naming the other desert is only safe where the visitor asked how the two ` +
+          `differ; anywhere else it is putting this trip somewhere it does not go`,
+        other[1].pattern.test(faq.question)
+      );
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // THE DRIVE TIMES, which are what actually tell the two trips apart.
+  //
+  // Landmark names were the symptom; the drive time is the fact. The owner
+  // gave both on 3 November 2026: Fayoum is an hour and a half to two hours
+  // from Cairo or Giza, Bahariya is four to five. The brochure had said
+  // Fayoum was THREE hours, and that wrong figure was not decoration. It was
+  // the entire published reason the Fayoum day costs $349 rather than $199,
+  // repeated on the package page, in its price story, in its FAQs and in
+  // three articles, one of whose meta description was "six hours of driving".
+  // Correcting the number meant rewriting the argument it was holding up.
+  //
+  // So the old figure is banned by name. A revert to "three hours" or "six
+  // hours of driving" anywhere in the Fayoum copy puts a false reason for a
+  // real price back in front of a customer, and it got there once already.
+  //
+  // Proven by restoring the old gettingThere (red), by restoring the old
+  // price-story paragraph (red), by restoring the article's old meta
+  // description (red), and by deleting the Bahariya hours (red).
+  {
+    const DRIVE = [
+      {
+        slug: "fayoum",
+        states: /hour and a half to two hours|under two hours/i,
+        band: "an hour and a half to two hours",
+      },
+      {
+        slug: "white-desert",
+        states: /four to five hours/i,
+        band: "four to five hours",
+      },
+    ];
+    for (const { slug, states, band } of DRIVE) {
+      const pkg = packages.find((p) => p.slug === slug);
+      ok(`${slug} is gone, so the guard on its drive time checks nothing`, pkg !== undefined);
+      if (!pkg) continue;
+      const copy = [
+        pkg.metaDescription ?? "",
+        pkg.eyebrow,
+        pkg.gettingThere,
+        ...pkg.whyThis,
+        ...pkg.faqs.map((f) => f.answer),
+      ].join("\n");
+      ok(
+        `${slug} no longer tells anybody how far it is. The owner confirmed ${band} from ` +
+          `Cairo or Giza, and it is the fact that separates this trip from the other one`,
+        states.test(copy)
+      );
+    }
+
+    // The withdrawn figure, across every surface that carried it.
+    const STALE = /three hours|six hours of driving/i;
+    const fayoum = packages.find((p) => p.slug === "fayoum");
+    if (fayoum) {
+      const everything = [
+        fayoum.metaDescription ?? "",
+        fayoum.eyebrow,
+        fayoum.intro,
+        fayoum.gettingThere,
+        fayoum.durationNote ?? "",
+        ...fayoum.whyThis,
+        ...fayoum.faqs.flatMap((f) => [f.question, f.answer]),
+        fayoum.priceStory?.heading ?? "",
+        ...(fayoum.priceStory?.body ?? []),
+      ].join("\n");
+      const stale = STALE.exec(everything);
+      ok(
+        `the Fayoum page says "${stale?.[0]}" again. That figure is withdrawn: the drive is ` +
+          `an hour and a half to two hours, and the old one was the stated reason for the ` +
+          `$349 price, so putting it back puts a false justification under a real number`,
+        stale === null
+      );
+    }
+
+    for (const story of flyingDressStories) {
+      const prose = [
+        story.metaDescription,
+        story.excerpt,
+        ...story.sections.flatMap((sec) => [sec.heading, ...sec.body, ...(sec.list ?? [])]),
+        ...story.faqs.flatMap((f) => f.answer),
+      ].join("\n");
+      if (!/fayoum/i.test(prose)) continue;
+      const stale = STALE.exec(prose);
+      ok(
+        `story ${story.slug} writes about Fayoum and says "${stale?.[0]}". That was the ` +
+          `brochure's figure and it was roughly double the real one; the owner confirmed an ` +
+          `hour and a half to two hours on 3 November 2026`,
+        stale === null
+      );
+    }
+
+    // The four shoot locations, which are what the price argument now rests
+    // on in place of the mileage. Named by the owner, so the page may name
+    // them; if they come off the page the argument has nothing under it.
+    if (fayoum) {
+      const copy = [fayoum.gettingThere, ...fayoum.whyThis, ...(fayoum.priceStory?.body ?? [])].join(
+        "\n"
+      );
+      for (const site of ["Mudawara", "Wadi El Rayan", "Arab Castles", "Magic Lake"]) {
+        ok(
+          `the Fayoum page no longer names ${site}, one of the four shoot locations the owner ` +
+            `confirmed. They are the stated reason the day costs more than a morning`,
+          copy.includes(site)
+        );
+      }
+    }
+  }
+}
 
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");

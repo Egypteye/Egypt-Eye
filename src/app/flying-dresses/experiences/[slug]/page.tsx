@@ -192,6 +192,53 @@ export default async function ExperiencePage({
       {/* WHY THE PRICE IS THE PRICE, read where the price is read.
           Only Fayoum carries one. It is $349 against $179 and $199, and the
           reason sat in an FAQ three screens below the number it explains. */}
+      {/* PRICED BY PARTY SIZE. Only the White Desert is, and the hero can
+          only show one number, so the tiers are printed in full here. Both
+          figures come from `partyPricing` and appear nowhere in prose: one
+          number, one place. See the field's note in content/flyingDresses.ts. */}
+      {pkg.partyPricing && pkg.partyPricing.length > 0 ? (
+        <section className="fd-section-tight" aria-labelledby="fd-party-pricing">
+          <div className="fd-shell fd-shell-narrow">
+            <p className="fd-eyebrow">What it costs</p>
+            <h2 id="fd-party-pricing" className="fd-display fd-h3" style={{ marginTop: "0.75rem" }}>
+              Priced by the size of the party
+            </h2>
+            <p className="fd-muted" style={{ marginTop: "1rem" }}>
+              This one is not charged per head. Two travelling together pay less each than one
+              travelling alone, so the rate depends on how many of you there are.
+            </p>
+            <ul className="fd-list fd-list-2" style={{ marginTop: "1.75rem" }}>
+              {pkg.partyPricing.map((tier) => (
+                <li key={tier.people}>
+                  <h3>
+                    {/* Spelled out, because this brand spells its numbers:
+                        "Thirteen pieces", "Five styles of gawn". "2 people"
+                        beside those reads like a spreadsheet. Falls back to
+                        the digit above six, where words start to get silly. */}
+                    {tier.people === 1
+                      ? "One person"
+                      : `${
+                          ["", "", "Two", "Three", "Four", "Five", "Six"][tier.people] ??
+                          String(tier.people)
+                        } people`}
+                  </h3>
+                  <p>
+                    <span className="fd-price">${tier.totalUsd}</span>
+                    {tier.people > 1 ? (
+                      <span className="fd-price-from">
+                        {` in total, which is $${Math.round(tier.totalUsd / tier.people)} each`}
+                      </span>
+                    ) : (
+                      <span className="fd-price-from"> in total</span>
+                    )}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      ) : null}
+
       {pkg.priceStory ? (
         <section className="fd-section-tight" aria-labelledby="fd-price-story">
           <div className="fd-shell fd-shell-narrow">
@@ -227,6 +274,49 @@ export default async function ExperiencePage({
                 </li>
               ))}
             </ol>
+          </div>
+        </section>
+      ) : null}
+
+      {/* THE DAY AROUND THE SHOOT, where there is one.
+          Two of these shoots sit inside a whole excursion and the pages used
+          to say nothing about the hours either side of the session. The two
+          cases are priced differently and the copy has to say which this is,
+          because an absent number is not self-explanatory: on Fayoum the tour
+          is a $75 upgrade, on the yacht day the activities are already paid
+          for. See `tourItinerary` in content/flyingDresses.ts. */}
+      {pkg.tourItinerary ? (
+        <section className="fd-section-tight" aria-labelledby="fd-itinerary">
+          <div className="fd-shell fd-shell-narrow">
+            <p className="fd-eyebrow">
+              {pkg.tourItinerary.supplement.kind === "included"
+                ? "Included in the day"
+                : "An optional extra"}
+            </p>
+            <h2 id="fd-itinerary" className="fd-display fd-h3" style={{ marginTop: "0.75rem" }}>
+              {pkg.tourItinerary.heading}
+            </h2>
+            <p className="fd-muted" style={{ marginTop: "1rem" }}>
+              {pkg.tourItinerary.lede}
+            </p>
+            {/* Three states, said in words. An absent number is not
+                self-evident: a reader who sees none must not conclude the
+                extra is free, which is what "included" is for. */}
+            {pkg.tourItinerary.supplement.kind === "included" ? null : (
+              <p className="fd-display fd-h4" style={{ marginTop: "1.5rem" }}>
+                {pkg.tourItinerary.supplement.usd === null
+                  ? "Quoted on request"
+                  : `+$${pkg.tourItinerary.supplement.usd} per person`}
+              </p>
+            )}
+            <p className="fd-muted" style={{ marginTop: "0.5rem", fontSize: "var(--fd-step--1)" }}>
+              {pkg.tourItinerary.durationNote}
+            </p>
+            <ul className="fd-ticks" style={{ marginTop: "1.75rem" }}>
+              {pkg.tourItinerary.steps.map((step) => (
+                <li key={step}>{step}</li>
+              ))}
+            </ul>
           </div>
         </section>
       ) : null}
