@@ -122,6 +122,34 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// WordPress posts whose slug did NOT survive the rebuild.
+//
+// The generic /:year/:month/:day/:slug rule maps every old permalink to
+// /stories/:slug, which is right for the posts whose slug carried over and
+// wrong for these: /stories/<slug> does not exist, so the 301 lands on a 404.
+// That is worse than the original 404 because it hides the cause — the crawler
+// is told the content moved, then finds nothing where it was sent.
+//
+// Which slugs these are cannot be derived from this repository: the old
+// WordPress database is gone, so the only source is Search Console. Each one
+// found there needs an explicit rule ABOVE the generic one (Next matches in
+// order). This list is the record of the ones found so far, and it asserts
+// that each is still intercepted — re-ordering the rules or deleting one would
+// silently restore the redirect-into-404.
+for (const slug of [
+  "7-best-spots-for-diving-in-egypt",
+  "embracing-egypts-rich-tapestry-a-solo-journey-through-siwa-giza-and-cairo",
+  "12-best-beach-in-egypt-to-hit-in-2024",
+  "the-mystery-of-ancient-egypt-unveiling-the-lost-civilization-of-the-gods-and-advanced-technology",
+]) {
+  const landed = resolve(`/2024/05/03/${slug}`)?.to;
+  ok(
+    `/2024/05/03/${slug} falls through to /stories/${slug}, which does not exist — a 301 into a 404`,
+    landed !== undefined && landed !== `/stories/${slug}`
+  );
+}
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-redirects: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

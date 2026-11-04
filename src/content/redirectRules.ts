@@ -151,6 +151,19 @@ export function redirectRules(): RedirectRule[] {
     // different coast guide as its successor would be inventing an
     // equivalence. The stories index is the honest destination.
     { source: "/2024/:month(\\d{2})/:day(\\d{2})/12-best-beach-in-egypt-to-hit-in-2024", destination: "/stories", permanent: true },
+    // Found in the Search Console "Excluded by noindex" export, last crawled
+    // 2026-07-23, still falling through to a /stories/ URL that does not
+    // exist. The post promised a lost civilisation of gods and advanced
+    // technology; this site does not publish that claim, so no article here is
+    // its successor. Naming one would be inventing an equivalence, exactly as
+    // with the beaches post above, so the stories index is the honest
+    // destination.
+    {
+      source:
+        "/2024/:month(\\d{2})/:day(\\d{2})/the-mystery-of-ancient-egypt-unveiling-the-lost-civilization-of-the-gods-and-advanced-technology",
+      destination: "/stories",
+      permanent: true,
+    },
 
     // WordPress date permalinks from the previous site — /2024/04/01/some-post.
     // Search Console reports 24 of these as 404s, and they are where most of
