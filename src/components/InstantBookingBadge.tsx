@@ -51,7 +51,11 @@ export function InstantBookingBadge({
   const tone =
     placement === "overlay"
       ? "bg-ink/80 px-2.5 py-1 text-[10px] text-gold-light backdrop-blur-sm"
-      : "bg-gold/15 px-2.5 py-1 text-[11px] text-gold-dark";
+      // gold-deep, not gold-dark, for the same measured reason as Badge: on
+      // the gold/15 wash, gold-dark reads 4.43:1 over sand-dim and 3.97:1
+      // over sand-deep, under the 4.5:1 that 11px bold needs. The overlay
+      // variant above sits on ink/80 instead and is fine as it is.
+      : "bg-gold/15 px-2.5 py-1 text-[11px] text-gold-deep";
 
   return (
     <span className={`${base} ${tone} ${className}`}>
