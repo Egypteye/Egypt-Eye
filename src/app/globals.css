@@ -25,6 +25,12 @@
      text-cream, which goes 4.78:1 -> 5.23:1, and gold-dark on white goes
      4.86:1 -> 5.32:1. */
   --color-gold-dark: #856717;
+  /* Gold dark enough to carry small text on a translucent gold wash.
+     gold-dark itself measures 4.71:1 on gold/15 over white but only 4.43:1
+     over sand-dim and 3.97:1 over sand-deep, so the badge it was used for
+     failed WCAG AA on two of the three surfaces it actually appears on.
+     This clears 5.25:1 on the worst of them. */
+  --color-gold-deep: #6f5513;
   /* Deepened from #5c7a5f. That green was too light to carry text either way
      round: cream/70 on a solid nile panel measured 3.20:1, and nile as text on
      cream only 4.69:1 — the Red Sea tile on the homepage was the visible
@@ -49,6 +55,7 @@
   --color-gold: var(--color-gold);
   --color-gold-light: var(--color-gold-light);
   --color-gold-dark: var(--color-gold-dark);
+  --color-gold-deep: var(--color-gold-deep);
   --color-nile: var(--color-nile);
   --color-nile-light: var(--color-nile-light);
   --color-terracotta: var(--color-terracotta);

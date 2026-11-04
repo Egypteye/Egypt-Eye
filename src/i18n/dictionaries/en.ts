@@ -99,6 +99,12 @@ export const en = {
 
   reviews: {
     chip: "Experience Rating",
+    // The accessible name for that chip, which needs the product in it.
+    // Every card on a listing page renders the same visible label, so to a
+    // screen reader the page was a row of identically named links pointing
+    // at different places — which Lighthouse flags and which is genuinely
+    // ambiguous to anyone who cannot see which card the link sits in.
+    chipFor: "Experience Rating for {name}",
     eyebrow: "Traveler Stories",
     heading: "What Our Travelers Say",
     intro:

@@ -202,6 +202,73 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
+// 7. /llms.txt, the other file served to automated clients.
+//
+// It is here rather than in its own check because it answers the same
+// question robots.txt does — what this site tells a non-human client — and it
+// has the same failure mode: a broken link or a stale price in it is not a
+// visible bug, it is an assistant confidently telling a customer something
+// wrong. On this site that matters more than usual: on 4 November 2026,
+// chatgpt.com sent 11 of 38 users and Google organic sent 1.
+// ---------------------------------------------------------------------------
+const LLMS = "src/app/llms.txt/route.ts";
+ok(`${LLMS} is missing`, existsSync(LLMS));
+
+if (existsSync(LLMS)) {
+  const llms = readFileSync(LLMS, "utf8");
+
+  ok(
+    "llms.txt has no H1 — the format requires one and Lighthouse's Agentic Browsing audit checks " +
+      "for it, so without it the file is ignored",
+    /`#\s/.test(llms) || /\\n#\s/.test(llms)
+  );
+  ok(
+    "llms.txt hardcodes the brand name instead of reading src/content/site.ts, so it can describe " +
+      "the business differently from the site",
+    /\$\{site\.name\}/.test(llms)
+  );
+  ok(
+    "llms.txt hardcodes the domain instead of using siteUrl",
+    /\$\{siteUrl\}/.test(llms) && !/https:\/\/egypteyetravel\.com/.test(llms)
+  );
+
+  // Every path it advertises must be a real page. A 404 in here is worse than
+  // a 404 anywhere else: it is handed to an assistant as an authoritative map
+  // of the site, and the assistant will quote it.
+  const advertised = [...llms.matchAll(/\$\{siteUrl\}(\/[a-z0-9/-]*)/g)].map((m) => m[1]);
+  ok(
+    `llms.txt advertises only ${advertised.length} paths, which is too few for the link assertion ` +
+      "below to be meaningful",
+    advertised.length > 8
+  );
+  const known = new Set(sitemapPaths);
+  for (const path of advertised) {
+    ok(
+      `llms.txt points at ${path}, which is not in the English sitemap — it is handed to an ` +
+        "assistant as a map of the site, so a dead link there gets quoted to customers",
+      known.has(path)
+    );
+    ok(`llms.txt points at ${path}, which robots.txt disallows`, !isDisallowed(path, rules));
+  }
+
+  // The things that go stale and must not be stated here. Prices, inclusions
+  // and availability live on the product pages, which change; a figure in
+  // this file would be read back to a customer long after it stopped being
+  // true. Per CLAUDE.md #7 none of it is invented here in the first place.
+  for (const [label, pattern] of [
+    ["a price", /\$\s?\d|\bUSD\b|\bEGP\b|\bper person\b/i],
+    ["a star rating or review score", /\b\d(?:\.\d)?\s*(?:\/\s*5|stars?\b|out of 5)/i],
+    ["a product or review count", /\b\d{2,}\s+(?:tours|reviews|experiences|photoshoots|travellers|travelers)\b/i],
+  ] as const) {
+    ok(
+      `llms.txt states ${label}, which belongs on the page that owns it — anything quoted from ` +
+        "here will be repeated by an assistant after it stops being true",
+      !pattern.test(llms)
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
 if (errors.length > 0) {
   console.error(`\ncheck-robots: ${errors.length} problem(s)\n`);
   for (const e of errors) console.error(`  ✗ ${e}`);

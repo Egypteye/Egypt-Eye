@@ -94,6 +94,7 @@ export const ar: Dictionary = {
 
   reviews: {
     chip: "تقييم التجربة",
+    chipFor: "تقييم تجربة {name}",
     eyebrow: "حكايات المسافرين",
     heading: "ماذا يقول مسافرونا",
     intro:
