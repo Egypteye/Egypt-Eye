@@ -25,11 +25,68 @@ export function p(text: string): StoryBodyBlock {
   } as StoryBodyBlock;
 }
 
+/**
+ * A paragraph with links in it.
+ *
+ * Portable Text puts a link in two places at once — a `markDefs` entry
+ * holding the href, and a `marks: [thatKey]` on the span it covers — which is
+ * enough boilerplate per link that article copy written by hand simply went
+ * without. Before this helper, not one of the 184 published articles carried
+ * a single inline link, so the only way one could point at another was the
+ * related-stories strip under the footer. For a library this size that is the
+ * difference between pages that reinforce each other and pages that compete.
+ *
+ * Segments are given in reading order, a plain string for ordinary prose and
+ * `{ text, href }` where a link belongs:
+ *
+ *   pl(["Both stand at ", { text: "Karnak", href: "/stories/karnak-temple-complete-guide" }, "."])
+ *
+ * An href starting with "/" renders through next/link; anything else is
+ * treated as outbound. See components/StoryBody.tsx.
+ */
+export function pl(segments: (string | { text: string; href: string })[]): StoryBodyBlock {
+  const markDefs: { _type: "link"; _key: string; href: string }[] = [];
+  const children = segments.map((segment) => {
+    if (typeof segment === "string") {
+      return { _type: "span", _key: nextBlockKey("s"), text: segment, marks: [] };
+    }
+    const linkKey = nextBlockKey("link");
+    markDefs.push({ _type: "link", _key: linkKey, href: segment.href });
+    return { _type: "span", _key: nextBlockKey("s"), text: segment.text, marks: [linkKey] };
+  });
+  return {
+    _type: "block",
+    _key: nextBlockKey("p"),
+    style: "normal",
+    children,
+    markDefs,
+  } as StoryBodyBlock;
+}
+
 export function h2(text: string): StoryBodyBlock {
   return {
     _type: "block",
     _key: nextBlockKey("h"),
     style: "h2",
+    children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
+    markDefs: [],
+  } as StoryBodyBlock;
+}
+
+/**
+ * A sub-heading inside a section an `h2` already opened.
+ *
+ * @portabletext/react renders `h3` from its own defaults, and the Studio's
+ * default `block` type offers it, so the style was always available — there
+ * was just no builder for it, and no article used it. A piece with
+ * sub-sections under a heading had nothing to express them with except
+ * another `h2`, which flattens the outline a reader and a crawler both read.
+ */
+export function h3(text: string): StoryBodyBlock {
+  return {
+    _type: "block",
+    _key: nextBlockKey("h"),
+    style: "h3",
     children: [{ _type: "span", _key: nextBlockKey("s"), text, marks: [] }],
     markDefs: [],
   } as StoryBodyBlock;
