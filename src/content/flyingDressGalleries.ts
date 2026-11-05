@@ -71,6 +71,11 @@ export const flyingDressGalleries: FlyingDressGallery[] = [
  */
 const SHOOT_GALLERIES: FlyingDressGallery[] = [
   {
+    // 24 frames: twelve camera, eleven retouched, one generated. The count is
+    // a multiple of 2 and 3 for the same reason the home gallery's is six —
+    // .fd-gallery pins to 1, 2 or 3 columns, and 25 left one frame alone in
+    // the last row at every breakpoint. fayoumRetouched12 is the one left out
+    // and stays in the registry, ready for the Studio to drop in.
     galleryId: "shoot-fayoum",
     title: "From the Fayoum sessions",
     layout: "grid",
@@ -79,11 +84,25 @@ const SHOOT_GALLERIES: FlyingDressGallery[] = [
       shootPhoto.fayoumShoot2,
       shootPhoto.fayoumShoot3,
       shootPhoto.fayoumShoot4,
+      shootPhoto.fayoumShoot5,
+      shootPhoto.fayoumShoot6,
+      shootPhoto.fayoumShoot7,
+      shootPhoto.fayoumShoot8,
+      shootPhoto.fayoumShoot9,
+      shootPhoto.fayoumShoot10,
+      shootPhoto.fayoumShoot11,
+      shootPhoto.fayoumShoot12,
       shootRetouched.fayoumRetouched1,
       shootRetouched.fayoumRetouched2,
       shootRetouched.fayoumRetouched3,
       shootRetouched.fayoumRetouched4,
       shootRetouched.fayoumRetouched5,
+      shootRetouched.fayoumRetouched6,
+      shootRetouched.fayoumRetouched7,
+      shootRetouched.fayoumRetouched8,
+      shootRetouched.fayoumRetouched9,
+      shootRetouched.fayoumRetouched10,
+      shootRetouched.fayoumRetouched11,
       shootGenerated.fayoumGenerated1,
     ],
   },
@@ -114,6 +133,8 @@ const SHOOT_GALLERIES: FlyingDressGallery[] = [
       shootGenerated.redSeaYacht7,
       shootGenerated.redSeaYacht8,
       shootGenerated.redSeaYacht9,
+      shootGenerated.redSeaYacht10,
+      shootGenerated.redSeaYacht11,
     ],
   },
 ];

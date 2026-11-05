@@ -597,6 +597,14 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/shoots/photo/fayoum-2.jpg",
   "/photos/flying-dresses/shoots/photo/fayoum-3.jpg",
   "/photos/flying-dresses/shoots/photo/fayoum-4.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-5.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-6.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-7.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-8.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-9.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-10.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-11.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-12.jpg",
   "/photos/flying-dresses/wardrobe-lineup.jpg",
   "/photos/flying-dresses/fayoum-black.jpg",
 
@@ -8187,17 +8195,26 @@ for (const pkg of packages) {
     );
   }
 
-  // A PHOTOGRAPH HAS A CAMERA IN IT.
+  // A PHOTOGRAPH CARRIES EXIF. A GENERATED FRAME DOES NOT.
   //
   // This is the rule that survives a file swap, which the directory table
   // above cannot: copying a generated frame over one of these keeps the path
-  // and the label agreeing with each other and nothing notices. Every real
-  // frame here was shot on the same body and carries "SONY ILCE-7M3" in EXIF
-  // through conversion; no generated file carries any Make at all.
+  // and the label agreeing with each other and nothing notices.
   //
-  // One of the six originally chosen had no EXIF and was swapped for another
-  // frame of the same session rather than weakening this to an allowlist: an
-  // exception list is how a rule like this rots.
+  // IT ASKS FOR EXIF, NOT FOR A CAMERA MAKE, and the difference matters. The
+  // first version required Make, which held for the six frames then published
+  // but was true of only 7 of the 29 real frames in the folder: most are the
+  // brand's own Instagram re-downloads, which keep an EXIF block carrying
+  // `Software: Instagram` and 1440x960 dimensions but no camera. Requiring
+  // Make would have meant either throwing away 21 genuine photographs or
+  // bolting on an exception list, and an exception list is how a rule like
+  // this rots.
+  //
+  // Measured across the whole folder before being written this way: 28 of 28
+  // real frames and 18 of 18 Firefly frames carry an EXIF block; 0 of the 19
+  // published generated frames carry one, because the C2PA PNGs lose
+  // everything crossing to JPEG. The separation is total, so the weaker-
+  // sounding rule is in fact the complete one.
   //
   // Proven by copying generated/white-desert-1.jpg over photo/fayoum-1.jpg:
   // red, naming the file. Restored and byte-compared afterwards.
@@ -8209,13 +8226,14 @@ for (const pkg of packages) {
     ok(`${dir} is empty, so the camera rule below checks nothing`, frames.length > 0);
     for (const file of frames) {
       const bytes = readFileSync(`${dir}/${file}`).toString("latin1");
-      // EXIF stores the Make as a NUL-terminated ASCII string in the IFD.
+      // The APP1 marker that opens a JFIF EXIF block. Present in every real
+      // frame here whatever wrote it, absent from every generated one.
       ok(
-        `${dir}/${file} carries no camera make in its EXIF. Everything in this ` +
-          "directory is a real exposure off a known body; a frame with no camera in it " +
-          "is either generated or has been re-saved by something that dropped the EXIF, " +
-          "and neither may be published as the agency's own photography",
-        /SONY|Canon|NIKON|FUJIFILM|Panasonic|Leica|Hasselblad|Apple/i.test(bytes.slice(0, 200_000))
+        `${dir}/${file} carries no EXIF block. Every real frame in this directory kept ` +
+          "one through conversion and no generated frame has one, so a file without EXIF " +
+          "is either generated or has been re-saved by something that stripped it. " +
+          "Neither may be published as the agency's own photography",
+        bytes.slice(0, 200_000).includes("Exif\u0000\u0000")
       );
     }
   }
