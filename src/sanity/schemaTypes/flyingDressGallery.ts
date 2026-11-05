@@ -37,7 +37,9 @@ export const flyingDressFrameObject = defineType({
       options: {
         list: [
           { title: "Ours. A real client shoot.", value: "agency" },
+          { title: "Ours, with AI retouching on top.", value: "retouched" },
           { title: "A photograph of the place, not of a shoot.", value: "location" },
+          { title: "A generated scene, not a photograph.", value: "reference" },
         ],
         layout: "radio",
       },

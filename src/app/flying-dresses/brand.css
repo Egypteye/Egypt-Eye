@@ -4764,3 +4764,15 @@ dialog.fd-lightbox:not([open]) {
     scroll-snap-type: none;
   }
 }
+
+/* The Fayoum aerial plate. One real drone pass, full width of the shell.
+   Height is capped so a 16:9 video does not push the rest of the page off a
+   phone screen, and object-fit keeps the horizon rather than letterboxing. */
+.fd-aerial {
+  width: 100%;
+  height: auto;
+  max-height: 60vh;
+  object-fit: cover;
+  display: block;
+  border-radius: var(--fd-radius, 0.5rem);
+}

@@ -12,7 +12,21 @@ import {
 import { BookingRail } from "../../_components/BookingRail";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
-import { agency, empty, location, type ImageSlot } from "../../_lib/assets";
+import { Gallery } from "../../_components/Gallery";
+import { ProductionReel } from "../../_components/ProductionReel";
+import { shootAerial, shootReels } from "../../_lib/shootReels";
+import { flyingDressGalleryById } from "@/content/flyingDressGalleries";
+import { getFlyingDressGallery } from "@/sanity/fetchers";
+import { hardenFlyingDressGallery } from "@/lib/sanityShape";
+import type { FlyingDressGallery } from "@/content/types";
+import {
+  agency,
+  empty,
+  location,
+  shootGenerated,
+  shootPhoto,
+  type ImageSlot,
+} from "../../_lib/assets";
 import { shootShareImages } from "../../_lib/shareImages";
 import { dressPhotos } from "../../_lib/dressPhotos";
 import {
@@ -45,11 +59,41 @@ export const dynamicParams = false;
 const ART: Partial<Record<string, { hero: ImageSlot; detail: ImageSlot }>> = {
   "sand-dunes": { hero: location.saharaDunes, detail: agency.fayoumDress },
   "pyramids-rooftop": { hero: agency.rooftopPortrait, detail: location.gizaPlateau },
-  fayoum: { hero: location.fayoumLake, detail: agency.fayoumRedShore },
-  // No photographs of the yacht yet: both slots render the labelled gap, so
-  // the page says what is missing rather than showing the wrong water.
-  "red-sea-yacht": { hero: empty.redSeaYacht, detail: empty.redSeaYacht },
+  // Real camera frames, supplied November 2026, replacing the stock lake
+  // photograph that stood here while the brand had none of its own.
+  fayoum: { hero: shootPhoto.fayoumHero, detail: shootPhoto.fayoumGroup },
+  // Generated, and credited as such on the page. Neither of these two has a
+  // photograph of its location in existence; the alternative was the labelled
+  // gap that stood here before, which told a buyer nothing about the product.
+  "red-sea-yacht": {
+    hero: shootGenerated.redSeaYachtHero,
+    detail: shootGenerated.redSeaYachtDetail,
+  },
+  "white-desert": {
+    hero: shootGenerated.whiteDesertHero,
+    detail: shootGenerated.whiteDesertDetail,
+  },
 };
+
+/**
+ * The shoot's own gallery, Studio-first exactly as the home page's is.
+ *
+ * Same rule as workGallery() there, and the same reason: a gallery the owner
+ * EMPTIED in the Studio stays empty, because that is an edit; one the
+ * projection never returned falls back to the repo's frames, because that is
+ * an absence. hardenFlyingDressGallery keeps the two apart.
+ *
+ * Returns null for a shoot with no gallery at all, which is every shoot but
+ * the three the owner supplied folders for.
+ */
+async function shootGallery(slug: string): Promise<FlyingDressGallery | null> {
+  const id = `shoot-${slug}`;
+  const local = flyingDressGalleryById(id);
+  if (!local) return null;
+  const fromSanity = await getFlyingDressGallery(id);
+  if (!fromSanity) return local;
+  return hardenFlyingDressGallery(fromSanity, local);
+}
 
 export async function generateMetadata({
   params,
@@ -92,15 +136,18 @@ export default async function ExperiencePage({
   if (!pkg) notFound();
 
   const art = ART[pkg.slug] ?? { hero: empty.redSeaYacht, detail: empty.redSeaYacht };
-  const [settings, addOns, wardrobe, packages] = await Promise.all([
+  const [settings, addOns, wardrobe, packages, gallery] = await Promise.all([
     fdSettings(),
     fdAddOns(),
     fdWardrobe(),
     fdPackages(),
+    shootGallery(pkg.slug),
   ]);
   const { packageIncludes, payment, cancellation } = settings;
   const { dresses, mensOutfits } = wardrobe;
   const others = packages.filter((p) => p.slug !== pkg.slug);
+  const reels = shootReels[pkg.slug] ?? [];
+  const aerial = shootAerial[pkg.slug];
   const enquiryMessage = flyingDressEnquiry({
     subject: pkg.title,
     location: pkg.name,
@@ -364,6 +411,61 @@ export default async function ExperiencePage({
           </div>
         </div>
       </section>
+
+      {/* The shoot's own frames. Mixed provenance on purpose: each frame
+          carries its own kind and its own caption, so a generated scene and a
+          camera frame can sit in one grid without the grid making a claim. */}
+      {gallery && gallery.frames.length > 0 ? (
+        <section className="fd-section-tight" aria-labelledby="fd-shoot-gallery">
+          <div className="fd-shell">
+            <h2
+              id="fd-shoot-gallery"
+              className="fd-display fd-h3"
+              style={{ marginBottom: "2rem" }}
+            >
+              {gallery.title}
+            </h2>
+            <Gallery frames={gallery.frames} layout={gallery.layout} />
+          </div>
+        </section>
+      ) : null}
+
+      {/* The one real video this brand has, kept away from the generated
+          strip below so the two are never read as the same thing. */}
+      {aerial ? (
+        <section className="fd-section-tight">
+          <div className="fd-shell">
+            <figure>
+              <video
+                className="fd-aerial"
+                src={aerial.mp4}
+                poster={aerial.poster}
+                width={aerial.width}
+                height={aerial.height}
+                muted
+                loop
+                playsInline
+                autoPlay
+                preload="none"
+                aria-hidden="true"
+              />
+              <figcaption className="fd-caption">{aerial.caption}</figcaption>
+            </figure>
+          </div>
+        </section>
+      ) : null}
+
+      {reels.length > 0 ? (
+        <section className="fd-section-tight" aria-labelledby="fd-shoot-reels">
+          <div className="fd-shell">
+            <ProductionReel
+              clips={reels}
+              heading="In motion"
+              intro="Generated clips, art-directed by us, showing how the fabric moves here. They are not footage of a session that happened."
+            />
+          </div>
+        </section>
+      ) : null}
 
       {/* Included. */}
       <section className="fd-section-tight">

@@ -49,7 +49,18 @@ import {
 } from "../src/content/outfitCollection.js";
 import { isFlyingDressesHost } from "../src/lib/brand/flyingDressesHost.js";
 import { photoshoots } from "../src/content/photoshoots.js";
-import { agency, allSlots, categoryPhoto, location } from "../src/app/flying-dresses/_lib/assets.js";
+import {
+  agency,
+  allSlots,
+  categoryPhoto,
+  location,
+  reference,
+  empty,
+  shootGenerated,
+  shootPhoto,
+  shootRetouched,
+} from "../src/app/flying-dresses/_lib/assets.js";
+import { shootAerial, shootReels } from "../src/app/flying-dresses/_lib/shootReels.js";
 import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
@@ -571,6 +582,21 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/rooftop-gold.jpg",
   "/photos/flying-dresses/fayoum-dress.jpg",
   "/photos/flying-dresses/assistant.jpg",
+  // THE FAYOUM SESSION, supplied by the owner 5 November 2026 as full-size
+  // Sony frames (up to 8639x5759). Admitted here because their bytes carry no
+  // generative claim at all: no C2PA manifest, no trainedAlgorithmicMedia, no
+  // named generator — checked against the originals before conversion, and
+  // the byte guard below re-checks the published files on every run.
+  //
+  // The folder also held 19 frames of the SAME session that do carry an Adobe
+  // Firefly C2PA manifest. Those are deliberately NOT on this list: they are
+  // kind:"retouched" and live under /retouched/. The split is the whole point.
+  "/photos/flying-dresses/shoots/photo/fayoum-hero.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-group.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-1.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-2.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-3.jpg",
+  "/photos/flying-dresses/shoots/photo/fayoum-4.jpg",
   "/photos/flying-dresses/wardrobe-lineup.jpg",
   "/photos/flying-dresses/fayoum-black.jpg",
 
@@ -8062,6 +8088,205 @@ for (const pkg of packages) {
     }
   }
 }
+
+// ---------------------------------------------------------------------------
+// NO SLOT MAY BE SHADOWED OUT OF THE CHECKS BY A DUPLICATE KEY.
+//
+// allSlots is a flat spread of every group, so two groups using the same key
+// silently drop one of them — and the one that disappears disappears from
+// EVERY honesty check in this file, which is the worst possible thing to lose
+// quietly.
+//
+// It happened immediately. shootRetouched.fayoum1 and shootGenerated.fayoum1
+// were both added on 5 November 2026; the generated one came later in the
+// spread, so the retouched slot vanished and allSlots reported kind
+// "reference" for that key. Its break-test looked like a passing check.
+//
+// Counting is the whole guard: if the flat record is smaller than the sum of
+// its parts, something was overwritten.
+{
+  const groups = { agency, location, reference, empty, shootPhoto, shootRetouched, shootGenerated };
+  const counted = Object.values(groups).reduce((n, g) => n + Object.keys(g).length, 0);
+  const seen = new Map<string, string[]>();
+  for (const [name, group] of Object.entries(groups)) {
+    for (const key of Object.keys(group)) seen.set(key, [...(seen.get(key) ?? []), name]);
+  }
+  const collisions = [...seen].filter(([, where]) => where.length > 1);
+  ok(
+    `image slot keys collide, so a slot is missing from every check in this file: ` +
+      collisions.map(([k, w]) => `"${k}" in ${w.join(" and ")}`).join("; "),
+    collisions.length === 0
+  );
+  // allSlots also carries wardrobeLineup, which is not one of the groups.
+  ok(
+    `allSlots holds ${Object.keys(allSlots).length} slots but the groups define ${counted} ` +
+      "(plus wardrobeLineup). A slot was overwritten on the way in",
+    Object.keys(allSlots).length >= counted
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE SHOOT FOLDERS: THE PATH SAYS WHAT THE FILE IS, AND THE BYTES AGREE.
+//
+// On 5 November 2026 the owner supplied three shoot folders and said the
+// images "may look Ai but that is yes Ai modified but comes from my original
+// work", and later that real and generated frames should be mixed because
+// there are not enough real ones. Both are fine. What is not fine is losing
+// track of which is which, and reading the folders showed THREE populations,
+// not two:
+//
+//   real        no C2PA, no generator, Sony bodies in EXIF
+//   retouched   c2pa.edited + compositeWithTrainedAlgorithmicMedia +
+//               softwareAgent "Adobe Firefly", over a real exposure
+//   generated   c2pa.created + trainedAlgorithmicMedia, OpenAI gpt-image
+//               (stills) or Runway (clips)
+//
+// THE PROBLEM THIS SOLVES. The byte-level guard further up can only read what
+// survives encoding. The Firefly JPEGs keep their manifests (15 c2pa hits
+// each) and are checkable forever. The generated PNGs do NOT: the C2PA box
+// does not cross PNG to JPEG, so once converted they look exactly as innocent
+// as a camera original. Encoding quietly destroys the evidence for the one
+// population it matters most for.
+//
+// So the directory carries the claim instead. It is in the path, in the diff,
+// and in the URL a reviewer can read, and this check pins each directory to
+// one kind in both directions.
+//
+// WHAT IT CATCHES: a LABEL that disagrees with its directory, a retouched
+// slot whose bytes have lost the Firefly manifest, a missing retouching
+// credit, and a file under photo/ that no camera produced.
+//
+// Proven by relabelling a retouched slot "agency" (red three ways: the
+// allowlist, the Firefly manifest in its own bytes, and this table), by
+// dropping the retouching from a credit (red), and by copying a generated
+// file over one under photo/ (red on the EXIF rule below).
+//
+// WHAT IT DOES NOT CATCH, stated because the first version of this comment
+// claimed it did and the break-test was green: nothing here verifies that a
+// GENERATED file is still generated. Those files lose their manifests in
+// conversion, so a generated frame moved into generated/ and relabelled is
+// indistinguishable from any other. The exposure runs one way only, and it is
+// the harmless way: the worst case is a real photograph wrongly credited as
+// generated, never a generated one passing as client work.
+{
+  const DIR_KIND = [
+    ["/shoots/photo/", "agency", "a real exposure with no generative claim in its bytes"],
+    ["/shoots/retouched/", "retouched", "a real exposure with an Adobe Firefly edit composited in"],
+    ["/shoots/generated/", "reference", "a fully generated frame"],
+  ] as const;
+
+  for (const [key, slot] of Object.entries(allSlots)) {
+    if (!slot.src) continue;
+    const dir = DIR_KIND.find(([d]) => slot.src!.includes(d));
+    if (!dir) continue;
+    const [segment, required, what] = dir;
+    ok(
+      `image slot "${key}" points at ${segment} — which is ${what} — but claims ` +
+        `kind:"${slot.kind}". That directory only holds kind:"${required}"`,
+      slot.kind === required
+    );
+  }
+
+  // A PHOTOGRAPH HAS A CAMERA IN IT.
+  //
+  // This is the rule that survives a file swap, which the directory table
+  // above cannot: copying a generated frame over one of these keeps the path
+  // and the label agreeing with each other and nothing notices. Every real
+  // frame here was shot on the same body and carries "SONY ILCE-7M3" in EXIF
+  // through conversion; no generated file carries any Make at all.
+  //
+  // One of the six originally chosen had no EXIF and was swapped for another
+  // frame of the same session rather than weakening this to an allowlist: an
+  // exception list is how a rule like this rots.
+  //
+  // Proven by copying generated/white-desert-1.jpg over photo/fayoum-1.jpg:
+  // red, naming the file. Restored and byte-compared afterwards.
+  {
+    const dir = "public/photos/flying-dresses/shoots/photo";
+    const frames = existsSync(dir)
+      ? readdirSync(dir).filter((f) => f.endsWith(".jpg") && !f.startsWith("poster-"))
+      : [];
+    ok(`${dir} is empty, so the camera rule below checks nothing`, frames.length > 0);
+    for (const file of frames) {
+      const bytes = readFileSync(`${dir}/${file}`).toString("latin1");
+      // EXIF stores the Make as a NUL-terminated ASCII string in the IFD.
+      ok(
+        `${dir}/${file} carries no camera make in its EXIF. Everything in this ` +
+          "directory is a real exposure off a known body; a frame with no camera in it " +
+          "is either generated or has been re-saved by something that dropped the EXIF, " +
+          "and neither may be published as the agency's own photography",
+        /SONY|Canon|NIKON|FUJIFILM|Panasonic|Leica|Hasselblad|Apple/i.test(bytes.slice(0, 200_000))
+      );
+    }
+  }
+
+  // And the other direction, so a new kind cannot be smuggled in by putting
+  // the file somewhere this table has never heard of.
+  for (const [key, slot] of Object.entries(allSlots)) {
+    if (slot.kind !== "retouched") continue;
+    ok(
+      `slot "${key}" is kind:"retouched" but does not live under /shoots/retouched/. ` +
+        "That directory is how the claim stays visible in review",
+      Boolean(slot.src?.includes("/shoots/retouched/"))
+    );
+    ok(
+      `the retouched slot "${key}" has a credit that never mentions the retouching. ` +
+        "A Firefly composite shipped as a straight photograph is the one promotion " +
+        "the asset registry exists to prevent",
+      /retouch|generative/i.test(slot.credit ?? "")
+    );
+    // The strong one: these files KEPT their manifests, so this is not a
+    // promise about the file, it is the file.
+    if (slot.src && existsSync(`public${slot.src}`)) {
+      const bytes = readFileSync(`public${slot.src}`).toString("latin1");
+      const hits = (bytes.match(/c2pa/gi) ?? []).length;
+      ok(
+        `the retouched slot "${key}" points at ${slot.src}, whose bytes carry no C2PA ` +
+          `manifest (${hits} hits). Every frame in this group kept an Adobe Firefly ` +
+          "manifest through encoding; one without it is not from that group",
+        hits >= 5
+      );
+    }
+  }
+
+  // Every generated clip is captioned as generated, in the one place a
+  // visitor reads. The stills are covered by the reference-slot checks above;
+  // the clips are not slots, so they are checked here.
+  for (const [slug, clips] of Object.entries(shootReels)) {
+    for (const clip of clips) {
+      ok(
+        `reel "${clip.id}" on ${slug} is served from ${clip.mp4} but its caption ` +
+          `("${clip.caption}") never says it is generated`,
+        /generated/i.test(clip.caption)
+      );
+      ok(
+        `reel "${clip.id}" is captioned as generated but is not served from the ` +
+          "generated directory, so the caption and the file disagree",
+        clip.mp4.includes("/shoots/generated/")
+      );
+      ok(
+        `reel "${clip.id}" claims a session in its alt text, which generated motion may not`,
+        !/\bshoot\b|\bsession\b|client/i.test(clip.alt)
+      );
+    }
+  }
+
+  // The aerial is the opposite claim and needs the opposite check: it is the
+  // only REAL video here, so it must not be sitting in the generated folder
+  // and must not be captioned as generated.
+  for (const [slug, plate] of Object.entries(shootAerial)) {
+    ok(
+      `the ${slug} aerial is presented as real footage but is served from the ` +
+        "generated directory",
+      plate.mp4.includes("/shoots/photo/")
+    );
+    ok(
+      `the ${slug} aerial is real drone footage but its caption calls it generated`,
+      !/generated/i.test(plate.caption)
+    );
+  }
+}
+
 
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");

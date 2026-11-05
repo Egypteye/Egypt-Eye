@@ -1,5 +1,11 @@
 import type { FlyingDressGallery } from "./types";
-import { agency, empty } from "../app/flying-dresses/_lib/assets";
+import {
+  agency,
+  empty,
+  shootGenerated,
+  shootPhoto,
+  shootRetouched,
+} from "../app/flying-dresses/_lib/assets";
 
 /**
  * The Flying Dresses galleries, as the repository knows them.
@@ -47,6 +53,72 @@ export const flyingDressGalleries: FlyingDressGallery[] = [
     ],
   },
 ];
+
+/**
+ * ONE GALLERY PER SHOOT, mixing what exists.
+ *
+ * The owner supplied these folders on 5 November 2026 and said plainly that
+ * there are not enough real photographs to fill a page per shoot, so real and
+ * generated frames should sit together. They do — but each frame keeps its own
+ * `kind`, so the mixing happens in the layout and never in the claim.
+ *
+ * Fayoum is the only one of the three with real photography of its own, so it
+ * leads with camera frames and the generated one comes last. The White Desert
+ * and the yacht have none at all, which is why every frame there is generated
+ * and captioned as such. A real Fayoum or rooftop frame was NOT borrowed to
+ * pad them: a photograph of the wrong place is the error the desert geography
+ * guard exists to catch, and it would be the same error here.
+ */
+const SHOOT_GALLERIES: FlyingDressGallery[] = [
+  {
+    galleryId: "shoot-fayoum",
+    title: "From the Fayoum sessions",
+    layout: "grid",
+    frames: [
+      shootPhoto.fayoumShoot1,
+      shootPhoto.fayoumShoot2,
+      shootPhoto.fayoumShoot3,
+      shootPhoto.fayoumShoot4,
+      shootRetouched.fayoumRetouched1,
+      shootRetouched.fayoumRetouched2,
+      shootRetouched.fayoumRetouched3,
+      shootRetouched.fayoumRetouched4,
+      shootRetouched.fayoumRetouched5,
+      shootGenerated.fayoumGenerated1,
+    ],
+  },
+  {
+    galleryId: "shoot-white-desert",
+    title: "How the White Desert photographs",
+    layout: "grid",
+    frames: [
+      shootGenerated.whiteDesert1,
+      shootGenerated.whiteDesert2,
+      shootGenerated.whiteDesert3,
+      shootGenerated.whiteDesert4,
+      shootGenerated.whiteDesert5,
+      shootGenerated.whiteDesertDetail,
+    ],
+  },
+  {
+    galleryId: "shoot-red-sea-yacht",
+    title: "How the yacht day photographs",
+    layout: "grid",
+    frames: [
+      shootGenerated.redSeaYacht1,
+      shootGenerated.redSeaYacht2,
+      shootGenerated.redSeaYacht3,
+      shootGenerated.redSeaYacht4,
+      shootGenerated.redSeaYacht5,
+      shootGenerated.redSeaYacht6,
+      shootGenerated.redSeaYacht7,
+      shootGenerated.redSeaYacht8,
+      shootGenerated.redSeaYacht9,
+    ],
+  },
+];
+
+flyingDressGalleries.push(...SHOOT_GALLERIES);
 
 export function flyingDressGalleryById(
   galleryId: string
