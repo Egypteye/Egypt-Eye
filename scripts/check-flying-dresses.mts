@@ -52,6 +52,7 @@ import { photoshoots } from "../src/content/photoshoots.js";
 import {
   agency,
   allSlots,
+  type ImageSlot,
   categoryPhoto,
   location,
   reference,
@@ -61,6 +62,7 @@ import {
   shootRetouched,
 } from "../src/app/flying-dresses/_lib/assets.js";
 import { shootAerial, shootReels } from "../src/app/flying-dresses/_lib/shootReels.js";
+import { shootArt } from "../src/app/flying-dresses/_lib/shootArt.js";
 import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
@@ -8319,6 +8321,63 @@ for (const pkg of packages) {
   }
 }
 
+
+// ---------------------------------------------------------------------------
+// EVERY SHOOT HAS ITS OWN PICTURE, AND NO SHOOT WEARS ANOTHER ONE'S.
+//
+// This bug shipped three times because the per-slug art map was copied into
+// three files that then drifted apart:
+//
+//   experiences/[slug]/page.tsx   fell back to `empty.redSeaYacht`, so the
+//                                 White Desert page advertised "The yacht at
+//                                 Ain Sokhna — photograph to come".
+//   experiences/page.tsx          the same fallback on the listing cards.
+//   page.tsx (home)               a ternary ending `: location.fayoumLake`,
+//                                 so anything that was not sand-dunes or
+//                                 pyramids-rooftop showed a photograph of a
+//                                 lake in Fayoum — the White Desert and the
+//                                 yacht included.
+//
+// Each was found and fixed separately while the other two kept rendering,
+// because nothing connected them. They now read one map in _lib/shootArt.ts,
+// and these two assertions are what keep it honest.
+//
+// The second is the one that matters. A fallback does not announce itself: it
+// shows a real, attractive photograph of the wrong product, which looks fine
+// in review. Two shoots sharing a picture is the signature it leaves, and on
+// a site whose whole provenance system exists to stop one place being passed
+// off as another, that is not cosmetic.
+//
+// Proven by deleting the white-desert entry (red, naming it) and by pointing
+// white-desert's card at the yacht's hero (red, naming both).
+{
+  const art = shootArt as Record<string, { card: ImageSlot; hero: ImageSlot; detail: ImageSlot }>;
+  for (const pkg of packages) {
+    ok(
+      `no picture is mapped for "${pkg.slug}" in _lib/shootArt.ts, so its card and its page ` +
+        "both render a labelled gap. Every shoot the brand sells has an entry there",
+      art[pkg.slug] !== undefined
+    );
+  }
+
+  const seen = new Map<string, string[]>();
+  for (const [slug, entry] of Object.entries(art)) {
+    for (const which of ["card", "hero", "detail"] as const) {
+      const src = entry[which]?.src;
+      if (!src) continue;
+      seen.set(src, [...(seen.get(src) ?? []), `${slug}.${which}`]);
+    }
+  }
+  for (const [src, where] of seen) {
+    const slugs = new Set(where.map((w) => w.split(".")[0]));
+    ok(
+      `${src} is used by more than one shoot (${where.join(", ")}). A picture shared between ` +
+        "products is what a silent fallback looks like: it renders a real photograph of the " +
+        "wrong place and nothing errors",
+      slugs.size === 1
+    );
+  }
+}
 
 if (errors.length > 0) {
   console.error("check-flying-dresses: FAILED\n");

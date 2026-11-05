@@ -15,7 +15,8 @@ import { getFlyingDressGallery } from "@/sanity/fetchers";
 import { hardenFlyingDressGallery } from "@/lib/sanityShape";
 import type { FlyingDressGallery } from "@/content/types";
 import { HeroVideo } from "./_components/HeroVideo";
-import { agency, empty, location } from "./_lib/assets";
+import { agency, empty } from "./_lib/assets";
+import { artFor } from "./_lib/shootArt";
 import { ItemActions } from "./_components/ItemActions";
 import { experienceCategories } from "@/content/flyingDressExperiences";
 import { flyingDressStories, storyReadingMinutes } from "@/content/flyingDressStories";
@@ -326,12 +327,7 @@ export default async function FlyingDressesHome() {
 
         <div className="fd-shell" style={{ display: "grid", gap: "var(--fd-section)" }}>
           {packages.map((pkg, index) => {
-            const art =
-              pkg.slug === "sand-dunes"
-                ? location.saharaDunes
-                : pkg.slug === "pyramids-rooftop"
-                  ? agency.rooftopPortrait
-                  : location.fayoumLake;
+            const art = artFor(pkg.slug).card;
 
             return (
               <article

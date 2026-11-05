@@ -14,20 +14,13 @@ import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { Gallery } from "../../_components/Gallery";
 import { ProductionReel } from "../../_components/ProductionReel";
+import { artFor } from "../../_lib/shootArt";
 import { shootAerial, shootReels } from "../../_lib/shootReels";
 import { flyingDressGalleryById } from "@/content/flyingDressGalleries";
 import { getFlyingDressGallery } from "@/sanity/fetchers";
 import { hardenFlyingDressGallery } from "@/lib/sanityShape";
 import type { FlyingDressGallery } from "@/content/types";
-import {
-  agency,
-  empty,
-  location,
-  shootGenerated,
-  shootPhoto,
-  visibleCredit,
-  type ImageSlot,
-} from "../../_lib/assets";
+import { visibleCredit } from "../../_lib/assets";
 import { shootShareImages } from "../../_lib/shareImages";
 import { dressPhotos } from "../../_lib/dressPhotos";
 import {
@@ -57,24 +50,6 @@ export async function generateStaticParams() {
 /** A slug that is not one of the three 404s rather than rendering empty. */
 export const dynamicParams = false;
 
-const ART: Partial<Record<string, { hero: ImageSlot; detail: ImageSlot }>> = {
-  "sand-dunes": { hero: location.saharaDunes, detail: agency.fayoumDress },
-  "pyramids-rooftop": { hero: agency.rooftopPortrait, detail: location.gizaPlateau },
-  // Real camera frames, supplied November 2026, replacing the stock lake
-  // photograph that stood here while the brand had none of its own.
-  fayoum: { hero: shootPhoto.fayoumHero, detail: shootPhoto.fayoumGroup },
-  // Generated, and credited as such on the page. Neither of these two has a
-  // photograph of its location in existence; the alternative was the labelled
-  // gap that stood here before, which told a buyer nothing about the product.
-  "red-sea-yacht": {
-    hero: shootGenerated.redSeaYachtHero,
-    detail: shootGenerated.redSeaYachtDetail,
-  },
-  "white-desert": {
-    hero: shootGenerated.whiteDesertHero,
-    detail: shootGenerated.whiteDesertDetail,
-  },
-};
 
 /**
  * The shoot's own gallery, Studio-first exactly as the home page's is.
@@ -136,7 +111,7 @@ export default async function ExperiencePage({
   const pkg = await fdPackageBySlug(slug);
   if (!pkg) notFound();
 
-  const art = ART[pkg.slug] ?? { hero: empty.redSeaYacht, detail: empty.redSeaYacht };
+  const art = artFor(pkg.slug);
   const [settings, addOns, wardrobe, packages, gallery] = await Promise.all([
     fdSettings(),
     fdAddOns(),

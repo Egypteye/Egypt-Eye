@@ -701,6 +701,20 @@ export const empty = {
     // the folder is that shot.
     wanted: "The accessory collection together, in one landscape frame",
   }),
+  /**
+   * The gap for a shoot nobody has given a picture. Deliberately says
+   * nothing about where it is: the old code fell back to the YACHT's gap for
+   * any unmapped slug, so the White Desert page advertised a yacht at Ain
+   * Sokhna. A fallback that names a place is a fallback that lies.
+   */
+  unknownShoot: slot({
+    kind: "empty",
+    src: null,
+    alt: "A flying dress photoshoot",
+    width: 1800,
+    height: 1200,
+    wanted: "A photograph of this shoot",
+  }),
   redSeaYacht: slot({
     kind: "empty",
     src: null,

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fdPackages, fdSettings } from "../_lib/content";
 import { Scene } from "../_components/Scene";
-import { agency, empty, location, type ImageSlot } from "../_lib/assets";
+import { artFor } from "../_lib/shootArt";
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { packagePriceLabel } from "@/content/flyingDresses";
@@ -25,12 +25,6 @@ export const metadata: Metadata = fdMetadata({
 //
 // Typed as a partial record and read through a fallback, so the next product
 // added in the Studio renders a labelled gap instead of an error page.
-const ART: Partial<Record<string, ImageSlot>> = {
-  "sand-dunes": location.saharaDunes,
-  "pyramids-rooftop": agency.rooftopPortrait,
-  fayoum: location.fayoumLake,
-  "red-sea-yacht": empty.redSeaYacht,
-};
 
 export default async function ExperiencesPage() {
   const [settings, packages] = await Promise.all([fdSettings(), fdPackages()]);
@@ -60,7 +54,7 @@ export default async function ExperiencesPage() {
 
       <div className="fd-shell" style={{ display: "grid", gap: "var(--fd-section)" }}>
         {packages.map((pkg, index) => {
-          const art = ART[pkg.slug] ?? empty.redSeaYacht;
+          const art = artFor(pkg.slug).card;
           return (
             <article
               key={pkg.slug}
