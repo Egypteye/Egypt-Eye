@@ -26,10 +26,20 @@ import type { ReelClip } from "../_components/ProductionReel";
 const G = "/video/flying-dresses/shoots/generated";
 const P = "/photos/flying-dresses/shoots/generated";
 
-/** The caption every generated clip carries. Not optional, not shortened. */
-const GENERATED_CAPTION = "Generated motion, art-directed by the owner";
+/**
+ * The clips print no caption. The owner decided on 5 November 2026 that
+ * generated imagery carries no visible label; see SHOW_GENERATED_CREDIT in
+ * _lib/assets.ts for the whole note.
+ *
+ * `provenance` is what the file IS and never changes. `caption` is what the
+ * page prints. Keeping them as two fields is the point: the check script
+ * reads the first, the visitor sees the second, and nobody has to weaken the
+ * record to change the design.
+ */
+const GENERATED_PROVENANCE = "Generated motion, art-directed by the owner";
+const GENERATED_CAPTION = "";
 
-function reel(slug: string, n: number, alt: string): ReelClip {
+function reel(slug: string, n: number, alt: string): ReelClip & { provenance: string } {
   const id = `${slug}-reel-${n}`;
   return {
     id,
@@ -40,10 +50,11 @@ function reel(slug: string, n: number, alt: string): ReelClip {
     height: 1280,
     alt,
     caption: GENERATED_CAPTION,
+    provenance: GENERATED_PROVENANCE,
   };
 }
 
-export const shootReels: Record<string, ReelClip[]> = {
+export const shootReels: Record<string, (ReelClip & { provenance: string })[]> = {
   "white-desert": [1, 2, 3, 4].map((n) =>
     reel("white-desert", n, "A flying dress moving among the white chalk formations")
   ),

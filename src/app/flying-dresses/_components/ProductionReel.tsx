@@ -151,7 +151,9 @@ function Clip({ clip }: { clip: ReelClip }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={clip.poster} alt={clip.alt} width={clip.width} height={clip.height} />
       </video>
-      <figcaption className="fd-reel-caption">{clip.caption}</figcaption>
+      {clip.caption ? (
+        <figcaption className="fd-reel-caption">{clip.caption}</figcaption>
+      ) : null}
     </figure>
   );
 }

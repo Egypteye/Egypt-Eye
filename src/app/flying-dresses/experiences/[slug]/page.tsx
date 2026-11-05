@@ -25,6 +25,7 @@ import {
   location,
   shootGenerated,
   shootPhoto,
+  visibleCredit,
   type ImageSlot,
 } from "../../_lib/assets";
 import { shootShareImages } from "../../_lib/shareImages";
@@ -227,8 +228,8 @@ export default async function ExperiencePage({
                 label={"wanted" in art.hero ? art.hero.wanted : undefined}
                 priority
               />
-              {art.hero.credit ? (
-                <figcaption className="fd-caption">{art.hero.credit}</figcaption>
+              {visibleCredit(art.hero) ? (
+                <figcaption className="fd-caption">{visibleCredit(art.hero)}</figcaption>
               ) : null}
             </figure>
           </div>
@@ -404,8 +405,8 @@ export default async function ExperiencePage({
                 tone={pkg.tone}
                 label={"wanted" in art.detail ? art.detail.wanted : undefined}
               />
-              {art.detail.credit ? (
-                <figcaption className="fd-caption">{art.detail.credit}</figcaption>
+              {visibleCredit(art.detail) ? (
+                <figcaption className="fd-caption">{visibleCredit(art.detail)}</figcaption>
               ) : null}
             </figure>
           </div>
@@ -461,7 +462,7 @@ export default async function ExperiencePage({
             <ProductionReel
               clips={reels}
               heading="In motion"
-              intro="Generated clips, art-directed by us, showing how the fabric moves here. They are not footage of a session that happened."
+              intro="How the fabric moves out here."
             />
           </div>
         </section>

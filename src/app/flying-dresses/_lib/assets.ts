@@ -1174,6 +1174,64 @@ export const shootGenerated = {
   }),
 };
 
+/**
+ * WHETHER A FRAME'S PROVENANCE IS PRINTED ON THE PAGE.
+ *
+ * The owner decided on 5 November 2026 that generated imagery carries no
+ * visible label. They were shown what it reverses — their own brief says
+ * "never present AI-generated imagery as real client work" — and chose it
+ * anyway for their own marketing. That is theirs to decide, so the caption
+ * is gone.
+ *
+ * WHAT IS DELIBERATELY NOT GONE is the record. `kind` and `credit` still say
+ * exactly what every file is, the /generated/, /retouched/ and /photo/ split
+ * still holds, and every check in scripts/check-flying-dresses.mts still
+ * runs. Those exist to stop a generated frame being attached to a named
+ * customer's shoot, appearing in a testimonial, or being promoted to
+ * kind:"agency" by someone who never read this file. None of that is about
+ * what the page prints.
+ *
+ * So: data honest, caption silent. Flip SHOW_GENERATED_CREDIT to true to put
+ * the captions back; nothing else needs touching.
+ */
+export const SHOW_GENERATED_CREDIT = false;
+
+/**
+ * The caption for a frame, or null when it should not be printed.
+ *
+ * Two different things happen here and they are not the same decision.
+ *
+ * A "reference" frame is generated outright, so with the switch off it prints
+ * nothing at all.
+ *
+ * A "retouched" frame is the agency's own photograph of a real session, and
+ * its credit reads "Nunu and Kassy shoot, Fayoum. Retouched with generative
+ * AI (Adobe Firefly)". Only the second sentence is the AI label, and only
+ * that sentence is dropped: the shoot credit is a genuine attribution to real
+ * customers and real work, and losing it would throw away the honest half to
+ * remove the other. The full string stays in the registry either way.
+ */
+export function visibleCredit(frame: {
+  kind: string;
+  credit?: string;
+}): string | null {
+  if (!frame.credit) return null;
+  if (SHOW_GENERATED_CREDIT) return frame.credit;
+  if (frame.kind === "reference") return null;
+  if (frame.kind === "retouched" || frame.kind === "styled") {
+    // Drop the clause that names the generation, keep the one that credits
+    // the real work. "Nunu and Kassy shoot, Fayoum. Retouched with generative
+    // AI" becomes the shoot; "Dresses photographed from the collection; the
+    // display and setting are generated" becomes the dresses.
+    const realHalf = frame.credit
+      .split(/\.\s*Retouched\b|;\s*the display\b/)[0]!
+      .replace(/[.;,\s]+$/, "")
+      .trim();
+    return realHalf.length > 0 ? realHalf : null;
+  }
+  return frame.credit;
+}
+
 /** Everything, for the check script and the asset checklist. */
 export const allSlots: Record<string, ImageSlot> = {
   ...agency,

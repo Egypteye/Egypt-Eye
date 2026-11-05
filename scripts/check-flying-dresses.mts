@@ -8267,19 +8267,33 @@ for (const pkg of packages) {
     }
   }
 
-  // Every generated clip is captioned as generated, in the one place a
-  // visitor reads. The stills are covered by the reference-slot checks above;
-  // the clips are not slots, so they are checked here.
+  // THE CLIPS' RECORD, NOT THEIR CAPTION.
+  //
+  // This used to require the visible caption to say "generated". On 5
+  // November 2026 the owner decided generated imagery carries no visible
+  // label, so the caption is now empty by design and asserting on it would
+  // just be asserting on a styling choice.
+  //
+  // What still has to be true is the record: every clip declares its
+  // provenance, is served from the generated directory, and never claims in
+  // its alt text that a session happened. The first two are what stop a
+  // generated clip being mistaken for footage later; the third is what stops
+  // it being described as one to a screen reader or to Google, which is a
+  // claim rather than a design decision and is not covered by the owner's
+  // call on captions.
+  //
+  // Proven by blanking a provenance string (red), by pointing a clip at the
+  // photo directory (red), and by putting "session" in an alt (red).
   for (const [slug, clips] of Object.entries(shootReels)) {
     for (const clip of clips) {
       ok(
-        `reel "${clip.id}" on ${slug} is served from ${clip.mp4} but its caption ` +
-          `("${clip.caption}") never says it is generated`,
-        /generated/i.test(clip.caption)
+        `reel "${clip.id}" on ${slug} records no provenance, so nothing in the repo ` +
+          "says what the file is",
+        /generated/i.test(clip.provenance)
       );
       ok(
-        `reel "${clip.id}" is captioned as generated but is not served from the ` +
-          "generated directory, so the caption and the file disagree",
+        `reel "${clip.id}" records generated provenance but is not served from the ` +
+          "generated directory, so the record and the file disagree",
         clip.mp4.includes("/shoots/generated/")
       );
       ok(

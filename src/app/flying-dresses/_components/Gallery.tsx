@@ -1,3 +1,4 @@
+import { visibleCredit } from "../_lib/assets";
 import { Scene } from "./Scene";
 import type { FlyingDressFrame } from "@/content/types";
 
@@ -92,7 +93,7 @@ export function Gallery({
             drift={frame.kind !== "empty"}
           />
           <figcaption className="fd-caption">
-            {frame.credit ?? (frame.kind === "empty" ? "Photograph to come" : "")}
+            {visibleCredit(frame) ?? (frame.kind === "empty" ? "Photograph to come" : "")}
           </figcaption>
         </figure>
       ))}
