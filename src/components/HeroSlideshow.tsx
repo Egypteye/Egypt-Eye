@@ -71,7 +71,25 @@ export function HeroSlideshow({
           className={`absolute inset-0 animate-[kenburns-drift_26000ms_ease-in-out_infinite_alternate] transition-opacity duration-1000 ease-in-out ${
             i === index ? "opacity-100" : "opacity-0"
           }`}
-          priority
+          // ONLY THE FIRST SLIDE. This used to be a bare `priority` on every
+          // one, and that is what made the homepage slow on a phone.
+          //
+          // Next's `priority` does three things: eager loading, high fetch
+          // priority, and a <link rel="preload"> in the head. Applied to all
+          // six slides it put six full-bleed 1920px photographs in the head
+          // as high-priority preloads, five of them for slides sitting at
+          // opacity-0 that nobody would see for eight seconds. The browser
+          // has no way to know which one matters, so on a throttled
+          // connection it fetched them more or less together and the one
+          // actually on screen arrived last.
+          //
+          // PageSpeed, mobile, 4 November 2026: LCP 9.6s against desktop's
+          // 1.6s, with nine image preloads in the head and the hero flagged
+          // for having no high-priority request at all. The remaining slides
+          // load lazily, which is correct — the first slide change is
+          // SLIDE_DURATION_MS away, which is a very long time in network
+          // terms.
+          priority={i === 0}
           sizes="100vw"
         />
       ))}

@@ -246,7 +246,7 @@ export default async function Home() {
           <Reveal>
             <div className="grid overflow-hidden rounded-3xl bg-ink lg:grid-cols-2">
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14">
-                <Badge>{home.flyingDress.badge}</Badge>
+                <Badge tone="dark">{home.flyingDress.badge}</Badge>
                 <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">
                   {home.flyingDress.title}
                 </h2>
@@ -287,7 +287,7 @@ export default async function Home() {
                 className="min-h-[280px] lg:order-1"
               />
               <div className="flex flex-col justify-center gap-5 p-10 sm:p-14 lg:order-2">
-                <Badge>{home.redSea.badge}</Badge>
+                <Badge tone="dark">{home.redSea.badge}</Badge>
                 <h2 className="font-display text-3xl font-semibold text-cream sm:text-4xl">{home.redSea.title}</h2>
                 <p className="text-cream/70">{home.redSea.body}</p>
                 <Link

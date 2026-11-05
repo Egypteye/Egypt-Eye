@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSiteSettings } from "@/sanity/fetchers";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { sendEmail } from "@/lib/email/resend";
+import { markEnquiryDelivery, recordEnquiry } from "@/lib/enquiries/store";
 import { tourEnquiryEmail } from "@/lib/email/templates";
 
 // Receives a submission from the "Email an Enquiry" popup on a tour,
@@ -112,7 +113,35 @@ export async function POST(request: NextRequest) {
     message: message || undefined,
   });
 
+  // Written down BEFORE the send is attempted. If Resend refuses — an expired
+  // key, an unverified sender, an outage — this row is the only thing that
+  // will remember a real customer tried to book. Never throws: a database
+  // problem must not cost the email too.
+  const enquiryId = await recordEnquiry({
+    kind: "tour_enquiry",
+    brand: "egypt_eye",
+    subjectTitle: itemTitle,
+    name,
+    email,
+    phone,
+    details: {
+      itemType,
+      itemSlug,
+      nationality,
+      travelers,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
+      flexibleDates,
+      hotel: hotel || undefined,
+      pickupLocation: pickupLocation || undefined,
+      preferredTime: preferredTime || undefined,
+      message: message || undefined,
+    },
+  });
+
   const result = await sendEmail({ to: site.contact.email, subject, html, text, replyTo: email });
+  await markEnquiryDelivery(enquiryId, result);
+
   if (!result.ok) {
     return NextResponse.json({ error: "Failed to send email" }, { status: 502 });
   }

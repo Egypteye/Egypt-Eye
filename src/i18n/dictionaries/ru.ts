@@ -93,6 +93,7 @@ export const ru: Dictionary = {
 
   reviews: {
     chip: "Оценка впечатления",
+    chipFor: "Оценка впечатления {name}",
     eyebrow: "Истории путешественников",
     heading: "Что говорят наши путешественники",
     intro:

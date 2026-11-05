@@ -53,7 +53,7 @@ export function SignatureExperienceCard({
         <div className="mt-2 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-ink-soft/85">
           {experience.duration && <span>{experience.duration}</span>}
           {experience.groupSize && <span>{experience.groupSize}</span>}
-          <ExperienceRatingLink type="experience" slug={experience.slug} />
+          <ExperienceRatingLink type="experience" slug={experience.slug} subjectName={experience.name} />
         </div>
 
         <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-ink transition group-hover:gap-3"><T>See the full experience</T><span aria-hidden="true">→</span>

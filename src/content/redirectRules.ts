@@ -8,6 +8,12 @@
 // with the same path-to-regexp Next compiles it with.
 import { storyRedirectRules } from "./redirectedStories";
 import { GOOGLE_REVIEW_URL } from "./googleReviews";
+// Imported rather than retyped: the second brand's address has one
+// definition, in the content file that owns the brand. A hardcoded copy here
+// would be a second place to forget if the domain ever changes.
+import { brand as flyingDressesBrand } from "./flyingDresses";
+
+const FLYING_DRESSES_URL = flyingDressesBrand.url;
 
 export type RedirectRule = {
   source: string;
@@ -145,6 +151,19 @@ export function redirectRules(): RedirectRule[] {
     // different coast guide as its successor would be inventing an
     // equivalence. The stories index is the honest destination.
     { source: "/2024/:month(\\d{2})/:day(\\d{2})/12-best-beach-in-egypt-to-hit-in-2024", destination: "/stories", permanent: true },
+    // Found in the Search Console "Excluded by noindex" export, last crawled
+    // 2026-07-23, still falling through to a /stories/ URL that does not
+    // exist. The post promised a lost civilisation of gods and advanced
+    // technology; this site does not publish that claim, so no article here is
+    // its successor. Naming one would be inventing an equivalence, exactly as
+    // with the beaches post above, so the stories index is the honest
+    // destination.
+    {
+      source:
+        "/2024/:month(\\d{2})/:day(\\d{2})/the-mystery-of-ancient-egypt-unveiling-the-lost-civilization-of-the-gods-and-advanced-technology",
+      destination: "/stories",
+      permanent: true,
+    },
 
     // WordPress date permalinks from the previous site — /2024/04/01/some-post.
     // Search Console reports 24 of these as 404s, and they are where most of
@@ -212,5 +231,83 @@ export function redirectRules(): RedirectRule[] {
     { source: "/tours/:id(\\d+)", destination: "/tours", permanent: true },
     { source: "/photoshoots/:id(\\d+)", destination: "/photoshoots", permanent: true },
     { source: "/stories/:id(\\d+)", destination: "/stories", permanent: true },
+
+    // THE FLYING DRESSES SHORT FORMS, WHICH WERE LEFT 404ing ON THIS DOMAIN.
+    //
+    // When the second brand was served from this domain its pages answered at
+    // two shapes: /packages and /flying-dresses/packages. src/proxy.ts fixed
+    // that by 308ing the short form to the long one, and later the long form
+    // started 308ing to flyingdressesegypt.com — but the short form was
+    // dropped from the chain somewhere in between, so on 4 November 2026 all
+    // six answered 404 while their long forms redirected correctly.
+    //
+    // These are not guesses. src/proxy.ts records the impressions Search
+    // Console had already attributed to the short forms when the duplication
+    // was found: /packages 26 and /rentals 53. Those are indexed URLs on this
+    // domain, and a 404 is where that search presence has been going.
+    //
+    // Cross-domain and permanent, because the content genuinely moved
+    // domains: the same 301 the long forms already get, applied one hop
+    // earlier. /collaborate is NOT here — Egypt Eye has its own page at that
+    // address, which answers 200 and must not be sent anywhere.
+    //
+    // The cost is that this domain gives up these six paths. If Egypt Eye
+    // ever wants /packages for tour packages, delete that line — but it needs
+    // to be a decision, not a surprise, which is why it is written down.
+    ...["packages", "rentals", "wardrobe", "celebrations", "creative", "enquire"].flatMap(
+      (slug): RedirectRule[] => [
+        {
+          source: `/${slug}`,
+          destination: `${FLYING_DRESSES_URL}/${slug}`,
+          permanent: true,
+        },
+        {
+          source: `/${slug}/:path*`,
+          destination: `${FLYING_DRESSES_URL}/${slug}/:path*`,
+          permanent: true,
+        },
+      ]
+    ),
+
+    // CONVENTIONAL OLD SLUGS, AND WHY THESE AND NOT THE OTHER THIRTY.
+    //
+    // Unlike every rule above, these are NOT from a Search Console export —
+    // they came from probing the patterns a WordPress travel site has and
+    // seeing which answered 404. So the evidence is weaker and the bar has to
+    // be higher: each one below is either WordPress's own default slug for a
+    // page this site really has (/privacy-policy, /terms-and-conditions) or
+    // the plural/singular of a page that exists (/photoshoot). Nothing here
+    // invents a page.
+    //
+    // Deliberately NOT added, though all of them 404: /team, /our-story,
+    // /services, /prices, /pricing, /news, /gallery, /portfolio, /book-now,
+    // /cart, /checkout, /login, /register, /my-account. Each would need a
+    // guess about what the old site's structure was or which page the visitor
+    // wanted, and a 301 to the wrong page is worse than a 404 — it spends the
+    // click and tells Google the two pages are the same thing. They stay 404
+    // until a Search Console export shows one of them actually earning
+    // impressions.
+    //
+    // /wp-login.php, /category/*, /tag/*, /author/* and the date archives are
+    // not here either, and should not be: those are exploit scans and crawler
+    // noise, and 404 is the correct, cheapest answer to both.
+    { source: "/about-us", destination: "/about", permanent: true },
+    { source: "/privacy-policy", destination: "/privacy", permanent: true },
+    { source: "/terms-and-conditions", destination: "/terms", permanent: true },
+    { source: "/terms-of-service", destination: "/terms", permanent: true },
+    { source: "/reviews", destination: "/testimonials", permanent: true },
+    { source: "/photoshoot", destination: "/photoshoots", permanent: true },
+    { source: "/photo-shoots", destination: "/photoshoots", permanent: true },
+    { source: "/shop", destination: "/boutique", permanent: true },
+    { source: "/store", destination: "/boutique", permanent: true },
+    { source: "/egypt-tours", destination: "/tours", permanent: true },
+    { source: "/day-tours", destination: "/tours", permanent: true },
+    { source: "/our-tours", destination: "/tours", permanent: true },
+    { source: "/tour", destination: "/tours", permanent: true },
+    { source: "/nile-cruises", destination: "/tours", permanent: true },
+    { source: "/destinations", destination: "/explore-egypt", permanent: true },
+    // Not /sitemap.xml — that is the real file. This is the extensionless
+    // form a person types, which Yoast used to serve.
+    { source: "/sitemap", destination: "/sitemap.xml", permanent: true },
   ];
 }

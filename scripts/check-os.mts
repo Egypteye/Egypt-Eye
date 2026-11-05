@@ -18,6 +18,7 @@
  */
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { isDisallowed, robotsDisallows } from "../src/content/robotsPolicy";
 import {
   INCLUSION_SUGGESTIONS,
   LOCATION_SUGGESTIONS,
@@ -541,8 +542,14 @@ ok(
   "the Flying Dresses domain allow-list admits /os — the internal workspace would be served on a second hostname",
 );
 
+// Asked of the rules robots.txt actually serves, not of the source text of
+// app/robots.ts. It used to grep that file for the literal "/os", which broke
+// the moment the Disallow list moved into content/robotsPolicy.ts to be
+// generated — a true assertion failing for a false reason. Matching the
+// crawler's own path semantics also covers /os/bookings, which a literal
+// match never did.
 ok(
-  /disallow: \[[^\]]*"\/os"/.test(readFileSync("src/app/robots.ts", "utf8")),
+  isDisallowed("/os", robotsDisallows()) && isDisallowed("/os/bookings", robotsDisallows()),
   "robots.txt no longer disallows /os — internal booking URLs would be offered to crawlers",
 );
 

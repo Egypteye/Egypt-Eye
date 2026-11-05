@@ -15,6 +15,7 @@
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { LOCALES, DEFAULT_LOCALE, type Locale } from "../src/i18n/locales.js";
+import { verifyTranslation } from "../src/i18n/protectedTerms.js";
 
 const MODEL = "gemini-3.6-flash";
 // Two corpora, one pipeline. The catalogue is server-only and large; the UI
@@ -157,7 +158,24 @@ ${JSON.stringify(texts, null, 0)}`;
       if (!Array.isArray(parsed) || parsed.length !== texts.length) {
         throw new Error(`expected ${texts.length} items, got ${Array.isArray(parsed) ? parsed.length : typeof parsed}`);
       }
-      return parsed.map((v, i) => (typeof v === "string" && v.trim() ? v : texts[i]));
+      // Verify, don't trust. The GLOSSARY above is an instruction, and an
+      // instruction is not a guarantee — the offline pipeline's equivalent
+      // failed silently and shipped "Egypt Eye" as "Traduzione:" in the
+      // Italian navbar for months. A string that drops a brand name or loses
+      // a {placeholder} is returned unchanged, which leaves it missing from
+      // the dictionary so the next run tries it again.
+      return parsed.map((v, i) => {
+        if (typeof v !== "string" || !v.trim()) return texts[i];
+        const faults = verifyTranslation(texts[i], v, locale);
+        if (faults.length > 0) {
+          console.warn(
+            `\n    rejected (${faults.map((f) => f.kind).join(", ")}): ${JSON.stringify(texts[i].slice(0, 60))}` +
+              `\n      ${faults[0].detail}`
+          );
+          return texts[i];
+        }
+        return v;
+      });
     } catch (err) {
       if (attempt === MAX_RETRIES) {
         console.warn(`    batch failed after ${MAX_RETRIES} tries (${(err as Error).message}) — left in English`);

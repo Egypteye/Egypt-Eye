@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { sendEmail } from "@/lib/email/resend";
+import { markEnquiryDelivery, recordEnquiry } from "@/lib/enquiries/store";
 import { shopVisitTeamEmail, shopVisitCustomerEmail } from "@/lib/email/templates";
 import { visitAreaBySlug, visitAreas } from "@/content/shoppingTours";
 import { site } from "@/content/site";
@@ -96,7 +97,26 @@ export async function POST(request: NextRequest) {
     notes: notes || null,
   };
 
+  // Stored before the attempt. This route already refuses to claim success
+  // when the email fails — which was the right half of the fix. The other
+  // half is keeping the request, so an honest "we could not get that
+  // through" is recoverable rather than final.
+  const enquiryId = await recordEnquiry({
+    kind: "shop_visit",
+    brand: "egypt_eye",
+    subjectTitle: area.name,
+    name,
+    email,
+    phone,
+    details: { reference, interests, notes: notes || undefined },
+  });
+
   let delivered = false;
+  let deliveryError: string | undefined;
+  // Captured so the stored row names the sender Resend accepted, like every
+  // other lead route. This one builds its result by hand, so it has to be
+  // threaded through explicitly.
+  let deliverySender: string | undefined;
   try {
     const team = shopVisitTeamEmail(facts);
     const sent = await sendEmail({
@@ -107,9 +127,14 @@ export async function POST(request: NextRequest) {
       replyTo: email,
     });
     delivered = sent.ok;
+    deliveryError = sent.error;
+    deliverySender = sent.from;
   } catch (err) {
+    deliveryError = err instanceof Error ? err.message : String(err);
     console.error("shop visit: team email threw", err);
   }
+
+  await markEnquiryDelivery(enquiryId, { ok: delivered, error: deliveryError, from: deliverySender });
 
   if (!delivered) {
     // The request did NOT reach anybody. Saying "we have it" here would be

@@ -56,6 +56,7 @@ export function ExperienceCard({ experience }: { experience: Experience }) {
           <ExperienceRatingLink
             type="experience"
             slug={experience.slug}
+            subjectName={experience.title}
           />
         </div>
       </div>

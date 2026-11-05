@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { siteUrl } from "@/content/seo";
+import { robotsDisallows } from "@/content/robotsPolicy";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -26,7 +27,13 @@ export default function robots(): MetadataRoute.Robots {
         // each booking was sold for. It is gated server-side, so listing it
         // here only keeps the URLs out of search results — it is not the
         // thing keeping anyone out.
-        disallow: ["/studio", "/api/", "/os"],
+        //
+        // The rest of the list is the unpublished languages, generated rather
+        // than written down so it cannot disagree with the sitemap: see
+        // content/robotsPolicy.ts for why their crawl is blocked when their
+        // indexing is already handled by `noindex`, and what the one-line
+        // change is when a language is ready to publish.
+        disallow: robotsDisallows(),
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,

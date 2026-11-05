@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSiteSettings } from "@/sanity/fetchers";
 import { checkRateLimit, getClientIp } from "@/lib/rateLimit";
 import { sendEmail } from "@/lib/email/resend";
+import { markEnquiryDelivery, recordEnquiry } from "@/lib/enquiries/store";
 import { transferRequestEmail } from "@/lib/email/templates";
 
 // Receives a submission from the Transfers booking form (/transfers) and
@@ -81,7 +82,27 @@ export async function POST(request: NextRequest) {
     notes: notes || undefined,
   });
 
+  // Stored before the send, for the same reason as /api/enquiry: a transfer
+  // request is a booked job, and a refused email used to erase it.
+  const enquiryId = await recordEnquiry({
+    kind: "transfer",
+    brand: "egypt_eye",
+    subjectTitle: subject,
+    name,
+    email,
+    phone,
+    details: {
+      date: date || undefined,
+      time: time || undefined,
+      passengers: passengers || undefined,
+      luggage: luggage || undefined,
+      vehicle: vehicle || undefined,
+      notes: notes || undefined,
+    },
+  });
+
   const result = await sendEmail({ to: site.contact.email, subject, html, text, replyTo: email });
+  await markEnquiryDelivery(enquiryId, result);
   if (!result.ok) {
     return NextResponse.json({ error: "Failed to send email" }, { status: 502 });
   }

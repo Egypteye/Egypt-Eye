@@ -24,6 +24,36 @@ function videoEmbedSrc(url: string): string | null {
 
 function portableTextComponents(ui: Record<string, string>): PortableTextComponents {
   return {
+  marks: {
+    /**
+     * @portabletext/react does ship a default for this, so a link in an
+     * article body was already rendering — as a bare `<a href>`. That is
+     * wrong in both directions here: an internal link bypassed next/link, so
+     * it did a full page load and prefetched nothing, and an outbound link
+     * went out with no `rel`, handing referrer and `window.opener` to
+     * whatever it pointed at.
+     */
+    link: ({ value, children }) => {
+      const href: string = value?.href ?? "";
+      if (href.startsWith("/")) {
+        return (
+          <Link href={href} className="text-gold-dark underline decoration-gold/40 underline-offset-2">
+            {children}
+          </Link>
+        );
+      }
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-gold-dark underline decoration-gold/40 underline-offset-2"
+        >
+          {children}
+        </a>
+      );
+    },
+  },
   types: {
     image: ({ value }) => {
       const src = urlForImage(value)?.width(1400).url();

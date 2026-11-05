@@ -31,11 +31,25 @@ import { localePath } from "@/i18n/locales";
 export function ExperienceRatingLink({
   type,
   slug,
+  subjectName,
   tone = "light",
   className = "",
 }: {
   type: ReviewSubjectType;
   slug: string;
+  /**
+   * The product this chip belongs to, used only for the accessible name.
+   *
+   * The visible label is deliberately the same on every card — it is a
+   * consistent door, not a per-product readout. But a screen reader announces
+   * links out of context, so a listing page was a row of links all called
+   * "Experience Rating" pointing at different URLs, with nothing to tell them
+   * apart. Passing the name fixes that without changing what anyone sees.
+   *
+   * Optional because a detail page renders exactly one of these, where there
+   * is nothing to be ambiguous with.
+   */
+  subjectName?: string;
   /** "dark" for the cream-on-photo treatment used in detail-page heroes. */
   tone?: "light" | "dark";
   className?: string;
@@ -55,6 +69,9 @@ export function ExperienceRatingLink({
   return (
     <Link
       href={localePath(href, locale)}
+      aria-label={
+        subjectName ? dict.reviews.chipFor.replace("{name}", subjectName) : undefined
+      }
       // relative z-20 lifts it above the card's full-bleed overlay link, so
       // the chip wins the click on a card that is otherwise one big link.
       className={`relative z-20 inline-flex min-h-[44px] items-center gap-1.5 rounded-full text-sm font-semibold transition ${palette} ${className}`}

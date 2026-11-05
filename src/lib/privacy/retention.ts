@@ -33,7 +33,16 @@ export async function applyDataRetention(): Promise<{ ok: boolean; report?: Rete
       console.error("data retention sweep failed:", error.message);
       return { ok: false };
     }
-    return { ok: true, report: (data ?? undefined) as RetentionReport | undefined };
+    // The enquiries table has its own function rather than a block inside
+    // apply_data_retention, because adding one would have meant retyping a
+    // hundred lines of customer-deleting SQL to gain six. See 0030's note.
+    // Merged here so the report stays one object and /admin keeps showing
+    // every number the policy promises.
+    const enquiries = await sweepEnquiries(false);
+    return {
+      ok: true,
+      report: { ...((data ?? {}) as RetentionReport), ...enquiries } as RetentionReport,
+    };
   } catch (err) {
     console.error("data retention sweep threw:", err);
     return { ok: false };
@@ -47,8 +56,37 @@ export async function previewDataRetention(): Promise<{ ok: boolean; report?: Re
     const supabase = createAdminSupabaseClient();
     const { data, error } = await supabase.rpc("apply_data_retention", { p_dry_run: true });
     if (error) return { ok: false };
-    return { ok: true, report: (data ?? undefined) as RetentionReport | undefined };
+    const enquiries = await sweepEnquiries(true);
+    return {
+      ok: true,
+      report: { ...((data ?? {}) as RetentionReport), ...enquiries } as RetentionReport,
+    };
   } catch {
     return { ok: false };
+  }
+}
+
+/**
+ * The enquiries half of the sweep.
+ *
+ * Returns a fragment to merge rather than a report of its own, so a caller
+ * cannot accidentally run one half and believe it ran both. Swallows its
+ * errors for the same reason the rest of this module does: an old enquiry
+ * that failed to anonymise must not take down the payment reconciliation
+ * running in the same request.
+ */
+async function sweepEnquiries(dryRun: boolean): Promise<Record<string, unknown>> {
+  try {
+    const supabase = createAdminSupabaseClient();
+    const { data, error } = await supabase.rpc("apply_enquiry_retention", { p_dry_run: dryRun });
+    if (error) {
+      console.error("enquiry retention sweep failed:", error.message);
+      return {};
+    }
+    const report = (data ?? {}) as { enquiries?: number };
+    return { enquiries: report.enquiries ?? 0 };
+  } catch (err) {
+    console.error("enquiry retention sweep threw:", err);
+    return {};
   }
 }

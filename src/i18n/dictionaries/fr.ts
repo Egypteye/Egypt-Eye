@@ -93,6 +93,7 @@ export const fr: Dictionary = {
 
   reviews: {
     chip: "Avis sur l'expérience",
+    chipFor: "Avis sur l'expérience {name}",
     eyebrow: "Récits de voyageurs",
     heading: "Ce que disent nos voyageurs",
     intro:
