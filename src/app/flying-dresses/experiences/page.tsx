@@ -1,3 +1,4 @@
+import { visibleCredit } from "../_lib/assets";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { fdPackages, fdSettings } from "../_lib/content";
@@ -108,7 +109,9 @@ export default async function ExperiencesPage() {
                   label={"wanted" in art ? art.wanted : undefined}
                   drift={Boolean(art.src)}
                 />
-                {art.credit ? <figcaption className="fd-caption">{art.credit}</figcaption> : null}
+                {visibleCredit(art) ? (
+                  <figcaption className="fd-caption">{visibleCredit(art)}</figcaption>
+                ) : null}
               </figure>
             </article>
           );

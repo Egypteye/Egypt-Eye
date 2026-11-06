@@ -8,7 +8,7 @@ import { Scene } from "../../_components/Scene";
 import { Wardrobe } from "../../_components/Wardrobe";
 import { AccessoryLookbook } from "../../_components/AccessoryLookbook";
 import { accessoryCategories, accessoryItems } from "@/content/flyingDressAccessories";
-import { empty } from "../../_lib/assets";
+import { empty, visibleCredit } from "../../_lib/assets";
 import {
   fdBreadcrumbJsonLd,
   fdFaqJsonLd,
@@ -135,7 +135,7 @@ export default async function RentalServicePage({
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone="neutral"
                 label={art.wanted}
-                credit={art.credit}
+                credit={visibleCredit(art) ?? undefined}
                 priority
               />
             </figure>

@@ -15,7 +15,7 @@ import { getFlyingDressGallery } from "@/sanity/fetchers";
 import { hardenFlyingDressGallery } from "@/lib/sanityShape";
 import type { FlyingDressGallery } from "@/content/types";
 import { HeroVideo } from "./_components/HeroVideo";
-import { agency, empty } from "./_lib/assets";
+import { agency, empty, visibleCredit } from "./_lib/assets";
 import { artFor } from "./_lib/shootArt";
 import { ItemActions } from "./_components/ItemActions";
 import { experienceCategories } from "@/content/flyingDressExperiences";
@@ -248,7 +248,7 @@ export default async function FlyingDressesHome() {
               drift
               className="fd-fabric"
             />
-            <figcaption className="fd-caption">{agency.blueGownDesert.credit}</figcaption>
+            <figcaption className="fd-caption">{visibleCredit(agency.blueGownDesert)}</figcaption>
           </figure>
         </div>
       </section>
@@ -376,7 +376,9 @@ export default async function FlyingDressesHome() {
                     label={"wanted" in art ? art.wanted : undefined}
                     drift={Boolean(art.src)}
                   />
-                  {art.credit ? <figcaption className="fd-caption">{art.credit}</figcaption> : null}
+                  {visibleCredit(art) ? (
+                    <figcaption className="fd-caption">{visibleCredit(art)}</figcaption>
+                  ) : null}
                 </figure>
               </article>
             );

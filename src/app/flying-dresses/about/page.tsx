@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fdPackages, fdSettings, fdWardrobe } from "../_lib/content";
 import { Scene } from "../_components/Scene";
-import { agency } from "../_lib/assets";
+import { agency, visibleCredit } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { aboutShareImage } from "../_lib/shareImages";
 
@@ -82,7 +82,7 @@ export default async function AboutPage() {
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 priority
               />
-              <figcaption className="fd-caption">{agency.whiteGownDune.credit}</figcaption>
+              <figcaption className="fd-caption">{visibleCredit(agency.whiteGownDune)}</figcaption>
             </figure>
           </div>
         </div>

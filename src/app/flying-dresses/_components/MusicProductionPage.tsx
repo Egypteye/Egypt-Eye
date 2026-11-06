@@ -4,7 +4,7 @@ import { FaqList } from "./FaqList";
 import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { ProductionReel } from "./ProductionReel";
 import { MusicSetups } from "./MusicSetups";
-import { agency } from "../_lib/assets";
+import { agency, visibleCredit } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 import { mergeFaqs } from "@/content/flyingDressExperiences";
 import {
@@ -146,7 +146,9 @@ function galleryFrames(): GalleryFrame[] {
         width: entry.slot.width,
         height: entry.slot.height,
         span: entry.span,
-        caption: entry.slot.credit ? `${entry.caption} ${entry.slot.credit}.` : entry.caption,
+        caption: visibleCredit(entry.slot)
+          ? `${entry.caption} ${visibleCredit(entry.slot)}.`
+          : entry.caption,
       })),
     ...gaps.map((gap) => ({
       src: null,
@@ -216,7 +218,7 @@ export function MusicProductionPage({
               ratio="fd-ratio-wide"
               sizes="(min-width: 60rem) 72rem, 94vw"
               priority
-              credit={hero.credit}
+              credit={visibleCredit(hero) ?? undefined}
             />
           </div>
         </section>

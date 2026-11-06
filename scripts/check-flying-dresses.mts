@@ -4116,9 +4116,9 @@ for (const [name, slot] of Object.entries(allSlots)) {
   );
   const rentalsPage = read("src/app/flying-dresses/rentals/[slug]/page.tsx");
   ok(
-    "the rentals page renders its art without passing the credit, so a styled frame shows with " +
-      "nothing saying what is generated",
-    /credit=\{art\.credit\}/.test(rentalsPage)
+    "the rentals page renders its art without routing the credit through visibleCredit(), so " +
+      "the switch that decides whether a caption prints cannot reach it",
+    /credit=\{visibleCredit\(art\)/.test(rentalsPage)
   );
 }
 
@@ -7094,12 +7094,14 @@ ok(
   // Proven by dropping the credit from the gallery caption builder (red) and
   // by removing the Scene credit prop from the hero (red).
   ok(
-    "the creator page renders a generated scene without its credit reaching the page",
-    /credit=\{hero\.credit\}/.test(pageSrc) && /slot\.credit/.test(pageSrc)
+    "the creator page renders its frames without routing credits through visibleCredit(), so " +
+      "the switch that decides whether a caption prints cannot reach them",
+    /credit=\{visibleCredit\(hero\)/.test(pageSrc) && /visibleCredit\(e\.slot\)/.test(pageSrc)
   );
   ok(
-    "the creator page gallery intro no longer says the scenes are generated, so four art-directed images read as a portfolio of past client work",
-    /generated scenes/i.test(pageSrc)
+    "the creator page intro claims a client session for frames that are generated. It may " +
+      "describe the place; it may not describe them as work that was photographed",
+    !/\bclient session\b|\bpast campaign\b|\bwe photographed these\b/i.test(pageSrc)
   );
 
   // 12. THE PAGE IS ACTUALLY WIRED UP.
@@ -8376,6 +8378,51 @@ for (const pkg of packages) {
         "wrong place and nothing errors",
       slugs.size === 1
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// NO COMPONENT PRINTS A CREDIT WITHOUT ASKING WHETHER IT SHOULD.
+//
+// visibleCredit() in _lib/assets.ts decides what a frame's caption says: with
+// SHOW_GENERATED_CREDIT off, a generated frame prints nothing and a retouched
+// or styled one prints the real half of its credit without the AI clause. A
+// component reading `slot.credit` straight bypasses all of that.
+//
+// Which is what happened. The owner asked for the labels off, the shoot
+// pages and the gallery were changed, and the HOME PAGE and the EXPERIENCES
+// LISTING kept printing "Generated scene... Not a photograph of a client
+// session" on the White Desert and yacht cards, found only by grepping the
+// deployed HTML. Ten render sites existed; four had been looked at.
+//
+// A string search is the right shape of check here: the failure is not a
+// wrong value anywhere in the data, it is a component reaching past the
+// helper, and that is visible in the source and nowhere else.
+//
+// Proven by restoring `{art.credit}` in experiences/page.tsx: red, naming
+// the file and the line.
+{
+  const tsxFiles = readdirSync("src/app/flying-dresses", {
+    recursive: true,
+    encoding: "utf8",
+  }).filter((f) => f.endsWith(".tsx"));
+
+  for (const file of tsxFiles) {
+    const path = `src/app/flying-dresses/${file}`;
+    const body = readFileSync(path, "utf8");
+    body.split("\n").forEach((line, i) => {
+      // `visibleCredit(x)` and `credit: "..."` in a data literal are fine;
+      // reading `.credit` off a slot to render it is not.
+      if (!/\.credit\b/.test(line)) return;
+      if (/visibleCredit/.test(line)) return;
+      ok(
+        `${path}:${i + 1} reads .credit directly instead of visibleCredit(). That bypasses ` +
+          "the switch that decides whether a generated frame's caption is printed, which is " +
+          `how the White Desert and yacht cards kept their labels after they were removed ` +
+          `everywhere else:  ${line.trim().slice(0, 80)}`,
+        false
+      );
+    });
   }
 }
 

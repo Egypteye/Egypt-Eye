@@ -3,7 +3,7 @@ import { Scene } from "./Scene";
 import { FaqList } from "./FaqList";
 import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { ProposalDecorations } from "./ProposalDecorations";
-import { agency } from "../_lib/assets";
+import { agency, visibleCredit } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 // proposalPayment stays a direct import: the deposit split is a money
 // authority and is deliberately not in the Studio. Everything else on this
@@ -103,7 +103,9 @@ function galleryFrames(): GalleryFrame[] {
       // The credit travels with the photograph, as everywhere else on this
       // site. A caption that loses its attribution is how real work starts
       // looking like stock.
-      caption: entry.slot.credit ? `${entry.caption} ${entry.slot.credit}.` : entry.caption,
+      caption: visibleCredit(entry.slot)
+        ? `${entry.caption} ${visibleCredit(entry.slot)}.`
+        : entry.caption,
     }));
 }
 
@@ -166,7 +168,7 @@ export function ProposalPage({
               ratio="fd-ratio-wide"
               sizes="(min-width: 60rem) 72rem, 94vw"
               priority
-              credit={hero.credit}
+              credit={visibleCredit(hero) ?? undefined}
             />
           </div>
         </section>
