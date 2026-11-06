@@ -66,6 +66,27 @@ export const shootReels: Record<string, (ReelClip & { provenance: string })[]> =
   ),
 };
 
+/**
+ * The clips as the CLIENT component receives them: no `provenance`.
+ *
+ * ProductionReel is a client component, so whatever it is handed is
+ * serialized into the page's RSC payload and shipped to the browser. Passing
+ * the whole record put "Generated motion, art-directed by the owner" into the
+ * HTML source six times on the Fayoum page — invisible to a reader, since no
+ * caption element renders, but present to anyone reading source, and of no
+ * use to the component, which never reads the field.
+ *
+ * So the record stays on the server, where the check script reads it, and the
+ * browser gets only what it needs to play a video.
+ */
+export function clipsFor(slug: string): ReelClip[] {
+  return (shootReels[slug] ?? []).map((entry) => {
+    const { provenance, ...clip } = entry;
+    void provenance;
+    return clip;
+  });
+}
+
 export type AerialPlate = {
   mp4: string;
   poster: string;

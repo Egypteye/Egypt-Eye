@@ -15,7 +15,7 @@ import { Scene } from "../../_components/Scene";
 import { Gallery } from "../../_components/Gallery";
 import { ProductionReel } from "../../_components/ProductionReel";
 import { artFor } from "../../_lib/shootArt";
-import { shootAerial, shootReels } from "../../_lib/shootReels";
+import { clipsFor, shootAerial } from "../../_lib/shootReels";
 import { flyingDressGalleryById } from "@/content/flyingDressGalleries";
 import { getFlyingDressGallery } from "@/sanity/fetchers";
 import { hardenFlyingDressGallery } from "@/lib/sanityShape";
@@ -122,7 +122,7 @@ export default async function ExperiencePage({
   const { packageIncludes, payment, cancellation } = settings;
   const { dresses, mensOutfits } = wardrobe;
   const others = packages.filter((p) => p.slug !== pkg.slug);
-  const reels = shootReels[pkg.slug] ?? [];
+  const reels = clipsFor(pkg.slug);
   const aerial = shootAerial[pkg.slug];
   const enquiryMessage = flyingDressEnquiry({
     subject: pkg.title,
