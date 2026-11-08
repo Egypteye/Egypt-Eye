@@ -576,6 +576,13 @@ textarea {
    that reads every class used in the brand's .tsx files found this one. */
 .fd-gallery-grid {
   grid-auto-flow: row;
+  /* Cells keep their own height instead of being stretched to the tallest in
+     the row. A grid gallery renders at each photograph's natural ratio (see
+     .fd-ratio-auto), so without this a landscape frame beside a portrait one
+     is stretched to the portrait's height and the picture inside it is
+     cropped again — the exact thing the natural ratio was for. Ragged row
+     bottoms are the correct look for a mixed-orientation gallery. */
+  align-items: start;
 }
 
 /* ---- Cards for the experiences catalogue --------------------------------
@@ -1753,6 +1760,138 @@ ol.fd-beats h3::before {
   background: var(--fd-gold);
 }
 
+/* ---- A whole panel that opens one shoot -------------------------------
+   Asked for on 8 November 2026: "Make the entire photoshoot card clickable,
+   not just its title or a small button."
+
+   THE PATTERN, AND WHY IT IS NOT A WRAPPER LINK.
+   The obvious reading is to wrap the <article> in an <a>. That would put the
+   Enquire button, and the share/save controls, INSIDE a link. Nested
+   interactive elements are invalid HTML, the inner control becomes
+   unreachable for some assistive technology, and the browser's own
+   "open link in new tab" lands on whichever one it guessed. The brief rules
+   it out in as many words: avoid nested or conflicting clickable elements.
+
+   So there is still exactly one link for the card, the one that was always
+   there, and it casts its hit area over the whole panel with ::after. The
+   accessibility tree is unchanged: one link, one accessible name, reached by
+   Tab in the same place as before. Keyboard users were never the problem
+   here; pointer users clicking a photograph and getting nothing were.
+
+   Anything else interactive inside the panel is lifted above that overlay so
+   it keeps its own hit area. The selector is written as "not the main link"
+   rather than as a list of known buttons, so a control added to one of these
+   panels later is covered by default instead of being swallowed. */
+.fd-cardlink {
+  position: relative;
+}
+
+/* WHAT IS DELIBERATELY NOT HERE: A PANEL-WIDE CLICK OVERLAY.
+
+   The brief asked for the entire panel to be clickable, and the usual way to
+   do that is a stretched link: an absolutely positioned ::after (or an empty
+   span) inside the one real link, covering the whole card.
+
+   It was built, and then removed, because it could not be shown to work and
+   could be shown to do harm.
+
+     * It never received a click here. `:hover`, `elementFromPoint` and
+       `elementsFromPoint` all resolved to the link across the whole panel,
+       so from script it looked perfect, while an actual click at the same
+       coordinates dispatched to the <div> underneath. Reproduced with
+       JavaScript disabled, with every animation killed, with a painted
+       background on the overlay and at z-index 5. The same two patterns in a
+       minimal standalone page in the same browser navigated correctly, so
+       the markup is not wrong; something about this page is.
+     * A screenshot with the overlay tinted shows it painting over the whole
+       card INCLUDING the Enquire button, and with it in place the Enquire
+       button stopped navigating.
+
+   An unverifiable layer sitting on top of a working enquiry button, on a
+   site whose enquiries are the business, is a bad trade for making a
+   paragraph of body text clickable. So the panel opens the shoot by two
+   plain anchors instead — the photograph (.fd-cardlink-figure) and the
+   button — and the body text is not a click target.
+
+   If this is revisited: the thing to explain first is why a click and
+   elementFromPoint disagree on this page, not which overlay element to use.
+   Both overlay flavours are equivalent and both failed identically. */
+
+/* THE PHOTOGRAPH, AS ITS OWN LINK.
+
+   Nothing clever, which is the point: a block anchor wrapped round the
+   frame. It is the largest and most obviously clickable part of the panel
+   and the one the owner reported clicking with nothing happening, and as a
+   plain element in the normal flow it cannot be out-painted or
+   out-hit-tested by anything. Verified by clicking it with JavaScript
+   disabled, at 1440, 768 and 390 wide, on the home page and the listing.
+
+   tabIndex={-1} in the markup keeps it out of the tab order: it is the
+   second link to the same page in this panel and a keyboard user should not
+   have to pass through both. A screen reader still reaches it, announced
+   with the photograph's own description. */
+.fd-cardlink-figure {
+  display: block;
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.fd-cardlink a:not(.fd-cardlink-main),
+.fd-cardlink button,
+.fd-cardlink summary,
+.fd-cardlink [role="button"],
+.fd-cardlink input,
+.fd-cardlink label {
+  position: relative;
+  z-index: 2;
+}
+
+/* Hover belongs to the whole panel, not to the button, because the whole
+   panel is what responds to a click. */
+@media (hover: hover) {
+  .fd-cardlink:hover .fd-figure img {
+    transform: scale(1.03);
+  }
+  .fd-cardlink:hover .fd-cardlink-main {
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+}
+
+.fd-figure img {
+  transition: transform 480ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fd-figure img {
+    transition: none;
+  }
+  .fd-cardlink:hover .fd-figure img {
+    transform: none;
+  }
+}
+
+/* The focus ring goes on the PANEL, not on the link, because the link's own
+   box is a small button in the corner while its clickable area is the whole
+   card. A ring that does not outline what Enter will activate is worse than
+   no ring. */
+.fd-cardlink:focus-within {
+  outline: 2px solid var(--fd-ink);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
+
+.fd-cardlink-main:focus-visible {
+  outline: none;
+}
+
+.fd-on-dark .fd-cardlink:focus-within {
+  outline-color: var(--fd-ivory);
+}
+
 /* ---- Figures and image frames ----------------------------------------- */
 
 .fd-figure {
@@ -1761,10 +1900,36 @@ ol.fd-beats h3::before {
   background: var(--fd-sand-deep);
 }
 
+/* object-fit and object-position come from the frame rather than being fixed
+   here, because the right answer differs per photograph and only the caller
+   knows it.
+
+   `cover` stays the default: it is correct whenever the box is the shape of
+   the picture, which `.fd-ratio-auto` below makes true. Where a layout needs
+   every cell identical, the caller sets `--fd-focus` so the crop keeps the
+   subject instead of the middle — the default 50% 50% is what beheaded the
+   portrait frames in a 3:2 box. `--fd-fit: contain` is for the frames that
+   must be seen whole; the sand ground on .fd-figure is what shows around
+   them, so a contained frame reads as matted rather than broken. */
 .fd-figure img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: var(--fd-fit, cover);
+  object-position: var(--fd-focus, 50% 50%);
+}
+
+/* THE BOX TAKES THE PHOTOGRAPH'S OWN SHAPE.
+
+   Scene sets --fd-ar from the file's real width and height, so a 1050x1400
+   portrait gets a 3:4 box and `cover` has nothing left to crop. This is the
+   fix for the complaint that photographs were losing heads and dress trains:
+   they were not being cropped by a bad crop, they were being cropped by a
+   3:2 box that no portrait fits.
+
+   The 3 / 2 fallback is only reached when a frame has no pixel dimensions,
+   which for a repo slot cannot happen and for a Studio frame can. */
+.fd-ratio-auto {
+  aspect-ratio: var(--fd-ar, 3 / 2);
 }
 
 .fd-ratio-portrait {

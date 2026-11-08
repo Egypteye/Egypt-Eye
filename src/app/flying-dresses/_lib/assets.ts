@@ -100,6 +100,14 @@ export type ImageSlot = {
    * came from. Agency work keeps its attribution so a reviewer can trace it.
    */
   credit?: string;
+  /**
+   * Which part of the photograph to keep when a layout has to crop it.
+   *
+   * A CSS object-position such as "50% 30%". It is read only where the box
+   * is a fixed shape; a frame rendered at its own ratio has nothing to crop.
+   * Leave it unset unless the centred default actually loses the subject.
+   */
+  focus?: string;
   /** For an empty slot: what should go here, shown on the slot itself. */
   wanted?: string;
 };
@@ -1213,37 +1221,90 @@ export const SHOW_GENERATED_CREDIT = false;
 /**
  * The caption for a frame, or null when it should not be printed.
  *
- * Two different things happen here and they are not the same decision.
+ * ---------------------------------------------------------------------------
+ * WHY THIS IS CLAUSE-BASED AND NOT KIND-BASED
+ * ---------------------------------------------------------------------------
+ * The first version of this function switched on `kind`: "reference" printed
+ * nothing, "retouched" and "styled" had their AI clause trimmed, and anything
+ * else fell through to `return frame.credit` unchanged.
  *
- * A "reference" frame is generated outright, so with the switch off it prints
- * nothing at all.
+ * That fall-through is a loaded gun. It means the label is removed from the
+ * kinds somebody remembered to list, and printed in full by any kind they did
+ * not. A slot added later as kind:"agency" with a generated credit, or a
+ * Studio frame arriving with a kind this file has never heard of, prints
+ * "Generated scene, art-directed by the owner. Not a photograph of a client
+ * session." and no check in the repository notices, because the data is
+ * correct and the source reads `visibleCredit(...)` exactly as it should.
  *
- * A "retouched" frame is the agency's own photograph of a real session, and
- * its credit reads "Nunu and Kassy shoot, Fayoum. Retouched with generative
- * AI (Adobe Firefly)". Only the second sentence is the AI label, and only
- * that sentence is dropped: the shoot credit is a genuine attribution to real
- * customers and real work, and losing it would throw away the honest half to
- * remove the other. The full string stays in the registry either way.
+ * So the decision is made on the SENTENCE, not on the kind. A credit is split
+ * into its clauses, every clause that names generation is dropped, and what
+ * is left is the honest attribution. There is no fall-through and no kind
+ * that escapes it:
+ *
+ *   "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe
+ *    Firefly)"                               -> "Nunu and Kassy shoot, Fayoum."
+ *   "Dresses photographed from the collection; the display and setting are
+ *    generated."           -> "Dresses photographed from the collection."
+ *   "Generated scene, art-directed by the owner. Not a photograph of a
+ *    client session."                        -> null
+ *   "Milya shoot, supplied October 2026"     -> unchanged
+ *
+ * The real half is kept deliberately. "Nunu and Kassy shoot, Fayoum" is a
+ * genuine attribution to real customers and real work; dropping the whole
+ * string to remove the AI sentence would throw away the honest half to get
+ * rid of the other.
+ *
+ * WHAT IS DELIBERATELY NOT TOUCHED is `frame.credit` itself. The registry
+ * still says exactly what every file is, and check-flying-dresses.mts still
+ * reads it. This function decides what the VISITOR sees, nothing else.
  */
+
+/**
+ * A clause naming image generation, in any of the forms this registry uses.
+ *
+ * Kept narrow on purpose. "Retouched" alone is not generation (a photograph
+ * can be retouched by hand) and "art-directed" alone is not either, so
+ * neither is listed: the clauses that must go all name the generation itself
+ * or deny the photograph.
+ */
+const GENERATION_CLAUSE =
+  /\b(generated|generative|ai\b|not a photograph)/i;
+
+/**
+ * Split a credit into the clauses a reader would hear as separate statements.
+ *
+ * Sentence full stops and semicolons both count, because the registry uses
+ * both: "... . Retouched with generative AI" and "...; the display and
+ * setting are generated".
+ */
+function creditClauses(credit: string): string[] {
+  return credit
+    .split(/[.;]\s+|[.;]$/)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+}
+
 export function visibleCredit(frame: {
-  kind: string;
+  /**
+   * Accepted and deliberately NOT read.
+   *
+   * It is in the signature because every caller has one and dropping it
+   * would churn ten call sites, and it is unused because reading it is the
+   * bug this function was rewritten to remove: a decision made on `kind`
+   * only covers the kinds somebody listed. A cover uploaded in the Studio
+   * has no kind at all, which is why it is optional.
+   */
+  kind?: string;
   credit?: string;
 }): string | null {
   if (!frame.credit) return null;
   if (SHOW_GENERATED_CREDIT) return frame.credit;
-  if (frame.kind === "reference") return null;
-  if (frame.kind === "retouched" || frame.kind === "styled") {
-    // Drop the clause that names the generation, keep the one that credits
-    // the real work. "Nunu and Kassy shoot, Fayoum. Retouched with generative
-    // AI" becomes the shoot; "Dresses photographed from the collection; the
-    // display and setting are generated" becomes the dresses.
-    const realHalf = frame.credit
-      .split(/\.\s*Retouched\b|;\s*the display\b/)[0]!
-      .replace(/[.;,\s]+$/, "")
-      .trim();
-    return realHalf.length > 0 ? realHalf : null;
-  }
-  return frame.credit;
+
+  const kept = creditClauses(frame.credit).filter(
+    (clause) => !GENERATION_CLAUSE.test(clause)
+  );
+  if (kept.length === 0) return null;
+  return `${kept.join(". ")}.`;
 }
 
 /** Everything, for the check script and the asset checklist. */

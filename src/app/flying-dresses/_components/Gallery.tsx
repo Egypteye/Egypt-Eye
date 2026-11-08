@@ -42,10 +42,24 @@ import type { FlyingDressFrame } from "@/content/types";
  *      its picture because it is not typed next to it.
  *   3. Counts are derived. `ours` and `total` come off the array, so a
  *      sentence about the gallery cannot disagree with the gallery.
- *   4. Every cell is the same shape, so the baselines line up whatever the mix
- *      of real photographs and gaps happens to be.
- *   5. Landscape by default, per the owner's standing instruction: most of the
- *      photography is landscape and portrait frames make the handover harder.
+ *   4. Every cell is the same WIDTH, so the grid stays a grid. Heights follow
+ *      each photograph (see 5), and the labelled gaps take the layout's
+ *      default shape since they have no photograph to take one from.
+ *   5. EVERY FRAME RENDERS AT ITS OWN SHAPE. This reverses the rule that
+ *      stood here before ("landscape by default"), and it is reversed on the
+ *      owner's instruction of 8 November 2026: photographs were being cropped
+ *      so that heads and dress trains were cut off.
+ *
+ *      The cropping was not a bad crop. It was a 3:2 box: the shoot folders
+ *      are mostly 1050x1400 portrait, and a portrait file in a landscape box
+ *      loses a third of its height to `object-fit: cover` no matter what the
+ *      crop is. So the box takes the file's shape instead, and then there is
+ *      nothing to cut off. Rows go ragged at the bottom, which is what a
+ *      mixed-orientation gallery is supposed to look like.
+ *
+ *      Rule 4 above is what gives way: the cells are no longer the same
+ *      shape. The two rules were always in tension and the owner has said
+ *      which way it goes.
  */
 
 export type GalleryLayout = "grid" | "feature" | "strip";
@@ -62,19 +76,46 @@ const SIZES: Record<GalleryLayout, string> = {
   strip: "(min-width: 60rem) 22vw, 70vw",
 };
 
+/**
+ * The default shape of a cell, per layout.
+ *
+ * "auto" means the frame takes the photograph's own proportions and nothing
+ * is cropped. That is right for `grid`, which is what every gallery on the
+ * site uses and where the mixed portrait/landscape shoot folders live.
+ *
+ * `feature` and `strip` keep a fixed shape, and not out of caution: their
+ * layouts are built on cells being identical. The feature gallery's first
+ * cell spans two rows and two columns, which only resolves if the rows are
+ * a known height; the strip is a single row of equal-width cells where
+ * ragged heights read as a mistake rather than as a gallery. If either ever
+ * needs to stop cropping, the fix is `focus` on the frame, not "auto" here.
+ */
+const DEFAULT_RATIO: Record<GalleryLayout, string> = {
+  grid: "auto",
+  feature: "fd-ratio-landscape",
+  strip: "fd-ratio-portrait",
+};
+
 export function Gallery({
   frames,
   layout = "grid",
-  ratio = "fd-ratio-landscape",
+  ratio,
   className = "",
 }: {
   /** Registry entries, never inline paths. See _lib/assets.ts. */
   frames: FlyingDressFrame[];
   layout?: GalleryLayout;
-  /** Overridable for the rare frame that genuinely needs portrait. */
+  /**
+   * Forces one shape on every cell, overriding the layout's default.
+   *
+   * Left unset, a `grid` renders each photograph at its own proportions and
+   * crops nothing. Pass a `fd-ratio-*` class only when the section genuinely
+   * needs uniform cells, and expect to pass `focus` on the frames too.
+   */
   ratio?: string;
   className?: string;
 }) {
+  const cellRatio = ratio ?? DEFAULT_RATIO[layout];
   return (
     <div className={`fd-gallery fd-gallery-${layout} fd-reveal-group ${className}`.trim()}>
       {frames.map((frame, index) => (
@@ -84,7 +125,8 @@ export function Gallery({
             alt={frame.alt}
             width={frame.width}
             height={frame.height}
-            ratio={ratio}
+            ratio={cellRatio}
+            focus={frame.focus}
             tone="neutral"
             sizes={SIZES[layout]}
             label={frame.wanted}

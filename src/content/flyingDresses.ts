@@ -470,9 +470,35 @@ export type FlyingDressPackage = {
   whyThis: string[];
   /** What the photography looks like here — art direction for the gallery. */
   visualDirection: string;
-  /** Hero image slot. See docs/FLYING-DRESSES-ASSET-CHECKLIST.md. */
+  /**
+   * THE COVER PHOTOGRAPH FOR THIS SHOOT, WHEN THE STUDIO HAS ONE.
+   *
+   * null means "the Studio has not been given one", and the page then falls
+   * back to the registry entry in _lib/shootArt.ts. It is deliberately NOT a
+   * path typed into this file: see coverFor() in _lib/shootArt.ts for why the
+   * fallback is a registry lookup rather than a string here.
+   *
+   * See docs/FLYING-DRESSES-ASSET-CHECKLIST.md.
+   */
   image: string | null;
   imageAlt: string;
+  /**
+   * The cover's real pixel size, when it is known.
+   *
+   * Only ever set together with `image`, and only from the same source: see
+   * mergePackages() in _lib/contentMerge.ts. Describing one photograph with
+   * another's dimensions reserves the wrong box and crops the picture to fit
+   * it, which is the bug this field exists to avoid rather than cause.
+   */
+  imageWidth?: number | null;
+  imageHeight?: number | null;
+  /**
+   * Where the subject is, as a CSS object-position, from the Studio hotspot.
+   *
+   * Read only where a layout has to crop. A cover rendered at its own shape
+   * has nothing to crop and ignores this.
+   */
+  imageFocus?: string;
   /** Marks a stand-in image so a reviewer can see what still needs replacing. */
   imageIsPlaceholder: boolean;
   /** Tone for the gradient shown when `image` is null. */

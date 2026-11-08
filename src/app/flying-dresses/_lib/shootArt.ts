@@ -85,3 +85,89 @@ export function artFor(slug: string): ShootArt {
     }
   );
 }
+
+/**
+ * THE COVER PHOTOGRAPH FOR A SHOOT CARD: the Studio's, or the registry's.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THIS EXISTS BESIDE artFor()
+ * ---------------------------------------------------------------------------
+ * `shootArt` above is a map typed into the repository. That is fine as a
+ * default and wrong as the only answer: the owner works from a browser and
+ * the Vercel dashboard (CLAUDE.md §2), so "change the cover photo of the
+ * White Desert shoot" must not be a code change. It is now a file upload in
+ * the Studio, and this function is where that upload wins.
+ *
+ * ---------------------------------------------------------------------------
+ * THE ORDER, AND WHY IT IS THIS WAY ROUND
+ * ---------------------------------------------------------------------------
+ * A Studio cover REPLACES the registry entry outright, which is CLAUDE.md §3
+ * applied to a photograph: once the document has one, the file-based default
+ * is not consulted and nothing of it leaks through. In particular the
+ * registry's `credit` does not: it describes the registry's file and would be
+ * a false attribution printed under somebody else's photograph. A Studio
+ * cover carries only what Studio knows about it.
+ *
+ * `imageAlt` is the one field that can fall back, because an empty alt is an
+ * accessibility failure rather than a design choice, and the registry's alt
+ * at least describes the same shoot. The Studio field asks for one and the
+ * check script warns when a cover has none.
+ *
+ * ---------------------------------------------------------------------------
+ * PER-SHOOT INDEPENDENCE
+ * ---------------------------------------------------------------------------
+ * The lookup is keyed on the package the caller is rendering, so changing one
+ * shoot's cover cannot reach another. The no-shared-picture check in
+ * check-flying-dresses.mts still guards the registry defaults, which is where
+ * a shared picture actually came from last time: a silent per-site fallback,
+ * not an editor.
+ */
+export type ShootCover = {
+  src: string | null;
+  alt: string;
+  width?: number;
+  height?: number;
+  /** CSS object-position, from the Studio hotspot. */
+  focus?: string;
+  credit?: string;
+  wanted?: string;
+  /** True when this came from the Studio rather than from shootArt. */
+  fromStudio: boolean;
+};
+
+export function coverFor(pkg: {
+  slug: string;
+  image?: string | null;
+  imageAlt?: string;
+  imageWidth?: number | null;
+  imageHeight?: number | null;
+  imageFocus?: string;
+}): ShootCover {
+  const fallback = artFor(pkg.slug).card;
+
+  if (pkg.image) {
+    return {
+      src: pkg.image,
+      alt: pkg.imageAlt?.trim() || fallback.alt,
+      width: pkg.imageWidth ?? undefined,
+      height: pkg.imageHeight ?? undefined,
+      focus: pkg.imageFocus,
+      // No credit. See the note above: the registry's credit belongs to the
+      // registry's file, and printing it under an uploaded photograph would
+      // attribute one picture's provenance to another.
+      credit: undefined,
+      fromStudio: true,
+    };
+  }
+
+  return {
+    src: fallback.src,
+    alt: fallback.alt,
+    width: fallback.width,
+    height: fallback.height,
+    focus: fallback.focus,
+    credit: fallback.credit,
+    wanted: fallback.wanted,
+    fromStudio: false,
+  };
+}

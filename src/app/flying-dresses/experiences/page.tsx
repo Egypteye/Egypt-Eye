@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { fdPackages, fdSettings } from "../_lib/content";
 import { Scene } from "../_components/Scene";
-import { artFor } from "../_lib/shootArt";
+import { coverFor } from "../_lib/shootArt";
 import { ItemActions } from "../_components/ItemActions";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
 import { packagePriceLabel } from "@/content/flyingDresses";
@@ -55,11 +55,16 @@ export default async function ExperiencesPage() {
 
       <div className="fd-shell" style={{ display: "grid", gap: "var(--fd-section)" }}>
         {packages.map((pkg, index) => {
-          const art = artFor(pkg.slug).card;
+          const art = coverFor(pkg);
           return (
             <article
               key={pkg.slug}
-              className={`fd-split fd-reveal${index % 2 === 1 ? " fd-split-reverse" : ""}`}
+              // fd-cardlink makes the WHOLE panel open the shoot. The hit area
+              // is cast by the "Everything about X" link below, not by a
+              // wrapper <a>: wrapping would nest the Enquire button inside
+              // another link, which is invalid and makes the inner one
+              // unreachable for some assistive technology.
+              className={`fd-split fd-reveal fd-cardlink${index % 2 === 1 ? " fd-split-reverse" : ""}`}
             >
               <div>
                 <p className="fd-eyebrow">{pkg.eyebrow}</p>
@@ -80,7 +85,10 @@ export default async function ExperiencesPage() {
                 </div>
 
                 <div className="fd-actions">
-                  <Link className="fd-btn" href={fdPath(`/experiences/${pkg.slug}`)}>
+                  <Link
+                    className="fd-btn fd-cardlink-main"
+                    href={fdPath(`/experiences/${pkg.slug}`)}
+                  >
                     Everything about {pkg.name}
                   </Link>
                   <Link
@@ -98,17 +106,40 @@ export default async function ExperiencesPage() {
               </div>
 
               <figure>
+                {/* THE PHOTOGRAPH IS ITSELF A LINK.
+
+                    The panel-wide overlay below handles the dead space, but
+                    the photograph is the thing a visitor actually clicks, so
+                    it does not depend on an overlay: it is a plain anchor
+                    wrapped round the frame, which cannot be out-painted or
+                    out-hit-tested by anything.
+
+                    tabIndex={-1} keeps it out of the tab order. It is the
+                    second link to the same page in this panel and a keyboard
+                    user does not want to pass through both; a screen reader
+                    still reaches it, announced with the photograph's own
+                    description, which is worth having. */}
+                <Link
+                  className="fd-cardlink-figure"
+                  href={fdPath(`/experiences/${pkg.slug}`)}
+                  tabIndex={-1}
+                >
                 <Scene
                   src={art.src}
                   alt={art.alt}
                   width={art.width}
                   height={art.height}
-                  ratio="fd-ratio-landscape"
+                  // The cover renders at its own proportions. A Studio upload
+                  // can be any shape the owner chooses, and the shoot folders
+                  // are mostly portrait; a fixed 3:2 box cropped both.
+                  ratio="auto"
+                  focus={art.focus}
                   sizes="(min-width: 60rem) 40vw, 92vw"
                   tone={pkg.tone}
-                  label={"wanted" in art ? art.wanted : undefined}
+                  label={art.wanted}
                   drift={Boolean(art.src)}
                 />
+                </Link>
                 {visibleCredit(art) ? (
                   <figcaption className="fd-caption">{visibleCredit(art)}</figcaption>
                 ) : null}

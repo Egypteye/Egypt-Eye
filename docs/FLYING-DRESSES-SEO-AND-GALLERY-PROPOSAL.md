@@ -207,8 +207,12 @@ that keep this site honest baked in rather than left to whoever edits the page n
 - **A missing photograph renders as a labelled gap**, via `Scene`. This is the rule
   that stops temporary imagery quietly becoming indistinguishable from your real
   client work, and it must survive into the gallery.
-- **Landscape by default**, per your instruction, with portrait available where a
-  photograph genuinely needs it.
+- ~~**Landscape by default**, per your instruction, with portrait available where a
+  photograph genuinely needs it.~~ **Reversed on 8 November 2026.** Every frame in a
+  `grid` gallery now renders at its own proportions. Forcing 3:2 was cropping a third
+  off the height of every portrait photograph, which is most of the shoot folders, and
+  no crop setting fixes a box the picture does not fit. `feature` and `strip` still use
+  a fixed shape, because their layouts depend on the cells being identical.
 - **Three layouts, not infinite**: `grid` (the even wall, what the home page now
   uses), `feature` (one large frame with supporting ones), and `strip` (a horizontal
   run for a sequence). Three is enough to tell every story on this site and few

@@ -60,9 +60,10 @@ import {
   shootGenerated,
   shootPhoto,
   shootRetouched,
+  visibleCredit,
 } from "../src/app/flying-dresses/_lib/assets.js";
 import { shootAerial, shootReels } from "../src/app/flying-dresses/_lib/shootReels.js";
-import { shootArt } from "../src/app/flying-dresses/_lib/shootArt.js";
+import { coverFor, shootArt } from "../src/app/flying-dresses/_lib/shootArt.js";
 import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
@@ -159,6 +160,7 @@ import {
   mergeRevealPage,
   mergeSettings,
   mergeWardrobe,
+  hotspotToFocus,
   type FdProposalPageDoc,
   type FdRateCardDoc,
   type FdRevealPageDoc,
@@ -8424,6 +8426,340 @@ for (const pkg of packages) {
       );
     });
   }
+}
+
+// ---------------------------------------------------------------------------
+// NO CAPTION THE VISITOR SEES NAMES IMAGE GENERATION, WHATEVER THE KIND IS.
+//
+// The source scan above proves every component asks visibleCredit(). This
+// proves visibleCredit() actually answers correctly, which is a different
+// claim and the one that was false.
+//
+// visibleCredit() used to switch on `kind`: "reference" printed nothing,
+// "retouched" and "styled" were trimmed, and EVERYTHING ELSE fell through to
+// `return frame.credit` unchanged. So the label was removed from the kinds
+// that had been listed and printed in full by any kind that had not — a slot
+// added later as kind:"agency" with a generated credit, or a Studio frame
+// with a kind this repo has never seen, would print "Generated scene,
+// art-directed by the owner. Not a photograph of a client session." with the
+// source scan green and the data entirely correct.
+//
+// This check does not care about kind, which is the whole point: it runs the
+// real function over every slot in the registry and reads what comes out.
+//
+// Proven by restoring the kind switch's fall-through (`return frame.credit`
+// for an unlisted kind) and setting one generated slot to kind:"agency":
+// red, naming the slot and the words that leaked.
+{
+  const bannedInCaption = /\b(generated|generative|\bAI\b|not a photograph)/i;
+
+  for (const [name, slot] of Object.entries(allSlots)) {
+    if (!slot.credit) continue;
+    const shown = visibleCredit(slot);
+    if (shown === null) continue;
+    const hit = shown.match(bannedInCaption);
+    ok(
+      `allSlots.${name}: visibleCredit() returns a caption that still names generation ` +
+        `(${hit ? `"${hit[0]}"` : ""}). The owner asked on 5 November 2026 for generated ` +
+        `imagery to carry no visible label; the registry keeps the full record in .credit, ` +
+        `but this is the string the visitor reads: ${JSON.stringify(shown)}`,
+      hit === null
+    );
+
+    // And the honest half must survive. Dropping the whole credit to get rid
+    // of the AI sentence would throw away a real attribution to real
+    // customers, which is the opposite mistake and just as wrong.
+    const hasRealHalf = slot.credit
+      .split(/[.;]\s+|[.;]$/)
+      .map((c) => c.trim())
+      .some((c) => c.length > 0 && !bannedInCaption.test(c));
+    ok(
+      `allSlots.${name}: the credit ${JSON.stringify(slot.credit)} has a real attribution in ` +
+        `it, but visibleCredit() printed nothing. The AI clause is what goes, not the ` +
+        `credit to the people in the photograph`,
+      !hasRealHalf || shown.length > 0
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// A SHOOT COVER IS NOT CROPPED TO A SHAPE IT IS NOT.
+//
+// Asked for on 8 November 2026: photographs were losing heads and dress
+// trains. The cause was not a bad crop, it was the box. Every cover was
+// rendered at ratio="fd-ratio-landscape" (3:2) while the shoot folders are
+// mostly 1050x1400 portrait, and `object-fit: cover` then removed a third of
+// the height. ratio="auto" gives the box the photograph's own proportions, so
+// there is nothing left to cut off.
+//
+// Checked as a string in the source because that is where the mistake lives:
+// the data is right, the CSS is right, and a page passing the wrong constant
+// renders a healthy-looking cropped picture that nothing else notices.
+//
+// Proven by putting ratio="fd-ratio-landscape" back on the home page's cover:
+// red, naming the file.
+{
+  const coverSites: [string, string][] = [
+    ["src/app/flying-dresses/page.tsx", "the home page's shoot panels"],
+    ["src/app/flying-dresses/experiences/page.tsx", "the experiences listing"],
+    ["src/app/flying-dresses/experiences/[slug]/page.tsx", "the shoot's own page"],
+  ];
+  for (const [file, where] of coverSites) {
+    const body = readFileSync(file, "utf8");
+    // The cover is whatever Scene is handed next to a `focus=` prop; that
+    // pairing is what marks a frame as one of these rather than a decorative
+    // image elsewhere on the page.
+    const blocks = body.split("<Scene").slice(1);
+    for (const block of blocks) {
+      const head = block.slice(0, block.indexOf("/>") + 1);
+      if (!/focus=\{/.test(head)) continue;
+      ok(
+        `${file}: ${where} renders a cover with a fixed ratio. A 3:2 box crops a portrait ` +
+          `photograph by a third of its height whatever the crop is, which is what cut the ` +
+          `tops off the dresses. Use ratio="auto" so the box takes the photograph's shape`,
+        /ratio="auto"/.test(head)
+      );
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// CLICKING A SHOOT'S PHOTOGRAPH OPENS THAT SHOOT.
+//
+// Asked for on 8 November 2026: "Make the entire photoshoot card clickable,
+// not just its title or a small button." The photograph is the part a visitor
+// actually clicks and the part that did nothing.
+//
+// It is a plain <Link> wrapped round the frame rather than an overlay. The
+// overlay version (a stretched link) was built first and removed; the long
+// note on .fd-cardlink in brand.css records why, and the short version is
+// that it could not be shown to receive a click and did stop the Enquire
+// button working. So what is checked here is the boring mechanism, in both
+// halves: the markup wraps the frame, and the stylesheet knows the class.
+//
+// Proven by removing the <Link> wrapper from the home page's figure: red.
+// And by deleting the .fd-cardlink-figure rule from brand.css: red.
+{
+  const css = readFileSync("src/app/flying-dresses/brand.css", "utf8");
+
+  ok(
+    "brand.css has no .fd-cardlink-figure rule, so the link around each shoot photograph is " +
+      "an inline element the size of its text rather than a block the size of the picture",
+    /\.fd-cardlink-figure\s*\{[^}]*display:\s*block/m.test(css)
+  );
+  ok(
+    "brand.css gives the photograph link no pointer cursor, so nothing tells a visitor the " +
+      "picture is a link",
+    /\.fd-cardlink-figure\s*\{[^}]*cursor:\s*pointer/m.test(css)
+  );
+  ok(
+    "brand.css gives the shoot panel no visible keyboard focus. The link's own focus ring " +
+      "outlines a small button while the panel is what responds, so the ring belongs on the " +
+      "panel",
+    /\.fd-cardlink:focus-within\s*\{[^}]*outline/m.test(css)
+  );
+  ok(
+    "brand.css does not lift the panel's other controls above the photograph link. Enquire, " +
+      "share and save must keep their own hit areas",
+    /\.fd-cardlink a:not\(\.fd-cardlink-main\)/.test(css)
+  );
+
+  for (const file of [
+    "src/app/flying-dresses/page.tsx",
+    "src/app/flying-dresses/experiences/page.tsx",
+  ]) {
+    const body = readFileSync(file, "utf8");
+    ok(
+      `${file}: the shoot panels are not marked fd-cardlink, so the hover and focus treatment ` +
+        `has nothing to hang on`,
+      /fd-cardlink(?![-a-z])/.test(body)
+    );
+    ok(
+      `${file}: the shoot photograph is not wrapped in a link. Clicking the picture is what ` +
+        `the owner reported doing and getting nothing, and it is the largest target on the ` +
+        `panel`,
+      /className="fd-cardlink-figure"/.test(body)
+    );
+    // The wrapper must point at the shoot, not at some other page, and must
+    // stay out of the tab order so the panel does not cost two tab stops.
+    const wrapper = body.slice(body.indexOf('className="fd-cardlink-figure"'));
+    ok(
+      `${file}: the link around the photograph does not point at /experiences/<slug>`,
+      /href=\{fdPath\(`\/experiences\/\$\{pkg\.slug\}`\)\}/.test(wrapper.slice(0, 220))
+    );
+    ok(
+      `${file}: the link around the photograph is in the tab order. It is the second link to ` +
+        `the same page in this panel, so a keyboard user would pass through both`,
+      /tabIndex=\{-1\}/.test(wrapper.slice(0, 260))
+    );
+    ok(
+      `${file}: nothing carries fd-cardlink-main, so the panel's own button is not marked and ` +
+        `the hover treatment cannot find it`,
+      /fd-cardlink-main/.test(body)
+    );
+  }
+
+  // The overlay is gone on purpose. If somebody re-adds one without resolving
+  // why a click and elementFromPoint disagreed on this page, they will break
+  // the Enquire button again exactly as before.
+  for (const file of [
+    "src/app/flying-dresses/page.tsx",
+    "src/app/flying-dresses/experiences/page.tsx",
+  ]) {
+    ok(
+      `${file}: a panel-wide click overlay is back. One was removed on 8 November 2026 because ` +
+        `it painted over the Enquire button and stopped it navigating, while never receiving a ` +
+        `click itself. Read the note on .fd-cardlink in brand.css before re-adding one`,
+      !/fd-cardlink-hit/.test(readFileSync(file, "utf8"))
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// A COVER UPLOADED IN THE STUDIO WINS, AND BRINGS NOTHING OF THE OLD ONE.
+//
+// CLAUDE.md §2: the owner has no terminal. "Change the cover photograph of
+// the White Desert shoot" has to be a file upload, not a commit. coverFor()
+// is where that upload beats the hardcoded map in _lib/shootArt.ts.
+//
+// The second half matters as much as the first. A Studio cover must not
+// inherit the registry entry's `credit`: that string describes the registry's
+// FILE, and printing it under a photograph the owner uploaded would attribute
+// one picture's provenance to another. That is the same class of mistake as
+// the shared-picture fallback, in the one field where it is a false claim
+// rather than a wrong image.
+//
+// Proven by making coverFor() return the fallback credit for a Studio cover:
+// red, quoting the credit it would have printed.
+{
+  const uploaded = coverFor({
+    slug: "white-desert",
+    image: "https://cdn.sanity.io/images/x/y/uploaded-by-the-owner.jpg",
+    imageAlt: "A dress among the chalk formations",
+    imageWidth: 1600,
+    imageHeight: 2000,
+    imageFocus: "40% 25%",
+  });
+  ok(
+    "coverFor() ignored a Studio cover and used the hardcoded one. The owner changes a " +
+      "cover photograph by uploading it, and nothing in the frontend may outrank that",
+    uploaded.src === "https://cdn.sanity.io/images/x/y/uploaded-by-the-owner.jpg"
+  );
+  ok(
+    "coverFor() dropped the Studio cover's dimensions. Without them the frame has no shape " +
+      "to take and falls back to a fixed box, which crops the upload",
+    uploaded.width === 1600 && uploaded.height === 2000
+  );
+  ok(
+    "coverFor() dropped the Studio hotspot. It is the only way the owner can say which part " +
+      "of a cover survives where something has to be cropped",
+    uploaded.focus === "40% 25%"
+  );
+  ok(
+    `coverFor() carried the registry's credit onto an uploaded photograph ` +
+      `(${JSON.stringify(uploaded.credit)}). That credit describes a different file, and ` +
+      `printing it here attributes one picture's provenance to another`,
+    uploaded.credit === undefined
+  );
+
+  // And with no upload, nothing changes: the registry entry is still the
+  // cover, credit and all.
+  const fallback = coverFor({ slug: "white-desert" });
+  ok(
+    "coverFor() returned no cover for a shoot with no Studio upload. The hardcoded map is " +
+      "still the default and removing an upload must fall back to it, not to an empty slot",
+    fallback.src === shootArt["white-desert"]!.card.src && fallback.fromStudio === false
+  );
+
+  // Independence. Changing one shoot's cover must not reach another.
+  const other = coverFor({ slug: "fayoum", image: "https://cdn.sanity.io/images/x/y/only-fayoum.jpg" });
+  ok(
+    "coverFor() let one shoot's Studio cover leak into another's. Each shoot's cover is its " +
+      "own document field and they cannot be allowed to share",
+    other.src !== coverFor({ slug: "white-desert" }).src
+  );
+
+  // An upload with no alt text still gets one. An empty alt is an
+  // accessibility failure, and the registry's alt describes the same shoot.
+  const noAlt = coverFor({ slug: "white-desert", image: "https://cdn.sanity.io/x.jpg" });
+  ok(
+    "coverFor() returned an empty alt for an uploaded cover. Falling back to the shoot's " +
+      "existing description is wrong only if it is missing too",
+    noAlt.alt.trim().length > 0
+  );
+}
+
+// ---------------------------------------------------------------------------
+// THE WHOLE CHAIN FROM THE STUDIO UPLOAD TO THE RENDERED FRAME.
+//
+// coverFor() is tested above against a package object. This tests the step
+// BEFORE it: that mergePackages() actually builds that object out of a Sanity
+// document, with the URL, the dimensions and the hotspot all arriving
+// together.
+//
+// It is a separate check because that is where the last four of these broke.
+// `partyPricing` and `tourItinerary` were simply missing from the object
+// mergePackages() returns, type checking passed because both are optional on
+// FlyingDressPackage, and the owner's $75 Fayoum tour had never rendered in
+// production. Three new optional fields on the same object is the same trap
+// laid again, so it gets a check that reads the output rather than the type.
+//
+// Proven by deleting imageWidth from the merged object: red.
+{
+  const doc = {
+    slug: "fayoum",
+    name: null, title: null, eyebrow: null, order: null, priceUsd: null,
+    durationNote: null, eyeSlug: null, priceStoryHeading: null, priceStoryBody: null,
+    intro: null, metaDescription: null, whyThis: null, gettingThere: null,
+    visualDirection: null,
+    imageUrl: "https://cdn.sanity.io/images/x/y/cover.jpg",
+    imageWidth: 1200,
+    imageHeight: 1600,
+    imageHotspotX: 0.5,
+    imageHotspotY: 0.25,
+    imageAlt: "A dress on the Fayoum dunes",
+    tone: "fayoum",
+    timeline: null, faqs: null,
+  };
+  const merged = mergePackages([doc])[0]!;
+
+  ok(
+    "mergePackages() dropped the Studio cover's URL, so uploading one in the Studio would " +
+      "change nothing on the site",
+    merged.image === "https://cdn.sanity.io/images/x/y/cover.jpg"
+  );
+  ok(
+    `mergePackages() dropped the cover's pixel size (${merged.imageWidth}x${merged.imageHeight}). ` +
+      "Without it the frame has no shape to take and falls back to a fixed box, which crops " +
+      "the upload and shifts the layout as it loads",
+    merged.imageWidth === 1200 && merged.imageHeight === 1600
+  );
+  ok(
+    `mergePackages() did not turn the Studio hotspot into a focal point (${merged.imageFocus}). ` +
+      "Expected \"50% 25%\" from x=0.5 y=0.25",
+    merged.imageFocus === "50% 25%"
+  );
+
+  // And the dimensions must not be taken from the content file while the URL
+  // comes from Studio: that describes one photograph with another's shape.
+  const urlOnly = mergePackages([{ ...doc, imageWidth: null, imageHeight: null, imageHotspotX: null, imageHotspotY: null }])[0]!;
+  ok(
+    "mergePackages() filled a Studio cover's missing dimensions from the content file. Those " +
+      "numbers belong to a different photograph; reserving that box and fitting this picture " +
+      "into it is the cropping bug, not a fallback",
+    urlOnly.imageWidth === null && urlOnly.imageHeight === null && urlOnly.imageFocus === undefined
+  );
+
+  // Half a hotspot is not a hotspot.
+  ok(
+    "hotspotToFocus() accepted a half-written hotspot. Sanity writes x and y together, and " +
+      "centring one axis while honouring the other looks deliberate and is not",
+    hotspotToFocus(0.5, null) === undefined && hotspotToFocus(null, 0.5) === undefined
+  );
+  ok(
+    "hotspotToFocus() does not clamp out-of-range coordinates to the frame",
+    hotspotToFocus(-1, 2) === "0% 100%"
+  );
 }
 
 if (errors.length > 0) {

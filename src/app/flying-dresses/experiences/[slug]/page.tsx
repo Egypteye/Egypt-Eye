@@ -14,7 +14,7 @@ import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
 import { Gallery } from "../../_components/Gallery";
 import { ProductionReel } from "../../_components/ProductionReel";
-import { artFor } from "../../_lib/shootArt";
+import { artFor, coverFor } from "../../_lib/shootArt";
 import { clipsFor, shootAerial } from "../../_lib/shootReels";
 import { flyingDressGalleryById } from "@/content/flyingDressGalleries";
 import { getFlyingDressGallery } from "@/sanity/fetchers";
@@ -112,6 +112,11 @@ export default async function ExperiencePage({
   if (!pkg) notFound();
 
   const art = artFor(pkg.slug);
+  // The Studio cover, when the owner has uploaded one, is the hero here too:
+  // "the cover photo of this shoot" means one photograph, not one for the
+  // card and a different one at the top of its own page. With no Studio
+  // cover this is the registry's hero and nothing changes.
+  const hero = coverFor(pkg);
   const [settings, addOns, wardrobe, packages, gallery] = await Promise.all([
     fdSettings(),
     fdAddOns(),
@@ -193,18 +198,21 @@ export default async function ExperiencePage({
 
             <figure>
               <Scene
-                src={art.hero.src}
-                alt={art.hero.alt}
-                width={art.hero.width}
-                height={art.hero.height}
-                ratio="fd-ratio-landscape"
+                src={hero.src}
+                alt={hero.alt}
+                width={hero.width}
+                height={hero.height}
+                // The shoot folders are mostly 1050x1400 portrait. Forcing
+                // 3:2 here is what cut the tops off the dresses.
+                ratio="auto"
+                focus={hero.focus}
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone={pkg.tone}
-                label={"wanted" in art.hero ? art.hero.wanted : undefined}
+                label={hero.wanted}
                 priority
               />
-              {visibleCredit(art.hero) ? (
-                <figcaption className="fd-caption">{visibleCredit(art.hero)}</figcaption>
+              {visibleCredit(hero) ? (
+                <figcaption className="fd-caption">{visibleCredit(hero)}</figcaption>
               ) : null}
             </figure>
           </div>
@@ -375,7 +383,10 @@ export default async function ExperiencePage({
                 alt={art.detail.alt}
                 width={art.detail.width}
                 height={art.detail.height}
-                ratio="fd-ratio-landscape"
+                // The shoot folders are mostly 1050x1400 portrait. Forcing
+                // 3:2 here is what cut the tops off the dresses.
+                ratio="auto"
+                focus={art.detail.focus}
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone={pkg.tone}
                 label={"wanted" in art.detail ? art.detail.wanted : undefined}
