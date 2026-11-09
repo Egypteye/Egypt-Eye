@@ -609,6 +609,22 @@ const AGENCY_WORK = new Set([
   "/photos/flying-dresses/shoots/photo/fayoum-10.jpg",
   "/photos/flying-dresses/shoots/photo/fayoum-11.jpg",
   "/photos/flying-dresses/shoots/photo/fayoum-12.jpg",
+  // THE TWO REAL COVER FRAMES the owner sent on 9 November 2026, one per
+  // shoot, to replace the covers that were there. Admitted here because
+  // their bytes carry no generative claim: an EXIF block, no C2PA manifest,
+  // no trainedAlgorithmicMedia, no named generator.
+  //
+  //   fayoum-cover    XMP "Adobe Photoshop 25.11 (Macintosh)", created
+  //                   2024-07-03T19:53:43+03:00, dc:rights "MARS" — the
+  //                   owner's own copyright, and the frame carries their
+  //                   Egypt_eye watermark.
+  //   rooftop-cover   EXIF block and an Adobe RGB profile, no generator.
+  //
+  // The third frame from the same message is NOT here and never will be: it
+  // arrived as an OpenAI-signed PNG and is kind:"reference" under
+  // /generated/. One message, two destinations, decided by the bytes.
+  "/photos/flying-dresses/shoots/photo/fayoum-cover.jpg",
+  "/photos/flying-dresses/shoots/photo/pyramids-rooftop-cover.jpg",
   "/photos/flying-dresses/wardrobe-lineup.jpg",
   "/photos/flying-dresses/fayoum-black.jpg",
 

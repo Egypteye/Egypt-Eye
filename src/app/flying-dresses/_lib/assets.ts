@@ -785,6 +785,36 @@ export const wardrobeLineup = slot({
  * and the group slot were checked at full resolution and carry none.
  */
 export const shootPhoto = {
+  /**
+   * THE THREE COVER FRAMES THE OWNER CHOSE ON 9 NOVEMBER 2026, one per
+   * shoot. Two of them are here; the third is generated and lives in
+   * shootGenerated below, which is the only reason it is not beside them.
+   *
+   * Both of these carry an EXIF block and no generative claim of any kind:
+   * no C2PA manifest, no trainedAlgorithmicMedia, no named generator. The
+   * Fayoum frame's XMP reads "Adobe Photoshop 25.11 (Macintosh)", created
+   * 2024-07-03T19:53:43+03:00 — Egypt summer time — with dc:rights "MARS",
+   * the owner's own copyright. The rooftop frame carries an EXIF block and
+   * an Adobe RGB profile with no generator anywhere in its bytes. Checked
+   * against the uploads before conversion; the byte guard in
+   * check-flying-dresses.mts re-checks the published files on every run.
+   */
+  fayoumCover: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-cover.jpg",
+    alt: "A red flying dress with a long train spread across a dune above the turquoise lakes of Fayoum",
+    width: 1800,
+    height: 1200,
+    credit: "Fayoum session, supplied by the owner",
+  }),
+  pyramidsRooftopCover: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/pyramids-rooftop-cover.jpg",
+    alt: "A gold flying dress fanned across a Giza rooftop at sunrise with all three pyramids behind",
+    width: 1800,
+    height: 1200,
+    credit: "Rooftop shoot, supplied by the owner",
+  }),
   fayoumHero: slot({
     kind: "agency",
     src: "/photos/flying-dresses/shoots/photo/fayoum-hero.jpg",
@@ -1026,6 +1056,35 @@ export const shootRetouched = {
  * checker can enforce rather than in a comment.
  */
 export const shootGenerated = {
+  /**
+   * THE WHITE DESERT COVER the owner chose on 9 November 2026.
+   *
+   * It is in THIS object, not in shootPhoto beside the other two covers they
+   * sent in the same message, because its bytes say so. The upload was a PNG
+   * carrying a C2PA manifest signed by OpenAI Media Service: c2pa.created
+   * with digitalSourceType trainedAlgorithmicMedia, softwareAgent
+   * "gpt-image", plus a c2pa.watermarked assertion. It is a generated image,
+   * not a photograph of a client session, and 1536x1024 is a gpt-image
+   * output size.
+   *
+   * The manifest itself does not survive here: C2PA in a PNG is carried in a
+   * caBX chunk and crossing to JPEG destroys it, which is true of every
+   * generated frame in this directory. That is exactly why the record lives
+   * in `kind` and in the directory rather than in the file — see the
+   * directory/kind pinning check in check-flying-dresses.mts, which fails if
+   * anything in /generated/ claims to be anything but kind:"reference".
+   *
+   * Replacing the previous White Desert cover with this one changes nothing
+   * about what the site claims: that one was generated too.
+   */
+  whiteDesertCover: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-cover.jpg",
+    alt: "A deep blue flying dress with a long train across a white chalk formation in the White Desert",
+    width: 1536,
+    height: 1024,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
   fayoumGenerated1: slot({
     kind: "reference",
     src: "/photos/flying-dresses/shoots/generated/fayoum-1.jpg",

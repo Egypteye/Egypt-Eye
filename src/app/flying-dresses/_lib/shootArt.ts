@@ -46,13 +46,16 @@ export const shootArt: Record<string, ShootArt> = {
     detail: agency.fayoumDress,
   },
   "pyramids-rooftop": {
-    card: agency.rooftopPortrait,
-    hero: agency.rooftopPortrait,
+    // Cover chosen by the owner, 9 November 2026.
+    card: shootPhoto.pyramidsRooftopCover,
+    hero: shootPhoto.pyramidsRooftopCover,
     detail: location.gizaPlateau,
   },
   fayoum: {
-    card: shootPhoto.fayoumHero,
-    hero: shootPhoto.fayoumHero,
+    // Cover chosen by the owner, 9 November 2026. fayoumHero, which was the
+    // cover until now, stays in the registry and in the gallery.
+    card: shootPhoto.fayoumCover,
+    hero: shootPhoto.fayoumCover,
     detail: shootPhoto.fayoumGroup,
   },
   "red-sea-yacht": {
@@ -61,8 +64,10 @@ export const shootArt: Record<string, ShootArt> = {
     detail: shootGenerated.redSeaYachtDetail,
   },
   "white-desert": {
-    card: shootGenerated.whiteDesertHero,
-    hero: shootGenerated.whiteDesertHero,
+    // Cover chosen by the owner, 9 November 2026. Generated, like the one it
+    // replaces: see the note on whiteDesertCover in _lib/assets.ts.
+    card: shootGenerated.whiteDesertCover,
+    hero: shootGenerated.whiteDesertCover,
     detail: shootGenerated.whiteDesertDetail,
   },
 };
