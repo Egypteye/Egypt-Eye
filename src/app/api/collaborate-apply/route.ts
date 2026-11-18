@@ -5,6 +5,7 @@ import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { sendEmail } from "@/lib/email/resend";
 import { collaborationApplicationEmail } from "@/lib/email/templates";
+import { collaborationRecipient } from "@/lib/email/recipients";
 
 // Receives a submission from the "Collaborate With Egypt Eye" creator
 // application form (/collaborate). Unlike Travel Agent applications, this
@@ -113,7 +114,14 @@ export async function POST(request: NextRequest) {
       collaborationType,
       reviewUrl: `${SITE_URL}/admin/collaborations/${data.id}`,
     });
-    await sendEmail({ to: site.contact.email, subject, html, text, replyTo: email });
+    // Collaborations, not Reservations — see src/lib/email/recipients.ts.
+    await sendEmail({
+      to: collaborationRecipient(site.contact),
+      subject,
+      html,
+      text,
+      replyTo: email,
+    });
   }
 
   return NextResponse.json({ ok: true });

@@ -142,6 +142,13 @@ export const siteSettings = defineType({
         defineField({ name: "email", title: "Email", type: "string" }),
         defineField({ name: "whatsapp", title: "WhatsApp (display)", type: "string" }),
         defineField({ name: "whatsappLink", title: "WhatsApp link (https://wa.me/...)", type: "url" }),
+        defineField({
+          name: "collaborationsEmail",
+          title: "Collaborations email",
+          type: "string",
+          description:
+            "Where creator collaboration applications from /collaborate are sent — the Collaborations team, not Reservations. Everything else on the site still goes to the Email above. Change it here and it takes effect on the next page load; no deploy needed.",
+        }),
       ],
     }),
 

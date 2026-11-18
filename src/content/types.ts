@@ -973,6 +973,13 @@ export type ResolvedSiteSettings = {
     email: string;
     whatsapp: string;
     whatsappLink: string;
+    /**
+     * The Collaborations team's inbox. Creator applications from /collaborate
+     * go here instead of the general `email`, which is Reservations. Optional:
+     * when it is absent or blank, collaborationRecipient() falls back to
+     * `email` rather than dropping the submission.
+     */
+    collaborationsEmail?: string;
   };
   // Who the customer is actually contracting with. Egypt Eye holds no
   // tourism licence of its own — it works under a larger licensed agency,
