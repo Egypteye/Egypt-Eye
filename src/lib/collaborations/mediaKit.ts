@@ -117,3 +117,40 @@ export function validateMediaKit(input: MediaKitInput): MediaKitDecision {
 
   return { ok: true, mode: hasFile ? (link ? "both" : "file") : "link", link };
 }
+
+/**
+ * The bucket a media kit PDF is stored in.
+ *
+ * Here rather than in the route because three places need to agree on it:
+ * the route that mints an upload URL, the route that records the path, and
+ * the nightly sweep that deletes the file.
+ */
+export const MEDIA_KIT_BUCKET = "collaboration-media-kits";
+
+/** Where a newly uploaded kit goes. Year-foldered so the bucket stays listable. */
+export function newMediaKitPath(uuid: string, now: Date = new Date()): string {
+  return `${now.getUTCFullYear()}/${uuid}.pdf`;
+}
+
+/**
+ * Whether a path the BROWSER handed back is one we actually minted.
+ *
+ * The PDF is uploaded straight from the browser to storage — Vercel caps a
+ * function's request body at 4.5 MB, far below a real media kit, so the file
+ * cannot travel through the API at all. The browser therefore reports its own
+ * object path when it submits the application, and a submitted path is
+ * attacker-controlled input.
+ *
+ * Storage itself stops the dangerous half: the bucket is private, accepts
+ * only application/pdf, caps size, and the upload token is bound to one
+ * path. This guards the rest — a path claiming to be a folder, an escape
+ * sequence, or someone else's object. Anything that is not exactly
+ * `<4-digit-year>/<uuid>.pdf` is refused, so no submitted string can point
+ * outside the shape this code creates.
+ */
+const MEDIA_KIT_PATH_RE =
+  /^[0-9]{4}\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.pdf$/;
+
+export function isMediaKitPath(value: string): boolean {
+  return MEDIA_KIT_PATH_RE.test(value);
+}

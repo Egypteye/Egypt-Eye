@@ -1,8 +1,10 @@
 "use client";
 
 import { useState, type ChangeEvent, type FormEvent } from "react";
+import { createClient } from "@/lib/supabase/client";
 import {
   validateMediaKit,
+  MEDIA_KIT_BUCKET,
   MEDIA_KIT_MAX_LABEL,
   MEDIA_KIT_MIME,
 } from "@/lib/collaborations/mediaKit";
@@ -103,14 +105,40 @@ export function CollaborateForm() {
       return;
     }
 
-    // Multipart, so the PDF goes with the application. The social rows are
-    // built in React state rather than by the browser, so they travel as one
-    // JSON field; everything else is already in the FormData.
     form.set("socialAccounts", JSON.stringify(validSocials));
+    // The file never goes to our API: Vercel rejects a request body over
+    // 4.5 MB before any of our code runs, and media kits are routinely
+    // larger. It goes straight to storage instead, and only the resulting
+    // path is submitted with the application.
     form.delete("mediaKitFile");
-    if (mediaKitFile) form.set("mediaKitFile", mediaKitFile);
 
     setStatus("sending");
+
+    if (mediaKitFile) {
+      try {
+        const res = await fetch("/api/collaborate-apply/upload-url", { method: "POST" });
+        if (!res.ok) throw new Error("no upload url");
+        const { path, token } = (await res.json()) as { path: string; token: string };
+        const { error: uploadError } = await createClient()
+          .storage.from(MEDIA_KIT_BUCKET)
+          .uploadToSignedUrl(path, token, mediaKitFile, { contentType: MEDIA_KIT_MIME });
+        if (uploadError) throw uploadError;
+        form.set("mediaKitPath", path);
+      } catch {
+        // The link, if they gave one, is still a complete media kit, so the
+        // application is worth sending. With no link there is nothing to
+        // send: say so rather than submitting an application the team
+        // cannot act on.
+        if (!mediaKit.link) {
+          setErrorMessage(
+            tr("We couldn't upload that file. Please try again, or paste a link to your media kit instead.")
+          );
+          setStatus("idle");
+          return;
+        }
+      }
+    }
+
     try {
       const res = await fetch("/api/collaborate-apply", { method: "POST", body: form });
       if (!res.ok) {

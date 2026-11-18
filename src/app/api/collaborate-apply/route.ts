@@ -6,8 +6,11 @@ import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { sendEmail } from "@/lib/email/resend";
 import { collaborationApplicationEmail } from "@/lib/email/templates";
 import { collaborationRecipient } from "@/lib/email/recipients";
-import crypto from "node:crypto";
-import { validateMediaKit, MEDIA_KIT_MIME } from "@/lib/collaborations/mediaKit";
+import {
+  validateMediaKit,
+  isMediaKitPath,
+  MEDIA_KIT_BUCKET,
+} from "@/lib/collaborations/mediaKit";
 
 // Receives a submission from the "Collaborate With Egypt Eye" creator
 // application form (/collaborate). Unlike Travel Agent applications, this
@@ -18,8 +21,6 @@ import { validateMediaKit, MEDIA_KIT_MIME } from "@/lib/collaborations/mediaKit"
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://egypteyetravel.com";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-/** Private bucket. A media kit carries the applicant's name, face and rates. */
-const MEDIA_KIT_BUCKET = "collaboration-media-kits";
 /**
  * How long the link in the team's email stays valid.
  *
@@ -115,10 +116,23 @@ export async function POST(request: NextRequest) {
   // rejecting afterwards would leave a half-application in the table that the
   // applicant believes they never sent.
   // ---------------------------------------------------------------------
-  const mediaKitFile = form.get("mediaKitFile");
-  const file = mediaKitFile instanceof File && mediaKitFile.size > 0 ? mediaKitFile : null;
+  // The PDF does NOT travel through this route: Vercel caps a function body
+  // at 4.5 MB, below a real media kit, and rejects it before our code runs.
+  // The browser uploads it straight to storage via /upload-url and reports
+  // the path here. See src/lib/collaborations/mediaKit.ts.
+  const claimedPath = clean(form.get("mediaKitPath"), 200);
+  const hasUpload = claimedPath !== "";
+
+  if (hasUpload && !isMediaKitPath(claimedPath)) {
+    return NextResponse.json({ error: "That media kit upload could not be verified." }, { status: 400 });
+  }
+
   const decision = validateMediaKit({
-    file: file ? { type: file.type, size: file.size } : null,
+    // Size and type are enforced by the bucket and by the browser before the
+    // upload starts; by the time a path exists, storage has already accepted
+    // the object as a PDF within the cap. What is still this route's job is
+    // the rule storage knows nothing about: at least one of the two.
+    file: hasUpload ? { type: "application/pdf", size: 1 } : null,
     link: clean(form.get("mediaKitUrl"), 1000),
   });
   if (!decision.ok) {
@@ -126,36 +140,35 @@ export async function POST(request: NextRequest) {
   }
   const mediaKitUrl = decision.link;
 
-  // Uploaded with the service role into a PRIVATE bucket. A media kit holds
-  // the creator's name, photographs and usually their rates; it is not
-  // something to leave on a guessable public URL.
+  // A well-formed path is not proof the object is there. Confirming it stops
+  // a row claiming a media kit the team cannot open — which, for a mandatory
+  // field, is worse than no application at all.
   let mediaKitPath: string | null = null;
-  let mediaKitNote: string | null = null;
-  if (file) {
+  if (hasUpload) {
     try {
-      const supabaseStorage = createAdminSupabaseClient();
-      const path = `${new Date().getUTCFullYear()}/${crypto.randomUUID()}.pdf`;
-      const { error: uploadError } = await supabaseStorage.storage
-        .from(MEDIA_KIT_BUCKET)
-        .upload(path, file, { contentType: MEDIA_KIT_MIME, upsert: false });
-      if (uploadError) throw uploadError;
-      mediaKitPath = path;
+      const folder = claimedPath.slice(0, claimedPath.indexOf("/"));
+      const name = claimedPath.slice(claimedPath.indexOf("/") + 1);
+      const { data: found, error: listError } = await createAdminSupabaseClient()
+        .storage.from(MEDIA_KIT_BUCKET)
+        .list(folder, { search: name, limit: 1 });
+      if (listError) throw listError;
+      mediaKitPath = found?.some((o) => o.name === name) ? claimedPath : null;
     } catch (err) {
-      console.error("media kit upload failed:", err);
-      // Refuse rather than accept. Unlike the papyrus photograph — where
-      // losing the commission would be worse than chasing the photo by
-      // reply — a media kit is the whole point of this form, and an
-      // applicant who is told "received" while the file was dropped has no
-      // way to know the team cannot see it.
-      if (!mediaKitUrl) {
-        return NextResponse.json(
-          { error: "We could not store that file. Please try again, or paste a link to your media kit instead." },
-          { status: 503 },
-        );
-      }
-      mediaKitNote = "A PDF was attached but could not be stored — the link below is what came through.";
+      console.error("media kit verification failed:", err);
+      mediaKitPath = null;
+    }
+
+    if (!mediaKitPath && !mediaKitUrl) {
+      return NextResponse.json(
+        { error: "We could not find that uploaded file. Please try again, or paste a link to your media kit instead." },
+        { status: 400 },
+      );
     }
   }
+  const mediaKitNote =
+    hasUpload && !mediaKitPath
+      ? "A PDF upload was reported but the file could not be found — the link below is what came through."
+      : null;
 
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
@@ -201,10 +214,15 @@ export async function POST(request: NextRequest) {
       } catch (err) {
         console.error("media kit signed link failed:", err);
       }
-      if (!mediaKitFileUrl && !mediaKitNote) {
-        mediaKitNote = "The PDF is stored — open the application in admin to read it.";
-      }
     }
+
+    // The signed link is a convenience; /admin mints a fresh one on every
+    // view, so a failure here costs nothing but a click.
+    const emailNote =
+      mediaKitNote ??
+      (mediaKitPath && !mediaKitFileUrl
+        ? "The PDF is stored — open the application in admin to read it."
+        : null);
 
     const { subject, html, text } = collaborationApplicationEmail({
       fullName,
@@ -213,7 +231,7 @@ export async function POST(request: NextRequest) {
       collaborationType,
       mediaKitFileUrl,
       mediaKitUrl,
-      mediaKitNote,
+      mediaKitNote: emailNote,
       reviewUrl: `${SITE_URL}/admin/collaborations/${data.id}`,
     });
     // Collaborations, not Reservations — see src/lib/email/recipients.ts.

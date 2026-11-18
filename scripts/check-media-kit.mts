@@ -29,6 +29,8 @@ import { readFileSync } from "node:fs";
 import {
   validateMediaKit,
   normaliseMediaKitLink,
+  isMediaKitPath,
+  newMediaKitPath,
   MEDIA_KIT_MAX_BYTES,
   MEDIA_KIT_MIME,
 } from "../src/lib/collaborations/mediaKit";
@@ -164,10 +166,47 @@ ok(
   /media_kit_url:\s*mediaKitUrl/.test(route)
 );
 ok("collaborate-apply does not store the uploaded file's path", /media_kit_path:\s*mediaKitPath/.test(route));
-ok(
-  "the media kit bucket is public, or no longer named in the route",
-  /collaboration-media-kits/.test(route)
+ok("collaborate-apply does not verify the submitted upload path", /isMediaKitPath\s*\(/.test(route));
+
+// ---------------------------------------------------------------------------
+// 4b. The submitted path is attacker-controlled.
+//
+// The PDF is uploaded straight from the browser, because Vercel rejects a
+// request body over 4.5 MB before our code runs and a media kit is routinely
+// larger. So the application reports its own object path, and that string
+// arrives from the client like any other form field.
+const mintedPath = newMediaKitPath("3f2504e0-4f89-11d3-9a0c-0305e82c3301", new Date("2026-11-18T00:00:00Z"));
+ok("a freshly minted path is rejected by its own validator", isMediaKitPath(mintedPath));
+ok("the minted path is not year-foldered", mintedPath.startsWith("2026/"));
+for (const hostile of [
+  "../../../etc/passwd",
+  "2026/../../avatars/someone/avatar",
+  "/2026/3f2504e0-4f89-11d3-9a0c-0305e82c3301.pdf",
+  "2026/3f2504e0-4f89-11d3-9a0c-0305e82c3301.pdf/../../x.pdf",
+  "2026/not-a-uuid.pdf",
+  "2026/3f2504e0-4f89-11d3-9a0c-0305e82c3301.exe",
+  "3f2504e0-4f89-11d3-9a0c-0305e82c3301.pdf",
+  "2026/3f2504e0-4f89-11d3-9a0c-0305e82c3301.pdf\n",
+  "",
+  "  ",
+]) {
+  ok(
+    `${JSON.stringify(hostile)} is accepted as an uploaded media kit path`,
+    isMediaKitPath(hostile) === false
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 4c. The upload endpoint must not let the caller choose where bytes land.
+const uploadRoute = stripComments(
+  readFileSync("src/app/api/collaborate-apply/upload-url/route.ts", "utf8")
 );
+ok(
+  "the upload-url route reads a path from the request — the caller must never choose it",
+  !/request\.(json|formData)\(\)/.test(uploadRoute)
+);
+ok("the upload-url route does not mint the path itself", /newMediaKitPath\s*\(/.test(uploadRoute));
+ok("the upload-url route is not rate limited", /checkRateLimit\s*\(/.test(uploadRoute));
 
 // ---------------------------------------------------------------------------
 // 5. The PDF is swept when the application is anonymised.
