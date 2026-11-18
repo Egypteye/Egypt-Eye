@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Scene } from "./Scene";
 import { FaqList } from "./FaqList";
 import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
-import { reference } from "../_lib/assets";
+import { reference, visibleCredit } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 import { mergeFaqs } from "@/content/flyingDressExperiences";
 import {
@@ -108,7 +108,7 @@ function galleryFrames(): GalleryFrame[] {
       span: e.span,
       // The credit is appended rather than replaced: the caption says what the
       // frame shows, the credit says what it is. Both, on every frame.
-      caption: e.slot.credit ? `${e.caption} ${e.slot.credit}` : e.caption,
+      caption: visibleCredit(e.slot) ? `${e.caption} ${visibleCredit(e.slot)}` : e.caption,
     }));
 }
 
@@ -170,7 +170,7 @@ export function CreatorShootsPage({
               ratio="fd-ratio-landscape"
               sizes="(min-width: 60rem) 72rem, 94vw"
               priority
-              credit={hero.credit}
+              credit={visibleCredit(hero) ?? undefined}
             />
           </div>
         </section>
@@ -218,7 +218,7 @@ export function CreatorShootsPage({
       <PhotoGallery
         frames={frames}
         heading="What the setting looks like"
-        intro="These four are generated scenes, art-directed from our own rooftop, the real skyline and the wardrobe we hold. They are here to show what the location gives you, the way a render shows a building that has not been photographed yet. NONE of them is a client session, none is a past campaign, and every one says so under it. The work we have actually photographed is on the celebration and photoshoot pages, where it is captioned as what it is."
+        intro="What the rooftop gives you: the skyline, the light through the evening, and the wardrobe we hold. The sessions we have photographed are on the celebration and photoshoot pages."
       />
 
       {/* ---------------------------------------------------------------

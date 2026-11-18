@@ -1609,7 +1609,7 @@ export type BoutiquePage = {
  * unbreakable rule about imagery on this brand.
  */
 export type FlyingDressFrame = {
-  kind: "agency" | "location" | "styled" | "reference" | "empty";
+  kind: "agency" | "location" | "styled" | "reference" | "retouched" | "empty";
   /** null only when kind is "empty". */
   src: string | null;
   /** Describes the photograph to someone who cannot see it. */
@@ -1619,6 +1619,14 @@ export type FlyingDressFrame = {
   height?: number;
   /** Attribution, which travels with the photograph rather than the page. */
   credit?: string;
+  /**
+   * Which part of the photograph to keep when a layout has to crop it.
+   *
+   * A CSS object-position such as "50% 30%". It is read only where the box
+   * is a fixed shape; a frame rendered at its own ratio has nothing to crop.
+   * Leave it unset unless the centred default actually loses the subject.
+   */
+  focus?: string;
   /** For an empty frame: what belongs here, shown on the slot itself. */
   wanted?: string;
 };

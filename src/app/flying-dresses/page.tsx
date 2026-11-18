@@ -15,7 +15,8 @@ import { getFlyingDressGallery } from "@/sanity/fetchers";
 import { hardenFlyingDressGallery } from "@/lib/sanityShape";
 import type { FlyingDressGallery } from "@/content/types";
 import { HeroVideo } from "./_components/HeroVideo";
-import { agency, empty, location } from "./_lib/assets";
+import { agency, empty, visibleCredit } from "./_lib/assets";
+import { coverFor } from "./_lib/shootArt";
 import { ItemActions } from "./_components/ItemActions";
 import { experienceCategories } from "@/content/flyingDressExperiences";
 import { flyingDressStories, storyReadingMinutes } from "@/content/flyingDressStories";
@@ -247,7 +248,7 @@ export default async function FlyingDressesHome() {
               drift
               className="fd-fabric"
             />
-            <figcaption className="fd-caption">{agency.blueGownDesert.credit}</figcaption>
+            <figcaption className="fd-caption">{visibleCredit(agency.blueGownDesert)}</figcaption>
           </figure>
         </div>
       </section>
@@ -326,17 +327,14 @@ export default async function FlyingDressesHome() {
 
         <div className="fd-shell" style={{ display: "grid", gap: "var(--fd-section)" }}>
           {packages.map((pkg, index) => {
-            const art =
-              pkg.slug === "sand-dunes"
-                ? location.saharaDunes
-                : pkg.slug === "pyramids-rooftop"
-                  ? agency.rooftopPortrait
-                  : location.fayoumLake;
+            const art = coverFor(pkg);
 
             return (
               <article
                 key={pkg.slug}
-                className={`fd-split fd-reveal${index % 2 === 1 ? " fd-split-reverse" : ""}`}
+                // The whole panel opens the shoot; see the note on the same
+                // class in experiences/page.tsx.
+                className={`fd-split fd-reveal fd-cardlink${index % 2 === 1 ? " fd-split-reverse" : ""}`}
               >
                 <div>
                   <p className="fd-eyebrow">{pkg.eyebrow}</p>
@@ -357,7 +355,10 @@ export default async function FlyingDressesHome() {
                   </div>
 
                   <div className="fd-actions">
-                    <Link className="fd-btn fd-btn-ghost" href={fdPath(`/experiences/${pkg.slug}`)}>
+                    <Link
+                      className="fd-btn fd-btn-ghost fd-cardlink-main"
+                      href={fdPath(`/experiences/${pkg.slug}`)}
+                    >
                       {pkg.name} in full
                     </Link>
                   </div>
@@ -369,18 +370,32 @@ export default async function FlyingDressesHome() {
                 </div>
 
                 <figure>
+                  {/* The photograph is itself a link; see the same wrapper
+                      on experiences/page.tsx for why it does not rely on the
+                      panel overlay. */}
+                  <Link
+                    className="fd-cardlink-figure"
+                    href={fdPath(`/experiences/${pkg.slug}`)}
+                    tabIndex={-1}
+                  >
                   <Scene
                     src={art.src}
                     alt={art.alt}
                     width={art.width}
                     height={art.height}
-                    ratio="fd-ratio-landscape"
+                    // Its own proportions, not a forced 3:2. See the same
+                    // call on the experiences listing.
+                    ratio="auto"
+                    focus={art.focus}
                     sizes="(min-width: 60rem) 40vw, 92vw"
                     tone={pkg.tone}
-                    label={"wanted" in art ? art.wanted : undefined}
+                    label={art.wanted}
                     drift={Boolean(art.src)}
                   />
-                  {art.credit ? <figcaption className="fd-caption">{art.credit}</figcaption> : null}
+                  </Link>
+                  {visibleCredit(art) ? (
+                    <figcaption className="fd-caption">{visibleCredit(art)}</figcaption>
+                  ) : null}
                 </figure>
               </article>
             );

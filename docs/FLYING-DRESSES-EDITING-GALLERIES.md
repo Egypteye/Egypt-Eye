@@ -63,6 +63,11 @@ nobody, including you, can tell later which frames were real.
 the screen, and six divides evenly by all three, so no frame is left alone at
 the end of a row. Three, nine or twelve also work.
 
+**Mixed portrait and landscape is fine.** Since 8 November 2026 each frame is
+shown at its own proportions rather than cropped to a wide box, so an upright
+photograph keeps its whole height. Rows end at different depths as a result.
+That is how it is meant to look, not a fault.
+
 **Once you publish, the Studio is in charge of that gallery.** Whatever is in
 the Studio replaces what the site had before, as a whole set rather than frame
 by frame. So if you empty the gallery and publish, the section goes empty: that

@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 import Image from "next/image";
 
 /**
@@ -34,6 +36,8 @@ export function Scene({
   priority = false,
   tone = "neutral",
   ratio = "fd-ratio-landscape",
+  fit = "cover",
+  focus,
   label,
   credit,
   className = "",
@@ -50,7 +54,44 @@ export function Scene({
   /** True for the one image above the fold. Never for more than one per page. */
   priority?: boolean;
   tone?: SceneTone;
+  /**
+   * The shape of the box the photograph sits in.
+   *
+   * One of the `fd-ratio-*` classes, or the string "auto".
+   *
+   * "auto" IS THE ONE THAT DOES NOT CROP. It sets the box to the
+   * photograph's own width/height, so `object-fit: cover` has nothing to
+   * cut off: the frame is exactly the shape of the file inside it. Use it
+   * wherever the whole photograph matters more than the cells lining up.
+   *
+   * A fixed class is still right where the layout depends on every cell
+   * being the same shape (the feature gallery's spanning cell, a horizontal
+   * strip). There, pick the class nearest the photography and set `focus`.
+   *
+   * "auto" needs `width` and `height`; without them there is nothing to
+   * compute and it falls back to landscape.
+   */
   ratio?: string;
+  /**
+   * How the photograph fills its box when the two shapes disagree.
+   *
+   * "cover" fills the box and crops the overflow. "contain" fits the whole
+   * photograph inside and lets the brand's sand tone show around it.
+   *
+   * With `ratio="auto"` the two are identical, because there is no overflow.
+   * This matters only for a fixed ratio, and there the honest default is
+   * still "cover": a letterboxed portrait in a 3:2 card looks like a
+   * mistake, while a 4:5 card with a focal point looks composed.
+   */
+  fit?: "cover" | "contain";
+  /**
+   * Which part of the photograph survives when `fit` is "cover".
+   *
+   * A CSS object-position: "50% 30%" keeps the upper third. The default
+   * centres, which is what cut the heads off portrait frames in a 3:2 box
+   * and is exactly what this prop exists to let a caller fix.
+   */
+  focus?: string;
   /** Shown on an empty slot. Falls back to the alt text, which describes the
       intended photograph and is exactly what belongs there. */
   label?: string;
@@ -68,11 +109,25 @@ export function Scene({
   /** Adds the slow scroll-linked scale. Off by default. */
   drift?: boolean;
 }) {
-  const frame = `fd-figure ${ratio} ${drift ? "fd-drift" : ""} ${className}`.trim();
+  // "auto" means: the box takes the photograph's own proportions, so nothing
+  // is cropped. It needs real pixel dimensions; without them there is nothing
+  // to compute, and landscape is the brand's standing default.
+  const natural = ratio === "auto" && typeof width === "number" && typeof height === "number";
+  const ratioClass = ratio === "auto" ? (natural ? "fd-ratio-auto" : "fd-ratio-landscape") : ratio;
+
+  const frame = `fd-figure ${ratioClass} ${drift ? "fd-drift" : ""} ${className}`.trim();
+
+  // Passed as custom properties rather than as inline styles on the <img>,
+  // because next/image owns that element's style attribute and the CSS has
+  // to be able to override per breakpoint.
+  const frameStyle: CSSProperties & Record<string, string | number> = {};
+  if (natural) frameStyle["--fd-ar"] = `${width} / ${height}`;
+  if (fit !== "cover") frameStyle["--fd-fit"] = fit;
+  if (focus) frameStyle["--fd-focus"] = focus;
 
   if (!src) {
     return (
-      <div className={frame}>
+      <div className={frame} style={frameStyle}>
         <div className={`fd-slot fd-slot-tone-${tone}`} style={{ height: "100%" }}>
           <div>
             <p className="fd-slot-label">{label ?? alt}</p>
@@ -84,7 +139,7 @@ export function Scene({
   }
 
   const picture = (
-    <div className={frame}>
+    <div className={frame} style={frameStyle}>
       <Image
         src={src}
         alt={alt}

@@ -12,7 +12,15 @@ import {
 import { BookingRail } from "../../_components/BookingRail";
 import { FaqList } from "../../_components/FaqList";
 import { Scene } from "../../_components/Scene";
-import { agency, empty, location, type ImageSlot } from "../../_lib/assets";
+import { Gallery } from "../../_components/Gallery";
+import { ProductionReel } from "../../_components/ProductionReel";
+import { artFor, coverFor } from "../../_lib/shootArt";
+import { clipsFor, shootAerial } from "../../_lib/shootReels";
+import { flyingDressGalleryById } from "@/content/flyingDressGalleries";
+import { getFlyingDressGallery } from "@/sanity/fetchers";
+import { hardenFlyingDressGallery } from "@/lib/sanityShape";
+import type { FlyingDressGallery } from "@/content/types";
+import { visibleCredit } from "../../_lib/assets";
 import { shootShareImages } from "../../_lib/shareImages";
 import { dressPhotos } from "../../_lib/dressPhotos";
 import {
@@ -42,14 +50,26 @@ export async function generateStaticParams() {
 /** A slug that is not one of the three 404s rather than rendering empty. */
 export const dynamicParams = false;
 
-const ART: Partial<Record<string, { hero: ImageSlot; detail: ImageSlot }>> = {
-  "sand-dunes": { hero: location.saharaDunes, detail: agency.fayoumDress },
-  "pyramids-rooftop": { hero: agency.rooftopPortrait, detail: location.gizaPlateau },
-  fayoum: { hero: location.fayoumLake, detail: agency.fayoumRedShore },
-  // No photographs of the yacht yet: both slots render the labelled gap, so
-  // the page says what is missing rather than showing the wrong water.
-  "red-sea-yacht": { hero: empty.redSeaYacht, detail: empty.redSeaYacht },
-};
+
+/**
+ * The shoot's own gallery, Studio-first exactly as the home page's is.
+ *
+ * Same rule as workGallery() there, and the same reason: a gallery the owner
+ * EMPTIED in the Studio stays empty, because that is an edit; one the
+ * projection never returned falls back to the repo's frames, because that is
+ * an absence. hardenFlyingDressGallery keeps the two apart.
+ *
+ * Returns null for a shoot with no gallery at all, which is every shoot but
+ * the three the owner supplied folders for.
+ */
+async function shootGallery(slug: string): Promise<FlyingDressGallery | null> {
+  const id = `shoot-${slug}`;
+  const local = flyingDressGalleryById(id);
+  if (!local) return null;
+  const fromSanity = await getFlyingDressGallery(id);
+  if (!fromSanity) return local;
+  return hardenFlyingDressGallery(fromSanity, local);
+}
 
 export async function generateMetadata({
   params,
@@ -91,16 +111,24 @@ export default async function ExperiencePage({
   const pkg = await fdPackageBySlug(slug);
   if (!pkg) notFound();
 
-  const art = ART[pkg.slug] ?? { hero: empty.redSeaYacht, detail: empty.redSeaYacht };
-  const [settings, addOns, wardrobe, packages] = await Promise.all([
+  const art = artFor(pkg.slug);
+  // The Studio cover, when the owner has uploaded one, is the hero here too:
+  // "the cover photo of this shoot" means one photograph, not one for the
+  // card and a different one at the top of its own page. With no Studio
+  // cover this is the registry's hero and nothing changes.
+  const hero = coverFor(pkg);
+  const [settings, addOns, wardrobe, packages, gallery] = await Promise.all([
     fdSettings(),
     fdAddOns(),
     fdWardrobe(),
     fdPackages(),
+    shootGallery(pkg.slug),
   ]);
   const { packageIncludes, payment, cancellation } = settings;
   const { dresses, mensOutfits } = wardrobe;
   const others = packages.filter((p) => p.slug !== pkg.slug);
+  const reels = clipsFor(pkg.slug);
+  const aerial = shootAerial[pkg.slug];
   const enquiryMessage = flyingDressEnquiry({
     subject: pkg.title,
     location: pkg.name,
@@ -170,18 +198,21 @@ export default async function ExperiencePage({
 
             <figure>
               <Scene
-                src={art.hero.src}
-                alt={art.hero.alt}
-                width={art.hero.width}
-                height={art.hero.height}
-                ratio="fd-ratio-landscape"
+                src={hero.src}
+                alt={hero.alt}
+                width={hero.width}
+                height={hero.height}
+                // The shoot folders are mostly 1050x1400 portrait. Forcing
+                // 3:2 here is what cut the tops off the dresses.
+                ratio="auto"
+                focus={hero.focus}
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone={pkg.tone}
-                label={"wanted" in art.hero ? art.hero.wanted : undefined}
+                label={hero.wanted}
                 priority
               />
-              {art.hero.credit ? (
-                <figcaption className="fd-caption">{art.hero.credit}</figcaption>
+              {visibleCredit(hero) ? (
+                <figcaption className="fd-caption">{visibleCredit(hero)}</figcaption>
               ) : null}
             </figure>
           </div>
@@ -352,18 +383,76 @@ export default async function ExperiencePage({
                 alt={art.detail.alt}
                 width={art.detail.width}
                 height={art.detail.height}
-                ratio="fd-ratio-landscape"
+                // The shoot folders are mostly 1050x1400 portrait. Forcing
+                // 3:2 here is what cut the tops off the dresses.
+                ratio="auto"
+                focus={art.detail.focus}
                 sizes="(min-width: 60rem) 40vw, 92vw"
                 tone={pkg.tone}
                 label={"wanted" in art.detail ? art.detail.wanted : undefined}
               />
-              {art.detail.credit ? (
-                <figcaption className="fd-caption">{art.detail.credit}</figcaption>
+              {visibleCredit(art.detail) ? (
+                <figcaption className="fd-caption">{visibleCredit(art.detail)}</figcaption>
               ) : null}
             </figure>
           </div>
         </div>
       </section>
+
+      {/* The shoot's own frames. Mixed provenance on purpose: each frame
+          carries its own kind and its own caption, so a generated scene and a
+          camera frame can sit in one grid without the grid making a claim. */}
+      {gallery && gallery.frames.length > 0 ? (
+        <section className="fd-section-tight" aria-labelledby="fd-shoot-gallery">
+          <div className="fd-shell">
+            <h2
+              id="fd-shoot-gallery"
+              className="fd-display fd-h3"
+              style={{ marginBottom: "2rem" }}
+            >
+              {gallery.title}
+            </h2>
+            <Gallery frames={gallery.frames} layout={gallery.layout} />
+          </div>
+        </section>
+      ) : null}
+
+      {/* The one real video this brand has, kept away from the generated
+          strip below so the two are never read as the same thing. */}
+      {aerial ? (
+        <section className="fd-section-tight">
+          <div className="fd-shell">
+            <figure>
+              <video
+                className="fd-aerial"
+                src={aerial.mp4}
+                poster={aerial.poster}
+                width={aerial.width}
+                height={aerial.height}
+                muted
+                loop
+                playsInline
+                autoPlay
+                preload="none"
+                aria-hidden="true"
+              />
+              <figcaption className="fd-caption">{aerial.caption}</figcaption>
+            </figure>
+          </div>
+        </section>
+      ) : null}
+
+      {reels.length > 0 ? (
+        <section className="fd-section-tight" aria-labelledby="fd-shoot-reels">
+          <div className="fd-shell">
+            <ProductionReel
+              clips={reels}
+              heading="In motion"
+              intro="How the fabric moves out here."
+            />
+          </div>
+        </section>
+      ) : null}
 
       {/* Included. */}
       <section className="fd-section-tight">

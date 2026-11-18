@@ -45,6 +45,34 @@
  *                       refusing them outright would throw away imagery the
  *                       owner art-directed for exactly this purpose.
  *
+ *   kind: "retouched"   THE AGENCY'S OWN PHOTOGRAPH OF A REAL SESSION, with a
+ *                       generative edit applied to it. Added 5 November 2026
+ *                       when the owner supplied the shoot folders and said the
+ *                       images "may look Ai but that is yes Ai modified but
+ *                       comes from my original work".
+ *
+ *                       The bytes agree with them, which is why this is a kind
+ *                       and not a judgement call. Every file here carries a
+ *                       C2PA manifest whose action is `c2pa.edited` — not
+ *                       `c2pa.created` — with
+ *                       digitalsourcetype/compositeWithTrainedAlgorithmicMedia
+ *                       and softwareAgent "Adobe Firefly", alongside Camera Raw
+ *                       and Photoshop entries, and several still carry the Sony
+ *                       body in EXIF. A real exposure was made; a generative
+ *                       edit was composited into it.
+ *
+ *                       So it IS client work and may be shown as such: this is
+ *                       a photograph of a session that happened, of customers
+ *                       who were there. What it may not do is pass silently —
+ *                       the credit says the frame was retouched with generative
+ *                       AI, because a photography brand that quietly ships a
+ *                       Firefly composite as a straight photograph is making
+ *                       the one promotion this file exists to prevent.
+ *
+ *                       It is deliberately NOT "reference": nothing here is
+ *                       generated from nothing. And deliberately not "agency":
+ *                       that kind means the frame is what the camera saw.
+ *
  *   kind: "empty"       no photograph exists. Renders as a designed, labelled
  *                       slot (components/Scene.tsx), never as a stock photo.
  *
@@ -59,7 +87,7 @@
  */
 
 export type ImageSlot = {
-  kind: "agency" | "location" | "styled" | "reference" | "empty";
+  kind: "agency" | "location" | "styled" | "reference" | "retouched" | "empty";
   /** null only when kind is "empty". */
   src: string | null;
   /** Describes the image to someone who cannot see it. */
@@ -72,6 +100,14 @@ export type ImageSlot = {
    * came from. Agency work keeps its attribution so a reviewer can trace it.
    */
   credit?: string;
+  /**
+   * Which part of the photograph to keep when a layout has to crop it.
+   *
+   * A CSS object-position such as "50% 30%". It is read only where the box
+   * is a fixed shape; a frame rendered at its own ratio has nothing to crop.
+   * Leave it unset unless the centred default actually loses the subject.
+   */
+  focus?: string;
   /** For an empty slot: what should go here, shown on the slot itself. */
   wanted?: string;
 };
@@ -673,6 +709,20 @@ export const empty = {
     // the folder is that shot.
     wanted: "The accessory collection together, in one landscape frame",
   }),
+  /**
+   * The gap for a shoot nobody has given a picture. Deliberately says
+   * nothing about where it is: the old code fell back to the YACHT's gap for
+   * any unmapped slug, so the White Desert page advertised a yacht at Ain
+   * Sokhna. A fallback that names a place is a fallback that lies.
+   */
+  unknownShoot: slot({
+    kind: "empty",
+    src: null,
+    alt: "A flying dress photoshoot",
+    width: 1800,
+    height: 1200,
+    wanted: "A photograph of this shoot",
+  }),
   redSeaYacht: slot({
     kind: "empty",
     src: null,
@@ -720,11 +770,610 @@ export const wardrobeLineup = slot({
   credit: "Agency group shoot, supplied October 2026",
 });
 
+/**
+ * THE FAYOUM SESSION, straight out of the camera.
+ *
+ * Supplied by the owner on 5 November 2026 as full-resolution Sony frames, up
+ * to 8639x5759. Nothing in their bytes claims a generative edit: no C2PA
+ * manifest, no trainedAlgorithmicMedia, no named generator. They are the
+ * highest-resolution genuine photographs this brand has, which is why the
+ * Fayoum hero is one of them rather than a generated scene — where a real
+ * frame of the place exists, it leads.
+ *
+ * Several carry the brand's own "Egypt_eye_" watermark. That is the owner's
+ * own mark on the owner's own work, so it ships; the two chosen for the hero
+ * and the group slot were checked at full resolution and carry none.
+ */
+export const shootPhoto = {
+  /**
+   * THE THREE COVER FRAMES THE OWNER CHOSE ON 9 NOVEMBER 2026, one per
+   * shoot. Two of them are here; the third is generated and lives in
+   * shootGenerated below, which is the only reason it is not beside them.
+   *
+   * Both of these carry an EXIF block and no generative claim of any kind:
+   * no C2PA manifest, no trainedAlgorithmicMedia, no named generator. The
+   * Fayoum frame's XMP reads "Adobe Photoshop 25.11 (Macintosh)", created
+   * 2024-07-03T19:53:43+03:00 — Egypt summer time — with dc:rights "MARS",
+   * the owner's own copyright. The rooftop frame carries an EXIF block and
+   * an Adobe RGB profile with no generator anywhere in its bytes. Checked
+   * against the uploads before conversion; the byte guard in
+   * check-flying-dresses.mts re-checks the published files on every run.
+   */
+  fayoumCover: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-cover.jpg",
+    alt: "A red flying dress with a long train spread across a dune above the turquoise lakes of Fayoum",
+    width: 1800,
+    height: 1200,
+    credit: "Fayoum session, supplied by the owner",
+  }),
+  pyramidsRooftopCover: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/pyramids-rooftop-cover.jpg",
+    alt: "A gold flying dress fanned across a Giza rooftop at sunrise with all three pyramids behind",
+    width: 1800,
+    height: 1200,
+    credit: "Rooftop shoot, supplied by the owner",
+  }),
+  fayoumHero: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-hero.jpg",
+    alt: "A red flying dress spread across pale rock above a turquoise lake in Fayoum",
+    width: 1800,
+    height: 1200,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumGroup: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-group.jpg",
+    alt: "Three flying dresses, gold, red and blue, on a dune above the water in Fayoum",
+    width: 1800,
+    height: 1200,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot1: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-1.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 933,
+    height: 1400,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot2: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-2.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot3: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-3.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot4: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-4.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot5: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-5.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot6: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-6.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot7: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-7.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 933,
+    height: 1400,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot8: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-8.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot9: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-9.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot10: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-10.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot11: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-11.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+  fayoumShoot12: slot({
+    kind: "agency",
+    src: "/photos/flying-dresses/shoots/photo/fayoum-12.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session, supplied by the owner November 2026",
+  }),
+};
+
+/**
+ * THE SAME SESSION, WITH A GENERATIVE EDIT COMPOSITED IN.
+ *
+ * Every file here carries a C2PA manifest reading `c2pa.edited`,
+ * digitalsourcetype/compositeWithTrainedAlgorithmicMedia and softwareAgent
+ * "Adobe Firefly", next to Camera Raw and Photoshop entries. A real exposure
+ * of a real session, with AI work done on top — which is exactly how the owner
+ * described them.
+ *
+ * The manifests SURVIVE into the published JPEGs (15 c2pa hits each), so the
+ * byte-level check in scripts/check-flying-dresses.mts can still read them and
+ * will refuse to let one of these be relabelled as a straight photograph.
+ */
+export const shootRetouched = {
+  fayoumRetouched1: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-1.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched2: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-2.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched3: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-3.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched4: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-4.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched5: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-5.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched6: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-6.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched7: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-7.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 933,
+    height: 1400,
+    credit: "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched8: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-8.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched9: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-9.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 933,
+    height: 1400,
+    credit: "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched10: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-10.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched11: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-11.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session. Retouched with generative AI (Adobe Firefly)",
+  }),
+  fayoumRetouched12: slot({
+    kind: "retouched",
+    src: "/photos/flying-dresses/shoots/retouched/fayoum-12.jpg",
+    alt: "A flying dress photographed on the pale dunes and lakes of Fayoum",
+    width: 1400,
+    height: 933,
+    credit: "Fayoum session. Retouched with generative AI (Adobe Firefly)",
+  }),
+};
+
+/**
+ * GENERATED SCENES, OpenAI gpt-image, `c2pa.created`.
+ *
+ * The owner art-directed these against their own reference and asked for them
+ * to be used, having no photographs of the White Desert or the yacht at all.
+ * They carry a visible credit wherever they render.
+ *
+ * THEIR MANIFESTS DO NOT SURVIVE ENCODING. The sources are PNG and the C2PA
+ * box does not cross the PNG to JPEG conversion, so unlike the retouched set
+ * these files cannot be checked by reading them. That is what the
+ * `/generated/` path segment is for: the check script holds every file under
+ * it to this kind, so the claim lives somewhere a reviewer can see and a
+ * checker can enforce rather than in a comment.
+ */
+export const shootGenerated = {
+  /**
+   * THE WHITE DESERT COVER the owner chose on 9 November 2026.
+   *
+   * It is in THIS object, not in shootPhoto beside the other two covers they
+   * sent in the same message, because its bytes say so. The upload was a PNG
+   * carrying a C2PA manifest signed by OpenAI Media Service: c2pa.created
+   * with digitalSourceType trainedAlgorithmicMedia, softwareAgent
+   * "gpt-image", plus a c2pa.watermarked assertion. It is a generated image,
+   * not a photograph of a client session, and 1536x1024 is a gpt-image
+   * output size.
+   *
+   * The manifest itself does not survive here: C2PA in a PNG is carried in a
+   * caBX chunk and crossing to JPEG destroys it, which is true of every
+   * generated frame in this directory. That is exactly why the record lives
+   * in `kind` and in the directory rather than in the file — see the
+   * directory/kind pinning check in check-flying-dresses.mts, which fails if
+   * anything in /generated/ claims to be anything but kind:"reference".
+   *
+   * Replacing the previous White Desert cover with this one changes nothing
+   * about what the site claims: that one was generated too.
+   */
+  whiteDesertCover: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-cover.jpg",
+    alt: "A deep blue flying dress with a long train across a white chalk formation in the White Desert",
+    width: 1536,
+    height: 1024,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  fayoumGenerated1: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/fayoum-1.jpg",
+    alt: "A pink flying dress on the pale dunes of Fayoum",
+    width: 1050,
+    height: 1400,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  whiteDesertHero: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-hero.jpg",
+    alt: "A flying dress among the white chalk formations of the White Desert",
+    width: 1197,
+    height: 1314,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  whiteDesertDetail: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-detail.jpg",
+    alt: "A golden flying dress on the dunes of the White Desert",
+    width: 1050,
+    height: 1400,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYachtHero: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-hero.jpg",
+    alt: "A golden flying dress on the deck of a yacht on the Red Sea",
+    width: 1500,
+    height: 1000,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYachtDetail: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-detail.jpg",
+    alt: "Four flying dresses on the bow of a yacht on the Red Sea",
+    width: 1500,
+    height: 1000,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  whiteDesert1: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-1.jpg",
+    alt: "A flying dress among the white chalk formations of the White Desert",
+    width: 900,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  whiteDesert2: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-2.jpg",
+    alt: "A flying dress among the white chalk formations of the White Desert",
+    width: 1008,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  whiteDesert3: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-3.jpg",
+    alt: "A flying dress among the white chalk formations of the White Desert",
+    width: 1097,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  whiteDesert4: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-4.jpg",
+    alt: "A flying dress among the white chalk formations of the White Desert",
+    width: 900,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  whiteDesert5: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/white-desert-5.jpg",
+    alt: "A flying dress among the white chalk formations of the White Desert",
+    width: 900,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht1: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-1.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 800,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht2: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-2.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 1200,
+    height: 900,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht3: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-3.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 1200,
+    height: 800,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht4: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-4.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 1200,
+    height: 800,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht5: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-5.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 1200,
+    height: 800,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht6: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-6.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 900,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht7: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-7.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 1200,
+    height: 800,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht8: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-8.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 800,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht9: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-9.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 1200,
+    height: 800,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht10: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-10.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 1200,
+    height: 800,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+  redSeaYacht11: slot({
+    kind: "reference",
+    src: "/photos/flying-dresses/shoots/generated/red-sea-yacht-11.jpg",
+    alt: "A flying dress on a yacht on the Red Sea at Ain Sokhna",
+    width: 800,
+    height: 1200,
+    credit: "Generated scene, art-directed by the owner. Not a photograph of a client session.",
+  }),
+};
+
+/**
+ * WHETHER A FRAME'S PROVENANCE IS PRINTED ON THE PAGE.
+ *
+ * The owner decided on 5 November 2026 that generated imagery carries no
+ * visible label. They were shown what it reverses — their own brief says
+ * "never present AI-generated imagery as real client work" — and chose it
+ * anyway for their own marketing. That is theirs to decide, so the caption
+ * is gone.
+ *
+ * WHAT IS DELIBERATELY NOT GONE is the record. `kind` and `credit` still say
+ * exactly what every file is, the /generated/, /retouched/ and /photo/ split
+ * still holds, and every check in scripts/check-flying-dresses.mts still
+ * runs. Those exist to stop a generated frame being attached to a named
+ * customer's shoot, appearing in a testimonial, or being promoted to
+ * kind:"agency" by someone who never read this file. None of that is about
+ * what the page prints.
+ *
+ * So: data honest, caption silent. Flip SHOW_GENERATED_CREDIT to true to put
+ * the captions back; nothing else needs touching.
+ */
+export const SHOW_GENERATED_CREDIT = false;
+
+/**
+ * The caption for a frame, or null when it should not be printed.
+ *
+ * ---------------------------------------------------------------------------
+ * WHY THIS IS CLAUSE-BASED AND NOT KIND-BASED
+ * ---------------------------------------------------------------------------
+ * The first version of this function switched on `kind`: "reference" printed
+ * nothing, "retouched" and "styled" had their AI clause trimmed, and anything
+ * else fell through to `return frame.credit` unchanged.
+ *
+ * That fall-through is a loaded gun. It means the label is removed from the
+ * kinds somebody remembered to list, and printed in full by any kind they did
+ * not. A slot added later as kind:"agency" with a generated credit, or a
+ * Studio frame arriving with a kind this file has never heard of, prints
+ * "Generated scene, art-directed by the owner. Not a photograph of a client
+ * session." and no check in the repository notices, because the data is
+ * correct and the source reads `visibleCredit(...)` exactly as it should.
+ *
+ * So the decision is made on the SENTENCE, not on the kind. A credit is split
+ * into its clauses, every clause that names generation is dropped, and what
+ * is left is the honest attribution. There is no fall-through and no kind
+ * that escapes it:
+ *
+ *   "Nunu and Kassy shoot, Fayoum. Retouched with generative AI (Adobe
+ *    Firefly)"                               -> "Nunu and Kassy shoot, Fayoum."
+ *   "Dresses photographed from the collection; the display and setting are
+ *    generated."           -> "Dresses photographed from the collection."
+ *   "Generated scene, art-directed by the owner. Not a photograph of a
+ *    client session."                        -> null
+ *   "Milya shoot, supplied October 2026"     -> unchanged
+ *
+ * The real half is kept deliberately. "Nunu and Kassy shoot, Fayoum" is a
+ * genuine attribution to real customers and real work; dropping the whole
+ * string to remove the AI sentence would throw away the honest half to get
+ * rid of the other.
+ *
+ * WHAT IS DELIBERATELY NOT TOUCHED is `frame.credit` itself. The registry
+ * still says exactly what every file is, and check-flying-dresses.mts still
+ * reads it. This function decides what the VISITOR sees, nothing else.
+ */
+
+/**
+ * A clause naming image generation, in any of the forms this registry uses.
+ *
+ * Kept narrow on purpose. "Retouched" alone is not generation (a photograph
+ * can be retouched by hand) and "art-directed" alone is not either, so
+ * neither is listed: the clauses that must go all name the generation itself
+ * or deny the photograph.
+ */
+const GENERATION_CLAUSE =
+  /\b(generated|generative|ai\b|not a photograph)/i;
+
+/**
+ * Split a credit into the clauses a reader would hear as separate statements.
+ *
+ * Sentence full stops and semicolons both count, because the registry uses
+ * both: "... . Retouched with generative AI" and "...; the display and
+ * setting are generated".
+ */
+function creditClauses(credit: string): string[] {
+  return credit
+    .split(/[.;]\s+|[.;]$/)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0);
+}
+
+export function visibleCredit(frame: {
+  /**
+   * Accepted and deliberately NOT read.
+   *
+   * It is in the signature because every caller has one and dropping it
+   * would churn ten call sites, and it is unused because reading it is the
+   * bug this function was rewritten to remove: a decision made on `kind`
+   * only covers the kinds somebody listed. A cover uploaded in the Studio
+   * has no kind at all, which is why it is optional.
+   */
+  kind?: string;
+  credit?: string;
+}): string | null {
+  if (!frame.credit) return null;
+  if (SHOW_GENERATED_CREDIT) return frame.credit;
+
+  const kept = creditClauses(frame.credit).filter(
+    (clause) => !GENERATION_CLAUSE.test(clause)
+  );
+  if (kept.length === 0) return null;
+  return `${kept.join(". ")}.`;
+}
+
 /** Everything, for the check script and the asset checklist. */
 export const allSlots: Record<string, ImageSlot> = {
   ...agency,
   ...location,
   ...reference,
   ...empty,
+  ...shootPhoto,
+  ...shootRetouched,
+  ...shootGenerated,
   wardrobeLineup,
 };

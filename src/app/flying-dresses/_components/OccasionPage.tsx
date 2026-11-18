@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Scene } from "./Scene";
 import { FaqList } from "./FaqList";
 import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
-import { agency } from "../_lib/assets";
+import { agency, visibleCredit } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 import { mergeFaqs, type ExperienceFaq } from "@/content/flyingDressExperiences";
 import { occasionVenue, type Occasion } from "@/content/flyingDressOccasions";
@@ -66,7 +66,7 @@ function buildFrames(occasion: Occasion): GalleryFrame[] {
         width: slot.width,
         height: slot.height,
         span: frame.span,
-        caption: slot.credit ? `${frame.caption} ${slot.credit}.` : frame.caption,
+        caption: visibleCredit(slot) ? `${frame.caption} ${visibleCredit(slot)}.` : frame.caption,
       };
     })
     .filter((frame): frame is GalleryFrame => frame !== null);
@@ -150,7 +150,7 @@ export function OccasionPage({
               ratio="fd-ratio-wide"
               sizes="(min-width: 60rem) 72rem, 94vw"
               priority
-              credit={hero.credit}
+              credit={visibleCredit(hero) ?? undefined}
             />
           </div>
         </section>

@@ -1,0 +1,108 @@
+import type { ReelClip } from "../_components/ProductionReel";
+
+/**
+ * The moving footage for each shoot page.
+ *
+ * TWO KINDS, AND THEY ARE NOT MIXED IN ONE STRIP.
+ *
+ * `shootReels` are vertical clips the owner supplied on 5 November 2026. Every
+ * one of them carries a C2PA manifest reading `c2pa.created` with
+ * digitalsourcetype/trainedAlgorithmicMedia and the generator "Runway" — the
+ * yacht files still have "Gen-4 Turbo … Runway (Photo to Video)" in their
+ * original filenames. They are generated motion, so they live under
+ * /video/flying-dresses/shoots/generated/ and every caption says so.
+ *
+ * `shootAerial` is the opposite and is kept apart for that reason: a real DJI
+ * drone pass over Fayoum, 4K HEVC in the original, no C2PA and no generator
+ * anywhere in its bytes. It is the only genuine video this brand has, and
+ * putting it in the same strip as the generated clips would blur exactly the
+ * line the captions are there to hold.
+ *
+ * All of it is silent. None of the sources carried an audio stream, which is
+ * what makes muted autoplay honest here rather than a workaround: there is no
+ * soundtrack being withheld, and no third party's music to clear.
+ */
+
+const G = "/video/flying-dresses/shoots/generated";
+const P = "/photos/flying-dresses/shoots/generated";
+
+/**
+ * The clips print no caption. The owner decided on 5 November 2026 that
+ * generated imagery carries no visible label; see SHOW_GENERATED_CREDIT in
+ * _lib/assets.ts for the whole note.
+ *
+ * `provenance` is what the file IS and never changes. `caption` is what the
+ * page prints. Keeping them as two fields is the point: the check script
+ * reads the first, the visitor sees the second, and nobody has to weaken the
+ * record to change the design.
+ */
+const GENERATED_PROVENANCE = "Generated motion, art-directed by the owner";
+const GENERATED_CAPTION = "";
+
+function reel(slug: string, n: number, alt: string): ReelClip & { provenance: string } {
+  const id = `${slug}-reel-${n}`;
+  return {
+    id,
+    mp4: `${G}/${id}.mp4`,
+    webm: `${G}/${id}.webm`,
+    poster: `${P}/poster-${id}.jpg`,
+    width: 720,
+    height: 1280,
+    alt,
+    caption: GENERATED_CAPTION,
+    provenance: GENERATED_PROVENANCE,
+  };
+}
+
+export const shootReels: Record<string, (ReelClip & { provenance: string })[]> = {
+  "white-desert": [1, 2, 3, 4].map((n) =>
+    reel("white-desert", n, "A flying dress moving among the white chalk formations")
+  ),
+  fayoum: [1, 2, 3, 4, 5, 6].map((n) =>
+    reel("fayoum", n, "A flying dress moving on the pale dunes of Fayoum")
+  ),
+  "red-sea-yacht": [1, 2, 3, 4].map((n) =>
+    reel("red-sea-yacht", n, "A flying dress moving on the deck of a yacht at sea")
+  ),
+};
+
+/**
+ * The clips as the CLIENT component receives them: no `provenance`.
+ *
+ * ProductionReel is a client component, so whatever it is handed is
+ * serialized into the page's RSC payload and shipped to the browser. Passing
+ * the whole record put "Generated motion, art-directed by the owner" into the
+ * HTML source six times on the Fayoum page — invisible to a reader, since no
+ * caption element renders, but present to anyone reading source, and of no
+ * use to the component, which never reads the field.
+ *
+ * So the record stays on the server, where the check script reads it, and the
+ * browser gets only what it needs to play a video.
+ */
+export function clipsFor(slug: string): ReelClip[] {
+  return (shootReels[slug] ?? []).map((entry) => {
+    const { provenance, ...clip } = entry;
+    void provenance;
+    return clip;
+  });
+}
+
+export type AerialPlate = {
+  mp4: string;
+  poster: string;
+  width: number;
+  height: number;
+  alt: string;
+  caption: string;
+};
+
+export const shootAerial: Record<string, AerialPlate> = {
+  fayoum: {
+    mp4: "/video/flying-dresses/shoots/photo/fayoum-aerial.mp4",
+    poster: "/photos/flying-dresses/shoots/photo/poster-fayoum-aerial.jpg",
+    width: 1280,
+    height: 720,
+    alt: "An aerial pass over the pale dunes and lakes of Fayoum",
+    caption: "Filmed over Fayoum from a drone",
+  },
+};

@@ -3,7 +3,7 @@ import { Scene } from "./Scene";
 import { FaqList } from "./FaqList";
 import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { CelebrationChoices } from "./CelebrationChoices";
-import { agency } from "../_lib/assets";
+import { agency, visibleCredit } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 import { mergeFaqs } from "@/content/flyingDressExperiences";
 import {
@@ -135,7 +135,9 @@ function galleryFrames(): GalleryFrame[] {
       width: entry.slot.width,
       height: entry.slot.height,
       span: entry.span,
-      caption: entry.slot.credit ? `${entry.caption} ${entry.slot.credit}.` : entry.caption,
+      caption: visibleCredit(entry.slot)
+        ? `${entry.caption} ${visibleCredit(entry.slot)}.`
+        : entry.caption,
     }));
 }
 
@@ -201,7 +203,7 @@ export function BirthdayPage({ experience }: { experience: { faqs: { question: s
               ratio="fd-ratio-wide"
               sizes="(min-width: 60rem) 72rem, 94vw"
               priority
-              credit={hero.credit}
+              credit={visibleCredit(hero) ?? undefined}
             />
           </div>
         </section>
@@ -277,7 +279,7 @@ export function BirthdayPage({ experience }: { experience: { faqs: { question: s
                       height={photo.slot.height}
                       ratio="fd-ratio-landscape"
                       sizes="(min-width: 48rem) 36rem, 94vw"
-                      credit={photo.slot.credit}
+                      credit={visibleCredit(photo.slot) ?? undefined}
                     />
                   ) : null}
                   <h3 className="fd-display fd-h4" style={{ marginTop: "1.5rem" }}>

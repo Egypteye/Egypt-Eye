@@ -101,6 +101,11 @@ export type FdPackageDoc = {
   gettingThere: string | null;
   visualDirection: string | null;
   imageUrl: string | null;
+  imageWidth: number | null;
+  imageHeight: number | null;
+  /** Sanity's hotspot, 0..1 across and down the asset. */
+  imageHotspotX: number | null;
+  imageHotspotY: number | null;
   imageAlt: string | null;
   tone: string | null;
   timeline: { when: string | null; what: string | null }[] | null;
@@ -361,6 +366,28 @@ export function mergeSettings(doc: FdSettingsDoc | null): FdSettings {
 /* Packages                                                                  */
 /* ------------------------------------------------------------------------ */
 
+/**
+ * Sanity's hotspot as a CSS object-position.
+ *
+ * The hotspot is what the owner dragged onto the subject in the Studio, in
+ * 0..1 across and down the asset; object-position wants percentages. It is
+ * read only when a layout has to crop — a cover rendered at its own shape has
+ * nothing to crop — so an unset hotspot returns undefined and the CSS default
+ * of dead centre applies.
+ *
+ * Both coordinates are required. Sanity writes the pair together, and half a
+ * hotspot would silently centre the other axis while looking deliberate.
+ */
+export function hotspotToFocus(
+  x: number | null | undefined,
+  y: number | null | undefined
+): string | undefined {
+  if (typeof x !== "number" || typeof y !== "number") return undefined;
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return undefined;
+  const pct = (n: number) => `${Math.round(Math.min(1, Math.max(0, n)) * 1000) / 10}%`;
+  return `${pct(x)} ${pct(y)}`;
+}
+
 export function mergePackages(docs: FdPackageDoc[] | null): FlyingDressPackage[] {
   // Non-empty Sanity list wins. An EMPTY list falls back rather than emptying
   // the site: unlike a field an editor cleared, "no photoshoot documents" is
@@ -397,6 +424,21 @@ export function mergePackages(docs: FdPackageDoc[] | null): FlyingDressPackage[]
         gettingThere: str(d.gettingThere, l?.gettingThere),
         visualDirection: str(d.visualDirection, l?.visualDirection),
         image: d.imageUrl ?? l?.image ?? null,
+        // THE COVER'S SHAPE AND FOCAL POINT TRAVEL WITH THE COVER.
+        //
+        // All three move together or none of them do. Taking the URL from
+        // Studio and the dimensions from the content file would describe one
+        // photograph with another's proportions, which reserves the wrong box
+        // and then crops the picture to fit it — the failure this whole change
+        // is about. So the test is on `d.imageUrl`: if the cover came from
+        // Studio, its measurements come from Studio too, and if Studio has no
+        // dimensions for it, the frame falls back to a fixed ratio rather than
+        // borrowing numbers that belong to a different file.
+        imageWidth: d.imageUrl ? (d.imageWidth ?? null) : (l?.imageWidth ?? null),
+        imageHeight: d.imageUrl ? (d.imageHeight ?? null) : (l?.imageHeight ?? null),
+        imageFocus: d.imageUrl
+          ? hotspotToFocus(d.imageHotspotX, d.imageHotspotY)
+          : (l?.imageFocus ?? undefined),
         imageAlt: str(d.imageAlt, l?.imageAlt),
         tone,
         faqs: arr(

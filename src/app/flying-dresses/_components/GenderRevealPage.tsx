@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaqList } from "./FaqList";
 import { PhotoGallery, type GalleryFrame } from "./PhotoGallery";
 import { RevealThemes } from "./RevealThemes";
-import { agency } from "../_lib/assets";
+import { agency, visibleCredit } from "../_lib/assets";
 import { fdPath } from "../_lib/seo";
 // revealVenue's location/dependency/namingNote and revealPayment's termsSet
 // and team note stay direct imports: they are shared constants or the record
@@ -125,7 +125,9 @@ function galleryFrames(): GalleryFrame[] {
       // The credit travels with the photograph, as everywhere else on this
       // site. A caption that loses its attribution is how real work starts
       // looking like stock.
-      caption: entry.slot.credit ? `${entry.caption} ${entry.slot.credit}.` : entry.caption,
+      caption: visibleCredit(entry.slot)
+        ? `${entry.caption} ${visibleCredit(entry.slot)}.`
+        : entry.caption,
     }));
 }
 

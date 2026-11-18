@@ -1206,6 +1206,15 @@ const FD_PACKAGE_PROJECTION = `{
   priceStoryHeading, priceStoryBody,
   intro, metaDescription, whyThis, gettingThere, visualDirection,
   "imageUrl": image.asset->url,
+  // Dimensions and hotspot come with the asset so the cover can be rendered
+  // at its own shape with its own focal point. Without the dimensions a
+  // Studio cover has no aspect ratio to use and falls back to a fixed box,
+  // which is what cropped the portrait frames; without the hotspot, a cover
+  // that does have to be cropped is cropped from the centre.
+  "imageWidth": image.asset->metadata.dimensions.width,
+  "imageHeight": image.asset->metadata.dimensions.height,
+  "imageHotspotX": image.hotspot.x,
+  "imageHotspotY": image.hotspot.y,
   imageAlt, tone,
   timeline[]{when, what},
   faqs[]{question, answer}

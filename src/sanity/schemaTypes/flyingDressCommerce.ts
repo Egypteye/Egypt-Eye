@@ -194,12 +194,25 @@ export const flyingDressPackage = defineType({
     }),
     defineField({
       name: "image",
-      title: "Hero photograph",
+      title: "Cover photograph",
       type: "image",
       group: "main",
       options: { hotspot: true },
       description:
-        "Landscape. Leave it empty and the page shows a designed gradient rather than a stock photograph — which is the house rule: a labelled gap beats a picture a visitor might mistake for your work.",
+        "The picture on this shoot's card on the home page and the Experiences list, and the one at the top of its own page. Upload a new one, or use Select to pick one already uploaded; the X removes it. Any shape works — portrait, landscape or square — and the card takes the shape of whatever you put here rather than cropping it to fit. Each shoot has its own: changing this one changes nothing else. Leave it empty and the shoot keeps the picture it has now.",
+    }),
+    defineField({
+      name: "imageFocalNote",
+      title: "If the picture ever has to be cropped",
+      type: "string",
+      group: "main",
+      readOnly: true,
+      // A note, not a field. Sanity's hotspot control is easy to miss and is
+      // the only way the owner can say which part of a cover survives a crop;
+      // without it the crop is from the centre, which is what cut the heads
+      // off the portrait frames in the first place.
+      description:
+        "Click the cover above, then Edit, and drag the circle onto the part that matters (usually the face, or the dress). Most places show the whole picture and ignore this. It is used where the space is a fixed shape and something has to go.",
     }),
     defineField({
       name: "imageAlt",
