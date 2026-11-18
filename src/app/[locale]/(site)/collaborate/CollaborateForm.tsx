@@ -1,6 +1,11 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import {
+  validateMediaKit,
+  MEDIA_KIT_MAX_LABEL,
+  MEDIA_KIT_MIME,
+} from "@/lib/collaborations/mediaKit";
 import { useTr } from "@/i18n/LocaleProvider";
 import { PhoneField } from "@/components/PhoneField";
 
@@ -46,6 +51,17 @@ export function CollaborateForm() {
   const [socials, setSocials] = useState<SocialRow[]>([{ platform: "Instagram", handle: "", followers: "" }]);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [mediaKitFile, setMediaKitFile] = useState<File | null>(null);
+
+  // Checked as the file is chosen, not only on submit. Someone who picks a
+  // 40 MB PDF should learn that before filling in the rest of the form.
+  function onMediaKitFileChange(e: ChangeEvent<HTMLInputElement>) {
+    const picked = e.target.files?.[0] ?? null;
+    setMediaKitFile(picked);
+    if (!picked) return;
+    const check = validateMediaKit({ file: { type: picked.type, size: picked.size } });
+    setErrorMessage(check.ok ? null : tr(check.error));
+  }
 
   function updateSocial(index: number, field: keyof SocialRow, value: string) {
     setSocials((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
@@ -75,25 +91,40 @@ export function CollaborateForm() {
       return;
     }
 
+    // The media kit is mandatory, and the same rules run here and on the
+    // server — one module, imported by both, so the form can never promise
+    // something the API will reject.
+    const mediaKit = validateMediaKit({
+      file: mediaKitFile ? { type: mediaKitFile.type, size: mediaKitFile.size } : null,
+      link: (form.get("mediaKitUrl") as string) ?? "",
+    });
+    if (!mediaKit.ok) {
+      setErrorMessage(tr(mediaKit.error));
+      return;
+    }
+
+    // Multipart, so the PDF goes with the application. The social rows are
+    // built in React state rather than by the browser, so they travel as one
+    // JSON field; everything else is already in the FormData.
+    form.set("socialAccounts", JSON.stringify(validSocials));
+    form.delete("mediaKitFile");
+    if (mediaKitFile) form.set("mediaKitFile", mediaKitFile);
+
     setStatus("sending");
     try {
-      const res = await fetch("/api/collaborate-apply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          fullName: form.get("fullName"),
-          email: form.get("email"),
-          phone: form.get("phone"),
-          socialAccounts: validSocials,
-          engagementRate: form.get("engagementRate"),
-          audienceCountries: form.get("audienceCountries"),
-          travelDates: form.get("travelDates"),
-          portfolioUrl: form.get("portfolioUrl"),
-          collaborationType: form.get("collaborationType"),
-          message: form.get("message"),
-        }),
-      });
-      if (!res.ok) throw new Error("Request failed");
+      const res = await fetch("/api/collaborate-apply", { method: "POST", body: form });
+      if (!res.ok) {
+        // The server's message is the useful one — it names the actual
+        // problem (wrong type, too large, bad link) instead of a generic
+        // failure the applicant can do nothing with.
+        const detail = await res.json().catch(() => null);
+        if (detail?.error) {
+          setErrorMessage(tr(detail.error));
+          setStatus("idle");
+          return;
+        }
+        throw new Error("Request failed");
+      }
       setStatus("sent");
     } catch {
       setStatus("error");
@@ -201,6 +232,52 @@ export function CollaborateForm() {
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">{tr("Tell us about your content and what you have in mind")}<textarea name="message" rows={4} className={inputClass()} />
         </label>
+
+        {/*
+          The media kit. Mandatory, but either half satisfies it, so this is
+          one labelled group rather than two fields that both look optional.
+          The two options are given equal weight on purpose: a creator who
+          keeps their kit in Drive should not feel they are taking the lesser
+          path, and one who has a PDF to hand should not have to upload it
+          somewhere first.
+        */}
+        <fieldset className="sm:col-span-2 rounded-2xl border border-gold/20 bg-sand/40 p-5">
+          <legend className="px-1 text-sm font-semibold text-ink-soft">{tr("Media kit *")}</legend>
+          <p className="mt-1 text-xs text-ink-soft/85">
+            {tr("Required — give us either one. Your media kit tells us about your audience, reach, engagement and the kind of work you make.")}
+          </p>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
+              {tr("Upload a PDF")}
+              <input
+                type="file"
+                name="mediaKitFile"
+                accept={MEDIA_KIT_MIME}
+                onChange={onMediaKitFileChange}
+                className="w-full rounded-xl border border-gold/25 bg-cream px-3 py-2.5 text-xs font-normal text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-ink file:px-3.5 file:py-1.5 file:text-xs file:font-semibold file:text-cream hover:file:bg-gold-dark"
+              />
+              <span className="font-normal text-ink-soft/75">
+                {mediaKitFile
+                  ? `${mediaKitFile.name} — ${(mediaKitFile.size / (1024 * 1024)).toFixed(1)} MB`
+                  : tr(`PDF only, up to ${MEDIA_KIT_MAX_LABEL}.`)}
+              </span>
+            </label>
+
+            <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
+              {tr("Or paste a link")}
+              <input
+                type="url"
+                name="mediaKitUrl"
+                placeholder={tr("https://drive.google.com/...")}
+                className={inputClass()}
+              />
+              <span className="font-normal text-ink-soft/75">
+                {tr("Google Drive, Dropbox, Notion or your own site. Please make sure it is viewable by anyone with the link.")}
+              </span>
+            </label>
+          </div>
+        </fieldset>
       </div>
 
       {errorMessage && <p className="mt-4 text-sm font-semibold text-terracotta">{errorMessage}</p>}

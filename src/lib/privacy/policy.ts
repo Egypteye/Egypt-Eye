@@ -134,6 +134,11 @@ export const RETENTION = [
     text: `A photograph sent for a papyrus commission is stored privately — never at a public web address — and deleted automatically ${COMMISSION_PHOTO_DAYS} days after you send it. The link our team uses to look at it stops working after 30.`,
   },
   {
+    label: "Media kits sent with a collaboration application",
+    text:
+      "A media kit you upload is stored privately — never at a public web address — and the link our team uses to open it is created fresh each time and expires within minutes. If you send a link to your own media kit instead, we keep the link, not a copy. Both are deleted at the same time as the rest of your application, 12 months after your last contact with us.",
+  },
+  {
     label: "Payment confirmations from PayPal",
     text:
       "These never contain your name, email address or postal address — they are removed before the record is written, not deleted later.",

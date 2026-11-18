@@ -5,6 +5,7 @@ import { reconcilePayments } from "@/lib/booking/reconcile";
 import { pruneRateLimitHits } from "@/lib/rateLimit";
 import { applyDataRetention } from "@/lib/privacy/retention";
 import { deleteExpiredCommissionPhotos } from "@/lib/privacy/photoRetention";
+import { deleteAnonymisedMediaKits } from "@/lib/privacy/mediaKitRetention";
 import { bearerMatches } from "@/lib/security/secrets";
 
 // Runs the payment sweep.
@@ -53,12 +54,18 @@ export async function POST(request: NextRequest) {
   // sweep. Same nightly job, same swallow-your-own-errors rule.
   const photos = await deleteExpiredCommissionPhotos();
 
+  // Media kits, likewise. The SQL sweep above blanks an applicant's name and
+  // email; the PDF on their media kit's cover page would put both straight
+  // back, so the file has to go with the row.
+  const mediaKits = await deleteAnonymisedMediaKits();
+
   return NextResponse.json({
     ok: true,
     ...report,
     rateLimitHitsPruned: pruned,
     retention: retention.report ?? { ok: retention.ok },
     commissionPhotos: photos,
+    mediaKits,
   });
 }
 

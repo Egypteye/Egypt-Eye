@@ -558,12 +558,21 @@ export function collaborationApplicationEmail({
   email,
   socialsSummary,
   collaborationType,
+  mediaKitFileUrl = null,
+  mediaKitUrl = null,
+  mediaKitNote = null,
   reviewUrl,
 }: {
   fullName: string;
   email: string;
   socialsSummary: string;
   collaborationType: string;
+  /** Signed link to the uploaded PDF. Expires; /admin mints a fresh one. */
+  mediaKitFileUrl?: string | null;
+  /** The applicant's own link, where they host the kit themselves. */
+  mediaKitUrl?: string | null;
+  /** Why there is no usable link, when there is a kit but no way to reach it. */
+  mediaKitNote?: string | null;
   reviewUrl: string;
 }) {
   const rows: [string, string][] = [
@@ -572,6 +581,44 @@ export function collaborationApplicationEmail({
     ["Social accounts", socialsSummary],
     ["Collaboration type", collaborationType],
   ];
+
+  // The media kit is the reason this form asks for anything else, so it gets
+  // its own block rather than a row in the table: the team should be able to
+  // open it without reading past the follower counts.
+  //
+  // Both links are rendered when both were given. They are not alternatives —
+  // an applicant who uploads a PDF *and* links a Drive folder has given two
+  // different things, and picking one for them loses the other.
+  const mediaKitLinks = [
+    mediaKitFileUrl ? { label: "Open the uploaded PDF", href: mediaKitFileUrl } : null,
+    mediaKitUrl ? { label: "Open their media kit link", href: mediaKitUrl } : null,
+  ].filter((l): l is { label: string; href: string } => l !== null);
+
+  const mediaKitHtml = `
+      <p style="margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">Media Kit</p>
+      ${
+        mediaKitLinks.length > 0
+          ? `<p style="margin:0 0 16px;font-size:14px;">${mediaKitLinks
+              .map(
+                (l) =>
+                  `<a href="${escapeHtml(l.href)}" style="color:#8c6d1f;font-weight:600;">${escapeHtml(l.label)}</a>`,
+              )
+              .join('<br style="line-height:10px;" />')}</p>`
+          : ""
+      }
+      ${
+        mediaKitNote
+          ? `<p style="margin:0 0 16px;font-size:13px;color:#6b7d70;">${escapeHtml(mediaKitNote)}</p>`
+          : ""
+      }`;
+
+  const mediaKitText = [
+    mediaKitFileUrl ? `Uploaded PDF: ${mediaKitFileUrl}` : null,
+    mediaKitUrl ? `Media kit link: ${mediaKitUrl}` : null,
+    mediaKitNote,
+  ]
+    .filter(Boolean)
+    .join("\n");
   const rowsHtml = rows
     .map(
       ([label, value]) =>
@@ -585,12 +632,15 @@ export function collaborationApplicationEmail({
       <p style="margin:0 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#8c6d1f;">New Collaboration Application</p>
       <p style="margin:0 0 20px;font-size:20px;font-weight:bold;">${escapeHtml(fullName)}</p>
       <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">${rowsHtml}</table>
+      ${mediaKitHtml}
       ${ctaButton("Review in Admin", reviewUrl)}
     `,
     footerHtml: `Sent from the Collaborate With Egypt Eye application form.`,
   });
 
-  const text = `New Collaboration Application\n${fullName}\n\n${rows.map(([l, v]) => `${l}: ${v}`).join("\n")}\n\nReview: ${reviewUrl}`;
+  const text = `New Collaboration Application\n${fullName}\n\n${rows
+    .map(([l, v]) => `${l}: ${v}`)
+    .join("\n")}\n\n${mediaKitText}\n\nReview: ${reviewUrl}`;
 
   return { subject: `New Collaboration Application: ${fullName}`, html, text };
 }

@@ -23,6 +23,8 @@ type Application = {
   portfolio_url: string | null;
   collaboration_type: string;
   message: string | null;
+  media_kit_url: string | null;
+  media_kit_path: string | null;
   status: CollaborationStatus;
   admin_notes: string | null;
   created_at: string;
@@ -39,6 +41,18 @@ export default async function AdminCollaborationDetailPage({ params }: { params:
   if (!data) notFound();
   const application = data as Application;
   const updateNotes = updateCollaborationNotes.bind(null, application.id);
+
+  // Minted fresh on every view, and short-lived. The alternative — storing a
+  // long-lived URL on the row — would mean a link to an applicant's media kit
+  // sitting in the database, still working for anyone who ever saw it, long
+  // after the application was declined.
+  let mediaKitFileUrl: string | null = null;
+  if (application.media_kit_path) {
+    const { data: signed } = await supabase.storage
+      .from("collaboration-media-kits")
+      .createSignedUrl(application.media_kit_path, 60 * 15);
+    mediaKitFileUrl = signed?.signedUrl ?? null;
+  }
 
   return (
     <div className="mx-auto max-w-3xl">
@@ -86,6 +100,43 @@ export default async function AdminCollaborationDetailPage({ params }: { params:
             )
           }
         />
+      </div>
+
+      <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
+        <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">Media Kit</p>
+        {mediaKitFileUrl || application.media_kit_url ? (
+          <div className="mt-3 flex flex-wrap gap-2">
+            {mediaKitFileUrl && (
+              <a
+                href={mediaKitFileUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-ink px-3.5 py-2 text-xs font-semibold text-cream transition hover:bg-gold-dark"
+              >
+                Open uploaded PDF
+              </a>
+            )}
+            {application.media_kit_url && (
+              <a
+                href={application.media_kit_url}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-sand-dim px-3.5 py-2 text-xs font-semibold text-ink-soft transition hover:bg-sand-deep"
+              >
+                Open their link
+              </a>
+            )}
+          </div>
+        ) : (
+          <p className="mt-3 text-sm text-ink-soft/85">
+            {application.media_kit_path
+              ? "A PDF is stored but a link could not be created — try reloading."
+              : "— (submitted before the media kit field existed)"}
+          </p>
+        )}
+        {application.media_kit_path && mediaKitFileUrl && (
+          <p className="mt-2 text-xs text-ink-soft/70">The PDF link expires after 15 minutes; reload this page for a new one.</p>
+        )}
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-cream p-6 shadow-sm">
