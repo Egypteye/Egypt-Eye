@@ -11,6 +11,8 @@ import {
   isMediaKitPath,
   MEDIA_KIT_BUCKET,
 } from "@/lib/collaborations/mediaKit";
+import { parsePlatformAccounts } from "@/lib/creatorClub/intake";
+import { scoreCreator } from "@/lib/creatorClub/scoring";
 
 // Receives a submission from the "Collaborate With Egypt Eye" creator
 // application form (/collaborate). Unlike Travel Agent applications, this
@@ -170,6 +172,27 @@ export async function POST(request: NextRequest) {
       ? "A PDF upload was reported but the file could not be found — the link below is what came through."
       : null;
 
+  // ---------------------------------------------------------------------
+  // The preliminary score.
+  //
+  // Computed HERE, from the submitted performance figures, every time. A
+  // score, tier or eligibility flag in the payload is never read — the form
+  // previews a number using the same module, but the stored one is always
+  // the server's. See src/lib/creatorClub/intake.ts.
+  //
+  // The figures are self-reported, so this is preliminary in the strongest
+  // sense: it proposes a tier for a human to verify against the screenshots
+  // and the media kit. Nothing is approved on the strength of it.
+  // ---------------------------------------------------------------------
+  let performanceRaw: unknown = null;
+  try {
+    performanceRaw = JSON.parse(clean(form.get("platformAccounts"), 20000) || "[]");
+  } catch {
+    performanceRaw = null;
+  }
+  const platformAccounts = parsePlatformAccounts(performanceRaw);
+  const scored = scoreCreator(platformAccounts);
+
   const supabase = createAdminSupabaseClient();
   const { data, error } = await supabase
     .from("collaboration_applications")
@@ -186,6 +209,12 @@ export async function POST(request: NextRequest) {
       message: message || null,
       media_kit_url: mediaKitUrl,
       media_kit_path: mediaKitPath,
+      score_inputs: platformAccounts.length > 0 ? platformAccounts : null,
+      preliminary_score: platformAccounts.length > 0 ? scored.normalised : null,
+      preliminary_tier: platformAccounts.length > 0 ? scored.tier : null,
+      eligible: platformAccounts.length > 0 ? scored.eligible : null,
+      score_breakdown: platformAccounts.length > 0 ? scored.categories : null,
+      score_computed_at: platformAccounts.length > 0 ? new Date().toISOString() : null,
     })
     .select("id")
     .single();
