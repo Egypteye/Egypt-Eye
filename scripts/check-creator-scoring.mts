@@ -153,6 +153,25 @@ ok("a complete application's attainable total is not 100", complete.attainable =
 ok("a flawless application does not reach the top tier", complete.tier === "Elite Creator");
 ok("score exceeded the attainable total", complete.score <= complete.attainable);
 
+// A tier reached with categories still pending must never read as settled.
+// 85 off three of six categories is correct arithmetic and a dangerous
+// sentence: "Elite Creator" proposes the largest package Egypt Eye offers.
+const partial = scoreCreator([
+  { platform: "tiktok", followers: 120_000, videos: tenVideos(60_000, 6_000) },
+]);
+ok(
+  "a score with pending categories is not flagged provisional — a creator could be shown a settled tier off a third of the form",
+  partial.provisional === true && partial.pendingCount > 0
+);
+ok(
+  "a fully supplied application is still flagged provisional",
+  complete.provisional === false
+);
+ok(
+  "provisional disagrees with pendingCount",
+  scoreCreator([{ platform: "tiktok", followers: 50_000 }]).provisional === true
+);
+
 // ---------------------------------------------------------------------------
 // 4. Median, not mean — one viral video must not carry a creator.
 const steady = Array.from({ length: 10 }, () => vid(1_000, 10));

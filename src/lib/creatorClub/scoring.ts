@@ -203,6 +203,21 @@ export type ScoreResult = {
   strongestFollowers: number;
   categories: CategoryResult[];
   pendingCount: number;
+  /**
+   * True while any category is pending, which is almost always.
+   *
+   * Normalising over scored categories alone means a creator who fills in
+   * only their follower count and video stats can read as "Elite Creator"
+   * off three of six categories — the three a creator can answer without
+   * uploading anything. That is the correct arithmetic and a dangerous
+   * sentence: Elite proposes the largest complimentary package Egypt Eye
+   * offers, and nobody should see that word as settled while half the
+   * evidence is missing.
+   *
+   * So the tier never travels without this flag, and every consumer must
+   * present a provisional tier as provisional.
+   */
+  provisional: boolean;
 };
 
 /** Weights for the platforms actually present, renormalised to sum to 1. */
@@ -424,6 +439,7 @@ export function scoreCreator(
   }
 
   const scored = categories.filter((c) => c.status === "scored");
+  const pending = categories.filter((c) => c.status === "pending").length;
   const score = scored.reduce((sum, c) => sum + (c.points ?? 0), 0);
   const attainable = scored.reduce((sum, c) => sum + c.max, 0);
   const normalised = attainable === 0 ? 0 : Math.round((score / attainable) * TOTAL_POINTS);
@@ -440,6 +456,7 @@ export function scoreCreator(
     strongestPlatform: strongest?.platform ?? null,
     strongestFollowers,
     categories,
-    pendingCount: categories.filter((c) => c.status === "pending").length,
+    pendingCount: pending,
+    provisional: pending > 0,
   };
 }
