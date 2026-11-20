@@ -161,10 +161,18 @@ const horsePhotography: Benefit = {
 };
 
 /**
- * Decision 3. Granted case by case, with no published retail value, because
- * there is no priced transfer product to discount against.
+ * Decision 3, corrected 20 Nov 2026.
+ *
+ * NOT a tier entitlement. An administrator grants or withholds it for any
+ * approved creator, whatever their tier, and it is never the creator's main
+ * complimentary package. It was briefly attached to Premium and Elite, which
+ * turned a discretionary courtesy into something a Premium creator could
+ * point at and claim.
+ *
+ * It therefore lives outside PROGRAM entirely — see GRANTABLE_BENEFITS. A
+ * benefit that sits in a tier is a promise; this one is a decision.
  */
-const airportPickup: Benefit = {
+export const airportPickup: Benefit = {
   id: "airport-pickup",
   kind: "discretionary",
   label: "Airport pickup, where approved",
@@ -247,7 +255,7 @@ export const PROGRAM: TierConfig[] = [
     minScore: 70,
     complimentary: [pyramidsMuseumFayoum, pyramidsMuseumAlexandria],
     discounts: [rooftopFlyingDressDiscount, fayoumFlyingDressDiscount, whiteDesertFlyingDress],
-    extras: [airportPickup],
+    extras: [],
     commissionPercent: null,
     deliverables: null,
   },
@@ -256,7 +264,7 @@ export const PROGRAM: TierConfig[] = [
     minScore: 85,
     complimentary: [pyramidsMuseumFayoum, pyramidsMuseumAlexandria, quadBikes, horsePhotography],
     discounts: [rooftopFlyingDressDiscount, fayoumFlyingDressDiscount, whiteDesertFlyingDress],
-    extras: [airportPickup],
+    extras: [],
     /** Decision 6: 10% of eligible net booking value, Elite only. */
     commissionPercent: 10,
     deliverables: null,
@@ -287,6 +295,20 @@ export const PACKAGE_RULES = {
   commissionCancellationDays: 30,
 } as const;
 
+/**
+ * Benefits an administrator may grant to an approved creator individually,
+ * independent of tier.
+ *
+ * Kept apart from PROGRAM on purpose: nothing here is implied by a score, so
+ * nothing here can be claimed by reaching a tier. The admin screens read this
+ * list to know what can be switched on for a given creator.
+ */
+export const GRANTABLE_BENEFITS: Benefit[] = [airportPickup];
+
+export function isGrantable(benefitId: string): boolean {
+  return GRANTABLE_BENEFITS.some((b) => b.id === benefitId);
+}
+
 export function tierConfig(tier: Tier): TierConfig {
   const found = PROGRAM.find((t) => t.tier === tier);
   if (!found) throw new Error(`No configuration for tier ${tier}`);
@@ -310,6 +332,7 @@ export function offerableBenefits(tier: Tier): {
 /** Every benefit mentioned anywhere in the programme, de-duplicated. */
 export function allBenefits(): Benefit[] {
   const seen = new Map<string, Benefit>();
+  for (const b of GRANTABLE_BENEFITS) seen.set(b.id, b);
   for (const t of PROGRAM) {
     for (const b of [...t.complimentary, ...t.discounts, ...t.extras]) {
       if (!seen.has(b.id)) seen.set(b.id, b);

@@ -33,6 +33,8 @@ import {
   offerableBenefits,
   tierConfig,
   scoringThresholdFor,
+  isGrantable,
+  GRANTABLE_BENEFITS,
   PENDING_PRODUCTS,
 } from "../src/lib/creatorClub/program";
 import { TIER_THRESHOLDS } from "../src/lib/creatorClub/scoring";
@@ -99,17 +101,30 @@ for (const tier of PROGRAM) {
 // reads as a live promise. Lint caught airport pickup sitting unused once;
 // this makes that a check rather than a coincidence.
 const attached = new Set<string>();
+for (const g of GRANTABLE_BENEFITS) attached.add(g.id);
 for (const t of PROGRAM) for (const b of [...t.complimentary, ...t.discounts, ...t.extras]) attached.add(b.id);
 for (const b of allBenefits()) {
   ok(`${b.id} is defined but attached to no tier — it is dead configuration`, attached.has(b.id));
 }
+// Decision 3, corrected 20 Nov 2026: airport pickup is granted by an
+// administrator to any approved creator, whatever their tier. Attaching it to
+// a tier turns a discretionary courtesy into something a creator can claim.
 ok(
-  "airport pickup is not offered by any tier, so decision 3's benefit does not exist in the programme",
-  PROGRAM.some((t) => t.extras.some((b) => b.id === "airport-pickup"))
+  "airport pickup is not in the grantable registry, so an administrator cannot assign it",
+  isGrantable("airport-pickup")
 );
+for (const t of PROGRAM) {
+  for (const list of [t.complimentary, t.discounts, t.extras]) {
+    ok(
+      `${t.tier} lists airport pickup as a tier benefit — it is granted individually, not earned by reaching a tier`,
+      !list.some((b) => b.id === "airport-pickup")
+    );
+  }
+}
 ok(
-  "airport pickup is offered as a complimentary CHOICE — it is an extra, not an alternative to a tour",
-  !PROGRAM.some((t) => t.complimentary.some((b) => b.id === "airport-pickup"))
+  "a tier benefit leaked into the grantable registry — those are promises, not decisions",
+  GRANTABLE_BENEFITS.every((g) => !PROGRAM.some((t) =>
+    [...t.complimentary, ...t.discounts, ...t.extras].some((b) => b.id === g.id)))
 );
 ok(
   "PENDING_PRODUCTS no longer lists the five products the owner asked for on 19 Nov 2026",

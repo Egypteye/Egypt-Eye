@@ -62,6 +62,16 @@ export const MIN_FOLLOWERS_FOR_COMPLIMENTARY = 10_000;
 /** How many recent videos are considered. Median, not mean — see `median`. */
 export const VIDEO_SAMPLE = 10;
 
+/**
+ * How many videos a platform must supply before it can be assessed at all.
+ *
+ * The agreed model evaluates the last ten videos. One video is not a median,
+ * it is an anecdote, and scoring engagement off it would hand a creator full
+ * marks for a single good post. A platform short of this contributes nothing
+ * and the category stays pending until the figures arrive.
+ */
+export const MIN_VIDEOS_FOR_ASSESSMENT = VIDEO_SAMPLE;
+
 export const CATEGORY_MAX = {
   audienceSize: 15,
   engagement: 20,
@@ -189,36 +199,52 @@ export type CategoryResult = {
 };
 
 export type ScoreResult = {
-  /** Points actually awarded across scored categories. */
-  score: number;
-  /** The total those categories could have reached. */
-  attainable: number;
-  /** Score normalised to 100 across SCORED categories only. */
-  normalised: number;
-  /** Tier from the normalised score. Provisional in every sense. */
-  tier: Tier;
+  /**
+   * Points earned, out of the full 100-point model. THE headline number.
+   *
+   * An application assessed on audience size alone earns 12 of 100 — not
+   * "80", which is what dividing by the assessable total produces and which
+   * reads as four-fifths of a finished assessment. The denominator is always
+   * the whole model.
+   */
+  earned: number;
+  /** Points sitting in categories nobody has assessed yet. */
+  pendingPoints: number;
+  /** The most the ASSESSED categories could have given. */
+  assessedMax: number;
+  assessedCount: number;
+  pendingCount: number;
+  /** True only when all six categories have been assessed. */
+  complete: boolean;
+  /**
+   * What the final score might be if the unassessed categories scored at the
+   * same rate as the assessed ones. Null when nothing has been assessed.
+   *
+   * An estimate, never a result. It exists so a creator filling in the form
+   * can see where they are heading, and it is labelled as an estimate
+   * everywhere it is shown.
+   */
+  indicative: number | null;
+  /**
+   * The tier. Null until every category is assessed.
+   *
+   * Deliberately not derived from `indicative`: a follower count alone once
+   * produced "Premium Creator", which is an entitlement nobody had earned.
+   * A tier exists when the assessment is finished and not before.
+   */
+  tier: Tier | null;
+  /**
+   * Where the estimate currently points. Never an entitlement, never stored
+   * as the creator's tier, and only meaningful alongside pendingCount.
+   */
+  indicativeTier: Tier | null;
   eligible: boolean;
   eligibilityDetail: string;
   strongestPlatform: EligiblePlatform | null;
   strongestFollowers: number;
   categories: CategoryResult[];
-  pendingCount: number;
-  /**
-   * True while any category is pending, which is almost always.
-   *
-   * Normalising over scored categories alone means a creator who fills in
-   * only their follower count and video stats can read as "Elite Creator"
-   * off three of six categories — the three a creator can answer without
-   * uploading anything. That is the correct arithmetic and a dangerous
-   * sentence: Elite proposes the largest complimentary package Egypt Eye
-   * offers, and nobody should see that word as settled while half the
-   * evidence is missing.
-   *
-   * So the tier never travels without this flag, and every consumer must
-   * present a provisional tier as provisional.
-   */
-  provisional: boolean;
 };
+
 
 /** Weights for the platforms actually present, renormalised to sum to 1. */
 export function normalisedWeights(
@@ -276,6 +302,12 @@ export function scoreCreator(
   const strongestFollowers = strongest?.followers ?? 0;
   const eligible = strongestFollowers >= MIN_FOLLOWERS_FOR_COMPLIMENTARY;
 
+  /** The fullest video sample any one platform has supplied. */
+  const videosSupplied = eligibleAccounts.reduce(
+    (most, a) => Math.max(most, (a.videos ?? []).length),
+    0,
+  );
+
   const categories: CategoryResult[] = [];
 
   // --- A. Audience size: strongest platform, never a sum. ---------------
@@ -301,6 +333,7 @@ export function scoreCreator(
   const erWeighted = { byViews: 0, byFollowers: 0, weight: 0 };
   for (const a of eligibleAccounts) {
     const w = weights[a.platform] ?? 0;
+    if ((a.videos ?? []).length < MIN_VIDEOS_FOR_ASSESSMENT) continue;
     const { byViews, byFollowers } = engagementRates(a);
     if (byViews === null || byFollowers === null) continue;
     erWeighted.byViews += byViews * w;
@@ -313,7 +346,9 @@ export function scoreCreator(
       max: CATEGORY_MAX.engagement,
       points: null,
       status: "pending",
-      detail: `Add the likes, comments, shares and views for your last ${VIDEO_SAMPLE} videos.`,
+      detail: videosSupplied === 0
+        ? `Add the likes, comments, shares and views for your last ${VIDEO_SAMPLE} videos.`
+        : `${videosSupplied} of ${VIDEO_SAMPLE} videos entered — ${VIDEO_SAMPLE - videosSupplied} more needed before engagement can be assessed.`,
     });
   } else {
     // Rescale: a platform with no video data contributed no weight, so the
@@ -340,6 +375,7 @@ export function scoreCreator(
   let vtfWeight = 0;
   for (const a of eligibleAccounts) {
     const w = weights[a.platform] ?? 0;
+    if ((a.videos ?? []).length < MIN_VIDEOS_FOR_ASSESSMENT) continue;
     const ratio = viewsToFollowers(a);
     if (ratio === null) continue;
     vtfWeighted += ratio * w;
@@ -351,7 +387,9 @@ export function scoreCreator(
       max: CATEGORY_MAX.videoPerformance,
       points: null,
       status: "pending",
-      detail: `Add the view counts for your last ${VIDEO_SAMPLE} videos.`,
+      detail: videosSupplied === 0
+        ? `Add the view counts for your last ${VIDEO_SAMPLE} videos.`
+        : `${videosSupplied} of ${VIDEO_SAMPLE} videos entered — ${VIDEO_SAMPLE - videosSupplied} more needed before video performance can be assessed.`,
     });
   } else {
     const ratio = vtfWeighted / vtfWeight;
@@ -438,17 +476,26 @@ export function scoreCreator(
     });
   }
 
-  const scored = categories.filter((c) => c.status === "scored");
-  const pending = categories.filter((c) => c.status === "pending").length;
-  const score = scored.reduce((sum, c) => sum + (c.points ?? 0), 0);
-  const attainable = scored.reduce((sum, c) => sum + c.max, 0);
-  const normalised = attainable === 0 ? 0 : Math.round((score / attainable) * TOTAL_POINTS);
+  const assessed = categories.filter((c) => c.status === "scored");
+  const pendingCats = categories.filter((c) => c.status === "pending");
+  const earned = assessed.reduce((sum, c) => sum + (c.points ?? 0), 0);
+  const assessedMax = assessed.reduce((sum, c) => sum + c.max, 0);
+  const pendingPoints = pendingCats.reduce((sum, c) => sum + c.max, 0);
+  const complete = pendingCats.length === 0;
+  const indicative =
+    assessedMax === 0 ? null : Math.round((earned / assessedMax) * TOTAL_POINTS);
 
   return {
-    score,
-    attainable,
-    normalised,
-    tier: tierFor(normalised),
+    earned,
+    pendingPoints,
+    assessedMax,
+    assessedCount: assessed.length,
+    pendingCount: pendingCats.length,
+    complete,
+    indicative,
+    // A tier only once the assessment is finished.
+    tier: complete ? tierFor(earned) : null,
+    indicativeTier: indicative === null ? null : tierFor(indicative),
     eligible,
     eligibilityDetail: eligible
       ? `${strongestFollowers.toLocaleString()} followers on ${strongest?.platform} meets the ${MIN_FOLLOWERS_FOR_COMPLIMENTARY.toLocaleString()} minimum for a complimentary package.`
@@ -456,7 +503,5 @@ export function scoreCreator(
     strongestPlatform: strongest?.platform ?? null,
     strongestFollowers,
     categories,
-    pendingCount: pending,
-    provisional: pending > 0,
   };
 }

@@ -58,7 +58,7 @@ const honestResult = scoreCreator(parsePlatformAccounts(honest));
 const cheatingResult = scoreCreator(parsePlatformAccounts(cheating));
 ok(
   "a payload carrying its own score produced a different result from the same figures without one",
-  honestResult.normalised === cheatingResult.normalised && honestResult.tier === cheatingResult.tier
+  honestResult.earned === cheatingResult.earned && honestResult.tier === cheatingResult.tier
 );
 ok(
   "a self-declared Elite creator with 12,000 followers was filed as Elite",

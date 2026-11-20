@@ -22,6 +22,7 @@
  * and free of `server-only`.
  */
 import {
+  VIDEO_SAMPLE,
   scoreCreator,
   normalisedWeights,
   median,
@@ -127,9 +128,10 @@ for (const key of ["engagement", "videoPerformance", "tourismRelevance", "conten
   ok(`${key} is pending but still carries points`, cat?.points === null);
 }
 ok(
-  "pending categories were counted in the attainable total — a half-filled application looks weak rather than incomplete",
-  bare.attainable === CATEGORY_MAX.audienceSize
+  "pending categories were counted in the assessed total — a half-filled application looks weak rather than incomplete",
+  bare.assessedMax === CATEGORY_MAX.audienceSize
 );
+ok("pendingPoints is wrong for a follower-count-only application", bare.pendingPoints === TOTAL_POINTS - CATEGORY_MAX.audienceSize);
 ok("pendingCount is wrong", bare.pendingCount === 5);
 
 // Content quality must never be awarded automatically.
@@ -149,27 +151,73 @@ const complete = scoreCreator(
   },
 );
 ok("a complete application still reports pending categories", complete.pendingCount === 0);
-ok("a complete application's attainable total is not 100", complete.attainable === TOTAL_POINTS);
+ok("a complete application is not flagged complete", complete.complete === true);
+ok("a complete application's assessed total is not 100", complete.assessedMax === TOTAL_POINTS);
 ok("a flawless application does not reach the top tier", complete.tier === "Elite Creator");
-ok("score exceeded the attainable total", complete.score <= complete.attainable);
+ok("earned exceeded the assessed total", complete.earned <= complete.assessedMax);
 
-// A tier reached with categories still pending must never read as settled.
-// 85 off three of six categories is correct arithmetic and a dangerous
-// sentence: "Elite Creator" proposes the largest package Egypt Eye offers.
-const partial = scoreCreator([
-  { platform: "tiktok", followers: 120_000, videos: tenVideos(60_000, 6_000) },
+// THE ONE THE OWNER CAUGHT. An application assessed on audience size alone
+// earns 12 of 100. Reporting "80" — 12 divided by the 15 points that could be
+// assessed — reads as four-fifths of a finished assessment and once produced
+// "Premium Creator" off a follower count.
+const followersOnly = scoreCreator([{ platform: "tiktok", followers: 120_000 }]);
+ok(
+  `a follower-count-only application earned ${followersOnly.earned}, not the 12 of 100 the model gives it`,
+  followersOnly.earned === 12
+);
+ok(
+  "a follower-count-only application reports a tier — a tier is an entitlement and this assessment is not finished",
+  followersOnly.tier === null
+);
+ok(
+  "an incomplete application is flagged complete",
+  followersOnly.complete === false && followersOnly.pendingCount === 5
+);
+ok(
+  "the indicative estimate is missing, so the form has nothing to show but the raw earned score",
+  followersOnly.indicative === 80
+);
+ok(
+  "the indicative estimate is being exposed as the tier",
+  followersOnly.indicativeTier !== null && followersOnly.tier === null
+);
+ok(
+  "pendingPoints does not account for the 85 unassessed points",
+  followersOnly.pendingPoints === 85
+);
+ok(
+  "earned + pendingPoints should never exceed the 100-point model",
+  followersOnly.earned + followersOnly.pendingPoints <= TOTAL_POINTS
+);
+
+// The agreed model evaluates the last TEN videos. One video is an anecdote.
+const oneVideo = scoreCreator([
+  { platform: "tiktok", followers: 120_000, videos: [vid(60_000, 6_000, 200, 300)] },
+]);
+for (const key of ["engagement", "videoPerformance"] as const) {
+  const cat = oneVideo.categories.find((c) => c.key === key);
+  ok(
+    `${key} was assessed from a single video — the agreed model needs ${VIDEO_SAMPLE}`,
+    cat?.status === "pending"
+  );
+}
+ok(
+  "one video was enough to produce a tier",
+  oneVideo.tier === null
+);
+const nineVideos = scoreCreator([
+  { platform: "tiktok", followers: 120_000, videos: Array.from({ length: 9 }, () => vid(60_000, 6_000)) },
 ]);
 ok(
-  "a score with pending categories is not flagged provisional — a creator could be shown a settled tier off a third of the form",
-  partial.provisional === true && partial.pendingCount > 0
+  `nine videos were treated as a full sample of ${VIDEO_SAMPLE}`,
+  nineVideos.categories.find((c) => c.key === "engagement")?.status === "pending"
 );
+const tenVideosExactly = scoreCreator([
+  { platform: "tiktok", followers: 120_000, videos: Array.from({ length: 10 }, () => vid(60_000, 6_000)) },
+]);
 ok(
-  "a fully supplied application is still flagged provisional",
-  complete.provisional === false
-);
-ok(
-  "provisional disagrees with pendingCount",
-  scoreCreator([{ platform: "tiktok", followers: 50_000 }]).provisional === true
+  `exactly ${VIDEO_SAMPLE} videos were still refused`,
+  tenVideosExactly.categories.find((c) => c.key === "engagement")?.status === "scored"
 );
 
 // ---------------------------------------------------------------------------
@@ -214,7 +262,7 @@ const smallButStrong = scoreCreator(
 ok("a sub-10k creator was marked eligible", smallButStrong.eligible === false);
 ok(
   "a sub-10k creator was given no score at all — eligibility and scoring must stay independent",
-  smallButStrong.normalised > 0
+  smallButStrong.earned > 0
 );
 
 // ---------------------------------------------------------------------------

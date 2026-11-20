@@ -427,16 +427,29 @@ export function CollaborateForm() {
                 {tr("Indicative score")}
               </p>
               <p className="font-display text-3xl font-semibold">
-                {preview.normalised}
+                {preview.earned}
                 <span className="text-base font-normal text-cream/60">/100</span>
               </p>
             </div>
 
             <p className="mt-2 text-sm text-cream/85">
-              {preview.provisional
-                ? tr("Provisional — based on what you have filled in so far.")
-                : tr("Based on everything you have given us.")}
+              {preview.complete
+                ? tr("All six categories assessed.")
+                : `${preview.assessedCount}/6 ${tr("categories assessed")} · ${preview.pendingPoints} ${tr("points still pending")}`}
             </p>
+
+            {/*
+              The estimate is shown separately from the earned score and is
+              never called a score. Showing one number for both is what made
+              a follower count read as 80/100.
+            */}
+            {!preview.complete && preview.indicative !== null && (
+              <p className="mt-1 text-xs text-cream/70">
+                {tr("On this rate the finished assessment would land near")}{" "}
+                <span className="font-semibold text-gold">{preview.indicative}</span>
+                {tr(" — an estimate from the categories assessed so far, not a score and not a tier.")}
+              </p>
+            )}
 
             <p className="mt-3 text-sm">
               {preview.eligible

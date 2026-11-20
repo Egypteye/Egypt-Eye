@@ -210,8 +210,12 @@ export async function POST(request: NextRequest) {
       media_kit_url: mediaKitUrl,
       media_kit_path: mediaKitPath,
       score_inputs: platformAccounts.length > 0 ? platformAccounts : null,
-      preliminary_score: platformAccounts.length > 0 ? scored.normalised : null,
-      preliminary_tier: platformAccounts.length > 0 ? scored.tier : null,
+      // Points earned out of the full 100-point model — never a figure
+      // normalised over the handful of categories a creator could fill in.
+      preliminary_score: platformAccounts.length > 0 ? scored.earned : null,
+      // Null until all six categories are assessed. A tier is an
+      // entitlement, and an unfinished assessment has not earned one.
+      preliminary_tier: platformAccounts.length > 0 && scored.complete ? scored.tier : null,
       eligible: platformAccounts.length > 0 ? scored.eligible : null,
       score_breakdown: platformAccounts.length > 0 ? scored.categories : null,
       score_computed_at: platformAccounts.length > 0 ? new Date().toISOString() : null,
