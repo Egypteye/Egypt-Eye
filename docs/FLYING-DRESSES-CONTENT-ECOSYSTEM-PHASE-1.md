@@ -165,7 +165,14 @@ internal linking and image search regardless, and that per-dress *articles*
 should wait for volume data. Thirteen dedicated articles on individual dress
 colours is very likely more than the demand supports.
 
-### 2.3 Photography bounds the plan harder than writing does — **Verified**
+### 2.3 Photography in the repo is thin, but the Drive is not — **Verified**
+
+> **Updated 20 November 2026**, once the Drive link was supplied. The figures
+> immediately below describe what is *published on the site today*. §10 has
+> the Drive library, which changes the conclusion: photography is no longer
+> the binding constraint for most clusters, and is a severe one for exactly
+> the clusters §5 identifies as the opportunity.
+
 
 | Kind | Count | Usable as real client work? |
 |---|---|---|
@@ -411,3 +418,100 @@ And two things I need from you:
 - **Not rewritten the October audit.** It is good and it stands.
 - **Not written anything that duplicates egypteyetravel.com**, because the
   build fails on it and because it would be the option that audit rated worst.
+
+
+---
+
+## 10. The Drive library
+
+**Verified** on 20 November 2026 by enumerating
+`drive.google.com/drive/folders/1bLvEK6u4qWFwyZUeFZzITpuTOSpnQLiL`
+through the Drive API.
+
+**Paging was stopped at 1,000 entries and the library is larger than that.**
+Every figure below is therefore a FLOOR, not a total. The distribution was
+stable across the last four pages, so the shape is reliable even though the
+totals are not final.
+
+1,000 entries seen: **63 folders, 937 assets — 894 images, 27 videos, 16 other.**
+
+### What is in it, mapped to the site
+
+| Drive folder | Images | Videos | Maps to | That page's editorial support today |
+|---|---:|---:|---|---|
+| Pyramids Rooftop | **577** | 2 | `/experiences/pyramids-rooftop` | 2 stories |
+| Dresses Colors / Photos | **106** | 0 | `/wardrobe` | 2 stories |
+| Pyramids Rooftop Proposal | 47 | 0 | `/celebrations/marriage-proposals` | 1 story |
+| Gender Reveal | 40 | 1 | `/celebrations/gender-reveals` | **none** |
+| Rooftop Anniversary | 28 | 0 | `/celebrations/anniversaries-and-romance` | **none** |
+| Fayoum: the Lakes and the White Dunes | 22 | 7 | `/experiences/fayoum` | 1 story |
+| Birthdays and private celebrations | 15 | 0 | `/celebrations/birthdays-and-celebrations` | **none** |
+| Accessories | 13 | 0 | `/rentals/accessories` | **none** |
+| The Red Sea Yacht Experience | 13 | 4 | `/experiences/red-sea-yacht` | **none** |
+| DJ, music and rooftop production | 11 | 9 | `/creative/dj-and-music` | **none** |
+| Bahariya and the White Desert | 7 | 4 | `/experiences/white-desert` | **none** |
+| Maternity and family portraits | 5 | 0 | `/celebrations/maternity-and-family` | 1 story |
+| Men's wear | 5 | 0 | `/rentals/mens-wear` | 1 story |
+| Creator, editorial and brand shoots | 4 | 0 | `/creative/creators-and-editorial` | **none** |
+| **Rent a Dress** | **1** | 0 | `/rentals/dress-rental` | **none** |
+
+The folder names map almost one-to-one onto the site's commercial pages. That
+is unusually good and it is worth keeping that way.
+
+### The finding that matters
+
+**The photography is concentrated where the content already is, and absent
+where the opportunity is.**
+
+Pyramids Rooftop alone is 577 images — roughly two thirds of the library, and
+it supports the cluster that is already best served. Meanwhile:
+
+| Cluster §5 named as the opportunity | Photography |
+|---|---|
+| `/rentals/dress-rental` — "biggest untapped product" | **1 image** |
+| `/creative/creators-and-editorial` | 4 images |
+| `/rentals/mens-wear` | 5 images |
+| `/experiences/white-desert` ($400, the highest-priced product) | 7 images |
+
+So §2.3 inverts rather than resolves. Photography is no longer a constraint on
+the rooftop, dress, proposal, gender-reveal and anniversary clusters: there is
+more than enough for 30–40 articles across those. It is a **hard** constraint
+on dress hire, men's wear and creator work, which is precisely where §5 says
+the commercial upside is, because the travel site does not compete there.
+
+**This needs a decision from you and it is not a writing decision:** the Hire
+and Commissioned-work clusters need a shoot before they need articles. A
+half-day photographing the rental dresses, the accessories on a model and the
+gawns would unblock six to eight articles against products nobody else is
+writing about.
+
+### Two things to resolve before any image is placed
+
+**1. The dress colour folders do not match the dress names.** Drive has 15
+colour folders: Yellow, Gold, Aqua, Group, Em. Green, White, Purple, Red,
+Pink, Black, Green, Blue, Bronze, Ginger, Magenta. The site has 13 named
+dresses: Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden,
+BronZey, Aqua, Lavender, Hot Pink, Orchid.
+
+Some are obvious (Gold/Golden, Bronze/BronZey, Ginger, Black, Aqua). Several
+are not: does **Purple** mean Lavender or Orchid? Does **Red** mean Cherry?
+**Green** vs **Em. Green** against Verdant and Emerald? What are **Yellow**
+and **Magenta** — dresses not on the site, or other names for ones that are?
+
+I will not guess. A wrong mapping puts the wrong dress in an article about
+choosing a colour, which is the one article where the colour is the whole
+point. **Six lines from you resolves it.**
+
+**2. Provenance still has to be checked per file.** The library has mixed
+provenance — earlier in this project a file from this same folder turned out
+to carry an OpenAI C2PA manifest, and the registry splits real from generated
+on exactly that evidence. Every image pulled into an article gets the same
+byte-level check before it is placed, and generated frames stay out of
+anything claiming to show client work.
+
+### What I can produce once you answer
+
+The article-to-image assignment sheet your brief asks for: filename, Drive
+link, target article, placement, SEO filename, alt text and caption, for every
+image used. That is mechanical once the colour mapping is settled and the
+cross-domain decision in §3 tells me which articles exist.
