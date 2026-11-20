@@ -96,6 +96,12 @@ export type TierConfig = {
   complimentary: Benefit[];
   /** Everything else they become eligible for. */
   discounts: Benefit[];
+  /**
+   * Granted case by case, on top of the package. Not an alternative to the
+   * complimentary choice — airport pickup is an extra, not something a
+   * creator picks instead of their tour.
+   */
+  extras: Benefit[];
   /** Only Elite earns commission (decision 6). Null everywhere else. */
   commissionPercent: number | null;
   deliverables: DeliverableMatrix | null;
@@ -214,6 +220,7 @@ export const PROGRAM: TierConfig[] = [
     minScore: 0,
     complimentary: [],
     discounts: [rooftopFlyingDressDiscount],
+    extras: [],
     commissionPercent: null,
     deliverables: null,
   },
@@ -222,6 +229,7 @@ export const PROGRAM: TierConfig[] = [
     minScore: 40,
     complimentary: [pyramidsPhotoshoot, pyramidsTour],
     discounts: [rooftopFlyingDressDiscount],
+    extras: [],
     commissionPercent: null,
     deliverables: null,
   },
@@ -230,6 +238,7 @@ export const PROGRAM: TierConfig[] = [
     minScore: 55,
     complimentary: [pyramidsMuseum, pyramidsKhan],
     discounts: [rooftopFlyingDressDiscount, fayoumFlyingDressDiscount],
+    extras: [],
     commissionPercent: null,
     deliverables: null,
   },
@@ -238,6 +247,7 @@ export const PROGRAM: TierConfig[] = [
     minScore: 70,
     complimentary: [pyramidsMuseumFayoum, pyramidsMuseumAlexandria],
     discounts: [rooftopFlyingDressDiscount, fayoumFlyingDressDiscount, whiteDesertFlyingDress],
+    extras: [airportPickup],
     commissionPercent: null,
     deliverables: null,
   },
@@ -246,6 +256,7 @@ export const PROGRAM: TierConfig[] = [
     minScore: 85,
     complimentary: [pyramidsMuseumFayoum, pyramidsMuseumAlexandria, quadBikes, horsePhotography],
     discounts: [rooftopFlyingDressDiscount, fayoumFlyingDressDiscount, whiteDesertFlyingDress],
+    extras: [airportPickup],
     /** Decision 6: 10% of eligible net booking value, Elite only. */
     commissionPercent: 10,
     deliverables: null,
@@ -283,11 +294,16 @@ export function tierConfig(tier: Tier): TierConfig {
 }
 
 /** Benefits a tier can actually be offered today — pending ones are excluded. */
-export function offerableBenefits(tier: Tier): { complimentary: Benefit[]; discounts: Benefit[] } {
+export function offerableBenefits(tier: Tier): {
+  complimentary: Benefit[];
+  discounts: Benefit[];
+  extras: Benefit[];
+} {
   const config = tierConfig(tier);
   return {
     complimentary: config.complimentary.filter((b) => !b.pending),
     discounts: config.discounts.filter((b) => !b.pending),
+    extras: config.extras.filter((b) => !b.pending),
   };
 }
 
@@ -295,7 +311,9 @@ export function offerableBenefits(tier: Tier): { complimentary: Benefit[]; disco
 export function allBenefits(): Benefit[] {
   const seen = new Map<string, Benefit>();
   for (const t of PROGRAM) {
-    for (const b of [...t.complimentary, ...t.discounts]) if (!seen.has(b.id)) seen.set(b.id, b);
+    for (const b of [...t.complimentary, ...t.discounts, ...t.extras]) {
+      if (!seen.has(b.id)) seen.set(b.id, b);
+    }
   }
   return [...seen.values()];
 }

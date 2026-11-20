@@ -90,10 +90,27 @@ for (const b of allBenefits()) {
 }
 for (const tier of PROGRAM) {
   const offerable = offerableBenefits(tier.tier);
-  for (const b of [...offerable.complimentary, ...offerable.discounts]) {
+  for (const b of [...offerable.complimentary, ...offerable.discounts, ...offerable.extras]) {
     ok(`${tier.tier} offers ${b.id}, which is still pending`, !b.pending);
   }
 }
+
+// A benefit defined and never attached to a tier is dead configuration that
+// reads as a live promise. Lint caught airport pickup sitting unused once;
+// this makes that a check rather than a coincidence.
+const attached = new Set<string>();
+for (const t of PROGRAM) for (const b of [...t.complimentary, ...t.discounts, ...t.extras]) attached.add(b.id);
+for (const b of allBenefits()) {
+  ok(`${b.id} is defined but attached to no tier — it is dead configuration`, attached.has(b.id));
+}
+ok(
+  "airport pickup is not offered by any tier, so decision 3's benefit does not exist in the programme",
+  PROGRAM.some((t) => t.extras.some((b) => b.id === "airport-pickup"))
+);
+ok(
+  "airport pickup is offered as a complimentary CHOICE — it is an extra, not an alternative to a tour",
+  !PROGRAM.some((t) => t.complimentary.some((b) => b.id === "airport-pickup"))
+);
 ok(
   "PENDING_PRODUCTS no longer lists the five products the owner asked for on 19 Nov 2026",
   Object.keys(PENDING_PRODUCTS).length === 5

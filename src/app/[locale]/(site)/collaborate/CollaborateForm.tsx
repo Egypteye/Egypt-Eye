@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   validateMediaKit,
@@ -10,6 +10,29 @@ import {
 } from "@/lib/collaborations/mediaKit";
 import { useTr } from "@/i18n/LocaleProvider";
 import { PhoneField } from "@/components/PhoneField";
+import { scoreCreator, type EligiblePlatform, type PlatformAccount } from "@/lib/creatorClub/scoring";
+
+/**
+ * Display name -> the key the scoring model uses.
+ *
+ * Only these three are weighted. A creator's YouTube or blog is still
+ * collected and still read by a human; it simply is not scored against bands
+ * calibrated for short-form video.
+ */
+const SCORED_BY_LABEL: Record<string, EligiblePlatform> = {
+  Instagram: "instagram",
+  TikTok: "tiktok",
+  Facebook: "facebook",
+};
+
+type VideoRow = { views: string; likes: string; comments: string; shares: string };
+
+const emptyVideo = (): VideoRow => ({ views: "", likes: "", comments: "", shares: "" });
+
+function toNumber(value: string): number {
+  const n = Number.parseFloat(value.replace(/[,\s]/g, ""));
+  return Number.isFinite(n) && n >= 0 ? n : 0;
+}
 
 const PLATFORMS = ["Instagram", "TikTok", "YouTube", "Facebook", "Blog / Website", "Other"];
 const COLLAB_TYPES = [
@@ -54,6 +77,66 @@ export function CollaborateForm() {
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [mediaKitFile, setMediaKitFile] = useState<File | null>(null);
+  /** Recent video figures, keyed by the scoring platform they belong to. */
+  const [videos, setVideos] = useState<Partial<Record<EligiblePlatform, VideoRow[]>>>({});
+
+  /** The scored platforms this creator has actually filled in. */
+  const scoredRows = socials
+    .map((row) => ({ key: SCORED_BY_LABEL[row.platform], followers: toNumber(row.followers) }))
+    .filter((r): r is { key: EligiblePlatform; followers: number } => Boolean(r.key) && r.followers > 0);
+
+  /**
+   * What the server will be sent, and what the preview below is computed
+   * from — one value, so the number a creator sees cannot differ from the
+   * one that is stored. Duplicates are merged here the same way
+   * parsePlatformAccounts merges them on the server.
+   */
+  // Stable keys so the memo recomputes on content, not on identity: both
+  // sources are rebuilt on every keystroke.
+  const scoredRowsKey = JSON.stringify(scoredRows);
+  const videosKey = JSON.stringify(videos);
+
+  const platformAccounts: PlatformAccount[] = useMemo(() => {
+    const byPlatform = new Map<EligiblePlatform, PlatformAccount>();
+    for (const row of scoredRows) {
+      const existing = byPlatform.get(row.key);
+      if (existing && existing.followers >= row.followers) continue;
+      byPlatform.set(row.key, {
+        platform: row.key,
+        followers: row.followers,
+        videos: (videos[row.key] ?? [])
+          .filter((v) => toNumber(v.views) > 0)
+          .map((v) => ({
+            views: toNumber(v.views),
+            likes: toNumber(v.likes),
+            comments: toNumber(v.comments),
+            shares: toNumber(v.shares),
+          })),
+      });
+    }
+    return [...byPlatform.values()];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scoredRowsKey, videosKey]);
+
+  /**
+   * A preview, never an answer. The same module runs on the server and its
+   * result is what gets stored; this exists so a creator can see what their
+   * figures are worth while they type.
+   */
+  const preview = useMemo(
+    () => (platformAccounts.length > 0 ? scoreCreator(platformAccounts) : null),
+    [platformAccounts],
+  );
+
+  function setVideoRows(platform: EligiblePlatform, rows: VideoRow[]) {
+    setVideos((prev) => ({ ...prev, [platform]: rows }));
+  }
+
+  function updateVideo(platform: EligiblePlatform, index: number, field: keyof VideoRow, value: string) {
+    const rows = [...(videos[platform] ?? [])];
+    rows[index] = { ...rows[index], [field]: value };
+    setVideoRows(platform, rows);
+  }
 
   // Checked as the file is chosen, not only on submit. Someone who picks a
   // 40 MB PDF should learn that before filling in the rest of the form.
@@ -106,6 +189,10 @@ export function CollaborateForm() {
     }
 
     form.set("socialAccounts", JSON.stringify(validSocials));
+    // The figures the server scores from. It recomputes the score itself and
+    // ignores anything score-shaped in this payload — see intake.ts — so this
+    // carries the performance data and nothing else.
+    form.set("platformAccounts", JSON.stringify(platformAccounts));
     // The file never goes to our API: Vercel rejects a request body over
     // 4.5 MB before any of our code runs, and media kits are routinely
     // larger. It goes straight to storage instead, and only the resulting
@@ -260,6 +347,119 @@ export function CollaborateForm() {
         </label>
         <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">{tr("Tell us about your content and what you have in mind")}<textarea name="message" rows={4} className={inputClass()} />
         </label>
+
+        {/*
+          Recent video performance.
+          
+          The scoring model is built on medians across recent videos, so
+          without these the engagement and video-performance categories stay
+          pending and the creator sees a score built on follower count alone.
+          Optional on purpose: a half-filled application must still be
+          submittable, and a missing category reads as pending rather than
+          as a weak creator.
+        */}
+        {scoredRows.length > 0 && (
+          <fieldset className="sm:col-span-2 rounded-2xl border border-gold/20 bg-sand/40 p-5">
+            <legend className="px-1 text-sm font-semibold text-ink-soft">{tr("Recent video performance")}</legend>
+            <p className="mt-1 text-xs text-ink-soft/85">
+              {tr("Your last few videos, newest first. We use the median, so one viral video will not flatter the result and one quiet one will not sink it. Leave this blank and these categories stay pending until we see your insights.")}
+            </p>
+
+            {scoredRows.map(({ key }) => {
+              const rows = videos[key] ?? [];
+              return (
+                <div key={key} className="mt-4">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{key}</p>
+                  {rows.map((row, i) => (
+                    <div key={i} className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {(["views", "likes", "comments", "shares"] as const).map((field) => (
+                        <label key={field} className="flex flex-col gap-1 text-[11px] font-normal text-ink-soft/85">
+                          {tr(field)}
+                          <input
+                            inputMode="numeric"
+                            value={row[field]}
+                            onChange={(e) => updateVideo(key, i, field, e.target.value)}
+                            className={inputClass("text-sm")}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  ))}
+                  <div className="mt-2 flex gap-3">
+                    {rows.length < 10 && (
+                      <button
+                        type="button"
+                        onClick={() => setVideoRows(key, [...rows, emptyVideo()])}
+                        className="text-xs font-semibold text-gold-dark underline"
+                      >
+                        {rows.length === 0 ? tr("Add a video") : tr("Add another video")}
+                      </button>
+                    )}
+                    {rows.length > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => setVideoRows(key, rows.slice(0, -1))}
+                        className="text-xs font-semibold text-ink-soft/70 underline"
+                      >
+                        {tr("Remove last")}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </fieldset>
+        )}
+
+        {/*
+          The live preview.
+          
+          Deliberately says "indicative" everywhere and never prints the tier
+          as settled while categories are pending: every figure above is
+          self-reported, and the three categories a creator can fill in
+          without uploading anything are exactly the three that would carry
+          an unearned tier. See the `provisional` flag in scoring.ts.
+        */}
+        {preview && (
+          <div className="sm:col-span-2 rounded-2xl border border-gold/25 bg-ink p-5 text-cream">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
+                {tr("Indicative score")}
+              </p>
+              <p className="font-display text-3xl font-semibold">
+                {preview.normalised}
+                <span className="text-base font-normal text-cream/60">/100</span>
+              </p>
+            </div>
+
+            <p className="mt-2 text-sm text-cream/85">
+              {preview.provisional
+                ? tr("Provisional — based on what you have filled in so far.")
+                : tr("Based on everything you have given us.")}
+            </p>
+
+            <p className="mt-3 text-sm">
+              {preview.eligible
+                ? tr("Meets the 10,000-follower minimum for a complimentary package.")
+                : tr("Below the 10,000-follower minimum for a complimentary package — paid and discounted collaborations are considered separately, so your application is still welcome.")}
+            </p>
+
+            <ul className="mt-4 flex flex-col gap-1.5 text-xs">
+              {preview.categories.map((c) => (
+                <li key={c.key} className="flex items-center justify-between gap-3 border-t border-cream/10 pt-1.5">
+                  <span className="text-cream/75">{c.key}</span>
+                  <span className={c.status === "pending" ? "text-gold/80" : "font-semibold"}>
+                    {c.status === "pending" ? tr("pending") : `${c.points}/${c.max}`}
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="mt-4 text-[11px] leading-relaxed text-cream/60">
+              {tr("Every figure here is the one you typed. Nothing is confirmed until our team has checked it against your insights and media kit, and a score is not an approval — complimentary experiences are selective and agreed case by case.")}
+            </p>
+          </div>
+        )}
 
         {/*
           The media kit. Mandatory, but either half satisfies it, so this is
