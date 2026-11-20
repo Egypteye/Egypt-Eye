@@ -64,7 +64,7 @@ import {
 } from "../src/app/flying-dresses/_lib/assets.js";
 import { shootAerial, shootReels } from "../src/app/flying-dresses/_lib/shootReels.js";
 import { coverFor, shootArt } from "../src/app/flying-dresses/_lib/shootArt.js";
-import { dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
+import { DRIVE_COLOUR_FOLDER, dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
 import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
 import {
@@ -8775,6 +8775,71 @@ for (const pkg of packages) {
   ok(
     "hotspotToFocus() does not clamp out-of-range coordinates to the frame",
     hotspotToFocus(-1, 2) === "0% 100%"
+  );
+}
+
+// ---------------------------------------------------------------------------
+// EVERY DRESS KNOWS WHICH DRIVE FOLDER IT CAME FROM, AND YELLOW IS NOT ONE.
+//
+// The owner approved the colour mapping on 20 November 2026 after five of the
+// thirteen were established by eye rather than from memory: Purple is
+// Lavender and not Orchid, Magenta is Orchid, Em. Green is Emerald, Green is
+// Verdant, Pink is Hot Pink. Those five are the ones a reader would notice
+// immediately and a writer would never catch, because the error is invisible
+// in text and obvious in a photograph.
+//
+// The mapping is checked rather than trusted because it is the thing that
+// decides which folder a dress article pulls its pictures from. A drifted
+// entry does not throw: it quietly illustrates an article about Emerald with
+// photographs of Verdant.
+//
+// YELLOW IS THE POINT OF THE SECOND HALF. The Drive has a fourteenth colour
+// folder with no dress to belong to. It is excluded until the owner says what
+// it is, and this check is what stops it being added by someone who finds
+// thirteen folders mapped, one spare, and assumes.
+//
+// Proven by pointing emerald at "Green": red, naming both dresses that then
+// claim the same folder. And by adding a yellow entry: red.
+{
+  const folders = Object.values(DRIVE_COLOUR_FOLDER);
+
+  for (const dress of FLYING_DRESS_COLLECTION) {
+    ok(
+      `dress "${dress.id}" has no Drive colour folder recorded in DRIVE_COLOUR_FOLDER, so nobody ` +
+        `pulling photographs for it knows which of the fourteen folders to open`,
+      typeof DRIVE_COLOUR_FOLDER[dress.id] === "string"
+    );
+  }
+
+  const ids = new Set(FLYING_DRESS_COLLECTION.map((d) => d.id));
+  for (const key of Object.keys(DRIVE_COLOUR_FOLDER)) {
+    ok(
+      `DRIVE_COLOUR_FOLDER maps "${key}", which is not a dress in the collection. If a dress was ` +
+        `retired its mapping goes with it; if this is the Yellow folder, it stays out until the ` +
+        `owner says whether it is Ginger, a second marigold, or discontinued`,
+      ids.has(key)
+    );
+  }
+
+  // Two dresses sharing a folder means one of them is about to be illustrated
+  // with the other's photographs.
+  for (const folder of new Set(folders)) {
+    const claimants = Object.entries(DRIVE_COLOUR_FOLDER)
+      .filter(([, f]) => f === folder)
+      .map(([d]) => d);
+    ok(
+      `Drive folder "${folder}" is claimed by more than one dress (${claimants.join(", ")}). One of ` +
+        `them will be illustrated with the other's photographs, which is invisible in the text ` +
+        `and obvious in the picture`,
+      claimants.length === 1
+    );
+  }
+
+  ok(
+    `the "Yellow" Drive folder is mapped to a dress. It is excluded on purpose: all thirteen ` +
+      `dresses are accounted for without it, and until the owner confirms what it is, publishing ` +
+      `it risks showing a customer a dress they cannot book`,
+    !folders.includes("Yellow")
   );
 }
 
