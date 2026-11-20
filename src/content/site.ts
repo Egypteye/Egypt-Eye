@@ -64,6 +64,11 @@ export const site = {
     "We show you Egypt, take care of you, customize the experience, and professionally capture it — Tour Operator, Experience Company, Photography Studio, and Concierge, all in one.",
   contact: {
     email: "info@egypteyetravel.com",
+    // Reservations handle `email` above. Creator applications from
+    // /collaborate are a different queue with a different team, so they are
+    // routed here instead. Editable in Sanity Studio under Site Settings →
+    // Contact → Collaborations email.
+    collaborationsEmail: "Lavie@egypteyetravel.com",
     whatsapp: "+20 127 414 4599",
     whatsappLink: "https://wa.me/201274144599",
   },
