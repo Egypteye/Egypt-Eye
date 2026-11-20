@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import {
   validateMediaKit,
@@ -10,29 +10,25 @@ import {
 } from "@/lib/collaborations/mediaKit";
 import { useTr } from "@/i18n/LocaleProvider";
 import { PhoneField } from "@/components/PhoneField";
-import { scoreCreator, type EligiblePlatform, type PlatformAccount } from "@/lib/creatorClub/scoring";
-
-/**
- * Display name -> the key the scoring model uses.
- *
- * Only these three are weighted. A creator's YouTube or blog is still
- * collected and still read by a human; it simply is not scored against bands
- * calibrated for short-form video.
- */
-const SCORED_BY_LABEL: Record<string, EligiblePlatform> = {
-  Instagram: "instagram",
-  TikTok: "tiktok",
-  Facebook: "facebook",
-};
-
-type VideoRow = { views: string; likes: string; comments: string; shares: string };
-
-const emptyVideo = (): VideoRow => ({ views: "", likes: "", comments: "", shares: "" });
-
-function toNumber(value: string): number {
-  const n = Number.parseFloat(value.replace(/[,\s]/g, ""));
-  return Number.isFinite(n) && n >= 0 ? n : 0;
-}
+import {
+  scoreCreator,
+  VIDEO_SAMPLE,
+  type EligiblePlatform,
+  type PlatformAccount,
+} from "@/lib/creatorClub/scoring";
+import {
+  ACKNOWLEDGEMENTS,
+  STEPS,
+  blockingIssues,
+  canSubmit,
+  emptyDraft,
+  stepComplete,
+  stepIssues,
+  videoProgress,
+  type Draft,
+  type StepId,
+  type VideoRow,
+} from "@/lib/creatorClub/application";
 
 const PLATFORMS = ["Instagram", "TikTok", "YouTube", "Facebook", "Blog / Website", "Other"];
 const COLLAB_TYPES = [
@@ -43,58 +39,64 @@ const COLLAB_TYPES = [
   "Ambassador Program",
   "Other",
 ];
+const CONTENT_TYPES = [
+  "Travel",
+  "Photography",
+  "Videography",
+  "Lifestyle",
+  "Fashion",
+  "Adventure",
+  "Luxury",
+  "Food",
+  "Culture",
+  "Family travel",
+  "Other",
+];
 
-type SocialRow = { platform: string; handle: string; followers: string };
+/** Display name -> the key the scoring model uses. Only these three weigh. */
+const SCORED_BY_LABEL: Record<string, EligiblePlatform> = {
+  Instagram: "instagram",
+  TikTok: "tiktok",
+  Facebook: "facebook",
+};
+
+const emptyVideo = (): VideoRow => ({ views: "", likes: "", comments: "", shares: "" });
+
+function toNumber(value: string): number {
+  const n = Number.parseFloat(value.replace(/[,\s]/g, ""));
+  return Number.isFinite(n) && n >= 0 ? n : 0;
+}
 
 function inputClass(extra = "") {
-  return `rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold ${extra}`;
+  return `w-full rounded-lg border border-black/10 bg-sand px-4 py-2.5 text-ink outline-none focus:border-gold ${extra}`;
 }
+
+const labelClass = "flex flex-col gap-1.5 text-sm font-semibold text-ink-soft";
 
 type Status = "idle" | "sending" | "sent" | "error";
 
 export function CollaborateForm() {
   const tr = useTr();
-  // Literal tr() calls, not tr(variable) — values sent to the backend
-  // (form.get("collaborationType") etc.) must stay the fixed English
-  // strings; only the displayed option text translates.
-  const platformLabels: Record<string, string> = {
-    Instagram: tr("Instagram"),
-    TikTok: tr("TikTok"),
-    YouTube: tr("YouTube"),
-    Facebook: tr("Facebook"),
-    "Blog / Website": tr("Blog / Website"),
-    Other: tr("Other"),
-  };
-  const collabTypeLabels: Record<string, string> = {
-    "Sponsored Trip": tr("Sponsored Trip"),
-    "Content Partnership": tr("Content Partnership"),
-    "Paid Campaign": tr("Paid Campaign"),
-    "Press Trip / Media Coverage": tr("Press Trip / Media Coverage"),
-    "Ambassador Program": tr("Ambassador Program"),
-    Other: tr("Other"),
-  };
-  const [socials, setSocials] = useState<SocialRow[]>([{ platform: "Instagram", handle: "", followers: "" }]);
+  const [draft, setDraft] = useState<Draft>(emptyDraft);
+  const [stepIndex, setStepIndex] = useState(0);
+  /** Issues appear once someone tries to leave a step, not while they type. */
+  const [showIssues, setShowIssues] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [mediaKitFile, setMediaKitFile] = useState<File | null>(null);
-  /** Recent video figures, keyed by the scoring platform they belong to. */
-  const [videos, setVideos] = useState<Partial<Record<EligiblePlatform, VideoRow[]>>>({});
+  const [honeypot, setHoneypot] = useState("");
 
-  /** The scored platforms this creator has actually filled in. */
-  const scoredRows = socials
+  const step: StepId = STEPS[stepIndex].id;
+  const set = <K extends keyof Draft>(key: K, value: Draft[K]) =>
+    setDraft((d) => ({ ...d, [key]: value }));
+
+  // --- derived -------------------------------------------------------------
+  const scoredRows = draft.socials
     .map((row) => ({ key: SCORED_BY_LABEL[row.platform], followers: toNumber(row.followers) }))
     .filter((r): r is { key: EligiblePlatform; followers: number } => Boolean(r.key) && r.followers > 0);
 
-  /**
-   * What the server will be sent, and what the preview below is computed
-   * from — one value, so the number a creator sees cannot differ from the
-   * one that is stored. Duplicates are merged here the same way
-   * parsePlatformAccounts merges them on the server.
-   */
-  // Stable keys so the memo recomputes on content, not on identity: both
-  // sources are rebuilt on every keystroke.
   const scoredRowsKey = JSON.stringify(scoredRows);
-  const videosKey = JSON.stringify(videos);
+  const videosKey = JSON.stringify(draft.videos);
 
   const platformAccounts: PlatformAccount[] = useMemo(() => {
     const byPlatform = new Map<EligiblePlatform, PlatformAccount>();
@@ -104,7 +106,7 @@ export function CollaborateForm() {
       byPlatform.set(row.key, {
         platform: row.key,
         followers: row.followers,
-        videos: (videos[row.key] ?? [])
+        videos: (draft.videos[row.key] ?? [])
           .filter((v) => toNumber(v.views) > 0)
           .map((v) => ({
             views: toNumber(v.views),
@@ -118,89 +120,80 @@ export function CollaborateForm() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scoredRowsKey, videosKey]);
 
-  /**
-   * A preview, never an answer. The same module runs on the server and its
-   * result is what gets stored; this exists so a creator can see what their
-   * figures are worth while they type.
-   */
+  /** A preview. The server recomputes and its answer is the one stored. */
   const preview = useMemo(
     () => (platformAccounts.length > 0 ? scoreCreator(platformAccounts) : null),
     [platformAccounts],
   );
 
-  function setVideoRows(platform: EligiblePlatform, rows: VideoRow[]) {
-    setVideos((prev) => ({ ...prev, [platform]: rows }));
-  }
+  const issues = stepIssues(step, draft);
+  const outstanding = blockingIssues(draft);
 
-  function updateVideo(platform: EligiblePlatform, index: number, field: keyof VideoRow, value: string) {
-    const rows = [...(videos[platform] ?? [])];
-    rows[index] = { ...rows[index], [field]: value };
-    setVideoRows(platform, rows);
-  }
-
-  // Checked as the file is chosen, not only on submit. Someone who picks a
-  // 40 MB PDF should learn that before filling in the rest of the form.
+  // --- media kit -----------------------------------------------------------
   function onMediaKitFileChange(e: ChangeEvent<HTMLInputElement>) {
     const picked = e.target.files?.[0] ?? null;
     setMediaKitFile(picked);
+    set("hasMediaKitFile", picked !== null);
     if (!picked) return;
     const check = validateMediaKit({ file: { type: picked.type, size: picked.size } });
     setErrorMessage(check.ok ? null : tr(check.error));
   }
 
-  function updateSocial(index: number, field: keyof SocialRow, value: string) {
-    setSocials((prev) => prev.map((row, i) => (i === index ? { ...row, [field]: value } : row)));
+  // --- navigation ----------------------------------------------------------
+  // The draft lives in state, never in the DOM, so stepping away from a
+  // screen and back does not lose what was typed on it.
+  function scrollUp() {
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function addSocialRow() {
-    setSocials((prev) => [...prev, { platform: "Instagram", handle: "", followers: "" }]);
+  function goNext() {
+    if (issues.length > 0) {
+      setShowIssues(true);
+      return;
+    }
+    setShowIssues(false);
+    setStepIndex((i) => Math.min(i + 1, STEPS.length - 1));
+    scrollUp();
   }
 
-  function removeSocialRow(index: number) {
-    setSocials((prev) => prev.filter((_, i) => i !== index));
+  function goBack() {
+    setShowIssues(false);
+    setStepIndex((i) => Math.max(i - 1, 0));
+    scrollUp();
   }
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  function jumpTo(index: number) {
+    setShowIssues(false);
+    setStepIndex(index);
+    scrollUp();
+  }
+
+  // --- submit --------------------------------------------------------------
+  async function submit() {
     setErrorMessage(null);
-
-    const form = new FormData(e.currentTarget);
-    if ((form.get("company") as string)?.trim()) {
+    if (honeypot.trim()) {
       setStatus("sent");
       return;
     }
-
-    const validSocials = socials.filter((s) => s.handle.trim());
-    if (validSocials.length === 0) {
-      setErrorMessage(tr("Please add at least one social media account."));
+    if (!canSubmit(draft)) {
+      setShowIssues(true);
       return;
     }
 
-    // The media kit is mandatory, and the same rules run here and on the
-    // server — one module, imported by both, so the form can never promise
-    // something the API will reject.
     const mediaKit = validateMediaKit({
       file: mediaKitFile ? { type: mediaKitFile.type, size: mediaKitFile.size } : null,
-      link: (form.get("mediaKitUrl") as string) ?? "",
+      link: draft.mediaKitUrl,
     });
     if (!mediaKit.ok) {
       setErrorMessage(tr(mediaKit.error));
       return;
     }
 
-    form.set("socialAccounts", JSON.stringify(validSocials));
-    // The figures the server scores from. It recomputes the score itself and
-    // ignores anything score-shaped in this payload — see intake.ts — so this
-    // carries the performance data and nothing else.
-    form.set("platformAccounts", JSON.stringify(platformAccounts));
-    // The file never goes to our API: Vercel rejects a request body over
-    // 4.5 MB before any of our code runs, and media kits are routinely
-    // larger. It goes straight to storage instead, and only the resulting
-    // path is submitted with the application.
-    form.delete("mediaKitFile");
-
     setStatus("sending");
+    const form = new FormData();
 
+    // The PDF never travels through our API: Vercel rejects a body over
+    // 4.5 MB before our code runs, and media kits are routinely larger.
     if (mediaKitFile) {
       try {
         const res = await fetch("/api/collaborate-apply/upload-url", { method: "POST" });
@@ -212,13 +205,9 @@ export function CollaborateForm() {
         if (uploadError) throw uploadError;
         form.set("mediaKitPath", path);
       } catch {
-        // The link, if they gave one, is still a complete media kit, so the
-        // application is worth sending. With no link there is nothing to
-        // send: say so rather than submitting an application the team
-        // cannot act on.
         if (!mediaKit.link) {
           setErrorMessage(
-            tr("We couldn't upload that file. Please try again, or paste a link to your media kit instead.")
+            tr("We couldn't upload that file. Please try again, or paste a link to your media kit instead."),
           );
           setStatus("idle");
           return;
@@ -226,12 +215,44 @@ export function CollaborateForm() {
       }
     }
 
+    form.set("fullName", draft.fullName);
+    form.set("creatorName", draft.creatorName);
+    form.set("email", draft.email);
+    form.set("phone", draft.phone);
+    form.set("country", draft.country);
+    form.set("portfolioUrl", draft.website);
+    form.set("collaborationType", draft.collaborationType);
+    form.set("audienceCountries", draft.audienceCountries);
+    form.set("travelDates", draft.travelDates);
+    form.set("message", draft.message);
+    if (mediaKit.link) form.set("mediaKitUrl", mediaKit.link);
+    form.set("socialAccounts", JSON.stringify(draft.socials.filter((s) => s.handle.trim())));
+    form.set("platformAccounts", JSON.stringify(platformAccounts));
+    form.set(
+      "creatorProfile",
+      JSON.stringify({
+        contentTypes: draft.contentTypes,
+        languages: draft.languages,
+        whyEgyptEye: draft.whyEgyptEye,
+        bestWork: draft.bestWork,
+      }),
+    );
+    form.set(
+      "travelPreferences",
+      JSON.stringify({
+        destinations: draft.destinations,
+        requestedExperience: draft.requestedExperience,
+        travellingAlone: draft.travellingAlone,
+      }),
+    );
+    form.set(
+      "acknowledgements",
+      JSON.stringify({ confirmedAt: new Date().toISOString(), points: draft.acknowledged }),
+    );
+
     try {
       const res = await fetch("/api/collaborate-apply", { method: "POST", body: form });
       if (!res.ok) {
-        // The server's message is the useful one — it names the actual
-        // problem (wrong type, too large, bad link) instead of a generic
-        // failure the applicant can do nothing with.
         const detail = await res.json().catch(() => null);
         if (detail?.error) {
           setErrorMessage(tr(detail.error));
@@ -250,290 +271,572 @@ export function CollaborateForm() {
     return (
       <div className="rounded-3xl border border-gold/15 bg-cream p-10 text-center shadow-xl shadow-black/5">
         <p className="font-display text-2xl font-semibold text-ink">{tr("Application received")}</p>
-        <p className="mt-3 text-sm text-ink-soft">{tr("Thanks for reaching out — our team reviews every application and will follow up if it’s a fit.")}</p>
+        <p className="mt-3 text-sm text-ink-soft">
+          {tr("Our Collaborations team reads every application and checks the figures against your insights and media kit. We will be in touch if it is a fit.")}
+        </p>
       </div>
     );
   }
 
+  const scorePanel = preview ? (
+    <div className="mt-6 rounded-2xl border border-gold/25 bg-ink p-5 text-cream">
+      <div className="flex flex-wrap items-baseline justify-between gap-2">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">{tr("Indicative score")}</p>
+        <p className="font-display text-3xl font-semibold">
+          {preview.earned}
+          <span className="text-base font-normal text-cream/60">/100</span>
+        </p>
+      </div>
+      <p className="mt-2 text-sm text-cream/85">
+        {preview.complete
+          ? tr("All six categories assessed.")
+          : `${preview.assessedCount}/6 ${tr("categories assessed")} · ${preview.pendingPoints} ${tr("points still pending")}`}
+      </p>
+      {!preview.complete && preview.indicative !== null && (
+        <p className="mt-1 text-xs text-cream/70">
+          {tr("On this rate the finished assessment would land near")}{" "}
+          <span className="font-semibold text-gold">{preview.indicative}</span>
+          {tr(" — an estimate from the categories assessed so far, not a score and not a tier.")}
+        </p>
+      )}
+      <p className="mt-3 text-sm">
+        {preview.eligible
+          ? tr("Meets the 10,000-follower minimum for a complimentary package.")
+          : tr("Below the 10,000-follower minimum for a complimentary package — paid and discounted collaborations are considered separately, so your application is still welcome.")}
+      </p>
+      <ul className="mt-4 flex flex-col gap-1.5 text-xs">
+        {preview.categories.map((c) => (
+          <li key={c.key} className="flex items-center justify-between gap-3 border-t border-cream/10 pt-1.5">
+            <span className="text-cream/75">{c.key}</span>
+            <span className={c.status === "pending" ? "text-gold/80" : "font-semibold"}>
+              {c.status === "pending" ? tr("pending") : `${c.points}/${c.max}`}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-4 text-[11px] leading-relaxed text-cream/60">
+        {tr("Every figure here is the one you typed. Nothing is confirmed until our team has checked it against your insights and media kit, and a score is not an approval — complimentary experiences are selective and agreed case by case.")}
+      </p>
+    </div>
+  ) : null;
+
   return (
-    <form onSubmit={handleSubmit} className="relative rounded-3xl border border-gold/15 bg-cream p-6 shadow-xl shadow-black/5 sm:p-10">
+    <div className="relative rounded-3xl border border-gold/15 bg-cream p-5 shadow-xl shadow-black/5 sm:p-10">
+      {/* Honeypot, same as every other form on the site. */}
       <div className="absolute left-0 top-0 h-px w-px overflow-hidden opacity-0" aria-hidden="true">
-        <label>{tr("Company")}<input type="text" name="company" tabIndex={-1} autoComplete="off" />
+        <label>
+          {tr("Company")}
+          <input
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+          />
         </label>
       </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
-          {tr("Full name *")}
-          <input name="fullName" required className={inputClass()} />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
-          {tr("Email *")}
-          <input type="email" name="email" required className={inputClass()} />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("WhatsApp / Phone")}
-          <PhoneField errorClassName="text-sm font-semibold text-terracotta" id="collaborate-phone" inputLabel="Phone number" selectClassName={inputClass()} inputClassName={inputClass()} />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Portfolio / previous work")}<input type="url" name="portfolioUrl" placeholder={tr("https://")} className={inputClass()} />
-        </label>
-      </div>
+      {/* Progress. A labelled count plus a bar per step: readable at 390px
+          without the labels wrapping into three lines. */}
+      <nav aria-label={tr("Application progress")} className="mb-6">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">
+          {tr("Step")} {stepIndex + 1}/{STEPS.length} · {tr(STEPS[stepIndex].title)}
+        </p>
+        <ol className="mt-2 flex gap-1.5">
+          {STEPS.map((s, i) => {
+            const done = i < stepIndex && stepComplete(s.id, draft);
+            return (
+              <li key={s.id} className="flex-1">
+                <button
+                  type="button"
+                  onClick={() => jumpTo(i)}
+                  aria-label={`${tr("Go to step")} ${i + 1}: ${tr(s.title)}`}
+                  aria-current={i === stepIndex ? "step" : undefined}
+                  className={`h-1.5 w-full rounded-full transition ${
+                    i === stepIndex ? "bg-ink" : done ? "bg-gold" : "bg-sand-deep"
+                  }`}
+                />
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
 
-      <div className="mt-6">
-        <p className="mb-2 text-sm font-semibold text-ink-soft">{tr("Social media accounts *")}</p>
-        <div className="flex flex-col gap-3">
-          {socials.map((row, i) => (
-            <div key={i} className="grid grid-cols-[1fr_1fr_1fr_auto] items-center gap-2">
-              <select
-                value={row.platform}
-                onChange={(e) => updateSocial(i, "platform", e.target.value)}
-                className={inputClass()}
-              >
-                {PLATFORMS.map((p) => (
-                  <option key={p} value={p}>
-                    {platformLabels[p] ?? p}
-                  </option>
-                ))}
-              </select>
-              <input
-                placeholder={tr("@handle")}
-                value={row.handle}
-                onChange={(e) => updateSocial(i, "handle", e.target.value)}
-                className={inputClass()}
-              />
-              <input
-                placeholder={tr("Followers")}
-                value={row.followers}
-                onChange={(e) => updateSocial(i, "followers", e.target.value)}
-                className={inputClass()}
-              />
-              <button
-                type="button"
-                onClick={() => removeSocialRow(i)}
-                disabled={socials.length === 1}
-                aria-label={tr("Remove this account")}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-ink-soft/85 transition hover:bg-sand-dim hover:text-terracotta disabled:opacity-30"
-              >
-                ×
-              </button>
+      {step === "personal" && (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <label className={labelClass}>
+            {tr("Full name *")}
+            <input value={draft.fullName} onChange={(e) => set("fullName", e.target.value)} className={inputClass()} />
+          </label>
+          <label className={labelClass}>
+            {tr("Creator name")}
+            <input
+              value={draft.creatorName}
+              onChange={(e) => set("creatorName", e.target.value)}
+              placeholder={tr("If different from your name")}
+              className={inputClass()}
+            />
+          </label>
+          <label className={labelClass}>
+            {tr("Email *")}
+            <input
+              type="email"
+              inputMode="email"
+              value={draft.email}
+              onChange={(e) => set("email", e.target.value)}
+              className={inputClass()}
+            />
+          </label>
+          <PhoneField id="creator-phone" value={draft.phone} onChange={(v: string) => set("phone", v)} />
+          <label className={labelClass}>
+            {tr("Country you are based in *")}
+            <input value={draft.country} onChange={(e) => set("country", e.target.value)} className={inputClass()} />
+          </label>
+          <label className={labelClass}>
+            {tr("Website or portfolio")}
+            <input
+              type="url"
+              inputMode="url"
+              value={draft.website}
+              onChange={(e) => set("website", e.target.value)}
+              placeholder={tr("https://")}
+              className={inputClass()}
+            />
+          </label>
+        </div>
+      )}
+
+      {step === "social" && (
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-ink-soft/85">
+            {tr("Add every account you would post from. Instagram, TikTok and Facebook are the three we score; the rest are read by our team.")}
+          </p>
+          {draft.socials.map((row, i) => (
+            <div key={i} className="rounded-2xl border border-gold/20 bg-sand/40 p-4">
+              <div className="grid gap-3 sm:grid-cols-3">
+                <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+                  {tr("Platform")}
+                  <select
+                    value={row.platform}
+                    onChange={(e) =>
+                      set("socials", draft.socials.map((r, j) => (j === i ? { ...r, platform: e.target.value } : r)))
+                    }
+                    className={inputClass("text-sm")}
+                  >
+                    {PLATFORMS.map((pf) => (
+                      <option key={pf} value={pf}>
+                        {tr(pf)}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+                  {tr("Handle")}
+                  <input
+                    value={row.handle}
+                    onChange={(e) =>
+                      set("socials", draft.socials.map((r, j) => (j === i ? { ...r, handle: e.target.value } : r)))
+                    }
+                    placeholder="@"
+                    className={inputClass("text-sm")}
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-xs font-semibold text-ink-soft">
+                  {tr("Followers")}
+                  <input
+                    inputMode="numeric"
+                    value={row.followers}
+                    onChange={(e) =>
+                      set("socials", draft.socials.map((r, j) => (j === i ? { ...r, followers: e.target.value } : r)))
+                    }
+                    className={inputClass("text-sm")}
+                  />
+                </label>
+              </div>
+              {draft.socials.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => set("socials", draft.socials.filter((_, j) => j !== i))}
+                  className="mt-2 text-xs font-semibold text-ink-soft/70 underline"
+                >
+                  {tr("Remove")}
+                </button>
+              )}
             </div>
           ))}
+          <button
+            type="button"
+            onClick={() => set("socials", [...draft.socials, { platform: "TikTok", handle: "", followers: "" }])}
+            className="self-start text-sm font-semibold text-gold-dark underline"
+          >
+            {tr("Add another account")}
+          </button>
+          {scorePanel}
         </div>
-        <button
-          type="button"
-          onClick={addSocialRow}
-          className="mt-2 text-xs font-semibold text-gold-dark hover:underline"
-        >
-          {tr("+ Add another account")}
-        </button>
-      </div>
+      )}
 
-      <div className="mt-6 grid gap-5 sm:grid-cols-2">
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Average engagement rate")}<input name="engagementRate" placeholder={tr("e.g. 4-6%")} className={inputClass()} />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Audience countries")}<input name="audienceCountries" placeholder={tr("e.g. USA, UK, Germany")} className={inputClass()} />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">{tr("Preferred travel dates")}<input name="travelDates" placeholder={tr("e.g. Flexible, or March 2027")} className={inputClass()} />
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft">
-          {tr("Collaboration type *")}
-          <select name="collaborationType" required defaultValue="" className={inputClass()}>
-            <option value="" disabled>{tr("Select a type")}</option>
-            {COLLAB_TYPES.map((t) => (
-              <option key={t} value={t}>
-                {collabTypeLabels[t] ?? t}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="flex flex-col gap-1.5 text-sm font-semibold text-ink-soft sm:col-span-2">{tr("Tell us about your content and what you have in mind")}<textarea name="message" rows={4} className={inputClass()} />
-        </label>
-
-        {/*
-          Recent video performance.
-          
-          The scoring model is built on medians across recent videos, so
-          without these the engagement and video-performance categories stay
-          pending and the creator sees a score built on follower count alone.
-          Optional on purpose: a half-filled application must still be
-          submittable, and a missing category reads as pending rather than
-          as a weak creator.
-        */}
-        {scoredRows.length > 0 && (
-          <fieldset className="sm:col-span-2 rounded-2xl border border-gold/20 bg-sand/40 p-5">
-            <legend className="px-1 text-sm font-semibold text-ink-soft">{tr("Recent video performance")}</legend>
-            <p className="mt-1 text-xs text-ink-soft/85">
-              {tr("Your last few videos, newest first. We use the median, so one viral video will not flatter the result and one quiet one will not sink it. Leave this blank and these categories stay pending until we see your insights.")}
-            </p>
-
-            {scoredRows.map(({ key }) => {
-              const rows = videos[key] ?? [];
-              return (
-                <div key={key} className="mt-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft/85">{key}</p>
-                  {rows.map((row, i) => (
-                    <div key={i} className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                      {(["views", "likes", "comments", "shares"] as const).map((field) => (
-                        <label key={field} className="flex flex-col gap-1 text-[11px] font-normal text-ink-soft/85">
-                          {tr(field)}
-                          <input
-                            inputMode="numeric"
-                            value={row[field]}
-                            onChange={(e) => updateVideo(key, i, field, e.target.value)}
-                            className={inputClass("text-sm")}
-                          />
-                        </label>
-                      ))}
-                    </div>
-                  ))}
-                  <div className="mt-2 flex gap-3">
-                    {rows.length < 10 && (
-                      <button
-                        type="button"
-                        onClick={() => setVideoRows(key, [...rows, emptyVideo()])}
-                        className="text-xs font-semibold text-gold-dark underline"
-                      >
-                        {rows.length === 0 ? tr("Add a video") : tr("Add another video")}
-                      </button>
-                    )}
-                    {rows.length > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => setVideoRows(key, rows.slice(0, -1))}
-                        className="text-xs font-semibold text-ink-soft/70 underline"
-                      >
-                        {tr("Remove last")}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </fieldset>
-        )}
-
-        {/*
-          The live preview.
-          
-          Deliberately says "indicative" everywhere and never prints the tier
-          as settled while categories are pending: every figure above is
-          self-reported, and the three categories a creator can fill in
-          without uploading anything are exactly the three that would carry
-          an unearned tier. See the `provisional` flag in scoring.ts.
-        */}
-        {preview && (
-          <div className="sm:col-span-2 rounded-2xl border border-gold/25 bg-ink p-5 text-cream">
-            <div className="flex flex-wrap items-baseline justify-between gap-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-gold">
-                {tr("Indicative score")}
-              </p>
-              <p className="font-display text-3xl font-semibold">
-                {preview.earned}
-                <span className="text-base font-normal text-cream/60">/100</span>
-              </p>
-            </div>
-
-            <p className="mt-2 text-sm text-cream/85">
-              {preview.complete
-                ? tr("All six categories assessed.")
-                : `${preview.assessedCount}/6 ${tr("categories assessed")} · ${preview.pendingPoints} ${tr("points still pending")}`}
-            </p>
-
-            {/*
-              The estimate is shown separately from the earned score and is
-              never called a score. Showing one number for both is what made
-              a follower count read as 80/100.
-            */}
-            {!preview.complete && preview.indicative !== null && (
-              <p className="mt-1 text-xs text-cream/70">
-                {tr("On this rate the finished assessment would land near")}{" "}
-                <span className="font-semibold text-gold">{preview.indicative}</span>
-                {tr(" — an estimate from the categories assessed so far, not a score and not a tier.")}
-              </p>
-            )}
-
-            <p className="mt-3 text-sm">
-              {preview.eligible
-                ? tr("Meets the 10,000-follower minimum for a complimentary package.")
-                : tr("Below the 10,000-follower minimum for a complimentary package — paid and discounted collaborations are considered separately, so your application is still welcome.")}
-            </p>
-
-            <ul className="mt-4 flex flex-col gap-1.5 text-xs">
-              {preview.categories.map((c) => (
-                <li key={c.key} className="flex items-center justify-between gap-3 border-t border-cream/10 pt-1.5">
-                  <span className="text-cream/75">{c.key}</span>
-                  <span className={c.status === "pending" ? "text-gold/80" : "font-semibold"}>
-                    {c.status === "pending" ? tr("pending") : `${c.points}/${c.max}`}
-                  </span>
-                </li>
-              ))}
-            </ul>
-
-            <p className="mt-4 text-[11px] leading-relaxed text-cream/60">
-              {tr("Every figure here is the one you typed. Nothing is confirmed until our team has checked it against your insights and media kit, and a score is not an approval — complimentary experiences are selective and agreed case by case.")}
-            </p>
-          </div>
-        )}
-
-        {/*
-          The media kit. Mandatory, but either half satisfies it, so this is
-          one labelled group rather than two fields that both look optional.
-          The two options are given equal weight on purpose: a creator who
-          keeps their kit in Drive should not feel they are taking the lesser
-          path, and one who has a PDF to hand should not have to upload it
-          somewhere first.
-        */}
-        <fieldset className="sm:col-span-2 rounded-2xl border border-gold/20 bg-sand/40 p-5">
-          <legend className="px-1 text-sm font-semibold text-ink-soft">{tr("Media kit *")}</legend>
-          <p className="mt-1 text-xs text-ink-soft/85">
-            {tr("Required — give us either one. Your media kit tells us about your audience, reach, engagement and the kind of work you make.")}
+      {step === "performance" && (
+        <div className="flex flex-col gap-5">
+          <p className="text-sm text-ink-soft/85">
+            {tr("Your last ten videos on each scored platform. We use the median, so one viral video will not flatter the result and one quiet one will not sink it.")}
           </p>
 
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
-              {tr("Upload a PDF")}
-              <input
-                type="file"
-                name="mediaKitFile"
-                accept={MEDIA_KIT_MIME}
-                onChange={onMediaKitFileChange}
-                className="w-full rounded-xl border border-gold/25 bg-cream px-3 py-2.5 text-xs font-normal text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-ink file:px-3.5 file:py-1.5 file:text-xs file:font-semibold file:text-cream hover:file:bg-gold-dark"
-              />
-              <span className="font-normal text-ink-soft/75">
-                {mediaKitFile
-                  ? `${mediaKitFile.name} — ${(mediaKitFile.size / (1024 * 1024)).toFixed(1)} MB`
-                  : tr(`PDF only, up to ${MEDIA_KIT_MAX_LABEL}.`)}
-              </span>
-            </label>
+          {scoredRows.length === 0 && (
+            <p className="rounded-xl border border-gold/20 bg-sand/40 px-4 py-3 text-sm text-ink-soft/85">
+              {tr("Add an Instagram, TikTok or Facebook account on the previous step to enter video figures.")}
+            </p>
+          )}
 
-            <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
-              {tr("Or paste a link")}
+          {scoredRows.map(({ key }) => {
+            const rows = draft.videos[key] ?? [];
+            const done = videoProgress(draft, key);
+            return (
+              <div key={key} className="rounded-2xl border border-gold/20 bg-sand/40 p-4">
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-ink-soft">{key}</p>
+                  <p className={`text-xs font-semibold ${done >= VIDEO_SAMPLE ? "text-gold-dark" : "text-ink-soft/70"}`}>
+                    {done}/{VIDEO_SAMPLE} {tr("videos")}
+                  </p>
+                </div>
+                <div className="mt-1 h-1 w-full rounded-full bg-sand-deep">
+                  <div
+                    className="h-1 rounded-full bg-gold transition-all"
+                    style={{ width: `${Math.min(100, (done / VIDEO_SAMPLE) * 100)}%` }}
+                  />
+                </div>
+
+                <div className="mt-3 flex flex-col gap-2">
+                  {rows.map((row, i) => (
+                    <div key={i} className="rounded-xl border border-black/5 bg-cream p-2.5">
+                      <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wide text-ink-soft/60">
+                        {tr("Video")} {i + 1}
+                      </p>
+                      <div className="grid grid-cols-4 gap-1.5">
+                        {(["views", "likes", "comments", "shares"] as const).map((field) => (
+                          <label key={field} className="flex flex-col gap-0.5 text-[10px] text-ink-soft/70">
+                            {tr(field)}
+                            <input
+                              inputMode="numeric"
+                              value={row[field]}
+                              onChange={(e) =>
+                                set("videos", {
+                                  ...draft.videos,
+                                  [key]: rows.map((r, j) => (j === i ? { ...r, [field]: e.target.value } : r)),
+                                })
+                              }
+                              className="w-full rounded-md border border-black/10 bg-sand px-2 py-1.5 text-sm text-ink outline-none focus:border-gold"
+                            />
+                          </label>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-2 flex gap-3">
+                  {rows.length < VIDEO_SAMPLE && (
+                    <button
+                      type="button"
+                      onClick={() => set("videos", { ...draft.videos, [key]: [...rows, emptyVideo()] })}
+                      className="text-xs font-semibold text-gold-dark underline"
+                    >
+                      {rows.length === 0 ? tr("Add a video") : tr("Add another")}
+                    </button>
+                  )}
+                  {rows.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => set("videos", { ...draft.videos, [key]: rows.slice(0, -1) })}
+                      className="text-xs font-semibold text-ink-soft/70 underline"
+                    >
+                      {tr("Remove last")}
+                    </button>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+
+          <fieldset className="rounded-2xl border border-gold/20 bg-sand/40 p-4">
+            <legend className="px-1 text-sm font-semibold text-ink-soft">{tr("Media kit *")}</legend>
+            <p className="mt-1 text-xs text-ink-soft/85">{tr("Required — give us either one.")}</p>
+            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+              <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
+                {tr("Upload a PDF")}
+                <input
+                  type="file"
+                  accept={MEDIA_KIT_MIME}
+                  onChange={onMediaKitFileChange}
+                  className="w-full rounded-xl border border-gold/25 bg-cream px-3 py-2.5 text-xs font-normal text-ink-soft file:mr-3 file:rounded-full file:border-0 file:bg-ink file:px-3.5 file:py-1.5 file:text-xs file:font-semibold file:text-cream"
+                />
+                <span className="font-normal text-ink-soft/75">
+                  {mediaKitFile
+                    ? `${mediaKitFile.name} — ${(mediaKitFile.size / (1024 * 1024)).toFixed(1)} MB`
+                    : tr(`PDF only, up to ${MEDIA_KIT_MAX_LABEL}.`)}
+                </span>
+              </label>
+              <label className="flex flex-col gap-1.5 text-xs font-semibold text-ink-soft">
+                {tr("Or paste a link")}
+                <input
+                  type="url"
+                  inputMode="url"
+                  value={draft.mediaKitUrl}
+                  onChange={(e) => set("mediaKitUrl", e.target.value)}
+                  placeholder={tr("https://drive.google.com/...")}
+                  className={inputClass("text-sm font-normal")}
+                />
+              </label>
+            </div>
+          </fieldset>
+
+          {scorePanel}
+        </div>
+      )}
+
+      {step === "profile" && (
+        <div className="flex flex-col gap-5">
+          <fieldset>
+            <legend className="text-sm font-semibold text-ink-soft">{tr("What do you make? *")}</legend>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {CONTENT_TYPES.map((t) => {
+                const on = draft.contentTypes.includes(t);
+                return (
+                  <button
+                    key={t}
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() =>
+                      set("contentTypes", on ? draft.contentTypes.filter((x) => x !== t) : [...draft.contentTypes, t])
+                    }
+                    className={`rounded-full px-3.5 py-2 text-xs font-semibold transition ${
+                      on ? "bg-ink text-cream" : "bg-sand-dim text-ink-soft hover:bg-sand-deep"
+                    }`}
+                  >
+                    {tr(t)}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+          <label className={labelClass}>
+            {tr("Languages you publish in")}
+            <input value={draft.languages} onChange={(e) => set("languages", e.target.value)} className={inputClass()} />
+          </label>
+          <label className={labelClass}>
+            {tr("Where most of your audience is")}
+            <input
+              value={draft.audienceCountries}
+              onChange={(e) => set("audienceCountries", e.target.value)}
+              placeholder={tr("e.g. USA, UK, Germany")}
+              className={inputClass()}
+            />
+          </label>
+          <label className={labelClass}>
+            {tr("Why Egypt Eye?")}
+            <textarea
+              rows={3}
+              value={draft.whyEgyptEye}
+              onChange={(e) => set("whyEgyptEye", e.target.value)}
+              className={inputClass()}
+            />
+          </label>
+          <label className={labelClass}>
+            {tr("Links to your three best pieces of work")}
+            <textarea
+              rows={3}
+              value={draft.bestWork}
+              onChange={(e) => set("bestWork", e.target.value)}
+              placeholder={tr("One per line")}
+              className={inputClass()}
+            />
+          </label>
+        </div>
+      )}
+
+      {step === "travel" && (
+        <div className="grid gap-5 sm:grid-cols-2">
+          <label className={labelClass}>
+            {tr("Collaboration type *")}
+            <select
+              value={draft.collaborationType}
+              onChange={(e) => set("collaborationType", e.target.value)}
+              className={inputClass()}
+            >
+              <option value="">{tr("Select a type")}</option>
+              {COLLAB_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {tr(t)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className={labelClass}>
+            {tr("Preferred travel dates")}
+            <input
+              value={draft.travelDates}
+              onChange={(e) => set("travelDates", e.target.value)}
+              placeholder={tr("e.g. Flexible, or March 2027")}
+              className={inputClass()}
+            />
+          </label>
+          <label className={labelClass}>
+            {tr("Destinations you are interested in")}
+            <input
+              value={draft.destinations}
+              onChange={(e) => set("destinations", e.target.value)}
+              className={inputClass()}
+            />
+          </label>
+          <label className={labelClass}>
+            {tr("The experience you would most like")}
+            <input
+              value={draft.requestedExperience}
+              onChange={(e) => set("requestedExperience", e.target.value)}
+              className={inputClass()}
+            />
+          </label>
+          <label className={`${labelClass} sm:col-span-2`}>
+            {tr("Are you travelling alone?")}
+            <input
+              value={draft.travellingAlone}
+              onChange={(e) => set("travellingAlone", e.target.value)}
+              className={inputClass()}
+            />
+            <span className="text-xs font-normal text-ink-soft/70">
+              {tr("A complimentary package covers you only, unless a companion is separately approved.")}
+            </span>
+          </label>
+          <label className={`${labelClass} sm:col-span-2`}>
+            {tr("Anything else you would like us to know")}
+            <textarea
+              rows={4}
+              value={draft.message}
+              onChange={(e) => set("message", e.target.value)}
+              className={inputClass()}
+            />
+          </label>
+        </div>
+      )}
+
+      {step === "agree" && (
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-ink-soft/85">
+            {tr("How the Creator Club works. Please confirm you have read each one — these are the operating rules, not a contract. If we go ahead, the full campaign terms come to you in writing first.")}
+          </p>
+          {ACKNOWLEDGEMENTS.map((a) => (
+            <label
+              key={a.id}
+              className="flex cursor-pointer items-start gap-3 rounded-xl border border-gold/20 bg-sand/40 px-4 py-3 text-sm text-ink-soft"
+            >
               <input
-                type="url"
-                name="mediaKitUrl"
-                placeholder={tr("https://drive.google.com/...")}
-                className={inputClass()}
+                type="checkbox"
+                checked={Boolean(draft.acknowledged[a.id])}
+                onChange={(e) => set("acknowledged", { ...draft.acknowledged, [a.id]: e.target.checked })}
+                className="mt-0.5 h-4 w-4 shrink-0 accent-[#1d2b22]"
               />
-              <span className="font-normal text-ink-soft/75">
-                {tr("Google Drive, Dropbox, Notion or your own site. Please make sure it is viewable by anyone with the link.")}
-              </span>
+              <span>{tr(a.text)}</span>
             </label>
-          </div>
-        </fieldset>
-      </div>
+          ))}
+        </div>
+      )}
+
+      {step === "review" && (
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-ink-soft/85">{tr("A last look before it goes to our Collaborations team.")}</p>
+          <dl className="rounded-2xl border border-gold/20 bg-sand/40 p-4 text-sm">
+            {[
+              [tr("Name"), draft.fullName],
+              [tr("Creator name"), draft.creatorName || "—"],
+              [tr("Email"), draft.email],
+              [tr("Country"), draft.country],
+              [
+                tr("Accounts"),
+                draft.socials
+                  .filter((s) => s.handle.trim())
+                  .map((s) => `${s.platform} ${s.handle}`)
+                  .join(", ") || "—",
+              ],
+              [tr("Media kit"), draft.hasMediaKitFile ? tr("PDF attached") : draft.mediaKitUrl || "—"],
+              [tr("Content"), draft.contentTypes.join(", ") || "—"],
+              [tr("Collaboration"), draft.collaborationType || "—"],
+              [tr("Travel dates"), draft.travelDates || "—"],
+            ].map(([k, v]) => (
+              <div key={String(k)} className="flex gap-3 border-b border-black/5 py-1.5 last:border-0">
+                <dt className="w-32 shrink-0 text-ink-soft/70">{k}</dt>
+                <dd className="font-medium text-ink">{v}</dd>
+              </div>
+            ))}
+          </dl>
+
+          {outstanding.length > 0 && (
+            <div className="rounded-xl border border-terracotta/30 bg-terracotta/5 px-4 py-3 text-sm text-terracotta">
+              <p className="font-semibold">{tr("Still needed before you can send this:")}</p>
+              <ul className="mt-1.5 flex flex-col gap-1">
+                {outstanding.map(({ step: s, issues: list }) => {
+                  const index = STEPS.findIndex((x) => x.id === s);
+                  return (
+                    <li key={s}>
+                      <button type="button" onClick={() => jumpTo(index)} className="underline">
+                        {tr(STEPS[index].title)}
+                      </button>
+                      {" — "}
+                      {list.map((i) => tr(i.message)).join(", ")}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+
+          {scorePanel}
+        </div>
+      )}
+
+      {showIssues && issues.length > 0 && (
+        <ul className="mt-5 rounded-xl border border-terracotta/30 bg-terracotta/5 px-4 py-3 text-sm text-terracotta">
+          {issues.map((i) => (
+            <li key={i.field}>{tr(i.message)}</li>
+          ))}
+        </ul>
+      )}
 
       {errorMessage && <p className="mt-4 text-sm font-semibold text-terracotta">{errorMessage}</p>}
 
-      <button
-        type="submit"
-        disabled={status === "sending"}
-        className="mt-8 w-full rounded-full bg-ink py-4 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-60"
-      >
-        {status === "sending" ? tr("Sending…") : tr("Submit Application")}
-      </button>
+      <div className="mt-8 flex gap-3">
+        {stepIndex > 0 && (
+          <button
+            type="button"
+            onClick={goBack}
+            className="rounded-full border border-ink/15 px-5 py-3.5 text-sm font-semibold text-ink-soft"
+          >
+            {tr("Back")}
+          </button>
+        )}
+        {step !== "review" ? (
+          <button
+            type="button"
+            onClick={goNext}
+            className="flex-1 rounded-full bg-ink py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark"
+          >
+            {tr("Continue")}
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={submit}
+            disabled={status === "sending" || !canSubmit(draft)}
+            className="flex-1 rounded-full bg-ink py-3.5 text-sm font-semibold text-cream transition hover:bg-gold-dark disabled:opacity-50"
+          >
+            {status === "sending" ? tr("Sending…") : tr("Submit application")}
+          </button>
+        )}
+      </div>
 
       {status === "error" && (
-        <p className="mt-3 text-center text-xs text-terracotta">{tr("Something went wrong sending your application. Please message us directly on WhatsApp instead.")}</p>
+        <p className="mt-3 text-center text-xs text-terracotta">
+          {tr("Something went wrong sending your application. Please message us directly on WhatsApp instead.")}
+        </p>
       )}
-    </form>
+    </div>
   );
 }

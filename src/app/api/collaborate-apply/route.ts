@@ -106,6 +106,24 @@ export async function POST(request: NextRequest) {
   const portfolioUrl = clean(form.get("portfolioUrl"), 500);
   const collaborationType = clean(form.get("collaborationType"), 100);
   const message = clean(form.get("message"), 2000);
+  const creatorName = clean(form.get("creatorName"), 200);
+  const country = clean(form.get("country"), 120);
+
+  /** Free-text blocks a human reads. Parsed defensively: a malformed one
+   *  must not cost the applicant their whole submission. */
+  function jsonField(name: string): Record<string, unknown> | null {
+    try {
+      const parsed: unknown = JSON.parse(clean(form.get(name), 8000) || "null");
+      return parsed && typeof parsed === "object" && !Array.isArray(parsed)
+        ? (parsed as Record<string, unknown>)
+        : null;
+    } catch {
+      return null;
+    }
+  }
+  const creatorProfile = jsonField("creatorProfile");
+  const travelPreferences = jsonField("travelPreferences");
+  const acknowledgements = jsonField("acknowledgements");
 
   if (!fullName || !EMAIL_RE.test(email) || socialAccounts.length === 0 || !collaborationType) {
     return NextResponse.json({ error: "Please fill in all required fields" }, { status: 400 });
@@ -209,6 +227,11 @@ export async function POST(request: NextRequest) {
       message: message || null,
       media_kit_url: mediaKitUrl,
       media_kit_path: mediaKitPath,
+      creator_name: creatorName || null,
+      country: country || null,
+      creator_profile: creatorProfile,
+      travel_preferences: travelPreferences,
+      acknowledgements: acknowledgements,
       score_inputs: platformAccounts.length > 0 ? platformAccounts : null,
       // Points earned out of the full 100-point model — never a figure
       // normalised over the handful of categories a creator could fill in.
