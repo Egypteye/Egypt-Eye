@@ -4,6 +4,45 @@ import {
 } from "@/content/outfitCollection";
 
 /**
+ * THE DRIVE COLOUR FOLDER EACH DRESS CAME FROM.
+ *
+ * Approved by the owner on 20 November 2026. Eight were confirmed from their
+ * own knowledge; five were established by viewing representative frames from
+ * each folder against the photographs already published here, and then
+ * approved. docs/FLYING-DRESSES-COLOUR-MAPPING.md holds the evidence, and the
+ * decisive one is Pink: the frame pulled from that folder and the published
+ * dress-hot-pink.jpg are the same photograph, which is how we know the site's
+ * dress images were sourced from these folders in the first place.
+ *
+ * Recorded in code rather than only in a document because the next person to
+ * pull a dress photograph out of the Drive needs to know which folder is
+ * which, and a document does not travel with the import.
+ *
+ * YELLOW IS DELIBERATELY ABSENT. The Drive has a fourteenth colour folder,
+ * "Yellow", holding four frames from a June 2025 session. All thirteen
+ * dresses are accounted for without it, and its marigold is the same family
+ * as Ginger's October 2026 session. It is either Ginger under an older name,
+ * a second marigold that is not sold, or discontinued. Until the owner says
+ * which, nothing from that folder is published: showing a customer a dress
+ * they cannot book is the one failure a colour article cannot survive.
+ */
+export const DRIVE_COLOUR_FOLDER: Record<string, string> = {
+  cherry: "Red",
+  emerald: "Em. Green",
+  navy: "Blue",
+  black: "Black",
+  verdant: "Green",
+  ginger: "Ginger",
+  snowy: "White",
+  golden: "Gold",
+  bronzey: "Bronze",
+  aqua: "Aqua",
+  lavender: "Purple",
+  "hot-pink": "Pink",
+  orchid: "Magenta",
+};
+
+/**
  * A photograph of each dress, for this brand's pages.
  *
  * WHY THIS IS NOT `Outfit.image`
