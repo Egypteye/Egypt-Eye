@@ -161,3 +161,77 @@ export function decideAdjustment(input: AdjustmentInput): AdjustmentDecision {
 export function tiersHighestFirst(): Tier[] {
   return TIER_THRESHOLDS.map((t) => t.tier);
 }
+
+/**
+ * The human half of the assessment, as it arrives from the admin form.
+ *
+ * Parsed here rather than in the server action so a check can execute it.
+ * Every field is optional: a reviewer who has watched the work but not yet
+ * read the audience insights should be able to save what they have, and the
+ * categories they have not reached stay `pending`.
+ */
+export type ReviewFormInput = {
+  tourismAudiencePercent?: string | null;
+  storytelling?: string | null;
+  cinematography?: string | null;
+  editing?: string | null;
+  authenticity?: string | null;
+  travelRelevance?: string | null;
+  postsPerWeek?: string | null;
+};
+
+/** Caps that mirror the scoring model's category maxima. */
+export const CONTENT_QUALITY_MAX = {
+  storytelling: 4,
+  cinematography: 4,
+  editing: 3,
+  authenticity: 2,
+  travelRelevance: 2,
+} as const;
+
+function clampNumber(raw: string | null | undefined, max: number): number | null {
+  if (raw === null || raw === undefined || String(raw).trim() === "") return null;
+  const n = Number.parseFloat(String(raw));
+  if (!Number.isFinite(n) || n < 0) return null;
+  return Math.min(n, max);
+}
+
+/**
+ * Turns the admin form into ReviewInputs the scoring model accepts.
+ *
+ * Content quality is all-or-nothing: the model takes five sub-scores and a
+ * partial set would quietly score the missing ones as zero, which reads as a
+ * reviewer judging the work harshly rather than not having judged it yet.
+ */
+export function parseReviewInputs(form: ReviewFormInput): {
+  tourismAudiencePercent?: number;
+  contentQuality?: {
+    storytelling: number;
+    cinematography: number;
+    editing: number;
+    authenticity: number;
+    travelRelevance: number;
+  };
+  postsPerWeek?: number;
+} {
+  const out: ReturnType<typeof parseReviewInputs> = {};
+
+  const tourism = clampNumber(form.tourismAudiencePercent, 100);
+  if (tourism !== null) out.tourismAudiencePercent = tourism;
+
+  const posts = clampNumber(form.postsPerWeek, 100);
+  if (posts !== null) out.postsPerWeek = posts;
+
+  const cq = {
+    storytelling: clampNumber(form.storytelling, CONTENT_QUALITY_MAX.storytelling),
+    cinematography: clampNumber(form.cinematography, CONTENT_QUALITY_MAX.cinematography),
+    editing: clampNumber(form.editing, CONTENT_QUALITY_MAX.editing),
+    authenticity: clampNumber(form.authenticity, CONTENT_QUALITY_MAX.authenticity),
+    travelRelevance: clampNumber(form.travelRelevance, CONTENT_QUALITY_MAX.travelRelevance),
+  };
+  if (Object.values(cq).every((v) => v !== null)) {
+    out.contentQuality = cq as NonNullable<ReturnType<typeof parseReviewInputs>["contentQuality"]>;
+  }
+
+  return out;
+}

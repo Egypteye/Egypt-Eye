@@ -32,6 +32,8 @@ import {
   tierExpiry,
   tierIsCurrent,
   tiersHighestFirst,
+  parseReviewInputs,
+  CONTENT_QUALITY_MAX,
 } from "../src/lib/creatorClub/registry";
 import { PACKAGE_RULES } from "../src/lib/creatorClub/program";
 import { TIER_THRESHOLDS } from "../src/lib/creatorClub/scoring";
@@ -134,6 +136,66 @@ ok(
   tierIsCurrent(expires, new Date("2027-06-01T00:00:00Z")) === false
 );
 ok("a creator with no expiry reads as current", tierIsCurrent(null) === false);
+
+// ---------------------------------------------------------------------------
+// 5b. The human half of the assessment.
+//
+// Content quality is five sub-scores. A PARTIAL set must be discarded, not
+// passed through: the model would score the missing ones as zero, which reads
+// as a reviewer judging the work harshly rather than not having judged it.
+const partialCq = parseReviewInputs({ storytelling: "4", cinematography: "4" });
+ok(
+  "a partial content-quality set was passed to the model — the missing fields would score as zero",
+  partialCq.contentQuality === undefined
+);
+const fullCq = parseReviewInputs({
+  storytelling: "4",
+  cinematography: "4",
+  editing: "3",
+  authenticity: "2",
+  travelRelevance: "2",
+});
+ok("a complete content-quality set was discarded", fullCq.contentQuality !== undefined);
+ok(
+  "content-quality sub-scores are not clamped to their maxima",
+  parseReviewInputs({
+    storytelling: "99",
+    cinematography: "99",
+    editing: "99",
+    authenticity: "99",
+    travelRelevance: "99",
+  }).contentQuality?.storytelling === CONTENT_QUALITY_MAX.storytelling
+);
+ok(
+  "a tourism percentage above 100 was not clamped",
+  parseReviewInputs({ tourismAudiencePercent: "900" }).tourismAudiencePercent === 100
+);
+for (const junk of ["", "   ", "abc", "-5"]) {
+  ok(
+    `${JSON.stringify(junk)} as a tourism percentage was accepted`,
+    parseReviewInputs({ tourismAudiencePercent: junk }).tourismAudiencePercent === undefined
+  );
+}
+ok(
+  "an empty review form produced inputs rather than nothing",
+  Object.keys(parseReviewInputs({})).length === 0
+);
+
+// The action that promotes must actually consult the gate.
+const actions = readFileSync("src/app/[locale]/(site)/admin/collaborations/actions.ts", "utf8");
+ok("the approve action does not call decidePromotion", /decidePromotion\s*\(/.test(actions));
+ok(
+  "the approve action does not recompute the score — it must not trust a stored one",
+  /scoreCreator\s*\(/.test(actions)
+);
+ok(
+  "the score adjustment action does not call decideAdjustment, so the reason is unenforced",
+  /decideAdjustment\s*\(/.test(actions)
+);
+ok(
+  "commission is set from something other than commissionFor on adjustment",
+  /commission_percent:\s*commissionFor\(/.test(actions)
+);
 
 // ---------------------------------------------------------------------------
 // 6. The statuses the schema allows and the code uses must agree.
