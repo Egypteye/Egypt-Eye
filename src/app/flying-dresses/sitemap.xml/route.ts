@@ -1,4 +1,5 @@
 import { packages, rentalServices } from "@/content/flyingDresses";
+import { dressPageIds } from "@/content/flyingDressWardrobe";
 import { categoryPath, experienceCategories } from "@/content/flyingDressExperiences";
 import { liveStories } from "@/content/flyingDressStories";
 import { fdUrl } from "../_lib/seo";
@@ -64,6 +65,9 @@ export function GET() {
       priority: "0.8",
     })),
     { path: "/wardrobe", priority: "0.8" },
+    // The thirteen per-dress pages. Commercial pages, so they sit with the
+    // products rather than with the stories below.
+    ...dressPageIds.map((id) => ({ path: `/wardrobe/${id}`, priority: "0.8" })),
     { path: "/packages", priority: "0.8" },
     // The stories. Below the products on purpose: these exist to be found by
     // someone who is not yet searching for a photoshoot by name, and to

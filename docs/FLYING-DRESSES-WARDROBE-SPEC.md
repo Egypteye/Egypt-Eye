@@ -49,8 +49,8 @@ One frame of the dress in motion on location, full bleed, portrait or
 landscape at its native ratio. Not a flat garment shot. The first thing a
 visitor sees should be the photograph they are buying, not the product.
 
-### 2. The name, the colour, and one sentence
-The dress name as the `h1`, a colour swatch from the stored hex, and a single
+### 2. The name and the colour in one sentence
+**Built without the swatch.** The dress name as the `h1` and a single
 sentence describing the colour as a photographer would: its depth, its
 temperature, and what it is not. Cherry's reads "a deep crimson, darker and
 cooler than a bright pillarbox red, and clearly distinct from Hot Pink".
@@ -114,10 +114,12 @@ Three decisions, and they are the whole difference:
 one body. These show six, because we have six. That is a fashion lookbook
 move, not an SEO move, and no competitor can copy it without the archive.
 
-**Native aspect ratios.** The cropping work already done on the gallery
-components means these can run portrait, landscape and square frames side by
-side without forcing everything into one shape. Uniform crops are what make a
-collection page look like a template.
+**Uncropped frames.** The gallery renders each photograph at its own
+dimensions rather than forcing it into a grid shape. *Correction after the
+build:* I sold this as a portrait-and-landscape mix, and it is not one. All 61
+frames are 3:2 landscape because every original was shot horizontally. The
+frames are uncropped, which was the real point, but the varied-lookbook look
+is not available from this photography.
 
 **The colour written as a photographer sees it.** Not "elegant red, perfect
 for your special day". Depth, temperature, how it holds in direct sun, what it
@@ -126,7 +128,13 @@ reader cannot get anywhere else.
 
 ---
 
-## 4. Honest constraints
+## 4. Built on 22 November
+
+All thirteen exist. Two blocks changed during the build and one data problem
+turned up; see `docs/FLYING-DRESSES-WARDROBE-BUILD.md`, which supersedes the
+constraints below.
+
+## 4. Honest constraints, as written before the build
 
 **Four dresses have thin folders.** Of the 106+ images, the Red, Pink and
 Purple folders are well stocked and some others are not. Before building, I
