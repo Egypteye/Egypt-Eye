@@ -65,6 +65,11 @@ import {
 import { shootAerial, shootReels } from "../src/app/flying-dresses/_lib/shootReels.js";
 import { coverFor, shootArt } from "../src/app/flying-dresses/_lib/shootArt.js";
 import { DRIVE_COLOUR_FOLDER, dressPhotos } from "../src/app/flying-dresses/_lib/dressPhotos.js";
+import {
+  UNATTRIBUTED_SHOOT,
+  WARDROBE_PRICE_NOTE,
+  dressPages,
+} from "../src/content/flyingDressWardrobe.js";
 import { marqueeColours, marqueePlaces } from "../src/app/flying-dresses/_lib/marquee.js";
 import { flyingDressGalleryById } from "../src/content/flyingDressGalleries.js";
 import {
@@ -171,6 +176,36 @@ import type { FlyingDressGallery } from "../src/content/types.js";
 
 const errors: string[] = [];
 /** Signature matches the other check scripts: label first, condition second. */
+
+/**
+ * A JPEG's real pixel dimensions, read from its SOF marker.
+ *
+ * Written here rather than pulled in as a dependency: it is twenty lines, the
+ * check scripts run offline, and adding a package to assert on four hundred
+ * bytes of header would be the more expensive of the two.
+ */
+function imageSizeOf(path: string): { width: number; height: number } {
+  const b = readFileSync(path);
+  let i = 2;
+  while (i < b.length - 9) {
+    if (b[i] !== 0xff) {
+      i += 1;
+      continue;
+    }
+    const marker = b[i + 1];
+    // SOF0..SOF15, excluding the four that are not frame headers.
+    if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc, 0xd8].includes(marker)) {
+      return { height: b.readUInt16BE(i + 5), width: b.readUInt16BE(i + 7) };
+    }
+    if (marker === 0xd8 || (marker >= 0xd0 && marker <= 0xd9)) {
+      i += 2;
+      continue;
+    }
+    i += 2 + b.readUInt16BE(i + 2);
+  }
+  return { width: 0, height: 0 };
+}
+
 const ok = (label: string, condition: boolean) => {
   if (!condition) errors.push(label);
 };
@@ -8841,6 +8876,193 @@ for (const pkg of packages) {
       `it risks showing a customer a dress they cannot book`,
     !folders.includes("Yellow")
   );
+}
+
+// ---------------------------------------------------------------------------
+// THE THIRTEEN PER-DRESS WARDROBE PAGES
+//
+// /wardrobe/[slug], one page per garment, each carrying real client frames
+// resized out of the Drive colour folders. The failures worth catching here
+// are the ones that are invisible on screen: a frame referenced but never
+// installed, a declared dimension that no longer matches the file, a page
+// quietly claiming more client sessions than it has, and a generated frame
+// getting into a product gallery.
+//
+// Each assertion below was proven by breaking it and watching it go red, then
+// restored. What broke what is recorded against each one.
+// ---------------------------------------------------------------------------
+{
+  const WARDROBE_DIR = "public/photos/flying-dresses/wardrobe";
+
+  // Both directions, so a dress added to the collection without a page shows
+  // up, and so does a page for a dress that no longer exists.
+  // Proven by deleting the Orchid entry from dressPages: red both ways.
+  for (const outfit of FLYING_DRESS_COLLECTION) {
+    ok(
+      `the dress "${outfit.id}" is in the collection but has no /wardrobe/${outfit.id} page. ` +
+        "Every dress gets a page or the wardrobe index links to a 404",
+      dressPages.some((d) => d.id === outfit.id)
+    );
+  }
+  for (const page of dressPages) {
+    ok(
+      `dressPages has an entry for "${page.id}", which is not a dress in FLYING_DRESS_COLLECTION`,
+      FLYING_DRESS_COLLECTION.some((o) => o.id === page.id)
+    );
+  }
+
+  const seenFiles = new Map<string, string>();
+  for (const page of dressPages) {
+    // A gallery of one is not a gallery, and more than six stops being a
+    // product page and starts being a contact sheet.
+    // Proven by slicing Cherry's frames to one: red.
+    ok(
+      `/wardrobe/${page.id} has ${page.frames.length} frames. A dress page carries between 2 and 6`,
+      page.frames.length >= 2 && page.frames.length <= 6
+    );
+
+    // NAMED sessions only. The page's heading counts the same way, and the
+    // two must not drift, because the heading is the claim and this is the
+    // thing holding it up.
+    const shoots = new Set(
+      page.frames.filter((f) => f.shoot !== UNATTRIBUTED_SHOOT).map((f) => f.shoot)
+    );
+    // THE HONESTY RULE. "On N different people" is the whole argument these
+    // pages make, so a page that cannot make it has to say so instead.
+    //
+    // Proven by deleting Golden's note: red, naming Golden.
+    //
+    // WHAT IT DOES NOT CATCH, stated because I wrote the opposite first and
+    // the break test disagreed: relabelling an unattributed frame with an
+    // invented person's name is GREEN here, because two names is two names
+    // as far as this can tell. Nothing automatic can catch a fabricated
+    // session; that is a judgement made when the frame is selected, and the
+    // only defence is that UNATTRIBUTED_SHOOT exists so the honest option is
+    // the easy one. This rule covers the case that is mechanical: a page that
+    // cannot show a range and does not admit it.
+    ok(
+      `/wardrobe/${page.id} has frames from fewer than two named client sessions and carries no ` +
+        "note saying so. A page showing one person while the gallery heading implies a range is " +
+        "the quiet overclaim these pages exist to avoid",
+      shoots.size > 1 || Boolean(page.note)
+    );
+
+    // An unattributed frame is a real photograph with no session recorded, so
+    // it can never be the only thing a page rests on.
+    // Proven by marking every Snowy frame unattributed: red.
+    ok(
+      `/wardrobe/${page.id} has no frame from a named client session at all`,
+      page.frames.some((f) => f.shoot !== UNATTRIBUTED_SHOOT)
+    );
+
+    for (const frame of page.frames) {
+      const path = `${WARDROBE_DIR}/${frame.file}`;
+
+      // Proven by renaming aqua-estele-124.jpg: red, naming the file.
+      ok(
+        `/wardrobe/${page.id} references ${frame.file}, which is not in ${WARDROBE_DIR}`,
+        existsSync(path)
+      );
+      if (!existsSync(path)) continue;
+
+      // One frame, one dress. A file reused across two pages means one of the
+      // two is showing a customer the wrong garment.
+      // Proven by pointing Orchid's first frame at a Cherry file: red.
+      const already = seenFiles.get(frame.file);
+      ok(
+        `${frame.file} is used by both /wardrobe/${already} and /wardrobe/${page.id}`,
+        already === undefined
+      );
+      seenFiles.set(frame.file, page.id);
+
+      // A PHOTOGRAPH CARRIES EXIF. A GENERATED FRAME DOES NOT.
+      //
+      // The same rule the /shoots/photo/ directory already runs, applied here
+      // because the resize that installs these files preserves EXIF on
+      // purpose. The older dress-*.jpg files predate that and were saved
+      // without it, which is why this is scoped to this directory rather than
+      // to the whole folder.
+      //
+      // Proven by re-saving aqua-estele-124.jpg through Pillow without the
+      // exif argument: red, naming the file. Restored from the original.
+      const bytes = readFileSync(path).toString("latin1");
+      ok(
+        `${path} carries no EXIF block. Every frame installed here kept one, and no generated ` +
+          "frame has one, so a file without EXIF is either generated or has been re-saved by " +
+          "something that stripped it. Neither may sit in a product gallery as client photography",
+        bytes.slice(0, 200_000).includes("Exif\u0000\u0000")
+      );
+
+      // And the other half: no generative assertion in the bytes.
+      //
+      // WHAT IT CATCHES AND WHAT IT DOES NOT, because the break test taught
+      // me the difference. Copying the rejected Firefly Fayoum frame over one
+      // of these byte for byte is red on this line, naming the file. Copying
+      // it through the Pillow resize that installs these frames is NOT: that
+      // re-encode drops the APP11 segment the manifest lives in, so the file
+      // arrives looking as innocent as a camera original and only the EXIF
+      // rule above still applies to it.
+      //
+      // So this catches a frame dropped into the directory by hand, which is
+      // the realistic mistake, and it cannot catch one laundered through the
+      // install script. The same one-way exposure the /shoots/ table has, and
+      // in the same harmless direction.
+      ok(
+        `${path} carries a generative provenance assertion. These pages show client photography ` +
+          "only; a composited frame belongs under /shoots/retouched/ with a credit that says so",
+        !/c2pa\.created|trainedAlgorithmicMedia/i.test(bytes.slice(0, 400_000))
+      );
+
+      // Declared dimensions are what stops the gallery distorting a frame or
+      // shifting layout. They are only useful while they are true.
+      // Proven by changing one h to 1000: red, naming the file and both pairs.
+      const dim = imageSizeOf(path);
+      ok(
+        `${frame.file} is declared ${frame.w}x${frame.h} but the file is ${dim.width}x${dim.height}`,
+        dim.width === frame.w && dim.height === frame.h
+      );
+    }
+
+    // Proven by pointing Cherry's first related entry at "cherry": red.
+    for (const rel of page.related) {
+      ok(
+        `/wardrobe/${page.id} lists "${rel.id}" as a related dress, which is not a dress id`,
+        FLYING_DRESS_COLLECTION.some((o) => o.id === rel.id)
+      );
+      ok(
+        `/wardrobe/${page.id} lists itself as a related dress`,
+        rel.id !== page.id
+      );
+    }
+  }
+
+  // Every installed file is used. An orphan here is 175KB of dead weight and,
+  // more usefully, a sign that a frame was swapped and the old one left.
+  // Proven by copying a file to wardrobe/unused.jpg: red, naming it.
+  for (const file of readdirSync(WARDROBE_DIR).filter((f) => f.endsWith(".jpg"))) {
+    ok(
+      `${WARDROBE_DIR}/${file} is not referenced by any dress page`,
+      seenFiles.has(file)
+    );
+  }
+
+  // THE PRICE. One figure, the published one, stated once and shared by all
+  // thirteen so no page can drift into implying a colour surcharge.
+  // Proven by changing the note to $209: red.
+  ok(
+    `the shared wardrobe price note does not state the published $199 per person. It reads: ` +
+      `"${WARDROBE_PRICE_NOTE}"`,
+    WARDROBE_PRICE_NOTE.includes("$199 per person")
+  );
+  for (const page of dressPages) {
+    const prose = [page.colour, page.fabric, ...page.againstTheGround, page.note ?? ""].join(" ");
+    const prices = prose.match(/\$\d+/g) ?? [];
+    ok(
+      `/wardrobe/${page.id} states a price in its prose (${prices.join(", ")}). The price lives in ` +
+        "one shared note so thirteen pages cannot disagree about it",
+      prices.length === 0
+    );
+  }
 }
 
 if (errors.length > 0) {

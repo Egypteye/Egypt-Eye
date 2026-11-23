@@ -67,6 +67,7 @@ type Filter = "all" | "dresses" | "mens" | string;
 export function Wardrobe({
   dresses,
   mensOutfits,
+  pageIds = [],
   /**
    * Photographs keyed by outfit id, from the merge rather than from
    * _lib/dressPhotos directly.
@@ -87,6 +88,14 @@ export function Wardrobe({
   dresses: Outfit[];
   mensOutfits: Outfit[];
   photos: Record<string, DressPhoto>;
+  /**
+   * Outfit ids that have a page of their own at /wardrobe/[slug].
+   *
+   * Passed in rather than imported, because this is a client component and
+   * importing flyingDressWardrobe.ts here would ship sixty-one frames of
+   * editorial copy to the browser to decide whether to render a link.
+   */
+  pageIds?: string[];
   showFilters?: boolean;
   initialFilter?: Filter;
 }) {
@@ -212,6 +221,18 @@ export function Wardrobe({
                     : "Photo coming soon"}
               </p>
             </button>
+            {/* A SIBLING OF THE BUTTON, NEVER A CHILD OF IT. A link inside a
+                button is invalid and, in this codebase, has already cost a
+                day: see the note in brand.css about the panel-wide click
+                overlay that reported hits correctly and received none. Two
+                plain controls side by side is the version that works. */}
+            {pageIds.includes(outfit.id) ? (
+              <p className="fd-outfit-note" style={{ marginTop: "0.25rem" }}>
+                <Link className="fd-inline-link" href={fdPath(`/wardrobe/${outfit.id}`)}>
+                  About {outfit.name}
+                </Link>
+              </p>
+            ) : null}
           </li>
         ))}
       </ul>

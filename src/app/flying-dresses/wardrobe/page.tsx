@@ -3,6 +3,7 @@ import Link from "next/link";
 import { fdWardrobe } from "../_lib/content";
 import { FaqList } from "../_components/FaqList";
 import { Wardrobe } from "../_components/Wardrobe";
+import { dressPageIds } from "@/content/flyingDressWardrobe";
 import { Scene } from "../_components/Scene";
 import { empty } from "../_lib/assets";
 import { fdBreadcrumbJsonLd, fdJsonLd, fdMetadata, fdPath } from "../_lib/seo";
@@ -111,7 +112,12 @@ export default async function WardrobePage() {
           <h2 id="fd-collection-heading" className="fd-sr">
             The collection
           </h2>
-          <Wardrobe dresses={dresses} mensOutfits={mensOutfits} photos={photos} />
+          <Wardrobe
+            dresses={dresses}
+            mensOutfits={mensOutfits}
+            photos={photos}
+            pageIds={dressPageIds}
+          />
         </div>
       </section>
 
