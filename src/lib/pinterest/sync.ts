@@ -7,6 +7,10 @@ import type { SanityImage } from "@/content/types";
 import { getPinterestConnection, createPin } from "./client";
 import { resolvePinImageUrl } from "./image";
 import { buildPinCopy } from "./caption";
+import {
+  UNPINNED_STORY_FILTER,
+  unpinnableParams,
+} from "@/content/pinnableStories";
 
 const localImageBySlug = new Map(localStories.map((s) => [s.slug, s.image]));
 
@@ -21,11 +25,14 @@ type UnpinnedStoryRow = {
   secondaryKeywords?: string[];
 };
 
-const UNPINNED_QUERY = `*[_type == "story" && status == "published" && !defined(pinterestPinId)] | order(publishedAt asc) [0...$limit] {
+// Both queries are built from the one shared filter, so the number the admin
+// screen reports as "remaining" is by construction the number this routine
+// would actually attempt. See src/content/pinnableStories.ts.
+const UNPINNED_QUERY = `*[${UNPINNED_STORY_FILTER}] | order(publishedAt asc) [0...$limit] {
   _id, "slug": slug.current, title, excerpt, image, category, primaryKeyword, secondaryKeywords
 }`;
 
-const REMAINING_COUNT_QUERY = `count(*[_type == "story" && status == "published" && !defined(pinterestPinId)])`;
+const REMAINING_COUNT_QUERY = `count(*[${UNPINNED_STORY_FILTER}])`;
 
 function delay(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -58,7 +65,10 @@ export async function pinUnpinnedStories({ limit = 25 }: { limit?: number } = {}
   }
 
   const sanity = createClient({ projectId, dataset, apiVersion, token: writeToken, useCdn: false });
-  const stories = await sanity.fetch<UnpinnedStoryRow[]>(UNPINNED_QUERY, { limit });
+  const stories = await sanity.fetch<UnpinnedStoryRow[]>(UNPINNED_QUERY, {
+    limit,
+    ...unpinnableParams,
+  });
 
   let pinned = 0;
   const errors: string[] = [];
@@ -101,6 +111,6 @@ export async function pinUnpinnedStories({ limit = 25 }: { limit?: number } = {}
     }
   }
 
-  const remaining = await sanity.fetch<number>(REMAINING_COUNT_QUERY);
+  const remaining = await sanity.fetch<number>(REMAINING_COUNT_QUERY, unpinnableParams);
   return { pinned, remaining, errors };
 }
