@@ -132,7 +132,13 @@ export default async function ShakiraCampaignPage() {
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/15" />
+        {/* A flat scrim on phones ONLY. The gradient below is weighted left,
+            which is right on desktop where the text occupies about half the
+            width — but on a phone the paragraph runs the full width and its
+            line-ends landed on bright sky, cream on near-white. Measured on
+            the live page, not guessed. */}
+        <div className="absolute inset-0 bg-ink/60 sm:bg-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-transparent to-transparent sm:bg-gradient-to-r sm:from-ink sm:via-ink/75 sm:to-ink/15" />
         {/* Bottom edge only, so the hero meets the next section cleanly. */}
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
         <Container className="relative">
