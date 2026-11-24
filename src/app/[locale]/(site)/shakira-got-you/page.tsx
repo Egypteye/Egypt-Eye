@@ -14,6 +14,7 @@ import {
   CAMPAIGN_COPY,
   PACKAGES,
   PARTY_DATE,
+  HERO_IMAGE,
   VILLA_PARTY,
   campaignDate,
   campaignFaqs,
@@ -111,9 +112,13 @@ export default async function ShakiraCampaignPage() {
       {/* ---------------------------------------------------------------- */}
       {/* Hero */}
       <section className="relative overflow-hidden bg-ink py-20 sm:py-28">
-        <div className="absolute inset-0 opacity-35">
+        {/* opacity-60, not 35: at 35 the photograph read as a green smear
+            rather than as Egypt. The legibility that the opacity used to buy
+            now comes from the gradient below, which is weighted to the left
+            where the text actually sits. */}
+        <div className="absolute inset-0 opacity-60">
           <SmartImage
-            image={imageFor("1-day-giza-tour")?.image}
+            image={HERO_IMAGE.url}
             tone="giza"
             alt=""
             priority
@@ -121,7 +126,8 @@ export default async function ShakiraCampaignPage() {
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/70 via-ink/60 to-ink" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/50" />
         <Container className="relative">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">

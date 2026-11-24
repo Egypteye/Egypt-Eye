@@ -55,6 +55,29 @@ export type CampaignPackage = {
   days: CampaignDay[];
 };
 
+/**
+ * The hero photograph.
+ *
+ * Its own image rather than a tour's: the Giza tour's picture is 1402px wide
+ * and portrait-ish, and stretching that across a 100vw hero left the Sphinx
+ * off-centre and the whole band reading as murky green rather than as a
+ * photograph. This one is 5379x3585 and composed wide, with the sun low
+ * between the pyramids.
+ *
+ * No identifiable faces — the riders are silhouettes. That matters on this
+ * page more than most: it is a campaign about a performer, and the last thing
+ * it should do is put a recognisable person's face behind that headline.
+ *
+ * Photograph by Simon Berger (unsplash.com/@simon_berger), Unsplash licence.
+ * Recorded here because provenance that lives only in a commit message is
+ * provenance nobody can find later.
+ */
+export const HERO_IMAGE = {
+  url: "https://images.unsplash.com/photo-1539768942893-daf53e448371?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=2400",
+  alt: "Camel riders crossing the Giza plateau at sunset, with the pyramids behind them",
+  credit: "Simon Berger / Unsplash",
+};
+
 /** The one date the whole campaign turns on. */
 export const PARTY_DATE = "2026-11-28";
 export const CAMPAIGN_LAUNCH = "2026-11-24";
@@ -199,7 +222,12 @@ export const PACKAGES: CampaignPackage[] = [
     summary:
       "The Pyramids, a day in the desert at the Valley of the Whales, then old Cairo and the villa.",
     destinations: ["Giza", "Fayoum", "Cairo"],
-    imageSlug: "wadi-el-hitan-whale-valley-safari",
+    // fayoum-nature-tour, not wadi-el-hitan-whale-valley-safari: the Whale
+    // Valley product has no image in Sanity, so this card rendered as a bare
+    // gold gradient on production while the other three showed photographs.
+    // The nature tour is also the closer match — this package's Fayoum day is
+    // the oasis day, not specifically the fossil safari.
+    imageSlug: "fayoum-nature-tour",
     days: [
       { date: "2026-11-26", title: "Giza day", place: "Giza", stops: GIZA_STOPS },
       { date: "2026-11-27", title: "Fayoum day", place: "Fayoum Oasis", stops: FAYOUM_STOPS },

@@ -46,10 +46,13 @@ import {
   VILLA_PARTY,
   campaignDate,
   campaignFaqs,
+  HERO_IMAGE,
   packageDateRange,
   partyIsUpcoming,
 } from "../src/content/shakiraCampaign";
 import { validateCampaignEnquiry } from "../src/lib/campaign/enquiry";
+import { tours as localTours } from "../src/content/tours";
+import { isHiddenTour } from "../src/content/hiddenTours";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -383,6 +386,41 @@ for (const kind of ["tour_enquiry", "flying_dresses", "transfer", "shop_visit"])
     MIGRATION.includes(`'${kind}'`)
   );
 }
+
+// ---------------------------------------------------------------------------
+// 6b. Every package card points at a REAL, VISIBLE tour that has a picture.
+//
+// This shipped broken. Package 3 pointed at wadi-el-hitan-whale-valley-safari,
+// which is in content/hiddenTours.ts — a product the site deliberately
+// withholds. getTours() filters hidden tours out, so the lookup returned
+// nothing and the card rendered as a bare gold gradient beside three
+// photographs. Nothing errored; the page just looked unfinished.
+//
+// The second half matters as much as the first: a campaign card is marketing
+// for a tour, and pointing one at a withheld product advertises something the
+// business has decided not to sell.
+for (const pkg of PACKAGES) {
+  const tour = localTours.find((t) => t.slug === pkg.imageSlug);
+  ok(
+    `package "${pkg.id}" points at tour "${pkg.imageSlug}", which does not exist`,
+    tour !== undefined
+  );
+  ok(
+    `package "${pkg.id}" points at "${pkg.imageSlug}", a HIDDEN tour — getTours() filters it out, so the card falls back to a bare gradient`,
+    !isHiddenTour(pkg.imageSlug)
+  );
+  ok(
+    `package "${pkg.id}" points at "${pkg.imageSlug}", which carries no image`,
+    typeof tour?.image === "string" ? tour.image.length > 0 : tour?.image !== undefined
+  );
+}
+
+// The hero needs its own picture for the same reason — and it must not be a
+// tour lookup that can be filtered away underneath it.
+ok("the hero has no image", HERO_IMAGE.url.startsWith("https://"));
+ok("the hero image has no alt text", HERO_IMAGE.alt.trim().length > 10);
+ok("the hero photograph is not credited", HERO_IMAGE.credit.trim().length > 0);
+ok("the page does not render the hero image", PAGE.includes("HERO_IMAGE.url"));
 
 // ---------------------------------------------------------------------------
 // 7. The homepage stays the homepage.
