@@ -2,6 +2,10 @@ import "server-only";
 import { client } from "@/sanity/client";
 import { supabaseAdminConfigured } from "@/lib/supabase/env";
 import { getPinterestConnection, listBoards } from "@/lib/pinterest/client";
+import {
+  UNPINNED_STORY_FILTER,
+  unpinnableParams,
+} from "@/content/pinnableStories";
 
 export type PinterestStatus = {
   connected: boolean;
@@ -21,7 +25,9 @@ export async function getPinterestStatus(): Promise<PinterestStatus> {
 
   const [pinnedCount, remainingCount] = await Promise.all([
     client.fetch<number>(`count(*[_type == "story" && status == "published" && defined(pinterestPinId)])`),
-    client.fetch<number>(`count(*[_type == "story" && status == "published" && !defined(pinterestPinId)])`),
+    // The same filter the sync itself uses, so this cannot report work that
+    // the sync would refuse to do. See src/content/pinnableStories.ts.
+    client.fetch<number>(`count(*[${UNPINNED_STORY_FILTER}])`, unpinnableParams),
   ]);
 
   let boards: { id: string; name: string }[] = [];
