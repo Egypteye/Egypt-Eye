@@ -116,7 +116,13 @@ export default async function ShakiraCampaignPage() {
             rather than as Egypt. The legibility that the opacity used to buy
             now comes from the gradient below, which is weighted to the left
             where the text actually sits. */}
-        <div className="absolute inset-0 opacity-60">
+        {/* The two numbers here were tuned against the live page, not guessed.
+            At opacity-35 with an even gradient the photograph read as a green
+            smear; at 60 with ink stacked from both sides the sunset was still
+            buried. The image now carries most of its own brightness and the
+            ink is weighted LEFT, where the text actually sits — so the warm
+            half of the frame survives on the right. */}
+        <div className="absolute inset-0 opacity-85">
           <SmartImage
             image={HERO_IMAGE.url}
             tone="giza"
@@ -126,8 +132,9 @@ export default async function ShakiraCampaignPage() {
             className="h-full w-full object-cover"
           />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/85 to-ink/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/75 to-ink/15" />
+        {/* Bottom edge only, so the hero meets the next section cleanly. */}
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-ink to-transparent" />
         <Container className="relative">
           <Reveal>
             <p className="text-xs font-semibold uppercase tracking-[0.3em] text-gold">
