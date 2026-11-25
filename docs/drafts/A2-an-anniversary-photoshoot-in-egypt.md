@@ -1,6 +1,7 @@
-# DRAFT A2: not published
+# A2: PUBLISHED 25 November 2026
 
-**Status:** for your approval. Nothing has been added to `flyingDressStories.ts`.
+**Status:** published. Live in `src/content/flyingDressStories.ts`. Kept as the
+record of how the article was built and which photographs were cleared.
 
 ## A title change I am proposing, and why
 

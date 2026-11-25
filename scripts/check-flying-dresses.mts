@@ -110,7 +110,8 @@ import {
   storyWordCount,
   liveStoryBySlug,
 } from "../src/content/flyingDressStories.js";
-import { isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
+import { flyingDressRoutes, isFlyingDressRoute } from "../src/content/flyingDressRoutes.js";
+import type { StoryFrame } from "../src/content/flyingDressStories.js";
 import {
   CHARGE_LABEL,
   cake as celebrationCake,
@@ -2827,22 +2828,23 @@ for (const section of ["celebrations", "creative"]) {
   // Proven by pointing one related link at /celebrations/proposals, which is
   // the category ID and not its slug: red.
   // -------------------------------------------------------------------------
+  // DERIVED, NOT RE-SPELLED.
+  //
+  // This used to list the routes by hand, and on 25 November it was the only
+  // thing on the site that had not heard of /wardrobe/[slug]: the first story
+  // to put a dress page in its related rail failed here while the identical
+  // link in its prose passed, because the prose check already reads
+  // flyingDressRoutes. Two lists of the same thing, disagreeing. The same
+  // shape of bug as the Pinterest predicate, fixed the same way.
+  //
+  // flyingDressRoutes is itself derived from the catalogues the pages render
+  // from, so a product renamed anywhere moves its URL here in that one edit.
+  //
+  // Proven by pointing a related link at /celebrations/proposals, which is
+  // the category ID rather than its slug: red.
   const validPaths = new Set<string>([
     "",
-    "/experiences",
-    "/celebrations",
-    "/creative",
-    "/rentals",
-    "/packages",
-    "/wardrobe",
-    "/faq",
-    "/about",
-    "/enquire",
-    "/collaborate",
-    "/stories",
-    ...packages.map((p) => `/experiences/${p.slug}`),
-    ...rentalServices.map((r) => `/rentals/${r.slug}`),
-    ...experienceCategories.map((c) => `/${c.section}/${c.slug}`),
+    ...flyingDressRoutes,
     ...slugs.map((slug) => `/stories/${slug}`),
   ]);
 
@@ -2897,6 +2899,12 @@ for (const section of ["celebrations", "creative"]) {
     ...packages.map((p) => p.priceUsd).filter((v): v is number => typeof v === "number"),
     ...packages.flatMap((p) => (p.partyPricing ?? []).map((tier) => tier.totalUsd)),
     ...addOns.map((a) => a.priceUsd).filter((v): v is number => typeof v === "number"),
+    // THE RATE CARD IS CATALOGUE TOO, and leaving it out made this guard wrong
+    // rather than strict. The $100 regular session and the $150 rooftop hour
+    // are published on the celebration pages and read from flyingDressRates.ts,
+    // but an article quoting either was failing as an invented figure. $199
+    // only passed because it happens to be a package price as well.
+    ...Object.values(rates).map((r) => r.amountUsd),
   ]);
 
   /** Competitor figures researched on 2026-10-25, each supported by a source on the article. */
@@ -9062,6 +9070,101 @@ for (const pkg of packages) {
         "one shared note so thirteen pages cannot disagree about it",
       prices.length === 0
     );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// PHOTOGRAPHS INSIDE ARTICLES
+//
+// Added with the field itself on 25 November 2026. The articles are the one
+// place on this site where a frame is chosen by whoever is writing rather
+// than pulled from a registry that is already guarded, so the same rules the
+// wardrobe pages live under apply here: the file exists, its declared size is
+// its real size, it carries EXIF, it carries no generative assertion, and it
+// names the session it came from.
+//
+// Each proven by breaking it and watching it go red. The file-exists one was
+// written because a break test found it missing: pointing a frame at a file
+// that is not there was GREEN before this block existed.
+// ---------------------------------------------------------------------------
+{
+  const STORY_DIR = "public/photos/flying-dresses/stories";
+  const storyFrames: { story: string; frame: StoryFrame }[] = [];
+  for (const story of flyingDressStories) {
+    if (story.hero) storyFrames.push({ story: story.slug, frame: story.hero });
+    for (const section of story.sections) {
+      if (section.image) storyFrames.push({ story: story.slug, frame: section.image });
+    }
+  }
+
+  for (const { story, frame } of storyFrames) {
+    const path = frame.src.startsWith("/")
+      ? `public${frame.src}`
+      : `${STORY_DIR}/${frame.src}`;
+
+    // Proven by renaming proposal-rose-heart.jpg in the content file: red.
+    ok(
+      `story ${story} shows "${frame.src}", which is not a file at ${path}`,
+      existsSync(path)
+    );
+    if (!existsSync(path)) continue;
+
+    // Proven by emptying a frame's shoot: red.
+    ok(
+      `story ${story} shows "${frame.src}" with no session named. Every frame of a person on ` +
+        "this site is a real client shoot and the caption says which; a frame that cannot be " +
+        `traced uses UNATTRIBUTED_STORY_SHOOT instead of a name that sounds plausible`,
+      frame.shoot.trim().length > 0
+    );
+
+    // Proven by changing a declared h to 900: red, naming both pairs.
+    const dim = imageSizeOf(path);
+    ok(
+      `story ${story} declares "${frame.src}" as ${frame.w}x${frame.h}, but the file is ` +
+        `${dim.width}x${dim.height}`,
+      dim.width === frame.w && dim.height === frame.h
+    );
+
+    const bytes = readFileSync(path).toString("latin1");
+    // Proven by re-saving a frame through Pillow with no exif argument: red.
+    ok(
+      `${path} carries no EXIF block. Every frame installed for an article kept one, and no ` +
+        "generated frame has one, so a file without EXIF is either generated or has been " +
+        "re-saved by something that stripped it",
+      bytes.slice(0, 200_000).includes("Exif\u0000\u0000")
+    );
+    // Proven by copying the rejected Firefly composite over a frame: red on
+    // this line, naming the file. Note what it matched on, because it is not
+    // what the pattern looks like it says: that file carries no literal
+    // "trainedAlgorithmicMedia", it carries "compositeWithTrainedAlgorithmicMedia",
+    // and the case-insensitive flag is what catches it. Both belong here.
+    //
+    // The generated Rooftop Birthday PNG also goes red, but on the dimension
+    // rule above rather than this one, because a PNG has no JPEG frame header
+    // to read. Worth saying rather than claiming a cleaner result than the
+    // test gave.
+    //
+    // Same one-way limitation as the wardrobe rule: a file laundered through
+    // the Pillow resize loses its manifest, and only the EXIF rule still
+    // applies to it.
+    ok(
+      `${path} carries a generative provenance assertion. Articles show client photography only`,
+      !/c2pa\.created|trainedAlgorithmicMedia/i.test(bytes.slice(0, 400_000))
+    );
+  }
+
+  // Everything installed is used. An orphan means a frame was swapped and the
+  // old one left behind.
+  // Proven by copying a frame to stories/unused.jpg: red, naming it.
+  const used = new Set(
+    storyFrames.map(({ frame }) =>
+      frame.src.startsWith("/") ? frame.src.split("/").pop()! : frame.src
+    )
+  );
+  if (existsSync(STORY_DIR)) {
+    for (const file of readdirSync(STORY_DIR).filter((f) => f.endsWith(".jpg"))) {
+      ok(`${STORY_DIR}/${file} is not shown by any article`, used.has(file));
+    }
   }
 }
 

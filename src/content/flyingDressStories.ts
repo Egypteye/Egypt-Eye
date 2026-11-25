@@ -90,10 +90,51 @@ export const storyClusters: { id: StoryClusterId; name: string; blurb: string }[
 ];
 
 /** A paragraph run, optionally followed by a list. */
+/**
+ * A PHOTOGRAPH INSIDE AN ARTICLE.
+ *
+ * Added 25 November 2026, and the gap it fills is embarrassing: a photography
+ * business had eleven articles on its site and not one of them carried a
+ * photograph. The story page imported no image component at all. Search
+ * Console for the same period put the stories section at 1.7% click-through
+ * against roughly 10% for the rest of the site, which is mostly a position-11
+ * problem and is not helped by a text-only page on a visual subject.
+ *
+ * `shoot` is not decoration. Every frame here is a real client session and
+ * the caption says which, the same contract the wardrobe pages hold. A frame
+ * whose session cannot be named uses UNATTRIBUTED_STORY_SHOOT rather than a
+ * plausible-sounding invention.
+ *
+ * `w` and `h` are the file's real dimensions, declared so the page can render
+ * at the native ratio without reading the file at build time. The check
+ * script asserts them against the files, as it does for the wardrobe.
+ */
+export type StoryFrame = {
+  /** Basename under /photos/flying-dresses/stories/, or a full brand path. */
+  src: string;
+  alt: string;
+  /** The client session it came from, so a frame traces back. */
+  shoot: string;
+  w: number;
+  h: number;
+};
+
+/** For a real frame whose client session nobody recorded. See StoryFrame. */
+export const UNATTRIBUTED_STORY_SHOOT = "an unrecorded rooftop session";
+
 export type StorySection = {
   heading: string;
   body: string[];
   list?: string[];
+  /**
+   * One photograph, rendered after this section's prose.
+   *
+   * Deliberately one, and deliberately attached to a section rather than
+   * collected into a gallery at the foot of the article: a frame that sits
+   * under the paragraph it illustrates is doing editorial work, and a strip
+   * of six at the bottom is a slideshow nobody scrolls to.
+   */
+  image?: StoryFrame;
 };
 
 /**
@@ -165,6 +206,12 @@ export type FlyingDressStory = {
    * `sources` is mandatory — the check script fails without it.
    */
   basis: "first-party" | "cited";
+  /**
+   * The opening photograph, above the prose. Optional because the eleven
+   * articles that predate this field are still text-only and still correct;
+   * they are not broken, they are just plainer.
+   */
+  hero?: StoryFrame;
   sections: StorySection[];
   faqs: { question: string; answer: string }[];
   /** Internal only. See the note on cross-domain links at the end of this file. */
@@ -413,7 +460,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       "/wardrobe/hot-pink",
       "/wardrobe/orchid",
     ],
-    relatedStorySlugs: ["one-size-cut-to-fit"],
+    relatedStorySlugs: ["one-size-cut-to-fit", "red-against-yellow-stone"],
   },
 
   // -----------------------------------------------------------------------
@@ -1351,6 +1398,796 @@ export const flyingDressStories: FlyingDressStory[] = [
       },
     ],
   },
+
+  // -----------------------------------------------------------------------
+  {
+    slug: "a-gender-reveal-above-giza",
+    cluster: "the-occasion",
+    title: "A gender reveal on a rooftop above Giza",
+    seoTitle: "A Gender Reveal Above Giza",
+    metaDescription: "The moment lasts about two seconds. What the roof looks like, who holds the secret, and why we will not promise you a prop.",
+    excerpt: "Two seconds of a family's life, on a roof with the pyramids behind it. The part nobody plans for is everything that has to be agreed before those two seconds can happen at all.",
+    publishedAt: "2026-11-25T00:00:00.000Z",
+    basis: "first-party",
+    hero:
+      {
+        src: "gender-reveal-dusk-lit-letters.jpg",
+        alt: "The lit BABY letters on the rooftop at dusk, a pink and gold sky, three pyramids over the town roofs, the couple holding a pink script balloon reading girl",
+        shoot: "Kayan",
+        w: 1600,
+        h: 1067,
+      },
+    sections: [
+      {
+        heading: "Someone has to know, and it is not going to be you",
+        body: [
+          "The moment itself lasts about two seconds. Everything else about a gender reveal, every conversation and every arrangement, exists to make those two seconds happen in front of the right people with a camera already running.",
+          "The whole service is built around one person: whoever is holding the result. Usually a family member, sometimes the clinic.",
+          "The planning conversation happens with them, on a channel that does not reach you. They agree the result, the colour and the timing with us. Neither of us tells you, and nothing we send you before the day gives it away.",
+          "If nobody can hold it, say so when you enquire. There is more than one way to arrange this, and we would rather suggest one than let the plan quietly depend on a person who turns out not to be available.",
+        ],
+      },
+      {
+        heading: "The two we have photographed looked nothing like each other",
+        body: [
+          "Same roof. Same balloon garland in pink, blue and white. Same lit letters spelling BABY, the same teddy bears, the same white flowers, the same wooden steps and the same strip of artificial grass. Two completely different sets of photographs, because of the hour.",
+          "The first was shot in the middle of the day. Hard blue sky, sharp shadows, the three pyramids crisp and pale behind the town roofs of Giza, the balloon colours reading bright and saturated. It is a cheerful, high-contrast, very awake-looking set of pictures.",
+          "The second was shot at dusk. The sky went pink and gold, the haze softened the pyramids until they read as shapes rather than stone, and the bulbs in the BABY letters came on and became part of the photograph instead of a prop sitting in daylight. Warmer, quieter, and the only one of the two where the lighting in the decoration does any work.",
+          "Neither is better. They are different photographs of the same setup, and the difference is entirely the hour you book. It is worth deciding which one you are imagining before you pick a time, because it is the single choice that changes the pictures most.",
+        ],
+        image:
+          {
+            src: "gender-reveal-daylight-setup.jpg",
+            alt: "The same rooftop setup in hard midday light, balloon garland and lit letters under a deep blue sky with three pyramids behind",
+            shoot: "John",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "What actually happened at those two reveals",
+        body: [
+          "At the daytime one, the result came out of a plain white box standing on the deck, with a printed sign on the front. The lid came off and helium balloons went up out of it. Pink. The photographs either side of that frame are the two of them watching the balloons leave, which is the part people forget to picture when they are planning the box.",
+          "At the dusk one, the answer arrived as a script foil balloon reading girl, held up in front of the lit letters with the pyramids behind.",
+          "Read those as what was agreed for those two dates, not as a menu. They are the only honest way to show you what this looks like, and they are not an offer, for the reason in the next section.",
+        ],
+        image:
+          {
+            src: "gender-reveal-the-moment.jpg",
+            alt: "The open white box on the rooftop deck with its printed sign, pink helium balloons rising out of it, the couple beside it mid-reaction",
+            shoot: "John",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Why we will not promise you a prop",
+        body: [
+          "It is the venue's building, and anything that pops, sprays, burns or drifts is their call. It can differ by date, by wind, and by who else is on the roof that evening.",
+          "So we ask them before we agree it with you, never after. Tell us what you are imagining when you enquire and we will come back with what the roof will permit on your date. Publishing a list we have not confirmed is how somebody arrives expecting an effect that was never possible, and that is a worse afternoon than being told no in advance.",
+          "The same applies to a cake or props you want to bring yourself, and to flowers and additional styling, which come through suppliers we work with rather than sitting in stock. Each one is confirmed separately once the date is held.",
+        ],
+      },
+      {
+        heading: "Everyone who came is in the photographs",
+        body: [
+          "A reveal with nobody else in the frame is a different event, and a smaller one.",
+          "What gets covered is the moment and the faces of the people watching it, the approach while nobody has said anything yet, the family around the reveal including whoever travelled for it, and directed portraits before or after while everybody is still in one place and still dressed for it.",
+          "How many people can come is a venue question rather than ours. Tell us the number when you enquire and we will confirm what the rooftop can take on your date.",
+        ],
+        image:
+          {
+            src: "gender-reveal-couple.jpg",
+            alt: "The couple close together on the rooftop with the pyramids behind and the balloon garland low in the frame",
+            shoot: "John",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Two weeks, not two days",
+        body: [
+          "Allow a fortnight or more. It is not a formality. The decoration, the balloons and anything coming through a supplier have to be arranged properly rather than found on the morning.",
+          "The event itself usually runs ninety minutes to two hours, depending on how many people come and whether portraits are part of it.",
+        ],
+        image:
+          {
+            src: "gender-reveal-golden-hour-setup.jpg",
+            alt: "The same rooftop setup in warm golden-hour haze, the pyramids softened to shapes behind the balloon garland",
+            shoot: "Kayan",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "What it costs",
+        body: [
+          "There is no published price for a gender reveal, and that is deliberate rather than evasive. What it costs depends on how many people come, which decoration you choose and whether you want it filmed, so you get a figure in writing before you commit to anything.",
+          "The quotation comes back after we have confirmed the roof, not before. How and when you pay is confirmed in writing with it. No page on this website takes a payment or asks for card details, and an enquiry does not reserve the roof.",
+        ],
+      },
+      {
+        heading: "If you want it filmed",
+        body: [
+          "A reveal is one of the few things we photograph that is arguably better as footage, because the sound is half of it. A cinematic film of the reveal, slow motion of the moment itself, and vertical cuts for the people who are going to watch this on a phone are all shot and edited in house rather than through a supplier, so they are arranged with the rest of the session and quoted with it.",
+        ],
+        image:
+          {
+            src: "gender-reveal-quiet.jpg",
+            alt: "The couple with their backs to the camera looking out at the pyramids, the lit letters at the edge of the frame",
+            shoot: "Kayan",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "The thing most people wish they had asked about",
+        body: [
+          "A flying dress session for the pregnancy, on the same roof and the same evening. Everyone is already there and already dressed, and it is something we do ourselves rather than arrange through anybody else. See [maternity and family sessions](/celebrations/maternity-and-family).",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Who finds out first?",
+        answer: "Nobody in the couple. The result goes from whoever is holding it to us, and the planning happens with them on a channel that does not reach you.",
+      },
+      {
+        question: "Can we do a confetti cannon, smoke or a balloon pop?",
+        answer: "Tell us what you are imagining and we will ask the venue for your date. We do not publish a list of permitted effects, because what the roof allows can change with the date, the wind and who else is up there that evening.",
+      },
+      {
+        question: "Is it better in the day or at sunset?",
+        answer: "They produce genuinely different photographs. Daylight gives you hard blue sky and saturated colour. Dusk gives you a pink and gold sky, softer pyramids, and lit letters that actually read as lit. Pick the one you are already imagining.",
+      },
+      {
+        question: "How many people can come?",
+        answer: "That is the venue's answer rather than ours. Give us the number when you enquire and we will confirm it for your date.",
+      },
+      {
+        question: "How far ahead do we need to book?",
+        answer: "Two weeks or more, mainly so the decoration and any props can be arranged properly.",
+      },
+      {
+        question: "How much is it?",
+        answer: "There is no published price. It depends on numbers, decoration and whether you want video, and you get a written quotation once the roof is confirmed.",
+      },
+    ],
+    related: [
+      { label: "Gender reveals", path: "/celebrations/gender-reveals" },
+      { label: "The Pyramids Rooftop photoshoot", path: "/experiences/pyramids-rooftop" },
+      { label: "Maternity and family", path: "/celebrations/maternity-and-family" },
+    ],
+    destination: {
+      label: "Plan a gender reveal",
+      path: "/celebrations/gender-reveals",
+      note: "Tell us your date, roughly how many people are coming, and who is holding the result. The quotation comes back in writing once the roof is confirmed.",
+    },
+    inboundFrom: ["/celebrations/gender-reveals", "/celebrations"],
+  },
+
+  // -----------------------------------------------------------------------
+  {
+    slug: "an-anniversary-photoshoot-in-egypt",
+    cluster: "the-occasion",
+    title: "An anniversary photoshoot in Egypt: the evening, the roof and what it costs",
+    seoTitle: "Anniversary Photoshoot in Egypt",
+    metaDescription: "A rooftop above Giza at golden hour, priced per person, decoration included. What the evening looks like and what it costs.",
+    excerpt: "Alessandra and Gianluca mark every anniversary by going somewhere new and photographing it in the clothes they were married in. In September 2026 that was a rooftop in Giza, and this is what that evening actually involves.",
+    publishedAt: "2026-11-25T00:00:00.000Z",
+    basis: "first-party",
+    hero:
+      {
+        src: "anniversary-kiss.jpg",
+        alt: "A couple kissing on the rooftop deck at golden hour, two pyramids behind them, kilim cushions along the bench",
+        shoot: "Alessandra",
+        w: 1600,
+        h: 1067,
+      },
+    sections: [
+      {
+        heading: "What the roof actually is",
+        body: [
+          "Alessandra and Gianluca have a tradition. Every anniversary they travel somewhere they have not been, and they photograph it in their wedding clothes. In September 2026 that was a rooftop above Giza, and the photographs on this page are from that evening. It is the only anniversary session in our library, which means this article is describing one real evening rather than averaging a category.",
+          "A rooftop in Giza with the pyramids across the skyline, confirmed with the venue for your date and your hour. The pyramids are the view from it. They are not a backdrop we have placed you in front of, and between you and them are the roofs of the town, which are in the wide frames because they are really there.",
+          "The corner used for couples is a low built-in bench run with patterned cushions and kilim rugs over a wooden deck. It photographs as somewhere to sit rather than a set, which is most of why it works for two people. You can lean on it, sit on it, or walk the length of the deck with the plateau behind you.",
+        ],
+        image:
+          {
+            src: "anniversary-standing.jpg",
+            alt: "The couple standing together on the deck, him in a tuxedo and her in a lace wedding dress and a straw hat, three pyramids across the frame",
+            shoot: "Alessandra",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Golden hour is the whole product",
+        body: [
+          "Every usable frame from that September evening is within about an hour of sunset.",
+          "The light at that hour does something specific here that matters more than it would elsewhere: the haze over the plateau turns the pyramids pale and slightly unreal while leaving the people in front of them warm and solid. You get separation without anything being lit. Shoot the same spot at noon and the pyramids go flat and grey and the couple squint.",
+          "So the hour is not a preference. It is the thing you are booking.",
+        ],
+        image:
+          {
+            src: "anniversary-dress-full-length.jpg",
+            alt: "The lace wedding dress and its train laid out across the rooftop deck, pyramids behind",
+            shoot: "Alessandra",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Two prices, and the difference between them",
+        body: [
+          "A session here is priced per person, so a couple is two.",
+          "Alessandra and Gianluca took the regular option, because the entire point of their tradition is the clothes they already own. Her lace wedding dress and his black tuxedo are the story; a flying dress would have replaced it. That is worth saying plainly, because the cheaper option is the right one for a significant number of anniversaries and nobody selling you a photoshoot usually says so.",
+          "Decoration is included in both. A setup from the designs we are running on your date, part of what you are paying rather than an extra on top. Tell us the mood and we will send you what is available.",
+          "One honest caveat about the photographs on this page: that session did not use decoration. The frames show the roof and the couple, nothing staged. If decoration matters to you, ask to see what is running for your date rather than reading it off these pictures.",
+        ],
+        list: [
+          "A flying dress session, $199 per person. A dress from [the collection](/wardrobe) in the colour you choose, an assistant throwing the fabric, and the directed session that goes with it.",
+          "A regular session, $100 per person. The same rooftop and the same direction, in your own clothes.",
+        ],
+      },
+      {
+        heading: "You do not have to know how to pose",
+        body: [
+          "The most common worry about a couple shoot, and the easiest to solve.",
+          "You are told where to stand, which way to turn, and what to do with your hands. The frames people like best from that evening are not the formal ones. They are the two of them laughing at something off camera, him in shirtsleeves and a bow tie with his sunglasses on, her holding a phone out at arm's length taking a selfie in the middle of a professional shoot. Those happen because somebody is directing the session loosely enough to let them.",
+        ],
+        image:
+          {
+            src: "anniversary-selfie.jpg",
+            alt: "She holds a phone out at arm's length taking a selfie mid-session while he laughs behind her",
+            shoot: "Alessandra",
+            w: 1067,
+            h: 1600,
+          },
+      },
+      {
+        heading: "If it is a surprise, nothing reaches your partner",
+        body: [
+          "Planned the same way a proposal is, because the risk is identical: one message to the wrong place and the evening is no longer a surprise.",
+          "You pick the channel, email or WhatsApp or whichever you choose, and we use only that one. Nothing goes anywhere you have not named. Tell us when you enquire if the address you are writing from is one you share. The setup is ready before you arrive, so the first time they see it is the moment you wanted, rather than while somebody is still tying a balloon.",
+        ],
+      },
+      {
+        heading: "How the evening is arranged",
+        body: [
+          "Five steps, and nothing is held until the fourth.",
+        ],
+        list: [
+          "Tell us the date and what it is for. An anniversary, a honeymoon, or just an evening that deserves more than a restaurant. Say whether it is a surprise.",
+          "Choose the session. Flying dress or your own clothes. The difference is the rate per person and what the photographs look like.",
+          "Choose how it looks. We send you the decoration designs available for your date. It is included, so this is a choice rather than an upsell.",
+          "We confirm the roof. The venue, the date and the hour are agreed, and the quotation comes back to you in writing.",
+          "The evening, photographed. Directed throughout.",
+        ],
+        image:
+          {
+            src: "anniversary-seated.jpg",
+            alt: "Both seated on the cushioned bench with the plateau behind them in warm low light",
+            shoot: "Alessandra",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Afterwards",
+        body: [
+          "The photographs are colour-graded and delivered after the session.",
+          "We do not publish a number of photographs or a delivery deadline for this service, because neither has been set. You get both in writing for your booking. A count on a web page that turns out not to fit your evening is worse than no count at all.",
+          "What you can add: a cinematic couple's film, shot and edited in house and quoted for your session. Or a flying dress with a coordinated outfit for him, if you want the pictures to be the other kind of anniversary photograph.",
+        ],
+        image:
+          {
+            src: "anniversary-low-sun.jpg",
+            alt: "Him in shirtsleeves, braces and a bow tie in warm low sun, the cushioned bench beside him",
+            shoot: "Alessandra",
+            w: 1067,
+            h: 1600,
+          },
+      },
+    ],
+    faqs: [
+      {
+        question: "What is the best time of day?",
+        answer: "Within about an hour of sunset. It is not a preference, it is what makes the pyramids separate from the people in front of them. At midday the plateau goes flat and grey.",
+      },
+      {
+        question: "How much does an anniversary photoshoot cost?",
+        answer: "It is priced per person, so a couple is two. $199 per person for a flying dress session, $100 per person for a regular session in your own clothes. Decoration is included in both.",
+      },
+      {
+        question: "Do we need to bring special clothes?",
+        answer: "No. A regular session is explicitly in your own clothes, and it is the right choice if what you are wearing is part of the point. Alessandra and Gianluca wore the clothes they were married in.",
+      },
+      {
+        question: "Neither of us can pose. Is that a problem?",
+        answer: "No, and it is the most common thing people say before a couple shoot. You are directed throughout: where to stand, which way to turn, what to do with your hands.",
+      },
+      {
+        question: "Can you keep it secret from my partner?",
+        answer: "Yes. You name one channel and we use only that one. Tell us if the address you are writing from is shared.",
+      },
+      {
+        question: "How many photographs do we get, and when?",
+        answer: "We do not publish a figure or a deadline for this service, because neither has been set. You get both in writing with your quotation rather than a number here that may not fit your booking.",
+      },
+    ],
+    related: [
+      { label: "Anniversaries and romance", path: "/celebrations/anniversaries-and-romance" },
+      { label: "The Pyramids Rooftop photoshoot", path: "/experiences/pyramids-rooftop" },
+      { label: "The wardrobe", path: "/wardrobe" },
+    ],
+    destination: {
+      label: "Plan your evening",
+      path: "/celebrations/anniversaries-and-romance",
+      note: "Priced per person, decoration included, and the hour confirmed with the roof before anything is agreed.",
+    },
+    inboundFrom: ["/celebrations/anniversaries-and-romance", "/celebrations"],
+  },
+
+  // -----------------------------------------------------------------------
+  {
+    slug: "red-against-yellow-stone",
+    cluster: "the-dress",
+    title: "Red against yellow stone",
+    seoTitle: "Red Flying Dress at the Pyramids",
+    metaDescription: "Cherry is the red in the collection. Nine sessions in the same dress, and what the colour actually does against pale stone in hard sun, in haze and in the air.",
+    excerpt: "Nine different people have been photographed in the same red dress on the same roof. Put side by side, they show something a colour chart cannot: how much of what red does in a photograph is decided by the sky rather than the dress.",
+    publishedAt: "2026-11-25T00:00:00.000Z",
+    basis: "first-party",
+    hero:
+      {
+        src: "/photos/flying-dresses/wardrobe/cherry-abbyrou-78.jpg",
+        alt: "The Cherry dress against a deep teal sky, its train fanned out symmetrically across the full width of the rooftop deck with three pyramids behind",
+        shoot: "Abby & Rou",
+        w: 1600,
+        h: 1067,
+      },
+    sections: [
+      {
+        heading: "Why it works here, in one paragraph",
+        body: [
+          "[Cherry](/wardrobe/cherry) is the red in the collection. One dress, a deep crimson rather than a pillarbox or a wine, and the single most requested colour we run. Nine separate sessions in it sit in our library: same dress, same roof, nine different people, and a usefully wide spread of weather.",
+          "Everything behind you at Giza is made of the same light. Pale limestone, pale sand, pale hazed sky, and the buff roofs of the town in between. It is a beautiful background and a low-contrast one, and it is unforgiving of any dress built from the same warm, light register.",
+          "Cherry is the opposite of that background in both hue and depth. It does not need the sun at a particular angle, it does not need a clean horizon, and it does not depend on the viewer being close enough to see detail. At any distance, in any of the nine sessions, it reads as the subject.",
+        ],
+      },
+      {
+        heading: "What changes is the sky, not the dress",
+        body: [
+          "This is the part the colour swatch cannot tell you.",
+          "On a hazy day, which is most days at Giza, the sky goes near white and the pyramids go pale and soft. Against that, Cherry photographs a shade lighter and slightly warmer than the fabric really is, closer to a bright scarlet. The whole frame becomes high key: a single saturated object against a wash of pale everything. It is the most graphic version of the photograph.",
+          "On a clear day with real blue in the sky, the same dress reads deeper and cooler, closer to its true crimson. The pyramids pick up definition, the frame gains a second strong colour, and the photograph becomes about the contrast between the red and the blue rather than about the red alone.",
+          "Both are good. They are not the same picture. If you have seen a particular red flying dress photograph you are hoping to reproduce, it is worth working out which of those two skies it was taken under, because that is the variable, and it is the one nobody can book.",
+        ],
+        image:
+          {
+            src: "/photos/flying-dresses/wardrobe/cherry-aroouj-155.jpg",
+            alt: "The Cherry dress under a near-white hazy sky, the train spread low and wide over the cushioned bench",
+            shoot: "Aroouj",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "What the fabric does that the colour does not",
+        body: [
+          "Cherry is cut in a satin with a high sheen, and the sheen is doing as much work as the hue.",
+          "Lying still across the deck, the train pools in wide soft folds and every ridge catches a highlight, so the dress is never a flat shape. It is a surface with light moving across it. That is why it holds up in a wide frame where the dress is small: there is internal structure to look at.",
+          "In the air it behaves differently again. Thrown, it does not stay a sheet. It curls, and the curl is where the colour goes darkest, because the fabric is shading itself. The best frames in the nine sessions are nearly all the ones where the train has turned over on itself mid throw and you can see a bright face and a dark fold in the same piece of cloth.",
+          "The practical version of that: a thrown Cherry train is more interesting to look at than a thrown pale one, because pale fabric in strong sun loses its folds to highlight. Red keeps them. See [how a flying dress actually flies](/stories/how-a-flying-dress-flies).",
+        ],
+        image:
+          {
+            src: "/photos/flying-dresses/wardrobe/cherry-img8981.jpg",
+            alt: "The Cherry train caught mid-throw, curling over on itself so a bright red face and a dark fold show in the same cloth",
+            shoot: "an unrecorded rooftop session",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "The shape of the dress itself",
+        body: [
+          "A deep V halter neckline, a fitted bodice to the waist, a front split, and then an amount of train that is genuinely difficult to picture until it is on the ground in front of you. In several of the nine frames the train fills the entire width of the photograph, laid out across the seating deck and over the bench behind it.",
+          "The bodice is close fitting and unremarkable, and that is the point. The dress is [adjustable](/stories/one-size-cut-to-fit) and is worn by people of very different heights and builds across those nine sessions, and the part that makes the photograph is behind you rather than on you.",
+        ],
+        image:
+          {
+            src: "/photos/flying-dresses/wardrobe/cherry-kristen-1187.jpg",
+            alt: "The Cherry train airborne in a long arc above the rooftop deck, arms raised, front split visible",
+            shoot: "Kristen",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Who it suits, and who it does not",
+        body: [
+          "This is the honest answer: Cherry suits the photograph more than it suits any particular person. It is chosen by people who want the picture to be loud, and it is the wrong choice for anyone who wants the pyramids to be the loudest thing in the frame. In a Cherry photograph the dress wins. That is what it is for.",
+          "If you want the plateau to carry the picture and the dress to belong to it, the warm earth tones in the collection do that instead, and a photographer will tell you the same thing on the roof in ten seconds.",
+        ],
+        image:
+          {
+            src: "/photos/flying-dresses/wardrobe/cherry-camela-94.jpg",
+            alt: "The Cherry dress under a warm hazy sky, the train swept across the whole deck in deep soft folds",
+            shoot: "Camela",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "What it costs",
+        body: [
+          "A flying dress session on the rooftop is $199 per person, which includes a dress from the collection in the colour you choose, an assistant throwing the fabric, and the directed session. Cherry is not priced differently from any other colour in the collection.",
+        ],
+        image:
+          {
+            src: "/photos/flying-dresses/wardrobe/cherry-bassim-57.jpg",
+            alt: "The Cherry train streaming low out of frame across the rooftop, two pyramids on a pale sky",
+            shoot: "Bassim",
+            w: 1600,
+            h: 1067,
+          },
+      },
+    ],
+    faqs: [
+      {
+        question: "Is Cherry red or burgundy?",
+        answer: "A deep crimson. Darker and cooler than a bright pillarbox red, and clearly distinct from Hot Pink, which is the other saturated warm colour in the collection.",
+      },
+      {
+        question: "Will it look like the photographs I have seen?",
+        answer: "It depends on the sky more than on anything you or we control. Hazy days give you a high key, almost graphic photograph with a near white sky. Clear days give you a deeper red against real blue. Both are good; they are different pictures.",
+      },
+      {
+        question: "Does red work in the middle of the day?",
+        answer: "Yes, better than most. It holds its colour in direct sun and stays readable in silhouette, which is not true of every colour in the collection.",
+      },
+      {
+        question: "Is a red dress too much against the pyramids?",
+        answer: "In a Cherry photograph the dress is the subject and the plateau is the setting. If you want it the other way round, say so and we will suggest a colour that belongs to the background rather than fighting it.",
+      },
+      {
+        question: "Does the colour cost extra?",
+        answer: "No. A flying dress session is $199 per person whichever of the thirteen colours you choose.",
+      },
+    ],
+    related: [
+      { label: "Cherry", path: "/wardrobe/cherry" },
+      { label: "Choosing a dress colour", path: "/stories/choosing-a-dress-colour" },
+      { label: "The Pyramids Rooftop photoshoot", path: "/experiences/pyramids-rooftop" },
+    ],
+    destination: {
+      label: "See the Cherry dress",
+      path: "/wardrobe/cherry",
+      note: "Six frames from six of the nine sessions, and the dress at $199 per person like every other colour in the collection.",
+    },
+    inboundFrom: ["/wardrobe", "/wardrobe/cherry"],
+    relatedStorySlugs: ["choosing-a-dress-colour", "one-size-cut-to-fit"],
+  },
+
+  // -----------------------------------------------------------------------
+  {
+    slug: "a-proposal-on-the-roof-start-to-finish",
+    cluster: "the-occasion",
+    title: "What a proposal on the roof actually looks like, start to finish",
+    seoTitle: "A Proposal on a Giza Rooftop",
+    metaDescription: "The setup is built before you arrive and the photographer is already in position. What three real proposals on this roof looked like.",
+    excerpt: "The part nobody pictures is the twenty minutes before. The setup goes up on an empty roof, the photographer finds the spot where she will not be looking, and then the two of you walk out into something already finished.",
+    publishedAt: "2026-11-25T00:00:00.000Z",
+    basis: "first-party",
+    hero:
+      {
+        src: "proposal-rose-heart.jpg",
+        alt: "A heart of red and white roses standing on the rooftop deck in soft haze, white pillar candles ringed around it, a couple inside the heart with three pyramids pale behind",
+        shoot: "Leonidas",
+        w: 1600,
+        h: 1067,
+      },
+    sections: [
+      {
+        heading: "The roof",
+        body: [
+          "Most of what we do for a proposal happens before either of you is on the roof. That is the thing worth understanding first, because it is the difference between a proposal that is photographed and a proposal that is staged again afterwards for the camera. By the time you walk out, the setup is standing, the candles are lit, the music is cued and the photographer is already in position.",
+          "A private hotel rooftop in Giza looking across at the Great Pyramids. It is confirmed with the venue for your date and your hour before anything is agreed, which is the step that has to happen first: the roof is somebody else's building and their answer is the one that decides your evening.",
+          "The pyramids are the view from it. They are not a backdrop we have placed you in front of, and the difference shows in a wide frame, where the plateau sits at its real distance with the roofs of the town between.",
+          "We do not name the hotel on this site yet. The name was given to us and we are waiting to confirm that they are content to be named publicly before we publish it, which is a slower answer than most people want and the right one.",
+        ],
+      },
+      {
+        heading: "What three of them actually looked like",
+        body: [
+          "We have photographed proposals on this roof with three different setups, and putting them side by side is more useful than any list.",
+          "The first was built around a heart of red and white roses on a frame, tall enough to stand inside. A red patterned rug on the deck, rose petals scattered across it, and a ring of white pillar candles in glass holders around the whole thing. Shot in soft haze, so the three pyramids behind sat pale and the roses were the only strong colour in the frame.",
+          "The second was quieter: two uprights carrying white drapes, small clusters of flowers at the top corners, the fabric running down onto the deck. Clear blue sky that evening. It is the one that photographs most like a wedding, and it is the one where the plateau does most of the work, because there is less in front of it.",
+          "The third was the most elaborate: a heart of roses with a gold script sign inside it, white drape to one side, and a red carpet runner down the deck. Both of them in white. It is the loudest of the three and it is the one that reads instantly in a photograph on a phone.",
+          "Read those as what was built on three particular dates rather than as a menu. You choose the setup from the designs we are running when you enquire, and we send you what is actually available for your date, because what is in the collection changes.",
+        ],
+        image:
+          {
+            src: "proposal-white-drape-wide.jpg",
+            alt: "Two uprights carrying white drapes standing on the empty end of the rooftop deck with the pyramids beyond",
+            shoot: "Manu",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "The secrecy, which is the actual job",
+        body: [
+          "A proposal is planned the same way a surprise party is, except that one misdirected message ruins it rather than spoils it.",
+          "You pick the channel. Email, WhatsApp, whichever you name, and we use only that one. Nothing goes anywhere you have not told us to send it. The venue, the timing and the setup are arranged between us and the roof, so there is no reason for anything to reach your partner at all.",
+          "If the address you are writing from is one you share, say so in the first message. It is the single most common way this goes wrong and it is the easiest to avoid. There is more on that in [photographing a proposal the other person does not know about](/stories/photographing-a-proposal-she-does-not-know-about).",
+        ],
+      },
+      {
+        heading: "Your song, through the speaker",
+        body: [
+          "There is a speaker on the roof. Send us the track you want playing as she arrives and we cue it.",
+          "It is a small thing that people are consistently glad they asked about, and it costs nothing to arrange. It also solves the problem of the walk out, which is otherwise the most awkward thirty seconds of the evening for the person doing the asking.",
+        ],
+      },
+      {
+        heading: "Where the photographer is",
+        body: [
+          "Not where she will be looking.",
+          "The frames people keep are almost always the ones taken before anybody said anything: the approach, the moment she sees the setup, the second before the question. Those only exist if somebody is already in position with the right lens on, which is why the photographer is placed before you walk out rather than following you onto the roof.",
+          "After the question, the session opens up. In all three of the sets above there are standing portraits, a dip, a kiss, and frames of the two of them with the plateau behind, all taken in the half hour that follows.",
+        ],
+        image:
+          {
+            src: "proposal-on-one-knee.jpg",
+            alt: "Him on one knee under the white drape arch presenting the ring, clear blue sky above the rooftop",
+            shoot: "Manu",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "What you get, and when",
+        body: [
+          "More than a hundred edited photographs. They are delivered as a Google Drive gallery, and the gallery stays available for one year from the day it is shared. There is no rush to download and no deadline to miss.",
+        ],
+        image:
+          {
+            src: "proposal-red-carpet.jpg",
+            alt: "Him kneeling on a red carpet runner in front of a heart of roses carrying a gold script sign, white drape to one side",
+            shoot: "Moustafa",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "How it is paid for",
+        body: [
+          "Twenty-five per cent secures your date. Until it is paid the roof is not held, and we will say that plainly rather than let you assume otherwise.",
+          "The remaining seventy-five per cent is paid on the day, after the event. Cash, PayPal, or a payment link we send you.",
+          "The quotation comes back to you in writing once the venue, the date and the time are agreed. Nothing is held before that.",
+          "Changing at the venue is arranged as part of holding your date. Tell us whether you are arriving dressed or want to change there and it is confirmed with the venue in writing along with everything else.",
+        ],
+        image:
+          {
+            src: "proposal-looking-out.jpg",
+            alt: "Both with their backs to the camera, framed inside the rose heart, looking across at the plateau",
+            shoot: "Leonidas",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "The order it happens in",
+        body: [
+          "Seven steps, and the roof is not yours until the fourth.",
+        ],
+        list: [
+          "Tell us the date, the hour and what she loves.",
+          "Choose the setup from what we are running for your date.",
+          "We confirm the roof and send the quotation in writing.",
+          "A deposit secures it.",
+          "The setup goes up on the roof ahead of you. The photographer takes position.",
+          "You walk out. It is photographed as it happens.",
+          "The gallery arrives, yours for a year.",
+        ],
+        image:
+          {
+            src: "proposal-after.jpg",
+            alt: "The dip and the kiss in front of the rose heart, both of them in white",
+            shoot: "Moustafa",
+            w: 1600,
+            h: 1067,
+          },
+      },
+    ],
+    faqs: [
+      {
+        question: "Does she see anything being set up?",
+        answer: "No. The setup is finished on the roof before you arrive, and the photographer is in position before you walk out. That is the whole design of the evening.",
+      },
+      {
+        question: "Can I choose the decoration?",
+        answer: "You choose from the designs we are running for your date. We send you what is genuinely available when you enquire rather than publishing a catalogue here that may not match what exists on your evening.",
+      },
+      {
+        question: "How do you keep it secret?",
+        answer: "You name one channel and we use only that one. Tell us if the address you are writing from is shared, because that is the most common way a surprise is lost.",
+      },
+      {
+        question: "Can I have a particular song playing?",
+        answer: "Yes. There is a speaker on the roof. Send us the track and we cue it for the moment she arrives.",
+      },
+      {
+        question: "How many photographs do we get?",
+        answer: "More than a hundred, edited, delivered as a Google Drive gallery that stays available for a year from the day it is shared.",
+      },
+      {
+        question: "What do I pay, and when?",
+        answer: "Twenty-five per cent secures the date and the remaining seventy-five per cent is paid on the day, after the event. Cash, PayPal, or a payment link we send you.",
+      },
+      {
+        question: "Which hotel is it?",
+        answer: "We are not publishing the name until the venue has confirmed they are content to be named. The roof itself is confirmed with them for your date before anything is agreed.",
+      },
+    ],
+    related: [
+      { label: "Marriage proposals", path: "/celebrations/marriage-proposals" },
+      { label: "The Pyramids Rooftop photoshoot", path: "/experiences/pyramids-rooftop" },
+      { label: "Photographing a proposal she does not know about", path: "/stories/photographing-a-proposal-she-does-not-know-about" },
+    ],
+    destination: {
+      label: "Plan a proposal on the roof",
+      path: "/celebrations/marriage-proposals",
+      note: "Twenty-five per cent secures the date, the setup goes up before you arrive, and the gallery is yours for a year.",
+    },
+    inboundFrom: ["/celebrations/marriage-proposals", "/celebrations"],
+    relatedStorySlugs: ["photographing-a-proposal-she-does-not-know-about"],
+  },
+
+  // -----------------------------------------------------------------------
+  {
+    slug: "a-birthday-on-the-roof",
+    cluster: "the-occasion",
+    title: "A birthday on the roof, with the dress",
+    seoTitle: "A Birthday Photoshoot in Egypt",
+    metaDescription: "A flying dress, a cake, and the people who came. What a birthday on a Giza rooftop actually involves, and what is included against what is quoted.",
+    excerpt: "Two birthdays on this roof, both of them a flying dress and a cake held in two hands. What is included, what is quoted, and the one thing our photographs cannot show you yet.",
+    publishedAt: "2026-11-25T00:00:00.000Z",
+    basis: "first-party",
+    hero:
+      {
+        src: "birthday-cake-on-the-bench.jpg",
+        alt: "Seated on the cushioned rooftop bench in a red flying dress, its train spread across the deck, holding a small cake with a gold topper, two pyramids in haze behind",
+        shoot: "Nana",
+        w: 1600,
+        h: 1067,
+      },
+    sections: [
+      {
+        heading: "What the two we have photographed were",
+        body: [
+          "A birthday here is not a party we put on. It is a photoshoot built around the person whose birthday it is, on a rooftop above Giza, and whatever else you want around it is arranged on top of that. Worth saying plainly at the start, because the two words that cause the most confusion in this category are included and arranged, and they mean different things on your quotation.",
+          "Both of the birthdays we have photographed were a flying dress session with a cake in it. Both wore [Cherry](/wardrobe/cherry), the deep red, which is the most requested colour we run.",
+          "The first was shot in soft haze, the red train laid out the full width of the deck and across the cushioned bench, two pyramids pale behind. She holds a small cake with a gold topper on it. In one frame she is putting on a small gold crown, which was hers rather than ours, and it is the best photograph of the set.",
+          "The second was a brighter evening, a pyramid clear behind her, and the thing that makes it is that she is not alone in it. Two other people are in several of the frames, crouched either side of her while she holds a white cake with red hearts piped down it. Those are the photographs people keep from a birthday: not the portrait, the three of them.",
+        ],
+        image:
+          {
+            src: "birthday-crown.jpg",
+            alt: "Putting on a small gold crown, the cake on her lap, laughing, the rooftop bench behind",
+            shoot: "Nana",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Here is what those photographs do not show",
+        body: [
+          "Neither of them had a built decoration setup. No arch, no signage, no balloons. Just the roof as it stands, the dress, the cake and the people.",
+          "That is worth being straight about, because the page you are reading this from offers decoration as something we arrange, and we do not currently have a photograph of a decorated birthday on this roof to show you. We have photographs of decorated proposals and a decorated gender reveal, and they are the same craft pointed at a different occasion, but they are not birthdays and we are not going to caption them as if they were.",
+          "Ask us what is available for your date and we will send you pictures of the actual setups rather than leave you to guess from these.",
+        ],
+        image:
+          {
+            src: "birthday-red-train.jpg",
+            alt: "The red train laid out the full width of the frame across the rooftop deck, pyramids behind",
+            shoot: "Nana",
+            w: 1600,
+            h: 1067,
+          },
+      },
+      {
+        heading: "Included, arranged, quoted",
+        body: [
+          "The distinction matters more here than anywhere else on this site.",
+          "Through a supplier: the cake. It comes from a baker we work with rather than our own kitchen, so the design, what is possible and what it costs are confirmed with you before anything is ordered. We do not publish flavours, sizes, dietary options, a price or a cut-off date for ordering, because none of those has been set.",
+        ],
+        list: [
+          "Included. The rooftop, confirmed with the venue for your date and your hour before anything is agreed. The dress from [the collection](/wardrobe) in the colour you choose. The direction, so nobody has to know how to pose. The photography of the evening itself: the people, the cake, the moment everyone sings, and portraits of whoever the evening is for.",
+          "Arranged, and priced in your quotation. The decoration. A setup from the designs we run, pointed at what you are celebrating. You choose from what is available for your date and what you choose is priced with the rest, rather than being folded into a headline figure.",
+        ],
+        image:
+          {
+            src: "birthday-holding-the-cake.jpg",
+            alt: "Standing with a white cake held in both hands, a pyramid clear behind her",
+            shoot: "Reem",
+            w: 1067,
+            h: 1600,
+          },
+      },
+      {
+        heading: "How it is priced",
+        body: [
+          "A photoshoot is priced per person. A party is the rooftop by the hour, with the photography quoted on top of it.",
+          "Which of those a birthday is depends on what you are actually planning. Three people and a cake is a photoshoot. A room full of people and an evening is the roof by the hour. Tell us roughly how many are coming and we will tell you which one you are looking at before you have to commit to anything.",
+          "We do not publish a minimum booking, a deposit, an overtime rate or a cancellation policy for this service, because none has been set. You get the terms for your booking in writing with the quotation.",
+        ],
+      },
+      {
+        heading: "Bringing people",
+        body: [
+          "You can add companions to the booking, and the second of the two sessions above is the argument for it.",
+          "Tell us the number when you enquire, because capacity is the venue's to set rather than ours and it has to be confirmed with them for your date.",
+        ],
+        image:
+          {
+            src: "birthday-three-of-them.jpg",
+            alt: "Three of them together on the rooftop, two crouched either side while she holds the white cake with red hearts",
+            shoot: "Reem",
+            w: 1067,
+            h: 1600,
+          },
+      },
+      {
+        heading: "Afterwards",
+        body: [
+          "The photographs are colour-graded and delivered after the session.",
+          "We do not publish a number or a delivery deadline for a birthday, because neither has been set for this service. You get both in writing for your booking. A figure on a web page that turns out not to fit your evening is worse than no figure at all.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        question: "Is the decoration included?",
+        answer: "No, and this is the one worth reading twice. For a birthday the decoration is arranged by us and priced in your quotation. It is included in some of our other services, which is exactly why it is spelled out here.",
+      },
+      {
+        question: "Can you organise a cake?",
+        answer: "Yes, through a baker we work with. The design, what is possible and the cost are confirmed with you before anything is ordered. We do not publish flavours, sizes or a price because none has been set.",
+      },
+      {
+        question: "How much does a birthday on the roof cost?",
+        answer: "It depends on whether you are booking a photoshoot or an evening. A photoshoot is priced per person; the rooftop as a party is by the hour with photography quoted on top. Tell us how many people are coming and we will tell you which one applies.",
+      },
+      {
+        question: "Can other people come?",
+        answer: "Yes. Tell us the number when you enquire so it can be confirmed with the venue, because capacity is theirs to set.",
+      },
+      {
+        question: "Which dress should I pick for a birthday?",
+        answer: "Both of the birthdays we have photographed used Cherry, the deep red, and it is the most requested colour in the collection. Any of the thirteen is included at the same price, so the choice is about the photograph you want.",
+      },
+      {
+        question: "How many photographs do we get, and when?",
+        answer: "We do not publish a figure or a deadline for this service, because neither has been set. You get both in writing with your quotation.",
+      },
+    ],
+    related: [
+      { label: "Birthdays and celebrations", path: "/celebrations/birthdays-and-celebrations" },
+      { label: "Cherry", path: "/wardrobe/cherry" },
+      { label: "The Pyramids Rooftop photoshoot", path: "/experiences/pyramids-rooftop" },
+    ],
+    destination: {
+      label: "Plan a birthday on the roof",
+      path: "/celebrations/birthdays-and-celebrations",
+      note: "Tell us roughly how many are coming and we will tell you whether you are looking at a photoshoot priced per person or the roof by the hour.",
+    },
+    inboundFrom: ["/celebrations/birthdays-and-celebrations", "/celebrations"],
+  },
+
 ];
 
 /**

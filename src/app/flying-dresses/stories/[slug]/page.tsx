@@ -10,6 +10,7 @@ import {
   storyReadingMinutes,
 } from "@/content/flyingDressStories";
 import { StoryProse } from "../../_components/StoryProse";
+import { StoryFigure } from "../../_components/StoryFigure";
 import { StoryCta } from "../../_components/StoryCta";
 import { StoryToc, headingId } from "../../_components/StoryToc";
 import {
@@ -134,6 +135,14 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
         </div>
       </section>
 
+      {story.hero ? (
+        <section className="fd-section-tight">
+          <div className="fd-shell">
+            <StoryFigure frame={story.hero} priority />
+          </div>
+        </section>
+      ) : null}
+
       <section className="fd-section-tight">
         <div className="fd-shell">
           <StoryToc headings={story.sections.map((section) => section.heading)} />
@@ -161,6 +170,7 @@ export default async function StoryPage({ params }: { params: Promise<{ slug: st
                     ))}
                   </ul>
                 ) : null}
+                {section.image ? <StoryFigure frame={section.image} /> : null}
               </div>
             ))}
           </article>
