@@ -32,7 +32,14 @@ import { supabaseAdminConfigured } from "@/lib/supabase/env";
  * was — never "the enquiry is refused because the database was busy".
  */
 
-export type EnquiryKind = "tour_enquiry" | "flying_dresses" | "transfer" | "shop_visit";
+export type EnquiryKind =
+  | "tour_enquiry"
+  | "flying_dresses"
+  | "transfer"
+  | "shop_visit"
+  // A campaign enquiry has no catalogue item behind it. The subject is a
+  // campaign package; 0039 widened the table constraint to admit it.
+  | "campaign";
 export type EnquiryBrand = "egypt_eye" | "flying_dresses";
 
 export type EnquiryRecord = {

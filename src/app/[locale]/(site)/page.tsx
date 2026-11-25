@@ -19,6 +19,7 @@ import { Reveal } from "@/components/Reveal";
 import { ExploreEgyptPromo } from "@/components/ExploreEgyptPromo";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { Glyph } from "./pharaoh-challenge/glyphs";
+import { CampaignHomePromo } from "@/components/CampaignHomePromo";
 import { describeCompanyRating, getCatalogStats, getCompanyRating } from "@/content/aggregate";
 import {
   getDestinationHubs,
@@ -462,6 +463,12 @@ export default async function Home() {
           </Reveal>
         </Container>
       </section>
+
+      {/* The "Egypt Eye Got You" campaign band — the LAST thing on the page,
+          below the Pharaoh's Challenge promo. One compact entry point, per
+          the campaign brief: nothing above this line moved, and the component
+          renders nothing once the campaign is switched off. */}
+      <CampaignHomePromo />
     </>
   );
 }

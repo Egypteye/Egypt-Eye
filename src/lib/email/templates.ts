@@ -2119,3 +2119,81 @@ export function shopVisitTeamEmail(v: ShopVisitFacts) {
 
   return { subject: `Shop visit request — ${v.areaName} (${v.reference})`, html, text };
 }
+
+export type CampaignEnquiryFacts = {
+  /** The package they chose, already resolved to its real name. */
+  packageName: string;
+  packageDates: string;
+  packageDuration: string;
+  partyDate: string;
+  name: string;
+  email: string;
+  phone: string;
+  travellers: string;
+  notes?: string;
+  pageUrl: string;
+};
+
+/**
+ * The campaign enquiry, as it reaches the team.
+ *
+ * Two things are stated in the body rather than left to be inferred, because
+ * both have already caused trouble elsewhere on this site: that an enquiry is
+ * not a booking, and that nothing about the villa has been promised. Whoever
+ * picks this up is quoting from scratch — there is no price on the page.
+ */
+export function campaignEnquiryEmail(f: CampaignEnquiryFacts) {
+  const row = (label: string, value: string) =>
+    `<tr><td style="padding:6px 0;color:#6b7d70;font-family:Arial,sans-serif;font-size:13px;">${escapeHtml(
+      label
+    )}</td><td style="padding:6px 0;text-align:right;"><strong>${escapeHtml(value)}</strong></td></tr>`;
+
+  const html = baseLayout({
+    preheader: `Campaign enquiry — ${f.packageName}, ${f.travellers}.`,
+    bodyHtml: `
+      <p style="margin:0 0 16px;"><strong>A campaign enquiry from the Egypt Eye Got You page.</strong> Nothing is booked and no price has been shown — this needs a quote and a confirmation of availability.</p>
+      <table role="presentation" style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+        ${row("Package", f.packageName)}
+        ${row("Duration", f.packageDuration)}
+        ${row("Dates", f.packageDates)}
+        ${row("Villa party", f.partyDate)}
+        ${row("Travellers", f.travellers)}
+        ${row("Name", f.name)}
+        ${row("Email", f.email)}
+        ${row("WhatsApp", f.phone)}
+      </table>
+      ${
+        f.notes
+          ? `<p style="margin:0 0 8px;font-family:Arial,sans-serif;font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#6b7d70;">Their request</p><p style="margin:0 0 16px;">${escapeHtml(
+              f.notes
+            )}</p>`
+          : ""
+      }
+      <p style="margin:0;color:#6b7d70;font-family:Arial,sans-serif;font-size:12px;line-height:1.6;">The page shows no venue, no start time and no price. Do not confirm any of those until they are agreed internally.</p>
+      ${ctaButton("Open the campaign page", f.pageUrl)}
+    `,
+    footerHtml: `Egypt Eye Travel and Tours — campaign enquiry, ${escapeHtml(f.packageName)}.`,
+  });
+
+  const text = [
+    "A campaign enquiry from the Egypt Eye Got You page.",
+    "Nothing is booked and no price has been shown.",
+    "",
+    `Package: ${f.packageName}`,
+    `Duration: ${f.packageDuration}`,
+    `Dates: ${f.packageDates}`,
+    `Villa party: ${f.partyDate}`,
+    `Travellers: ${f.travellers}`,
+    `Name: ${f.name}`,
+    `Email: ${f.email}`,
+    `WhatsApp: ${f.phone}`,
+    f.notes ? `\nTheir request: ${f.notes}` : "",
+    "",
+    "The page shows no venue, no start time and no price.",
+    f.pageUrl,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  return { subject: `Campaign enquiry — ${f.packageName} (${f.packageDates})`, html, text };
+}

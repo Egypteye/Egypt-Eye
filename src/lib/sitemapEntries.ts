@@ -9,6 +9,7 @@ import {
 } from "@/sanity/fetchers";
 import { getEnabledHotelsPublic } from "@/lib/hotels";
 import { siteUrl } from "@/content/seo";
+import { CAMPAIGN_ACTIVE, CAMPAIGN_COPY } from "@/content/shakiraCampaign";
 import { weeklyTrips } from "@/content/weeklyTrips";
 import { treasureCategories, treasureProducts } from "@/content/treasures";
 import { isWithdrawnPath } from "@/content/withdrawnSections";
@@ -99,6 +100,19 @@ export async function sitemapEntriesFor(code: Locale): Promise<MetadataRoute.Sit
     { url: `${siteUrl}/travel-agents`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/affiliate`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/collaborate`, changeFrequency: "monthly", priority: 0.5 },
+    // The November 2026 campaign, and only while it is running. A retired
+    // campaign submitted to Google is crawl budget spent on a page that now
+    // says it has ended — and this site already has a crawl-budget problem.
+    // The page keeps answering either way; it simply stops being advertised.
+    ...(CAMPAIGN_ACTIVE
+      ? [
+          {
+            url: `${siteUrl}${CAMPAIGN_COPY.path}`,
+            changeFrequency: "daily" as const,
+            priority: 0.8,
+          },
+        ]
+      : []),
   ];
 
   // Products get their own entries, but only the ones that are real. A
