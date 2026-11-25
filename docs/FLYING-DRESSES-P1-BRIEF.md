@@ -120,7 +120,7 @@ nowhere to send a convinced reader except a single `/wardrobe` index.
 | **Target keyword** | `red flying dress pyramids` |
 | **Search intent** | Informational with a commercial lean. |
 | **URL** | `/stories/red-against-yellow-stone` |
-| **Commercial page** | `/wardrobe/cherry` (falls back to `/experiences/pyramids-rooftop` until it exists) |
+| **Commercial page** | `/wardrobe/cherry` — **built 22 November** |
 | **Expected customer value** | Moderate, and it is the **template**. Cherry is the most requested colour, so this is the per-colour article worth proving the format on before writing seven more. |
 | **Photography** | Red folder, nine client sessions. Selected and provenance-checked. |
 | **Internal linking** | In from the colour hub and `/wardrobe`. Out to Cherry. |

@@ -11,7 +11,7 @@
 | `seoTitle` | Red Flying Dress at the Pyramids |
 | `metaDescription` | Cherry is the red in the collection. Nine sessions in the same dress, and what the colour actually does against pale stone in hard sun, in haze and in the air. |
 | `basis` | `first-party` |
-| `destination` | See the Pyramids Rooftop photoshoot → `/experiences/pyramids-rooftop` |
+| `destination` | See the Cherry dress → `/wardrobe/cherry` |
 | `related` | `/wardrobe`, `/stories/choosing-a-dress-colour`, `/stories/how-a-flying-dress-flies` |
 | `inboundFrom` | `/wardrobe`, `/stories/choosing-a-dress-colour` |
 | Target keyword | `red flying dress pyramids` |
@@ -21,10 +21,9 @@ Cherry as one of the two strongest performers against stone, in one sentence.
 This article is the evidence behind that sentence and does not restate the
 survey. The hub keeps the comparison; this keeps the depth.
 
-**Link note.** The destination points at `/experiences/pyramids-rooftop`
-because `/wardrobe/cherry` does not exist yet. If the thirteen wardrobe pages
-are approved, this article's destination should change to `/wardrobe/cherry`
-and that is a one-line edit.
+**Link note, updated 25 November.** `/wardrobe/cherry` now exists, so the
+destination points there rather than at the rooftop experience. That is where
+a reader convinced by this article should land.
 
 ---
 
