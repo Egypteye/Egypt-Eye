@@ -80,9 +80,9 @@ win available.
 | **URL** | `/stories/a-proposal-on-the-roof-start-to-finish` |
 | **Commercial page** | `/celebrations/marriage-proposals` |
 | **Expected customer value** | **The highest per booking in the programme.** It is the one service with stated terms, a deposit, a setup built before arrival and a hundred-plus edited photographs. The buyer is also the least price sensitive person we sell to. |
-| **Photography** | 47 images, Manu's and Leonidas's sessions. |
+| **Photography** | **Three** sessions, not two: Manu, Leonidas and Moustafa, the last being the largest and most elaborately decorated. Selected and provenance-checked. |
 | **Internal linking** | From the proposals page and from the live `photographing-a-proposal-she-does-not-know-about`, which covers secrecy and should link here for the sequence. |
-| **Status** | Next to draft. |
+| **Status** | **Drafted.** `docs/drafts/P1a-a-proposal-on-the-roof.md` |
 
 ### 4. A1 — A birthday on the roof, with the dress
 | | |
@@ -92,9 +92,9 @@ win available.
 | **URL** | `/stories/a-birthday-on-the-roof` |
 | **Commercial page** | `/celebrations/birthdays-and-celebrations` |
 | **Expected customer value** | Moderate to high, and the easiest competitive win on the list: Egypt Eye's `birthday-photoshoot-egypt` is 451 words and general. **Note the trap:** decoration is *not* included for birthdays, unlike anniversaries. The article must not inherit the anniversary's wording. |
-| **Photography** | 15 images. |
+| **Photography** | 15 files, two client sessions (Nana, Reem), both in Cherry. One file in the folder is generated and excluded. Selected and provenance-checked. |
 | **Internal linking** | From the celebrations hub. Out to `/wardrobe` and `/rentals/mens-wear`. |
-| **Status** | Pending. |
+| **Status** | **Drafted.** `docs/drafts/A1-a-birthday-on-the-roof.md` |
 
 ---
 

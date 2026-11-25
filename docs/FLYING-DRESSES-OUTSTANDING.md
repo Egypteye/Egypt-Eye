@@ -152,6 +152,20 @@ works, but a real answer is better.
 
 ## Genuine gaps
 
+**New, found 25 November while drafting A1:** we have **no photograph of a
+decorated birthday**. Both birthday sessions in the archive are a flying dress
+and a cake with the roof as it stands. The commercial page offers decoration
+as something we arrange, and there is nothing to show a customer. Decorated
+proposals and a decorated gender reveal exist and are the same craft, but they
+are not birthdays and will not be captioned as if they were.
+
+**Also found:** `Rooftop Birthday Beneath the Pyramids.png`, sitting in the
+Birthdays client folder, is a generated image (no EXIF, `c2pa.created` with
+`trainedAlgorithmicMedia`, OpenAI gpt-image). It is the only file in that
+folder with a descriptive name, so it is the one anyone reaching for "a
+birthday photo" would take first. Worth moving or renaming.
+
+
 These are the shots the business does not have. None of them blocks a P1
 item; all of them would improve one.
 
