@@ -20,6 +20,7 @@ import { collectReviewSubjects, reviewedSubjectKeys } from "@/lib/reviewSubjects
 import { jsonLdScript } from "@/content/jsonLd";
 import { SiteAnalytics } from "@/components/SiteAnalytics";
 import { AnalyticsConsent } from "@/components/AnalyticsConsent";
+import { OutboundTracker } from "@/components/OutboundTracker";
 
 // Cyrillic is in the body face's subsets because Russian is one of the
 // supported languages and Cormorant covers it; without it every Russian page
@@ -202,6 +203,9 @@ export default async function RootLayout({
               genuinely cannot collide — check-analytics.mts asserts it. */}
           <SiteAnalytics />
           <AnalyticsConsent />
+          {/* One delegated listener for every WhatsApp / mailto / tel link on the
+              site — see the component for why this is not a prop per button. */}
+          <OutboundTracker />
         </LocaleProvider>
       </body>
     </html>

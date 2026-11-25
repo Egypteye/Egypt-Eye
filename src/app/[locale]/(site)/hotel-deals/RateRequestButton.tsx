@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 const inputClass =
   "w-full rounded-lg border border-black/10 bg-sand px-3.5 py-2.5 text-sm text-ink outline-none transition focus:border-gold";
@@ -103,6 +104,7 @@ function RateRequestModal({
         throw new Error(data.error || tr("Something went wrong. Please try again."));
       }
       setStatus("success");
+      trackLead(LEAD_SOURCES.hotelRate);
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));

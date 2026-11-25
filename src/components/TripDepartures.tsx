@@ -9,6 +9,7 @@ import { localePath } from "@/i18n/locales";
 import { SeatPill, GuaranteeNote } from "./SeatAvailability";
 import { formatDateRange, groupByMonth } from "@/lib/departureModel";
 import type { Departure } from "@/lib/departureModel";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 // Pick a date, then take the seats. The whole booking journey for a Weekly
 // Trip, on one screen.
@@ -125,6 +126,7 @@ export function TripDepartures({
 
       setResult(data as Result);
       setStatus("done");
+      trackLead(LEAD_SOURCES.tripSeat);
     } catch {
       setStatus("error");
       setError(tr("Something went wrong. Please try again, or message us on WhatsApp."));

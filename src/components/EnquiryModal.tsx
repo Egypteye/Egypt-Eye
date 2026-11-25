@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
 import { PhoneField } from "@/components/PhoneField";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 type ItemType = "tour" | "experience" | "photoshoot" | "signatureExperience";
 
@@ -133,6 +134,10 @@ export function EnquiryModal({
         throw new Error(data.error || tr("Something went wrong. Please try again."));
       }
       setStatus("success");
+      // Here and NOT at the honeypot's fake success above: a bot that fills
+      // the hidden field is shown the same confirmation, and counting that
+      // would put bot traffic straight into the conversion figures.
+      trackLead(LEAD_SOURCES.tourEnquiry, itemTitle);
     } catch (err) {
       setStatus("error");
       setError(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));

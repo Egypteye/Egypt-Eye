@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
 import { PhoneField } from "@/components/PhoneField";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 const SERVICE_OPTIONS = [
   "Inbound Tour Operator",
@@ -81,6 +82,7 @@ export function TravelAgentForm() {
       });
       if (!res.ok) throw new Error("Request failed");
       setStatus("sent");
+      trackLead(LEAD_SOURCES.travelAgent);
     } catch {
       setStatus("error");
     }

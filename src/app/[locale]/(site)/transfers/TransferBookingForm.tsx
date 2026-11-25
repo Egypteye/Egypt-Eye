@@ -7,6 +7,7 @@ import { useLocale, useTr } from "@/i18n/LocaleProvider";
 import { getTransferQuote } from "@/lib/transferPricing";
 import type { TransferCategory, TransferVehicle, TransferVehicleId, TransferZone } from "@/content/types";
 import { PhoneField } from "@/components/PhoneField";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 const DURATION_OPTIONS = [3, 4, 5, 6, 8, 10];
 
@@ -173,6 +174,7 @@ export function TransferBookingForm({
       });
       if (!res.ok) throw new Error("Request failed");
       setStatus("sent");
+      trackLead(LEAD_SOURCES.transfer);
     } catch {
       setStatus("error");
     }

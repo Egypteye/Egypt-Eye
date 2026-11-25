@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
 import { PhoneField } from "@/components/PhoneField";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 const PROMOTION_METHODS = [
   "Blog / Website",
@@ -83,6 +84,7 @@ export function AffiliateForm() {
       });
       if (!res.ok) throw new Error("Request failed");
       setStatus("sent");
+      trackLead(LEAD_SOURCES.affiliate);
     } catch {
       setStatus("error");
     }

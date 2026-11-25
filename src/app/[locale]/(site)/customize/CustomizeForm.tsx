@@ -7,6 +7,7 @@ import { removeJourneyItem, useJourneyItems } from "@/lib/journey";
 import { WhatsAppBookButton } from "@/components/WhatsAppBookButton";
 import { useTr } from "@/i18n/LocaleProvider";
 import { countryDialCodes, flagFor } from "@/content/countryCodes";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 /**
  * Joins a dialling code and a local number into one submitted value.
@@ -159,6 +160,7 @@ export function CustomizeForm({
       });
       if (!res.ok) throw new Error("Request failed");
       setStatus("sent");
+      trackLead(LEAD_SOURCES.customize);
     } catch {
       setStatus("error");
     }
