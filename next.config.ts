@@ -171,6 +171,14 @@ const nextConfig: NextConfig = {
     // tested without a server — see scripts/check-redirects.mts.
     return redirectRules();
   },
+
+  experimental: {
+    // Set by `next upgrade --agent=security` (16.4.3 -> 16.4.6). It records
+    // that this app's last agent-driven upgrade was a security one, so the
+    // CLI stops re-issuing the advisory nudge for a version we are already
+    // on. It changes no runtime behaviour.
+    agentUpgrade: "security",
+  },
 };
 
 export default nextConfig;
