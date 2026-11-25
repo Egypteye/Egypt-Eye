@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 const FULL_NAV = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/enquiries", label: "Enquiries & Email" },
   { href: "/admin/discounts", label: "Discounts" },
   { href: "/admin/newsletter", label: "Newsletter" },
   { href: "/admin/reviews", label: "Reviews" },
@@ -33,6 +34,7 @@ const FULL_NAV = [
 // dead-end clicks.
 const RESERVATIONS_STAFF_NAV = [
   { href: "/admin/reservations", label: "Reservations" },
+  { href: "/admin/enquiries", label: "Enquiries & Email" },
   { href: "/admin/hotel-rate-requests", label: "Hotel Rate Requests" },
 ];
 

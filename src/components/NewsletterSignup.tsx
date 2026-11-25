@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 export function NewsletterSignup({
   variant = "section",
@@ -32,6 +33,7 @@ export function NewsletterSignup({
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || tr("Something went wrong."));
       setStatus("sent");
+      trackLead(LEAD_SOURCES.newsletter);
     } catch (err) {
       setErrorMessage(err instanceof Error ? err.message : tr("Something went wrong. Please try again."));
       setStatus("error");

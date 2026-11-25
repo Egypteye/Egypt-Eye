@@ -29,6 +29,7 @@ import {
   type StepId,
   type VideoRow,
 } from "@/lib/creatorClub/application";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 const PLATFORMS = ["Instagram", "TikTok", "YouTube", "Facebook", "Blog / Website", "Other"];
 const COLLAB_TYPES = [
@@ -262,6 +263,7 @@ export function CollaborateForm() {
         throw new Error("Request failed");
       }
       setStatus("sent");
+      trackLead(LEAD_SOURCES.collaborate);
     } catch {
       setStatus("error");
     }

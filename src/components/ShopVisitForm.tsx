@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import { SCENT_FAMILIES } from "@/lib/boutique/scentFamilies";
 import { PhoneField } from "@/components/PhoneField";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 // "Come and smell them first."
 //
@@ -54,6 +55,7 @@ export function ShopVisitForm({ areas }: { areas: Area[] }) {
         return;
       }
       setSent({ reference: json.reference, areaName: json.areaName });
+      trackLead(LEAD_SOURCES.shopVisit, json.areaName);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

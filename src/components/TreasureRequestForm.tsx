@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useTr } from "@/i18n/LocaleProvider";
 import type { TreasureCategory, TreasureProduct } from "@/content/types";
 import { PhoneField } from "@/components/PhoneField";
+import { trackLead, LEAD_SOURCES } from "@/lib/analytics/leads";
 
 // One form for all four categories.
 //
@@ -83,6 +84,7 @@ export function TreasureRequestForm({
         return;
       }
       setStatus("sent");
+      trackLead(LEAD_SOURCES.treasureRequest);
       formRef.current?.reset();
       setPhotoPreview(null);
       setPhotoName(null);
