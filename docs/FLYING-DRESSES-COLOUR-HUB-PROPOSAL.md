@@ -1,7 +1,9 @@
 # Proposed change to a live page: `choosing-a-dress-colour`
 
-25 November 2026. **Not applied.** You asked to see proposed changes to
-existing pages before they are made, so this is the whole change, written out.
+25 November 2026. **Applied on 25 November**, approved in full, including the
+Navy swatch correction. Kept as the record of what changed on a live page and
+why. The section below headed "What I need" is answered: all three content
+changes approved, the swatch corrected, D6 dropped.
 
 ---
 
@@ -154,11 +156,21 @@ the added links. Nothing about what the business sells changes.
 
 ---
 
-## What I need
+## What was decided
 
-1. **Approve the three content changes** (links, the Navy correction, the new
-   section), or tell me which to drop.
-2. **The Navy swatch**: correct the stored hex to the photographed colour,
-   or leave it and accept the mismatch on the wardrobe index.
-3. **Confirm D6 is dropped** from the content map, which takes the P1 list
-   from fourteen articles to thirteen.
+1. **All three content changes approved** and applied.
+2. **The Navy swatch was corrected**, from `#1e2a4a` to `#2469b7`. That figure
+   is the dominant blue of `dress-navy.jpg`, the photograph the wardrobe index
+   shows beside the swatch, so the square and the picture now agree. The six
+   `/wardrobe/navy` frames sample more saturated at `#023794` because they are
+   graded harder; the hero was the better source for a garment swatch, and the
+   reasoning is recorded in `outfitCollection.ts`. The dress is **not** renamed.
+3. **D6 is dropped.** The P1 list goes from fourteen articles to thirteen.
+
+## One thing the build caught
+
+The link check failed on the first attempt, correctly: `/wardrobe/[slug]` was
+in the sitemap but had never been added to `flyingDressRoutes.ts`, so the
+first story to link to a dress page was the first thing to notice. The routes
+are now derived from `dressPages`, the same list `generateStaticParams` uses,
+so a dress added or removed moves its URL in one edit.

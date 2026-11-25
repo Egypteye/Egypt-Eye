@@ -307,7 +307,7 @@ export const flyingDressStories: FlyingDressStory[] = [
       {
         heading: "Thirteen colours, one price",
         body: [
-          "The collection holds thirteen flying dresses: Cherry, Emerald, Navy, Black, Verdant, Ginger, Snowy, Golden, BronZey, Aqua, Lavender, Hot Pink and Orchid. One is included in every photoshoot, in the colour you choose, and choosing one does not change the price. There is no premium colour.",
+          "The collection holds thirteen flying dresses: [Cherry](/wardrobe/cherry), [Emerald](/wardrobe/emerald), [Navy](/wardrobe/navy), [Black](/wardrobe/black), [Verdant](/wardrobe/verdant), [Ginger](/wardrobe/ginger), [Snowy](/wardrobe/snowy), [Golden](/wardrobe/golden), [BronZey](/wardrobe/bronzey), [Aqua](/wardrobe/aqua), [Lavender](/wardrobe/lavender), [Hot Pink](/wardrobe/hot-pink) and [Orchid](/wardrobe/orchid). Each has a page of its own with the frames we have shot it in. One is included in every photoshoot, in the colour you choose, and choosing one does not change the price. There is no premium colour.",
           "That removes the only reason to compromise, and leaves a single question: which of these will look like something against the particular background you are standing in front of.",
         ],
       },
@@ -324,19 +324,34 @@ export const flyingDressStories: FlyingDressStory[] = [
           "Against that palette, a saturated colour from the cool or deep end of the collection reads immediately, at any distance, in any light.",
         ],
         list: [
-          "Cherry and Orchid are the strongest performers against stone. They hold their colour in direct sun, they stay readable in silhouette, and they photograph as the subject even when the dress is small in a wide frame.",
-          "Emerald, Verdant and Aqua work on the same principle from the other side of the wheel. Emerald in particular is the one people are surprised by, because there is no green anywhere in a Giza frame, so it has the whole scene to itself.",
-          "Navy and Black are the most reliable choices of all for a wide landscape shot, because the separation does not depend on colour at all. They work as shape. They are also the two that take the hottest midday sun least comfortably, which is worth weighing against the time of day you are shooting.",
-          "Lavender sits between the two groups. It separates well in the softer light either side of the middle of the day and loses a little of its distinctness under a hard overhead sun.",
+          "[Cherry](/wardrobe/cherry) and [Orchid](/wardrobe/orchid) are the strongest performers against stone. They hold their colour in direct sun, they stay readable in silhouette, and they photograph as the subject even when the dress is small in a wide frame.",
+          "[Emerald](/wardrobe/emerald), [Verdant](/wardrobe/verdant) and [Aqua](/wardrobe/aqua) work on the same principle from the other side of the wheel. Emerald in particular is the one people are surprised by, because there is no green anywhere in a Giza frame, so it has the whole scene to itself.",
+          "[Black](/wardrobe/black) is the most reliable choice of all for a wide landscape shot, because the separation does not depend on colour at all. It works as shape, and it is the one that takes the hottest midday sun least comfortably, which is worth weighing against the hour you are shooting.",
+          "[Navy](/wardrobe/navy) is the surprise of the group. The name suggests something dark and quiet; the dress photographs as a vivid royal blue, and blue is the one colour the plateau cannot answer. It separates on hue as strongly as Cherry does, and it is the most consistent dress in the collection across weather: hazy or clear, early or late, it reads the same blue.",
+          "[Lavender](/wardrobe/lavender) sits between the two groups. It separates well in the softer light either side of the middle of the day and loses a little of its distinctness under a hard overhead sun.",
         ],
       },
       {
         heading: "The ones that need thought",
         body: [
-          "Snowy, Golden, Ginger and BronZey are the colours the background is already wearing. None of them is a bad choice, and all four produce photographs that people love, but they ask for something in return.",
+          "[Snowy](/wardrobe/snowy), [Golden](/wardrobe/golden), [Ginger](/wardrobe/ginger) and [BronZey](/wardrobe/bronzey) are the colours the background is already wearing. None of them is a bad choice, and all four produce photographs that people love, but they ask for something in return.",
           "Snowy against white dunes or hazed limestone is a tonal photograph rather than a graphic one: all the interest is in the fold and the movement of the fabric, not in the contrast. It is the most bridal of the thirteen and the one that most rewards being shot low against sky rather than ground.",
           "Golden, Ginger and BronZey are the warm earth tones, and they are at their best when there is something behind you that is not earth: sky, water at Fayoum, or the shaded face of a building on a rooftop. Put any of them against a sunlit dune at the same angle and the dress and the ground become one object.",
           "If one of these four is the colour you want, say so. The adjustment is the photographer's, not yours. It is a matter of what goes behind you, and that is a decision made on the roof in ten seconds.",
+        ],
+      },
+      {
+        // ADDED 25 NOVEMBER 2026. This is what the content map had down as a
+        // separate article, D6. It is here instead: this page already ranks
+        // best of any story on the site, and a second article about choosing
+        // a colour would have split that between two of our own pages.
+        heading: "Or choose on the photograph you want",
+        body: [
+          "Everything above is about what separates from the background, which is the right question if you want the dress to be the subject. It is not the only question worth asking.",
+          "If you want the picture to be loud, pick from the saturated end and accept that the dress wins the frame: [Cherry](/wardrobe/cherry), [Orchid](/wardrobe/orchid), [Hot Pink](/wardrobe/hot-pink), [Aqua](/wardrobe/aqua), [Emerald](/wardrobe/emerald). In a photograph from any of those, the plateau is the setting and the dress is the subject.",
+          "If you want the pyramids to carry the picture and the dress to belong to the scene, the warm tones do that: [Golden](/wardrobe/golden), [Ginger](/wardrobe/ginger), [BronZey](/wardrobe/bronzey), and [Snowy](/wardrobe/snowy) in its own tonal way. They are not weaker choices, they are a different photograph, and they are the ones most often chosen by people who came for the place rather than for the dress.",
+          "If you want the photograph to work whatever the sky does on the day, [Navy](/wardrobe/navy) and Aqua are the two that hold their colour in any light. That matters more than it sounds when you are booking from abroad and cannot pick your weather.",
+          "And if you simply like a colour, wear it. Every one of the thirteen has produced photographs people were delighted with, the choice costs nothing, and the one thing that is visible in a frame is whether somebody is comfortable in what they are standing in.",
         ],
       },
       {
@@ -379,7 +394,25 @@ export const flyingDressStories: FlyingDressStory[] = [
       path: "/wardrobe",
       note: "Every colour in the collection, photographed. Nothing is reserved by looking, and the colour is confirmed with you before the day rather than decided on it.",
     },
-    inboundFrom: ["/wardrobe"],
+    // The hub and the thirteen pages point at each other. /wardrobe/[slug]
+    // renders StoriesFromHere for "/wardrobe", so listing the dress pages
+    // here is what puts this article on all thirteen of them.
+    inboundFrom: [
+      "/wardrobe",
+      "/wardrobe/cherry",
+      "/wardrobe/emerald",
+      "/wardrobe/navy",
+      "/wardrobe/black",
+      "/wardrobe/verdant",
+      "/wardrobe/ginger",
+      "/wardrobe/snowy",
+      "/wardrobe/golden",
+      "/wardrobe/bronzey",
+      "/wardrobe/aqua",
+      "/wardrobe/lavender",
+      "/wardrobe/hot-pink",
+      "/wardrobe/orchid",
+    ],
     relatedStorySlugs: ["one-size-cut-to-fit"],
   },
 

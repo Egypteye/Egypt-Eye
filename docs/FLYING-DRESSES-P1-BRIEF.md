@@ -103,14 +103,14 @@ win available.
 Build these **after** the wardrobe pages, not before. Written first they have
 nowhere to send a convinced reader except a single `/wardrobe` index.
 
-### 5. D6 — Choosing a colour for the photographs you actually want
+### 5. D6 — DROPPED on 25 November
 | | |
 |---|---|
 | **Target keyword** | `how to choose flying dress colour` |
 | **Search intent** | Decision support, late funnel. |
 | **URL** | `/stories/choosing-a-colour-for-the-photographs-you-want` |
 | **Commercial page** | `/wardrobe`, then all thirteen dress pages |
-| **Expected customer value** | High as a **distributor**. It is the one article that legitimately links to all thirteen product pages, which makes it the hub that tells search engines those pages matter. Its own conversions are secondary to that job. |
+| **Expected customer value** | Was: the hub linking to all thirteen product pages. **Superseded.** The live `choosing-a-dress-colour` sits at position 4.48 and now carries those thirteen links itself, so a second article would only have split that. See `FLYING-DRESSES-COLOUR-HUB-PROPOSAL.md`. |
 | **Photography** | Mixed, across folders. |
 | **Internal linking** | The spine of the cluster. All thirteen out; in from `/wardrobe` and `choosing-a-dress-colour`. |
 

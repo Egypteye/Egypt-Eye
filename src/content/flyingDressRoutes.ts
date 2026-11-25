@@ -33,6 +33,7 @@
  */
 
 import { packages, rentalServices } from "./flyingDresses";
+import { dressPages } from "./flyingDressWardrobe";
 import { categoryPath, experienceCategories } from "./flyingDressExperiences";
 
 /**
@@ -74,6 +75,13 @@ const STATIC_ROUTES = [
 export const flyingDressRoutes: readonly string[] = [
   ...STATIC_ROUTES,
   ...packages.map((p) => `/experiences/${p.slug}`),
+  // The thirteen per-dress pages. Derived from the same list that
+  // /wardrobe/[slug] builds generateStaticParams from, so a dress added or
+  // removed moves its URL here in the same edit. This was missing when the
+  // pages shipped on 22 November: the sitemap knew about them and this did
+  // not, so the first story to link to one failed the link check. Working as
+  // designed, and the reason that check exists.
+  ...dressPages.map((d) => `/wardrobe/${d.id}`),
   ...rentalServices.map((s) => `/rentals/${s.slug}`),
   ...experienceCategories.map((c) => categoryPath(c)),
 ];

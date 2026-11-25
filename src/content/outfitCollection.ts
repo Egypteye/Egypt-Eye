@@ -74,8 +74,32 @@ export const FLYING_DRESS_COLLECTION: Outfit[] = [
   {
     id: "navy",
     name: "Navy",
+    // CORRECTED 25 NOVEMBER 2026, AND THE NAME IS NOT THE COLOUR.
+    //
+    // This was #1e2a4a, a very dark navy, and no photograph of the garment
+    // supports it. The dress is a vivid royal blue. It was almost certainly
+    // picked from the word "Navy" rather than from the dress, the way Hot
+    // Pink's note says its own was not.
+    //
+    // It mattered because the wardrobe index renders this square next to the
+    // photograph: someone choosing a dark navy from the swatch was going to
+    // be handed a bright royal blue on the day.
+    //
+    // Two independent samples, both of the owner's own files:
+    //   dress-navy.jpg, the frame this index shows   #2469b7  (S 0.80)
+    //   the six /wardrobe/navy frames, body of fabric #023794  (S 0.99)
+    //
+    // The wardrobe frames are graded harder, so they read more saturated than
+    // the garment is. This takes the hero's figure, because that is the exact
+    // photograph the swatch sits beside, and a swatch that disagrees with the
+    // picture next to it is the problem being fixed. Same rule as Hot Pink:
+    // the fabric's dominant tone in the owner's photograph, not a guess from
+    // the name.
+    //
+    // The NAME is deliberately unchanged. Renaming a garment the owner named
+    // is not a call this file gets to make.
     category: "womens-dress",
-    hex: "#1e2a4a",
+    hex: "#2469b7",
     // The owner's own photograph of this dress, from the "Blue" folder
     // of their wardrobe shoot.
     image: { asset: { _ref: "image-a4b58d910bc56083b55716cf087b29ac4b11e0a8-5754x3836-jpg", _type: "reference" } },
