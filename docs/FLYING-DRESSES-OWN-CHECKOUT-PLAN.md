@@ -110,3 +110,80 @@ secret and the Supabase service role key.** That is the whole of the new risk,
 and it is reversible only by taking the feature out again.
 
 Everything else I can decide and do.
+
+---
+
+# BUILT — 26 November 2026
+
+Commit `a239ac3`, on all three branches. Step 1 of the order above is done.
+Steps 2 to 5 are below, and step 2 is yours.
+
+## What went live
+
+A checkout at **flyingdressesegypt.com/secure/photoshoot/&lt;slug&gt;**, in the
+brand's own chrome: Bodoni headline, Jost body, the ivory background, the
+brand's own fields and button. Verified in a real browser at desktop and
+phone widths, with no horizontal scroll on an iPhone 13.
+
+The deposit button on the packages page no longer leaves the domain.
+
+**It is inert right now.** The Flying Dresses Vercel project has no PayPal
+credentials, so the page renders the enquiry path and says, in as many words,
+"Online deposits are not switched on yet, so nothing will be charged here."
+Nobody can be charged until you do step 2.
+
+## Three things found while building, worth knowing
+
+1. **A dormant bug in the Egypt Eye form.** When a product is sold through a
+   PayPal payment *link* rather than the API, the form captured the link and
+   never showed it: the customer saw "your request is with our team" and had
+   no way to pay. It had never fired, because no product in the Studio has a
+   payment link set. If you had ever set one, that product would have taken
+   requests nobody could pay. Fixed.
+
+2. **The page PayPal returns people to was hardcoded to Egypt Eye.** A Flying
+   Dresses customer would have paid and landed on egypteyetravel.com. Now each
+   brand returns to its own site. Deliberately *not* done by trusting what the
+   browser claims the domain is, which would have let someone send a paying
+   customer to a site of their choosing.
+
+3. **The checkout refuses products this brand does not sell.** Without that,
+   flyingdressesegypt.com/secure/photoshoot/&lt;any-Egypt-Eye-slug&gt; would have
+   sold a desert safari under the Flying Dresses name.
+
+## Step 2 — yours, in the Vercel dashboard
+
+Project **flying-dresses-egypt**, Settings, Environment Variables. Add these
+to **Production**, with the values copied from the **egypt-eye** project's own
+settings so both domains use one PayPal account:
+
+| Name | Where to get it |
+|---|---|
+| `PAYPAL_CLIENT_ID` | copy from the egypt-eye project |
+| `PAYPAL_CLIENT_SECRET` | copy from the egypt-eye project |
+| `PAYPAL_ENV` | set to `sandbox` first, `live` only at step 4 |
+| `SUPABASE_SERVICE_ROLE_KEY` | copy from the egypt-eye project |
+| `NEXT_PUBLIC_SUPABASE_URL` | copy from the egypt-eye project |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | copy from the egypt-eye project |
+
+Then Deployments, and redeploy the latest. Environment variables only reach a
+build that happens after they are saved.
+
+**Do not paste any of these to me in chat.** They go in the Vercel panel and
+nowhere else. I do not need to see them to test the result.
+
+Still one PayPal app. Do not create a second one.
+
+## Then tell me, and I will do steps 3 and 5
+
+I will put a real booking through the live domain on sandbox money, read the
+row back out of Supabase, check the order in PayPal, and tell you exactly what
+each side recorded before you switch `PAYPAL_ENV` to `live`.
+
+## What is deliberately still NOT on this domain
+
+`/api/bookings/reconcile` and `/api/webhooks/paypal` stay 404 here. PayPal
+settles an order by its id against the shared Supabase, so the webhook already
+registered on the Egypt Eye domain settles orders started on this one. A
+second endpoint would need a second registration and a second webhook id and
+would buy nothing, while adding a second thing that can settle one payment.
