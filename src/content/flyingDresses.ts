@@ -1038,6 +1038,25 @@ export function packageBySlug(slug: string): FlyingDressPackage | undefined {
   return packages.find((p) => p.slug === slug);
 }
 
+/**
+ * The package sold as a given Egypt Eye photoshoot document, if any.
+ *
+ * This is the gate on this brand's own checkout page. Without it,
+ * /secure/photoshoot/<any-slug> on flyingdressesegypt.com would take a
+ * deposit for a desert safari in flying-dress chrome, under this brand's
+ * name — the site telling a customer something untrue about who they are
+ * buying from.
+ *
+ * The empty `eyeSlug` is excluded explicitly. Two packages carry one (the
+ * creative sessions, which have no Egypt Eye counterpart that takes a
+ * deposit), and `find` on an empty string would otherwise match the first of
+ * them for a request with no slug at all.
+ */
+export function packageByEyeSlug(eyeSlug: string): FlyingDressPackage | undefined {
+  if (!eyeSlug) return undefined;
+  return packages.find((p) => p.eyeSlug === eyeSlug);
+}
+
 // ---------------------------------------------------------------------------
 // ADD-ONS AND EXTRAS
 //

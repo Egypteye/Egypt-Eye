@@ -32,6 +32,7 @@ import {
   mensOutfits,
   nav,
   packages,
+  packageByEyeSlug,
   rentalServices,
   urgentCall,
   wardrobe,
@@ -1416,39 +1417,44 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
-// THE DEPOSIT BUTTON MUST LEAVE THIS DOMAIN, AND THE DIALOG MUST NOT BE
-// MOUNTED HERE.
+// THE DEPOSIT IS TAKEN ON THIS DOMAIN NOW, AND THE TAILWIND DIALOG STILL MUST
+// NOT BE MOUNTED HERE.
 //
-// This was briefly the other way round: SecureDateButton, the dialog Egypt Eye
-// opens on its own product pages, was mounted on these pages so that nobody
-// mid-purchase had to cross to another brand. The booking logic was right —
-// correct price, correct deposit percentage, correct wording — and the dialog
-// still rendered as unstyled markup inline in the page, because that component
-// is built from Tailwind utilities that resolve against the @theme in
-// app/globals.css and this brand's root layout loads only brand.css, which
-// imports no Tailwind on purpose.
+// The history matters because it is what these assertions are shaped by.
+// SecureDateButton, the dialog Egypt Eye opens on its own product pages, was
+// once mounted on these pages so nobody mid-purchase had to cross to another
+// brand. The booking logic was right — correct price, correct deposit
+// percentage, correct wording — and the dialog still rendered as unstyled
+// markup inline in the page, because it is built from Tailwind utilities that
+// resolve against the @theme in app/globals.css while this brand's root layout
+// loads only brand.css, which imports no Tailwind on purpose.
 //
-// So the two halves are asserted separately, because they fail separately:
-//   1. The handoff must stay absolute, to the Egypt Eye checkout that works.
-//   2. This file must not import the Egypt Eye dialog at all. A styling
-//      problem is invisible to every check in this repo — it was caught by
-//      screenshotting the deployed page, not here — so what is guarded is the
-//      import, which is checkable. When the dialog can be presented in this
-//      brand's chrome, this assertion is the one to come back and change.
+// The fix was a handoff to the Egypt Eye checkout, and these guards pinned it
+// there. The handoff is now gone, replaced by a checkout written in this
+// brand's own `fd-` classes at app/flying-dresses/secure/[type]/[slug]. So
+// the first assertion inverts: the rail must link to THIS domain. The second
+// does not change at all, because the reason for it never did — a Tailwind
+// component still renders as nothing here.
 //
-// PROVEN by restoring the SecureDateButton branch (both red) and by deleting
-// the handoff link (first red). Then reverted.
+// A styling problem is invisible to every check in this repo; it was caught by
+// screenshotting the deployed page, not here. So what is guarded is the
+// import, which is checkable.
+//
+// PROVEN by restoring the EGYPT_EYE_ORIGIN link (first red), by restoring the
+// SecureDateButton branch (second red), and by emptying the eyeSlug gate on
+// the new page (the gate assertions below, red). Then reverted.
 // ---------------------------------------------------------------------------
 const bookingRail = read("src/app/flying-dresses/_components/BookingRail.tsx");
-const railCode = bookingRail
-  .replace(/\{\/\*[\s\S]*?\*\/\}/g, " ")
-  .replace(/\/\*[\s\S]*?\*\//g, " ")
-  .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
+// stripComments() is the hoisted one above, written for the em-dash guard. It
+// removes block comments wholesale, so the body of a {/* ... */} JSX comment is
+// gone and only the braces remain — which is all these assertions need.
+const railCode = stripComments(bookingRail);
 
 ok(
-  "the Flying Dresses rail no longer sends the deposit to the Egypt Eye checkout, so a customer who " +
-    "wants to pay has nowhere to go",
-  railCode.includes("EGYPT_EYE_ORIGIN") && /secure\/photoshoot\/\$\{pkg\.eyeSlug\}/.test(railCode)
+  "the Flying Dresses rail still sends the deposit to the Egypt Eye checkout, so a customer pays on " +
+    "another brand's site when this one now has its own",
+  !railCode.includes("EGYPT_EYE_ORIGIN") &&
+    /fdPath\(`\/secure\/photoshoot\/\$\{pkg\.eyeSlug\}`\)/.test(railCode)
 );
 ok(
   "the Flying Dresses rail mounts Egypt Eye's SecureDateButton, whose Tailwind classes resolve to " +
@@ -1457,10 +1463,74 @@ ok(
   !railCode.includes("SecureDateButton")
 );
 
-// The rule that will gate the dialog once it can be presented in this brand's
-// chrome. Nothing calls it while the handoff stands, and it is exercised here
-// rather than deleted because it is the one thing that will stand between a
-// customer and a charge with no booking behind it.
+// ---------------------------------------------------------------------------
+// THE CHECKOUT THAT REPLACED THE HANDOFF.
+//
+// Three properties, each of which fails on its own.
+// ---------------------------------------------------------------------------
+const fdCheckout = read("src/app/flying-dresses/secure/[type]/[slug]/page.tsx");
+const fdCheckoutCode = stripComments(fdCheckout);
+const fdForm = read("src/app/flying-dresses/_components/SecureBookingFields.tsx");
+const fdFormCode = stripComments(fdForm);
+
+// 1. THE GATE. Without it, /secure/photoshoot/<any-egypt-eye-slug> on this
+//    domain renders a desert safari in flying-dress chrome and takes a deposit
+//    for a product this brand does not sell. That is the site telling a
+//    customer something untrue about who they are buying from, which is a
+//    worse failure than any styling one.
+ok(
+  "the Flying Dresses checkout takes any Egypt Eye product, so its own domain would sell a safari " +
+    "under this brand's name",
+  fdCheckoutCode.includes("packageByEyeSlug") && /if\s*\(!pkg\s*\|\|\s*type !== "photoshoot"\)/.test(fdCheckoutCode)
+);
+// And the lookup itself must refuse the empty eyeSlug that two packages carry,
+// or a request with no slug matches the first of them.
+ok(
+  "packageByEyeSlug matches a package whose eyeSlug is empty",
+  packageByEyeSlug("") === undefined
+);
+ok(
+  "packageByEyeSlug does not resolve the rooftop shoot it is called with",
+  packageByEyeSlug("pyramids-rooftop-flying-dress-photoshoot") !== undefined
+);
+
+// 2. NO SECOND ANSWER ABOUT MONEY. The page may ask productRail; the client
+//    component may not compute anything. CLAUDE.md §5.
+ok(
+  "the Flying Dresses checkout page computes its own figures instead of asking productRail",
+  fdCheckoutCode.includes("productRail(")
+);
+for (const forbidden of ["productRail", "quoteDeposit", "resolveDeposit", "payPalConfig"]) {
+  ok(
+    `the Flying Dresses booking form imports ${forbidden} — a client component must not be a second ` +
+      "authority on money",
+    !fdFormCode.includes(forbidden)
+  );
+}
+
+// 3. ONE IMPLEMENTATION OF THE BEHAVIOUR. The form is markup over the shared
+//    hook and the shared copy; a form holding its own fetch to /api/bookings
+//    is the fork this split exists to prevent.
+ok(
+  "the Flying Dresses booking form does not use the shared useSecureBooking hook",
+  fdFormCode.includes("useSecureBooking(")
+);
+ok(
+  "the Flying Dresses booking form posts to /api/bookings itself instead of going through the shared hook",
+  !fdFormCode.includes('fetch("/api/bookings"')
+);
+
+// Tailwind utilities would resolve to nothing in this layout, exactly as the
+// dialog did. Checked on the two class attributes most likely to be pasted in
+// from Egypt Eye's form.
+for (const tailwindism of ["rounded-full", "text-ink", "bg-gold", "sm:grid-cols-2"]) {
+  ok(
+    `the Flying Dresses booking form carries the Tailwind class "${tailwindism}", which resolves to ` +
+      "nothing under this brand's layout",
+    !fdForm.includes(tailwindism)
+  );
+}
+
 ok(
   "canCompleteBookingHere lets a deployment take money with no database behind it",
   canCompleteBookingHere({ providerEnabled: true, supabaseReady: false }) === false
@@ -1475,17 +1545,20 @@ ok(
 );
 
 // ---------------------------------------------------------------------------
-// WHAT THE BRAND'S DOMAIN REFUSES.
+// WHAT THE BRAND'S DOMAIN ANSWERS, AND WHAT IT STILL REFUSES.
 //
-// No booking route answers on this host, because nothing on this host calls
-// one: the deposit button hands off to the Egypt Eye checkout. Three were
-// briefly open for a dialog that could not be styled here, and an allow-list
-// entry for a feature that is not shipped reads to the next person as a
-// decision somebody made.
+// Three booking routes answer here now, because the checkout that calls them
+// runs here. They were briefly open once before for a dialog that could not be
+// styled on this brand, and were taken back out on the grounds that an
+// allow-list entry for an unshipped feature reads to the next person as a
+// decision somebody made. They are back with the feature, so each one is
+// asserted to have a caller on this domain as well as an entry in the proxy —
+// the pairing is the point, and a route open with nothing calling it should go
+// red here again.
 //
-// Two of them stay shut even when the dialog arrives, and nothing should ever
-// widen to a prefix — `startsWith("/api/bookings")` would admit both of them
-// and every route added under that path from now on.
+// Two stay shut whatever happens, and nothing may ever widen to a prefix:
+// `startsWith("/api/bookings")` would admit both of them and every route added
+// under that path from now on.
 // ---------------------------------------------------------------------------
 // Comments stripped, for the third time in this change: the proxy's own note
 // explains the prefix trap by writing `startsWith("/api/bookings")` out in
@@ -1497,8 +1570,8 @@ const proxyCode = proxySource
 
 for (const route of ["/api/bookings", "/api/bookings/rail", "/api/bookings/paypal/capture"]) {
   ok(
-    `${route} answers on the Flying Dresses domain, for a checkout that does not run there`,
-    !proxyCode.includes(`pathname === "${route}"`)
+    `${route} does not answer on the Flying Dresses domain, so its own checkout cannot complete`,
+    proxyCode.includes(`pathname === "${route}"`)
   );
 }
 ok(

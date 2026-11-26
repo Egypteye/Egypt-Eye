@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
 import type { PaymentMode } from "@/lib/booking/wording";
 import { PhoneField } from "@/components/PhoneField";
+import { useSecureBooking } from "@/lib/booking/useSecureBooking";
+import { resultCopy } from "@/lib/booking/secureResultCopy";
 
 // The form. Four questions, which is the whole point of this path existing.
 //
-// Everything it renders after submitting is governed by one rule from
-// docs/booking-deposits.md: the word "confirmed" never appears. The customer
-// has made a request and, where deposits are live, had money held. Neither is
-// a confirmation, and a person has not looked at it yet.
+// THIS FILE IS NOW MARKUP ONLY, and that is the change worth understanding.
+//
+// Flying Dresses Egypt takes deposits on its own domain, in its own chrome —
+// brand.css, no Tailwind — so these utility classes would render it unstyled.
+// The tempting fix is to copy this file and restyle it, which would leave two
+// implementations of the sequence that decides whether a customer is sent to
+// PayPal, sent a payment link, or told a human will come back.
+//
+// So the behaviour moved to lib/booking/useSecureBooking.ts and the sentences
+// to lib/booking/secureResultCopy.ts. What is left here is a brand's opinion
+// about borders and type. The Flying Dresses component beside it holds a
+// different opinion about the same two authorities.
+//
+// The rule from docs/booking-deposits.md still governs the copy, and is now
+// enforced where the copy lives: the word "confirmed" never appears as a
+// claim. The customer has made a request and, where deposits are live, had
+// money held. Neither is a confirmation, and a person has not looked at it
+// yet.
 
 type Props = {
   productType: "photoshoot" | "experience";
@@ -21,11 +36,6 @@ type Props = {
   paymentMode: PaymentMode;
 };
 
-type Result =
-  | { kind: "payLink"; reference: string; paymentLink: string; amountUsd: number }
-  | { kind: "payDeposit"; reference: string; approvalUrl: string }
-  | { kind: "awaitingTeam"; reference: string; notice?: string };
-
 export function SecureBookingForm({
   productType,
   productSlug,
@@ -33,109 +43,31 @@ export function SecureBookingForm({
   depositPercent,
   paymentMode,
 }: Props) {
-  const [form, setForm] = useState({
-    startsAt: "",
-    slotLabel: "",
-    people: 1,
-    guestName: "",
-    guestEmail: "",
-    guestPhone: "",
-    notes: "",
+  const { form, set, submitting, error, setPhoneProblem, result, ready, submit } = useSecureBooking({
+    productType,
+    productSlug,
   });
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  // The authority's verdict on the number, held so the form's own gate can
-  // refuse an unusable one instead of quietly sending none.
-  const [phoneProblem, setPhoneProblem] = useState<string | null>(null);
-  const [result, setResult] = useState<Result | null>(null);
-
-  const set = <K extends keyof typeof form>(key: K, value: (typeof form)[K]) =>
-    setForm((f) => ({ ...f, [key]: value }));
-
-  // An empty phone is fine here — it is offered, not demanded. A number the
-  // authority rejects is not: it reaches this component as the empty string,
-  // so letting it through would book a date with no way to ring the guest
-  // about it, which is the one thing this field exists to prevent.
-  const ready =
-    form.startsAt.trim() !== "" &&
-    form.guestName.trim() !== "" &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.guestEmail.trim()) &&
-    !phoneProblem;
-
-  async function submit(event: React.FormEvent) {
-    event.preventDefault();
-    if (!ready || submitting) return;
-    setSubmitting(true);
-    setError(null);
-    try {
-      const response = await fetch("/api/bookings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ productType, productSlug, ...form }),
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        setError(data?.error ?? "Something went wrong. Please try again, or message us on WhatsApp.");
-        return;
-      }
-      if (data.next === "payLink" && data.deposit?.paymentLink) {
-        setResult({
-          kind: "payLink",
-          reference: data.reference,
-          paymentLink: data.deposit.paymentLink,
-          amountUsd: data.deposit.amountUsd,
-        });
-        return;
-      }
-      if (data.next === "payDeposit" && data.deposit?.approvalUrl) {
-        setResult({ kind: "payDeposit", reference: data.reference, approvalUrl: data.deposit.approvalUrl });
-      } else {
-        setResult({ kind: "awaitingTeam", reference: data.reference, notice: data.notice });
-      }
-    } catch {
-      setError("We could not reach the server. Please check your connection and try again.");
-    } finally {
-      setSubmitting(false);
-    }
-  }
 
   if (result) {
+    const copy = resultCopy(result, { productTitle, depositPercent });
+
     return (
       <div className="mt-8 rounded-2xl border border-gold/30 bg-sand/40 p-6">
-        <h2 className="font-display text-2xl font-semibold text-ink">
-          {result.kind === "payDeposit" ? "One step left" : "Your request is with our team"}
-        </h2>
-
-        {result.kind === "payDeposit" ? (
-          <>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-              Your request is saved as <strong className="text-ink">{result.reference}</strong>. To hold your date,
-              approve the {depositPercent}% deposit. It is a hold — nothing is charged until our team confirms your
-              date.
-            </p>
-            <a
-              href={result.approvalUrl}
-              className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
-            >
-              Instant Booking
-            </a>
-          </>
-        ) : (
-          <>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-              {(result.kind === "awaitingTeam" && result.notice) ||
-                `We have your request for ${productTitle}, saved as ${result.reference}. Nothing has been charged.`}
-            </p>
-            <p className="mt-3 text-sm leading-relaxed text-ink-soft">
-              A member of our team is checking the date now and will come back to you{" "}
-              <strong className="text-ink">with your confirmation</strong>, or with the nearest dates we can offer.
-            </p>
-          </>
+        <h2 className="font-display text-2xl font-semibold text-ink">{copy.heading}</h2>
+        {copy.body.map((paragraph) => (
+          <p key={paragraph} className="mt-3 text-sm leading-relaxed text-ink-soft">
+            {paragraph}
+          </p>
+        ))}
+        {copy.action && (
+          <a
+            href={copy.action.href}
+            className="mt-5 inline-block rounded-full bg-gold px-6 py-3 text-sm font-semibold text-ink transition hover:bg-gold-light"
+          >
+            {copy.action.label}
+          </a>
         )}
-
-        <p className="mt-4 text-xs text-ink-soft">
-          We have emailed you a copy. Quote {result.reference} if you reply.
-        </p>
+        <p className="mt-4 text-xs text-ink-soft">{copy.footnote}</p>
       </div>
     );
   }

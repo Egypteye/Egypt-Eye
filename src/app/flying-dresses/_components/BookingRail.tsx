@@ -3,7 +3,7 @@ import { getPhotoshootBySlug, getSiteSettings } from "@/sanity/fetchers";
 import { productRail } from "@/lib/booking/productRail";
 import { HUMAN_CONFIRMS } from "@/lib/booking/wording";
 import type { FlyingDressPackage } from "@/content/flyingDresses";
-import { EGYPT_EYE_ORIGIN, flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
+import { flyingDressEnquiry, whatsappHref } from "@/content/flyingDresses";
 import { fdPath } from "../_lib/seo";
 
 /**
@@ -217,51 +217,53 @@ export async function BookingRail({ pkg }: { pkg: FlyingDressPackage }) {
       </p>
 
       <div className="fd-actions">
-        {/* THE DEPOSIT BUTTON LEAVES THIS DOMAIN, AND FOR ONE CONCRETE REASON.
+        {/* THE DEPOSIT BUTTON STAYS ON THIS DOMAIN, AND IT DID NOT USED TO.
             =================================================================
-            Not because the money cannot be taken here. It can: this app's
-            PayPal and Supabase are one set of credentials, the three routes
-            the checkout needs are open on this host (see src/proxy.ts), and
-            canCompleteBookingHere() in lib/booking/paypalConfig.ts is the
-            rule that decides whether a given deployment may finish a booking
-            at all. All of that is in place and stays in place.
+            It pointed at egypteyetravel.com/secure/photoshoot/<slug>, and
+            the long comment that used to sit here explained why: not because
+            the money could not be taken on this host — this app's PayPal and
+            Supabase are one set of credentials and always were — but because
+            of the CHROME. SecureDateButton, the dialog Egypt Eye opens on its
+            own product pages, is built from Tailwind utility classes that
+            resolve against the @theme in app/globals.css. This brand loads
+            only brand.css. Mounting that dialog here was tried and every one
+            of those classes resolved to nothing: a raw date field, a bare
+            close glyph, no overlay, around a form computing correct figures.
 
-            It leaves because of the CHROME, which is a smaller problem than
-            the money and a harder one to fake. SecureDateButton — the dialog
-            Egypt Eye opens on its own product pages — is built from Tailwind
-            utility classes that resolve against the @theme in
-            app/globals.css. This brand has its own root layout and loads only
-            brand.css, which is hand-written and imports no Tailwind, on
-            purpose and for reasons written at the top of that file.
+            That comment said the handoff would stay until the checkout could
+            be presented in this brand's chrome, and that doing so was real
+            work on the one component that takes money and belonged in its own
+            change. It now has one. The checkout is
+            app/flying-dresses/secure/[type]/[slug], in `fd-` classes, and
+            neither shortcut the old note refused was taken:
 
-            Mounting the dialog here anyway is not a cosmetic compromise. It
-            was tried, and every one of those utility classes resolved to
-            nothing: the dialog rendered as unstyled markup inline in the page
-            — a raw date field, a bare close glyph, no overlay — around a
-            booking form that was computing the right figures. A payment form
-            that looks broken is worse than a seam, because the seam costs a
-            click and the broken form costs the sale and the trust behind it.
+              - No Tailwind was imported into this layout.
+              - The form was not forked. Its behaviour is
+                lib/booking/useSecureBooking.ts and its sentences are
+                lib/booking/secureResultCopy.ts, both shared with Egypt Eye,
+                and productRail() is still the only authority for the figures.
+                CLAUDE.md §5.
 
-            So the handoff stays until the dialog can be presented in this
-            brand's chrome, which is real work with real risk on the one
-            component that takes money, and belongs in its own change rather
-            than bolted onto this one. The two things NOT acceptable as
-            shortcuts: importing Tailwind into this layout (it would ship a
-            second utility bundle and put Egypt Eye's reset under a stylesheet
-            written against the browser's, restyling every page of this brand
-            to fix one dialog), and forking the form (CLAUDE.md §5 — a second
-            money form is a second set of money bugs). */}
-        <a className="fd-btn" href={`${EGYPT_EYE_ORIGIN}/secure/photoshoot/${pkg.eyeSlug}`}>
+            So the seam is gone and the rule it was protecting is intact. */}
+        <Link className="fd-btn" href={fdPath(`/secure/photoshoot/${pkg.eyeSlug}`)}>
           Choose your date &amp; pay the deposit
-        </a>
+        </Link>
         <Link className="fd-btn fd-btn-ghost" href={fdPath(`/enquire?package=${pkg.slug}`)}>
           Or ask us first
         </Link>
       </div>
 
+      {/* THIS SENTENCE WAS TRUE AND HAD TO CHANGE WITH THE BUTTON ABOVE IT.
+          It read "Secure checkout runs on our Egypt Eye booking page", which
+          was an accurate description of a handoff that no longer happens. A
+          sentence that was true when written is exactly the kind that gets
+          left behind by a change to the code beside it, and this one would
+          have been telling visitors they were about to leave a site they now
+          stay on. What survives is the part that is still true and still the
+          reassurance worth giving: no card details are typed here. */}
       <p className="fd-muted" style={{ fontSize: "var(--fd-step--1)", marginTop: "1.25rem" }}>
-        Secure checkout runs on our Egypt Eye booking page: the same team, the same shoot, the
-        same PayPal account. Card details are never typed into a form on this site.
+        Checkout runs on the same PayPal account our team has used for every photoshoot. Card
+        details are never typed into a form on this site: PayPal takes them on its own pages.
       </p>
     </div>
   );

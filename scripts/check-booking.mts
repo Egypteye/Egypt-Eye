@@ -37,6 +37,14 @@ import {
   stateCopy,
   type BookingState,
 } from "../src/lib/booking/states";
+import {
+  PAYING_RESULT_KINDS,
+  allResultCopy,
+  resultCopy,
+  resultCopyClaimsConfirmation,
+} from "../src/lib/booking/secureResultCopy";
+import { shapeReturnView, missingBookingCopy } from "../src/lib/booking/returnView";
+import { bookingRedirects, bookingReturnOrigin, FLYING_DRESSES_ORIGIN } from "../src/lib/brand/bookingOrigin";
 
 const errors: string[] = [];
 const ok = (label: string, condition: boolean) => {
@@ -932,11 +940,36 @@ const ctas: [string, string][] = [
   ["src/components/SecureDateButton.tsx", "the photoshoot and experience dialog"],
   ["src/components/TripDepartures.tsx", "the weekly trip seat form"],
   ["src/components/WeeklyTripsCalendar.tsx", "the weekly trip calendar card"],
-  ["src/app/[locale]/(site)/secure/[type]/[slug]/SecureBookingForm.tsx", "the secure booking page"],
+  // The secure PAGE used to be listed here with its own literal. It no longer
+  // owns one: two brands render that page now, and the label moved into the
+  // shared copy module so they cannot disagree about it. The assertion moved
+  // with it, which is strictly better — one file to read rather than two to
+  // keep in step.
+  ["src/lib/booking/secureResultCopy.ts", "the shared secure-page result copy"],
 ];
 for (const [file, where] of ctas) {
   const text = await readFile(file, "utf8");
   ok(`${where} does not say "Instant Booking" on its booking CTA`, text.includes("Instant Booking"));
+}
+
+// AND NEITHER BRAND'S FORM MAY WRITE ITS OWN.
+//
+// The assertion above would pass while a brand component quietly rendered a
+// hardcoded button beside the shared one, which is exactly the drift the
+// module was created to stop. So each form is checked for the opposite: it
+// reads the label out of the copy object and contains no literal of its own.
+const secureForms: [string, string][] = [
+  ["src/app/[locale]/(site)/secure/[type]/[slug]/SecureBookingForm.tsx", "Egypt Eye's secure form"],
+  ["src/app/flying-dresses/_components/SecureBookingFields.tsx", "Flying Dresses' secure form"],
+];
+for (const [file, where] of secureForms) {
+  const text = await readFile(file, "utf8");
+  ok(`${where} renders the shared action label`, text.includes("copy.action.label"));
+  ok(
+    `${where} writes its own "Instant Booking" literal instead of reading the shared copy`,
+    !text.includes('"Instant Booking"') && !text.includes(">Instant Booking<")
+  );
+  ok(`${where} maps the result itself instead of calling resultCopy()`, text.includes("resultCopy("));
 }
 // The old wordings must be gone from the instant path, but must survive on the
 // request path — a departure with the switch off really is a request, and
@@ -1318,6 +1351,271 @@ ok(
   ok(
     "the phone-field sweep found no phone inputs at all, so it is no longer checking anything",
     telFiles.length >= 3
+  );
+}
+
+
+// ---------------------------------------------------------------------------
+// TWO BRANDS TAKE DEPOSITS, AND THE DANGEROUS PART IS THE RETURN URL.
+//
+// Flying Dresses Egypt now has its own checkout at
+// app/flying-dresses/secure/[type]/[slug], posting to the same /api/bookings
+// behind the same single PayPal app. The markup is per-brand; the behaviour,
+// the sentences and the return URL are not.
+//
+// The return URL is the one that can be a security bug rather than a styling
+// one. The obvious implementation reads the Host header and builds the URL
+// from it, which is an open redirect with PayPal doing the redirecting — from
+// inside a payment flow the victim already trusts, so the attacker never has
+// to get anyone to click anything.
+//
+// PROVEN by changing bookingReturnOrigin to `return `https://${host}`` — the
+// crafted-host assertions below went red. Then reverted.
+// ---------------------------------------------------------------------------
+const EE = "https://egypteyetravel.com";
+
+// The brand's own hostnames, apex and www, and the Vercel names that caused
+// the incident written up in lib/brand/flyingDressesHost.ts.
+for (const host of [
+  "flyingdressesegypt.com",
+  "www.flyingdressesegypt.com",
+  "FlyingDressesEgypt.com",
+  "flyingdressesegypt.com:443",
+  "flying-dresses-egypt.vercel.app",
+  "flying-dresses-egypt-git-main-team.vercel.app",
+]) {
+  ok(
+    `a booking made on ${host} returns to the Egypt Eye site, which is another company as far as the ` +
+      "customer is concerned",
+    bookingReturnOrigin(host, EE) === FLYING_DRESSES_ORIGIN
+  );
+}
+
+// Everything else falls through to Egypt Eye. That is the fail-safe direction:
+// the wrong brand's chrome is recoverable, an unknown domain is not.
+for (const host of [
+  "egypteyetravel.com",
+  "www.egypteyetravel.com",
+  "egypt-eye.vercel.app",
+  "egypt-eye-git-flying-dresses-production-team.vercel.app",
+  "localhost:3000",
+  "",
+]) {
+  ok(
+    `a booking made on ${host || "(no host)"} does not return to the Egypt Eye site`,
+    bookingReturnOrigin(host, EE) === EE
+  );
+}
+
+// THE ASSERTION THAT MATTERS MOST. A crafted Host must never reach the URL.
+for (const host of [
+  "evil.example.com",
+  "flyingdressesegypt.com.evil.example.com",
+  "evil.example.com#flyingdressesegypt.com",
+  "flyingdressesegypt.com@evil.example.com",
+  "flying-dresses-egypt.evil.example.com",
+]) {
+  const origin = bookingReturnOrigin(host, EE);
+  ok(
+    `a crafted Host header reaches the return URL: ${host}`,
+    origin === EE || origin === FLYING_DRESSES_ORIGIN
+  );
+  const { returnUrl, cancelUrl } = bookingRedirects({
+    host,
+    egyptEyeOrigin: EE,
+    reference: "EE-1234",
+    productType: "photoshoot",
+    productSlug: "rooftop",
+  });
+  ok(
+    `a crafted Host header is echoed into the URLs PayPal is given: ${host}`,
+    !returnUrl.includes("evil.example.com") && !cancelUrl.includes("evil.example.com")
+  );
+}
+
+// A host missing entirely is the null case Next hands over, not an error.
+ok(
+  "a request with no Host header throws instead of falling back",
+  bookingReturnOrigin(null, EE) === EE && bookingReturnOrigin(undefined, EE) === EE
+);
+
+// Return and cancel must agree about the origin, or completing and abandoning
+// a payment put the customer on different brands' sites.
+for (const host of ["flyingdressesegypt.com", "egypteyetravel.com"]) {
+  const { returnUrl, cancelUrl } = bookingRedirects({
+    host,
+    egyptEyeOrigin: EE,
+    reference: "EE-1234",
+    productType: "photoshoot",
+    productSlug: "rooftop",
+  });
+  const origin = bookingReturnOrigin(host, EE);
+  ok(
+    `return and cancel disagree about the origin on ${host}`,
+    returnUrl.startsWith(origin) && cancelUrl.startsWith(origin)
+  );
+  ok(
+    `the ${host} return URL does not carry the reference, so the page it lands on has nothing to look up`,
+    returnUrl.includes("ref=EE-1234")
+  );
+}
+
+// And the route must actually use it rather than keeping its constant.
+const bookingsRoute = await readFile("src/app/api/bookings/route.ts", "utf8");
+ok(
+  "the bookings route still builds the return URL from the Egypt Eye site URL, so a Flying Dresses " +
+    "customer is handed to another brand after paying",
+  bookingsRoute.includes("bookingRedirects({") &&
+    !/returnUrl: `\$\{siteUrl\}/.test(bookingsRoute)
+);
+ok(
+  "the bookings route interpolates the request host into a URL, which is the open redirect this is all for",
+  !/\$\{\s*(request\.headers\.get\("host"\)|host)\s*\}/.test(bookingsRoute)
+);
+
+// ---------------------------------------------------------------------------
+// THE SENTENCES AFTER THE BUTTON, WHICH BOTH BRANDS NOW SHARE.
+//
+// This is the screen a customer reads immediately after money has moved, when
+// they are most primed to read "done" into whatever is on it. Every sentence
+// it can produce goes through claimsConfirmation.
+//
+// PROVEN by changing payDepositCopy's heading to "Your date is confirmed" —
+// red. And by deleting the `action` from payLinkCopy — the paying-kinds
+// assertion went red, which is the dormant bug this module was written to
+// make impossible. Then reverted.
+// ---------------------------------------------------------------------------
+const everyResult = allResultCopy();
+ok(
+  "the result-copy list is empty, so the assertions below are checking nothing",
+  everyResult.length >= 4
+);
+for (const copy of everyResult) {
+  ok(
+    `a secure-page result screen claims a confirmation: ${copy.heading}`,
+    !resultCopyClaimsConfirmation(copy)
+  );
+  ok(`a secure-page result screen has no footnote: ${copy.heading}`, copy.footnote.length > 0);
+  ok(`a secure-page result screen has no body: ${copy.heading}`, copy.body.length > 0);
+  for (const sentence of copy.body) {
+    ok(
+      `a secure-page result screen says a booking is confirmed: ${sentence}`,
+      !claimsConfirmation(sentence)
+    );
+  }
+}
+
+// EVERY RESULT THAT WANTS MONEY MUST OFFER SOMEWHERE TO PAY.
+//
+// The bug this replaces: Egypt Eye's form branched on the result in markup, so
+// a "payLink" result rendered "your request is with our team" and no link at
+// all. The link was in state and never shown. Dormant only because no product
+// in the Studio carries a paypalLink.
+const paying = [
+  resultCopy(
+    { kind: "payDeposit", reference: "EE-1", approvalUrl: "https://paypal.test/a" },
+    { productTitle: "a shoot", depositPercent: 25 }
+  ),
+  resultCopy(
+    { kind: "payLink", reference: "EE-1", paymentLink: "https://paypal.test/b", amountUsd: 50 },
+    { productTitle: "a shoot", depositPercent: 25 }
+  ),
+];
+ok(
+  "the paying-result list no longer covers every paying kind",
+  paying.length === PAYING_RESULT_KINDS.length
+);
+for (const copy of paying) {
+  ok(
+    `a result that needs paying offers no link to pay: ${copy.heading}`,
+    copy.action !== undefined && copy.action.href.startsWith("https://")
+  );
+  ok(
+    `a paying result's button has no label: ${copy.heading}`,
+    (copy.action?.label ?? "").length > 0
+  );
+}
+// And the one that is NOT a payment must not grow a button.
+ok(
+  "the awaiting-team result offers a button, which implies a payment that is not happening",
+  resultCopy({ kind: "awaitingTeam", reference: "EE-1" }, { productTitle: "a shoot", depositPercent: 25 })
+    .action === undefined
+);
+
+// ---------------------------------------------------------------------------
+// THE PAGE PAYPAL SENDS THEM BACK TO, ALSO SHARED.
+//
+// Nothing about payment state comes from the URL: the row decides. So the
+// heading is asserted against the row, state by state, and the only state
+// allowed to congratulate is the one a person put the booking into.
+//
+// PROVEN by changing the heading to a constant "Your date is confirmed" — red
+// on every non-confirmed state. Then reverted.
+// ---------------------------------------------------------------------------
+const returnRows: [string, string | null][] = [
+  ["confirmed", "captured"],
+  ["held", "authorized"],
+  ["checking", "authorized"],
+  ["awaitingDeposit", null],
+  ["declined", null],
+  ["cancelled", null],
+];
+for (const [status, depositStatus] of returnRows) {
+  const view = shapeReturnView({
+    reference: "EE-1234",
+    status,
+    deposit_status: depositStatus,
+    deposit_amount: 50,
+    starts_at: null,
+    slot_label: null,
+    journey_snapshot: [{ title: "Rooftop shoot" }],
+  });
+  ok(
+    `the return page congratulates a ${status} booking`,
+    view.copy.isConfirmed || !claimsConfirmation(view.heading)
+  );
+  ok(
+    `the return page's heading claims a confirmation a ${status} row does not support`,
+    view.heading.includes("confirmed") === view.copy.isConfirmed
+  );
+  // And "charged" must follow the state rather than the redirect.
+  ok(
+    `the return page says a ${status} deposit was charged when the state says otherwise`,
+    view.depositStatusLabel === (view.copy.charged ? "charged" : "not charged")
+  );
+}
+// A row with no deposit figure says nothing about a deposit at all.
+ok(
+  "a booking with no deposit figure still gets a deposit line on the return page",
+  shapeReturnView({ reference: "EE-1", status: "checking", deposit_amount: null }).depositStatusLabel === null
+);
+// A snapshot that is not an array, or carries no title, must not crash or
+// invent a product name.
+ok(
+  "a malformed journey snapshot breaks the return page",
+  shapeReturnView({ reference: "EE-1", status: "checking", journey_snapshot: "nonsense" }).title ===
+    "Your booking"
+);
+ok(
+  "the missing-booking copy claims a confirmation",
+  !claimsConfirmation(missingBookingCopy("EE-1234").body.join(" ")) &&
+    missingBookingCopy("EE-1234").body.some((line) => line.includes("EE-1234"))
+);
+
+// Both brands' return pages must read the shared shaping rather than the row.
+for (const file of [
+  "src/app/[locale]/(site)/secure/return/page.tsx",
+  "src/app/flying-dresses/secure/return/page.tsx",
+]) {
+  const text = await readFile(file, "utf8");
+  ok(`${file} does not use the shared return-view loader`, text.includes("loadReturnView("));
+  ok(
+    `${file} queries the reservations table itself instead of going through the shared loader`,
+    !text.includes('.from("reservations")')
+  );
+  ok(
+    `${file} writes its own confirmation heading instead of reading the shared one`,
+    text.includes("booking.heading")
   );
 }
 

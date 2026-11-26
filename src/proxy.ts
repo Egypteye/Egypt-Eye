@@ -55,18 +55,21 @@ const FLYING_DRESSES_BASE = "/flying-dresses";
  * the isolation people assume they are buying is of the DEPLOYMENT, and what
  * actually matters is which URLs the HOSTNAME answers.
  *
- * So the brand's domain answers its own pages, its own enquiry endpoint, and
- * static assets. Everything else is 404 — including /studio, /admin,
- * /account, /api/migrate, /api/bookings/*, /api/webhooks/paypal and the
- * purge routes. Those are guarded by their own secrets and by Sanity's login
- * as well, but a URL that should not exist on this domain should not answer
- * on this domain, secret or no secret. Defence in depth, and one less domain
- * to think about when a credential is next rotated.
+ * So the brand's domain answers its own pages, its own two form endpoints,
+ * the three booking routes its own checkout calls, and static assets.
+ * Everything else is 404 — including /admin, /account, /api/migrate,
+ * /api/bookings/reconcile, /api/webhooks/paypal and the purge routes. Those
+ * are guarded by their own secrets and by Sanity's login as well, but a URL
+ * that should not exist on this domain should not answer on this domain,
+ * secret or no secret. Defence in depth, and one less domain to think about
+ * when a credential is next rotated.
  *
  * Deliberately NOT allowed, and why each one matters:
- *   /studio         a second Studio URL for the same dataset
  *   /auth/*         Egypt Eye's Supabase auth callback
- *   /api/* (others) booking, payment capture, webhooks, CMS writes, admin
+ *   /api/* (others) reconcile, webhooks, CMS writes, admin
+ *
+ * /studio is allowed, decided separately and further down this file; the
+ * three booking routes are allowed and argued for inside the function.
  */
 function isFlyingDressesAllowed(pathname: string): boolean {
   return (
@@ -78,24 +81,25 @@ function isFlyingDressesAllowed(pathname: string): boolean {
     pathname === "/api/flying-dresses-enquiry" ||
     pathname === "/api/flying-dresses-collaborate" ||
     // ---------------------------------------------------------------------
-    // NO BOOKING ROUTE ANSWERS HERE, BECAUSE NOTHING HERE CALLS ONE.
+    // THE BOOKING ROUTE, BECAUSE THIS BRAND NOW TAKES ITS OWN DEPOSITS.
     //
-    // Three of them were briefly listed: /api/bookings, /api/bookings/rail
-    // and /api/bookings/paypal/capture, which is what the Egypt Eye booking
-    // dialog needs when it runs on this brand's own pages. That dialog is not
-    // mounted here — it is built from Tailwind utilities this brand's layout
-    // does not load, and the deposit button hands off to the Egypt Eye
-    // checkout instead, which is written up in BookingRail.tsx.
+    // These three were listed once before and taken back out, correctly: at
+    // the time nothing on this domain called them, because the deposit button
+    // handed off to the Egypt Eye checkout, and an allow-list entry for a
+    // feature that is not shipped is a quiet widening nobody decided to make.
+    // The note that removed them said they would return in the change that
+    // presented the checkout in this brand's chrome. That change is done —
+    // app/flying-dresses/secure/[type]/[slug] — so they return with it, and
+    // every one of them now has a caller on this domain.
     //
-    // So they come back out. An allow-list entry for a feature that is not
-    // shipped is the same quiet widening this function's own note warns
-    // about, one step slower: nothing calls them, nothing notices them, and
-    // the next person reads them as a decision somebody made on purpose. When
-    // the dialog can be presented in this brand's chrome, the three lines
-    // return in that change, where they can be reasoned about together.
+    //   /api/bookings               the form posts here
+    //   /api/bookings/rail          the live price and deposit figure
+    //   /api/bookings/paypal/capture  the browser's hand-back after approval
     //
-    // Two will stay out even then, and they are worth naming because they
-    // look like omissions:
+    // Listed individually, like the two above, for the reason in that note.
+    //
+    // TWO STAY OUT, and they are worth naming because they look like
+    // omissions:
     //
     //   /api/bookings/reconcile — the cron sweep that captures stragglers. It
     //   belongs to one deployment, runs on a schedule with CRON_SECRET, and a
@@ -104,10 +108,15 @@ function isFlyingDressesAllowed(pathname: string): boolean {
     //   /api/webhooks/paypal — PayPal delivers to the URLs registered on the
     //   app, and the handler finds the booking by ORDER ID in Supabase, not
     //   by which deployment created it. Both projects share one Supabase, so
-    //   an order started here would be settled by the webhook already
-    //   registered on the Egypt Eye domain. A second endpoint needs a second
-    //   registration and a second PAYPAL_WEBHOOK_ID, and buys nothing.
+    //   an order started here is settled by the webhook already registered on
+    //   the Egypt Eye domain. A second endpoint needs a second registration
+    //   and a second PAYPAL_WEBHOOK_ID, and buys nothing. This is the reason
+    //   a deposit taken on this domain settles correctly with no webhook of
+    //   its own: one PayPal app, one Supabase, one settlement path.
     // ---------------------------------------------------------------------
+    pathname === "/api/bookings" ||
+    pathname === "/api/bookings/rail" ||
+    pathname === "/api/bookings/paypal/capture" ||
     // Framework and static assets, which carry no authority.
     pathname.startsWith("/_next") ||
     pathname.startsWith("/photos/") ||

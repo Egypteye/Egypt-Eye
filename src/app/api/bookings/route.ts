@@ -13,6 +13,7 @@ import { composePhone } from "@/lib/booking/phone";
 import type { PaymentMode } from "@/lib/booking/wording";
 import { productRail } from "@/lib/booking/productRail";
 import { siteUrl } from "@/content/seo";
+import { bookingRedirects } from "@/lib/brand/bookingOrigin";
 import { sendEmail } from "@/lib/email/resend";
 import { bookingRequestTeamEmail } from "@/lib/email/templates";
 
@@ -488,8 +489,24 @@ export async function POST(request: NextRequest) {
     reference: data.reference,
     quote: quoted.quote,
     description: `Deposit to secure ${product.title} — ${data.reference}`,
-    returnUrl: `${siteUrl}/secure/return?ref=${data.reference}`,
-    cancelUrl: `${siteUrl}/secure/${productType}/${productSlug}?ref=${data.reference}`,
+    // BOTH BRANDS TAKE DEPOSITS NOW, SO THE RETURN URL IS NOT A CONSTANT.
+    //
+    // It used to be siteUrl, which is Egypt Eye's. A customer who paid on
+    // flyingdressesegypt.com would have been delivered to egypteyetravel.com
+    // by PayPal — a different company's website, at the one moment in the
+    // flow where that reads as something having gone wrong with their money.
+    //
+    // The host is used only to CHOOSE between two origins this repository
+    // already knows; it is never echoed into the URL. See the long note in
+    // lib/brand/bookingOrigin.ts: echoing a client-supplied Host here would
+    // be an open redirect with PayPal doing the redirecting.
+    ...bookingRedirects({
+      host: request.headers.get("host"),
+      egyptEyeOrigin: siteUrl,
+      reference: data.reference,
+      productType,
+      productSlug,
+    }),
   });
 
   if (!opened.ok) {
