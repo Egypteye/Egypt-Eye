@@ -48,7 +48,11 @@ export default async function FlyingDressesReturnPage({
     return (
       <div className="fd-section">
         <div className="fd-shell fd-shell-narrow">
-          <h1 className="fd-display fd-h1">{copy.heading}</h1>
+          {/* fd-h2, matching the checkout and this brand's 404 page.
+              fd-h1 is the hero scale and rendered these two headings at over
+              100px, which is a landing-page size on a page that exists to
+              report one fact about one booking. */}
+          <h1 className="fd-display fd-h2">{copy.heading}</h1>
           {copy.body.map((paragraph) => (
             <p key={paragraph} className="fd-lead">
               {paragraph}
@@ -68,7 +72,7 @@ export default async function FlyingDressesReturnPage({
     <div className="fd-section">
       <div className="fd-shell fd-shell-narrow">
         <p className="fd-eyebrow">{booking.copy.label}</p>
-        <h1 className="fd-display fd-h1">{booking.heading}</h1>
+        <h1 className="fd-display fd-h2">{booking.heading}</h1>
         <p className="fd-lead">{booking.copy.message}</p>
 
         <dl className="fd-facts" style={{ marginTop: "1.5rem" }}>
