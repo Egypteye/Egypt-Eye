@@ -56,7 +56,7 @@ const FLYING_DRESSES_BASE = "/flying-dresses";
  * actually matters is which URLs the HOSTNAME answers.
  *
  * So the brand's domain answers its own pages, its own two form endpoints,
- * the three booking routes its own checkout calls, and static assets.
+ * the one booking route its own checkout posts to, and static assets.
  * Everything else is 404 — including /admin, /account, /api/migrate,
  * /api/bookings/reconcile, /api/webhooks/paypal and the purge routes. Those
  * are guarded by their own secrets and by Sanity's login as well, but a URL
@@ -81,25 +81,52 @@ function isFlyingDressesAllowed(pathname: string): boolean {
     pathname === "/api/flying-dresses-enquiry" ||
     pathname === "/api/flying-dresses-collaborate" ||
     // ---------------------------------------------------------------------
-    // THE BOOKING ROUTE, BECAUSE THIS BRAND NOW TAKES ITS OWN DEPOSITS.
+    // ONE BOOKING ROUTE, BECAUSE THIS BRAND NOW TAKES ITS OWN DEPOSITS.
     //
-    // These three were listed once before and taken back out, correctly: at
-    // the time nothing on this domain called them, because the deposit button
+    // /api/bookings was listed once before and taken back out, correctly: at
+    // the time nothing on this domain called it, because the deposit button
     // handed off to the Egypt Eye checkout, and an allow-list entry for a
     // feature that is not shipped is a quiet widening nobody decided to make.
-    // The note that removed them said they would return in the change that
+    // The note that removed it said it would return in the change that
     // presented the checkout in this brand's chrome. That change is done —
-    // app/flying-dresses/secure/[type]/[slug] — so they return with it, and
-    // every one of them now has a caller on this domain.
+    // app/flying-dresses/secure/[type]/[slug] — and the form there posts
+    // here, through lib/booking/useSecureBooking.ts.
     //
-    //   /api/bookings               the form posts here
-    //   /api/bookings/rail          the live price and deposit figure
-    //   /api/bookings/paypal/capture  the browser's hand-back after approval
+    // IT IS ONE ROUTE AND NOT THREE, WHICH IS A CORRECTION.
     //
-    // Listed individually, like the two above, for the reason in that note.
+    // /api/bookings/rail and /api/bookings/paypal/capture went in alongside
+    // it, under a comment claiming each had a caller on this domain. Neither
+    // did. Grep says so plainly:
     //
-    // TWO STAY OUT, and they are worth naming because they look like
+    //   /api/bookings/rail           fetched only by SecureDateButton.tsx
+    //   /api/bookings/paypal/capture fetched only by PayPalDepositButtons.tsx
+    //
+    // Both are Tailwind components that are NOT mounted on this brand — the
+    // whole reason this checkout was written separately, and a fact one of
+    // this file's own guards asserts. So two routes were opened on a second
+    // public hostname for callers that do not exist there: exactly the quiet
+    // widening the original note warned about, committed by the change that
+    // quoted that note approvingly.
+    //
+    // THIS CHECKOUT GENUINELY NEEDS NEITHER, and it is worth saying why so
+    // nobody re-adds them on a hunch:
+    //
+    //   rail exists because Egypt Eye's popup sits on a statically cached
+    //   product page and must re-ask for the viewer's own figures. This
+    //   brand's checkout is a dynamic server render that already called
+    //   productRail() before any HTML was sent, so the figures are in the
+    //   props. There is nothing to re-ask.
+    //
+    //   capture exists for the in-page PayPal buttons, where the browser
+    //   finishes the order. This flow is a redirect: the customer leaves for
+    //   PayPal and comes back to /secure/return, and the money is settled by
+    //   the webhook on the Egypt Eye domain against the shared Supabase.
+    //   The browser on this domain never captures anything.
+    //
+    // THREE STAY OUT, and they are worth naming because they look like
     // omissions:
+    //
+    //   /api/bookings/rail and /api/bookings/paypal/capture — above.
     //
     //   /api/bookings/reconcile — the cron sweep that captures stragglers. It
     //   belongs to one deployment, runs on a schedule with CRON_SECRET, and a
@@ -115,8 +142,6 @@ function isFlyingDressesAllowed(pathname: string): boolean {
     //   its own: one PayPal app, one Supabase, one settlement path.
     // ---------------------------------------------------------------------
     pathname === "/api/bookings" ||
-    pathname === "/api/bookings/rail" ||
-    pathname === "/api/bookings/paypal/capture" ||
     // Framework and static assets, which carry no authority.
     pathname.startsWith("/_next") ||
     pathname.startsWith("/photos/") ||

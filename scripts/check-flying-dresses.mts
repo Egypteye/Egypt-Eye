@@ -1547,18 +1547,25 @@ ok(
 // ---------------------------------------------------------------------------
 // WHAT THE BRAND'S DOMAIN ANSWERS, AND WHAT IT STILL REFUSES.
 //
-// Three booking routes answer here now, because the checkout that calls them
-// runs here. They were briefly open once before for a dialog that could not be
-// styled on this brand, and were taken back out on the grounds that an
-// allow-list entry for an unshipped feature reads to the next person as a
-// decision somebody made. They are back with the feature, so each one is
-// asserted to have a caller on this domain as well as an entry in the proxy —
-// the pairing is the point, and a route open with nothing calling it should go
-// red here again.
+// EXACTLY ONE booking route answers here: /api/bookings, which this brand's
+// own checkout posts to. The guard below is written as a PAIRING, because the
+// previous version of it was not, and that is how two routes shipped open on
+// a second public hostname with nothing on that hostname calling them.
 //
-// Two stay shut whatever happens, and nothing may ever widen to a prefix:
-// `startsWith("/api/bookings")` would admit both of them and every route added
-// under that path from now on.
+// What happened: /api/bookings/rail and /api/bookings/paypal/capture were
+// added beside /api/bookings under a comment asserting each had a caller
+// here. Neither did — rail is fetched only by SecureDateButton.tsx and
+// capture only by PayPalDepositButtons.tsx, both Tailwind components this
+// brand does not mount, which the assertions further up this file already
+// prove. The guard at the time only checked that the proxy listed them, so
+// listing them was all it took to go green. A check that cannot fail on the
+// broken version checks nothing. CLAUDE.md §4.
+//
+// So each allowed route must now ALSO be fetched by code this domain can
+// reach, and each refused one must be fetched by none of it.
+//
+// Nothing may ever widen to a prefix: `startsWith("/api/bookings")` would
+// admit the reconcile sweep and every route added under that path from now on.
 // ---------------------------------------------------------------------------
 // Comments stripped, for the third time in this change: the proxy's own note
 // explains the prefix trap by writing `startsWith("/api/bookings")` out in
@@ -1568,10 +1575,42 @@ const proxyCode = proxySource
   .replace(/\/\*[\s\S]*?\*\//g, " ")
   .replace(/(^|[^:])\/\/[^\n]*/g, "$1 ");
 
-for (const route of ["/api/bookings", "/api/bookings/rail", "/api/bookings/paypal/capture"]) {
+/**
+ * The client code this domain can actually reach: the Flying Dresses form and
+ * the shared hook behind it. Deliberately NOT the whole of src/ — the point is
+ * what runs on THIS brand, and src/components holds Egypt Eye's dialog, whose
+ * fetches are exactly what made the old guard pass on the broken version.
+ */
+const fdReachable = [
+  "src/app/flying-dresses/_components/SecureBookingFields.tsx",
+  "src/lib/booking/useSecureBooking.ts",
+]
+  .map((f) => read(f))
+  .join("\n");
+
+// Open here, and called from here. Both halves, or the pairing is not checked.
+for (const route of ["/api/bookings"]) {
   ok(
     `${route} does not answer on the Flying Dresses domain, so its own checkout cannot complete`,
     proxyCode.includes(`pathname === "${route}"`)
+  );
+  ok(
+    `${route} is open on the Flying Dresses domain with nothing on that domain calling it`,
+    fdReachable.includes(`"${route}"`)
+  );
+}
+
+// Shut here, and called by nothing here. A future checkout that genuinely
+// needs one of these must open it AND call it in the same change, which is
+// what the pairing above is for.
+for (const route of ["/api/bookings/rail", "/api/bookings/paypal/capture"]) {
+  ok(
+    `${route} answers on the Flying Dresses domain for a caller that does not exist there`,
+    !proxyCode.includes(`pathname === "${route}"`)
+  );
+  ok(
+    `${route} is called by Flying Dresses code while the proxy refuses it, so that call 404s`,
+    !fdReachable.includes(route)
   );
 }
 ok(
